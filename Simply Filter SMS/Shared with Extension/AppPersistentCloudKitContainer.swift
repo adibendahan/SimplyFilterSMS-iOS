@@ -1,0 +1,18 @@
+//
+//  AppPersistentCloudKitContainer.swift
+//  Simply Filter SMS
+//
+//  Created by Adi Ben-Dahan on 27/12/2021.
+//
+
+import CoreData
+
+class AppPersistentCloudKitContainer: NSPersistentCloudKitContainer {
+    override class func defaultDirectoryURL() -> URL {
+        guard let storeURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: kAppGroupContainer) else {
+            return URL(fileURLWithPath: NSTemporaryDirectory())
+        }
+        
+        return storeURL.appendingPathComponent(kDatabaseFilename)
+    }
+}

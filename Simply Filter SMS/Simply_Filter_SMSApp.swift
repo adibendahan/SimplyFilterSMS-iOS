@@ -13,7 +13,7 @@ struct Simply_Filter_SMSApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            FilterListView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }

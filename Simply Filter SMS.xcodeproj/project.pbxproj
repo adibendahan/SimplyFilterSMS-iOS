@@ -7,47 +7,62 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */; };
+		699F55802778BB3100AD7C64 /* AddFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699F557F2778BB3100AD7C64 /* AddFilterView.swift */; };
 		69CD70CA2770D4D100F91A2F /* Simply_Filter_SMSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70C92770D4D100F91A2F /* Simply_Filter_SMSApp.swift */; };
-		69CD70CC2770D4D100F91A2F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70CB2770D4D100F91A2F /* ContentView.swift */; };
+		69CD70CC2770D4D100F91A2F /* FilterListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70CB2770D4D100F91A2F /* FilterListView.swift */; };
 		69CD70CE2770D4D100F91A2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69CD70CD2770D4D100F91A2F /* Assets.xcassets */; };
 		69CD70D12770D4D100F91A2F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69CD70D02770D4D100F91A2F /* Preview Assets.xcassets */; };
-		69CD70D32770D4D100F91A2F /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D22770D4D100F91A2F /* Persistence.swift */; };
-		69CD70D62770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D42770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodeld */; };
-		69CD70E02770D4D100F91A2F /* Simply_Filter_SMSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70DF2770D4D100F91A2F /* Simply_Filter_SMSTests.swift */; };
-		69CD70EA2770D4D100F91A2F /* Simply_Filter_SMSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70E92770D4D100F91A2F /* Simply_Filter_SMSUITests.swift */; };
-		69CD70EC2770D4D100F91A2F /* Simply_Filter_SMSUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70EB2770D4D100F91A2F /* Simply_Filter_SMSUITestsLaunchTests.swift */; };
+		69CD70D32770D4D100F91A2F /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D22770D4D100F91A2F /* PersistenceController.swift */; };
+		69CD70D62770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */; };
+		69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70FE2770D65D00F91A2F /* MessageFilterExtension.swift */; };
+		69CD71032770D65D00F91A2F /* Simply Filter SMS Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 69CD70FC2770D65D00F91A2F /* Simply Filter SMS Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		69DB7014277A1F0200245DBA /* Constsants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constsants.swift */; };
+		69DB7015277A1F0200245DBA /* Constsants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constsants.swift */; };
+		69DB7017277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */; };
+		69DB7018277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		69CD70DC2770D4D100F91A2F /* PBXContainerItemProxy */ = {
+		69CD71012770D65D00F91A2F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69CD70BE2770D4D100F91A2F /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 69CD70C52770D4D100F91A2F;
-			remoteInfo = "Simply Filter SMS";
-		};
-		69CD70E62770D4D100F91A2F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 69CD70BE2770D4D100F91A2F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 69CD70C52770D4D100F91A2F;
-			remoteInfo = "Simply Filter SMS";
+			remoteGlobalIDString = 69CD70FB2770D65D00F91A2F;
+			remoteInfo = "Simply Filter SMS Extension";
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		69CD71072770D65D00F91A2F /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				69CD71032770D65D00F91A2F /* Simply Filter SMS Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		699F557F2778BB3100AD7C64 /* AddFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFilterView.swift; sourceTree = "<group>"; };
 		69CD70C62770D4D100F91A2F /* Simply Filter SMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Simply Filter SMS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69CD70C92770D4D100F91A2F /* Simply_Filter_SMSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simply_Filter_SMSApp.swift; sourceTree = "<group>"; };
-		69CD70CB2770D4D100F91A2F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		69CD70CB2770D4D100F91A2F /* FilterListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListView.swift; sourceTree = "<group>"; };
 		69CD70CD2770D4D100F91A2F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		69CD70D02770D4D100F91A2F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		69CD70D22770D4D100F91A2F /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		69CD70D22770D4D100F91A2F /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		69CD70D52770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Simply_Filter_SMS.xcdatamodel; sourceTree = "<group>"; };
-		69CD70DB2770D4D100F91A2F /* Simply Filter SMSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Simply Filter SMSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		69CD70DF2770D4D100F91A2F /* Simply_Filter_SMSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simply_Filter_SMSTests.swift; sourceTree = "<group>"; };
-		69CD70E52770D4D100F91A2F /* Simply Filter SMSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Simply Filter SMSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		69CD70E92770D4D100F91A2F /* Simply_Filter_SMSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simply_Filter_SMSUITests.swift; sourceTree = "<group>"; };
-		69CD70EB2770D4D100F91A2F /* Simply_Filter_SMSUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simply_Filter_SMSUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		69CD70FC2770D65D00F91A2F /* Simply Filter SMS Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Simply Filter SMS Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		69CD70FE2770D65D00F91A2F /* MessageFilterExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFilterExtension.swift; sourceTree = "<group>"; };
+		69CD71002770D65D00F91A2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		69CD71082770D74300F91A2F /* Simply Filter SMS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Simply Filter SMS.entitlements"; sourceTree = "<group>"; };
+		69CD71092770D7AD00F91A2F /* Simply Filter SMS Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Simply Filter SMS Extension.entitlements"; sourceTree = "<group>"; };
+		69DB7013277A1F0200245DBA /* Constsants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constsants.swift; sourceTree = "<group>"; };
+		69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPersistentCloudKitContainer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,14 +73,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		69CD70D82770D4D100F91A2F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		69CD70E22770D4D100F91A2F /* Frameworks */ = {
+		69CD70F92770D65D00F91A2F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -79,8 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				69CD70C82770D4D100F91A2F /* Simply Filter SMS */,
-				69CD70DE2770D4D100F91A2F /* Simply Filter SMSTests */,
-				69CD70E82770D4D100F91A2F /* Simply Filter SMSUITests */,
+				69CD70FD2770D65D00F91A2F /* Simply Filter SMS Extension */,
 				69CD70C72770D4D100F91A2F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -89,8 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				69CD70C62770D4D100F91A2F /* Simply Filter SMS.app */,
-				69CD70DB2770D4D100F91A2F /* Simply Filter SMSTests.xctest */,
-				69CD70E52770D4D100F91A2F /* Simply Filter SMSUITests.xctest */,
+				69CD70FC2770D65D00F91A2F /* Simply Filter SMS Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,11 +105,10 @@
 			isa = PBXGroup;
 			children = (
 				69CD70C92770D4D100F91A2F /* Simply_Filter_SMSApp.swift */,
-				69CD70CB2770D4D100F91A2F /* ContentView.swift */,
-				69CD70CD2770D4D100F91A2F /* Assets.xcassets */,
-				69CD70D22770D4D100F91A2F /* Persistence.swift */,
-				69CD70D42770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodeld */,
-				69CD70CF2770D4D100F91A2F /* Preview Content */,
+				69CD70D22770D4D100F91A2F /* PersistenceController.swift */,
+				69DB7011277A1EBE00245DBA /* Views */,
+				69DB7012277A1EDF00245DBA /* Shared with Extension */,
+				69DB7010277A03F800245DBA /* Resources */,
 			);
 			path = "Simply Filter SMS";
 			sourceTree = "<group>";
@@ -116,21 +121,43 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		69CD70DE2770D4D100F91A2F /* Simply Filter SMSTests */ = {
+		69CD70FD2770D65D00F91A2F /* Simply Filter SMS Extension */ = {
 			isa = PBXGroup;
 			children = (
-				69CD70DF2770D4D100F91A2F /* Simply_Filter_SMSTests.swift */,
+				69CD71092770D7AD00F91A2F /* Simply Filter SMS Extension.entitlements */,
+				69CD70FE2770D65D00F91A2F /* MessageFilterExtension.swift */,
+				69CD71002770D65D00F91A2F /* Info.plist */,
 			);
-			path = "Simply Filter SMSTests";
+			path = "Simply Filter SMS Extension";
 			sourceTree = "<group>";
 		};
-		69CD70E82770D4D100F91A2F /* Simply Filter SMSUITests */ = {
+		69DB7010277A03F800245DBA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				69CD70E92770D4D100F91A2F /* Simply_Filter_SMSUITests.swift */,
-				69CD70EB2770D4D100F91A2F /* Simply_Filter_SMSUITestsLaunchTests.swift */,
+				69CD70CF2770D4D100F91A2F /* Preview Content */,
+				69CD70CD2770D4D100F91A2F /* Assets.xcassets */,
+				69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */,
+				69CD71082770D74300F91A2F /* Simply Filter SMS.entitlements */,
 			);
-			path = "Simply Filter SMSUITests";
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		69DB7011277A1EBE00245DBA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				69CD70CB2770D4D100F91A2F /* FilterListView.swift */,
+				699F557F2778BB3100AD7C64 /* AddFilterView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		69DB7012277A1EDF00245DBA /* Shared with Extension */ = {
+			isa = PBXGroup;
+			children = (
+				69DB7013277A1F0200245DBA /* Constsants.swift */,
+				69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */,
+			);
+			path = "Shared with Extension";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,51 +170,34 @@
 				69CD70C22770D4D100F91A2F /* Sources */,
 				69CD70C32770D4D100F91A2F /* Frameworks */,
 				69CD70C42770D4D100F91A2F /* Resources */,
+				69CD71072770D65D00F91A2F /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				69CD71022770D65D00F91A2F /* PBXTargetDependency */,
 			);
 			name = "Simply Filter SMS";
 			productName = "Simply Filter SMS";
 			productReference = 69CD70C62770D4D100F91A2F /* Simply Filter SMS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		69CD70DA2770D4D100F91A2F /* Simply Filter SMSTests */ = {
+		69CD70FB2770D65D00F91A2F /* Simply Filter SMS Extension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 69CD70F22770D4D100F91A2F /* Build configuration list for PBXNativeTarget "Simply Filter SMSTests" */;
+			buildConfigurationList = 69CD71042770D65D00F91A2F /* Build configuration list for PBXNativeTarget "Simply Filter SMS Extension" */;
 			buildPhases = (
-				69CD70D72770D4D100F91A2F /* Sources */,
-				69CD70D82770D4D100F91A2F /* Frameworks */,
-				69CD70D92770D4D100F91A2F /* Resources */,
+				69CD70F82770D65D00F91A2F /* Sources */,
+				69CD70F92770D65D00F91A2F /* Frameworks */,
+				69CD70FA2770D65D00F91A2F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				69CD70DD2770D4D100F91A2F /* PBXTargetDependency */,
 			);
-			name = "Simply Filter SMSTests";
-			productName = "Simply Filter SMSTests";
-			productReference = 69CD70DB2770D4D100F91A2F /* Simply Filter SMSTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		69CD70E42770D4D100F91A2F /* Simply Filter SMSUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 69CD70F52770D4D100F91A2F /* Build configuration list for PBXNativeTarget "Simply Filter SMSUITests" */;
-			buildPhases = (
-				69CD70E12770D4D100F91A2F /* Sources */,
-				69CD70E22770D4D100F91A2F /* Frameworks */,
-				69CD70E32770D4D100F91A2F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				69CD70E72770D4D100F91A2F /* PBXTargetDependency */,
-			);
-			name = "Simply Filter SMSUITests";
-			productName = "Simply Filter SMSUITests";
-			productReference = 69CD70E52770D4D100F91A2F /* Simply Filter SMSUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
+			name = "Simply Filter SMS Extension";
+			productName = "Simply Filter SMS Extension";
+			productReference = 69CD70FC2770D65D00F91A2F /* Simply Filter SMS Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -202,13 +212,8 @@
 					69CD70C52770D4D100F91A2F = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
-					69CD70DA2770D4D100F91A2F = {
+					69CD70FB2770D65D00F91A2F = {
 						CreatedOnToolsVersion = 13.2.1;
-						TestTargetID = 69CD70C52770D4D100F91A2F;
-					};
-					69CD70E42770D4D100F91A2F = {
-						CreatedOnToolsVersion = 13.2.1;
-						TestTargetID = 69CD70C52770D4D100F91A2F;
 					};
 				};
 			};
@@ -226,8 +231,7 @@
 			projectRoot = "";
 			targets = (
 				69CD70C52770D4D100F91A2F /* Simply Filter SMS */,
-				69CD70DA2770D4D100F91A2F /* Simply Filter SMSTests */,
-				69CD70E42770D4D100F91A2F /* Simply Filter SMSUITests */,
+				69CD70FB2770D65D00F91A2F /* Simply Filter SMS Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -242,14 +246,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		69CD70D92770D4D100F91A2F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		69CD70E32770D4D100F91A2F /* Resources */ = {
+		69CD70FA2770D65D00F91A2F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -263,42 +260,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69CD70D32770D4D100F91A2F /* Persistence.swift in Sources */,
-				69CD70CC2770D4D100F91A2F /* ContentView.swift in Sources */,
+				69CD70D32770D4D100F91A2F /* PersistenceController.swift in Sources */,
+				699F55802778BB3100AD7C64 /* AddFilterView.swift in Sources */,
+				69CD70CC2770D4D100F91A2F /* FilterListView.swift in Sources */,
+				69DB7014277A1F0200245DBA /* Constsants.swift in Sources */,
 				69CD70CA2770D4D100F91A2F /* Simply_Filter_SMSApp.swift in Sources */,
-				69CD70D62770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodeld in Sources */,
+				69CD70D62770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld in Sources */,
+				69DB7017277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		69CD70D72770D4D100F91A2F /* Sources */ = {
+		69CD70F82770D65D00F91A2F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69CD70E02770D4D100F91A2F /* Simply_Filter_SMSTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		69CD70E12770D4D100F91A2F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				69CD70EC2770D4D100F91A2F /* Simply_Filter_SMSUITestsLaunchTests.swift in Sources */,
-				69CD70EA2770D4D100F91A2F /* Simply_Filter_SMSUITests.swift in Sources */,
+				69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */,
+				69DB7018277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */,
+				694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */,
+				69DB7015277A1F0200245DBA /* Constsants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		69CD70DD2770D4D100F91A2F /* PBXTargetDependency */ = {
+		69CD71022770D65D00F91A2F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 69CD70C52770D4D100F91A2F /* Simply Filter SMS */;
-			targetProxy = 69CD70DC2770D4D100F91A2F /* PBXContainerItemProxy */;
-		};
-		69CD70E72770D4D100F91A2F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 69CD70C52770D4D100F91A2F /* Simply Filter SMS */;
-			targetProxy = 69CD70E62770D4D100F91A2F /* PBXContainerItemProxy */;
+			target = 69CD70FB2770D65D00F91A2F /* Simply Filter SMS Extension */;
+			targetProxy = 69CD71012770D65D00F91A2F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -422,17 +411,20 @@
 		69CD70F02770D4D100F91A2F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = EV4K7STD9W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -444,24 +436,27 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		69CD70F12770D4D100F91A2F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = EV4K7STD9W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -473,83 +468,59 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
-		69CD70F32770D4D100F91A2F /* Debug */ = {
+		69CD71052770D65D00F91A2F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EV4K7STD9W;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				INFOPLIST_FILE = "Simply Filter SMS Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adibendahan.Simply-Filter-SMSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.adibendahan.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Simply Filter SMS.app/Simply Filter SMS";
 			};
 			name = Debug;
 		};
-		69CD70F42770D4D100F91A2F /* Release */ = {
+		69CD71062770D65D00F91A2F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EV4K7STD9W;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				INFOPLIST_FILE = "Simply Filter SMS Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adibendahan.Simply-Filter-SMSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.adibendahan.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Simply Filter SMS.app/Simply Filter SMS";
-			};
-			name = Release;
-		};
-		69CD70F62770D4D100F91A2F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EV4K7STD9W;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adibendahan.Simply-Filter-SMSUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Simply Filter SMS";
-			};
-			name = Debug;
-		};
-		69CD70F72770D4D100F91A2F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EV4K7STD9W;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adibendahan.Simply-Filter-SMSUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Simply Filter SMS";
 			};
 			name = Release;
 		};
@@ -574,20 +545,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		69CD70F22770D4D100F91A2F /* Build configuration list for PBXNativeTarget "Simply Filter SMSTests" */ = {
+		69CD71042770D65D00F91A2F /* Build configuration list for PBXNativeTarget "Simply Filter SMS Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				69CD70F32770D4D100F91A2F /* Debug */,
-				69CD70F42770D4D100F91A2F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		69CD70F52770D4D100F91A2F /* Build configuration list for PBXNativeTarget "Simply Filter SMSUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				69CD70F62770D4D100F91A2F /* Debug */,
-				69CD70F72770D4D100F91A2F /* Release */,
+				69CD71052770D65D00F91A2F /* Debug */,
+				69CD71062770D65D00F91A2F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -595,13 +557,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		69CD70D42770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodeld */ = {
+		69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
 				69CD70D52770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodel */,
 			);
 			currentVersion = 69CD70D52770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodel */;
-			path = Simply_Filter_SMS.xcdatamodeld;
+			path = "Simply-Filter-SMS.xcdatamodeld";
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
