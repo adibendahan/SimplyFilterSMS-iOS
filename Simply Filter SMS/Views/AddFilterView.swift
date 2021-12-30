@@ -21,24 +21,24 @@ struct AddFilterView: View {
             NavigationView {
                 VStack(alignment: .trailing, spacing: 8) {
                     Spacer()
-                    TextField("Text", text: $filterText)
+                    TextField("addFilter_text"~, text: $filterText)
                         .focused($focusedField, equals: .text)
                     Spacer()
-                    Picker("Type", selection: $selectedFilterType) {
-                        Text("Deny").tag(FilterType.deny.rawValue)
-                        Text("Allow").tag(FilterType.allow.rawValue)
+                    Picker("addFilter_type"~, selection: $selectedFilterType) {
+                        Text("general_allow"~).tag(FilterType.deny.rawValue)
+                        Text("general_deny"~).tag(FilterType.allow.rawValue)
                     }.pickerStyle(.segmented)
                     Spacer()
                     Button {
                         addFilter()
                         dismiss()
                     } label: {
-                        Text("Add").frame(maxWidth: .infinity)
+                        Text("addFilter_add"~).frame(maxWidth: .infinity)
                     }.buttonStyle(FilledButton()).disabled(filterText.isEmpty)
                     Spacer().padding()
                 }
                 .frame(width: geometry.size.width-32, alignment: .center)
-                .navigationTitle("Add filter")
+                .navigationTitle("addFilter_addFilter"~)
             }
         }
         .onAppear {

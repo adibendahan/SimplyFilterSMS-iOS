@@ -26,33 +26,34 @@ struct FilterListView: View {
                 
                 if allowList.count > 0 || denyList.count > 0 {
                     List {
-                        if denyList.count > 0 {
-                            Section {
-                                ForEach(denyList, id: \.self) { filter in
-                                    Text(filter.text ?? "(null)")
-                                }
-                                .onDelete {
-                                    self.deleteFilters(withOffsets: $0, in: denyList)
-                                }
-                            } header: {
-                                Text("Deny")
-                            }
-                        }
-                        
                         if allowList.count > 0 {
                             Section{
                                 ForEach(allowList, id: \.self) { filter in
-                                    Text(filter.text ?? "(null)")
+                                    Text(filter.text ?? "general_null"~)
                                 }
                                 .onDelete {
                                     self.deleteFilters(withOffsets: $0, in: allowList)
                                 }
                             } header: {
-                                Text("Allow")
+                                Text("general_allow"~)
+                            }
+                        }
+                        
+                        if denyList.count > 0 {
+                            Section {
+                                ForEach(denyList, id: \.self) { filter in
+                                    Text(filter.text ?? "general_null"~)
+                                }
+                                .onDelete {
+                                    self.deleteFilters(withOffsets: $0, in: denyList)
+                                }
+                            } header: {
+                                Text("general_deny"~)
                             }
                         }
                     }
                     .listStyle(InsetGroupedListStyle())
+                    
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             EditButton()
@@ -61,7 +62,7 @@ struct FilterListView: View {
                             Button {
                                 addFilterButton = true
                             } label: {
-                                Label("Add filter", systemImage: "plus")
+                                Label("addFilter_addFilter"~, systemImage: "plus")
                             }
                         }
                     }
@@ -76,7 +77,7 @@ struct FilterListView: View {
                         Image(systemName: "plus.message.fill")
                             .imageScale(.large)
                             .font(.system(size: 34, weight: .bold))
-                        Text("Add filters")
+                        Text("filterList_addFilters"~)
                             .font(.body)
                         Spacer()
                     }
@@ -84,7 +85,7 @@ struct FilterListView: View {
                     FooterView()
                 }
             }
-            .navigationTitle("Filters")
+            .navigationTitle("filterList_filters"~)
             .sheet(isPresented: $addFilterButton) {
                 AddFilterView()
             }

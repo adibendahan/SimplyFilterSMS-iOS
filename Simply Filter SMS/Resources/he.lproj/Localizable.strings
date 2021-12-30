@@ -1,0 +1,25 @@
+/* 
+  Localizable.strings
+  Simply Filter SMS
+
+  Created by Adi Ben-Dahan on 30/12/2021.
+  
+*/
+
+
+//MARK: General
+"general_allow" = "אפשר";
+"general_deny" = "חסום";
+"general_null" = "(ריק)";
+
+
+//MARK: Filter List View
+"filterList_filters" = "פילטרים";
+"filterList_addFilters" = "הוסף פילטרים";
+
+
+//MARK: Add Filter View
+"addFilter_add" = "הוסף";
+"addFilter_addFilter" = "הוסף פילטר";
+"addFilter_text" = "טקסט";
+"addFilter_type" = "סוג פילטר";

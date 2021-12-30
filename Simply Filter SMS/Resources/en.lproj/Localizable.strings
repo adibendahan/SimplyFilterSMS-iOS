@@ -1,0 +1,25 @@
+/* 
+  Localizable.strings
+  Simply Filter SMS
+
+  Created by Adi Ben-Dahan on 30/12/2021.
+  
+*/
+
+
+//MARK: General
+"general_allow" = "Allow";
+"general_deny" = "Deny";
+"general_null" = "(null)";
+
+
+//MARK: Filter List View
+"filterList_filters" = "Filters";
+"filterList_addFilters" = "Add filters";
+
+
+//MARK: Add Filter View
+"addFilter_add" = "Add";
+"addFilter_addFilter" = "Add filter";
+"addFilter_text" = "Text";
+"addFilter_type" = "Type";
