@@ -40,6 +40,8 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
         do {
             let filters = try managedContext.fetch(fetchRequest)
             
+            
+            //MARK: Priority #1 - Allow
             let allowList = filters.filter({ guard let value = $0.value(forKey: "type") as? Int64,
                                                    Int(value) == FilterType.allow.rawValue else { return false }
                 return true
@@ -52,7 +54,7 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
                 }
             }
             
-            
+            //MARK: Priority #2 - Deny
             let denyList = filters.filter {
                 guard let value = $0.value(forKey: "type") as? Int64,
                       Int(value) == FilterType.deny.rawValue else { return false }
@@ -63,6 +65,23 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
             for denyFilter in denyList {
                 if let deniedText = denyFilter.value(forKey: "text") as? String,
                    messageBody.contains(deniedText.lowercased()) {
+                    return .junk
+                }
+            }
+            
+            //MARK: Priority #3 - Deny Language
+            let denyLanguageList = filters.filter {
+                guard let value = $0.value(forKey: "type") as? Int64,
+                      Int(value) == FilterType.denyLanguage.rawValue else { return false }
+                
+                return true
+            }
+            
+            for denyLanguageFilter in denyLanguageList {
+                if let deniedLanguageText = denyLanguageFilter.value(forKey: "text") as? String,
+                   let deniedLanguage = FilteredLanguage(rawValue: deniedLanguageText),
+                   deniedLanguage != .unknown,
+                   messageBody.rangeOfCharacter(from: deniedLanguage.charcterSet) != nil {
                     return .junk
                 }
             }

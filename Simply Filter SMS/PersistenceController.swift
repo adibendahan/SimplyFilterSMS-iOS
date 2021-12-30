@@ -24,6 +24,12 @@ struct PersistenceController {
             
             newFilter.text = text
         }
+        
+        let newFilter = Filter(context: viewContext)
+        newFilter.uuid = UUID()
+        newFilter.type = Int64(FilterType.denyLanguage.rawValue)
+        newFilter.text = FilteredLanguage.arabic.rawValue
+        
         do {
             try viewContext.save()
         } catch {

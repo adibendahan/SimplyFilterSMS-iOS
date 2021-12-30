@@ -13,12 +13,19 @@
 "general_null" = "(ריק)";
 "general_copyright" = "© 2021 עדי בן-דהן, כל הזכויות שמורות.";
 
+
+//MARK: Languages
+"lang_arabic" = "ערבית";
+"lang_hebrew" = "עברית";
+
+
 //MARK: Filter List View
 "filterList_filters" = "פילטרים";
 "filterList_addFilters" = "הוסף פילטרים";
-"filterList_menu_filterLanguage" = "סינון שפה";
+"filterList_menu_filterLanguage" = "חסום שפה";
 "filterList_menu_enableExtension" = "הפעל את הפילטרים";
 "filterList_menu_about" = "אודות";
+"filterList_deniedLanguage" = "שפה חסומה";
 
 
 //MARK: Add Filter View

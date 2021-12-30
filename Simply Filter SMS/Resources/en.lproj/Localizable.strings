@@ -13,12 +13,19 @@
 "general_null" = "(null)";
 "general_copyright" = "© 2021 Adi Ben-Dahan. All rights reserved.";
 
+
+//MARK: Languages
+"lang_arabic" = "Arabic";
+"lang_hebrew" = "Hebrew";
+
+
 //MARK: Filter List View
 "filterList_filters" = "Filters";
 "filterList_addFilters" = "Add filters";
-"filterList_menu_filterLanguage" = "Filter language";
+"filterList_menu_filterLanguage" = "Block a language";
 "filterList_menu_enableExtension" = "Activate filters";
 "filterList_menu_about" = "About";
+"filterList_deniedLanguage" = "Blocked Language";
 
 
 //MARK: Add Filter View

@@ -33,9 +33,24 @@ struct FilterListView: View {
             VStack {
                 let denyList = filters.filter({ Int($0.type) == FilterType.deny.rawValue})
                 let allowList = filters.filter({ Int($0.type) == FilterType.allow.rawValue})
+                let denyLanguageList = filters.filter({ Int($0.type) == FilterType.denyLanguage.rawValue})
                 
-                if allowList.count > 0 || denyList.count > 0 {
+                if allowList.count > 0 || denyList.count > 0 || denyLanguageList.count > 0 {
                     List {
+                        if denyLanguageList.count > 0 {
+                            Section {
+                                ForEach(denyLanguageList, id: \.self) { filter in
+                                    let lang = FilteredLanguage(rawValue: filter.text ?? FilteredLanguage.unknown.rawValue) ?? FilteredLanguage.unknown
+                                    Text(lang.name)
+                                }
+                                .onDelete {
+                                    self.deleteFilters(withOffsets: $0, in: denyLanguageList)
+                                }
+                            } header: {
+                                Text("filterList_deniedLanguage"~)
+                            }
+                        }
+                        
                         if allowList.count > 0 {
                             Section{
                                 ForEach(allowList, id: \.self) { filter in
@@ -74,8 +89,17 @@ struct FilterListView: View {
                                 } label: {
                                     Label("addFilter_addFilter"~, systemImage: "plus")
                                 }
-                                Button {
-                                    presentedSheet = .addLanguageFilter
+                                Menu {
+                                    Button {
+                                        addFilter(language: .arabic)
+                                    } label: {
+                                        Text("lang_arabic"~)
+                                    }
+                                    Button {
+                                        addFilter(language: .hebrew)
+                                    } label: {
+                                        Text("lang_hebrew"~)
+                                    }
                                 } label: {
                                     Label("filterList_menu_filterLanguage"~, systemImage: "globe")
                                 }
@@ -120,8 +144,6 @@ struct FilterListView: View {
                     AddFilterView()
                 case .about:
                     AboutView()
-                case .addLanguageFilter:
-                    EmptyView()
                 case .enableExtension:
                     EnableExtensionView()
                 }
@@ -150,6 +172,24 @@ struct FilterListView: View {
             }
         }
     }
+    
+    private func addFilter(language: FilteredLanguage) {
+        guard !filters.map({ $0.text ?? FilteredLanguage.unknown.rawValue }).map(({ FilteredLanguage(rawValue: $0) })).contains(language) else { return }
+        
+        withAnimation {
+            let newFilter = Filter(context: viewContext)
+            newFilter.uuid = UUID()
+            newFilter.type = Int64(FilterType.denyLanguage.rawValue)
+            newFilter.text = language.rawValue
+
+            do {
+                try viewContext.save()
+            } catch {
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -162,5 +202,5 @@ struct ContentView_Previews: PreviewProvider {
 enum SheetView: Int, Identifiable {
     var id: Self { self }
     
-    case addFilter=0, addLanguageFilter, enableExtension, about
+    case addFilter=0, enableExtension, about
 }
