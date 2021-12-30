@@ -47,7 +47,7 @@
 //MARK: About View
 "aboutView_aboutSection" = "About";
 "aboutView_linksSection" = "Links";
-"aboutView_aboutText" = "Developed by Adi Ben-Dahan in Tel Aviv, Israel 🇮🇱\n\nAll message filtering is done locally with no data collection whatsoever. If encounter a problem with the app functionality please open an issue on the GitHub project.";
+"aboutView_aboutText" = "Developed by Adi Ben-Dahan in Tel Aviv, Israel 🇮🇱\n\nAll message filtering is done locally with no data collection whatsoever. If you encounter a problem with the app functionality please open an issue on the GitHub project page.";
 "aboutView_twitter" = "Twitter";
 "aboutView_github" = "GitHub";
 "aboutView_linkedin" = "LinkedIn";
