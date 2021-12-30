@@ -11,11 +11,14 @@
 "general_allow" = "אפשר";
 "general_deny" = "חסום";
 "general_null" = "(ריק)";
-
+"general_copyright" = "© 2021 עדי בן-דהן, כל הזכויות שמורות.";
 
 //MARK: Filter List View
 "filterList_filters" = "פילטרים";
 "filterList_addFilters" = "הוסף פילטרים";
+"filterList_menu_filterLanguage" = "סינון שפה";
+"filterList_menu_enableExtension" = "הפעל את הפילטרים";
+"filterList_menu_about" = "אודות";
 
 
 //MARK: Add Filter View
@@ -23,3 +26,21 @@
 "addFilter_addFilter" = "הוסף פילטר";
 "addFilter_text" = "טקסט";
 "addFilter_type" = "סוג פילטר";
+
+
+//MARK: Enable Extension View
+"enableExtension_step1" = "שלב 1";
+"enableExtension_step1_desc" = "פתח את 'הגדרות' ולחץ על 'הודעות'";
+"enableExtension_step2" = "שלב 2";
+"enableExtension_step2_desc" = "לחץ על 'לא ידוע וספאם' תחת 'סינון הודעות'";
+"enableExtension_step3" = "שלב 3";
+"enableExtension_step3_desc" = "הפעל את 'Simply Filter SMS' תחת 'סינון הודעות טקסט'";
+
+
+//MARK: About View
+"aboutView_aboutSection" = "אודות";
+"aboutView_linksSection" = "קישורים";
+"aboutView_aboutText" = "פותח על ידי עדי בן-דהן בתל אביב, ישראל 🇮🇱\n\nסינון ההודעות נעשה לוקאלית בלבד, לא נאסף שום מידע. אם נתקלת בבעיה בתפעול האפליקציה בבקשה דווח בדף הפרוייקט ב-GitHub.";
+"aboutView_twitter" = "Twitter";
+"aboutView_github" = "GitHub";
+"aboutView_linkedin" = "LinkedIn";

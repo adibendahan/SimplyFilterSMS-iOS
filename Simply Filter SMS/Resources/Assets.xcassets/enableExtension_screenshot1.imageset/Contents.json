@@ -1,0 +1,41 @@
+{
+  "images" : [
+    {
+      "filename" : "1_en_li.png",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "1_en_da.png",
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "1_he_li.png",
+      "idiom" : "universal",
+      "locale" : "he"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "1_he_da.png",
+      "idiom" : "universal",
+      "locale" : "he"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "localizable" : true
+  }
+}

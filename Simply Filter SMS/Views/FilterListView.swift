@@ -9,6 +9,7 @@ import SwiftUI
 import CoreData
 
 struct FilterListView: View {
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Filter.type, ascending: false), NSSortDescriptor(keyPath: \Filter.text, ascending: true)],
@@ -16,7 +17,16 @@ struct FilterListView: View {
     
     private var filters: FetchedResults<Filter>
     
-    @State private var addFilterButton = false
+    @State private var presentedSheet: SheetView? = nil
+    
+    private var backgroundColor: Color {
+        if colorScheme == .light {
+            return Color(uiColor: UIColor.secondarySystemBackground)
+        }
+        else {
+            return Color(uiColor: UIColor.systemBackground)
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -53,16 +63,34 @@ struct FilterListView: View {
                         }
                     }
                     .listStyle(InsetGroupedListStyle())
-                    
                     .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
+                        ToolbarItem(placement: .navigationBarLeading) {
                             EditButton()
                         }
-                        ToolbarItem {
-                            Button {
-                                addFilterButton = true
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Menu{
+                                Button {
+                                    presentedSheet = .addFilter
+                                } label: {
+                                    Label("addFilter_addFilter"~, systemImage: "plus")
+                                }
+                                Button {
+                                    presentedSheet = .addLanguageFilter
+                                } label: {
+                                    Label("filterList_menu_filterLanguage"~, systemImage: "globe")
+                                }
+                                Button {
+                                    presentedSheet = .enableExtension
+                                } label: {
+                                    Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
+                                }
+                                Button {
+                                    presentedSheet = .about
+                                } label: {
+                                    Label("filterList_menu_about"~, systemImage: "info.circle")
+                                }
                             } label: {
-                                Label("addFilter_addFilter"~, systemImage: "plus")
+                                Image(systemName: "ellipsis.circle.fill")
                             }
                         }
                     }
@@ -71,7 +99,7 @@ struct FilterListView: View {
                 else {
                     Spacer()
                     Button {
-                        addFilterButton = true
+                        presentedSheet = .addFilter
                     } label: {
                         Spacer()
                         Image(systemName: "plus.message.fill")
@@ -86,14 +114,24 @@ struct FilterListView: View {
                 }
             }
             .navigationTitle("filterList_filters"~)
-            .sheet(isPresented: $addFilterButton) {
-                AddFilterView()
+            .sheet(item: $presentedSheet) { } content: { presentedSheet in
+                switch (presentedSheet) {
+                case .addFilter:
+                    AddFilterView()
+                case .about:
+                    AboutView()
+                case .addLanguageFilter:
+                    EmptyView()
+                case .enableExtension:
+                    EnableExtensionView()
+                }
             }
+            .background(backgroundColor)
         }
     }
     
     private func FooterView() -> some View {
-        Text("Simply Filter SMS v1.0.0\n© 2021 Adi Ben-Dahan. All rights reserved.")
+        Text("Simply Filter SMS v1.0.0\n\(Text("general_copyright"~))")
             .frame(maxWidth: .infinity, alignment: .center)
             .font(.footnote)
             .foregroundColor(.secondary)
@@ -118,4 +156,11 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         FilterListView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
+}
+
+
+enum SheetView: Int, Identifiable {
+    var id: Self { self }
+    
+    case addFilter=0, addLanguageFilter, enableExtension, about
 }

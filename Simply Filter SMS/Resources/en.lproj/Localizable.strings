@@ -1,4 +1,4 @@
-/* 
+/*
   Localizable.strings
   Simply Filter SMS
 
@@ -11,11 +11,14 @@
 "general_allow" = "Allow";
 "general_deny" = "Deny";
 "general_null" = "(null)";
-
+"general_copyright" = "© 2021 Adi Ben-Dahan. All rights reserved.";
 
 //MARK: Filter List View
 "filterList_filters" = "Filters";
 "filterList_addFilters" = "Add filters";
+"filterList_menu_filterLanguage" = "Filter language";
+"filterList_menu_enableExtension" = "Activate filters";
+"filterList_menu_about" = "About";
 
 
 //MARK: Add Filter View
@@ -23,3 +26,21 @@
 "addFilter_addFilter" = "Add filter";
 "addFilter_text" = "Text";
 "addFilter_type" = "Type";
+
+
+//MARK: Enable Extension View
+"enableExtension_step1" = "Step 1";
+"enableExtension_step1_desc" = "Open 'Settings' App and tap on 'Messages'";
+"enableExtension_step2" = "Step 2";
+"enableExtension_step2_desc" = "Tap on 'Unknown & Spam' under 'Message Filtering'";
+"enableExtension_step3" = "Step 3";
+"enableExtension_step3_desc" = "Turn on 'Simply Filter SMS' under 'SMS Filtering'";
+
+
+//MARK: About View
+"aboutView_aboutSection" = "About";
+"aboutView_linksSection" = "Links";
+"aboutView_aboutText" = "Developed by Adi Ben-Dahan in Tel Aviv, Israel 🇮🇱\n\nAll message filtering is done locally with no data collection whatsoever. If encounter a problem with the app functionality please open an issue on the GitHub project.";
+"aboutView_twitter" = "Twitter";
+"aboutView_github" = "GitHub";
+"aboutView_linkedin" = "LinkedIn";
