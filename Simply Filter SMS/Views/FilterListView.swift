@@ -153,11 +153,14 @@ struct FilterListView: View {
     }
     
     private func FooterView() -> some View {
-        Text("Simply Filter SMS v1.0.0\n\(Text("general_copyright"~))")
+        Text("Simply Filter SMS v\(Text(appVersion))\n\(Text("general_copyright"~))")
             .frame(maxWidth: .infinity, alignment: .center)
             .font(.footnote)
             .foregroundColor(.secondary)
             .multilineTextAlignment(.center)
+            .onTapGesture {
+                self.presentedSheet = .about
+            }
     }
 
     private func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {

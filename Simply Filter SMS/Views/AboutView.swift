@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import MessageUI
 
 struct AboutView: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
+    @State var result: Result<MFMailComposeResult, Error>? = nil
+    @State var isShowingMailView = false
     
     private var backgroundColor: Color {
         if colorScheme == .light {
@@ -30,7 +34,7 @@ struct AboutView: View {
                 VStack(alignment: .trailing) {
                     Text("Simply Filter SMS")
                         .font(.system(size: 32, weight: .bold, design: .default))
-                    Text("v1.0.0")
+                    Text("v\(Text(appVersion))")
                         .font(.footnote)
                         .italic()
                 }
@@ -50,8 +54,27 @@ struct AboutView: View {
                                 .resizable()
                                 .frame(width: 26, height: 26, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
+                            Spacer()
                             Text("aboutView_github"~)
                                 .foregroundColor(.primary)
+                            Spacer().padding()
+                        }
+                    }
+                    if MFMailComposeViewController.canSendMail() {
+                        Button {
+                            self.isShowingMailView = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "envelope")
+                                    .resizable()
+                                    .frame(width: 25, height: 20, alignment: .center)
+                                    .aspectRatio(contentMode: .fit)
+                                    .foregroundColor(.blue)
+                                Spacer()
+                                Text("aboutView_sendMail"~)
+                                    .foregroundColor(.primary)
+                                Spacer().padding()
+                            }
                         }
                     }
                     Link(destination: URL(string: "https://twitter.com/a_bd")!) {
@@ -60,18 +83,10 @@ struct AboutView: View {
                                 .resizable()
                                 .frame(width: 26, height: 21, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
+                            Spacer()
                             Text("aboutView_twitter"~)
                                 .foregroundColor(.primary)
-                        }
-                    }
-                    Link(destination: URL(string: "https://www.linkedin.com/in/adi-ben-dahan-8b213343")!) {
-                        HStack {
-                            Image("LinkedIn")
-                                .resizable()
-                                .frame(width: 26, height: 22, alignment: .center)
-                                .aspectRatio(contentMode: .fit)
-                            Text("aboutView_linkedin"~)
-                                .foregroundColor(.primary)
+                            Spacer().padding()
                         }
                     }
                 } header: {
@@ -84,12 +99,16 @@ struct AboutView: View {
             .listStyle(.grouped)
         }
         .background(backgroundColor)
+        .sheet(isPresented: $isShowingMailView) {
+            MailView(isShowing: self.$isShowingMailView, result: self.$result)
+                .edgesIgnoringSafeArea(.bottom)
+        }
     }
 }
 
 struct AboutView_Previews: PreviewProvider {
     static var previews: some View {
         AboutView()
-.previewInterfaceOrientation(.portrait)
+            .previewInterfaceOrientation(.portrait)
     }
 }

@@ -50,4 +50,4 @@
 "aboutView_aboutText" = "פותח על ידי עדי בן-דהן בתל אביב, ישראל 🇮🇱\n\nסינון ההודעות נעשה לוקאלית בלבד, לא נאסף שום מידע. אם נתקלת בבעיה בתפעול האפליקציה בבקשה דווח בדף הפרוייקט ב-GitHub.";
 "aboutView_twitter" = "Twitter";
 "aboutView_github" = "GitHub";
-"aboutView_linkedin" = "LinkedIn";
+"aboutView_sendMail" = "אימייל";

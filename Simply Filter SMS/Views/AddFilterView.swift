@@ -25,8 +25,8 @@ struct AddFilterView: View {
                         .focused($focusedField, equals: .text)
                     Spacer()
                     Picker("addFilter_type"~, selection: $selectedFilterType) {
-                        Text("general_allow"~).tag(FilterType.deny.rawValue)
-                        Text("general_deny"~).tag(FilterType.allow.rawValue)
+                        Text("general_deny"~).tag(FilterType.deny.rawValue)
+                        Text("general_allow"~).tag(FilterType.allow.rawValue)
                     }.pickerStyle(.segmented)
                     Spacer()
                     Button {

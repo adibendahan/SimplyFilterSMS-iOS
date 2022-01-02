@@ -18,7 +18,7 @@ postfix func ~ (string: String) -> String {
 let kAppWorkingDirectory = "Simply-Filter-SMS"
 let kDatabaseFilename = "CoreData.sqlite"
 let kAppGroupContainer = "group.\(kAppWorkingDirectory)"
-
+let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 
 //MARK: Enums
 enum FilterType: Int {
