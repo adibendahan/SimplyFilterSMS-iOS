@@ -72,6 +72,8 @@ struct EnableExtensionView: View {
                             .font(.title2)
                         Spacer()
                         Button {
+                            UserDefaults.isAppFirstRun = false
+                            dismiss()
                             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                         } label: {
                             Text(ctaString).frame(maxWidth: .infinity)

@@ -21,16 +21,18 @@
 
 //MARK: Filter List View
 "filterList_filters" = "פילטרים";
-"filterList_addFilters" = "הוסף פילטרים";
-"filterList_menu_filterLanguage" = "חסום שפה";
-"filterList_menu_enableExtension" = "הפעל את הפילטרים";
+"filterList_allowed" = "טקסט מאופשר";
+"filterList_denied" = "טקסט חסום";
+"filterList_addFilters" = "הוספת פילטרים";
+"filterList_menu_filterLanguage" = "חסימת שפה";
+"filterList_menu_enableExtension" = "הפעלת פילטרים";
 "filterList_menu_about" = "אודות";
 "filterList_deniedLanguage" = "שפה חסומה";
 
 
 //MARK: Add Filter View
-"addFilter_add" = "הוסף";
-"addFilter_addFilter" = "הוסף פילטר";
+"addFilter_add" = "הוספה";
+"addFilter_addFilter" = "הוספת פילטר";
 "addFilter_text" = "טקסט";
 "addFilter_type" = "סוג פילטר";
 

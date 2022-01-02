@@ -9,6 +9,7 @@ import SwiftUI
 import CoreData
 
 struct FilterListView: View {
+    @Environment(\.isPreview) var isPreview
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
@@ -61,7 +62,7 @@ struct FilterListView: View {
                                     self.deleteFilters(withOffsets: $0, in: allowList)
                                 }
                             } header: {
-                                Text("general_allow"~)
+                                Text("filterList_allowed"~)
                             }
                         }
                         
@@ -74,7 +75,7 @@ struct FilterListView: View {
                                     self.deleteFilters(withOffsets: $0, in: denyList)
                                 }
                             } header: {
-                                Text("general_deny"~)
+                                Text("filterList_denied"~)
                             }
                         }
                     }
@@ -156,7 +157,7 @@ struct FilterListView: View {
             })
             .background(backgroundColor)
             .onAppear() {
-                if UserDefaults.isAppFirstRun {
+                if !isPreview && UserDefaults.isAppFirstRun {
                     self.isPresentingFullScreenWelcome = true
                 }
             }
