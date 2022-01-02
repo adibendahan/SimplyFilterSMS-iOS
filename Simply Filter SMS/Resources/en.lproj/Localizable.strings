@@ -21,6 +21,8 @@
 
 //MARK: Filter List View
 "filterList_filters" = "Filters";
+"filterList_allowed" = "Allowed text";
+"filterList_denied" = "Blocked text";
 "filterList_addFilters" = "Add filters";
 "filterList_menu_filterLanguage" = "Block a language";
 "filterList_menu_enableExtension" = "Activate filters";
