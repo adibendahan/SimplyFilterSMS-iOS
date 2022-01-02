@@ -18,6 +18,7 @@ struct FilterListView: View {
     private var filters: FetchedResults<Filter>
     
     @State private var presentedSheet: SheetView? = nil
+    @State private var isPresentingFullScreenWelcome = false
     
     private var backgroundColor: Color {
         if colorScheme == .light {
@@ -78,46 +79,6 @@ struct FilterListView: View {
                         }
                     }
                     .listStyle(InsetGroupedListStyle())
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            EditButton()
-                        }
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Menu{
-                                Button {
-                                    presentedSheet = .addFilter
-                                } label: {
-                                    Label("addFilter_addFilter"~, systemImage: "plus")
-                                }
-                                Menu {
-                                    Button {
-                                        addFilter(language: .arabic)
-                                    } label: {
-                                        Text("lang_arabic"~)
-                                    }
-                                    Button {
-                                        addFilter(language: .hebrew)
-                                    } label: {
-                                        Text("lang_hebrew"~)
-                                    }
-                                } label: {
-                                    Label("filterList_menu_filterLanguage"~, systemImage: "globe")
-                                }
-                                Button {
-                                    presentedSheet = .enableExtension
-                                } label: {
-                                    Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
-                                }
-                                Button {
-                                    presentedSheet = .about
-                                } label: {
-                                    Label("filterList_menu_about"~, systemImage: "info.circle")
-                                }
-                            } label: {
-                                Image(systemName: "ellipsis.circle.fill")
-                            }
-                        }
-                    }
                     FooterView()
                 }
                 else {
@@ -126,7 +87,7 @@ struct FilterListView: View {
                         presentedSheet = .addFilter
                     } label: {
                         Spacer()
-                        Image(systemName: "plus.message.fill")
+                        Image(systemName: "plus.message")
                             .imageScale(.large)
                             .font(.system(size: 34, weight: .bold))
                         Text("filterList_addFilters"~)
@@ -137,6 +98,48 @@ struct FilterListView: View {
                     FooterView()
                 }
             }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if filters.count > 0 {
+                        EditButton()
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu{
+                        Button {
+                            presentedSheet = .addFilter
+                        } label: {
+                            Label("addFilter_addFilter"~, systemImage: "plus")
+                        }
+                        Menu {
+                            Button {
+                                addFilter(language: .arabic)
+                            } label: {
+                                Text("lang_arabic"~)
+                            }
+                            Button {
+                                addFilter(language: .hebrew)
+                            } label: {
+                                Text("lang_hebrew"~)
+                            }
+                        } label: {
+                            Label("filterList_menu_filterLanguage"~, systemImage: "globe")
+                        }
+                        Button {
+                            presentedSheet = .enableExtension
+                        } label: {
+                            Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
+                        }
+                        Button {
+                            presentedSheet = .about
+                        } label: {
+                            Label("filterList_menu_about"~, systemImage: "info.circle")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                }
+            }
             .navigationTitle("filterList_filters"~)
             .sheet(item: $presentedSheet) { } content: { presentedSheet in
                 switch (presentedSheet) {
@@ -145,10 +148,18 @@ struct FilterListView: View {
                 case .about:
                     AboutView()
                 case .enableExtension:
-                    EnableExtensionView()
+                    EnableExtensionView(isFromMenu: true)
                 }
             }
+            .fullScreenCover(isPresented: $isPresentingFullScreenWelcome, onDismiss: { }, content: {
+                EnableExtensionView(isFromMenu: false)
+            })
             .background(backgroundColor)
+            .onAppear() {
+                if UserDefaults.isAppFirstRun {
+                    self.isPresentingFullScreenWelcome = true
+                }
+            }
         }
     }
     

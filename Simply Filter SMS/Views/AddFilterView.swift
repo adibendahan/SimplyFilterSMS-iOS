@@ -39,6 +39,17 @@ struct AddFilterView: View {
                 }
                 .frame(width: geometry.size.width-32, alignment: .center)
                 .navigationTitle("addFilter_addFilter"~)
+                .toolbar {
+                    ToolbarItem {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 16, weight: .bold, design: .default))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
             }
         }
         .onAppear {
@@ -67,19 +78,6 @@ struct AddFilterView: View {
 
 private enum Field: Int, Hashable {
     case text
-}
-
-struct FilledButton: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration
-            .label
-            .foregroundColor(configuration.isPressed ? .gray : .white)
-            .padding()
-            .background(isEnabled ? Color.accentColor : .gray)
-            .cornerRadius(8)
-    }
 }
 
 struct AddFilterView_Previews: PreviewProvider {
