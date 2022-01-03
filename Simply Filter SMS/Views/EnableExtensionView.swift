@@ -19,8 +19,6 @@ struct EnableExtensionView: View {
             NavigationView {
                 TabView (selection: $tabSelection) {
                     let shouldShowWelcomePages = !isFromMenu && UserDefaults.isAppFirstRun
-                    let ctaString = "enableExtension_ready_callToAction"~
-                    let cancelString = "enableExtension_ready_cancel"~
                     
                     if shouldShowWelcomePages {
                         VStack (alignment: .center, spacing: 8) {
@@ -67,16 +65,20 @@ struct EnableExtensionView: View {
                     
                     VStack (alignment: .center, spacing: 8) {
                         Spacer().frame(height: 12, alignment: .top)
-                        Text(String(format: "enableExtension_ready_desc"~, ctaString, cancelString))
-                            .frame(width: geometry.size.width*0.9, alignment: .leading)
-                            .font(.title2)
+                        ReadyView(geometry: geometry)
+                        Spacer()
+                        Image("enableExtension_screenshot4")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .clipShape(RoundedRectangle(cornerRadius: 50*0.9, style: .continuous))
+                            .frame(width: geometry.size.width*0.9, alignment: .center)
                         Spacer()
                         Button {
                             UserDefaults.isAppFirstRun = false
                             dismiss()
                             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                         } label: {
-                            Text(ctaString).frame(maxWidth: .infinity)
+                            Text("enableExtension_ready_callToAction"~).frame(maxWidth: .infinity)
                         }.buttonStyle(FilledButton())
                             .frame(width: geometry.size.width*0.9, alignment: .center)
                         Button {
@@ -85,7 +87,7 @@ struct EnableExtensionView: View {
                                 dismiss()
                             }
                         } label: {
-                            Text(cancelString).frame(maxWidth: .infinity)
+                            Text("enableExtension_ready_cancel"~).frame(maxWidth: .infinity)
                         }.buttonStyle(OutlineButton())
                             .frame(width: geometry.size.width*0.9, alignment: .center)
                         Spacer().frame(height: 50, alignment: .bottom)
@@ -104,6 +106,15 @@ struct EnableExtensionView: View {
                                 .font(.system(size: 16, weight: .bold, design: .default))
                                 .foregroundColor(.secondary)
                         }
+                    }
+                }
+            }
+            .task {
+                while tabSelection < 5 {
+                    try? await Task.sleep(seconds: 5)
+                    
+                    withAnimation {
+                        tabSelection = tabSelection + 1
                     }
                 }
             }
@@ -129,9 +140,25 @@ struct EnableExtensionView: View {
                     .frame(width: geometry.size.width*0.9, alignment: .center)
                 Spacer(minLength: 50)
             }
-            
         }
         .navigationTitle(title)
+    }
+    
+    func ReadyView(geometry: GeometryProxy) -> some View {
+        let ctaString = "enableExtension_ready_callToAction"~
+        let cancelString = "enableExtension_ready_cancel"~
+        let fullString = "enableExtension_ready_desc"~
+        let parts = fullString.split(separator: "#")
+        
+        return Text("""
+\(String(parts[0]))\
+\(Text(ctaString).bold().italic())\
+\(String(parts[1]))\
+\(Text(cancelString).bold().italic())\
+\(String(parts[2]))
+""")
+            .frame(width: geometry.size.width*0.9, alignment: .leading)
+            .font(.title2)
     }
 }
 

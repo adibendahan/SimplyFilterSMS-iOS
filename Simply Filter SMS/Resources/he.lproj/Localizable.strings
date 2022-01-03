@@ -27,6 +27,7 @@
 "filterList_menu_filterLanguage" = "חסימת שפה";
 "filterList_menu_enableExtension" = "הפעלת פילטרים";
 "filterList_menu_about" = "אודות";
+"filterList_menu_debug" = "טעינת נתוני דיבאג";
 "filterList_deniedLanguage" = "שפה חסומה";
 
 
@@ -49,7 +50,7 @@
 "enableExtension_welcome_callToAction" = "הראה לי איך";
 "enableExtension_welcome_cancel" = "כבר עשיתי זאת";
 "enableExtension_ready" = "מוכנים?";
-"enableExtension_ready_desc" = "לחצו על כפתור ה%@ על מנת לעבור להגדרות מערכת ההפעלה או %@ אם כבר הגדרתם את Simply Filter SMS כאפליקציה שמסננת הודעות.";
+"enableExtension_ready_desc" = "לחצו על כפתור ה# על מנת לעבור להגדרות מערכת ההפעלה או # אם כבר הגדרתם את 'Simply Filter SMS' כאפליקציה שמסננת הודעות.";
 "enableExtension_ready_callToAction" = "הגדרות";
 "enableExtension_ready_cancel" = "ביטול";
 

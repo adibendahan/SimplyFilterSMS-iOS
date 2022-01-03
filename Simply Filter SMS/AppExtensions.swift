@@ -9,10 +9,26 @@ import SwiftUI
 
 extension EnvironmentValues {
     var isPreview: Bool {
-        #if DEBUG
+#if DEBUG
         return ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
-        #else
+#else
         return false
-        #endif
+#endif
+    }
+    
+    var isDebug: Bool {
+#if DEBUG
+        return true
+#else
+        return false
+#endif
+    }
+}
+
+
+extension Task where Success == Never, Failure == Never {
+    static func sleep(seconds: Double) async throws {
+        let duration = UInt64(seconds * 1_000_000_000)
+        try await Task.sleep(nanoseconds: duration)
     }
 }

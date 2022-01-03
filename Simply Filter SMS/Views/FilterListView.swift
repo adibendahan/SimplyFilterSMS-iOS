@@ -10,6 +10,7 @@ import CoreData
 
 struct FilterListView: View {
     @Environment(\.isPreview) var isPreview
+    @Environment(\.isDebug) var isDebug
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
@@ -106,7 +107,14 @@ struct FilterListView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu{
+                    Menu {
+                        if isDebug && filters.count == 0 {
+                            Button {
+                                loadDebugData()
+                            } label: {
+                                Label("filterList_menu_debug"~, systemImage: "chevron.left.forwardslash.chevron.right")
+                            }
+                        }
                         Button {
                             presentedSheet = .addFilter
                         } label: {
@@ -203,6 +211,35 @@ struct FilterListView: View {
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
+        }
+    }
+    
+    private func loadDebugData() {
+        let _ = ["Adi", "דהאן", "דהן", "עדי"].map { allowText -> Filter in
+            let newFilter = Filter(context: viewContext)
+            newFilter.uuid = UUID()
+            newFilter.type = Int64(FilterType.allow.rawValue)
+            newFilter.text = allowText
+            return newFilter
+        }
+        let _ = ["גנץ", "הימור", "הלוואה", "נתניהו"].map { allowText -> Filter in
+            let newFilter = Filter(context: viewContext)
+            newFilter.uuid = UUID()
+            newFilter.type = Int64(FilterType.deny.rawValue)
+            newFilter.text = allowText
+            return newFilter
+        }
+    
+        let langFilter = Filter(context: viewContext)
+        langFilter.uuid = UUID()
+        langFilter.type = Int64(FilterType.denyLanguage.rawValue)
+        langFilter.text = FilteredLanguage.arabic.rawValue
+        
+        do {
+            try viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
 }
