@@ -17,7 +17,7 @@ postfix func ~ (string: String) -> String {
 //MARK: Constants
 let kAppWorkingDirectory = "Simply-Filter-SMS"
 let kDatabaseFilename = "CoreData.sqlite"
-let kAppGroupContainer = "group.\(kAppWorkingDirectory)"
+let kAppGroupContainer = "group.com.grizz.apps.dev.simply-filter-sms"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 
 //MARK: Enums
