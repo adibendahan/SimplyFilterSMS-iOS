@@ -21,7 +21,7 @@ struct MailView: UIViewControllerRepresentable {
     func makeUIViewController(context: UIViewControllerRepresentableContext<MailView>) -> MFMailComposeViewController {
         let vc = MFMailComposeViewController()
         vc.mailComposeDelegate = context.coordinator
-        vc.setToRecipients(["simply.filter.sms@gmail.com"])
+        vc.setToRecipients([kSupportEmail])
         return vc
     }
 

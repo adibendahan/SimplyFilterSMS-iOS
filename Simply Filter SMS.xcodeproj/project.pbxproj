@@ -64,6 +64,7 @@
 		6941FE19277E19CC00B99539 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		6941FE1B277FDBE700B99539 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 		69657E4027847074008DCFB4 /* Privacy Policy.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Privacy Policy.md"; sourceTree = "<group>"; };
+		69657E412784C5DF008DCFB4 /* Support.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Support.md; sourceTree = "<group>"; };
 		699F557F2778BB3100AD7C64 /* AddFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFilterView.swift; sourceTree = "<group>"; };
 		69CD70C62770D4D100F91A2F /* Simply Filter SMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Simply Filter SMS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69CD70C92770D4D100F91A2F /* Simply_Filter_SMSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simply_Filter_SMSApp.swift; sourceTree = "<group>"; };
@@ -166,6 +167,7 @@
 				69CD71082770D74300F91A2F /* Simply Filter SMS.entitlements */,
 				6941FE15277DE78B00B99539 /* Localizable.strings */,
 				69657E4027847074008DCFB4 /* Privacy Policy.md */,
+				69657E412784C5DF008DCFB4 /* Support.md */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -395,7 +397,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -450,7 +452,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -546,7 +548,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -572,7 +574,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

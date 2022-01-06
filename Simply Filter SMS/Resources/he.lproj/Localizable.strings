@@ -53,6 +53,7 @@
 "enableExtension_ready_desc" = "לחצו על כפתור ה# על מנת לעבור להגדרות מערכת ההפעלה או # אם כבר הגדרתם את 'Simply Filter SMS' כאפליקציה שמסננת הודעות.";
 "enableExtension_ready_callToAction" = "הגדרות";
 "enableExtension_ready_cancel" = "ביטול";
+"enableExtension_next" = "שלב הבא";
 
 //MARK: About View
 "aboutView_aboutSection" = "אודות";

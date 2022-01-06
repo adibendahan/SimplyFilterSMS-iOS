@@ -118,7 +118,7 @@ struct FilterListView: View {
                         Button {
                             presentedSheet = .addFilter
                         } label: {
-                            Label("addFilter_addFilter"~, systemImage: "plus")
+                            Label("addFilter_addFilter"~, systemImage: "plus.circle")
                         }
                         Menu {
                             Button {

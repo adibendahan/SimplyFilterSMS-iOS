@@ -53,7 +53,7 @@ struct EnableExtensionView: View {
                     StepView(title: "enableExtension_step1"~,
                              text: "enableExtension_step1_desc"~,
                              image: "enableExtension_screenshot1",
-                             geometry: geometry).tag(2)
+                             geometry: geometry).tag(2).onAppear { tabSelection = 2 }
                     StepView(title: "enableExtension_step2"~,
                              text: "enableExtension_step2_desc"~,
                              image: "enableExtension_screenshot2",
@@ -109,15 +109,6 @@ struct EnableExtensionView: View {
                     }
                 }
             }
-            .task {
-                while tabSelection < 5 {
-                    try? await Task.sleep(seconds: 5)
-                    
-                    withAnimation {
-                        tabSelection = tabSelection + 1
-                    }
-                }
-            }
         }
     }
     
@@ -126,20 +117,32 @@ struct EnableExtensionView: View {
                   image: String,
                   geometry: GeometryProxy) -> some View {
         
-        ScrollView {
-            VStack (alignment: .center, spacing: 8) {
-                Spacer()
-                Text(text)
-                    .frame(width: geometry.size.width*0.9, alignment: .leading)
-                    .font(.title2)
-                Spacer()
-                Image(image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 50*0.9, style: .continuous))
-                    .frame(width: geometry.size.width*0.9, alignment: .center)
-                Spacer(minLength: 50)
+        VStack {
+            ScrollView {
+                VStack (alignment: .center, spacing: 8) {
+                    Spacer()
+                    Text(text)
+                        .frame(width: geometry.size.width*0.9, alignment: .leading)
+                        .font(.title2)
+                    Spacer()
+                    Image(image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 50*0.9, style: .continuous))
+                        .frame(width: geometry.size.width*0.9, alignment: .center)
+                    Spacer(minLength: 50)
+                }
             }
+            Spacer(minLength: 20)
+            Button {
+                withAnimation {
+                    tabSelection = tabSelection + 1
+                }
+            } label: {
+                Text("enableExtension_next"~).frame(maxWidth: .infinity)
+            }.buttonStyle(FilledButton())
+                .frame(width: geometry.size.width*0.9, alignment: .center)
+            Spacer().frame(height: 50, alignment: .bottom)
         }
         .navigationTitle(title)
     }
