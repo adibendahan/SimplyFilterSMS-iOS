@@ -9,7 +9,6 @@ import CoreData
 
 struct PersistenceController {
     static let shared = PersistenceController()
-
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
@@ -42,17 +41,20 @@ struct PersistenceController {
     let container: NSPersistentCloudKitContainer
 
     init(inMemory: Bool = false) {
-        container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
-        container.viewContext.automaticallyMergesChangesFromParent = true
+        let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
         
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
         
+        self.container = container
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
+            
+            container.viewContext.mergePolicy = NSMergePolicy(merge: .mergeByPropertyStoreTrumpMergePolicyType)
+            container.viewContext.automaticallyMergesChangesFromParent = true
         })
     }
 }
