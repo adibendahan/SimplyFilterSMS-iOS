@@ -14,7 +14,7 @@ struct AddFilterView: View {
     @FocusState private var focusedField: Field?
     
     @State private var filterText = ""
-    @State private var selectedFilterType = FilterType.deny.rawValue
+    @State private var selectedFilterType = FilterType.deny
     
     var body: some View {
         GeometryReader { geometry in
@@ -25,8 +25,8 @@ struct AddFilterView: View {
                         .focused($focusedField, equals: .text)
                     Spacer()
                     Picker("addFilter_type"~, selection: $selectedFilterType) {
-                        Text("general_deny"~).tag(FilterType.deny.rawValue)
-                        Text("general_allow"~).tag(FilterType.allow.rawValue)
+                        Text("general_deny"~).tag(FilterType.deny)
+                        Text("general_allow"~).tag(FilterType.allow)
                     }.pickerStyle(.segmented)
                     Spacer()
                     Button {
@@ -63,7 +63,7 @@ struct AddFilterView: View {
         withAnimation {
             let newFilter = Filter(context: viewContext)
             newFilter.uuid = UUID()
-            newFilter.type = Int64(self.selectedFilterType)
+            newFilter.type = Int64(self.selectedFilterType.rawValue)
             newFilter.text = self.filterText
 
             do {
@@ -82,6 +82,9 @@ private enum Field: Int, Hashable {
 
 struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
-        AddFilterView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        let context = PersistenceController.preview.container.viewContext
+        return ZStack {
+            AddFilterView().environment(\.managedObjectContext, context)
+        }
     }
 }

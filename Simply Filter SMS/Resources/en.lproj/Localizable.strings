@@ -25,7 +25,7 @@
 "filterList_denied" = "Blocked text";
 "filterList_addFilters" = "Add filters";
 "filterList_menu_filterLanguage" = "Block a language";
-"filterList_menu_enableExtension" = "Activate filters";
+"filterList_menu_enableExtension" = "Help";
 "filterList_menu_about" = "About";
 "filterList_menu_debug" = "Load debug data";
 "filterList_deniedLanguage" = "Blocked Language";

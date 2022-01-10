@@ -25,7 +25,7 @@
 "filterList_denied" = "טקסט חסום";
 "filterList_addFilters" = "הוספת פילטרים";
 "filterList_menu_filterLanguage" = "חסימת שפה";
-"filterList_menu_enableExtension" = "הפעלת פילטרים";
+"filterList_menu_enableExtension" = "עזרה";
 "filterList_menu_about" = "אודות";
 "filterList_menu_debug" = "טעינת נתוני דיבאג";
 "filterList_deniedLanguage" = "שפה חסומה";

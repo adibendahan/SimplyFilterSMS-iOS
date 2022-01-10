@@ -13,10 +13,8 @@ struct FilterListView: View {
     @Environment(\.isDebug) var isDebug
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.managedObjectContext) private var viewContext
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Filter.type, ascending: false), NSSortDescriptor(keyPath: \Filter.text, ascending: true)],
-        animation: .default)
     
+    @FetchRequest(fetchRequest: getFiltersFetchRequest)
     private var filters: FetchedResults<Filter>
     
     @State private var presentedSheet: SheetView? = nil
@@ -30,6 +28,13 @@ struct FilterListView: View {
             return Color(uiColor: UIColor.systemBackground)
         }
     }
+    
+    private static var getFiltersFetchRequest: NSFetchRequest<Filter> {
+        let request: NSFetchRequest<Filter> = Filter.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
+                                   NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
+        return request
+   }
     
     var body: some View {
         NavigationView {
@@ -246,7 +251,8 @@ struct FilterListView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterListView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        let context = PersistenceController.preview.container.viewContext
+        return FilterListView().environment(\.managedObjectContext, context)
     }
 }
 
