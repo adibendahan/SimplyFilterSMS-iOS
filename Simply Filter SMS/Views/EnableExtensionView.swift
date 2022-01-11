@@ -22,29 +22,42 @@ struct EnableExtensionView: View {
                     
                     if shouldShowWelcomePages {
                         VStack (alignment: .center, spacing: 8) {
-                            Spacer().frame(height: 12, alignment: .top)
+                            
+                            Spacer()
+                                .frame(height: 12, alignment: .top)
+                            
                             Text("enableExtension_welcome_desc"~)
                                 .frame(width: geometry.size.width*0.9, alignment: .leading)
                                 .font(.title2)
+                            
                             Spacer()
+                            
                             Button {
                                 withAnimation {
                                     tabSelection = 2
                                 }
                             } label: {
-                                Text("enableExtension_welcome_callToAction"~).frame(maxWidth: .infinity)
-                            }.buttonStyle(FilledButton())
-                                .frame(width: geometry.size.width*0.9, alignment: .center)
+                                Text("enableExtension_welcome_callToAction"~)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(FilledButton())
+                            .frame(width: geometry.size.width*0.9, alignment: .center)
+                            
                             Button {
                                 UserDefaults.isAppFirstRun = false
                                 withAnimation {
                                    dismiss()
                                 }
                             } label: {
-                                Text("enableExtension_welcome_cancel"~).frame(maxWidth: .infinity)
-                            }.buttonStyle(OutlineButton())
-                                .frame(width: geometry.size.width*0.9, alignment: .center)
-                            Spacer().frame(height: 50, alignment: .bottom)
+                                Text("enableExtension_welcome_cancel"~)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(OutlineButton())
+                            .frame(width: geometry.size.width*0.9, alignment: .center)
+                            .contentShape(Rectangle())
+                            
+                            Spacer()
+                                .frame(height: 50, alignment: .bottom)
                         }
                         .navigationTitle("enableExtension_welcome"~)
                         .tag(1)
@@ -53,44 +66,65 @@ struct EnableExtensionView: View {
                     StepView(title: "enableExtension_step1"~,
                              text: "enableExtension_step1_desc"~,
                              image: "enableExtension_screenshot1",
-                             geometry: geometry).tag(2).onAppear { tabSelection = 2 }
+                             geometry: geometry)
+                        .tag(2)
+                        .onAppear { tabSelection = 2 }
+                    
                     StepView(title: "enableExtension_step2"~,
                              text: "enableExtension_step2_desc"~,
                              image: "enableExtension_screenshot2",
-                             geometry: geometry).tag(3)
+                             geometry: geometry)
+                        .tag(3)
+                    
                     StepView(title: "enableExtension_step3"~,
                              text: "enableExtension_step3_desc"~,
                              image: "enableExtension_screenshot3",
-                             geometry: geometry).tag(4)
+                             geometry: geometry)
+                        .tag(4)
                     
                     VStack (alignment: .center, spacing: 8) {
-                        Spacer().frame(height: 12, alignment: .top)
-                        ReadyView(geometry: geometry)
                         Spacer()
+                            .frame(height: 12, alignment: .top)
+                        
+                        ReadyView(geometry: geometry)
+                        
+                        Spacer()
+                        
                         Image("enableExtension_screenshot4")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .clipShape(RoundedRectangle(cornerRadius: 50*0.9, style: .continuous))
                             .frame(width: geometry.size.width*0.9, alignment: .center)
+                        
                         Spacer()
+                        
                         Button {
                             UserDefaults.isAppFirstRun = false
                             dismiss()
                             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                         } label: {
-                            Text("enableExtension_ready_callToAction"~).frame(maxWidth: .infinity)
-                        }.buttonStyle(FilledButton())
-                            .frame(width: geometry.size.width*0.9, alignment: .center)
+                            Text("enableExtension_ready_callToAction"~)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(FilledButton())
+                        .frame(width: geometry.size.width*0.9, alignment: .center)
+                        .contentShape(Rectangle())
+                        
                         Button {
                             UserDefaults.isAppFirstRun = false
                             withAnimation {
                                 dismiss()
                             }
                         } label: {
-                            Text("enableExtension_ready_cancel"~).frame(maxWidth: .infinity)
-                        }.buttonStyle(OutlineButton())
-                            .frame(width: geometry.size.width*0.9, alignment: .center)
-                        Spacer().frame(height: 50, alignment: .bottom)
+                            Text("enableExtension_ready_cancel"~)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(OutlineButton())
+                        .frame(width: geometry.size.width*0.9, alignment: .center)
+                        .contentShape(Rectangle())
+                        
+                        Spacer()
+                            .frame(height: 50, alignment: .bottom)
                     }
                     .navigationTitle("enableExtension_ready"~)
                     .tag(5)
@@ -121,28 +155,39 @@ struct EnableExtensionView: View {
             ScrollView {
                 VStack (alignment: .center, spacing: 8) {
                     Spacer()
+                    
                     Text(text)
                         .frame(width: geometry.size.width*0.9, alignment: .leading)
                         .font(.title2)
+                    
                     Spacer()
+                    
                     Image(image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .clipShape(RoundedRectangle(cornerRadius: 50*0.9, style: .continuous))
                         .frame(width: geometry.size.width*0.9, alignment: .center)
+                    
                     Spacer(minLength: 50)
                 }
             }
+            
             Spacer(minLength: 20)
+            
             Button {
                 withAnimation {
                     tabSelection = tabSelection + 1
                 }
             } label: {
-                Text("enableExtension_next"~).frame(maxWidth: .infinity)
-            }.buttonStyle(FilledButton())
-                .frame(width: geometry.size.width*0.9, alignment: .center)
-            Spacer().frame(height: 50, alignment: .bottom)
+                Text("enableExtension_next"~)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(FilledButton())
+            .frame(width: geometry.size.width*0.9, alignment: .center)
+            .contentShape(Rectangle())
+            
+            Spacer()
+                .frame(height: 50, alignment: .bottom)
         }
         .navigationTitle(title)
     }

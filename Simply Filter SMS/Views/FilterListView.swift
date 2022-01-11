@@ -39,9 +39,9 @@ struct FilterListView: View {
     var body: some View {
         NavigationView {
             VStack {
-                let denyList = filters.filter({ Int($0.type) == FilterType.deny.rawValue})
-                let allowList = filters.filter({ Int($0.type) == FilterType.allow.rawValue})
-                let denyLanguageList = filters.filter({ Int($0.type) == FilterType.denyLanguage.rawValue})
+                let denyList = filters.filter({ $0.filterType == .deny })
+                let allowList = filters.filter({ $0.filterType == .allow })
+                let denyLanguageList = filters.filter({ $0.filterType == .denyLanguage })
                 
                 if allowList.count > 0 || denyList.count > 0 || denyLanguageList.count > 0 {
                     List {
@@ -75,13 +75,45 @@ struct FilterListView: View {
                         if denyList.count > 0 {
                             Section {
                                 ForEach(denyList, id: \.self) { filter in
-                                    Text(filter.text ?? "general_null"~)
+                                    HStack (alignment: .center , spacing: 0) {
+                                        Text(filter.text ?? "general_null"~)
+                                        Spacer()
+                                        Menu {
+                                            ForEach(DenyFolderType.allCases) { folder in
+                                                Button {
+                                                    updateFilter(filter, denyFolder: folder)
+                                                } label: {
+                                                    Label {
+                                                        Text(folder.name)
+                                                    } icon: {
+                                                        Image(systemName: folder.iconName)
+                                                    }
+                                                }
+                                            }
+                                        } label: {
+                                            HStack {
+                                                Image(systemName: filter.denyFolderType.iconName)
+                                                Text(filter.denyFolderType.name)
+                                                    .font(.footnote)
+                                            }
+                                            .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+                                            .background(Color.secondary.opacity(0.1))
+                                            .foregroundColor(.red)
+                                            .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                                        }
+
+                                    }
                                 }
                                 .onDelete {
                                     self.deleteFilters(withOffsets: $0, in: denyList)
                                 }
                             } header: {
-                                Text("filterList_denied"~)
+                                HStack {
+                                    Text("filterList_denied"~)
+                                    Spacer()
+                                    Text("Folder")
+                                }
+                                
                             }
                         }
                     }
@@ -115,7 +147,7 @@ struct FilterListView: View {
                     Menu {
                         if isDebug && filters.count == 0 {
                             Button {
-                                loadDebugData()
+                                PersistenceController.shared.loadDebugData()
                             } label: {
                                 Label("filterList_menu_debug"~, systemImage: "chevron.left.forwardslash.chevron.right")
                             }
@@ -207,7 +239,8 @@ struct FilterListView: View {
         withAnimation {
             let newFilter = Filter(context: viewContext)
             newFilter.uuid = UUID()
-            newFilter.type = Int64(FilterType.denyLanguage.rawValue)
+            newFilter.filterType = .denyLanguage
+            newFilter.denyFolderType = .junk
             newFilter.text = language.rawValue
 
             do {
@@ -219,26 +252,8 @@ struct FilterListView: View {
         }
     }
     
-    private func loadDebugData() {
-        let _ = ["Adi", "דהאן", "דהן", "עדי"].map { allowText -> Filter in
-            let newFilter = Filter(context: viewContext)
-            newFilter.uuid = UUID()
-            newFilter.type = Int64(FilterType.allow.rawValue)
-            newFilter.text = allowText
-            return newFilter
-        }
-        let _ = ["גנץ", "הימור", "הלוואה", "נתניהו"].map { allowText -> Filter in
-            let newFilter = Filter(context: viewContext)
-            newFilter.uuid = UUID()
-            newFilter.type = Int64(FilterType.deny.rawValue)
-            newFilter.text = allowText
-            return newFilter
-        }
-    
-        let langFilter = Filter(context: viewContext)
-        langFilter.uuid = UUID()
-        langFilter.type = Int64(FilterType.denyLanguage.rawValue)
-        langFilter.text = FilteredLanguage.arabic.rawValue
+    private func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
+        filter.denyFolderType = denyFolder
         
         do {
             try viewContext.save()

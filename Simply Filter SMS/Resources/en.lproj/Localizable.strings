@@ -34,9 +34,14 @@
 //MARK: Add Filter View
 "addFilter_add" = "Add";
 "addFilter_addFilter" = "Add filter";
-"addFilter_text" = "Text";
+"addFilter_text" = "Type a word";
+"addFilter_text_caption" = "Filter messages containing:";
 "addFilter_type" = "Type";
-
+"addFilter_type_caption" = "Select an action:";
+"addFilter_folder_caption" = "Select a destination folder:";
+"addFilter_folder_junk" = "Junk";
+"addFilter_folder_transactions" = "Transactions";
+"addFilter_folder_promotions" = "Promotions";
 
 //MARK: Enable Extension View
 "enableExtension_step1" = "Step 1";

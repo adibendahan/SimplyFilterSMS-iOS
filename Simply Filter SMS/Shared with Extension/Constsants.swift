@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import IdentityLookup
 
 //MARK: Localization
 postfix operator ~
@@ -22,8 +23,49 @@ let kSupportEmail = "grizz.apps.dev@gmail.com"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 
 //MARK: Enums
-enum FilterType: Int {
+@objc enum FilterType: Int64 {
     case deny=0, allow, denyLanguage
+}
+
+@objc enum DenyFolderType: Int64, CaseIterable, Identifiable {
+    case junk=0, transaction, promotion
+    
+    var id: Int64 {
+        return self.rawValue
+    }
+    
+    var iconName: String {
+        switch self {
+        case .junk:
+            return "xmark.bin"
+        case .transaction:
+            return "arrow.left.arrow.right"
+        case .promotion:
+            return "megaphone"
+        }
+    }
+    
+    var name: String {
+        switch self {
+        case .junk:
+            return "addFilter_folder_junk"~
+        case .transaction:
+            return "addFilter_folder_transactions"~
+        case .promotion:
+            return "addFilter_folder_promotions"~
+        }
+    }
+    
+    var action: ILMessageFilterAction {
+        switch self {
+        case .junk:
+            return .junk
+        case .transaction:
+            return .transaction
+        case .promotion:
+            return .promotion
+        }
+    }
 }
 
 enum FilteredLanguage: String {
@@ -50,6 +92,27 @@ enum FilteredLanguage: String {
             return CharacterSet(charactersIn: Unicode.Scalar(UInt16(0x0590))!...Unicode.Scalar(UInt16(0x05ff))!)
         case .unknown:
             return CharacterSet()
+        }
+    }
+}
+
+
+extension Filter {
+    var filterType: FilterType {
+        get {
+            return FilterType(rawValue: self.type) ?? .deny
+        }
+        set {
+            self.type = newValue.rawValue
+        }
+    }
+    
+    var denyFolderType: DenyFolderType {
+        get {
+            return DenyFolderType(rawValue: self.folderType) ?? .junk
+        }
+        set {
+            self.folderType = newValue.rawValue
         }
     }
 }

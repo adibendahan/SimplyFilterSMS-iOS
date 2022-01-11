@@ -15,27 +15,79 @@ struct AddFilterView: View {
     
     @State private var filterText = ""
     @State private var selectedFilterType = FilterType.deny
+    @State private var selectedDenyFolderType = DenyFolderType.junk
     
     var body: some View {
         GeometryReader { geometry in
             NavigationView {
-                VStack(alignment: .trailing, spacing: 8) {
+                VStack(alignment: .leading, spacing: 8) {
+                    
                     Spacer()
+                    Text("addFilter_text_caption"~)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .italic()
+                        .bold()
+
                     TextField("addFilter_text"~, text: $filterText)
                         .focused($focusedField, equals: .text)
+                    
                     Spacer()
-                    Picker("addFilter_type"~, selection: $selectedFilterType) {
-                        Text("general_deny"~).tag(FilterType.deny)
-                        Text("general_allow"~).tag(FilterType.allow)
-                    }.pickerStyle(.segmented)
+                    
+                    Text("addFilter_type_caption"~)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .italic()
+                        .bold()
+                    
+                    Picker("addFilter_type"~, selection: $selectedFilterType.animation()) {
+                        Text("general_deny"~)
+                            .tag(FilterType.deny)
+                        Text("general_allow"~)
+                            .tag(FilterType.allow)
+                    }
+                    .pickerStyle(.segmented)
+                    
+                    if selectedFilterType == FilterType.deny {
+                        Spacer()
+                        
+                            Text("addFilter_folder_caption"~)
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                                .italic()
+                                .bold()
+                        
+                            Picker(selection: $selectedDenyFolderType, label: Text("")) {
+                                ForEach(DenyFolderType.allCases, id: \.rawValue) { folder in
+                                    HStack {
+                                        Image(systemName: folder.iconName)
+                                        Text(folder.name)
+                                            .font(.body)
+                                    }
+                                    .tag(folder)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .frame(width: geometry.size.width-32, height: 32, alignment: .center)
+                            .background(Color.secondary.opacity(0.15))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    
                     Spacer()
+                    
                     Button {
                         addFilter()
                         dismiss()
                     } label: {
-                        Text("addFilter_add"~).frame(maxWidth: .infinity)
-                    }.buttonStyle(FilledButton()).disabled(filterText.isEmpty)
-                    Spacer().padding()
+                        Text("addFilter_add"~)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(FilledButton())
+                    .disabled(filterText.isEmpty)
+                    .contentShape(Rectangle())
+                    
+                    Spacer()
+                        .padding()
                 }
                 .frame(width: geometry.size.width-32, alignment: .center)
                 .navigationTitle("addFilter_addFilter"~)
@@ -63,7 +115,8 @@ struct AddFilterView: View {
         withAnimation {
             let newFilter = Filter(context: viewContext)
             newFilter.uuid = UUID()
-            newFilter.type = Int64(self.selectedFilterType.rawValue)
+            newFilter.filterType = self.selectedFilterType
+            newFilter.denyFolderType = self.selectedDenyFolderType
             newFilter.text = self.filterText
 
             do {

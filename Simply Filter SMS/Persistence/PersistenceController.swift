@@ -11,33 +11,10 @@ struct PersistenceController {
     static let shared = PersistenceController()
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
-        let viewContext = result.container.viewContext
-        for i in 0..<10 {
-            let newFilter = Filter(context: viewContext)
-            newFilter.uuid = UUID()
-            newFilter.type = Int64(i%2)
-            var text = ""
-            for _ in 0...i {
-                text = text.appending("a")
-            }
-            
-            newFilter.text = text
-        }
-        
-        let newFilter = Filter(context: viewContext)
-        newFilter.uuid = UUID()
-        newFilter.type = Int64(FilterType.denyLanguage.rawValue)
-        newFilter.text = FilteredLanguage.arabic.rawValue
-        
-        do {
-            try viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        result.loadDebugData()
         return result
     }()
-
+    
     let container: NSPersistentCloudKitContainer
 
     init(inMemory: Bool = false) {
@@ -57,4 +34,44 @@ struct PersistenceController {
             container.viewContext.automaticallyMergesChangesFromParent = true
         })
     }
+    
+    func loadDebugData() {
+        struct AllowEntry {
+            let text: String
+            let folder: DenyFolderType
+        }
+        
+        let _ = [AllowEntry(text: "נתניהו", folder: .promotion),
+                 AllowEntry(text: "הלוואה", folder: .transaction),
+                 AllowEntry(text: "הימור", folder: .junk),
+                 AllowEntry(text: "גנץ", folder: .promotion)].map { entry -> Filter in
+            let newFilter = Filter(context: container.viewContext)
+            newFilter.uuid = UUID()
+            newFilter.filterType = .deny
+            newFilter.denyFolderType = entry.folder
+            newFilter.text = entry.text
+            return newFilter
+        }
+        
+        let _ = ["Adi", "דהאן", "דהן", "עדי"].map { allowText -> Filter in
+            let newFilter = Filter(context: container.viewContext)
+            newFilter.uuid = UUID()
+            newFilter.filterType = .allow
+            newFilter.text = allowText
+            return newFilter
+        }
+    
+        let langFilter = Filter(context: container.viewContext)
+        langFilter.uuid = UUID()
+        langFilter.filterType = .denyLanguage
+        langFilter.text = FilteredLanguage.arabic.rawValue
+        
+        do {
+            try container.viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
+    
 }

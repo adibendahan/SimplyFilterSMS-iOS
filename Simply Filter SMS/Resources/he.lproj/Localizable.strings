@@ -34,8 +34,14 @@
 //MARK: Add Filter View
 "addFilter_add" = "הוספה";
 "addFilter_addFilter" = "הוספת פילטר";
-"addFilter_text" = "טקסט";
+"addFilter_text" = "הקלידו מילה";
+"addFilter_text_caption" = "סנן הודעות שמכילות:";
 "addFilter_type" = "סוג פילטר";
+"addFilter_type_caption" = "בחרו פעולה";
+"addFilter_folder_caption" = "בחרו תיקיית יעד:";
+"addFilter_folder_junk" = "זבל";
+"addFilter_folder_transactions" = "פעולות";
+"addFilter_folder_promotions" = "פרסומי";
 
 
 //MARK: Enable Extension View
