@@ -17,7 +17,7 @@ struct PersistenceController {
     }()
     
     let container: NSPersistentCloudKitContainer
-
+    
     init(inMemory: Bool = false) {
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
         
@@ -42,7 +42,7 @@ struct PersistenceController {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
                                    NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
         return request
-   }
+    }
     
     func loadDebugData() {
         struct AllowEntry {
@@ -69,7 +69,7 @@ struct PersistenceController {
             newFilter.text = allowText
             return newFilter
         }
-    
+        
         let langFilter = Filter(context: container.viewContext)
         langFilter.uuid = UUID()
         langFilter.filterType = .denyLanguage
@@ -82,5 +82,4 @@ struct PersistenceController {
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
-    
 }

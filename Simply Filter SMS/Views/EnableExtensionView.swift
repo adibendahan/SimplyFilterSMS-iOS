@@ -48,7 +48,7 @@ struct EnableExtensionView: View {
                             Button {
                                 UserDefaults.isAppFirstRun = false
                                 withAnimation {
-                                   dismiss()
+                                    dismiss()
                                 }
                             } label: {
                                 Text("enableExtension_welcome_cancel"~)

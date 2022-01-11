@@ -11,7 +11,7 @@ struct FilledButton: ButtonStyle {
     
     @Environment(\.isEnabled)
     private var isEnabled
-
+    
     func makeBody(configuration: Configuration) -> some View {
         configuration
             .label
@@ -34,10 +34,8 @@ struct OutlineButton: ButtonStyle {
             .foregroundColor(configuration.isPressed ? .gray : .accentColor)
             .padding()
             .background(
-                RoundedRectangle(
-                    cornerRadius: 8,
-                    style: .continuous
-                ).stroke(Color.accentColor)
-        )
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(Color.accentColor)
+            )
     }
 }

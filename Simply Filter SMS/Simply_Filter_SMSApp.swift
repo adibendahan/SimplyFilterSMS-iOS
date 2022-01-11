@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct Simply_Filter_SMSApp: App {
     let persistenceController = PersistenceController.shared
-
+    
     var body: some Scene {
         WindowGroup {
             FilterListView()

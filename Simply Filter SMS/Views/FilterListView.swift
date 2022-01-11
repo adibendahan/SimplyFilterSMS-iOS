@@ -38,7 +38,7 @@ struct FilterListView: View {
                 
                 if allowList.count > 0 || denyList.count > 0 || denyLanguageList.count > 0 {
                     List {
-
+                        
                         if allowList.count > 0 {
                             Section{
                                 ForEach(allowList, id: \.self) { filter in
@@ -59,7 +59,7 @@ struct FilterListView: View {
                                        let blockedLanguage = NLLanguage(filterText: filterText),
                                        blockedLanguage != .undetermined,
                                        let localizedName = Locale.current.localizedString(forIdentifier: blockedLanguage.rawValue) {
-
+                                        
                                         HStack (alignment: .center , spacing: 0) {
                                             Text(localizedName)
                                             
@@ -250,16 +250,6 @@ struct FilterListView: View {
         }
     }
     
-    private func detectedLanguage(for string: String) -> String? {
-            let recognizer = NLLanguageRecognizer()
-            recognizer.processString(string)
-            guard let languageCode = recognizer.dominantLanguage?.rawValue else { return nil }
-            let detectedLanguage = Locale.current.localizedString(forIdentifier: languageCode)
-            print("languageCode: \(languageCode)")
-            return detectedLanguage
-        }
-    
-    
     private func FooterView() -> some View {
         Text("Simply Filter SMS v\(Text(appVersion))\n\(Text("general_copyright"~))")
             .frame(maxWidth: .infinity, alignment: .center)
@@ -270,7 +260,7 @@ struct FilterListView: View {
                 self.presentedSheet = .about
             }
     }
-
+    
     private func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
         withAnimation {
             offsets.map({ filters[$0] }).forEach({ viewContext.delete($0) })
