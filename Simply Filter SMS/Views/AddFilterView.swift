@@ -20,43 +20,44 @@ struct AddFilterView: View {
     var body: some View {
         GeometryReader { geometry in
             NavigationView {
-                VStack(alignment: .leading, spacing: 8) {
-                    
-                    Spacer()
-                    Text("addFilter_text_caption"~)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .italic()
-                        .bold()
-
-                    TextField("addFilter_text"~, text: $filterText)
-                        .focused($focusedField, equals: .text)
-                    
-                    Spacer()
-                    
-                    Text("addFilter_type_caption"~)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .italic()
-                        .bold()
-                    
-                    Picker("addFilter_type"~, selection: $selectedFilterType.animation()) {
-                        Text("general_deny"~)
-                            .tag(FilterType.deny)
-                        Text("general_allow"~)
-                            .tag(FilterType.allow)
-                    }
-                    .pickerStyle(.segmented)
-                    
-                    if selectedFilterType == FilterType.deny {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 8) {
+                        
+                        Spacer()
+                        Text("addFilter_text_caption"~)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .italic()
+                            .bold()
+                        
+                        TextField("addFilter_text"~, text: $filterText)
+                            .focused($focusedField, equals: .text)
+                        
                         Spacer()
                         
+                        Text("addFilter_type_caption"~)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .italic()
+                            .bold()
+                        
+                        Picker("addFilter_type"~, selection: $selectedFilterType.animation()) {
+                            Text("general_deny"~)
+                                .tag(FilterType.deny)
+                            Text("general_allow"~)
+                                .tag(FilterType.allow)
+                        }
+                        .pickerStyle(.segmented)
+                        
+                        if selectedFilterType == FilterType.deny {
+                            Spacer()
+                            
                             Text("addFilter_folder_caption"~)
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
                                 .italic()
                                 .bold()
-                        
+                            
                             Picker(selection: $selectedDenyFolderType, label: Text("")) {
                                 ForEach(DenyFolderType.allCases, id: \.rawValue) { folder in
                                     HStack {
@@ -71,38 +72,39 @@ struct AddFilterView: View {
                             .frame(width: geometry.size.width-32, height: 32, alignment: .center)
                             .background(Color.secondary.opacity(0.15))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        addFilter()
-                        dismiss()
-                    } label: {
-                        Text("addFilter_add"~)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(FilledButton())
-                    .disabled(filterText.isEmpty)
-                    .contentShape(Rectangle())
-                    
-                    Spacer()
-                        .padding()
-                }
-                .frame(width: geometry.size.width-32, alignment: .center)
-                .navigationTitle("addFilter_addFilter"~)
-                .toolbar {
-                    ToolbarItem {
+                        }
+                        
+                        Spacer()
+                        
                         Button {
+                            addFilter()
                             dismiss()
                         } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 16, weight: .bold, design: .default))
-                                .foregroundColor(.secondary)
+                            Text("addFilter_add"~)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(FilledButton())
+                        .disabled(filterText.isEmpty)
+                        .contentShape(Rectangle())
+                    } // VStack
+                    .frame(width: geometry.size.width-32, alignment: .center)
+                    .navigationTitle("addFilter_addFilter"~)
+                    .toolbar {
+                        ToolbarItem {
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 16, weight: .bold, design: .default))
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
-                }
-            }
+                } // ScrollView
+                
+                Spacer()
+                    .padding()
+            } // NavigationView
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
@@ -118,7 +120,7 @@ struct AddFilterView: View {
             newFilter.filterType = self.selectedFilterType
             newFilter.denyFolderType = self.selectedDenyFolderType
             newFilter.text = self.filterText
-
+            
             do {
                 try viewContext.save()
             } catch {
