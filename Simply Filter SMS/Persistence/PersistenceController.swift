@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import NaturalLanguage
 
 struct PersistenceController {
     static let shared = PersistenceController()
@@ -34,6 +35,14 @@ struct PersistenceController {
             container.viewContext.automaticallyMergesChangesFromParent = true
         })
     }
+    
+    
+    static var getFiltersFetchRequest: NSFetchRequest<Filter> {
+        let request: NSFetchRequest<Filter> = Filter.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
+                                   NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
+        return request
+   }
     
     func loadDebugData() {
         struct AllowEntry {
@@ -64,7 +73,7 @@ struct PersistenceController {
         let langFilter = Filter(context: container.viewContext)
         langFilter.uuid = UUID()
         langFilter.filterType = .denyLanguage
-        langFilter.text = FilteredLanguage.arabic.rawValue
+        langFilter.text = NLLanguage.arabic.filterText
         
         do {
             try container.viewContext.save()

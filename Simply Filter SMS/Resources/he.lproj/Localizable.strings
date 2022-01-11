@@ -11,12 +11,12 @@
 "general_allow" = "אפשר";
 "general_deny" = "חסום";
 "general_null" = "(ריק)";
-"general_copyright" = "© 2021 עדי בן-דהן, כל הזכויות שמורות.";
-
+"general_copyright" = "© 2022 עדי בן-דהן, כל הזכויות שמורות.";
+"general_close" = "סגירה";
 
 //MARK: Languages
-"lang_arabic" = "ערבית";
-"lang_hebrew" = "עברית";
+"lang_allBlocked" = "כל השפות הנתמכות כבר חסומות!";
+"lang_how" = "\nעיבוד וזיהוי השפה נעשה **לוקאלית** ע״י מנוע השפות של מערכת ההפעלה. הודעה תחסם רק אם **השפה הדומיננטית** של הטקסט נמצאת ברשימת השפות החסומות.";
 
 
 //MARK: Filter List View

@@ -9,19 +9,12 @@ import SwiftUI
 import MessageUI
 
 struct AboutView: View {
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
+    @Environment(\.colorScheme)
+    var colorScheme: ColorScheme
     
     @State var result: Result<MFMailComposeResult, Error>? = nil
     @State var isShowingMailView = false
-    
-    private var backgroundColor: Color {
-        if colorScheme == .light {
-            return Color(uiColor: UIColor.secondarySystemBackground)
-        }
-        else {
-            return Color(uiColor: UIColor.systemBackground)
-        }
-    }
     
     var body: some View {
         VStack {
@@ -31,15 +24,18 @@ struct AboutView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 55, alignment: .center)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                
                 VStack(alignment: .trailing) {
                     Text("Simply Filter SMS")
                         .font(.system(size: 32, weight: .bold, design: .default))
+                    
                     Text("v\(Text(appVersion))")
                         .font(.footnote)
                         .italic()
                 }
             }
             .padding()
+            
             List {
                 Section {
                     Text("aboutView_aboutText"~)
@@ -47,6 +43,7 @@ struct AboutView: View {
                 } header: {
                     Text("aboutView_aboutSection"~)
                 }
+                
                 Section {
                     Link(destination: URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!) {
                         HStack {
@@ -54,10 +51,14 @@ struct AboutView: View {
                                 .resizable()
                                 .frame(width: 26, height: 26, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
+                            
                             Spacer()
+                            
                             Text("aboutView_github"~)
                                 .foregroundColor(.primary)
-                            Spacer().padding()
+                            
+                            Spacer()
+                                .padding()
                         }
                     }
                     if MFMailComposeViewController.canSendMail() {
@@ -83,10 +84,14 @@ struct AboutView: View {
                                 .resizable()
                                 .frame(width: 26, height: 21, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
+                            
                             Spacer()
+                            
                             Text("aboutView_twitter"~)
                                 .foregroundColor(.primary)
-                            Spacer().padding()
+                            
+                            Spacer()
+                                .padding()
                         }
                     }
                 } header: {
@@ -98,7 +103,7 @@ struct AboutView: View {
             }
             .listStyle(.grouped)
         }
-        .background(backgroundColor)
+        .background(Color.listBackgroundColor(for: colorScheme))
         .sheet(isPresented: $isShowingMailView) {
             MailView(isShowing: self.$isShowingMailView, result: self.$result)
                 .edgesIgnoringSafeArea(.bottom)

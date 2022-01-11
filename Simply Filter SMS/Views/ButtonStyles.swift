@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct FilledButton: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
+    
+    @Environment(\.isEnabled)
+    private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration
@@ -22,7 +24,9 @@ struct FilledButton: ButtonStyle {
 
 
 struct OutlineButton: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
+    
+    @Environment(\.isEnabled)
+    private var isEnabled
     
     func makeBody(configuration: Configuration) -> some View {
         configuration

@@ -7,6 +7,7 @@
 
 import IdentityLookup
 import CoreData
+import NaturalLanguage
 
 final class MessageFilterExtension: ILMessageFilterExtension {
     lazy var persistentContainer: NSPersistentContainer = {
@@ -84,11 +85,16 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
             }
             
             for denyLanguageFilter in denyLanguageList {
-                if let deniedLanguageText = denyLanguageFilter.value(forKey: "text") as? String,
-                   let deniedLanguage = FilteredLanguage(rawValue: deniedLanguageText),
-                   deniedLanguage != .unknown,
-                   messageText.rangeOfCharacter(from: deniedLanguage.charcterSet) != nil {
-                    return .junk
+                if let deniedLanguageText = denyLanguageFilter.value(forKey: "text") as? String {
+                    let deniedLanguage = NLLanguage(filterText: deniedLanguageText)
+                    
+                    if deniedLanguage != .undetermined,
+                       NLLanguage.dominantLanguage(for: messageBody) == deniedLanguage {
+                        guard let denyFolderValue = denyLanguageFilter.value(forKey: "folderType") as? Int64,
+                              let denyFolder = DenyFolderType(rawValue: denyFolderValue) else { return .junk }
+                        
+                        return denyFolder.action
+                    }
                 }
             }
         }

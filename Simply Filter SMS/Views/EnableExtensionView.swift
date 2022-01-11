@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct EnableExtensionView: View {
-    @Environment(\.dismiss) var dismiss
+    
+    @Environment(\.dismiss)
+    var dismiss
     
     @State private var tabSelection = 1
     

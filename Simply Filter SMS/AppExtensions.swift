@@ -24,3 +24,14 @@ extension EnvironmentValues {
 #endif
     }
 }
+
+extension Color {
+    static func listBackgroundColor(for colorScheme: ColorScheme) -> Color {
+        if colorScheme == .light {
+            return Color(uiColor: UIColor.secondarySystemBackground)
+        }
+        else {
+            return Color(uiColor: UIColor.systemBackground)
+        }
+    }
+}

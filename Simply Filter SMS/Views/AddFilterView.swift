@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct AddFilterView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.dismiss) var dismiss
+    
+    @Environment(\.managedObjectContext)
+    private var viewContext
+    
+    @Environment(\.dismiss)
+    var dismiss
     
     @FocusState private var focusedField: Field?
     
@@ -24,6 +28,7 @@ struct AddFilterView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         
                         Spacer()
+                        
                         Text("addFilter_text_caption"~)
                             .font(.footnote)
                             .foregroundColor(.secondary)
