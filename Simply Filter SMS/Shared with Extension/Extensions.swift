@@ -61,8 +61,8 @@ extension NLLanguage: Identifiable {
         return recognizer.dominantLanguage
     }
     
-    public var filterText: String? {
-        guard NLLanguage.allSupportedCases.contains(self) else { return nil }
+    public var filterText: String {
+        guard NLLanguage.allSupportedCases.contains(self) else { return "$lang:unknown" }
         let langName = Locale(identifier: "en_US").localizedString(forIdentifier: self.rawValue) ?? "unknown"
         return "$lang:\(langName.lowercased())"
     }

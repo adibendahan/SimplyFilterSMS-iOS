@@ -25,7 +25,9 @@ struct LanguageListView: View {
             NavigationView {
                 VStack(alignment: .leading) {
                     Spacer()
-                    let remainingSupportedLanguages = NLLanguage.allSupportedCases.filter({ !self.isAlreadyBlocked(language: $0) }).sorted(by: { $0.filterText ?? "" < $1.filterText ?? "" })
+                    let remainingSupportedLanguages = NLLanguage.allSupportedCases
+                        .filter({ !PersistenceController.shared.isDuplicateFilter(text: $0.filterText, type: .denyLanguage) })
+                        .sorted(by: { $0.filterText < $1.filterText })
                     
                     if remainingSupportedLanguages.count > 0 {
                         List {
@@ -33,7 +35,7 @@ struct LanguageListView: View {
                                 ForEach (remainingSupportedLanguages) { supportedLanguage in
                                     if let localizedName = Locale.current.localizedString(forIdentifier: supportedLanguage.rawValue) {
                                         Button {
-                                            addFilter(language: supportedLanguage)
+                                            PersistenceController.shared.addFilter(text: supportedLanguage.filterText, type: .denyLanguage)
                                             dismiss()
                                         } label: {
                                             Text(localizedName)
@@ -45,7 +47,7 @@ struct LanguageListView: View {
                                 Text("Supported languages")
                             } footer: {
                                 Text(.init("lang_how"~)) // Dev notes: Markdown text requires the .init workaround
-                            }
+                            } // Section
                         } // List
                         .listStyle(InsetGroupedListStyle())
                     }
@@ -83,40 +85,7 @@ struct LanguageListView: View {
                     }
                 }
             } // NavigationView
-        }
-    }
-    
-    private func isAlreadyBlocked(language: NLLanguage) -> Bool {
-        var filterExists = false
-        let fetchRequest = NSFetchRequest<Filter>(entityName: "Filter")
-        fetchRequest.predicate = NSPredicate(format: "type == %ld AND text == %@", FilterType.denyLanguage.rawValue, language.filterText ?? "")
-        
-        do {
-            let results = try viewContext.fetch(fetchRequest)
-            filterExists = results.count > 0
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        
-        return filterExists
-    }
-    
-    private func addFilter(language: NLLanguage) {
-        guard !self.isAlreadyBlocked(language: language) else { return }
-        
-        let newFilter = Filter(context: viewContext)
-        newFilter.uuid = UUID()
-        newFilter.filterType = .denyLanguage
-        newFilter.denyFolderType = .junk
-        newFilter.text = language.filterText
-        
-        do {
-            try viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        } // GeometryReader
     }
 }
 

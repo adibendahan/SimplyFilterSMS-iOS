@@ -35,14 +35,14 @@
 "addFilter_add" = "הוספה";
 "addFilter_addFilter" = "הוספת פילטר";
 "addFilter_text" = "הקלידו מילה";
-"addFilter_text_caption" = "סנן הודעות שמכילות:";
+"addFilter_text_caption" = "סנן הודעות שמכילות (מינימום 3 תווים):";
 "addFilter_type" = "סוג פילטר";
 "addFilter_type_caption" = "בחרו פעולה";
 "addFilter_folder_caption" = "בחרו תיקיית יעד:";
 "addFilter_folder_junk" = "זבל";
 "addFilter_folder_transactions" = "פעולות";
 "addFilter_folder_promotions" = "פרסומי";
-
+"addFilter_duplicate" = "פילטר קיים";
 
 //MARK: Enable Extension View
 "enableExtension_step1" = "שלב 1";

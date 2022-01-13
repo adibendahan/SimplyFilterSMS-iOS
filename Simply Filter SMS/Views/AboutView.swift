@@ -99,10 +99,10 @@ struct AboutView: View {
                 } footer: {
                     Text("general_copyright"~)
                         .frame(maxWidth: .infinity, alignment: .center)
-                }
+                } // Section
             }
             .listStyle(.grouped)
-        }
+        } // VStack
         .background(Color.listBackgroundColor(for: colorScheme))
         .sheet(isPresented: $isShowingMailView) {
             MailView(isShowing: self.$isShowingMailView, result: self.$result)

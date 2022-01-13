@@ -26,6 +26,7 @@ struct AddFilterView: View {
             NavigationView {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 8) {
+                        let isDuplicate = PersistenceController.shared.isDuplicateFilter(text: filterText, type: selectedFilterType)
                         
                         Spacer()
                         
@@ -35,9 +36,26 @@ struct AddFilterView: View {
                             .italic()
                             .bold()
                         
-                        TextField("addFilter_text"~, text: $filterText)
-                            .focused($focusedField, equals: .text)
-                        
+                        HStack (alignment: .center) {
+                            
+                            TextField("addFilter_text"~, text: $filterText)
+                                .focused($focusedField, equals: .text)
+                            
+                            if (isDuplicate) {
+                                HStack {
+                                    Image(systemName: "xmark.octagon")
+                                        .foregroundColor(.red.opacity(0.8))
+                                    
+                                    Text("addFilter_duplicate"~)
+                                        .font(.footnote)
+                                        .foregroundColor(.red)
+                                }
+                                .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+                                .background(Color.red.opacity(0.1))
+                                .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                            }
+                        }
+
                         Spacer()
                         
                         Text("addFilter_type_caption"~)
@@ -82,14 +100,18 @@ struct AddFilterView: View {
                         Spacer()
                         
                         Button {
-                            addFilter()
-                            dismiss()
+                            withAnimation {
+                                PersistenceController.shared.addFilter(text: self.filterText,
+                                                                       type: self.selectedFilterType,
+                                                                       denyFolder: self.selectedDenyFolderType)
+                                dismiss()
+                            }
                         } label: {
                             Text("addFilter_add"~)
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(FilledButton())
-                        .disabled(filterText.isEmpty)
+                        .disabled(filterText.count < 3 || isDuplicate)
                         .contentShape(Rectangle())
                     } // VStack
                     .frame(width: geometry.size.width-32, alignment: .center)
@@ -114,23 +136,6 @@ struct AddFilterView: View {
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                 focusedField = .text
-            }
-        }
-    }
-    
-    private func addFilter() {
-        withAnimation {
-            let newFilter = Filter(context: viewContext)
-            newFilter.uuid = UUID()
-            newFilter.filterType = self.selectedFilterType
-            newFilter.denyFolderType = self.selectedDenyFolderType
-            newFilter.text = self.filterText
-            
-            do {
-                try viewContext.save()
-            } catch {
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }

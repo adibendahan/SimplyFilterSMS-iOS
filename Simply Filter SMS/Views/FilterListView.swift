@@ -139,8 +139,8 @@ struct FilterListView: View {
                                             .foregroundColor(.red)
                                             .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                                         }
-                                    }
-                                }
+                                    } // HStack
+                                } // ForEach
                                 .onDelete {
                                     self.deleteFilters(withOffsets: $0, in: denyList)
                                 }
@@ -152,7 +152,7 @@ struct FilterListView: View {
                                     
                                     Text("Folder")
                                 }
-                            }
+                            } // Section
                         }
                     }
                     .listStyle(InsetGroupedListStyle())
@@ -180,7 +180,7 @@ struct FilterListView: View {
                     
                     FooterView()
                 }
-            }
+            } // VStack
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if filters.count > 0 {
@@ -247,7 +247,7 @@ struct FilterListView: View {
                     self.isPresentingFullScreenWelcome = true
                 }
             }
-        }
+        } // NavigationView
     }
     
     private func FooterView() -> some View {

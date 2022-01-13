@@ -60,7 +60,7 @@ struct EnableExtensionView: View {
                             
                             Spacer()
                                 .frame(height: 50, alignment: .bottom)
-                        }
+                        } // VStack
                         .navigationTitle("enableExtension_welcome"~)
                         .tag(1)
                     }
@@ -127,10 +127,10 @@ struct EnableExtensionView: View {
                         
                         Spacer()
                             .frame(height: 50, alignment: .bottom)
-                    }
+                    } // VStack
                     .navigationTitle("enableExtension_ready"~)
                     .tag(5)
-                }
+                } // TabView
                 .tabViewStyle(.page)
                 .indexViewStyle(.page(backgroundDisplayMode: .always))
                 .toolbar {
@@ -144,8 +144,8 @@ struct EnableExtensionView: View {
                         }
                     }
                 }
-            }
-        }
+            } // NavigationView
+        } // GeometryReader
     }
     
     func StepView(title: String,
