@@ -32,6 +32,9 @@
 		69DB7015277A1F0200245DBA /* Constsants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constsants.swift */; };
 		69DB7017277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */; };
 		69DB7018277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */; };
+		69E6F5652790E98400AD6BFA /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E6F5642790E98400AD6BFA /* HelpView.swift */; };
+		69FF9C8627921DCC007FA2DB /* QuestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FF9C8527921DCC007FA2DB /* QuestionView.swift */; };
+		69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FF9C8727933CE9007FA2DB /* FooterView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +92,9 @@
 		69CD71092770D7AD00F91A2F /* Simply Filter SMS Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Simply Filter SMS Extension.entitlements"; sourceTree = "<group>"; };
 		69DB7013277A1F0200245DBA /* Constsants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constsants.swift; sourceTree = "<group>"; };
 		69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPersistentCloudKitContainer.swift; sourceTree = "<group>"; };
+		69E6F5642790E98400AD6BFA /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
+		69FF9C8527921DCC007FA2DB /* QuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionView.swift; sourceTree = "<group>"; };
+		69FF9C8727933CE9007FA2DB /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,10 +204,11 @@
 				690F054D278200B60036553B /* ButtonStyles.swift */,
 				69CD70CB2770D4D100F91A2F /* FilterListView.swift */,
 				699F557F2778BB3100AD7C64 /* AddFilterView.swift */,
-				6941FE17277DF88200B99539 /* EnableExtensionView.swift */,
 				6941FE19277E19CC00B99539 /* AboutView.swift */,
 				6941FE1B277FDBE700B99539 /* MailView.swift */,
 				695D5BC0278DE4B50037C926 /* LanguageListView.swift */,
+				69FF9C8727933CE9007FA2DB /* FooterView.swift */,
+				69FF9C8427921D59007FA2DB /* Help View */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -214,6 +221,16 @@
 				695D5BC2278E01C00037C926 /* Extensions.swift */,
 			);
 			path = "Shared with Extension";
+			sourceTree = "<group>";
+		};
+		69FF9C8427921D59007FA2DB /* Help View */ = {
+			isa = PBXGroup;
+			children = (
+				69FF9C8527921DCC007FA2DB /* QuestionView.swift */,
+				69E6F5642790E98400AD6BFA /* HelpView.swift */,
+				6941FE17277DF88200B99539 /* EnableExtensionView.swift */,
+			);
+			path = "Help View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -321,11 +338,14 @@
 				69CD70D32770D4D100F91A2F /* PersistenceController.swift in Sources */,
 				699F55802778BB3100AD7C64 /* AddFilterView.swift in Sources */,
 				69CD70CC2770D4D100F91A2F /* FilterListView.swift in Sources */,
+				69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */,
 				690F054E278200B60036553B /* ButtonStyles.swift in Sources */,
 				6941FE18277DF88200B99539 /* EnableExtensionView.swift in Sources */,
 				6941FE1A277E19CC00B99539 /* AboutView.swift in Sources */,
+				69E6F5652790E98400AD6BFA /* HelpView.swift in Sources */,
 				695D5BC1278DE4B50037C926 /* LanguageListView.swift in Sources */,
 				69DB7014277A1F0200245DBA /* Constsants.swift in Sources */,
+				69FF9C8627921DCC007FA2DB /* QuestionView.swift in Sources */,
 				69CD70CA2770D4D100F91A2F /* Simply_Filter_SMSApp.swift in Sources */,
 				690F0550278218000036553B /* UserDefaults.swift in Sources */,
 				695D5BC3278E01C00037C926 /* Extensions.swift in Sources */,

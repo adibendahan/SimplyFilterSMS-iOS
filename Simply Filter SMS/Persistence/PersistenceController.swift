@@ -21,6 +21,12 @@ struct PersistenceController {
                                    NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
         return request
     }
+    static var frequentlyAskedQuestions = [Question(text: "faq_question_0"~, answer: "faq_answer_0"~, action: .activateFilters),
+                                           Question(text: "faq_question_1"~, answer: "faq_answer_1"~),
+                                           Question(text: "faq_question_2"~, answer: "faq_answer_2"~),
+                                           Question(text: "faq_question_3"~, answer: "faq_answer_3"~),
+                                           Question(text: "faq_question_4"~, answer: "faq_answer_4"~),
+                                           Question(text: "faq_question_5"~, answer: "faq_answer_5"~)]
     
     let container: NSPersistentCloudKitContainer
     
@@ -73,6 +79,28 @@ struct PersistenceController {
         }
         
         return filterExists
+    }
+    
+    func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
+        offsets.map({ filters[$0] }).forEach({ self.container.viewContext.delete($0) })
+        
+        do {
+            try self.container.viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
+    
+    func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
+        filter.denyFolderType = denyFolder
+        
+        do {
+            try self.container.viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
     }
     
     func loadDebugData() {

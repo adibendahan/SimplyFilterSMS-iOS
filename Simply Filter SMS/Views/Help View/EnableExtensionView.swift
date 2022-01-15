@@ -21,6 +21,7 @@ struct EnableExtensionView: View {
             NavigationView {
                 TabView (selection: $tabSelection) {
                     let shouldShowWelcomePages = !isFromMenu && UserDefaults.isAppFirstRun
+                    let welcomeIndex = shouldShowWelcomePages ? 1 : 0
                     
                     if shouldShowWelcomePages {
                         VStack (alignment: .center, spacing: 8) {
@@ -69,20 +70,19 @@ struct EnableExtensionView: View {
                              text: "enableExtension_step1_desc"~,
                              image: "enableExtension_screenshot1",
                              geometry: geometry)
-                        .tag(2)
-                        .onAppear { tabSelection = 2 }
+                        .tag(welcomeIndex + 1)
                     
                     StepView(title: "enableExtension_step2"~,
                              text: "enableExtension_step2_desc"~,
                              image: "enableExtension_screenshot2",
                              geometry: geometry)
-                        .tag(3)
+                        .tag(welcomeIndex + 2)
                     
                     StepView(title: "enableExtension_step3"~,
                              text: "enableExtension_step3_desc"~,
                              image: "enableExtension_screenshot3",
                              geometry: geometry)
-                        .tag(4)
+                        .tag(welcomeIndex + 3)
                     
                     VStack (alignment: .center, spacing: 8) {
                         Spacer()
@@ -129,7 +129,7 @@ struct EnableExtensionView: View {
                             .frame(height: 50, alignment: .bottom)
                     } // VStack
                     .navigationTitle("enableExtension_ready"~)
-                    .tag(5)
+                    .tag(welcomeIndex + 4)
                 } // TabView
                 .tabViewStyle(.page)
                 .indexViewStyle(.page(backgroundDisplayMode: .always))

@@ -31,44 +31,95 @@ struct FilterListView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
-                let denyList = filters.filter({ $0.filterType == .deny })
-                let allowList = filters.filter({ $0.filterType == .allow })
-                let denyLanguageList = filters.filter({ $0.filterType == .denyLanguage })
-                
-                if allowList.count > 0 || denyList.count > 0 || denyLanguageList.count > 0 {
-                    List {
-                        
-                        if allowList.count > 0 {
-                            Section{
-                                ForEach(allowList, id: \.self) { filter in
-                                    Text(filter.text ?? "general_null"~)
+            ZStack (alignment: .bottom) {
+                VStack {
+                    let denyList = filters.filter({ $0.filterType == .deny })
+                    let allowList = filters.filter({ $0.filterType == .allow })
+                    let denyLanguageList = filters.filter({ $0.filterType == .denyLanguage })
+                    
+                    if allowList.count > 0 || denyList.count > 0 || denyLanguageList.count > 0 {
+                        List {
+                            
+                            if allowList.count > 0 {
+                                Section{
+                                    ForEach(allowList, id: \.self) { filter in
+                                        Text(filter.text ?? "general_null"~)
+                                    }
+                                    .onDelete {
+                                        PersistenceController.shared.deleteFilters(withOffsets: $0, in: allowList)
+                                    }
+                                } header: {
+                                    Text("filterList_allowed"~)
                                 }
-                                .onDelete {
-                                    self.deleteFilters(withOffsets: $0, in: allowList)
-                                }
-                            } header: {
-                                Text("filterList_allowed"~)
                             }
-                        }
-                        
-                        if denyLanguageList.count > 0 {
-                            Section {
-                                ForEach(denyLanguageList, id: \.self) { filter in
-                                    if let filterText = filter.text,
-                                       let blockedLanguage = NLLanguage(filterText: filterText),
-                                       blockedLanguage != .undetermined,
-                                       let localizedName = Locale.current.localizedString(forIdentifier: blockedLanguage.rawValue) {
+                            
+                            if denyLanguageList.count > 0 {
+                                Section {
+                                    ForEach(denyLanguageList, id: \.self) { filter in
+                                        if let filterText = filter.text,
+                                           let blockedLanguage = NLLanguage(filterText: filterText),
+                                           blockedLanguage != .undetermined,
+                                           let localizedName = Locale.current.localizedString(forIdentifier: blockedLanguage.rawValue) {
+                                            
+                                            HStack (alignment: .center , spacing: 0) {
+                                                Text(localizedName)
+                                                
+                                                Spacer()
+                                                
+                                                Menu {
+                                                    ForEach(DenyFolderType.allCases) { folder in
+                                                        Button {
+                                                            PersistenceController.shared.updateFilter(filter, denyFolder: folder)
+                                                        } label: {
+                                                            Label {
+                                                                Text(folder.name)
+                                                            } icon: {
+                                                                Image(systemName: folder.iconName)
+                                                            }
+                                                        }
+                                                    }
+                                                } label: {
+                                                    HStack {
+                                                        Image(systemName: filter.denyFolderType.iconName)
+                                                        
+                                                        Text(filter.denyFolderType.name)
+                                                            .font(.footnote)
+                                                    }
+                                                    .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+                                                    .background(Color.secondary.opacity(0.1))
+                                                    .foregroundColor(.red)
+                                                    .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                                                }
+                                            }
+                                        }
                                         
+                                    }
+                                    .onDelete {
+                                        PersistenceController.shared.deleteFilters(withOffsets: $0, in: denyLanguageList)
+                                    }
+                                } header: {
+                                    HStack {
+                                        Text("filterList_deniedLanguage"~)
+                                        
+                                        Spacer()
+                                        
+                                        Text("Folder")
+                                    }
+                                }
+                            }
+                            
+                            if denyList.count > 0 {
+                                Section {
+                                    ForEach(denyList, id: \.self) { filter in
                                         HStack (alignment: .center , spacing: 0) {
-                                            Text(localizedName)
+                                            Text(filter.text ?? "general_null"~)
                                             
                                             Spacer()
                                             
                                             Menu {
                                                 ForEach(DenyFolderType.allCases) { folder in
                                                     Button {
-                                                        updateFilter(filter, denyFolder: folder)
+                                                        PersistenceController.shared.updateFilter(filter, denyFolder: folder)
                                                     } label: {
                                                         Label {
                                                             Text(folder.name)
@@ -89,200 +140,119 @@ struct FilterListView: View {
                                                 .foregroundColor(.red)
                                                 .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                                             }
-                                        }
+                                        } // HStack
+                                    } // ForEach
+                                    .onDelete {
+                                        PersistenceController.shared.deleteFilters(withOffsets: $0, in: denyList)
                                     }
-                                    
-                                }
-                                .onDelete {
-                                    self.deleteFilters(withOffsets: $0, in: denyLanguageList)
-                                }
-                            } header: {
-                                HStack {
-                                    Text("filterList_deniedLanguage"~)
-                                    
-                                    Spacer()
-                                    
-                                    Text("Folder")
-                                }
-                            }
-                        }
-                        
-                        if denyList.count > 0 {
-                            Section {
-                                ForEach(denyList, id: \.self) { filter in
-                                    HStack (alignment: .center , spacing: 0) {
-                                        Text(filter.text ?? "general_null"~)
+                                } header: {
+                                    HStack {
+                                        Text("filterList_denied"~)
                                         
                                         Spacer()
                                         
-                                        Menu {
-                                            ForEach(DenyFolderType.allCases) { folder in
-                                                Button {
-                                                    updateFilter(filter, denyFolder: folder)
-                                                } label: {
-                                                    Label {
-                                                        Text(folder.name)
-                                                    } icon: {
-                                                        Image(systemName: folder.iconName)
-                                                    }
-                                                }
-                                            }
-                                        } label: {
-                                            HStack {
-                                                Image(systemName: filter.denyFolderType.iconName)
-                                                
-                                                Text(filter.denyFolderType.name)
-                                                    .font(.footnote)
-                                            }
-                                            .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-                                            .background(Color.secondary.opacity(0.1))
-                                            .foregroundColor(.red)
-                                            .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                                        }
-                                    } // HStack
-                                } // ForEach
-                                .onDelete {
-                                    self.deleteFilters(withOffsets: $0, in: denyList)
-                                }
-                            } header: {
-                                HStack {
-                                    Text("filterList_denied"~)
-                                    
-                                    Spacer()
-                                    
-                                    Text("Folder")
-                                }
-                            } // Section
-                        }
-                    }
-                    .listStyle(InsetGroupedListStyle())
-                    FooterView()
-                }
-                else {
-                    Spacer()
-                    
-                    Button {
-                        presentedSheet = .addFilter
-                    } label: {
-                        Spacer()
-                        
-                        Image(systemName: "plus.message")
-                            .imageScale(.large)
-                            .font(.system(size: 34, weight: .bold))
-                        
-                        Text("filterList_addFilters"~)
-                            .font(.body)
-                        
-                        Spacer()
-                    }
-                    
-                    Spacer()
-                    
-                    FooterView()
-                }
-            } // VStack
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    if filters.count > 0 {
-                        EditButton()
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        if isDebug && filters.count == 0 {
-                            Button {
-                                PersistenceController.shared.loadDebugData()
-                            } label: {
-                                Label("filterList_menu_debug"~, systemImage: "chevron.left.forwardslash.chevron.right")
+                                        Text("Folder")
+                                    }
+                                } // Section
                             }
                         }
+                        .listStyle(InsetGroupedListStyle())
+                    }
+                    else {
+                        Spacer()
                         
                         Button {
                             presentedSheet = .addFilter
                         } label: {
-                            Label("addFilter_addFilter"~, systemImage: "plus.circle")
+                            Spacer()
+                            
+                            Image(systemName: "plus.message")
+                                .imageScale(.large)
+                                .font(.system(size: 34, weight: .bold))
+                            
+                            Text("filterList_addFilters"~)
+                                .font(.body)
+                            
+                            Spacer()
                         }
                         
-                        Button {
-                            presentedSheet = .addLanguageFilter
-                        } label: {
-                            Label("filterList_menu_filterLanguage"~, systemImage: "globe")
+                        Spacer()
+                    }
+                } // VStack
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        if filters.count > 0 {
+                            EditButton()
                         }
-                        
-                        Button {
-                            presentedSheet = .enableExtension
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Menu {
+                            if isDebug && filters.count == 0 {
+                                Button {
+                                    PersistenceController.shared.loadDebugData()
+                                } label: {
+                                    Label("filterList_menu_debug"~, systemImage: "chevron.left.forwardslash.chevron.right")
+                                }
+                            }
+                            
+                            Button {
+                                presentedSheet = .addFilter
+                            } label: {
+                                Label("addFilter_addFilter"~, systemImage: "plus.circle")
+                            }
+                            
+                            Button {
+                                presentedSheet = .addLanguageFilter
+                            } label: {
+                                Label("filterList_menu_filterLanguage"~, systemImage: "globe")
+                            }
+                            
+                            Button {
+                                presentedSheet = .enableExtension
+                            } label: {
+                                Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
+                            }
+                            
+                            Button {
+                                presentedSheet = .about
+                            } label: {
+                                Label("filterList_menu_about"~, systemImage: "info.circle")
+                            }
                         } label: {
-                            Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
+                            Image(systemName: "ellipsis.circle")
                         }
-                        
-                        Button {
-                            presentedSheet = .about
-                        } label: {
-                            Label("filterList_menu_about"~, systemImage: "info.circle")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
                     }
                 }
-            }
-            .navigationTitle("filterList_filters"~)
-            .sheet(item: $presentedSheet) { } content: { presentedSheet in
-                switch (presentedSheet) {
-                case .addFilter:
-                    AddFilterView()
-                case .about:
-                    AboutView()
-                case .enableExtension:
-                    EnableExtensionView(isFromMenu: true)
-                case .addLanguageFilter:
-                    LanguageListView()
+                .navigationTitle("filterList_filters"~)
+                .sheet(item: $presentedSheet) { } content: { presentedSheet in
+                    switch (presentedSheet) {
+                    case .addFilter:
+                        AddFilterView()
+                    case .about:
+                        AboutView()
+                    case .enableExtension:
+                        HelpView(questions: PersistenceController.frequentlyAskedQuestions)
+                    case .addLanguageFilter:
+                        LanguageListView()
+                    }
                 }
-            }
-            .fullScreenCover(isPresented: $isPresentingFullScreenWelcome, onDismiss: { }, content: {
-                EnableExtensionView(isFromMenu: false)
-            })
-            .background(Color.listBackgroundColor(for: colorScheme))
-            .onAppear() {
-                if !isPreview && UserDefaults.isAppFirstRun {
-                    self.isPresentingFullScreenWelcome = true
+                .fullScreenCover(isPresented: $isPresentingFullScreenWelcome, onDismiss: { }, content: {
+                    EnableExtensionView(isFromMenu: false)
+                })
+                .background(Color.listBackgroundColor(for: colorScheme))
+                .onAppear() {
+                    if !isPreview && UserDefaults.isAppFirstRun {
+                        self.isPresentingFullScreenWelcome = true
+                    }
                 }
-            }
+                
+                FooterView()
+                    .onTapGesture {
+                        self.presentedSheet = .about
+                    }
+            } // ZStack
         } // NavigationView
-    }
-    
-    private func FooterView() -> some View {
-        Text("Simply Filter SMS v\(Text(appVersion))\n\(Text("general_copyright"~))")
-            .frame(maxWidth: .infinity, alignment: .center)
-            .font(.footnote)
-            .foregroundColor(.secondary)
-            .multilineTextAlignment(.center)
-            .onTapGesture {
-                self.presentedSheet = .about
-            }
-    }
-    
-    private func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
-        withAnimation {
-            offsets.map({ filters[$0] }).forEach({ viewContext.delete($0) })
-            
-            do {
-                try viewContext.save()
-            } catch {
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-    
-    private func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
-        filter.denyFolderType = denyFolder
-        
-        do {
-            try viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

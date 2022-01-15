@@ -35,3 +35,12 @@ extension Color {
         }
     }
 }
+
+extension AnyTransition {
+    static var opacitySlowInFastOut: AnyTransition {
+        .asymmetric(
+            insertion: .opacity.animation(.easeIn(duration: 0.35)),
+            removal: .opacity.animation(.easeOut(duration: 0.15)).combined(with: .scale)
+        )
+    }
+}
