@@ -274,6 +274,7 @@ struct FilterListView: View {
             Spacer()
         }
         .padding(.top, 1)
+        .padding(.bottom, 40)
     }
 }
 

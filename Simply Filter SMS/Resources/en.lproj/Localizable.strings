@@ -75,7 +75,7 @@
 "faq_question_0" = "How do I activate message filtering on iOS?";
 "faq_answer_0" = "Tap to open the onboarding screen.";
 "faq_question_1" = "How does message filtering work?";
-"faq_answer_1" = "When you recive a text message from a number that is not in your contact list, Simply Filter SMS will filter the it based on the following rules:\n\n• If a text message contains any words from the Allow list it will be delivered regularly.\n• If not, the message will be scanned for any denied words and in case any were found it will be delivered to the Junk folder.\n• If the text doesn't contain any denied words, it will be delivered regularly.\n";
+"faq_answer_1" = "When you recive a text message from a number that is not in your contact list, Simply Filter SMS will filter it based on the following rules:\n\n• If a text message contains any words from the Allow list it will be delivered regularly.\n• If not, the message will be scanned for any denied words and in case any were found it will be delivered to the Junk folder.\n• If the text doesn't contain any denied words, it will be delivered regularly.\n";
 "faq_question_2" = "Are my messages exposed to the app developer?";
 "faq_answer_2" = "No. Simply Filter SMS does not collect any information whatsoever, all message processing is done locally on your device without any logging.";
 "faq_question_3" = "What about iMessages and messages from my contats?";

@@ -88,6 +88,8 @@ struct HelpView: View {
                                     QuestionView(question: question)
                                 }
                             }
+                            Spacer()
+                                .padding(.bottom, 50)
                         } // VStack
                     } // ScrollView
                     .padding(.horizontal, 16)
