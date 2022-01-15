@@ -81,20 +81,14 @@ struct AddFilterView: View {
                                 .italic()
                                 .bold()
                             
-                            Picker(selection: $selectedDenyFolderType, label: Text("")) {
+                            Picker(selection: $selectedDenyFolderType, label: Text("addFilter_folder_caption"~)) {
                                 ForEach(DenyFolderType.allCases, id: \.rawValue) { folder in
-                                    HStack {
-                                        Image(systemName: folder.iconName)
-                                        Text(folder.name)
-                                            .font(.body)
-                                    }
-                                    .tag(folder)
+                                    Text(folder.name)
+                                        .font(.body)
+                                        .tag(folder)
                                 }
                             }
-                            .pickerStyle(.menu)
-                            .frame(width: geometry.size.width-32, height: 32, alignment: .center)
-                            .background(Color.secondary.opacity(0.15))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .pickerStyle(.segmented)
                         }
                         
                         Spacer()
