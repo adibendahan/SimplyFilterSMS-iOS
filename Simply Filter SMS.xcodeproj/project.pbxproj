@@ -202,13 +202,13 @@
 			isa = PBXGroup;
 			children = (
 				690F054D278200B60036553B /* ButtonStyles.swift */,
+				69FF9C8727933CE9007FA2DB /* FooterView.swift */,
 				69CD70CB2770D4D100F91A2F /* FilterListView.swift */,
 				699F557F2778BB3100AD7C64 /* AddFilterView.swift */,
 				6941FE19277E19CC00B99539 /* AboutView.swift */,
 				6941FE1B277FDBE700B99539 /* MailView.swift */,
 				695D5BC0278DE4B50037C926 /* LanguageListView.swift */,
-				69FF9C8727933CE9007FA2DB /* FooterView.swift */,
-				69FF9C8427921D59007FA2DB /* Help View */,
+				69FF9C8427921D59007FA2DB /* Help Views */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -223,14 +223,14 @@
 			path = "Shared with Extension";
 			sourceTree = "<group>";
 		};
-		69FF9C8427921D59007FA2DB /* Help View */ = {
+		69FF9C8427921D59007FA2DB /* Help Views */ = {
 			isa = PBXGroup;
 			children = (
 				69FF9C8527921DCC007FA2DB /* QuestionView.swift */,
 				69E6F5642790E98400AD6BFA /* HelpView.swift */,
 				6941FE17277DF88200B99539 /* EnableExtensionView.swift */,
 			);
-			path = "Help View";
+			path = "Help Views";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -9,6 +9,12 @@ import SwiftUI
 import CoreData
 import NaturalLanguage
 
+enum FilterListSheetView: Int, Identifiable {
+    var id: Self { self }
+    
+    case addFilter=0, enableExtension, about, addLanguageFilter
+}
+
 struct FilterListView: View {
     
     @Environment(\.isPreview)
@@ -26,7 +32,7 @@ struct FilterListView: View {
     @FetchRequest(fetchRequest: PersistenceController.getFiltersFetchRequest)
     private var filters: FetchedResults<Filter>
     
-    @State private var presentedSheet: SheetView? = nil
+    @State private var presentedSheet: FilterListSheetView? = nil
     @State private var isPresentingFullScreenWelcome = false
     
     var body: some View {
@@ -50,6 +56,10 @@ struct FilterListView: View {
                                     }
                                 } header: {
                                     Text("filterList_allowed"~)
+                                } footer: {
+                                    if denyList.count == 0 && denyLanguageList.count == 0 {
+                                        AddFilterButton()
+                                    }
                                 }
                             }
                             
@@ -105,6 +115,10 @@ struct FilterListView: View {
                                         
                                         Text("Folder")
                                     }
+                                } footer: {
+                                    if denyList.count == 0 {
+                                        AddFilterButton()
+                                    }
                                 }
                             }
                             
@@ -153,6 +167,8 @@ struct FilterListView: View {
                                         
                                         Text("Folder")
                                     }
+                                } footer: {
+                                    AddFilterButton()
                                 } // Section
                             }
                         }
@@ -161,20 +177,7 @@ struct FilterListView: View {
                     else {
                         Spacer()
                         
-                        Button {
-                            presentedSheet = .addFilter
-                        } label: {
-                            Spacer()
-                            
-                            Image(systemName: "plus.message")
-                                .imageScale(.large)
-                                .font(.system(size: 34, weight: .bold))
-                            
-                            Text("filterList_addFilters"~)
-                                .font(.body)
-                            
-                            Spacer()
-                        }
+                        AddFilterButton()
                         
                         Spacer()
                     }
@@ -254,6 +257,24 @@ struct FilterListView: View {
         } // NavigationView
         .navigationViewStyle(StackNavigationViewStyle())
     }
+    
+    private func AddFilterButton() -> some View {
+        Button {
+            presentedSheet = .addFilter
+        } label: {
+            Spacer()
+            
+            Image(systemName: "plus.message")
+                .imageScale(.large)
+                .font(.system(size: 20, weight: .bold))
+            
+            Text("filterList_addFilters"~)
+                .font(.body)
+            
+            Spacer()
+        }
+        .padding(.top, 1)
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -261,11 +282,4 @@ struct ContentView_Previews: PreviewProvider {
         let context = PersistenceController.preview.container.viewContext
         return FilterListView().environment(\.managedObjectContext, context)
     }
-}
-
-
-enum SheetView: Int, Identifiable {
-    var id: Self { self }
-    
-    case addFilter=0, enableExtension, about, addLanguageFilter
 }
