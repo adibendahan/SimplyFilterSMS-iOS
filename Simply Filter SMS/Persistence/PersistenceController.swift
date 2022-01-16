@@ -92,6 +92,17 @@ struct PersistenceController {
         }
     }
     
+    func deleteFilters(_ filters: Set<Filter>) {
+        filters.forEach({ self.container.viewContext.delete($0) })
+        
+        do {
+            try self.container.viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
+    
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
         filter.denyFolderType = denyFolder
         
@@ -109,10 +120,12 @@ struct PersistenceController {
             let folder: DenyFolderType
         }
         
-        let _ = [AllowEntry(text: "נתניהו", folder: .promotion),
-                 AllowEntry(text: "הלוואה", folder: .transaction),
+        let _ = [AllowEntry(text: "נתניהו", folder: .junk),
+                 AllowEntry(text: "הלוואה", folder: .junk),
                  AllowEntry(text: "הימור", folder: .junk),
-                 AllowEntry(text: "גנץ", folder: .promotion)].map { entry -> Filter in
+                 AllowEntry(text: "גנץ", folder: .junk),
+                 AllowEntry(text: "Weed", folder: .junk),
+                 AllowEntry(text: "Bet", folder: .junk)].map { entry -> Filter in
             let newFilter = Filter(context: self.container.viewContext)
             newFilter.uuid = UUID()
             newFilter.filterType = .deny

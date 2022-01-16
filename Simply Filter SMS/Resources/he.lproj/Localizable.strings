@@ -29,7 +29,7 @@
 "filterList_menu_about" = "אודות";
 "filterList_menu_debug" = "טעינת נתוני דיבאג";
 "filterList_deniedLanguage" = "שפה חסומה";
-
+"filterList_deleteFiltersCount" = "מחיקה (%ld)";
 
 //MARK: Add Filter View
 "addFilter_add" = "הוספה";

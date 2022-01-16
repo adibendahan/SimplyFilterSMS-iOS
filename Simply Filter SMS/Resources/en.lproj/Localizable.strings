@@ -29,6 +29,7 @@
 "filterList_menu_about" = "About";
 "filterList_menu_debug" = "Load debug data";
 "filterList_deniedLanguage" = "Blocked Language";
+"filterList_deleteFiltersCount" = "Delete (%ld)";
 
 
 //MARK: Add Filter View
