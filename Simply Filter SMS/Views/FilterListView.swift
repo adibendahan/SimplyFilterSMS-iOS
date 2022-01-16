@@ -244,6 +244,7 @@ struct FilterListView: View {
                            withAnimation {
                                PersistenceController.shared.deleteFilters(selectedFilters)
                                self.editMode = .inactive
+                               self.selectedFilters = Set()
                            }
                        },
                        label: {
