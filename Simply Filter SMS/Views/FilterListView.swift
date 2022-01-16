@@ -36,16 +36,64 @@ struct FilterListView: View {
     @State private var isPresentingFullScreenWelcome = false
     @State private var selectedFilters: Set<Filter> = Set()
     @State var editMode: EditMode = .inactive
-    
+
     var body: some View {
         NavigationView {
             ZStack (alignment: .bottom) {
-                let denyList = filters.filter({ $0.filterType == .deny })
-                let allowList = filters.filter({ $0.filterType == .allow })
-                let denyLanguageList = filters.filter({ $0.filterType == .denyLanguage })
+                let sortedFilters: Dictionary<FilterType, Array<Filter>> = [.deny : filters.filter({ $0.filterType == .deny }),
+                                                                            .allow : filters.filter({ $0.filterType == .allow }),
+                                                                            .denyLanguage : filters.filter({ $0.filterType == .denyLanguage })]
                 
                 List (selection: $selectedFilters) {
-                    if filters.count == 0 {
+                    
+                    if filters.count > 0 {
+                        ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
+
+                            if let sectionFilters = sortedFilters[filterType], sectionFilters.count > 0 {
+                                Section {
+                                    ForEach(sectionFilters, id: \.self) { filter in
+                                        self.makeRow(for: filter)
+                                            .environment(\.editMode, self.$editMode)
+                                    }
+                                    .onDelete {
+                                        PersistenceController.shared.deleteFilters(withOffsets: $0, in: sectionFilters)
+                                    }
+                                } header: {
+                                    HStack {
+                                        Text(filterType.name)
+                                        
+                                        if filterType.supportsFolders {
+                                            Spacer()
+                                            
+                                            Text("filterList_folder"~)
+                                        }
+                                    }
+                                } footer: {
+                                    switch filterType {
+                                    case .deny:
+                                        AddFilterButton()
+                                        
+                                    case .denyLanguage:
+                                        if (sortedFilters[.deny] ?? []).count == 0 {
+                                            AddFilterButton()
+                                        }
+                                        else {
+                                            EmptyView()
+                                        }
+                                        
+                                    case .allow:
+                                        if (sortedFilters[.deny] ?? []).count == 0 && (sortedFilters[.denyLanguage] ?? []).count == 0 {
+                                            AddFilterButton()
+                                        }
+                                        else {
+                                            EmptyView()
+                                        }
+                                    }
+                                }
+                            }
+                        } // ForEach
+                    }
+                    else { // When filters list is empty:
                         Section {
                             
                         } footer: {
@@ -53,134 +101,8 @@ struct FilterListView: View {
                                 .padding(.top, 120)
                         }
                     }
-                    
-                    if allowList.count > 0 {
-                        Section{
-                            ForEach(allowList, id: \.self) { filter in
-                                Text(filter.text ?? "general_null"~)
-                            }
-                            .onDelete {
-                                PersistenceController.shared.deleteFilters(withOffsets: $0, in: allowList)
-                            }
-                        } header: {
-                            Text("filterList_allowed"~)
-                        } footer: {
-                            if denyList.count == 0 && denyLanguageList.count == 0 {
-                                AddFilterButton()
-                            }
-                        }
-                    }
-                    
-                    if denyLanguageList.count > 0 {
-                        Section {
-                            ForEach(denyLanguageList, id: \.self) { filter in
-                                if let filterText = filter.text,
-                                   let blockedLanguage = NLLanguage(filterText: filterText),
-                                   blockedLanguage != .undetermined,
-                                   let localizedName = Locale.current.localizedString(forIdentifier: blockedLanguage.rawValue) {
-                                    
-                                    HStack (alignment: .center , spacing: 0) {
-                                        Text(localizedName)
-                                        
-                                        Spacer()
-                                        
-                                        Menu {
-                                            ForEach(DenyFolderType.allCases) { folder in
-                                                Button {
-                                                    PersistenceController.shared.updateFilter(filter, denyFolder: folder)
-                                                } label: {
-                                                    Label {
-                                                        Text(folder.name)
-                                                    } icon: {
-                                                        Image(systemName: folder.iconName)
-                                                    }
-                                                }
-                                            }
-                                        } label: {
-                                            HStack {
-                                                Image(systemName: filter.denyFolderType.iconName)
-                                                
-                                                Text(filter.denyFolderType.name)
-                                                    .font(.footnote)
-                                            }
-                                            .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-                                            .background(Color.secondary.opacity(0.1))
-                                            .foregroundColor(.red)
-                                            .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                                        }
-                                    }
-                                    .environment(\.editMode, self.$editMode)
-                                }
-                            }
-                            .onDelete {
-                                PersistenceController.shared.deleteFilters(withOffsets: $0, in: denyLanguageList)
-                            }
-                        } header: {
-                            HStack {
-                                Text("filterList_deniedLanguage"~)
-                                
-                                Spacer()
-                                
-                                Text("Folder")
-                            }
-                        } footer: {
-                            if denyList.count == 0 {
-                                AddFilterButton()
-                            }
-                        }
-                    }
-                    
-                    if denyList.count > 0 {
-                        Section {
-                            ForEach(denyList, id: \.self) { filter in
-                                HStack (alignment: .center , spacing: 0) {
-                                    Text(filter.text ?? "general_null"~)
-                                    
-                                    Spacer()
-                                    
-                                    Menu {
-                                        ForEach(DenyFolderType.allCases) { folder in
-                                            Button {
-                                                PersistenceController.shared.updateFilter(filter, denyFolder: folder)
-                                            } label: {
-                                                Label {
-                                                    Text(folder.name)
-                                                } icon: {
-                                                    Image(systemName: folder.iconName)
-                                                }
-                                            }
-                                        }
-                                    } label: {
-                                        HStack {
-                                            Image(systemName: filter.denyFolderType.iconName)
-                                            
-                                            Text(filter.denyFolderType.name)
-                                                .font(.footnote)
-                                        }
-                                        .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-                                        .background(Color.secondary.opacity(0.1))
-                                        .foregroundColor(.red)
-                                        .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                                    }
-                                } // HStack
-                                .environment(\.editMode, self.$editMode)
-                            } // ForEach
-                            .onDelete {
-                                PersistenceController.shared.deleteFilters(withOffsets: $0, in: denyList)
-                            }
-                        } header: {
-                            HStack {
-                                Text("filterList_denied"~)
-                                
-                                Spacer()
-                                
-                                Text("Folder")
-                            }
-                        } footer: {
-                            AddFilterButton()
-                        } // Section
-                    }
-                }
+
+                } // List
                 .listStyle(InsetGroupedListStyle())
                 .navigationBarItems(leading: EditButton())
                 .navigationBarItems(trailing: NavigationBarItemTrailing())
@@ -217,23 +139,55 @@ struct FilterListView: View {
         .navigationViewStyle(StackNavigationViewStyle())
     }
     
-    private func AddFilterButton() -> some View {
-        Button {
-            presentedSheet = .addFilter
-        } label: {
-            Spacer()
-            
-            Image(systemName: "plus.message")
-                .imageScale(.large)
-                .font(.system(size: 20, weight: .bold))
-            
-            Text("filterList_addFilters"~)
-                .font(.body)
-            
-            Spacer()
+    @ViewBuilder
+    private func makeRow(for filter: Filter) -> some View {
+        
+        if filter.filterType.supportsFolders {
+            HStack (alignment: .center , spacing: 0) {
+                
+                if filter.filterType == .denyLanguage,
+                   let filterText = filter.text,
+                   let blockedLanguage = NLLanguage(filterText: filterText),
+                   blockedLanguage != .undetermined,
+                   let localizedName = Locale.current.localizedString(forIdentifier: blockedLanguage.rawValue) {
+                    
+                    Text(localizedName)
+                }
+                else {
+                    Text(filter.text ?? "general_null"~)
+                }
+
+                Spacer()
+                
+                Menu {
+                    ForEach(DenyFolderType.allCases) { folder in
+                        Button {
+                            PersistenceController.shared.updateFilter(filter, denyFolder: folder)
+                        } label: {
+                            Label {
+                                Text(folder.name)
+                            } icon: {
+                                Image(systemName: folder.iconName)
+                            }
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: filter.denyFolderType.iconName)
+                        
+                        Text(filter.denyFolderType.name)
+                            .font(.footnote)
+                    }
+                    .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+                    .background(Color.secondary.opacity(0.1))
+                    .foregroundColor(.red)
+                    .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                }
+            } // HStack
         }
-        .padding(.top, 1)
-        .padding(.bottom, 40)
+        else {
+            Text(filter.text ?? "general_null"~)
+        }
     }
     
     @ViewBuilder
@@ -255,6 +209,25 @@ struct FilterListView: View {
         else {
             MenuView()
         }
+    }
+    
+    private func AddFilterButton() -> some View {
+        Button {
+            presentedSheet = .addFilter
+        } label: {
+            Spacer()
+            
+            Image(systemName: "plus.message")
+                .imageScale(.large)
+                .font(.system(size: 20, weight: .bold))
+            
+            Text("filterList_addFilters"~)
+                .font(.body)
+            
+            Spacer()
+        }
+        .padding(.top, 1)
+        .padding(.bottom, 40)
     }
     
     private func MenuView() -> some View {

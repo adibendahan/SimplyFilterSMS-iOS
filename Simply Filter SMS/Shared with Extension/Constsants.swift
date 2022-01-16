@@ -23,16 +23,47 @@ let kSupportEmail = "grizz.apps.dev@gmail.com"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 
 //MARK: Enums
-@objc enum FilterType: Int64 {
+@objc enum FilterType: Int64, CaseIterable, Identifiable {
+    var id: Int64 { return self.rawValue }
+    
     case deny=0, allow, denyLanguage
+    
+    var sortIndex: Int {
+        switch self {
+        case .deny:
+            return 2
+        case .allow:
+            return 0
+        case .denyLanguage:
+            return 1
+        }
+    }
+    
+    var name: String {
+        switch self {
+        case .deny:
+            return "filterList_denied"~
+        case .allow:
+            return "filterList_allowed"~
+        case .denyLanguage:
+            return "filterList_deniedLanguage"~
+        }
+    }
+    
+    var supportsFolders: Bool {
+        switch self {
+        case .allow:
+            return false
+        default:
+            return true
+        }
+    }
 }
 
 @objc enum DenyFolderType: Int64, CaseIterable, Identifiable {
-    case junk=0, transaction, promotion
+    var id: Int64 { return self.rawValue }
     
-    var id: Int64 {
-        return self.rawValue
-    }
+    case junk=0, transaction, promotion
     
     var iconName: String {
         switch self {

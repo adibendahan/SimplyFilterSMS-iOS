@@ -30,6 +30,7 @@
 "filterList_menu_debug" = "טעינת נתוני דיבאג";
 "filterList_deniedLanguage" = "שפה חסומה";
 "filterList_deleteFiltersCount" = "מחיקה (%ld)";
+"filterList_folder" = "תיקייה";
 
 //MARK: Add Filter View
 "addFilter_add" = "הוספה";
