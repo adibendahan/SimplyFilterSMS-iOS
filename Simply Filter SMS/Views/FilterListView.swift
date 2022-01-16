@@ -35,7 +35,7 @@ struct FilterListView: View {
     @State private var presentedSheet: FilterListSheetView? = nil
     @State private var isPresentingFullScreenWelcome = false
     @State private var selectedFilters: Set<Filter> = Set()
-    @State var editMode: EditMode = .inactive
+    @State private var editMode: EditMode = .inactive
 
     var body: some View {
         NavigationView {
@@ -48,7 +48,7 @@ struct FilterListView: View {
                     
                     if filters.count > 0 {
                         ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
-
+                            
                             if let sectionFilters = sortedFilters[filterType], sectionFilters.count > 0 {
                                 Section {
                                     ForEach(sectionFilters, id: \.self) { filter in
@@ -101,7 +101,7 @@ struct FilterListView: View {
                                 .padding(.top, 120)
                         }
                     }
-
+                    
                 } // List
                 .listStyle(InsetGroupedListStyle())
                 .navigationBarItems(leading: EditButton())
@@ -156,7 +156,7 @@ struct FilterListView: View {
                 else {
                     Text(filter.text ?? "general_null"~)
                 }
-
+                
                 Spacer()
                 
                 Menu {
@@ -193,21 +193,24 @@ struct FilterListView: View {
     @ViewBuilder
     private func NavigationBarItemTrailing() -> some View {
         if editMode.isEditing {
-                Button(role: .destructive,
-                       action: {
-                           withAnimation {
-                               PersistenceController.shared.deleteFilters(selectedFilters)
-                               self.editMode = .inactive
-                               self.selectedFilters = Set()
-                           }
-                       },
-                       label: {
-                           Text(String(format: "filterList_deleteFiltersCount"~, selectedFilters.count))
-                               .foregroundColor(.red)
-                       })
+            Button(
+                role: .destructive,
+                action: {
+                    withAnimation {
+                        PersistenceController.shared.deleteFilters(selectedFilters)
+                        self.selectedFilters = Set()
+                    }
+                },
+                label: {
+                    Text(String(format: "filterList_deleteFiltersCount"~, selectedFilters.count))
+                        .foregroundColor(.red)
+            })
         }
         else {
             MenuView()
+                .onAppear {
+                    self.selectedFilters = Set()
+                }
         }
     }
     
