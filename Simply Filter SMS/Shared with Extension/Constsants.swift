@@ -21,6 +21,7 @@ let kDatabaseFilename = "CoreData.sqlite"
 let kAppGroupContainer = "group.com.grizz.apps.dev.simply-filter-sms"
 let kSupportEmail = "grizz.apps.dev@gmail.com"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
+let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
 
 //MARK: Enums
 @objc enum FilterType: Int64, CaseIterable, Identifiable {

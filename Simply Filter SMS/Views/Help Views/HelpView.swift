@@ -101,9 +101,9 @@ struct HelpView: View {
                                 dismiss()
                             } label: {
                                 Image(systemName: "xmark")
-                                    .font(.system(size: 16, weight: .bold, design: .default))
                                     .foregroundColor(.secondary)
                             }
+                            .contentShape(Rectangle())
                         }
                     }
                     

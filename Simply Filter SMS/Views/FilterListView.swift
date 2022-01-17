@@ -192,7 +192,7 @@ struct FilterListView: View {
     
     @ViewBuilder
     private func NavigationBarItemTrailing() -> some View {
-        if editMode.isEditing {
+        if editMode.isEditing && selectedFilters.count > 0 {
             Button(
                 role: .destructive,
                 action: {
@@ -224,7 +224,7 @@ struct FilterListView: View {
                 .imageScale(.large)
                 .font(.system(size: 20, weight: .bold))
             
-            Text("filterList_addFilters"~)
+            Text("addFilter_addFilter"~)
                 .font(.body)
             
             Spacer()
@@ -246,7 +246,7 @@ struct FilterListView: View {
             Button {
                 presentedSheet = .addFilter
             } label: {
-                Label("addFilter_addFilter"~, systemImage: "plus.circle")
+                Label("addFilter_addFilter"~, systemImage: "plus.message")
             }
             
             Button {

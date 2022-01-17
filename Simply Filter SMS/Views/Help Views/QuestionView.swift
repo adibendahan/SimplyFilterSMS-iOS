@@ -66,11 +66,13 @@ struct QuestionView: View {
                 }
             }
         } // VStack
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
 struct QuestionView_Previews: PreviewProvider {
     static var previews: some View {
         QuestionView(question: Question(text: "Question text?", answer: "Short answer."))
+            .padding()
     }
 }

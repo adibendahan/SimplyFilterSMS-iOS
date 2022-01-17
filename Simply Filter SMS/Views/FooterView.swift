@@ -14,13 +14,14 @@ struct FooterView: View {
                 .frame(height: 1, alignment: .bottom)
                 .foregroundColor(.primary.opacity(0.05))
                 .padding(.bottom, 8)
-            Text("Simply Filter SMS v\(Text(appVersion))\n\(Text("general_copyright"~))")
+            Text("Simply Filter SMS v\(Text(appVersion))\n\(Text(String(format: "general_copyright"~, Calendar.current.component(.year, from: Date()))))")
                 .frame(maxWidth: .infinity, alignment: .center)
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
         }
         .background(.ultraThinMaterial)
+        .frame(maxHeight: .infinity, alignment: .bottom)
     }
 }
 

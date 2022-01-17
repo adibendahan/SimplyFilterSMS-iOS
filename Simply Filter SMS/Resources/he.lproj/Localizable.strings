@@ -11,7 +11,7 @@
 "general_allow" = "אפשר";
 "general_deny" = "חסום";
 "general_null" = "(ריק)";
-"general_copyright" = "© 2022 עדי בן-דהן, כל הזכויות שמורות.";
+"general_copyright" = "© %ld עדי בן-דהן, כל הזכויות שמורות.";
 "general_close" = "סגירה";
 
 //MARK: Languages
@@ -23,7 +23,6 @@
 "filterList_filters" = "פילטרים";
 "filterList_allowed" = "טקסט מאופשר";
 "filterList_denied" = "טקסט חסום";
-"filterList_addFilters" = "הוספת פילטרים";
 "filterList_menu_filterLanguage" = "חסימת שפה";
 "filterList_menu_enableExtension" = "עזרה";
 "filterList_menu_about" = "אודות";

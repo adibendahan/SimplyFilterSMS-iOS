@@ -21,71 +21,70 @@ struct LanguageListView: View {
     var dismiss
     
     var body: some View {
-        GeometryReader { geometry in
-            NavigationView {
-                VStack(alignment: .leading) {
-                    Spacer()
-                    let remainingSupportedLanguages = NLLanguage.allSupportedCases
-                        .filter({ !PersistenceController.shared.isDuplicateFilter(text: $0.filterText, type: .denyLanguage) })
-                        .sorted(by: { $0.filterText < $1.filterText })
-                    
-                    if remainingSupportedLanguages.count > 0 {
-                        List {
-                            Section {
-                                ForEach (remainingSupportedLanguages) { supportedLanguage in
-                                    if let localizedName = Locale.current.localizedString(forIdentifier: supportedLanguage.rawValue) {
-                                        Button {
-                                            PersistenceController.shared.addFilter(text: supportedLanguage.filterText, type: .denyLanguage)
-                                            dismiss()
-                                        } label: {
-                                            Text(localizedName)
-                                                .foregroundColor(.primary)
-                                        }
+        NavigationView {
+            VStack(alignment: .leading) {
+                Spacer()
+                
+                let remainingSupportedLanguages = NLLanguage.allSupportedCases
+                    .filter({ !PersistenceController.shared.isDuplicateFilter(text: $0.filterText, type: .denyLanguage) })
+                    .sorted(by: { $0.filterText < $1.filterText })
+                
+                if remainingSupportedLanguages.count > 0 {
+                    List {
+                        Section {
+                            ForEach (remainingSupportedLanguages) { supportedLanguage in
+                                if let localizedName = Locale.current.localizedString(forIdentifier: supportedLanguage.rawValue) {
+                                    Button {
+                                        PersistenceController.shared.addFilter(text: supportedLanguage.filterText, type: .denyLanguage)
+                                        dismiss()
+                                    } label: {
+                                        Text(localizedName)
+                                            .foregroundColor(.primary)
                                     }
                                 }
-                            } header: {
-                                Text("Supported languages")
-                            } footer: {
-                                Text(.init("lang_how"~)) // Dev notes: Markdown text requires the .init workaround
-                            } // Section
-                        } // List
-                        .listStyle(InsetGroupedListStyle())
-                    }
-                    else {
-                        VStack (alignment: .leading) {
-                            Text("lang_allBlocked"~)
-                            
-                            Spacer(minLength: 24)
-                            
-                            Button {
-                                dismiss()
-                            } label: {
-                                Text("general_close"~)
-                                    .frame(maxWidth: .infinity)
                             }
-                            .buttonStyle(FilledButton())
-                            .contentShape(Rectangle())
-                            
-                            Spacer().padding()
-                        }
-                        .frame(width: geometry.size.width-32, alignment: .center)
-                    }
-                } // VStack
-                .navigationTitle("filterList_menu_filterLanguage"~)
-                .background(Color.listBackgroundColor(for: colorScheme))
-                .toolbar {
-                    ToolbarItem {
+                        } header: {
+                            Text("Supported languages")
+                        } footer: {
+                            Text(.init("lang_how"~)) // Dev notes: Markdown text requires the .init workaround
+                        } // Section
+                    } // List
+                    .listStyle(InsetGroupedListStyle())
+                }
+                else {
+                    VStack (alignment: .leading) {
+                        Text("lang_allBlocked"~)
+                        
+                        Spacer(minLength: 24)
+                        
                         Button {
                             dismiss()
                         } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 16, weight: .bold, design: .default))
-                                .foregroundColor(.secondary)
+                            Text("general_close"~)
+                                .frame(maxWidth: .infinity)
                         }
+                        .buttonStyle(FilledButton())
+                        .contentShape(Rectangle())
+                        
+                        Spacer().padding()
                     }
+                    .padding()
                 }
-            } // NavigationView
-        } // GeometryReader
+            } // VStack
+            .navigationTitle("filterList_menu_filterLanguage"~)
+            .background(Color.listBackgroundColor(for: colorScheme))
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.secondary)
+                    }
+                    .contentShape(Rectangle())
+                }
+            }
+        } // NavigationView
     }
 }
 

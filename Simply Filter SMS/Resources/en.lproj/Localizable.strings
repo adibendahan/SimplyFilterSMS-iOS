@@ -11,7 +11,7 @@
 "general_allow" = "Allow";
 "general_deny" = "Deny";
 "general_null" = "(null)";
-"general_copyright" = "© 2022 Adi Ben-Dahan. All rights reserved.";
+"general_copyright" = "© %ld Adi Ben-Dahan. All rights reserved.";
 "general_close" = "Close";
 
 //MARK: Languages
@@ -23,7 +23,6 @@
 "filterList_filters" = "Filters";
 "filterList_allowed" = "Allowed text";
 "filterList_denied" = "Blocked text";
-"filterList_addFilters" = "Add filters";
 "filterList_menu_filterLanguage" = "Block a language";
 "filterList_menu_enableExtension" = "Help";
 "filterList_menu_about" = "About";
