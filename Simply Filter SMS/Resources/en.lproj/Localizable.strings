@@ -69,6 +69,7 @@
 "aboutView_twitter" = "Twitter";
 "aboutView_github" = "GitHub";
 "aboutView_sendMail" = "Email";
+"aboutView_appIconCredit" = "\n\n🙏🏼 Special thanks to the icon designer: [Vitali Levit](https://instagram.com/eighteeneleven_by_rkl).";
 
 
 //MARK: Help View

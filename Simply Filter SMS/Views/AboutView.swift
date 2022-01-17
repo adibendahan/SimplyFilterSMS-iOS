@@ -45,7 +45,7 @@ struct AboutView: View {
                         
                         VStack(alignment: .trailing) {
                             Text("Simply Filter SMS")
-                                .font(.system(size: 32, weight: .bold, design: .default))
+                                .font(.system(size: 26, weight: .bold, design: .default))
                             
                             Text("v\(Text(appVersion)) (\(Text(appBuild)))")
                                 .font(.footnote)
@@ -56,7 +56,7 @@ struct AboutView: View {
                     
                     List {
                         Section {
-                            Text("aboutView_aboutText"~)
+                            Text("\("aboutView_aboutText"~)\(Text(.init("aboutView_appIconCredit"~)))")
                                 .font(.subheadline)
                         } header: {
                             Text("aboutView_aboutSection"~)
@@ -117,6 +117,7 @@ struct AboutView: View {
                         }
                     }
                     .listStyle(.grouped)
+                    .padding(.bottom, 40)
                 } // VStack
                 
                 FooterView()

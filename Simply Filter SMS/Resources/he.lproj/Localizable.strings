@@ -68,7 +68,7 @@
 "aboutView_twitter" = "Twitter";
 "aboutView_github" = "GitHub";
 "aboutView_sendMail" = "אימייל";
-
+"aboutView_appIconCredit" = "\n\n🙏🏼 תודה מיוחדת למעצב האייקון: [ויטאלי לויט](https://instagram.com/eighteeneleven_by_rkl).";
 
 //MARK: Help View
 "faq_subtitle" = "הנה רשימה של שאלות שכיחות, אם אתם לא מוצאים את התשובה לשאלתכם צרו קשר בעזרת";
