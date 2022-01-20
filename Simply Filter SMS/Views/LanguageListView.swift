@@ -44,7 +44,7 @@ struct LanguageListView: View {
                                 }
                             }
                         } header: {
-                            Text("Supported languages")
+                            Text("lang_supported"~)
                         } footer: {
                             Text(.init("lang_how"~)) // Dev notes: Markdown text requires the .init workaround
                         } // Section

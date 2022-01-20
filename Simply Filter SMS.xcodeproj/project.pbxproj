@@ -72,8 +72,6 @@
 		6941FE1B277FDBE700B99539 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 		695D5BC0278DE4B50037C926 /* LanguageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageListView.swift; sourceTree = "<group>"; };
 		695D5BC2278E01C00037C926 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		69657E4027847074008DCFB4 /* Privacy Policy.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Privacy Policy.md"; sourceTree = "<group>"; };
-		69657E412784C5DF008DCFB4 /* Support.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Support.md; sourceTree = "<group>"; };
 		6973D01C278B537300A173CD /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		6973D01E278B54AF00A173CD /* Simply-Filter-SMS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Simply-Filter-SMS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		6973D025278CE89800A173CD /* Simply_Filter_SMS 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Simply_Filter_SMS 2.xcdatamodel"; sourceTree = "<group>"; };
@@ -192,8 +190,6 @@
 				69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */,
 				69CD71082770D74300F91A2F /* Simply Filter SMS.entitlements */,
 				6941FE15277DE78B00B99539 /* Localizable.strings */,
-				69657E4027847074008DCFB4 /* Privacy Policy.md */,
-				69657E412784C5DF008DCFB4 /* Support.md */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
