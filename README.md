@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://github.com/adibendahan/SimplyFilterSMS-iOS"><img src="https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/main/Simply%20Filter%20SMS/Resources/Assets.xcassets/AppIcon.appiconset/1024.png" width="256" height="256"></a>
+  <a href="https://github.com/adibendahan/SimplyFilterSMS-iOS"><img src="Simply%20Filter%20SMS/Resources/Assets.xcassets/AppIcon.appiconset/1024.png" width="256" height="256"></a>
   <h1>Simply Filter SMS</h1>
   <p>
     <b>Simply filter text messages from unknown senders using keywords</b>
@@ -31,9 +31,9 @@ Requires iOS 15 or later.
 ## Screenshots
 
 <p float="left">
-<img width="250" src="https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/main/Simply%20Filter%20SMS/Resources/Screenshots/English/iPhone%2013%20Pro%20Max/Filters.png">
-<img width="250" src="https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/main/Simply%20Filter%20SMS/Resources/Screenshots/English/iPhone%2013%20Pro%20Max/Add%20filter.png">
-<img width="250" src="https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/main/Simply%20Filter%20SMS/Resources/Screenshots/English/iPhone%2013%20Pro%20Max/Block%20a%20language.png">
+<img width="250" src="Simply%20Filter%20SMS/Resources/Screenshots/English/iPhone%2013%20Pro%20Max/Filters.png">
+<img width="250" src="Simply%20Filter%20SMS/Resources/Screenshots/English/iPhone%2013%20Pro%20Max/Add%20filter.png">
+<img width="250" src="Simply%20Filter%20SMS/Resources/Screenshots/English/iPhone%2013%20Pro%20Max/Block%20a%20language.png">
 </p>
 
 ## Features
