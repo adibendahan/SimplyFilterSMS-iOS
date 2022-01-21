@@ -36,13 +36,15 @@ struct FilterListView: View {
     @State private var isPresentingFullScreenWelcome = false
     @State private var selectedFilters: Set<Filter> = Set()
     @State private var editMode: EditMode = .inactive
-
+    @State private var allowAutomaticFilter: Bool = UserDefaults.isAutomaticFilterOn
+    
     var body: some View {
         NavigationView {
             ZStack (alignment: .bottom) {
                 let sortedFilters: Dictionary<FilterType, Array<Filter>> = [.deny : filters.filter({ $0.filterType == .deny }),
                                                                             .allow : filters.filter({ $0.filterType == .allow }),
-                                                                            .denyLanguage : filters.filter({ $0.filterType == .denyLanguage })]
+                                                                            .denyLanguage : filters.filter({ $0.filterType == .denyLanguage }),
+                                                                            .automatic : filters.filter({ $0.filterType == .automatic })]
                 
                 List (selection: $selectedFilters) {
                     
@@ -62,7 +64,7 @@ struct FilterListView: View {
                                     HStack {
                                         Text(filterType.name)
                                         
-                                        if filterType.supportsFolders {
+                                        if filterType.supportsFolders == .folder {
                                             Spacer()
                                             
                                             Text("filterList_folder"~)
@@ -70,6 +72,9 @@ struct FilterListView: View {
                                     }
                                 } footer: {
                                     switch filterType {
+                                    case .automatic:
+                                        EmptyView()
+                                        
                                     case .deny:
                                         AddFilterButton()
                                         
@@ -142,7 +147,7 @@ struct FilterListView: View {
     @ViewBuilder
     private func makeRow(for filter: Filter) -> some View {
         
-        if filter.filterType.supportsFolders {
+        if filter.filterType.supportsFolders == .folder {
             HStack (alignment: .center , spacing: 0) {
                 
                 if filter.filterType == .denyLanguage,
@@ -184,6 +189,14 @@ struct FilterListView: View {
                     .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                 }
             } // HStack
+        }
+        else if filter.filterType.supportsFolders == .switcher {
+            NavigationLink(filter.text ?? "general_null"~, destination: EmptyView())
+//            Toggle(filter.text ?? "general_null"~, isOn: $allowAutomaticFilter)
+//                .onChange(of: allowAutomaticFilter) { newValue in
+//                    UserDefaults.isAutomaticFilterOn = newValue
+//                }
+            
         }
         else {
             Text(filter.text ?? "general_null"~)
