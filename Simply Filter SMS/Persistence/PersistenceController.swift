@@ -114,6 +114,24 @@ struct PersistenceController {
         }
     }
     
+    func languages(for type: LanguageListViewType) -> [NLLanguage] {
+        var supportedLanguages: [NLLanguage] = []
+        
+        switch type {
+        case .blockLanguage:
+            let remainingSupportedLanguages = NLLanguage.allSupportedCases
+                .filter({ !self.isDuplicateFilter(text: $0.filterText, type: .denyLanguage) })
+                .sorted(by: { $0.filterText < $1.filterText })
+            supportedLanguages.append(contentsOf: remainingSupportedLanguages)
+            
+        case .automaticBlocking:
+            supportedLanguages.append(.hebrew)
+            supportedLanguages.append(.english)
+        }
+
+        return supportedLanguages
+    }
+    
     func loadDebugData() {
         struct AllowEntry {
             let text: String

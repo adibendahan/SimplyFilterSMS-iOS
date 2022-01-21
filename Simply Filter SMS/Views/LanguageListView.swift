@@ -9,6 +9,42 @@ import SwiftUI
 import NaturalLanguage
 import CoreData
 
+enum LanguageListViewType {
+    case blockLanguage, automaticBlocking
+    
+    var name: String {
+        switch self {
+        case .blockLanguage:
+            return "filterList_menu_filterLanguage"~
+        case .automaticBlocking:
+            return "autoFilter_title"~
+        }
+    }
+    
+    var footer: String {
+        switch self {
+        case .blockLanguage:
+            return "lang_how"~
+        case .automaticBlocking:
+            return String(format: "autoFilter_lastUpdated"~, Date().description)
+        }
+    }
+}
+
+struct LanguageWithAutomaticState: Identifiable, Equatable {
+    var id: NLLanguage
+    var isOn: Bool {
+        didSet (newValue) {
+            UserDefaults.setLanguageAtumaticState(for: id, value: isOn)
+        }
+    }
+
+    init(language: NLLanguage) {
+        self.id = language
+        self.isOn = UserDefaults.languageAutomaticState(for: language)
+    }
+}
+
 struct LanguageListView: View {
     
     @Environment(\.colorScheme)
@@ -20,33 +56,40 @@ struct LanguageListView: View {
     @Environment(\.dismiss)
     var dismiss
     
+    @State var viewType: LanguageListViewType
+    @State var onLanguageSelected: (NLLanguage) -> ()
+    @State var languages: [LanguageWithAutomaticState]
+    
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
                 Spacer()
                 
-                let remainingSupportedLanguages = NLLanguage.allSupportedCases
-                    .filter({ !PersistenceController.shared.isDuplicateFilter(text: $0.filterText, type: .denyLanguage) })
-                    .sorted(by: { $0.filterText < $1.filterText })
-                
-                if remainingSupportedLanguages.count > 0 {
+                if languages.count > 0 {
                     List {
                         Section {
-                            ForEach (remainingSupportedLanguages) { supportedLanguage in
-                                if let localizedName = Locale.current.localizedString(forIdentifier: supportedLanguage.rawValue) {
-                                    Button {
-                                        PersistenceController.shared.addFilter(text: supportedLanguage.filterText, type: .denyLanguage)
-                                        dismiss()
-                                    } label: {
-                                        Text(localizedName)
-                                            .foregroundColor(.primary)
+                            ForEach (languages.indices) { index in
+                                let language = $languages[index].id
+                                if let localizedName = Locale.current.localizedString(forIdentifier: language.rawValue) {
+                                    switch viewType {
+                                    case .blockLanguage:
+                                        Button {
+                                            onLanguageSelected(language)
+                                            dismiss()
+                                        } label: {
+                                            Text(localizedName)
+                                                .foregroundColor(.primary)
+                                        }
+                                        
+                                    case .automaticBlocking:
+                                        Toggle(localizedName, isOn: $languages[index].isOn)
                                     }
                                 }
                             }
                         } header: {
                             Text("lang_supported"~)
                         } footer: {
-                            Text(.init("lang_how"~)) // Dev notes: Markdown text requires the .init workaround
+                            Text(.init(viewType.footer))
                         } // Section
                     } // List
                     .listStyle(InsetGroupedListStyle())
@@ -71,7 +114,7 @@ struct LanguageListView: View {
                     .padding()
                 }
             } // VStack
-            .navigationTitle("filterList_menu_filterLanguage"~)
+            .navigationTitle(viewType.name)
             .background(Color.listBackgroundColor(for: colorScheme))
             .toolbar {
                 ToolbarItem {
@@ -86,11 +129,28 @@ struct LanguageListView: View {
             }
         } // NavigationView
     }
+    
+    init(type: LanguageListViewType) {
+        let languages = PersistenceController.shared.languages(for: type)
+        _viewType = State(initialValue: type)
+        
+        let onLanguageSelected: (NLLanguage) -> () = { language in
+            switch type {
+            case .blockLanguage:
+                PersistenceController.shared.addFilter(text: language.filterText, type: .denyLanguage)
+            default:
+                break
+            }
+        }
+        _onLanguageSelected = State(initialValue: onLanguageSelected)
+        _languages = State(initialValue: languages.map({ LanguageWithAutomaticState(language: $0) }))
+    }
 }
 
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
         let context = PersistenceController.preview.container.viewContext
-        LanguageListView().environment(\.managedObjectContext, context)
+        LanguageListView(type: .automaticBlocking)
+            .environment(\.managedObjectContext, context)
     }
 }

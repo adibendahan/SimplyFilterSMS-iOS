@@ -88,3 +88,6 @@
 "faq_question_5" = "What's the difference between Junk/Transactions/Promotions folders?";
 "faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customable in any way. Only messages filtered to the Junk folder will be delivered silently.";
 
+//MARK: Automatic Filtering
+"autoFilter_title" = "Automatic filtering";
+"autoFilter_lastUpdated" = "***Last updated: %@.***";

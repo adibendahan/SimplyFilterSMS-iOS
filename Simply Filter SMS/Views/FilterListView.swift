@@ -116,7 +116,7 @@ struct FilterListView: View {
                     case .enableExtension:
                         HelpView(questions: PersistenceController.frequentlyAskedQuestions)
                     case .addLanguageFilter:
-                        LanguageListView()
+                        LanguageListView(type: .blockLanguage)
                     }
                 }
                 .fullScreenCover(isPresented: $isPresentingFullScreenWelcome, onDismiss: { }, content: {
