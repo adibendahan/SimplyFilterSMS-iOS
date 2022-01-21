@@ -240,6 +240,7 @@
 				69CD70C32770D4D100F91A2F /* Frameworks */,
 				69CD70C42770D4D100F91A2F /* Resources */,
 				69CD71072770D65D00F91A2F /* Embed App Extensions */,
+				69C7A42D279AF4790051B0DE /* Run BartyCrouch */,
 			);
 			buildRules = (
 			);
@@ -325,6 +326,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		69C7A42D279AF4790051B0DE /* Run BartyCrouch */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run BartyCrouch";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which /opt/homebrew/bin/bartycrouch > /dev/null; then\n  /opt/homebrew/bin/bartycrouch update -x\n  /opt/homebrew/bin/bartycrouch lint -x\nelse\n  echo \"warning: BartyCrouch not installed, download it from https://github.com/Flinesoft/BartyCrouch\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		69CD70C22770D4D100F91A2F /* Sources */ = {

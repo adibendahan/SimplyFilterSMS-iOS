@@ -1,0 +1,13 @@
+[update]
+tasks = ["normalize"]
+
+[update.normalize]
+paths = ["."]
+sourceLocale = "en"
+harmonizeWithSource = true
+sortByKeys = false
+
+[lint]
+paths = ["."]
+duplicateKeys = true
+emptyValues = true

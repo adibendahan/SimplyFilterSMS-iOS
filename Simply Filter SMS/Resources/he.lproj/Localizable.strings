@@ -1,88 +1,128 @@
-/* 
-  Localizable.strings
-  Simply Filter SMS
-
-  Created by Adi Ben-Dahan on 30/12/2021.
-  
-*/
-
-
-//MARK: General
 "general_allow" = "אפשר";
+
 "general_deny" = "חסום";
+
 "general_null" = "(ריק)";
+
 "general_copyright" = "© %ld עדי בן-דהן, כל הזכויות שמורות.";
+
 "general_close" = "סגירה";
 
-//MARK: Languages
 "lang_supported" = "שפות נתמכות";
+
 "lang_allBlocked" = "כל השפות הנתמכות כבר חסומות!";
+
 "lang_how" = "\nעיבוד וזיהוי השפה נעשה **לוקאלית** ע״י מנוע השפות של מערכת ההפעלה. הודעה תחסם רק אם **השפה הדומיננטית** של הטקסט נמצאת ברשימת השפות החסומות.";
 
-
-//MARK: Filter List View
 "filterList_filters" = "פילטרים";
+
 "filterList_allowed" = "טקסט מאופשר";
+
 "filterList_denied" = "טקסט חסום";
+
 "filterList_menu_filterLanguage" = "חסימת שפה";
+
 "filterList_menu_enableExtension" = "עזרה";
+
 "filterList_menu_about" = "אודות";
+
 "filterList_menu_debug" = "טעינת נתוני דיבאג";
+
 "filterList_deniedLanguage" = "שפה חסומה";
+
 "filterList_deleteFiltersCount" = "מחיקה (%ld)";
+
 "filterList_folder" = "תיקייה";
 
-//MARK: Add Filter View
 "addFilter_add" = "הוספה";
+
 "addFilter_addFilter" = "הוספת פילטר";
+
 "addFilter_text" = "הקלידו מילה";
+
 "addFilter_text_caption" = "סנן הודעות שמכילות (מינימום 3 תווים):";
+
 "addFilter_type" = "סוג פילטר";
+
 "addFilter_type_caption" = "בחרו פעולה";
+
 "addFilter_folder_caption" = "בחרו תיקיית יעד:";
+
 "addFilter_folder_junk" = "זבל";
+
 "addFilter_folder_transactions" = "פעולות";
+
 "addFilter_folder_promotions" = "פרסומי";
+
 "addFilter_duplicate" = "פילטר קיים";
 
-//MARK: Enable Extension View
 "enableExtension_step1" = "שלב 1";
+
 "enableExtension_step1_desc" = "פתחו את 'הגדרות' ולחצו על 'הודעות'";
+
 "enableExtension_step2" = "שלב 2";
+
 "enableExtension_step2_desc" = "לחצו על 'לא ידוע וספאם' תחת 'סינון הודעות'";
+
 "enableExtension_step3" = "שלב 3";
+
 "enableExtension_step3_desc" = "הפעילו את 'Simply Filter SMS' תחת 'סינון הודעות טקסט'";
+
 "enableExtension_welcome" = "ברוכים הבאים! 🥳";
+
 "enableExtension_welcome_desc" = "יש לאפשר את Simply Filter SMS כאפליקציה שמסננת הודעות בהגדרות של מערכת ההפעלה.";
+
 "enableExtension_welcome_callToAction" = "הראה לי איך";
+
 "enableExtension_welcome_cancel" = "כבר עשיתי זאת";
+
 "enableExtension_ready" = "מוכנים?";
+
 "enableExtension_ready_desc" = "לחצו על כפתור ה# על מנת לעבור להגדרות מערכת ההפעלה או # אם כבר הגדרתם את 'Simply Filter SMS' כאפליקציה שמסננת הודעות.";
+
 "enableExtension_ready_callToAction" = "הגדרות";
+
 "enableExtension_ready_cancel" = "ביטול";
+
 "enableExtension_next" = "שלב הבא";
 
-//MARK: About View
 "aboutView_aboutSection" = "אודות";
+
 "aboutView_linksSection" = "קישורים";
+
 "aboutView_aboutText" = "פותח על ידי עדי בן-דהן בתל אביב, ישראל 🇮🇱\n\nסינון ההודעות נעשה לוקאלית בלבד, לא נאסף שום מידע. אם נתקלת בבעיה בתפעול האפליקציה בבקשה דווח בדף הפרוייקט ב-GitHub.";
+
 "aboutView_twitter" = "Twitter";
+
 "aboutView_github" = "GitHub";
+
 "aboutView_sendMail" = "אימייל";
+
 "aboutView_appIconCredit" = "\n\n🙏🏼 תודה מיוחדת למעצב האייקון: [ויטאלי לויט](https://instagram.com/eighteeneleven_by_rkl).";
 
-//MARK: Help View
 "faq_subtitle" = "הנה רשימה של שאלות שכיחות, אם אתם לא מוצאים את התשובה לשאלתכם צרו קשר בעזרת";
+
 "faq_question_0" = "איך מפעילים את הסינון במערכת ההפעלה?";
+
 "faq_answer_0" = "לחצו כאן כדי לעבור להסבר על הפעלת הסינון.";
+
 "faq_question_1" = "איך עובד הסינון של ההודעות?";
+
 "faq_answer_1" = "כאשר אתם מקבלים הודעת טקסט ממספר שלא נמצא באנשי הקשר שלכם, Simply Filter SMS תסנן את ההודעה בעזרת החוקים הבאים:\n\n• אם ההודעה מכילה מילה מרשימת המילים המאופשרות היא תתקבל כהודעה רגילה.\n• אם לא, ההודעה תיסרק על מנת למצוא מילים מרשימת המילים החסומות ובמקרה שנמצאה מילה חסומה ההודעה תעבור לתיקיית הזבל.\n• אם ההודעה לא מכילה מילים חסומות, היא תתקבל כהודעה רגילה.\n";
+
 "faq_question_2" = "האם ההודעות שלי חשופות למפתח האפליקציה?";
+
 "faq_answer_2" = "לא. Simply Filter SMS לא אוספת שום מידע על המשתמש, סריקת ההודעות נעשית באופן לוקאלי בלבד על המכשיר מבלי לכתוב כל לוג.";
+
 "faq_question_3" = "מה לגבי iMessages והודעות מאנשי הקשר שלי?";
+
 "faq_answer_3" = "אפל לא חושפת את תוכן ההודעות האלה למפתחים, הן נשארות פרטיות לחלוטין.";
+
 "faq_question_4" = "איפה ההודעות שנחסמו?";
+
 "faq_answer_4" = "כאשר הודעה מסומנת כזבל ניתן עדיין לקרוא אותה בתיקיית הזבל באפליקציית ההודעות במערכת ההפעלה.";
+
 "faq_question_5" = "מה ההבדל בין תיקיית זבל/פעולות/פרסומי?";
+
 "faq_answer_5" = "אין הבדל רב, ניתן לסנן כל מילה לכל תיקייה. התיקיות הינן קבועות ואינן ניתנות לשינוי. רק הודעות שמסוננות לתיקיית זבל יתקבלו ללא כל התראה.";
 
