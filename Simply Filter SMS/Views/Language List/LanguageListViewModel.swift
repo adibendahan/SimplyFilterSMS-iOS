@@ -31,7 +31,6 @@ class LanguageListViewModel: ObservableObject {
     
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
         self.persistanceManager.addFilter(text: text, type: type, denyFolder: denyFolder)
-        self.fetchLanguages()
     }
 }
 
