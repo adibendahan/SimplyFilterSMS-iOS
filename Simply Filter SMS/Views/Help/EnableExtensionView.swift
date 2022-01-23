@@ -13,203 +13,80 @@ struct EnableExtensionView: View {
     var dismiss
     
     @State var appManager: AppManagerProtocol = AppManager.shared
+    @State var isFromMenu: Bool
     @State private var tabSelection = 1
     
-    var isFromMenu: Bool
-    
     var body: some View {
-        GeometryReader { geometry in
-            NavigationView {
-                TabView (selection: $tabSelection) {
-                    let shouldShowWelcomePages = !isFromMenu && self.appManager.defaultsManager.isAppFirstRun
-                    let welcomeIndex = shouldShowWelcomePages ? 1 : 0
+        NavigationView {
+            TabView (selection: $tabSelection) {
+                let shouldShowWelcomePages = !self.isFromMenu && self.appManager.defaultsManager.isAppFirstRun
+                let welcomeIndex = shouldShowWelcomePages ? 1 : 0
+                
+                if shouldShowWelcomePages {
+                    let welcomePageModel = TwoButtonPageViewModel(
+                        title: "enableExtension_welcome"~,
+                        text: "enableExtension_welcome_desc"~,
+                        confirmText: "enableExtension_welcome_callToAction"~,
+                        cancelText: "enableExtension_welcome_cancel"~,
+                        onConfirm: {
+                            tabSelection = 2
+                        },
+                        onCancel: {
+                            self.appManager.defaultsManager.isAppFirstRun = false
+                            dismiss()
+                        })
                     
-                    if shouldShowWelcomePages {
-                        VStack (alignment: .center, spacing: 8) {
-                            
-                            Spacer()
-                                .frame(height: 12, alignment: .top)
-                            
-                            Text("enableExtension_welcome_desc"~)
-                                .frame(width: geometry.size.width*0.9, alignment: .leading)
-                                .font(.title2)
-                            
-                            Spacer()
-                            
-                            Button {
-                                withAnimation {
-                                    tabSelection = 2
-                                }
-                            } label: {
-                                Text("enableExtension_welcome_callToAction"~)
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(FilledButton())
-                            .frame(width: geometry.size.width*0.9, alignment: .center)
-                            
-                            Button {
-                                self.appManager.defaultsManager.isAppFirstRun = false
-                                withAnimation {
-                                    dismiss()
-                                }
-                            } label: {
-                                Text("enableExtension_welcome_cancel"~)
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(OutlineButton())
-                            .frame(width: geometry.size.width*0.9, alignment: .center)
-                            .contentShape(Rectangle())
-                            
-                            Spacer()
-                                .frame(height: 50, alignment: .bottom)
-                        } // VStack
-                        .navigationTitle("enableExtension_welcome"~)
+                    TwoButtonPageView(model: welcomePageModel)
                         .tag(1)
-                    }
+                }
+                
+                ForEach(1...3, id: \.self) { index in
+                    let model = ScreenshotPageViewModel(
+                        title: "enableExtension_step\(index)"~,
+                        text: "enableExtension_step\(index)_desc"~,
+                        image: "enableExtension_screenshot\(index)",
+                        confirmText: "enableExtension_next"~,
+                        onConfirm: {
+                            tabSelection = tabSelection + 1
+                        })
                     
-                    StepView(title: "enableExtension_step1"~,
-                             text: "enableExtension_step1_desc"~,
-                             image: "enableExtension_screenshot1",
-                             geometry: geometry)
-                        .tag(welcomeIndex + 1)
-                    
-                    StepView(title: "enableExtension_step2"~,
-                             text: "enableExtension_step2_desc"~,
-                             image: "enableExtension_screenshot2",
-                             geometry: geometry)
-                        .tag(welcomeIndex + 2)
-                    
-                    StepView(title: "enableExtension_step3"~,
-                             text: "enableExtension_step3_desc"~,
-                             image: "enableExtension_screenshot3",
-                             geometry: geometry)
-                        .tag(welcomeIndex + 3)
-                    
-                    VStack (alignment: .center, spacing: 8) {
-                        Spacer()
-                            .frame(height: 12, alignment: .top)
-                        
-                        ReadyView(geometry: geometry)
-                        
-                        Spacer()
-                        
-                        Image("enableExtension_screenshot4")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .clipShape(RoundedRectangle(cornerRadius: 50*0.9, style: .continuous))
-                            .frame(width: geometry.size.width*0.9, alignment: .center)
-                        
-                        Spacer()
-                        
-                        Button {
-                            self.appManager.defaultsManager.isAppFirstRun = false
-                            dismiss()
-                            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                        } label: {
-                            Text("enableExtension_ready_callToAction"~)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(FilledButton())
-                        .frame(width: geometry.size.width*0.9, alignment: .center)
-                        .contentShape(Rectangle())
-                        
-                        Button {
-                            self.appManager.defaultsManager.isAppFirstRun = false
-                            withAnimation {
-                                dismiss()
-                            }
-                        } label: {
-                            Text("enableExtension_ready_cancel"~)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(OutlineButton())
-                        .frame(width: geometry.size.width*0.9, alignment: .center)
-                        .contentShape(Rectangle())
-                        
-                        Spacer()
-                            .frame(height: 50, alignment: .bottom)
-                    } // VStack
-                    .navigationTitle("enableExtension_ready"~)
+                    ScreenshotPageView(model: model)
+                        .tag(welcomeIndex + index)
+                }
+                
+                let readyPageModel = TwoButtonPageViewModel(
+                    title: "enableExtension_welcome"~,
+                    text: String(format: "enableExtension_ready_desc"~, "enableExtension_ready_callToAction"~, "enableExtension_ready_cancel"~),
+                    confirmText: "enableExtension_ready_callToAction"~,
+                    cancelText: "enableExtension_ready_cancel"~,
+                    onConfirm: {
+                        self.appManager.defaultsManager.isAppFirstRun = false
+                        dismiss()
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                    },
+                    onCancel: {
+                        self.appManager.defaultsManager.isAppFirstRun = false
+                        dismiss()
+                    },
+                    image: "enableExtension_screenshot4")
+                
+                TwoButtonPageView(model: readyPageModel)
                     .tag(welcomeIndex + 4)
-                } // TabView
-                .tabViewStyle(.page)
-                .indexViewStyle(.page(backgroundDisplayMode: .always))
-                .toolbar {
-                    ToolbarItem {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "xmark")
-                                .foregroundColor(.secondary)
-                        }
-                        .contentShape(Rectangle())
+            } // TabView
+            .tabViewStyle(.page)
+            .indexViewStyle(.page(backgroundDisplayMode: .always))
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.secondary)
                     }
-                }
-            } // NavigationView
-        } // GeometryReader
-    }
-    
-    func StepView(title: String,
-                  text: String,
-                  image: String,
-                  geometry: GeometryProxy) -> some View {
-        
-        VStack {
-            ScrollView {
-                VStack (alignment: .center, spacing: 8) {
-                    Spacer()
-                    
-                    Text(text)
-                        .frame(width: geometry.size.width*0.9, alignment: .leading)
-                        .font(.title2)
-                    
-                    Spacer()
-                    
-                    Image(image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(RoundedRectangle(cornerRadius: 50*0.9, style: .continuous))
-                        .frame(width: geometry.size.width*0.9, alignment: .center)
-                    
-                    Spacer(minLength: 50)
+                    .contentShape(Rectangle())
                 }
             }
-            
-            Spacer(minLength: 20)
-            
-            Button {
-                withAnimation {
-                    tabSelection = tabSelection + 1
-                }
-            } label: {
-                Text("enableExtension_next"~)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(FilledButton())
-            .frame(width: geometry.size.width*0.9, alignment: .center)
-            .contentShape(Rectangle())
-            
-            Spacer()
-                .frame(height: 50, alignment: .bottom)
-        }
-        .navigationTitle(title)
-    }
-    
-    func ReadyView(geometry: GeometryProxy) -> some View {
-        let ctaString = "enableExtension_ready_callToAction"~
-        let cancelString = "enableExtension_ready_cancel"~
-        let fullString = "enableExtension_ready_desc"~
-        let parts = fullString.split(separator: "#")
-        
-        return Text("""
-\(String(parts[0]))\
-\(Text(ctaString).bold().italic())\
-\(String(parts[1]))\
-\(Text(cancelString).bold().italic())\
-\(String(parts[2]))
-""")
-            .frame(width: geometry.size.width*0.9, alignment: .leading)
-            .font(.title2)
+        } // NavigationView
     }
 }
 

@@ -58,7 +58,7 @@
 "enableExtension_welcome_callToAction" = "Show me how";
 "enableExtension_welcome_cancel" = "It's done";
 "enableExtension_ready" = "Ready?";
-"enableExtension_ready_desc" = "Tap on the # button to go to iOS Settings app or # if you already enabled 'Simply Filter SMS' as your SMS filter app.";
+"enableExtension_ready_desc" = "Tap on the ***%@*** button to go to iOS Settings app or ***%@*** if you already enabled 'Simply Filter SMS' as your SMS filter app.";
 "enableExtension_ready_callToAction" = "Settings";
 "enableExtension_ready_cancel" = "Cancel";
 "enableExtension_next" = "Next step";
