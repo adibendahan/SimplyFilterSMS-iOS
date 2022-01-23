@@ -25,13 +25,11 @@ struct FilterListView: View {
     
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
-    
-    @Environment(\.managedObjectContext)
-    private var viewContext
-    
-    @FetchRequest(fetchRequest: PersistenceController.getFiltersFetchRequest)
+
+    @FetchRequest(fetchRequest: AppManager.shared.persistanceManager.getFiltersFetchRequest())
     private var filters: FetchedResults<Filter>
     
+    @State var appManager: AppManagerProtocol = AppManager.shared
     @State private var presentedSheet: FilterListSheetView? = nil
     @State private var isPresentingFullScreenWelcome = false
     @State private var selectedFilters: Set<Filter> = Set()
@@ -56,7 +54,7 @@ struct FilterListView: View {
                                             .environment(\.editMode, self.$editMode)
                                     }
                                     .onDelete {
-                                        PersistenceController.shared.deleteFilters(withOffsets: $0, in: sectionFilters)
+                                        self.appManager.persistanceManager.deleteFilters(withOffsets: $0, in: sectionFilters)
                                     }
                                 } header: {
                                     HStack {
@@ -114,7 +112,7 @@ struct FilterListView: View {
                     case .about:
                         AboutView()
                     case .enableExtension:
-                        HelpView(questions: PersistenceController.frequentlyAskedQuestions)
+                        HelpView(questions: self.appManager.persistanceManager.getFrequentlyAskedQuestions())
                     case .addLanguageFilter:
                         LanguageListView(type: .blockLanguage)
                     }
@@ -124,7 +122,7 @@ struct FilterListView: View {
                 })
                 .background(Color.listBackgroundColor(for: colorScheme))
                 .onAppear() {
-                    if !isPreview && UserDefaults.isAppFirstRun {
+                    if !isPreview && self.appManager.defaultsManager.isAppFirstRun {
                         self.isPresentingFullScreenWelcome = true
                     }
                 }
@@ -162,7 +160,7 @@ struct FilterListView: View {
                 Menu {
                     ForEach(DenyFolderType.allCases) { folder in
                         Button {
-                            PersistenceController.shared.updateFilter(filter, denyFolder: folder)
+                            self.appManager.persistanceManager.updateFilter(filter, denyFolder: folder)
                         } label: {
                             Label {
                                 Text(folder.name)
@@ -197,7 +195,7 @@ struct FilterListView: View {
                 role: .destructive,
                 action: {
                     withAnimation {
-                        PersistenceController.shared.deleteFilters(selectedFilters)
+                        self.appManager.persistanceManager.deleteFilters(selectedFilters)
                         self.selectedFilters = Set()
                     }
                 },
@@ -237,7 +235,7 @@ struct FilterListView: View {
         Menu {
             if isDebug && filters.count == 0 {
                 Button {
-                    PersistenceController.shared.loadDebugData()
+                    self.appManager.persistanceManager.loadDebugData()
                 } label: {
                     Label("filterList_menu_debug"~, systemImage: "chevron.left.forwardslash.chevron.right")
                 }
@@ -274,7 +272,7 @@ struct FilterListView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let context = PersistenceController.preview.container.viewContext
+        let context = AppManager.shared.persistanceManager.preview().context
         return FilterListView().environment(\.managedObjectContext, context)
     }
 }

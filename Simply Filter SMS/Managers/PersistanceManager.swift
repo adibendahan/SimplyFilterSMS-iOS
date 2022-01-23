@@ -1,36 +1,19 @@
 //
-//  PersistenceController.swift
+//  PersistanceManager.swift
 //  Simply Filter SMS
 //
-//  Created by Adi Ben-Dahan on 20/12/2021.
+//  Created by Adi Ben-Dahan on 23/01/2022.
 //
 
+import Foundation
 import CoreData
 import NaturalLanguage
 
-struct PersistenceController {
-    static let shared = PersistenceController()
-    static var preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
-        result.loadDebugData()
-        return result
-    }()
-    static var getFiltersFetchRequest: NSFetchRequest<Filter> {
-        let request: NSFetchRequest<Filter> = Filter.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
-                                   NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
-        return request
-    }
-    static var frequentlyAskedQuestions = [Question(text: "faq_question_0"~, answer: "faq_answer_0"~, action: .activateFilters),
-                                           Question(text: "faq_question_1"~, answer: "faq_answer_1"~),
-                                           Question(text: "faq_question_2"~, answer: "faq_answer_2"~),
-                                           Question(text: "faq_question_3"~, answer: "faq_answer_3"~),
-                                           Question(text: "faq_question_4"~, answer: "faq_answer_4"~),
-                                           Question(text: "faq_question_5"~, answer: "faq_answer_5"~)]
+class PersistanceManager: PersistanceManagerProtocol {
+
     
-    let container: NSPersistentCloudKitContainer
-    
-    init(inMemory: Bool = false) {
+    //MARK: - Initialization -
+    required init(inMemory: Bool = false) {
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
         self.container = container
         
@@ -48,21 +31,35 @@ struct PersistenceController {
         })
     }
     
+    
+    //MARK: - Private Members and Helpers -
+    private let container: NSPersistentCloudKitContainer
+    
+    private func saveContext() {
+        do {
+            try context.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
+    
+    
+    //MARK: - Public API -
+    var context: NSManagedObjectContext {
+        return self.container.viewContext
+    }
+    
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
         guard !self.isDuplicateFilter(text: text, type: type) else { return }
         
-        let newFilter = Filter(context: self.container.viewContext)
+        let newFilter = Filter(context: context)
         newFilter.uuid = UUID()
         newFilter.filterType = type
         newFilter.denyFolderType = denyFolder
         newFilter.text = text
         
-        do {
-            try self.container.viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        saveContext()
     }
     
     func isDuplicateFilter(text: String, type: FilterType) -> Bool {
@@ -71,7 +68,7 @@ struct PersistenceController {
         fetchRequest.predicate = NSPredicate(format: "type == %ld AND text == %@", type.rawValue, text)
         
         do {
-            let results = try self.container.viewContext.fetch(fetchRequest)
+            let results = try context.fetch(fetchRequest)
             filterExists = results.count > 0
         } catch {
             let nsError = error as NSError
@@ -82,36 +79,18 @@ struct PersistenceController {
     }
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
-        offsets.map({ filters[$0] }).forEach({ self.container.viewContext.delete($0) })
-        
-        do {
-            try self.container.viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        offsets.map({ filters[$0] }).forEach({ context.delete($0) })
+        saveContext()
     }
     
     func deleteFilters(_ filters: Set<Filter>) {
-        filters.forEach({ self.container.viewContext.delete($0) })
-        
-        do {
-            try self.container.viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        filters.forEach({ context.delete($0) })
+        saveContext()
     }
     
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
         filter.denyFolderType = denyFolder
-        
-        do {
-            try self.container.viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        saveContext()
     }
     
     func languages(for type: LanguageListViewType) -> [NLLanguage] {
@@ -132,6 +111,28 @@ struct PersistenceController {
         return supportedLanguages
     }
     
+    func getFrequentlyAskedQuestions() -> [Question] {
+        return [Question(text: "faq_question_0"~, answer: "faq_answer_0"~, action: .activateFilters),
+                Question(text: "faq_question_1"~, answer: "faq_answer_1"~),
+                Question(text: "faq_question_2"~, answer: "faq_answer_2"~),
+                Question(text: "faq_question_3"~, answer: "faq_answer_3"~),
+                Question(text: "faq_question_4"~, answer: "faq_answer_4"~),
+                Question(text: "faq_question_5"~, answer: "faq_answer_5"~)]
+    }
+    
+    func getFiltersFetchRequest() -> NSFetchRequest<Filter> {
+        let request: NSFetchRequest<Filter> = Filter.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
+                                   NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
+        return request
+    }
+    
+    func preview() -> PersistanceManagerProtocol {
+        let result = PersistanceManager(inMemory: true)
+        result.loadDebugData()
+        return result
+    }
+    
     func loadDebugData() {
         struct AllowEntry {
             let text: String
@@ -144,7 +145,7 @@ struct PersistenceController {
                  AllowEntry(text: "גנץ", folder: .junk),
                  AllowEntry(text: "Weed", folder: .junk),
                  AllowEntry(text: "Bet", folder: .junk)].map { entry -> Filter in
-            let newFilter = Filter(context: self.container.viewContext)
+            let newFilter = Filter(context: context)
             newFilter.uuid = UUID()
             newFilter.filterType = .deny
             newFilter.denyFolderType = entry.folder
@@ -153,23 +154,18 @@ struct PersistenceController {
         }
         
         let _ = ["Adi", "דהאן", "דהן", "עדי"].map { allowText -> Filter in
-            let newFilter = Filter(context: self.container.viewContext)
+            let newFilter = Filter(context: context)
             newFilter.uuid = UUID()
             newFilter.filterType = .allow
             newFilter.text = allowText
             return newFilter
         }
         
-        let langFilter = Filter(context: self.container.viewContext)
+        let langFilter = Filter(context: context)
         langFilter.uuid = UUID()
         langFilter.filterType = .denyLanguage
         langFilter.text = NLLanguage.arabic.filterText
         
-        do {
-            try self.container.viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        saveContext()
     }
 }

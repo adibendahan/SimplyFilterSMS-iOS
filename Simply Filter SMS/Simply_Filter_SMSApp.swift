@@ -9,12 +9,12 @@ import SwiftUI
 
 @main
 struct Simply_Filter_SMSApp: App {
-    let persistenceController = PersistenceController.shared
+    let appManager = AppManager.shared
     
     var body: some Scene {
         WindowGroup {
             FilterListView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, appManager.persistanceManager.context)
         }
     }
 }

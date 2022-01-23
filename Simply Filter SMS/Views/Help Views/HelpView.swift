@@ -123,7 +123,7 @@ struct HelpView: View {
 
 struct FrequentlyAskedView_Previews: PreviewProvider {
     static var previews: some View {
-        HelpView(questions: PersistenceController.frequentlyAskedQuestions)
+        HelpView(questions: AppManager.shared.persistanceManager.getFrequentlyAskedQuestions())
     }
 }
 

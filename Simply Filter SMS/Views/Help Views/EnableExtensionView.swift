@@ -12,6 +12,7 @@ struct EnableExtensionView: View {
     @Environment(\.dismiss)
     var dismiss
     
+    @State var appManager: AppManagerProtocol = AppManager.shared
     @State private var tabSelection = 1
     
     var isFromMenu: Bool
@@ -20,7 +21,7 @@ struct EnableExtensionView: View {
         GeometryReader { geometry in
             NavigationView {
                 TabView (selection: $tabSelection) {
-                    let shouldShowWelcomePages = !isFromMenu && UserDefaults.isAppFirstRun
+                    let shouldShowWelcomePages = !isFromMenu && self.appManager.defaultsManager.isAppFirstRun
                     let welcomeIndex = shouldShowWelcomePages ? 1 : 0
                     
                     if shouldShowWelcomePages {
@@ -47,7 +48,7 @@ struct EnableExtensionView: View {
                             .frame(width: geometry.size.width*0.9, alignment: .center)
                             
                             Button {
-                                UserDefaults.isAppFirstRun = false
+                                self.appManager.defaultsManager.isAppFirstRun = false
                                 withAnimation {
                                     dismiss()
                                 }
@@ -101,7 +102,7 @@ struct EnableExtensionView: View {
                         Spacer()
                         
                         Button {
-                            UserDefaults.isAppFirstRun = false
+                            self.appManager.defaultsManager.isAppFirstRun = false
                             dismiss()
                             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                         } label: {
@@ -113,7 +114,7 @@ struct EnableExtensionView: View {
                         .contentShape(Rectangle())
                         
                         Button {
-                            UserDefaults.isAppFirstRun = false
+                            self.appManager.defaultsManager.isAppFirstRun = false
                             withAnimation {
                                 dismiss()
                             }

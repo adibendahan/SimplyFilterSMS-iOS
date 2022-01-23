@@ -8,15 +8,13 @@
 import SwiftUI
 
 struct AddFilterView: View {
-    
-    @Environment(\.managedObjectContext)
-    private var viewContext
-    
+
     @Environment(\.dismiss)
     var dismiss
     
     @FocusState private var focusedField: Field?
     
+    @State var appManager: AppManagerProtocol = AppManager.shared
     @State private var filterText = ""
     @State private var selectedFilterType = FilterType.deny
     @State private var selectedDenyFolderType = DenyFolderType.junk
@@ -26,7 +24,7 @@ struct AddFilterView: View {
             NavigationView {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 8) {
-                        let isDuplicate = PersistenceController.shared.isDuplicateFilter(text: filterText, type: selectedFilterType)
+                        let isDuplicate = self.appManager.persistanceManager.isDuplicateFilter(text: filterText, type: selectedFilterType)
                         
                         Spacer()
                         
@@ -95,9 +93,9 @@ struct AddFilterView: View {
                         
                         Button {
                             withAnimation {
-                                PersistenceController.shared.addFilter(text: self.filterText,
-                                                                       type: self.selectedFilterType,
-                                                                       denyFolder: self.selectedDenyFolderType)
+                                self.appManager.persistanceManager.addFilter(text: self.filterText,
+                                                                             type: self.selectedFilterType,
+                                                                             denyFolder: self.selectedDenyFolderType)
                                 dismiss()
                             }
                         } label: {
@@ -141,9 +139,8 @@ private enum Field: Int, Hashable {
 
 struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
-        let context = PersistenceController.preview.container.viewContext
         return ZStack {
-            AddFilterView().environment(\.managedObjectContext, context)
+            AddFilterView().environment(\.managedObjectContext, AppManager.shared.persistanceManager.preview().context)
         }
     }
 }

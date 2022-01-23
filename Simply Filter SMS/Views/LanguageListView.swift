@@ -35,13 +35,13 @@ struct LanguageWithAutomaticState: Identifiable, Equatable {
     var id: NLLanguage
     var isOn: Bool {
         didSet (newValue) {
-            UserDefaults.setLanguageAtumaticState(for: id, value: isOn)
+            AppManager.shared.defaultsManager.setLanguageAtumaticState(for: id, value: newValue)
         }
     }
 
     init(language: NLLanguage) {
         self.id = language
-        self.isOn = UserDefaults.languageAutomaticState(for: language)
+        self.isOn = AppManager.shared.defaultsManager.languageAutomaticState(for: language)
     }
 }
 
@@ -49,15 +49,12 @@ struct LanguageListView: View {
     
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
-    
-    @Environment(\.managedObjectContext)
-    private var viewContext
-    
+
     @Environment(\.dismiss)
     var dismiss
     
+    @State var appManager: AppManagerProtocol = AppManager.shared
     @State var viewType: LanguageListViewType
-    @State var onLanguageSelected: (NLLanguage) -> ()
     @State var languages: [LanguageWithAutomaticState]
     
     var body: some View {
@@ -74,7 +71,7 @@ struct LanguageListView: View {
                                     switch viewType {
                                     case .blockLanguage:
                                         Button {
-                                            onLanguageSelected(language)
+                                            self.appManager.persistanceManager.addFilter(text: language.filterText, type: .denyLanguage, denyFolder: .junk)
                                             dismiss()
                                         } label: {
                                             Text(localizedName)
@@ -131,26 +128,15 @@ struct LanguageListView: View {
     }
     
     init(type: LanguageListViewType) {
-        let languages = PersistenceController.shared.languages(for: type)
+        let languages = _appManager.wrappedValue.persistanceManager.languages(for: type)
         _viewType = State(initialValue: type)
-        
-        let onLanguageSelected: (NLLanguage) -> () = { language in
-            switch type {
-            case .blockLanguage:
-                PersistenceController.shared.addFilter(text: language.filterText, type: .denyLanguage)
-            default:
-                break
-            }
-        }
-        _onLanguageSelected = State(initialValue: onLanguageSelected)
         _languages = State(initialValue: languages.map({ LanguageWithAutomaticState(language: $0) }))
     }
 }
 
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
-        let context = PersistenceController.preview.container.viewContext
         LanguageListView(type: .automaticBlocking)
-            .environment(\.managedObjectContext, context)
+            .environment(\.managedObjectContext, AppManager.shared.persistanceManager.preview().context)
     }
 }
