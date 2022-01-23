@@ -16,10 +16,10 @@ struct HelpView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
+    @StateObject var model: HelpViewModel
     @State var result: Result<MFMailComposeResult, Error>? = nil
     @State var isShowingMailView = false
     @State var isShowingEnableExtensionView = false
-    @State var questions: [Question]
     
     var body: some View {
         NavigationView {
@@ -73,19 +73,23 @@ struct HelpView: View {
                             
                             Spacer(minLength: 24)
                             
-                            ForEach (questions) { question in
+                            ForEach (self.model.questions) { question in
                                 if question.action != .none {
-                                    QuestionView(question: question) {
-                                        switch question.action {
-                                        case .activateFilters:
-                                            isShowingEnableExtensionView = true
-                                        default:
-                                            break
-                                        }
-                                    }
+                                    QuestionView(
+                                        model: QuestionViewModel(text: question.text,
+                                                                 answer: question.answer,
+                                                                 action: question.action,
+                                                                 onAction: {
+                                                                     switch question.action {
+                                                                     case .activateFilters:
+                                                                         isShowingEnableExtensionView = true
+                                                                     default:
+                                                                         break
+                                                                     }
+                                    }))
                                 }
                                 else {
-                                    QuestionView(question: question)
+                                    QuestionView(model: question)
                                 }
                             }
                             Spacer()
@@ -94,7 +98,7 @@ struct HelpView: View {
                     } // ScrollView
                     .padding(.horizontal, 16)
                     .background(Color.listBackgroundColor(for: colorScheme))
-                    .navigationTitle("filterList_menu_enableExtension"~)
+                    .navigationTitle(self.model.title)
                     .toolbar {
                         ToolbarItem {
                             Button {
@@ -123,7 +127,7 @@ struct HelpView: View {
 
 struct FrequentlyAskedView_Previews: PreviewProvider {
     static var previews: some View {
-        HelpView(questions: AppManager.shared.persistanceManager.getFrequentlyAskedQuestions())
+        HelpView(model: HelpViewModel(persistanceManager: AppManager.shared.persistanceManager.preview()))
     }
 }
 

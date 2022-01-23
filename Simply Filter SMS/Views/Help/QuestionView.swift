@@ -7,39 +7,28 @@
 
 import SwiftUI
 
-struct Question: Identifiable {
-    let id: UUID = UUID()
-    let text: String
-    let answer: String
-    var action: QuestionAction = .none
-}
-
-enum QuestionAction {
-    case none, activateFilters
-}
-
 struct QuestionView: View {
+    
     @Environment(\.layoutDirection)
     var layoutDirection
     
+    @StateObject var model: QuestionViewModel
     @State private var isExpanded: Bool = false
-    @State var question: Question
-    @State var action:(() -> Void)?
     
     var body: some View {
         VStack (alignment: .leading) {
             Button {
                 withAnimation {
-                    isExpanded.toggle()
+                    self.isExpanded.toggle()
                 }
             } label: {
                 HStack {
-                    Image(systemName: layoutDirection == .leftToRight ? "chevron.right.circle" : "chevron.left.circle")
+                    Image(systemName: self.layoutDirection == .leftToRight ? "chevron.right.circle" : "chevron.left.circle")
                         .rotationEffect(.degrees(isExpanded ? 90 : 0))
                         .frame(width: 16, height: 16, alignment: .leading)
                         .padding(.trailing, 8)
                     
-                    Text(question.text)
+                    Text(self.model.text)
                         .font(.system(size: 16, weight: .semibold, design: .default))
                         .multilineTextAlignment(.leading)
                         .foregroundColor(.primary)
@@ -48,18 +37,18 @@ struct QuestionView: View {
             }
             
             if isExpanded {
-                if let action = action {
+                if let onAction = self.model.onAction {
                     Button {
-                        action()
+                        onAction()
                     } label: {
-                        Text(.init(question.answer))
+                        Text(.init(self.model.answer))
                             .font(.system(size: 16, weight: .thin, design: .default))
                             .transition(.opacitySlowInFastOut)
                             .padding(.leading, 32)
                     }
                 }
                 else {
-                    Text(.init(question.answer))
+                    Text(.init(self.model.answer))
                         .font(.system(size: 16, weight: .thin, design: .default))
                         .transition(.opacitySlowInFastOut)
                         .padding(.leading, 32)
@@ -72,7 +61,9 @@ struct QuestionView: View {
 
 struct QuestionView_Previews: PreviewProvider {
     static var previews: some View {
-        QuestionView(question: Question(text: "Question text?", answer: "Short answer."))
+    
+        let model = QuestionViewModel(text: "Question text?", answer: "Short answer.")
+        QuestionView(model: model)
             .padding()
     }
 }

@@ -18,8 +18,8 @@ protocol PersistanceManagerProtocol: AnyObject {
     func deleteFilters(_ filters: Set<Filter>)
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType)
     func languages(for type: LanguageListViewType) -> [NLLanguage]
-    func getFrequentlyAskedQuestions() -> [Question]
-    func getFiltersFetchRequest() -> NSFetchRequest<Filter>
+    func getFrequentlyAskedQuestions() -> [QuestionViewModel]
+    func getFilters() -> [Filter]
     
     func preview() -> PersistanceManagerProtocol
     func loadDebugData()

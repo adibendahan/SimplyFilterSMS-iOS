@@ -9,12 +9,6 @@ import SwiftUI
 import CoreData
 import NaturalLanguage
 
-enum FilterListSheetView: Int, Identifiable {
-    var id: Self { self }
-    
-    case addFilter=0, enableExtension, about, addLanguageFilter
-}
-
 struct FilterListView: View {
     
     @Environment(\.isPreview)
@@ -26,35 +20,29 @@ struct FilterListView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
 
-    @FetchRequest(fetchRequest: AppManager.shared.persistanceManager.getFiltersFetchRequest())
-    private var filters: FetchedResults<Filter>
+    @StateObject var model: FilterListViewModel
     
-    @State var appManager: AppManagerProtocol = AppManager.shared
-    @State private var presentedSheet: FilterListSheetView? = nil
     @State private var isPresentingFullScreenWelcome = false
     @State private var selectedFilters: Set<Filter> = Set()
     @State private var editMode: EditMode = .inactive
+    @State private var presentedSheet: FilterListSheetView? = nil
 
     var body: some View {
         NavigationView {
             ZStack (alignment: .bottom) {
-                let sortedFilters: Dictionary<FilterType, Array<Filter>> = [.deny : filters.filter({ $0.filterType == .deny }),
-                                                                            .allow : filters.filter({ $0.filterType == .allow }),
-                                                                            .denyLanguage : filters.filter({ $0.filterType == .denyLanguage })]
-                
                 List (selection: $selectedFilters) {
                     
-                    if filters.count > 0 {
+                    if !self.model.isEmpty {
                         ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
                             
-                            if let sectionFilters = sortedFilters[filterType], sectionFilters.count > 0 {
+                            if let sectionFilters = self.model.filters[filterType], sectionFilters.count > 0 {
                                 Section {
                                     ForEach(sectionFilters, id: \.self) { filter in
                                         self.makeRow(for: filter)
                                             .environment(\.editMode, self.$editMode)
                                     }
                                     .onDelete {
-                                        self.appManager.persistanceManager.deleteFilters(withOffsets: $0, in: sectionFilters)
+                                        self.model.deleteFilters(withOffsets: $0, in: sectionFilters)
                                     }
                                 } header: {
                                     HStack {
@@ -72,7 +60,7 @@ struct FilterListView: View {
                                         AddFilterButton()
                                         
                                     case .denyLanguage:
-                                        if (sortedFilters[.deny] ?? []).count == 0 {
+                                        if (self.model.filters[.deny] ?? []).count == 0 {
                                             AddFilterButton()
                                         }
                                         else {
@@ -80,7 +68,7 @@ struct FilterListView: View {
                                         }
                                         
                                     case .allow:
-                                        if (sortedFilters[.deny] ?? []).count == 0 && (sortedFilters[.denyLanguage] ?? []).count == 0 {
+                                        if (self.model.filters[.deny] ?? []).count == 0 && (self.model.filters[.denyLanguage] ?? []).count == 0 {
                                             AddFilterButton()
                                         }
                                         else {
@@ -104,17 +92,23 @@ struct FilterListView: View {
                 .listStyle(InsetGroupedListStyle())
                 .navigationBarItems(leading: EditButton())
                 .navigationBarItems(trailing: NavigationBarItemTrailing())
-                .navigationTitle("filterList_filters"~)
-                .sheet(item: $presentedSheet) { } content: { presentedSheet in
+                .navigationTitle(self.model.title)
+                .sheet(item: $presentedSheet) { // onDismiss:
+                    self.presentedSheet = nil
+                    self.model.fetchFilters()
+                } content: { presentedSheet in
                     switch (presentedSheet) {
                     case .addFilter:
                         AddFilterView()
                     case .about:
                         AboutView()
                     case .enableExtension:
-                        HelpView(questions: self.appManager.persistanceManager.getFrequentlyAskedQuestions())
+                        let model = HelpViewModel(persistanceManager: AppManager.shared.persistanceManager)
+                        HelpView(model: model)
                     case .addLanguageFilter:
-                        LanguageListView(type: .blockLanguage)
+                        let model = LanguageListViewModel(persistanceManager: AppManager.shared.persistanceManager,
+                                                          viewType: .blockLanguage)
+                        LanguageListView(model: model)
                     }
                 }
                 .fullScreenCover(isPresented: $isPresentingFullScreenWelcome, onDismiss: { }, content: {
@@ -122,7 +116,8 @@ struct FilterListView: View {
                 })
                 .background(Color.listBackgroundColor(for: colorScheme))
                 .onAppear() {
-                    if !isPreview && self.appManager.defaultsManager.isAppFirstRun {
+                    
+                    if !isPreview && self.model.isAppFirstRun {
                         self.isPresentingFullScreenWelcome = true
                     }
                 }
@@ -135,6 +130,9 @@ struct FilterListView: View {
             } // ZStack
         } // NavigationView
         .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            self.model.fetchFilters()
+        }
     }
     
     @ViewBuilder
@@ -160,7 +158,7 @@ struct FilterListView: View {
                 Menu {
                     ForEach(DenyFolderType.allCases) { folder in
                         Button {
-                            self.appManager.persistanceManager.updateFilter(filter, denyFolder: folder)
+                            self.model.updateFilter(filter, denyFolder: folder)
                         } label: {
                             Label {
                                 Text(folder.name)
@@ -195,8 +193,9 @@ struct FilterListView: View {
                 role: .destructive,
                 action: {
                     withAnimation {
-                        self.appManager.persistanceManager.deleteFilters(selectedFilters)
+                        self.model.deleteFilters(selectedFilters)
                         self.selectedFilters = Set()
+                        self.model.fetchFilters()
                     }
                 },
                 label: {
@@ -233,9 +232,9 @@ struct FilterListView: View {
     
     private func MenuView() -> some View {
         Menu {
-            if isDebug && filters.count == 0 {
+            if isDebug && self.model.isEmpty {
                 Button {
-                    self.appManager.persistanceManager.loadDebugData()
+                    self.model.loadDebugData()
                 } label: {
                     Label("filterList_menu_debug"~, systemImage: "chevron.left.forwardslash.chevron.right")
                 }
@@ -272,7 +271,8 @@ struct FilterListView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let context = AppManager.shared.persistanceManager.preview().context
-        return FilterListView().environment(\.managedObjectContext, context)
+        let model = FilterListViewModel(persistanceManager: AppManager.shared.persistanceManager.preview(),
+                                    defaultsManager: AppManager.shared.defaultsManager)
+        return FilterListView(model: model)
     }
 }

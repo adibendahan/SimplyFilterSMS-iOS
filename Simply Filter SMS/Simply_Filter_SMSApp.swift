@@ -9,12 +9,11 @@ import SwiftUI
 
 @main
 struct Simply_Filter_SMSApp: App {
-    let appManager = AppManager.shared
-    
     var body: some Scene {
         WindowGroup {
-            FilterListView()
-                .environment(\.managedObjectContext, appManager.persistanceManager.context)
+            let model = FilterListViewModel(persistanceManager: AppManager.shared.persistanceManager,
+                                            defaultsManager: AppManager.shared.defaultsManager)
+            FilterListView(model: model)
         }
     }
 }

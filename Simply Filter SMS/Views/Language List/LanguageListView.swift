@@ -9,42 +9,6 @@ import SwiftUI
 import NaturalLanguage
 import CoreData
 
-enum LanguageListViewType {
-    case blockLanguage, automaticBlocking
-    
-    var name: String {
-        switch self {
-        case .blockLanguage:
-            return "filterList_menu_filterLanguage"~
-        case .automaticBlocking:
-            return "autoFilter_title"~
-        }
-    }
-    
-    var footer: String {
-        switch self {
-        case .blockLanguage:
-            return "lang_how"~
-        case .automaticBlocking:
-            return String(format: "autoFilter_lastUpdated"~, Date().description)
-        }
-    }
-}
-
-struct LanguageWithAutomaticState: Identifiable, Equatable {
-    var id: NLLanguage
-    var isOn: Bool {
-        didSet (newValue) {
-            AppManager.shared.defaultsManager.setLanguageAtumaticState(for: id, value: newValue)
-        }
-    }
-
-    init(language: NLLanguage) {
-        self.id = language
-        self.isOn = AppManager.shared.defaultsManager.languageAutomaticState(for: language)
-    }
-}
-
 struct LanguageListView: View {
     
     @Environment(\.colorScheme)
@@ -53,25 +17,23 @@ struct LanguageListView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @State var appManager: AppManagerProtocol = AppManager.shared
-    @State var viewType: LanguageListViewType
-    @State var languages: [LanguageWithAutomaticState]
+    @StateObject var model: LanguageListViewModel
     
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
                 Spacer()
                 
-                if languages.count > 0 {
+                if !self.model.languages.isEmpty {
                     List {
                         Section {
-                            ForEach (languages.indices) { index in
-                                let language = $languages[index].id
+                            ForEach (self.model.languages.indices) { index in
+                                let language = $model.languages[index].id
                                 if let localizedName = Locale.current.localizedString(forIdentifier: language.rawValue) {
-                                    switch viewType {
+                                    switch self.model.type {
                                     case .blockLanguage:
                                         Button {
-                                            self.appManager.persistanceManager.addFilter(text: language.filterText, type: .denyLanguage, denyFolder: .junk)
+                                            self.model.addFilter(text: language.filterText, type: .denyLanguage)
                                             dismiss()
                                         } label: {
                                             Text(localizedName)
@@ -79,14 +41,14 @@ struct LanguageListView: View {
                                         }
                                         
                                     case .automaticBlocking:
-                                        Toggle(localizedName, isOn: $languages[index].isOn)
+                                        Toggle(localizedName, isOn: $model.languages[index].isOn)
                                     }
                                 }
                             }
                         } header: {
                             Text("lang_supported"~)
                         } footer: {
-                            Text(.init(viewType.footer))
+                            Text(.init(self.model.footer))
                         } // Section
                     } // List
                     .listStyle(InsetGroupedListStyle())
@@ -111,7 +73,7 @@ struct LanguageListView: View {
                     .padding()
                 }
             } // VStack
-            .navigationTitle(viewType.name)
+            .navigationTitle(self.model.title)
             .background(Color.listBackgroundColor(for: colorScheme))
             .toolbar {
                 ToolbarItem {
@@ -125,18 +87,16 @@ struct LanguageListView: View {
                 }
             }
         } // NavigationView
-    }
-    
-    init(type: LanguageListViewType) {
-        let languages = _appManager.wrappedValue.persistanceManager.languages(for: type)
-        _viewType = State(initialValue: type)
-        _languages = State(initialValue: languages.map({ LanguageWithAutomaticState(language: $0) }))
+        .onAppear {
+            self.model.fetchLanguages()
+        }
     }
 }
 
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
-        LanguageListView(type: .automaticBlocking)
-            .environment(\.managedObjectContext, AppManager.shared.persistanceManager.preview().context)
+        let model = LanguageListViewModel(persistanceManager: AppManager.shared.persistanceManager.preview(),
+                                          viewType: .blockLanguage)
+        LanguageListView(model: model)
     }
 }

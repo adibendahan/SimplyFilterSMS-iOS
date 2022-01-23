@@ -111,20 +111,24 @@ class PersistanceManager: PersistanceManagerProtocol {
         return supportedLanguages
     }
     
-    func getFrequentlyAskedQuestions() -> [Question] {
-        return [Question(text: "faq_question_0"~, answer: "faq_answer_0"~, action: .activateFilters),
-                Question(text: "faq_question_1"~, answer: "faq_answer_1"~),
-                Question(text: "faq_question_2"~, answer: "faq_answer_2"~),
-                Question(text: "faq_question_3"~, answer: "faq_answer_3"~),
-                Question(text: "faq_question_4"~, answer: "faq_answer_4"~),
-                Question(text: "faq_question_5"~, answer: "faq_answer_5"~)]
+    func getFrequentlyAskedQuestions() -> [QuestionViewModel] {
+        return [QuestionViewModel(text: "faq_question_0"~, answer: "faq_answer_0"~, action: .activateFilters),
+                QuestionViewModel(text: "faq_question_1"~, answer: "faq_answer_1"~),
+                QuestionViewModel(text: "faq_question_2"~, answer: "faq_answer_2"~),
+                QuestionViewModel(text: "faq_question_3"~, answer: "faq_answer_3"~),
+                QuestionViewModel(text: "faq_question_4"~, answer: "faq_answer_4"~),
+                QuestionViewModel(text: "faq_question_5"~, answer: "faq_answer_5"~)]
     }
     
-    func getFiltersFetchRequest() -> NSFetchRequest<Filter> {
+    func getFilters() -> [Filter] {
         let request: NSFetchRequest<Filter> = Filter.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
                                    NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
-        return request
+        
+        
+        guard let filters = try? self.context.fetch(request) else { return [] }
+        
+        return filters
     }
     
     func preview() -> PersistanceManagerProtocol {
