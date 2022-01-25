@@ -120,7 +120,7 @@ struct HelpView: View {
                 .edgesIgnoringSafeArea(.bottom)
         }
         .sheet(isPresented: $isShowingEnableExtensionView) {
-            EnableExtensionView(isFromMenu: true)
+            EnableExtensionView(model: EnableExtensionViewModel(showWelcome: false))
         }
     }
 }

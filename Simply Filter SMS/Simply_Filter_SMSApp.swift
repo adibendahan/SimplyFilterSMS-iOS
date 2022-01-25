@@ -11,9 +11,7 @@ import SwiftUI
 struct Simply_Filter_SMSApp: App {
     var body: some Scene {
         WindowGroup {
-            let model = FilterListViewModel(persistanceManager: AppManager.shared.persistanceManager,
-                                            defaultsManager: AppManager.shared.defaultsManager)
-            FilterListView(model: model)
+            FilterListView(model: FilterListViewModel())
         }
     }
 }

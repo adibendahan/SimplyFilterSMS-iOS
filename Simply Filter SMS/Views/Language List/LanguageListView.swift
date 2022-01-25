@@ -95,8 +95,8 @@ struct LanguageListView: View {
 
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = LanguageListViewModel(persistanceManager: AppManager.shared.persistanceManager.preview(),
-                                          viewType: .blockLanguage)
+        let model = LanguageListViewModel(viewType: .blockLanguage,
+                                          persistanceManager: AppManager.shared.persistanceManager.preview())
         LanguageListView(model: model)
     }
 }

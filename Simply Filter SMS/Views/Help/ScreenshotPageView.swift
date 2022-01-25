@@ -10,6 +10,7 @@ import SwiftUI
 struct ScreenshotPageView: View {
     
     @StateObject var model: ScreenshotPageViewModel
+    @State var coordinator: EnableExtensionView.PageCoordinator? = nil
     
     var body: some View {
         VStack {
@@ -19,7 +20,7 @@ struct ScreenshotPageView: View {
                     
                     Text(self.model.text)
                         .font(.title2)
-                        .frame(width: .infinity, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Spacer()
                     
@@ -36,9 +37,7 @@ struct ScreenshotPageView: View {
             Spacer(minLength: 20)
             
             Button {
-                withAnimation {
-                    self.model.onConfirm?()
-                }
+                self.coordinator?.onPerform(action: model.confirmAction)
             } label: {
                 Text(self.model.confirmText)
                     .frame(maxWidth: .infinity)
@@ -59,7 +58,8 @@ struct ScreenshotPageView_Previews: PreviewProvider {
         let model = ScreenshotPageViewModel(title: "enableExtension_step2"~,
                                             text: "enableExtension_step2_desc"~,
                                             image: "enableExtension_screenshot2",
-                                            confirmText: "enableExtension_next"~)
+                                            confirmText: "enableExtension_next"~,
+                                            confirmAction: .nextPage)
         ScreenshotPageView(model: model)
     }
 }

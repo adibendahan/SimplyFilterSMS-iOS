@@ -15,8 +15,8 @@ class FilterListViewModel: ObservableObject {
     private let persistanceManager: PersistanceManagerProtocol
     private let defaultsManager: DefaultsManagerProtocol
     
-    init(persistanceManager: PersistanceManagerProtocol,
-         defaultsManager: DefaultsManagerProtocol) {
+    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
+         defaultsManager: DefaultsManagerProtocol = AppManager.shared.defaultsManager) {
         
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
@@ -63,5 +63,5 @@ class FilterListViewModel: ObservableObject {
 enum FilterListSheetView: Int, Identifiable {
     var id: Self { self }
     
-    case addFilter=0, enableExtension, about, addLanguageFilter
+    case addFilter=0, help, about, addLanguageFilter
 }

@@ -10,6 +10,7 @@ import SwiftUI
 struct TwoButtonPageView: View {
     
     @StateObject var model: TwoButtonPageViewModel
+    @State var coordinator: EnableExtensionView.PageCoordinator? = nil
     
     var body: some View {
         VStack (alignment: .center, spacing: 8) {
@@ -35,7 +36,7 @@ struct TwoButtonPageView: View {
             
             Button {
                 withAnimation {
-                    self.model.onConfirm?()
+                    self.coordinator?.onPerform(action: model.confirmAction)
                 }
             } label: {
                 Text(self.model.confirmText)
@@ -46,7 +47,7 @@ struct TwoButtonPageView: View {
             
             Button {
                 withAnimation {
-                    self.model.onCancel?()
+                    self.coordinator?.onPerform(action: model.cancelAction)
                 }
             } label: {
                 Text(self.model.cancelText)
@@ -68,7 +69,9 @@ struct SingleButtonPage_Previews: PreviewProvider {
         let model = TwoButtonPageViewModel(title: "enableExtension_welcome"~,
                                            text: "enableExtension_welcome_desc"~,
                                            confirmText: "enableExtension_welcome_callToAction"~,
+                                           confirmAction: .nextPage,
                                            cancelText: "enableExtension_welcome_cancel"~,
+                                           cancelAction: .dismiss,
                                            image: "enableExtension_screenshot4")
         
         TwoButtonPageView(model: model)

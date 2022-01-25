@@ -8,23 +8,35 @@
 import SwiftUI
 
 class ScreenshotPageViewModel: ObservableObject {
-
+    
+    private var id = UUID()
+    
     @Published var title: String
     @Published var text: String
     @Published var image: String
     @Published var confirmText: String
-    @Published var onConfirm: (() -> ())? = nil
+    @Published var confirmAction: EnableExtensionView.PageCoordinator.Action
     
     init(title: String,
          text: String,
          image: String,
          confirmText: String,
-         onConfirm: (() -> ())? = nil) {
+         confirmAction: EnableExtensionView.PageCoordinator.Action) {
         
         self.title = title
         self.text = text
         self.image = image
         self.confirmText = confirmText
-        self.onConfirm = onConfirm
+        self.confirmAction = confirmAction
+    }
+}
+
+extension ScreenshotPageViewModel: Hashable {
+    static func == (lhs: ScreenshotPageViewModel, rhs: ScreenshotPageViewModel) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

@@ -102,17 +102,16 @@ struct FilterListView: View {
                         AddFilterView()
                     case .about:
                         AboutView()
-                    case .enableExtension:
-                        let model = HelpViewModel(persistanceManager: AppManager.shared.persistanceManager)
+                    case .help:
+                        let model = HelpViewModel()
                         HelpView(model: model)
                     case .addLanguageFilter:
-                        let model = LanguageListViewModel(persistanceManager: AppManager.shared.persistanceManager,
-                                                          viewType: .blockLanguage)
+                        let model = LanguageListViewModel(viewType: .blockLanguage)
                         LanguageListView(model: model)
                     }
                 }
                 .fullScreenCover(isPresented: $isPresentingFullScreenWelcome, onDismiss: { }, content: {
-                    EnableExtensionView(isFromMenu: false)
+                    EnableExtensionView(model: EnableExtensionViewModel(showWelcome: true))
                 })
                 .background(Color.listBackgroundColor(for: colorScheme))
                 .onAppear() {
@@ -253,7 +252,7 @@ struct FilterListView: View {
             }
             
             Button {
-                presentedSheet = .enableExtension
+                presentedSheet = .help
             } label: {
                 Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
             }
@@ -271,8 +270,7 @@ struct FilterListView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = FilterListViewModel(persistanceManager: AppManager.shared.persistanceManager.preview(),
-                                    defaultsManager: AppManager.shared.defaultsManager)
+        let model = FilterListViewModel(persistanceManager: AppManager.shared.persistanceManager.preview())
         return FilterListView(model: model)
     }
 }

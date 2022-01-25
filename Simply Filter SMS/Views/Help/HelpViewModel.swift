@@ -13,7 +13,7 @@ class HelpViewModel: ObservableObject {
     
     private let persistanceManager: PersistanceManagerProtocol
     
-    init(persistanceManager: PersistanceManagerProtocol) {
+    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
         self.persistanceManager = persistanceManager
         self.title = "filterList_menu_enableExtension"~
         self.questions = persistanceManager.getFrequentlyAskedQuestions()

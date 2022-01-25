@@ -16,8 +16,8 @@ class LanguageListViewModel: ObservableObject {
     
     private let persistanceManager: PersistanceManagerProtocol
     
-    init(persistanceManager: PersistanceManagerProtocol,
-         viewType: LanguageListViewType) {
+    init(viewType: LanguageListViewType,
+         persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
         
         self.persistanceManager = persistanceManager
         self.type = viewType
