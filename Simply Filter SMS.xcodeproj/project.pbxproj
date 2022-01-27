@@ -24,6 +24,7 @@
 		695D5BC4278E01C00037C926 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC2278E01C00037C926 /* Extensions.swift */; };
 		6973D01D278B537300A173CD /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6973D01C278B537300A173CD /* CloudKit.framework */; };
 		6983139C27A1B144005309B3 /* AutomaticFilterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6983139B27A1B144005309B3 /* AutomaticFilterList.swift */; };
+		698FFA5627A3086F00C0B2E8 /* AutomaticFilterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6983139B27A1B144005309B3 /* AutomaticFilterList.swift */; };
 		699F55802778BB3100AD7C64 /* AddFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699F557F2778BB3100AD7C64 /* AddFilterView.swift */; };
 		69A7F52627A0575100ACF6F1 /* EnableExtensionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A7F52527A0575100ACF6F1 /* EnableExtensionViewModel.swift */; };
 		69AA2C52279D755200CEABE5 /* PersistanceManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C51279D755200CEABE5 /* PersistanceManagerProtocol.swift */; };
@@ -472,6 +473,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				695D5BC4278E01C00037C926 /* Extensions.swift in Sources */,
+				698FFA5627A3086F00C0B2E8 /* AutomaticFilterList.swift in Sources */,
 				69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */,
 				69DB7018277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */,
 				694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */,
