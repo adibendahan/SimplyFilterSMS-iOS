@@ -20,12 +20,17 @@ struct FilterListView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
 
+    enum SheetView: Int, Identifiable {
+        var id: Self { self }
+        case addFilter=0, help, about, addLanguageFilter
+    }
+    
     @StateObject var model: FilterListViewModel
     
     @State private var isPresentingFullScreenWelcome = false
     @State private var selectedFilters: Set<Filter> = Set()
     @State private var editMode: EditMode = .inactive
-    @State private var presentedSheet: FilterListSheetView? = nil
+    @State private var presentedSheet: SheetView? = nil
     @State private var viewDidAppear = false
     
     var body: some View {
@@ -34,7 +39,7 @@ struct FilterListView: View {
                 List (selection: $selectedFilters) {
                     
                     Section {
-                        NavigationLink(destination: LanguageListView(model: LanguageListViewModel(viewType: .automaticBlocking)), isActive:$model.isNavigationActive) {
+                        NavigationLink(destination: LanguageListView(model: LanguageListViewModel(mode: .automaticBlocking)), isActive:$model.isNavigationActive) {
 
                             HStack {
                                 Image(systemName: "bolt.shield.fill")
@@ -152,7 +157,7 @@ struct FilterListView: View {
                         let model = HelpViewModel()
                         HelpView(model: model)
                     case .addLanguageFilter:
-                        let model = LanguageListViewModel(viewType: .blockLanguage)
+                        let model = LanguageListViewModel(mode: .blockLanguage)
                         LanguageListView(model: model)
                     }
                 }

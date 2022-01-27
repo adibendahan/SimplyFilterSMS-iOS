@@ -17,10 +17,14 @@ struct LanguageListView: View {
     @Environment(\.dismiss)
     var dismiss
     
+    enum Mode {
+        case blockLanguage, automaticBlocking
+    }
+    
     @StateObject var model: LanguageListViewModel
     
     var body: some View {
-        switch self.model.type {
+        switch self.model.mode {
         case .blockLanguage:
             NavigationView {
                 self.makeBody()
@@ -40,7 +44,7 @@ struct LanguageListView: View {
                         ForEach (self.model.languages.indices) { index in
                             let language = $model.languages[index].id
                             if let localizedName = Locale.current.localizedString(forIdentifier: language.rawValue) {
-                                switch self.model.type {
+                                switch self.model.mode {
                                 case .blockLanguage:
                                     Button {
                                         self.model.addFilter(text: language.filterText, type: .denyLanguage)
@@ -105,7 +109,7 @@ struct LanguageListView: View {
                 Button {
                     dismiss()
                 } label: {
-                    switch self.model.type {
+                    switch self.model.mode {
                     case .blockLanguage:
                         Image(systemName: "xmark")
                             .foregroundColor(.secondary)
@@ -125,7 +129,7 @@ struct LanguageListView: View {
 
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = LanguageListViewModel(viewType: .blockLanguage,
+        let model = LanguageListViewModel(mode: .blockLanguage,
                                           persistanceManager: AppManager.shared.persistanceManager.preview)
         LanguageListView(model: model)
     }

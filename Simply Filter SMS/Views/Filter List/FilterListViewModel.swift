@@ -21,13 +21,13 @@ class FilterListViewModel: ObservableObject {
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
          defaultsManager: DefaultsManagerProtocol = AppManager.shared.defaultsManager) {
         
+        let isAutomaticFilteringOn = persistanceManager.isAutomaticFilteringOn
+        
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
         self.title = "filterList_filters"~
         self.isAppFirstRun = defaultsManager.isAppFirstRun
         self.isNavigationActive = false
-        
-        let isAutomaticFilteringOn = persistanceManager.isAutomaticFilteringOn
         self.isAutomaticFilteringOn = isAutomaticFilteringOn
         
         if isAutomaticFilteringOn {
@@ -51,13 +51,7 @@ class FilterListViewModel: ObservableObject {
         self.isAppFirstRun = defaultsManager.isAppFirstRun
         let isAutomaticFilteringOn = persistanceManager.isAutomaticFilteringOn
         self.isAutomaticFilteringOn = isAutomaticFilteringOn
-        
-        if isAutomaticFilteringOn {
-            self.activeLanguages = persistanceManager.activeAutomaticLanguages
-        }
-        else {
-            self.activeLanguages = nil
-        }
+        self.activeLanguages = isAutomaticFilteringOn ? persistanceManager.activeAutomaticLanguages : nil
     }
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
@@ -79,11 +73,4 @@ class FilterListViewModel: ObservableObject {
         self.persistanceManager.loadDebugData()
         self.refresh()
     }
-}
-
-
-enum FilterListSheetView: Int, Identifiable {
-    var id: Self { self }
-    
-    case addFilter=0, help, about, addLanguageFilter
 }

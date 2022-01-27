@@ -35,16 +35,16 @@ struct StoredDefault<T: PropertyListValue> {
     
     var wrappedValue: T {
         get {
-            if let val = UserDefaults.standard.object(forKey: key) as? T {
+            if let val = UserDefaults.standard.object(forKey: self.key) as? T {
                 return val
             }
             else {
-                UserDefaults.standard.set(defaultValue, forKey: key)
-                return defaultValue
+                UserDefaults.standard.set(self.defaultValue, forKey: self.key)
+                return self.defaultValue
             }
         }
         set {
-            UserDefaults.standard.set(newValue, forKey:key)
-            }
+            UserDefaults.standard.set(newValue, forKey:self.key)
+        }
     }
 }

@@ -136,13 +136,13 @@ class PersistanceManager: PersistanceManagerProtocol {
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
         guard !self.isDuplicateFilter(text: text, type: type) else { return }
         
-        let newFilter = Filter(context: context)
+        let newFilter = Filter(context: self.context)
         newFilter.uuid = UUID()
         newFilter.filterType = type
         newFilter.denyFolderType = denyFolder
         newFilter.text = text
         
-        saveContext()
+        self.saveContext()
     }
     
     func isDuplicateFilter(text: String, type: FilterType) -> Bool {
@@ -162,21 +162,21 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
-        offsets.map({ filters[$0] }).forEach({ context.delete($0) })
-        saveContext()
+        offsets.map({ filters[$0] }).forEach({ self.context.delete($0) })
+        self.saveContext()
     }
     
     func deleteFilters(_ filters: Set<Filter>) {
-        filters.forEach({ context.delete($0) })
-        saveContext()
+        filters.forEach({ self.context.delete($0) })
+        self.saveContext()
     }
     
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
         filter.denyFolderType = denyFolder
-        saveContext()
+        self.saveContext()
     }
     
-    func languages(for type: LanguageListViewType) -> [NLLanguage] {
+    func languages(for type: LanguageListView.Mode) -> [NLLanguage] {
         var supportedLanguages: [NLLanguage] = []
         
         switch type {
@@ -317,6 +317,6 @@ class PersistanceManager: PersistanceManagerProtocol {
         langFilter.filterType = .denyLanguage
         langFilter.text = NLLanguage.arabic.filterText
         
-        saveContext()
+        self.saveContext()
     }
 }

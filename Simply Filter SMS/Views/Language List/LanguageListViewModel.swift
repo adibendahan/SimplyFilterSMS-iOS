@@ -10,7 +10,7 @@ import NaturalLanguage
 
 class LanguageListViewModel: ObservableObject {
     @Published var languages: [LanguageWithAutomaticState] = []
-    @Published var type: LanguageListViewType
+    @Published var mode: LanguageListView.Mode
     @Published var title: String
     @Published var footer: String
     @Published var lastUpdate: Date?
@@ -18,24 +18,31 @@ class LanguageListViewModel: ObservableObject {
     private let persistanceManager: PersistanceManagerProtocol
     private let automaticFilterManager: AutomaticFilterManagerProtocol
     
-    init(viewType: LanguageListViewType,
+    init(mode: LanguageListView.Mode,
          persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
          automaticFilterManager: AutomaticFilterManagerProtocol = AppManager.shared.automaticFiltersManager) {
         
+        let cacheAge = persistanceManager.automaticFiltersCacheAge ?? nil
+        
         self.automaticFilterManager = automaticFilterManager
         self.persistanceManager = persistanceManager
-        self.type = viewType
-        self.title = viewType.name
-        let cacheAge = persistanceManager.automaticFiltersCacheAge ?? nil
+        self.mode = mode
         self.lastUpdate = cacheAge
+        self.footer = LanguageListViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
         
-        self.footer = LanguageListViewModel.updatedFooter(for: viewType, cacheAge: cacheAge)
+        switch mode {
+        case .automaticBlocking:
+            self.title = "autoFilter_title"~
+        case .blockLanguage:
+            self.title = "filterList_menu_filterLanguage"~
+        }
     }
     
-    private static func updatedFooter(for type: LanguageListViewType, cacheAge: Date?) -> String {
-        switch type {
+    private static func updatedFooter(for mode: LanguageListView.Mode, cacheAge: Date?) -> String {
+        switch mode {
         case .blockLanguage:
             return "lang_how"~
+            
         case .automaticBlocking:
             let formatter = DateFormatter()
             formatter.locale = Locale.current
@@ -53,12 +60,12 @@ class LanguageListViewModel: ObservableObject {
     }
     
     func refresh() {
-        self.languages = self.persistanceManager.languages(for: self.type).map({ LanguageWithAutomaticState(language: $0,
-                                                                                                            persistanceManager: self.persistanceManager) })
         let cacheAge = persistanceManager.automaticFiltersCacheAge ?? nil
-        self.lastUpdate = cacheAge
         
-        self.footer = LanguageListViewModel.updatedFooter(for: self.type, cacheAge: cacheAge)
+        self.lastUpdate = cacheAge
+        self.footer = LanguageListViewModel.updatedFooter(for: self.mode, cacheAge: cacheAge)
+        self.languages = self.persistanceManager.languages(for: self.mode).map({ LanguageWithAutomaticState(language: $0,
+                                                                                                            persistanceManager: self.persistanceManager) })
     }
     
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
@@ -70,20 +77,6 @@ class LanguageListViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self?.refresh()
             }
-        }
-    }
-}
-
-
-enum LanguageListViewType {
-    case blockLanguage, automaticBlocking
-    
-    var name: String {
-        switch self {
-        case .blockLanguage:
-            return "filterList_menu_filterLanguage"~
-        case .automaticBlocking:
-            return "autoFilter_title"~
         }
     }
 }

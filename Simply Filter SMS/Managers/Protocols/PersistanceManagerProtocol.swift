@@ -20,7 +20,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter])
     func deleteFilters(_ filters: Set<Filter>)
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType)
-    func languages(for type: LanguageListViewType) -> [NLLanguage]
+    func languages(for type: LanguageListView.Mode) -> [NLLanguage]
     func getFrequentlyAskedQuestions() -> [QuestionViewModel]
     func getFilters() -> [Filter]
     
