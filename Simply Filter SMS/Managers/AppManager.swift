@@ -12,4 +12,9 @@ class AppManager: AppManagerProtocol {
     
     var persistanceManager: PersistanceManagerProtocol = PersistanceManager()
     var defaultsManager: DefaultsManagerProtocol = DefaultsManager()
+    var automaticFiltersManager: AutomaticFilterManagerProtocol
+    
+    init() {
+        self.automaticFiltersManager = AutomaticFilterManager(persistanceManager: self.persistanceManager)
+    }
 }

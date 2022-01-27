@@ -7,6 +7,7 @@
 
 import Foundation
 import NaturalLanguage
+import SwiftUI
 
 extension Collection {
     
@@ -36,7 +37,7 @@ extension Filter {
     }
 }
 
-extension NLLanguage: Identifiable {
+extension NLLanguage {
     
     init(filterText: String) {
         var language = NLLanguage.undetermined
@@ -52,16 +53,15 @@ extension NLLanguage: Identifiable {
         self = language
     }
     
-    public var id: Int { self.hashValue }
-    public static var allSupportedCases: [NLLanguage] = [.hebrew, .arabic, .english, .spanish, .simplifiedChinese, .traditionalChinese, .russian,
+    static var allSupportedCases: [NLLanguage] = [.hebrew, .arabic, .english, .spanish, .simplifiedChinese, .traditionalChinese, .russian,
                                                          .french, .german, .italian, .japanese, .persian, .turkish]
-    public static func dominantLanguage(for string: String) -> NLLanguage? {
+    static func dominantLanguage(for string: String) -> NLLanguage? {
         let recognizer = NLLanguageRecognizer()
         recognizer.processString(string)
         return recognizer.dominantLanguage
     }
-    
-    public var filterText: String {
+        
+    var filterText: String {
         guard NLLanguage.allSupportedCases.contains(self) else { return "$lang:unknown" }
         let langName = Locale(identifier: "en_US").localizedString(forIdentifier: self.rawValue) ?? "unknown"
         return "$lang:\(langName.lowercased())"

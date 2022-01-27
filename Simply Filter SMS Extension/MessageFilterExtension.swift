@@ -11,8 +11,8 @@ import NaturalLanguage
 
 final class MessageFilterExtension: ILMessageFilterExtension {
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
-        
+        let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: true)
+
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
@@ -97,10 +97,40 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
                     }
                 }
             }
+            
+                //MARK: Priority #4 - Automatic Filtering
+            return self.runAutomaticFilters(messageText: messageText)
         }
         catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
+            print("ERROR: Could not fetch. \(error), \(error.userInfo)")
             return .none
+        }
+    }
+    
+    func runAutomaticFilters(messageText: String) -> ILMessageFilterAction {
+        let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
+        let cacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
+        
+        guard let automaticFiltersLanguages = try? self.persistentContainer.viewContext.fetch(languageRequest),
+              let cacheRow = try? self.persistentContainer.viewContext.fetch(cacheRequest).first,
+              let filtersData = cacheRow.filtersData,
+              let automaticFilterList = AutomaticFilterList(base64String: filtersData) else {
+                  
+                  print("ERROR: error while loading cache")
+                  return .none
+              }
+        
+        for automaticFiltersLanguage in automaticFiltersLanguages {
+            if automaticFiltersLanguage.isActive,
+               let langRawValue = automaticFiltersLanguage.lang,
+               let filterList = automaticFilterList.filterList[langRawValue] {
+                
+                for filter in filterList {
+                    if messageText.contains(filter.lowercased()) {
+                        return .junk
+                    }
+                }
+            }
         }
         
         return .allow

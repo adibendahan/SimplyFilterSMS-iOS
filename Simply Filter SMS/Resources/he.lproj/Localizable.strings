@@ -128,5 +128,13 @@
 
 "autoFilter_title" = "סינון אוטומטי";
 
-"autoFilter_lastUpdated" = "***עדכון אחרון: %@.***";
+"autoFilter_lastUpdated" = "***עודכן לארונה ב %@.***";
+
+"autoFilter_forceUpdate" = "עדכן עכשיו";
+
+"autoFilter_neverUpdated" = "לעולם לא";
+
+"autoFilter_ON" = "פועל";
+
+"autoFilter_OFF" = "כבוי";
 

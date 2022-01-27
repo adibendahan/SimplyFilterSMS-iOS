@@ -10,9 +10,6 @@ import NaturalLanguage
 
 protocol DefaultsManagerProtocol {
     var isAppFirstRun: Bool { get set }
-    
-    func languageAutomaticState(for language: NLLanguage) -> Bool
-    func setLanguageAtumaticState(for language: NLLanguage, value: Bool)
 }
 
 protocol PropertyListValue {}

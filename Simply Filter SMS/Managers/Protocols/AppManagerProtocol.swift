@@ -10,4 +10,5 @@ import Foundation
 protocol AppManagerProtocol {
     var persistanceManager: PersistanceManagerProtocol { get }
     var defaultsManager: DefaultsManagerProtocol { get set }
+    var automaticFiltersManager: AutomaticFilterManagerProtocol { get }
 }

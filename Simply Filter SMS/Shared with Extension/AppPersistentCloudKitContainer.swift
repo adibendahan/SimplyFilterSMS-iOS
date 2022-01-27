@@ -15,4 +15,15 @@ class AppPersistentCloudKitContainer: NSPersistentCloudKitContainer {
         
         return storeURL.appendingPathComponent(kDatabaseFilename)
     }
+    
+    convenience init(name: String, isReadOnly: Bool) {
+        self.init(name: name)
+
+        if isReadOnly {
+            let description = NSPersistentStoreDescription()
+            description.url = AppPersistentCloudKitContainer.defaultDirectoryURL().appendingPathComponent("\(name).sqlite")
+            description.isReadOnly = isReadOnly
+            self.persistentStoreDescriptions = [description]
+        }
+    }
 }

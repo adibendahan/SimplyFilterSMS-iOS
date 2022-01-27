@@ -89,5 +89,9 @@
 "faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customable in any way. Only messages filtered to the Junk folder will be delivered silently.";
 
 //MARK: Automatic Filtering
-"autoFilter_title" = "Automatic filtering";
-"autoFilter_lastUpdated" = "***Last updated: %@.***";
+"autoFilter_title" = "Automatic Filtering";
+"autoFilter_lastUpdated" = "***Updated on %@***";
+"autoFilter_forceUpdate" = "Force update";
+"autoFilter_neverUpdated" = "Never";
+"autoFilter_ON" = "ON";
+"autoFilter_OFF" = "OFF";

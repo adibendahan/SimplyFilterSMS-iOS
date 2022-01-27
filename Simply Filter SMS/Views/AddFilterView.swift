@@ -140,7 +140,7 @@ private enum Field: Int, Hashable {
 struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
-            AddFilterView().environment(\.managedObjectContext, AppManager.shared.persistanceManager.preview().context)
+            AddFilterView().environment(\.managedObjectContext, AppManager.shared.persistanceManager.preview.context)
         }
     }
 }

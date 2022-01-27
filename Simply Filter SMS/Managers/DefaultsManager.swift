@@ -16,19 +16,6 @@ class DefaultsManager: DefaultsManagerProtocol {
     var isAppFirstRun: Bool
 
     
-    //MARK: - Helpers -
-    func languageAutomaticState(for language: NLLanguage) -> Bool {
-        let languageKey = "$state(for: \(language.rawValue))"
-        guard let _ = UserDefaults.standard.object(forKey: languageKey) else { return false }
-        return UserDefaults.standard.bool(forKey: languageKey)
-    }
-    
-    func setLanguageAtumaticState(for language: NLLanguage, value: Bool) {
-        let languageKey = "$state(for: \(language.rawValue))"
-        UserDefaults.standard.set(value, forKey: languageKey)
-    }
-    
-    
     //MARK: - Stored Defaults Removal -
     init() {
         self.removeDeletedKeys()

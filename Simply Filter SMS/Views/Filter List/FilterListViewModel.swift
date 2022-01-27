@@ -11,6 +11,9 @@ class FilterListViewModel: ObservableObject {
     @Published var filters: Dictionary<FilterType, [Filter]> = [:]
     @Published var title: String
     @Published var isAppFirstRun: Bool
+    @Published var isAutomaticFilteringOn: Bool
+    @Published var isNavigationActive: Bool
+    @Published var activeLanguages: String?
     
     private let persistanceManager: PersistanceManagerProtocol
     private let defaultsManager: DefaultsManagerProtocol
@@ -22,6 +25,14 @@ class FilterListViewModel: ObservableObject {
         self.defaultsManager = defaultsManager
         self.title = "filterList_filters"~
         self.isAppFirstRun = defaultsManager.isAppFirstRun
+        self.isNavigationActive = false
+        
+        let isAutomaticFilteringOn = persistanceManager.isAutomaticFilteringOn
+        self.isAutomaticFilteringOn = isAutomaticFilteringOn
+        
+        if isAutomaticFilteringOn {
+            self.activeLanguages = persistanceManager.activeAutomaticLanguages
+        }
     }
     
     var isEmpty: Bool {
@@ -30,32 +41,43 @@ class FilterListViewModel: ObservableObject {
         return filterCount == 0
     }
     
-    func fetchFilters() {
+    func refresh() {
         let fetchedFilters = self.persistanceManager.getFilters()
         
         for filterType in FilterType.allCases {
             filters[filterType] = fetchedFilters.filter({ $0.filterType == filterType })
         }
+        
+        self.isAppFirstRun = defaultsManager.isAppFirstRun
+        let isAutomaticFilteringOn = persistanceManager.isAutomaticFilteringOn
+        self.isAutomaticFilteringOn = isAutomaticFilteringOn
+        
+        if isAutomaticFilteringOn {
+            self.activeLanguages = persistanceManager.activeAutomaticLanguages
+        }
+        else {
+            self.activeLanguages = nil
+        }
     }
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
         self.persistanceManager.deleteFilters(withOffsets: offsets, in: filters)
-        self.fetchFilters()
+        self.refresh()
     }
     
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
         self.persistanceManager.updateFilter(filter, denyFolder: denyFolder)
-        self.fetchFilters()
+        self.refresh()
     }
     
     func deleteFilters(_ filters: Set<Filter>) {
         self.persistanceManager.deleteFilters(filters)
-        self.fetchFilters()
+        self.refresh()
     }
     
     func loadDebugData() {
         self.persistanceManager.loadDebugData()
-        self.fetchFilters()
+        self.refresh()
     }
 }
 

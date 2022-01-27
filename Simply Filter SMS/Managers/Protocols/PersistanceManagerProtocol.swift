@@ -11,6 +11,9 @@ import NaturalLanguage
 
 protocol PersistanceManagerProtocol: AnyObject {
     var context: NSManagedObjectContext { get }
+    var isAutomaticFilteringOn: Bool { get }
+    var automaticFiltersCacheAge: Date? { get }
+    var activeAutomaticLanguages: String? { get }
     
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType)
     func isDuplicateFilter(text: String, type: FilterType) -> Bool
@@ -21,7 +24,14 @@ protocol PersistanceManagerProtocol: AnyObject {
     func getFrequentlyAskedQuestions() -> [QuestionViewModel]
     func getFilters() -> [Filter]
     
-    func preview() -> PersistanceManagerProtocol
+    func initAutomaticFiltering()
+    func languageAutomaticState(for language: NLLanguage) -> Bool
+    func setLanguageAtumaticState(for language: NLLanguage, value: Bool)
+    func cacheAutomaticFilterList(_ filterList: AutomaticFilterList)
+    func isCacheStale(comparedTo newFilterList: AutomaticFilterList) -> Bool
+    
+    // DEBUG:
+    var preview: PersistanceManagerProtocol { get }
     func loadDebugData()
 }
 

@@ -26,11 +26,53 @@ struct FilterListView: View {
     @State private var selectedFilters: Set<Filter> = Set()
     @State private var editMode: EditMode = .inactive
     @State private var presentedSheet: FilterListSheetView? = nil
-
+    @State private var viewDidAppear = false
+    
     var body: some View {
         NavigationView {
             ZStack (alignment: .bottom) {
                 List (selection: $selectedFilters) {
+                    
+                    Section {
+                        NavigationLink(destination: LanguageListView(model: LanguageListViewModel(viewType: .automaticBlocking)), isActive:$model.isNavigationActive) {
+
+                            HStack {
+                                Image(systemName: "bolt.shield.fill")
+                                    .foregroundColor(.accentColor)
+                                    .font(.system(size: self.model.activeLanguages == nil ? 18 : 24))
+                                
+                                VStack (alignment: .leading) {
+                                    Text("autoFilter_title"~)
+                                        .font(.system(size: 18))
+                                        .bold()
+                                    
+                                    if let activeLanguages = self.model.activeLanguages {
+                                        Text(activeLanguages)
+                                            .font(.caption2)
+                                    }
+                                }
+                                
+                                Spacer()
+                                
+                                if self.model.isAutomaticFilteringOn {
+                                    Text("autoFilter_ON"~)
+                                        .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+                                        .background(Color.green.opacity(0.1))
+                                        .foregroundColor(.green)
+                                        .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                                        .font(.system(size: 16, weight: .heavy, design: .default))
+                                }
+                                else {
+                                    Text("autoFilter_OFF"~)
+                                        .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+                                        .background(Color.red.opacity(0.1))
+                                        .foregroundColor(.red)
+                                        .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                                        .font(.system(size: 16, weight: .heavy, design: .default))
+                                }
+                            }
+                        }
+                    }
                     
                     if !self.model.isEmpty {
                         ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
@@ -90,12 +132,16 @@ struct FilterListView: View {
                     
                 } // List
                 .listStyle(InsetGroupedListStyle())
+                .padding(.top, 1)
                 .navigationBarItems(leading: EditButton())
                 .navigationBarItems(trailing: NavigationBarItemTrailing())
                 .navigationTitle(self.model.title)
                 .sheet(item: $presentedSheet) { // onDismiss:
                     self.presentedSheet = nil
-                    self.model.fetchFilters()
+                    guard self.viewDidAppear else { return }
+                    withAnimation {
+                        self.model.refresh()
+                    }
                 } content: { presentedSheet in
                     switch (presentedSheet) {
                     case .addFilter:
@@ -110,17 +156,19 @@ struct FilterListView: View {
                         LanguageListView(model: model)
                     }
                 }
-                .fullScreenCover(isPresented: $isPresentingFullScreenWelcome, onDismiss: { }, content: {
-                    EnableExtensionView(model: EnableExtensionViewModel(showWelcome: true))
-                })
+                .fullScreenCover(
+                    isPresented: $isPresentingFullScreenWelcome,
+                    onDismiss: {
+                        self.isPresentingFullScreenWelcome = false
+                        self.model.refresh()
+                    },
+                    content: {
+                        EnableExtensionView(model: EnableExtensionViewModel(showWelcome: true))
+                    })
                 .background(Color.listBackgroundColor(for: colorScheme))
-                .onAppear() {
-                    
-                    if !isPreview && self.model.isAppFirstRun {
-                        self.isPresentingFullScreenWelcome = true
-                    }
-                }
+
                 .environment(\.editMode, $editMode)
+                
                 
                 FooterView()
                     .onTapGesture {
@@ -129,8 +177,22 @@ struct FilterListView: View {
             } // ZStack
         } // NavigationView
         .navigationViewStyle(StackNavigationViewStyle())
-        .onAppear {
-            self.model.fetchFilters()
+        .onAppear() {
+            self.model.refresh()
+            if !isPreview && self.model.isAppFirstRun {
+                self.isPresentingFullScreenWelcome = true
+            }
+            self.viewDidAppear = true
+        }
+        .onReceive(self.model.$isNavigationActive) { isNavigationActive in
+            guard self.viewDidAppear else { return }
+            DispatchQueue.main.async {
+                if !isNavigationActive {
+                    withAnimation {
+                        self.model.refresh()
+                    }
+                }
+            }
         }
     }
     
@@ -194,7 +256,7 @@ struct FilterListView: View {
                     withAnimation {
                         self.model.deleteFilters(selectedFilters)
                         self.selectedFilters = Set()
-                        self.model.fetchFilters()
+                        self.model.refresh()
                     }
                 },
                 label: {
@@ -270,7 +332,7 @@ struct FilterListView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = FilterListViewModel(persistanceManager: AppManager.shared.persistanceManager.preview())
+        let model = FilterListViewModel(persistanceManager: AppManager.shared.persistanceManager.preview)
         return FilterListView(model: model)
     }
 }

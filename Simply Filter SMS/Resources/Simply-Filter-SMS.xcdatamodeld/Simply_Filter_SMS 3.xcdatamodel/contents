@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="AutomaticFiltersCache" representedClassName="AutomaticFiltersCache" syncable="YES" codeGenerationType="class">
+        <attribute name="age" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="filtersData" optional="YES" attributeType="String"/>
+        <attribute name="hashed" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="AutomaticFiltersLanguage" representedClassName="AutomaticFiltersLanguage" syncable="YES" codeGenerationType="class">
+        <attribute name="isActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lang" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Filter" representedClassName="Filter" syncable="YES" codeGenerationType="class">
+        <attribute name="folderType" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
+    <elements>
+        <element name="AutomaticFiltersCache" positionX="-54" positionY="18" width="128" height="89"/>
+        <element name="Filter" positionX="-63" positionY="-18" width="128" height="89"/>
+        <element name="AutomaticFiltersLanguage" positionX="-54" positionY="27" width="128" height="59"/>
+    </elements>
+</model>
