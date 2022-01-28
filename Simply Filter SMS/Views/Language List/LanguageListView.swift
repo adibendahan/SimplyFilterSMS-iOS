@@ -43,7 +43,7 @@ struct LanguageListView: View {
                     Section {
                         ForEach (self.model.languages.indices) { index in
                             let language = $model.languages[index].id
-                            if let localizedName = Locale.current.localizedString(forIdentifier: language.rawValue) {
+                            if let localizedName = language.localizedName {
                                 switch self.model.mode {
                                 case .blockLanguage:
                                     Button {

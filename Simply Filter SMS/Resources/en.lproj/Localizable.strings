@@ -54,7 +54,7 @@
 "enableExtension_step3" = "Step 3";
 "enableExtension_step3_desc" = "Turn on 'Simply Filter SMS' under 'SMS Filtering'";
 "enableExtension_welcome" = "Welcome! 🥳";
-"enableExtension_welcome_desc" = "You need to enable Simply Filter SMS as your SMS filter app on iOS Settings.";
+"enableExtension_welcome_desc" = "You need to enable Simply Filter SMS as your SMS filter app in iOS Settings.";
 "enableExtension_welcome_callToAction" = "Show me how";
 "enableExtension_welcome_cancel" = "It's done";
 "enableExtension_ready" = "Ready?";
@@ -75,7 +75,7 @@
 
 //MARK: Help View
 "faq_subtitle" = "Here's a list of frequently asked questions, if you can't find your answer here you can reach out by";
-"faq_question_0" = "How do I activate message filtering on iOS?";
+"faq_question_0" = "How do I activate message filtering in iOS?";
 "faq_answer_0" = "Tap to open the onboarding screen.";
 "faq_question_1" = "How does message filtering work?";
 "faq_answer_1" = "When you recive a text message from a number that is not in your contact list, Simply Filter SMS will filter it based on the following rules:\n\n• If a text message contains any words from the Allow list it will be delivered regularly.\n• If not, the message will be scanned for any denied words and in case any were found it will be delivered to the Junk folder.\n• If the text doesn't contain any denied words, it will be delivered regularly.\n";
@@ -86,7 +86,7 @@
 "faq_question_4" = "Where are the filtered messages?";
 "faq_answer_4" = "When a text message is tagged as junk it will still be available for reading on the Messages app under the Junk folder.";
 "faq_question_5" = "What's the difference between Junk/Transactions/Promotions folders?";
-"faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customable in any way. Only messages filtered to the Junk folder will be delivered silently.";
+"faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customizable in any way. Only messages filtered to the Junk folder will be delivered silently.";
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "Automatic Filtering";

@@ -36,8 +36,9 @@ class PersistanceManager: PersistanceManagerProtocol {
     private let container: NSPersistentCloudKitContainer
     
     private func saveContext() {
+        guard self.context.hasChanges else { return }
         do {
-            try context.save()
+            try self.context.save()
         } catch {
             let nsError = error as NSError
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
@@ -88,6 +89,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     
     var activeAutomaticLanguages: String? {
         let request: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersLanguage.lang, ascending: true)]
         guard let automaticFiltersLanguages = try? self.context.fetch(request) else { return nil }
         
         let supportedLanguages = self.languages(for: .automaticBlocking)
@@ -100,7 +102,8 @@ class PersistanceManager: PersistanceManagerProtocol {
                 let lang = NLLanguage(rawValue: langRawValue)
                 
                 if supportedLanguages.contains(lang),
-                   let localizedName = Locale.current.localizedString(forIdentifier: langRawValue) {
+                   let localizedName = lang.localizedName {
+                    
                     languageNames.append(localizedName)
                 }
             }
@@ -183,12 +186,13 @@ class PersistanceManager: PersistanceManagerProtocol {
         case .blockLanguage:
             let remainingSupportedLanguages = NLLanguage.allSupportedCases
                 .filter({ !self.isDuplicateFilter(text: $0.filterText, type: .denyLanguage) })
-                .sorted(by: { $0.filterText < $1.filterText })
+                .sorted(by: { $0.rawValue < $1.rawValue })
             supportedLanguages.append(contentsOf: remainingSupportedLanguages)
             
         case .automaticBlocking:
-            supportedLanguages.append(.hebrew)
             supportedLanguages.append(.english)
+            supportedLanguages.append(.hebrew)
+            supportedLanguages.sort(by: { $0.rawValue < $1.rawValue })
         }
 
         return supportedLanguages

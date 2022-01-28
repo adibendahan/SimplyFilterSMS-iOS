@@ -211,7 +211,7 @@ struct FilterListView: View {
                    let filterText = filter.text,
                    let blockedLanguage = NLLanguage(filterText: filterText),
                    blockedLanguage != .undetermined,
-                   let localizedName = Locale.current.localizedString(forIdentifier: blockedLanguage.rawValue) {
+                   let localizedName = blockedLanguage.localizedName {
                     
                     Text(localizedName)
                 }

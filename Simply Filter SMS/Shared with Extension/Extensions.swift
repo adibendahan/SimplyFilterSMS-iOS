@@ -66,4 +66,8 @@ extension NLLanguage {
         let langName = Locale(identifier: "en_US").localizedString(forIdentifier: self.rawValue) ?? "unknown"
         return "$lang:\(langName.lowercased())"
     }
+    
+    var localizedName: String? {
+        return Locale.current.localizedString(forIdentifier: self.rawValue)
+    }
 }

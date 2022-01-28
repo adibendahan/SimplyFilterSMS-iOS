@@ -43,6 +43,16 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "694E53DB27A42EA8009A7E0E"
+               BuildableName = "Simply Filter SMS Tests.xctest"
+               BlueprintName = "Simply Filter SMS Tests"
+               ReferencedContainer = "container:Simply Filter SMS.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
