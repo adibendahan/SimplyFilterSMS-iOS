@@ -13,17 +13,18 @@ struct AddFilterView: View {
     var dismiss
     
     @FocusState private var focusedField: Field?
+    @StateObject var model: AddFilterViewModel
     
-    @State var appManager: AppManagerProtocol = AppManager.shared
     @State private var filterText = ""
     @State private var selectedFilterType = FilterType.deny
     @State private var selectedDenyFolderType = DenyFolderType.junk
+    @State private var isDismissing = false
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
-                    let isDuplicate = self.appManager.persistanceManager.isDuplicateFilter(text: filterText, type: selectedFilterType)
+                    let isDuplicate = self.model.isDuplicateFilter(text: filterText, type: selectedFilterType)
                     
                     Spacer()
                     
@@ -38,7 +39,7 @@ struct AddFilterView: View {
                         TextField("addFilter_text"~, text: $filterText)
                             .focused($focusedField, equals: .text)
                         
-                        if (isDuplicate) {
+                        if (!self.isDismissing && isDuplicate) {
                             HStack {
                                 Image(systemName: "xmark.octagon")
                                     .foregroundColor(.red.opacity(0.8))
@@ -92,10 +93,11 @@ struct AddFilterView: View {
                     
                     Button {
                         withAnimation {
-                            self.appManager.persistanceManager.addFilter(text: self.filterText,
-                                                                         type: self.selectedFilterType,
-                                                                         denyFolder: self.selectedDenyFolderType)
+                            self.model.addFilter(text: self.filterText,
+                                                 type: self.selectedFilterType,
+                                                 denyFolder: self.selectedDenyFolderType)
                             dismiss()
+                            self.isDismissing = true
                         }
                     } label: {
                         Text("addFilter_add"~)
@@ -138,7 +140,7 @@ private enum Field: Int, Hashable {
 struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
-            AddFilterView().environment(\.managedObjectContext, AppManager.shared.persistanceManager.preview.context)
+            AddFilterView(model: AddFilterViewModel(persistanceManager: AppManager.shared.persistanceManager.preview))
         }
     }
 }

@@ -18,6 +18,7 @@
 		6941FE18277DF88200B99539 /* EnableExtensionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE17277DF88200B99539 /* EnableExtensionView.swift */; };
 		6941FE1A277E19CC00B99539 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE19277E19CC00B99539 /* AboutView.swift */; };
 		6941FE1C277FDBE700B99539 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE1B277FDBE700B99539 /* MailView.swift */; };
+		6943DBE327A3704E0024C791 /* AddFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6943DBE227A3704E0024C791 /* AddFilterViewModel.swift */; };
 		694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */; };
 		695D5BC1278DE4B50037C926 /* LanguageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC0278DE4B50037C926 /* LanguageListView.swift */; };
 		695D5BC3278E01C00037C926 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC2278E01C00037C926 /* Extensions.swift */; };
@@ -91,6 +92,7 @@
 		6941FE17277DF88200B99539 /* EnableExtensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionView.swift; sourceTree = "<group>"; };
 		6941FE19277E19CC00B99539 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		6941FE1B277FDBE700B99539 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
+		6943DBE227A3704E0024C791 /* AddFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFilterViewModel.swift; sourceTree = "<group>"; };
 		695D5BC0278DE4B50037C926 /* LanguageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageListView.swift; sourceTree = "<group>"; };
 		695D5BC2278E01C00037C926 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		6973D01C278B537300A173CD /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
@@ -273,6 +275,7 @@
 				69AA2C63279DB65C00CEABE5 /* Language List */,
 				69FF9C8427921D59007FA2DB /* Help */,
 				699F557F2778BB3100AD7C64 /* AddFilterView.swift */,
+				6943DBE227A3704E0024C791 /* AddFilterViewModel.swift */,
 				6941FE19277E19CC00B99539 /* AboutView.swift */,
 				69FF9C8727933CE9007FA2DB /* FooterView.swift */,
 				690F054D278200B60036553B /* ButtonStyles.swift */,
@@ -438,6 +441,7 @@
 				69CD70CC2770D4D100F91A2F /* FilterListView.swift in Sources */,
 				69118BFB279E0AD0001F2613 /* TwoButtonPageViewModel.swift in Sources */,
 				69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */,
+				6943DBE327A3704E0024C791 /* AddFilterViewModel.swift in Sources */,
 				690F054E278200B60036553B /* ButtonStyles.swift in Sources */,
 				6941FE18277DF88200B99539 /* EnableExtensionView.swift in Sources */,
 				69AA2C61279DB54F00CEABE5 /* HelpViewModel.swift in Sources */,

@@ -150,7 +150,7 @@ struct FilterListView: View {
                 } content: { presentedSheet in
                     switch (presentedSheet) {
                     case .addFilter:
-                        AddFilterView()
+                        AddFilterView(model: AddFilterViewModel())
                     case .about:
                         AboutView()
                     case .help:
