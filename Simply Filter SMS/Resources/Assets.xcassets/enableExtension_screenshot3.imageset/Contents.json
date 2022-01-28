@@ -29,6 +29,22 @@
       "filename" : "3_he_da.png",
       "idiom" : "universal",
       "locale" : "he"
+    },
+    {
+      "filename" : "3_ru_li.png",
+      "idiom" : "universal",
+      "locale" : "ru"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "3_ru_da.png",
+      "idiom" : "universal",
+      "locale" : "ru"
     }
   ],
   "info" : {

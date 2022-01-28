@@ -78,6 +78,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		10C8082327A43DE3002781DD /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		690F054D278200B60036553B /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
 		690F055227822DFA0036553B /* AppExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppExtensions.swift; sourceTree = "<group>"; };
 		69118BF6279DF3B3001F2613 /* TwoButtonPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButtonPageView.swift; sourceTree = "<group>"; };
@@ -374,6 +375,7 @@
 				en,
 				he,
 				Base,
+				ru,
 			);
 			mainGroup = 69CD70BD2770D4D100F91A2F;
 			productRefGroup = 69CD70C72770D4D100F91A2F /* Products */;
@@ -497,6 +499,7 @@
 			children = (
 				6941FE14277DE78B00B99539 /* en */,
 				6941FE16277DE78E00B99539 /* he */,
+				10C8082327A43DE3002781DD /* ru */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

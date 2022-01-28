@@ -189,6 +189,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         case .automaticBlocking:
             supportedLanguages.append(.hebrew)
             supportedLanguages.append(.english)
+            supportedLanguages.append(.russian)
         }
 
         return supportedLanguages
