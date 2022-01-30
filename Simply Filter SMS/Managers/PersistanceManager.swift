@@ -293,6 +293,9 @@ class PersistanceManager: PersistanceManagerProtocol {
                     uninitializedRules.removeAll(where: { $0 == rule })
                 }
             }
+            else {
+                self.context.delete(automaticFiltersRuleRecord)
+            }
         }
         
         for uninitializedRule in uninitializedRules {
