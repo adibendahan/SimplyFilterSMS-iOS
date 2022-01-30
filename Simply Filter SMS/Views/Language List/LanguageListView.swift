@@ -89,6 +89,7 @@ struct LanguageListView: View {
                                     }
                                 } // Toggle
                                 .tint(.accentColor)
+                                .disabled(self.model.isAllUnknownFilteringOn && rule != .allUnknown)
                             } // ForEach
                         } // Section
                     }
@@ -140,6 +141,7 @@ struct LanguageListView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                         .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
                     } // Section
+                    .disabled(self.model.isAllUnknownFilteringOn)
                 } // List
                 .listStyle(InsetGroupedListStyle())
             }

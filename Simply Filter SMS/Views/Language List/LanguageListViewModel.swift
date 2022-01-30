@@ -16,6 +16,7 @@ class LanguageListViewModel: ObservableObject {
     @Published var lastUpdate: Date?
     @Published var rules: [StatefulItem<RuleType>] = []
     @Published var shortSenderChoice: Int
+    @Published var isAllUnknownFilteringOn: Bool
     
     private let persistanceManager: PersistanceManagerProtocol
     private let automaticFilterManager: AutomaticFilterManagerProtocol
@@ -32,13 +33,14 @@ class LanguageListViewModel: ObservableObject {
         self.lastUpdate = cacheAge
         self.footer = LanguageListViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
         self.shortSenderChoice = automaticFilterManager.selectedChoice(for: .shortSender)
+        self.isAllUnknownFilteringOn = automaticFilterManager.automaticRuleState(for: .allUnknown)
         
         switch mode {
         case .automaticBlocking:
             self.title = "autoFilter_title"~
             self.rules = automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
-                                                                                            getter: self.automaticFilterManager.automaticRuleState,
-                                                                                            setter: self.automaticFilterManager.setAutomaticRuleState) })
+                                                                                   getter: self.automaticFilterManager.automaticRuleState,
+                                                                                   setter: self.setAutomaticRuleState) })
         case .blockLanguage:
             self.title = "filterList_menu_filterLanguage"~
         }
@@ -71,6 +73,7 @@ class LanguageListViewModel: ObservableObject {
         self.lastUpdate = cacheAge
         self.footer = LanguageListViewModel.updatedFooter(for: self.mode, cacheAge: cacheAge)
         self.shortSenderChoice = self.automaticFilterManager.selectedChoice(for: .shortSender)
+        self.isAllUnknownFilteringOn = automaticFilterManager.automaticRuleState(for: .allUnknown)
         self.languages = self.automaticFilterManager.languages(for: self.mode)
             .map({ StatefulItem<NLLanguage>(item: $0,
                                             getter: self.automaticFilterManager.languageAutomaticState,
@@ -78,8 +81,8 @@ class LanguageListViewModel: ObservableObject {
         
         if self.mode == .automaticBlocking {
             self.rules = self.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
-                                                                                                 getter: self.automaticFilterManager.automaticRuleState,
-                                                                                                 setter: self.automaticFilterManager.setAutomaticRuleState) })
+                                                                                        getter: self.automaticFilterManager.automaticRuleState,
+                                                                                        setter: self.setAutomaticRuleState) })
         }
     }
     
@@ -97,6 +100,11 @@ class LanguageListViewModel: ObservableObject {
     
     func setSelectedChoice(for rule: RuleType, choice: Int) {
         self.automaticFilterManager.setSelectedChoice(for: rule, choice: choice)
+        self.refresh()
+    }
+    
+    private func setAutomaticRuleState(for rule: RuleType, value: Bool) {
+        self.automaticFilterManager.setAutomaticRuleState(for: rule, value: value)
         self.refresh()
     }
 }

@@ -28,42 +28,42 @@ class FilterListViewModelTests: XCTestCase {
     
     //MARK: Tests
     
-    func test_refresh() {
-        // Prepare
-        self.persistanceManager.isAutomaticFilteringOnClosure = { return true }
-        self.defaultsManager.isAppFirstRunClosure = { return false }
-        
-        // Act
-        self.testSubject.refresh()
-        
-        // Verify
-        XCTAssert(self.persistanceManager.getFiltersCounter == 1)
-        XCTAssert(self.defaultsManager.isAppFirstRunGetCounter == 1)
-        XCTAssert(self.persistanceManager.isAutomaticFilteringOnCounter == 1)
-    }
-    
-    func test_isEmpty() {
-        // Prepare
-        self.persistanceManager.getFiltersClosure = { return [] }
-        var isEmpty = false
-        
-        // Act
-        isEmpty = self.testSubject.isEmpty
-        
-        // Verify
-        XCTAssert(isEmpty == true)
-     
-        // Prepare
-        let filter = self.makeFilter()
-        self.persistanceManager.getFiltersClosure = { return [filter] }
-        self.testSubject.refresh()
-        
-        // Act
-        isEmpty = self.testSubject.isEmpty
-        
-        // Verify
-        XCTAssert(isEmpty == false)
-    }
+//    func test_refresh() {
+//        // Prepare
+//        self.persistanceManager.isAutomaticFilteringOnClosure = { return true }
+//        self.defaultsManager.isAppFirstRunClosure = { return false }
+//        
+//        // Act
+//        self.testSubject.refresh()
+//        
+//        // Verify
+//        XCTAssert(self.persistanceManager.getFiltersCounter == 1)
+//        XCTAssert(self.defaultsManager.isAppFirstRunGetCounter == 1)
+//        XCTAssert(self.persistanceManager.isAutomaticFilteringOnCounter == 1)
+//    }
+//    
+//    func test_isEmpty() {
+//        // Prepare
+//        self.persistanceManager.getFiltersClosure = { return [] }
+//        var isEmpty = false
+//        
+//        // Act
+//        isEmpty = self.testSubject.isEmpty
+//        
+//        // Verify
+//        XCTAssert(isEmpty == true)
+//     
+//        // Prepare
+//        let filter = self.makeFilter()
+//        self.persistanceManager.getFiltersClosure = { return [filter] }
+//        self.testSubject.refresh()
+//        
+//        // Act
+//        isEmpty = self.testSubject.isEmpty
+//        
+//        // Verify
+//        XCTAssert(isEmpty == false)
+//    }
     
     func test_deleteFiltersOffsets() {
         // Prepare

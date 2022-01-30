@@ -13,68 +13,46 @@ import NaturalLanguage
 
 class mock_PersistanceManager: PersistanceManagerProtocol {
 
-    var isAutomaticFilteringOnCounter = 0
-    var automaticFiltersCacheAgeCounter = 0
-    var activeAutomaticLanguagesCounter = 0
     var addFilterCounter = 0
     var isDuplicateFilterCounter = 0
     var deleteFiltersOffsetsCounter = 0
     var deleteFiltersCounter = 0
     var updateFilterCounter = 0
-    var languagesCounter = 0
-    var getFrequentlyAskedQuestionsCounter = 0
-    var getFiltersCounter = 0
+    var fetchFilterRecordsCounter = 0
     var initAutomaticFilteringCounter = 0
-    var languageAutomaticStateCounter = 0
-    var setLanguageAtumaticStateCounter = 0
-    var cacheAutomaticFilterListCounter = 0
+    var saveCacheCounter = 0
     var isCacheStaleCounter = 0
+    var commitContextCounter = 0
+    var fetchAutomaticFiltersLanguageRecordsCounter = 0
+    var fetchAutomaticFiltersRuleRecordsCounter = 0
+    var fetchAutomaticFiltersCacheRecordsCounter = 0
+    var fetchAutomaticFiltersLanguageRecordCounter = 0
+    var fetchAutomaticFiltersRuleRecordCounter = 0
     
-    var isAutomaticFilteringOnClosure: (() -> (Bool))?
-    var automaticFiltersCacheAgeClosure: (() -> (Date?))?
-    var activeAutomaticLanguagesClosure: (() -> (String?))?
     var addFilterClosure: ((String, FilterType, DenyFolderType) -> ())?
-    var isDuplicateFilterClosure: ((String, FilterType) -> (Bool))?
+    var isDuplicateFilterClosure: ((String) -> (Bool))?
     var deleteFiltersOffsetsClosure: ((IndexSet, [Filter]) -> ())?
     var deleteFiltersClosure: ((Set<Filter>) -> ())?
     var updateFilterClosure: ((Filter, DenyFolderType) -> ())?
-    var languagesClosure: ((LanguageListView.Mode) -> ([NLLanguage]))?
-    var getFrequentlyAskedQuestionsClosure: (() -> ([QuestionViewModel]))?
-    var getFiltersClosure: (() -> ([Filter]))?
-    var initAutomaticFilteringClosure: (() -> ())?
-    var languageAutomaticStateClosure: ((NLLanguage) -> (Bool))?
-    var setLanguageAtumaticStateClosure: ((NLLanguage, Bool) -> ())?
-    var cacheAutomaticFilterListClosure: ((AutomaticFilterList) -> ())?
+    var fetchFilterRecordsClosure: (() -> ([Filter]))?
+    var initAutomaticFilteringClosure: (([NLLanguage], [RuleType]) -> ())?
+    var saveCacheClosure: ((AutomaticFilterList) -> ())?
     var isCacheStaleClosure: ((AutomaticFilterList) -> (Bool))?
+    var commitContextClosure: (() -> ())?
+    var fetchAutomaticFiltersLanguageRecordsClosure: (() -> ([AutomaticFiltersLanguage]))?
+    var fetchAutomaticFiltersRuleRecordsClosure: (() -> ([AutomaticFiltersRule]))?
+    var fetchAutomaticFiltersCacheRecordsClosure: (() -> ([AutomaticFiltersCache]))?
+    var fetchAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage?))?
+    var fetchAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule?))?
     
-    var isAutomaticFilteringOn: Bool {
-        get {
-            self.isAutomaticFilteringOnCounter += 1
-            return self.isAutomaticFilteringOnClosure?() ?? false
-        }
-    }
-    
-    var automaticFiltersCacheAge: Date? {
-        get {
-            self.automaticFiltersCacheAgeCounter += 1
-            return self.automaticFiltersCacheAgeClosure?() ?? nil
-        }
-    }
-    var activeAutomaticLanguages: String? {
-        get {
-            self.activeAutomaticLanguagesCounter += 1
-            return self.activeAutomaticLanguagesClosure?() ?? nil
-        }
-    }
-
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType) {
         self.addFilterCounter += 1
         self.addFilterClosure?(text, type, denyFolder)
     }
 
-    func isDuplicateFilter(text: String, type: FilterType) -> Bool {
+    func isDuplicateFilter(text: String) -> Bool {
         self.isDuplicateFilterCounter += 1
-        return self.isDuplicateFilterClosure?(text, type) ?? false
+        return self.isDuplicateFilterClosure?(text) ?? false
     }
 
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
@@ -92,39 +70,19 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.updateFilterClosure?(filter, denyFolder)
     }
 
-    func languages(for type: LanguageListView.Mode) -> [NLLanguage] {
-        self.languagesCounter += 1
-        return self.languagesClosure?(type) ?? []
+    func fetchFilterRecords() -> [Filter] {
+        self.fetchFilterRecordsCounter += 1
+        return self.fetchFilterRecordsClosure?() ?? []
     }
 
-    func getFrequentlyAskedQuestions() -> [QuestionViewModel] {
-        self.getFrequentlyAskedQuestionsCounter += 1
-        return self.getFrequentlyAskedQuestionsClosure?() ?? []
-    }
-
-    func getFilterRecords() -> [Filter] {
-        self.getFiltersCounter += 1
-        return self.getFiltersClosure?() ?? []
-    }
-
-    func initAutomaticFiltering() {
+    func initAutomaticFiltering(languages: [NLLanguage], rules: [RuleType]) {
         self.initAutomaticFilteringCounter += 1
-        self.initAutomaticFilteringClosure?()
+        self.initAutomaticFilteringClosure?(languages, rules)
     }
-
-    func languageAutomaticState(for language: NLLanguage) -> Bool {
-        self.languageAutomaticStateCounter += 1
-        return self.languageAutomaticStateClosure?(language) ?? false
-    }
-
-    func setLanguageAtumaticState(for language: NLLanguage, value: Bool) {
-        self.setLanguageAtumaticStateCounter += 1
-        self.setLanguageAtumaticStateClosure?(language, value)
-    }
-
+    
     func saveCache(with filterList: AutomaticFilterList) {
-        self.cacheAutomaticFilterListCounter += 1
-        self.cacheAutomaticFilterListClosure?(filterList)
+        self.saveCacheCounter += 1
+        self.saveCacheClosure?(filterList)
     }
 
     func isCacheStale(comparedTo newFilterList: AutomaticFilterList) -> Bool {
@@ -132,23 +90,35 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.isCacheStaleClosure?(newFilterList) ?? false
     }
     
-    #warning("Adi - Missing implementation + testing")
-    func automaticRuleState(for rule: RuleType) -> Bool {
-        return false
+    func commitContext() {
+        self.commitContextCounter += 1
+        self.commitContextClosure?()
     }
     
-    func setAutomaticRuleState(for rule: RuleType, value: Bool) {
-        
+    func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage] {
+        self.fetchAutomaticFiltersLanguageRecordsCounter += 1
+        return self.fetchAutomaticFiltersLanguageRecordsClosure?() ?? []
     }
     
-    func selectedChoice(for rule: RuleType) -> Int {
-        return 0
+    func fetchAutomaticFiltersRuleRecords() -> [AutomaticFiltersRule] {
+        self.fetchAutomaticFiltersRuleRecordsCounter += 1
+        return self.fetchAutomaticFiltersRuleRecordsClosure?() ?? []
     }
     
-    func setSelectedChoice(for rule: RuleType, choice: Int) {
-        
+    func fetchAutomaticFiltersCacheRecords() -> [AutomaticFiltersCache] {
+        self.fetchAutomaticFiltersCacheRecordsCounter += 1
+        return self.fetchAutomaticFiltersCacheRecordsClosure?() ?? []
     }
     
+    func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage? {
+        self.fetchAutomaticFiltersLanguageRecordCounter += 1
+        return self.fetchAutomaticFiltersLanguageRecordClosure?(language) ?? nil
+    }
+    
+    func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule? {
+        self.fetchAutomaticFiltersRuleRecordCounter += 1
+        return self.fetchAutomaticFiltersRuleRecordClosure?(rule) ?? nil
+    }
 
     //MARK: Helpers
     private var persistance = PersistanceManager(inMemory: true)
@@ -161,21 +131,13 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     }
     
     func resetCounters() {
-        self.isAutomaticFilteringOnCounter = 0
-        self.automaticFiltersCacheAgeCounter = 0
-        self.activeAutomaticLanguagesCounter = 0
         self.addFilterCounter = 0
         self.isDuplicateFilterCounter = 0
         self.deleteFiltersOffsetsCounter = 0
         self.deleteFiltersCounter = 0
         self.updateFilterCounter = 0
-        self.languagesCounter = 0
-        self.getFrequentlyAskedQuestionsCounter = 0
-        self.getFiltersCounter = 0
         self.initAutomaticFilteringCounter = 0
-        self.languageAutomaticStateCounter = 0
-        self.setLanguageAtumaticStateCounter = 0
-        self.cacheAutomaticFilterListCounter = 0
+        self.saveCacheCounter = 0
         self.isCacheStaleCounter = 0
     }
     
