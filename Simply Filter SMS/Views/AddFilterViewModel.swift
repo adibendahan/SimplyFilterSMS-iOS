@@ -8,10 +8,13 @@
 import Foundation
 
 class AddFilterViewModel: ObservableObject {
+    @Published var isAllUnknownFilteringOn: Bool
+    
     private var persistanceManager: PersistanceManagerProtocol
     
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
         self.persistanceManager = persistanceManager
+        self.isAllUnknownFilteringOn = persistanceManager.automaticRuleState(for: .allUnknown) == true
     }
     
     func isDuplicateFilter(text: String, type: FilterType) -> Bool {

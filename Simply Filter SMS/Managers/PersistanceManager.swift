@@ -54,24 +54,96 @@ class PersistanceManager: PersistanceManagerProtocol {
         }
     }
     
+    private func initAutomaticFilteringLanguages() {
+        let request: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
+        guard let automaticFiltersLanguages = try? self.context.fetch(request) else { return }
+        var uninitializedLanguages: [NLLanguage] = self.languages(for: .automaticBlocking)
+
+        for automaticFiltersLanguage in automaticFiltersLanguages {
+            if let langRawValue = automaticFiltersLanguage.lang {
+                let lang = NLLanguage(langRawValue)
+                
+                if !uninitializedLanguages.contains(lang) {
+                    self.context.delete(automaticFiltersLanguage)
+                }
+                else {
+                    uninitializedLanguages.removeAll(where: { $0 == lang })
+                }
+            }
+        }
+        
+        for uninitializedLanguage in uninitializedLanguages {
+            let newLang = AutomaticFiltersLanguage(context: self.context)
+            newLang.lang = uninitializedLanguage.rawValue
+            newLang.isActive = false
+        }
+    }
+    
+    private func initAutomaticFilteringRules() {
+        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
+        guard let automaticFiltersRules = try? self.context.fetch(request) else { return }
+        var uninitializedRules: [RuleType] = RuleType.allCases
+
+        for automaticFiltersRule in automaticFiltersRules {
+            if let rule = automaticFiltersRule.ruleType {
+
+                if !uninitializedRules.contains(rule) {
+                    self.context.delete(automaticFiltersRule)
+                }
+                else {
+                    uninitializedRules.removeAll(where: { $0 == rule })
+                }
+            }
+        }
+        
+        for uninitializedRule in uninitializedRules {
+            let newRule = AutomaticFiltersRule(context: self.context)
+            newRule.ruleId = uninitializedRule.rawValue
+            newRule.selectedChoice = uninitializedRule == .shortSender ? 6 : 0
+            newRule.isActive = false
+        }
+    }
+    
     //MARK: - Public API -
     var context: NSManagedObjectContext {
         return self.container.viewContext
     }
     
+    #warning("Adi - Should move to automaticFilterManager")
     var isAutomaticFilteringOn: Bool {
-        let request: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
-        guard let automaticFiltersLanguages = try? self.context.fetch(request) else { return false }
-        let supportedLanguages: [NLLanguage] = self.languages(for: .automaticBlocking)
         var isAutomaticFilteringOn = false
         
-        for automaticFilterLanguage in automaticFiltersLanguages {
-            if let langRawValue = automaticFilterLanguage.lang {
-                let lang = NLLanguage(rawValue: langRawValue)
-                
-                if supportedLanguages.contains(lang) && automaticFilterLanguage.isActive == true {
-                    isAutomaticFilteringOn = true
-                    break
+        let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
+        
+        if let automaticFiltersLanguages = try? self.context.fetch(languageRequest) {
+            let supportedLanguages: [NLLanguage] = self.languages(for: .automaticBlocking)
+            
+            
+            for automaticFilterLanguage in automaticFiltersLanguages {
+                if let langRawValue = automaticFilterLanguage.lang {
+                    let lang = NLLanguage(rawValue: langRawValue)
+                    
+                    if supportedLanguages.contains(lang) && automaticFilterLanguage.isActive == true {
+                        isAutomaticFilteringOn = true
+                        break
+                    }
+                }
+            }
+        }
+        
+        #warning("Adi - Missing tests")
+        if !isAutomaticFilteringOn {
+            let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
+            
+            if let automaticFiltersRules = try? self.context.fetch(ruleRequest) {
+                for automaticFiltersRule in automaticFiltersRules {
+                    if let _ = automaticFiltersRule.ruleType {
+                        
+                        if automaticFiltersRule.isActive == true {
+                            isAutomaticFilteringOn = true
+                            break
+                        }
+                    }
                 }
             }
         }
@@ -79,6 +151,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         return isAutomaticFilteringOn
     }
     
+    #warning("Adi - Should move to automaticFilterManager")
     var automaticFiltersCacheAge: Date? {
         let request: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
@@ -86,35 +159,56 @@ class PersistanceManager: PersistanceManagerProtocol {
         
         return cache.age
     }
-    
+
+    #warning("Adi - Should move to automaticFilterManager")
     var activeAutomaticLanguages: String? {
-        let request: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersLanguage.lang, ascending: true)]
-        guard let automaticFiltersLanguages = try? self.context.fetch(request) else { return nil }
+        guard self.automaticRuleState(for: .allUnknown) == false else { return RuleType.allUnknown.shortTitle }
         
-        let supportedLanguages = self.languages(for: .automaticBlocking)
-        var languageNames: [String] = []
+        var activeLanguagesString = ""
+        var automaticFilterNames: [String] = []
         
-        for automaticFiltersLanguage in automaticFiltersLanguages {
-            if let langRawValue = automaticFiltersLanguage.lang,
-                automaticFiltersLanguage.isActive == true {
-                
-                let lang = NLLanguage(rawValue: langRawValue)
-                
-                if supportedLanguages.contains(lang),
-                   let localizedName = lang.localizedName {
+        let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
+        languageRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersLanguage.lang, ascending: true)]
+        if let automaticFiltersLanguages = try? self.context.fetch(languageRequest) {
+            
+            let supportedLanguages = self.languages(for: .automaticBlocking)
+            
+            
+            for automaticFiltersLanguage in automaticFiltersLanguages {
+                if let langRawValue = automaticFiltersLanguage.lang,
+                   automaticFiltersLanguage.isActive == true {
                     
-                    languageNames.append(localizedName)
+                    let lang = NLLanguage(rawValue: langRawValue)
+                    
+                    if supportedLanguages.contains(lang),
+                       let localizedName = lang.localizedName {
+                        
+                        automaticFilterNames.append(localizedName)
+                    }
                 }
             }
         }
         
-        guard languageNames.count > 0 else { return nil }
+        #warning("Adi - Missing tests")
+        let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
+        ruleRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersRule.ruleId, ascending: true)]
+        if let automaticFiltersRules = try? self.context.fetch(ruleRequest) {
+            
+            for automaticFiltersRule in automaticFiltersRules {
+                if automaticFiltersRule.isActive,
+                   let rule = automaticFiltersRule.ruleType,
+                   let shortTitle = rule.shortTitle {
+                    
+                    automaticFilterNames.append(shortTitle)
+                }
+            }
+        }
         
-        var activeLanguagesString = ""
-        let count = languageNames.count - 1
+        guard automaticFilterNames.count > 0 else { return nil }
         
-        for (index, string) in languageNames.enumerated() {
+        let count = automaticFilterNames.count - 1
+        
+        for (index, string) in automaticFilterNames.enumerated() {
             if index < count {
                 activeLanguagesString.append(string + ", ")
             }
@@ -219,28 +313,9 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func initAutomaticFiltering() {
-        let request: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
-        guard let automaticFiltersLanguages = try? self.context.fetch(request) else { return }
-        var uninitializedLanguages: [NLLanguage] = self.languages(for: .automaticBlocking)
-
-        for automaticFiltersLanguage in automaticFiltersLanguages {
-            if let langRawValue = automaticFiltersLanguage.lang {
-                let lang = NLLanguage(langRawValue)
-                
-                if !uninitializedLanguages.contains(lang) {
-                    self.context.delete(automaticFiltersLanguage)
-                }
-                else {
-                    uninitializedLanguages.removeAll(where: { $0 == lang })
-                }
-            }
-        }
-        
-        for uninitializedLanguage in uninitializedLanguages {
-            let newLang = AutomaticFiltersLanguage(context: self.context)
-            newLang.lang = uninitializedLanguage.rawValue
-            newLang.isActive = false
-        }
+        #warning("Adi - Missing tests")
+        self.initAutomaticFilteringLanguages()
+        self.initAutomaticFilteringRules()
         
         self.saveContext()
     }
@@ -286,6 +361,40 @@ class PersistanceManager: PersistanceManagerProtocol {
         }
         
         return isStale
+    }
+    
+    func automaticRuleState(for rule: RuleType) -> Bool {
+        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
+        request.predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
+        guard let automaticFiltersRule = try? self.context.fetch(request).first else { return false }
+        
+        return automaticFiltersRule.isActive
+    }
+    
+    func setAutomaticRuleState(for rule: RuleType, value: Bool) {
+        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
+        request.predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
+        guard let automaticFiltersRule = try? self.context.fetch(request).first else { return }
+        
+        automaticFiltersRule.isActive = value
+        self.saveContext()
+    }
+    
+    func selectedChoice(for rule: RuleType) -> Int {
+        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
+        request.predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
+        guard let automaticFiltersRule = try? self.context.fetch(request).first else { return 0 }
+        
+        return Int(automaticFiltersRule.selectedChoice)
+    }
+    
+    func setSelectedChoice(for rule: RuleType, choice: Int) {
+        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
+        request.predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
+        guard let automaticFiltersRule = try? self.context.fetch(request).first else { return }
+        
+        automaticFiltersRule.selectedChoice = Int64(choice)
+        self.saveContext()
     }
     
     func loadDebugData() {

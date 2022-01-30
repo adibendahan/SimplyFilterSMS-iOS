@@ -95,3 +95,14 @@
 "autoFilter_neverUpdated" = "Never";
 "autoFilter_ON" = "ON";
 "autoFilter_OFF" = "OFF";
+"autoFilter_allUnknown" = "Filter All Unknown";
+"autoFilter_links" = "Filter Links";
+"autoFilter_numbersOnly" = "Allow Numbers Only";
+"autoFilter_shortSender" = "Filter Short Senders";
+"autoFilter_shortSender_desc" = "Atleast %ld characters";
+"autoFilter_shortSender_change" = "Tap to change";
+"autoFilter_shortSender_action" = "Select new limit";
+"autoFilter_allUnknown_shortTitle" = "All unknwon senders (except Allowed Text)";
+"autoFilter_links_shortTitle" = "Links";
+"autoFilter_numbersOnly_shortTitle" = "Numbers only";
+"autoFilter_shortSender_shortTitle" = "Short numbers";

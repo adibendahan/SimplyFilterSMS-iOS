@@ -29,6 +29,10 @@ protocol PersistanceManagerProtocol: AnyObject {
     func setLanguageAtumaticState(for language: NLLanguage, value: Bool)
     func cacheAutomaticFilterList(_ filterList: AutomaticFilterList)
     func isCacheStale(comparedTo newFilterList: AutomaticFilterList) -> Bool
+    func automaticRuleState(for rule: RuleType) -> Bool
+    func setAutomaticRuleState(for rule: RuleType, value: Bool)
+    func selectedChoice(for rule: RuleType) -> Int
+    func setSelectedChoice(for rule: RuleType, choice: Int)
     
     // DEBUG:
     var preview: PersistanceManagerProtocol { get }

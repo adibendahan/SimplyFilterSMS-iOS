@@ -63,8 +63,12 @@ struct AddFilterView: View {
                         .bold()
                     
                     Picker("addFilter_type"~, selection: $selectedFilterType.animation()) {
-                        Text("general_deny"~)
-                            .tag(FilterType.deny)
+                        
+                        if !self.model.isAllUnknownFilteringOn {
+                            Text("general_deny"~)
+                                .tag(FilterType.deny)
+                        }
+                        
                         Text("general_allow"~)
                             .tag(FilterType.allow)
                     }
@@ -126,6 +130,7 @@ struct AddFilterView: View {
                 .padding()
         } // NavigationView
         .onAppear {
+            self.selectedFilterType = self.model.isAllUnknownFilteringOn ? FilterType.allow : FilterType.deny
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                 focusedField = .text
             }

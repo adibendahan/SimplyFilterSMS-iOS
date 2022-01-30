@@ -19,7 +19,7 @@ struct FilterListView: View {
     
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
-
+    
     enum SheetView: Int, Identifiable {
         var id: Self { self }
         case addFilter=0, help, about, addLanguageFilter
@@ -39,8 +39,9 @@ struct FilterListView: View {
                 List (selection: $selectedFilters) {
                     
                     Section {
-                        NavigationLink(destination: LanguageListView(model: LanguageListViewModel(mode: .automaticBlocking)), isActive:$model.isNavigationActive) {
-
+                        NavigationLink(destination: LanguageListView(model: LanguageListViewModel(mode: .automaticBlocking)),
+                                       isActive:$model.isNavigationActive) {
+                            
                             HStack {
                                 Image(systemName: "bolt.shield.fill")
                                     .foregroundColor(.accentColor)
@@ -54,6 +55,7 @@ struct FilterListView: View {
                                     if let activeLanguages = self.model.activeLanguages {
                                         Text(activeLanguages)
                                             .font(.caption2)
+                                            .lineLimit(1)
                                     }
                                 }
                                 
@@ -82,7 +84,11 @@ struct FilterListView: View {
                     if !self.model.isEmpty {
                         ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
                             
-                            if let sectionFilters = self.model.filters[filterType], sectionFilters.count > 0 {
+                            if let sectionFilters = self.model.filters[filterType],
+                               sectionFilters.count > 0,
+                               self.model.isAllUnknownFilteringOn == false ||
+                                (self.model.isAllUnknownFilteringOn == true && filterType.allowedWhenAllSendersBlocked) {
+                                
                                 Section {
                                     ForEach(sectionFilters, id: \.self) { filter in
                                         self.makeRow(for: filter)
@@ -171,9 +177,7 @@ struct FilterListView: View {
                         EnableExtensionView(model: EnableExtensionViewModel(showWelcome: true))
                     })
                 .background(Color.listBackgroundColor(for: colorScheme))
-
                 .environment(\.editMode, $editMode)
-                
                 
                 FooterView()
                     .onTapGesture {
@@ -254,6 +258,7 @@ struct FilterListView: View {
     
     @ViewBuilder
     private func NavigationBarItemTrailing() -> some View {
+        
         if editMode.isEditing && selectedFilters.count > 0 {
             Button(
                 role: .destructive,
@@ -267,7 +272,7 @@ struct FilterListView: View {
                 label: {
                     Text(String(format: "filterList_deleteFiltersCount"~, selectedFilters.count))
                         .foregroundColor(.red)
-            })
+                })
         }
         else {
             MenuView()
@@ -298,6 +303,7 @@ struct FilterListView: View {
     
     private func MenuView() -> some View {
         Menu {
+            
             if isDebug && self.model.isEmpty {
                 Button {
                     self.model.loadDebugData()
@@ -312,10 +318,12 @@ struct FilterListView: View {
                 Label("addFilter_addFilter"~, systemImage: "plus.message")
             }
             
-            Button {
-                presentedSheet = .addLanguageFilter
-            } label: {
-                Label("filterList_menu_filterLanguage"~, systemImage: "globe")
+            if !self.model.isAllUnknownFilteringOn {
+                Button {
+                    presentedSheet = .addLanguageFilter
+                } label: {
+                    Label("filterList_menu_filterLanguage"~, systemImage: "globe")
+                }
             }
             
             Button {

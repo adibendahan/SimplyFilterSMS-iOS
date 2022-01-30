@@ -9,11 +9,13 @@ import Foundation
 import NaturalLanguage
 
 class LanguageListViewModel: ObservableObject {
-    @Published var languages: [LanguageWithAutomaticState] = []
+    @Published var languages: [StatefulItem<NLLanguage>] = []
     @Published var mode: LanguageListView.Mode
     @Published var title: String
     @Published var footer: String
     @Published var lastUpdate: Date?
+    @Published var rules: [StatefulItem<RuleType>] = []
+    @Published var shortSenderChoice: Int
     
     private let persistanceManager: PersistanceManagerProtocol
     private let automaticFilterManager: AutomaticFilterManagerProtocol
@@ -29,10 +31,14 @@ class LanguageListViewModel: ObservableObject {
         self.mode = mode
         self.lastUpdate = cacheAge
         self.footer = LanguageListViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
+        self.shortSenderChoice = persistanceManager.selectedChoice(for: .shortSender)
         
         switch mode {
         case .automaticBlocking:
             self.title = "autoFilter_title"~
+            self.rules = automaticFilterManager.availableRules.map({ StatefulItem<RuleType>(item: $0,
+                                                                                            getter: self.automaticFilterManager.automaticRuleState,
+                                                                                            setter: self.automaticFilterManager.setAutomaticRuleState) })
         case .blockLanguage:
             self.title = "filterList_menu_filterLanguage"~
         }
@@ -64,8 +70,16 @@ class LanguageListViewModel: ObservableObject {
         
         self.lastUpdate = cacheAge
         self.footer = LanguageListViewModel.updatedFooter(for: self.mode, cacheAge: cacheAge)
-        self.languages = self.persistanceManager.languages(for: self.mode).map({ LanguageWithAutomaticState(language: $0,
-                                                                                                            persistanceManager: self.persistanceManager) })
+        self.shortSenderChoice = persistanceManager.selectedChoice(for: .shortSender)
+        self.languages = self.persistanceManager.languages(for: self.mode).map({ StatefulItem<NLLanguage>(item: $0,
+                                                                                                          getter: self.persistanceManager.languageAutomaticState,
+                                                                                                          setter: self.persistanceManager.setLanguageAtumaticState) })
+        
+        if self.mode == .automaticBlocking {
+            self.rules = self.automaticFilterManager.availableRules.map({ StatefulItem<RuleType>(item: $0,
+                                                                                                 getter: self.automaticFilterManager.automaticRuleState,
+                                                                                                 setter: self.automaticFilterManager.setAutomaticRuleState) })
+        }
     }
     
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
@@ -79,28 +93,9 @@ class LanguageListViewModel: ObservableObject {
             }
         }
     }
-}
-
-struct LanguageWithAutomaticState: Identifiable, Equatable {
-
-    private var persistanceManager: PersistanceManagerProtocol
     
-    var id: NLLanguage
-    var isOn: Bool {
-        didSet {
-            self.persistanceManager.setLanguageAtumaticState(for: id, value: self.isOn)
-        }
-    }
-
-    init(language: NLLanguage,
-         persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
-        
-        self.persistanceManager = persistanceManager
-        self.id = language
-        self.isOn = persistanceManager.languageAutomaticState(for: language)
-    }
-    
-    static func == (lhs: LanguageWithAutomaticState, rhs: LanguageWithAutomaticState) -> Bool {
-        return lhs.id == rhs.id
+    func setSelectedChoice(for rule: RuleType, choice: Int) {
+        self.persistanceManager.setSelectedChoice(for: rule, choice: choice)
+        self.refresh()
     }
 }

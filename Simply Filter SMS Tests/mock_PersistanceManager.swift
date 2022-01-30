@@ -132,6 +132,23 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.isCacheStaleClosure?(newFilterList) ?? false
     }
     
+    #warning("Adi - Missing implementation + testing")
+    func automaticRuleState(for rule: RuleType) -> Bool {
+        return false
+    }
+    
+    func setAutomaticRuleState(for rule: RuleType, value: Bool) {
+        
+    }
+    
+    func selectedChoice(for rule: RuleType) -> Int {
+        return 0
+    }
+    
+    func setSelectedChoice(for rule: RuleType, choice: Int) {
+        
+    }
+    
 
     //MARK: Helpers
     private var persistance = PersistanceManager(inMemory: true)

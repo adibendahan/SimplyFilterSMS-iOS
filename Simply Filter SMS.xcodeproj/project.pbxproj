@@ -42,6 +42,7 @@
 		69AA2C66279DC65500CEABE5 /* QuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C65279DC65500CEABE5 /* QuestionViewModel.swift */; };
 		69B2A9A9279CD89E000DFAFC /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2A9A8279CD89E000DFAFC /* AppManager.swift */; };
 		69B2A9AB279CD964000DFAFC /* PersistanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */; };
+		69B2D03227A5B0E600F965AB /* StatefulItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2D03127A5B0E600F965AB /* StatefulItem.swift */; };
 		69CD70CA2770D4D100F91A2F /* Simply_Filter_SMSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70C92770D4D100F91A2F /* Simply_Filter_SMSApp.swift */; };
 		69CD70CC2770D4D100F91A2F /* FilterListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70CB2770D4D100F91A2F /* FilterListView.swift */; };
 		69CD70CE2770D4D100F91A2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69CD70CD2770D4D100F91A2F /* Assets.xcassets */; };
@@ -127,6 +128,7 @@
 		69AA2C65279DC65500CEABE5 /* QuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionViewModel.swift; sourceTree = "<group>"; };
 		69B2A9A8279CD89E000DFAFC /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceManager.swift; sourceTree = "<group>"; };
+		69B2D03127A5B0E600F965AB /* StatefulItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatefulItem.swift; sourceTree = "<group>"; };
 		69CD70C62770D4D100F91A2F /* Simply Filter SMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Simply Filter SMS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69CD70C92770D4D100F91A2F /* Simply_Filter_SMSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simply_Filter_SMSApp.swift; sourceTree = "<group>"; };
 		69CD70CB2770D4D100F91A2F /* FilterListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListView.swift; sourceTree = "<group>"; };
@@ -229,6 +231,16 @@
 			path = Managers;
 			sourceTree = "<group>";
 		};
+		69B2D03027A5B0AB00F965AB /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				69DB7012277A1EDF00245DBA /* Shared with Extension */,
+				690F055227822DFA0036553B /* AppExtensions.swift */,
+				69B2D03127A5B0E600F965AB /* StatefulItem.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		69C449F627A30445007C09A5 /* __TEMP__ */ = {
 			isa = PBXGroup;
 			children = (
@@ -265,10 +277,9 @@
 				69C449F627A30445007C09A5 /* __TEMP__ */,
 				6973D01E278B54AF00A173CD /* Simply-Filter-SMS-Info.plist */,
 				69CD70C92770D4D100F91A2F /* Simply_Filter_SMSApp.swift */,
-				690F055227822DFA0036553B /* AppExtensions.swift */,
 				69B2A9A7279CD874000DFAFC /* Managers */,
 				69DB7011277A1EBE00245DBA /* Views */,
-				69DB7012277A1EDF00245DBA /* Shared with Extension */,
+				69B2D03027A5B0AB00F965AB /* Helpers */,
 				69DB7010277A03F800245DBA /* Resources */,
 			);
 			path = "Simply Filter SMS";
@@ -512,6 +523,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69B2D03227A5B0E600F965AB /* StatefulItem.swift in Sources */,
 				699F55802778BB3100AD7C64 /* AddFilterView.swift in Sources */,
 				69AA2C57279D78E700CEABE5 /* DefaultsManagerProtocol.swift in Sources */,
 				69AA2C5F279D9B5800CEABE5 /* FilterListViewModel.swift in Sources */,

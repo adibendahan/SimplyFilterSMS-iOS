@@ -14,21 +14,26 @@ class FilterListViewModel: ObservableObject {
     @Published var isAutomaticFilteringOn: Bool
     @Published var isNavigationActive: Bool
     @Published var activeLanguages: String?
+    @Published var isAllUnknownFilteringOn: Bool
     
     private let persistanceManager: PersistanceManagerProtocol
     private let defaultsManager: DefaultsManagerProtocol
+    private let automaticFilterManager: AutomaticFilterManagerProtocol
     
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
-         defaultsManager: DefaultsManagerProtocol = AppManager.shared.defaultsManager) {
+         defaultsManager: DefaultsManagerProtocol = AppManager.shared.defaultsManager,
+         automaticFilterManager: AutomaticFilterManagerProtocol = AppManager.shared.automaticFiltersManager) {
         
         let isAutomaticFilteringOn = persistanceManager.isAutomaticFilteringOn
         
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
+        self.automaticFilterManager = automaticFilterManager
         self.title = "filterList_filters"~
         self.isAppFirstRun = defaultsManager.isAppFirstRun
         self.isNavigationActive = false
         self.isAutomaticFilteringOn = isAutomaticFilteringOn
+        self.isAllUnknownFilteringOn = automaticFilterManager.automaticRuleState(for: .allUnknown)
         
         if isAutomaticFilteringOn {
             self.activeLanguages = persistanceManager.activeAutomaticLanguages
@@ -36,6 +41,10 @@ class FilterListViewModel: ObservableObject {
     }
     
     var isEmpty: Bool {
+        guard self.isAllUnknownFilteringOn == false else {
+            return self.filters[.allow]?.count ?? 0 == 0
+        }
+        
         var filterCount = 0
         FilterType.allCases.forEach({ filterCount += self.filters[$0]?.count ?? 0})
         return filterCount == 0
@@ -52,6 +61,7 @@ class FilterListViewModel: ObservableObject {
         let isAutomaticFilteringOn = persistanceManager.isAutomaticFilteringOn
         self.isAutomaticFilteringOn = isAutomaticFilteringOn
         self.activeLanguages = isAutomaticFilteringOn ? persistanceManager.activeAutomaticLanguages : nil
+        self.isAllUnknownFilteringOn = persistanceManager.automaticRuleState(for: .allUnknown)
     }
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {

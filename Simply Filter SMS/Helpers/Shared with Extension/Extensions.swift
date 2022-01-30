@@ -37,7 +37,23 @@ extension Filter {
     }
 }
 
-extension NLLanguage {
+extension AutomaticFiltersRule {
+    var ruleType: RuleType? {
+        get {
+            return RuleType(rawValue: self.ruleId)
+        }
+        set {
+            self.ruleId = newValue?.rawValue ?? -1
+        }
+    }
+}
+
+
+extension NLLanguage: Identifiable {
+    public var id: String {
+        self.rawValue
+    }
+    
     
     init(filterText: String) {
         var language = NLLanguage.undetermined

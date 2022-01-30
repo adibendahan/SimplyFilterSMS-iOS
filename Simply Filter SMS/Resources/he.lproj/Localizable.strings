@@ -138,3 +138,24 @@
 
 "autoFilter_OFF" = "כבוי";
 
+"autoFilter_allUnknown" = "אפשר הודעות מאנשי קשר בלבד";
+
+"autoFilter_links" = "חסום קישורים";
+
+"autoFilter_numbersOnly" = "אפשר מספרים בלבד";
+
+"autoFilter_shortSender" = "חסום שולחים קצרים";
+
+"autoFilter_shortSender_desc" = "לפחות %ld תווים";
+
+"autoFilter_shortSender_change" = "לחצו בכדי לשנות";
+
+"autoFilter_shortSender_action" = "בחרו הגבלה חדשה";
+
+"autoFilter_allUnknown_shortTitle" = "אנשי קשר בלבד (למעט טקסט מאופשר)";
+
+"autoFilter_links_shortTitle" = "קישורים";
+
+"autoFilter_numbersOnly_shortTitle" = "מספרים בלבד";
+
+"autoFilter_shortSender_shortTitle" = "שולחים קצרים";

@@ -74,6 +74,11 @@ extension URL {
 
 
 protocol AutomaticFilterManagerProtocol {
+    var availableRules: [RuleType] { get }
+    
+    func automaticRuleState(for rule: RuleType) -> Bool
+    func setAutomaticRuleState(for rule: RuleType, value: Bool)
+    
     func fetchAutomaticFilterList(completion: @escaping (AutomaticFilterList?) -> ())
     func forceUpdateAutomaticFilters(completion: (()->())?)
 }
@@ -151,6 +156,18 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             self?.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
             completion?()
         }
+    }
+    
+    var availableRules: [RuleType] {
+        return RuleType.allCases
+    }
+    
+    func automaticRuleState(for rule: RuleType) -> Bool {
+        return self.persistanceManager.automaticRuleState(for: rule)
+    }
+    
+    func setAutomaticRuleState(for rule: RuleType, value: Bool) {
+        self.persistanceManager.setAutomaticRuleState(for: rule, value: value)
     }
     
     private func updateCacheIfNeeded(newFilterList: AutomaticFilterList, force: Bool = false) {
