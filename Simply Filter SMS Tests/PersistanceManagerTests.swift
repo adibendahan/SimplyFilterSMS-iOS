@@ -77,7 +77,7 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssert(automaticFiltersCacheAge == nil)
         
         // Prepare
-        self.persistanceManager.cacheAutomaticFilterList(AutomaticFilterList(filterList: ["he": ["word"]]))
+        self.persistanceManager.saveCache(with: AutomaticFilterList(filterList: ["he": ["word"]]))
         
         // Act
         automaticFiltersCacheAge = self.persistanceManager.automaticFiltersCacheAge
@@ -177,7 +177,7 @@ class PersistanceManagerTests: XCTestCase {
         // Prepare
         self.persistanceManager.addFilter(text: "1", type: .deny, denyFolder: .junk)
         self.persistanceManager.addFilter(text: "2", type: .deny, denyFolder: .junk)
-        let filters = self.persistanceManager.getFilters()
+        let filters = self.persistanceManager.fetchFilterRecords()
         let setToDelete: Set<Filter> = Set(arrayLiteral: filters[0], filters[1])
         self.persistanceManager.addFilter(text: "3", type: .deny, denyFolder: .junk)
         self.expectingSaveContext()
@@ -197,7 +197,7 @@ class PersistanceManagerTests: XCTestCase {
         self.persistanceManager.addFilter(text: "1", type: .deny, denyFolder: .junk)
         self.persistanceManager.addFilter(text: "2", type: .deny, denyFolder: .junk)
         self.persistanceManager.addFilter(text: "3", type: .deny, denyFolder: .junk)
-        let filters = self.persistanceManager.getFilters()
+        let filters = self.persistanceManager.fetchFilterRecords()
         let indexSetToDelete = IndexSet(arrayLiteral: 0, 2)
         self.expectingSaveContext()
         
@@ -214,7 +214,7 @@ class PersistanceManagerTests: XCTestCase {
     func test_updateFilter() {
         // Prepare
         self.persistanceManager.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        let filter = self.persistanceManager.getFilters().first!
+        let filter = self.persistanceManager.fetchFilterRecords().first!
         self.expectingSaveContext()
         
         // Act
@@ -222,7 +222,7 @@ class PersistanceManagerTests: XCTestCase {
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        let updatedFilter = self.persistanceManager.getFilters().first!
+        let updatedFilter = self.persistanceManager.fetchFilterRecords().first!
         XCTAssert(updatedFilter.denyFolderType == .promotion)
     }
     
@@ -270,7 +270,7 @@ class PersistanceManagerTests: XCTestCase {
         self.persistanceManager.addFilter(text: "2", type: .allow, denyFolder: .junk)
         
         // Act
-        let filters = self.persistanceManager.getFilters()
+        let filters = self.persistanceManager.fetchFilterRecords()
         
         // Verify
         XCTAssert(filters.count == 2)
@@ -360,7 +360,7 @@ class PersistanceManagerTests: XCTestCase {
         self.expectingSaveContext()
         
         // Act
-        self.persistanceManager.cacheAutomaticFilterList(newerfiltersList)
+        self.persistanceManager.saveCache(with: newerfiltersList)
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)

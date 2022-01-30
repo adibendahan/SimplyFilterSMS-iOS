@@ -24,7 +24,7 @@ struct AddFilterView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
-                    let isDuplicate = self.model.isDuplicateFilter(text: filterText, type: selectedFilterType)
+                    let isDuplicate = self.model.isDuplicateFilter(text: filterText)
                     
                     Spacer()
                     
@@ -145,7 +145,9 @@ private enum Field: Int, Hashable {
 struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
-            AddFilterView(model: AddFilterViewModel(persistanceManager: AppManager.shared.persistanceManager.preview))
+            AddFilterView(
+                model: AddFilterViewModel(isAllUnknownFilteringOn: false,
+                                          persistanceManager: AppManager.shared.previewsPersistanceManager))
         }
     }
 }

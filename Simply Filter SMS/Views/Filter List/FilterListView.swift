@@ -156,7 +156,7 @@ struct FilterListView: View {
                 } content: { presentedSheet in
                     switch (presentedSheet) {
                     case .addFilter:
-                        AddFilterView(model: AddFilterViewModel())
+                        AddFilterView(model: AddFilterViewModel(isAllUnknownFilteringOn: self.model.isAllUnknownFilteringOn))
                     case .about:
                         AboutView()
                     case .help:
@@ -345,7 +345,7 @@ struct FilterListView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = FilterListViewModel(persistanceManager: AppManager.shared.persistanceManager.preview)
+        let model = FilterListViewModel(persistanceManager: AppManager.shared.previewsPersistanceManager)
         return FilterListView(model: model)
     }
 }

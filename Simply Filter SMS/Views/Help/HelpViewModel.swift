@@ -11,11 +11,11 @@ class HelpViewModel: ObservableObject {
     @Published var questions: [QuestionViewModel]
     @Published var title: String
     
-    private let persistanceManager: PersistanceManagerProtocol
+    private let appManager: AppManagerProtocol
     
-    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
-        self.persistanceManager = persistanceManager
+    init(appManager: AppManagerProtocol = AppManager.shared) {
+        self.appManager = appManager
         self.title = "filterList_menu_enableExtension"~
-        self.questions = persistanceManager.getFrequentlyAskedQuestions()
+        self.questions = appManager.getFrequentlyAskedQuestions()
     }
 }

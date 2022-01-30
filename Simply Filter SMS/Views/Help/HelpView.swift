@@ -127,7 +127,7 @@ struct HelpView: View {
 
 struct FrequentlyAskedView_Previews: PreviewProvider {
     static var previews: some View {
-        HelpView(model: HelpViewModel(persistanceManager: AppManager.shared.persistanceManager.preview))
+        HelpView(model: HelpViewModel(appManager: AppManager.shared))
     }
 }
 

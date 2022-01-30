@@ -102,7 +102,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.getFrequentlyAskedQuestionsClosure?() ?? []
     }
 
-    func getFilters() -> [Filter] {
+    func getFilterRecords() -> [Filter] {
         self.getFiltersCounter += 1
         return self.getFiltersClosure?() ?? []
     }
@@ -122,7 +122,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.setLanguageAtumaticStateClosure?(language, value)
     }
 
-    func cacheAutomaticFilterList(_ filterList: AutomaticFilterList) {
+    func saveCache(with filterList: AutomaticFilterList) {
         self.cacheAutomaticFilterListCounter += 1
         self.cacheAutomaticFilterListClosure?(filterList)
     }

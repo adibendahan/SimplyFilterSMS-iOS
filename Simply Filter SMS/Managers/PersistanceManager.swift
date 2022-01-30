@@ -8,6 +8,7 @@
 import Foundation
 import CoreData
 import NaturalLanguage
+import UIKit
 
 class PersistanceManager: PersistanceManagerProtocol {
 
@@ -32,11 +33,15 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     
-    //MARK: - Private Members and Helpers -
-    private let container: NSPersistentCloudKitContainer
+    //MARK: - Public API (PersistanceManagerProtocol) -
+    //MARK: Context
+    var context: NSManagedObjectContext {
+        return self.container.viewContext
+    }
     
-    private func saveContext() {
+    func commitContext() {
         guard self.context.hasChanges else { return }
+        
         do {
             try self.context.save()
         } catch {
@@ -45,193 +50,88 @@ class PersistanceManager: PersistanceManagerProtocol {
         }
     }
     
-    private func deleteExistingCaches() {
-        let request: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
-        guard let caches = try? self.context.fetch(request) else { return }
+    
+    //MARK: Fetching
+    func fetchFilterRecords() -> [Filter] {
+        let sortDescriptor = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
+                              NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
+        var filters: [Filter] = []
         
-        for cache in caches {
-            self.context.delete(cache)
+        self.fetch(Filter.self, sortDescriptor: sortDescriptor)?.forEach {
+            guard let filter = $0 as? Filter else { return }
+            filters.append(filter)
         }
+        
+        return filters
     }
     
-    private func initAutomaticFilteringLanguages() {
-        let request: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
-        guard let automaticFiltersLanguages = try? self.context.fetch(request) else { return }
-        var uninitializedLanguages: [NLLanguage] = self.languages(for: .automaticBlocking)
-
-        for automaticFiltersLanguage in automaticFiltersLanguages {
-            if let langRawValue = automaticFiltersLanguage.lang {
-                let lang = NLLanguage(langRawValue)
-                
-                if !uninitializedLanguages.contains(lang) {
-                    self.context.delete(automaticFiltersLanguage)
-                }
-                else {
-                    uninitializedLanguages.removeAll(where: { $0 == lang })
-                }
-            }
+    func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage] {
+        let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersLanguage.lang, ascending: true)]
+        var automaticFiltersLanguageRecords: [AutomaticFiltersLanguage] = []
+        
+        self.fetch(AutomaticFiltersLanguage.self, sortDescriptor: sortDescriptor)?.forEach {
+            guard let automaticFiltersLanguageRecord = $0 as? AutomaticFiltersLanguage else { return }
+            automaticFiltersLanguageRecords.append(automaticFiltersLanguageRecord)
         }
         
-        for uninitializedLanguage in uninitializedLanguages {
-            let newLang = AutomaticFiltersLanguage(context: self.context)
-            newLang.lang = uninitializedLanguage.rawValue
-            newLang.isActive = false
-        }
-    }
-    
-    private func initAutomaticFilteringRules() {
-        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
-        guard let automaticFiltersRules = try? self.context.fetch(request) else { return }
-        var uninitializedRules: [RuleType] = RuleType.allCases
-
-        for automaticFiltersRule in automaticFiltersRules {
-            if let rule = automaticFiltersRule.ruleType {
-
-                if !uninitializedRules.contains(rule) {
-                    self.context.delete(automaticFiltersRule)
-                }
-                else {
-                    uninitializedRules.removeAll(where: { $0 == rule })
-                }
-            }
-        }
-        
-        for uninitializedRule in uninitializedRules {
-            let newRule = AutomaticFiltersRule(context: self.context)
-            newRule.ruleId = uninitializedRule.rawValue
-            newRule.selectedChoice = uninitializedRule == .shortSender ? 6 : 0
-            newRule.isActive = false
-        }
-    }
-    
-    //MARK: - Public API -
-    var context: NSManagedObjectContext {
-        return self.container.viewContext
-    }
-    
-    #warning("Adi - Should move to automaticFilterManager")
-    var isAutomaticFilteringOn: Bool {
-        var isAutomaticFilteringOn = false
-        
-        let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
-        
-        if let automaticFiltersLanguages = try? self.context.fetch(languageRequest) {
-            let supportedLanguages: [NLLanguage] = self.languages(for: .automaticBlocking)
-            
-            
-            for automaticFilterLanguage in automaticFiltersLanguages {
-                if let langRawValue = automaticFilterLanguage.lang {
-                    let lang = NLLanguage(rawValue: langRawValue)
-                    
-                    if supportedLanguages.contains(lang) && automaticFilterLanguage.isActive == true {
-                        isAutomaticFilteringOn = true
-                        break
-                    }
-                }
-            }
-        }
-        
-        #warning("Adi - Missing tests")
-        if !isAutomaticFilteringOn {
-            let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
-            
-            if let automaticFiltersRules = try? self.context.fetch(ruleRequest) {
-                for automaticFiltersRule in automaticFiltersRules {
-                    if let _ = automaticFiltersRule.ruleType {
-                        
-                        if automaticFiltersRule.isActive == true {
-                            isAutomaticFilteringOn = true
-                            break
-                        }
-                    }
-                }
-            }
-        }
-        
-        return isAutomaticFilteringOn
-    }
-    
-    #warning("Adi - Should move to automaticFilterManager")
-    var automaticFiltersCacheAge: Date? {
-        let request: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
-        guard let cache = try? self.context.fetch(request).first else { return nil }
-        
-        return cache.age
+        return automaticFiltersLanguageRecords
     }
 
-    #warning("Adi - Should move to automaticFilterManager")
-    var activeAutomaticLanguages: String? {
-        guard self.automaticRuleState(for: .allUnknown) == false else { return RuleType.allUnknown.shortTitle }
+    func fetchAutomaticFiltersRuleRecords() -> [AutomaticFiltersRule] {
+        let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersRule.ruleId, ascending: true)]
+        var automaticFiltersRuleRecords: [AutomaticFiltersRule] = []
         
-        var activeLanguagesString = ""
-        var automaticFilterNames: [String] = []
-        
-        let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
-        languageRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersLanguage.lang, ascending: true)]
-        if let automaticFiltersLanguages = try? self.context.fetch(languageRequest) {
-            
-            let supportedLanguages = self.languages(for: .automaticBlocking)
-            
-            
-            for automaticFiltersLanguage in automaticFiltersLanguages {
-                if let langRawValue = automaticFiltersLanguage.lang,
-                   automaticFiltersLanguage.isActive == true {
-                    
-                    let lang = NLLanguage(rawValue: langRawValue)
-                    
-                    if supportedLanguages.contains(lang),
-                       let localizedName = lang.localizedName {
-                        
-                        automaticFilterNames.append(localizedName)
-                    }
-                }
-            }
+        self.fetch(AutomaticFiltersRule.self, sortDescriptor: sortDescriptor)?.forEach {
+            guard let automaticFiltersRuleRecord = $0 as? AutomaticFiltersRule else { return }
+            automaticFiltersRuleRecords.append(automaticFiltersRuleRecord)
         }
         
-        #warning("Adi - Missing tests")
-        let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
-        ruleRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersRule.ruleId, ascending: true)]
-        if let automaticFiltersRules = try? self.context.fetch(ruleRequest) {
-            
-            for automaticFiltersRule in automaticFiltersRules {
-                if automaticFiltersRule.isActive,
-                   let rule = automaticFiltersRule.ruleType,
-                   let shortTitle = rule.shortTitle {
-                    
-                    automaticFilterNames.append(shortTitle)
-                }
-            }
-        }
-        
-        guard automaticFilterNames.count > 0 else { return nil }
-        
-        let count = automaticFilterNames.count - 1
-        
-        for (index, string) in automaticFilterNames.enumerated() {
-            if index < count {
-                activeLanguagesString.append(string + ", ")
-            }
-            else {
-                activeLanguagesString.append(string)
-                
-                if count > 0 {
-                    activeLanguagesString.append(".")
-                }
-            }
-        }
-        
-        return activeLanguagesString.isEmpty ? nil : activeLanguagesString
+        return automaticFiltersRuleRecords
     }
     
-    var preview: PersistanceManagerProtocol {
-        let result = PersistanceManager(inMemory: true)
-        result.loadDebugData()
-        return result
+    func fetchAutomaticFiltersCacheRecords() -> [AutomaticFiltersCache] {
+        let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
+        var automaticFiltersCacheRecords: [AutomaticFiltersCache] = []
+        
+        self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.forEach {
+            guard let automaticFiltersCacheRecord = $0 as? AutomaticFiltersCache else { return }
+            automaticFiltersCacheRecords.append(automaticFiltersCacheRecord)
+        }
+        
+        return automaticFiltersCacheRecords
+    }
+    
+    func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage? {
+        let predicate = NSPredicate(format: "lang == %@", language.rawValue)
+        guard let automaticFiltersLanguageRecord =
+                self.fetch(AutomaticFiltersLanguage.self, predicate: predicate)?.firstObject as? AutomaticFiltersLanguage else { return nil }
+        return automaticFiltersLanguageRecord
+    }
+    
+    func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule? {
+        let predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
+        guard let automaticFiltersRuleRecord =
+                self.fetch(AutomaticFiltersRule.self, predicate: predicate)?.firstObject as? AutomaticFiltersRule else { return nil }
+        return automaticFiltersRuleRecord
+    }
+    
+
+    //MARK: Helpers
+    func initAutomaticFiltering(languages: [NLLanguage], rules: [RuleType]) {
+        self.initAutomaticFiltersLanguage(languages: languages)
+        self.initAutomaticFiltersRule(rules: rules)
+        
+        self.commitContext()
+    }
+    
+    func isDuplicateFilter(text: String) -> Bool {
+        let predicate = NSPredicate(format: "text == %@", text)
+        guard let _ = self.fetch(Filter.self, predicate: predicate)?.firstObject as? Filter else { return false }
+        return true
     }
     
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
-        guard !self.isDuplicateFilter(text: text, type: type) else { return }
+        guard !self.isDuplicateFilter(text: text) else { return }
         
         let newFilter = Filter(context: self.context)
         newFilter.uuid = UUID()
@@ -239,105 +139,25 @@ class PersistanceManager: PersistanceManagerProtocol {
         newFilter.denyFolderType = denyFolder
         newFilter.text = text
         
-        self.saveContext()
-    }
-    
-    func isDuplicateFilter(text: String, type: FilterType) -> Bool {
-        var filterExists = false
-        let fetchRequest = NSFetchRequest<Filter>(entityName: "Filter")
-        fetchRequest.predicate = NSPredicate(format: "type == %ld AND text == %@", type.rawValue, text)
-        
-        do {
-            let results = try context.fetch(fetchRequest)
-            filterExists = results.count > 0
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        
-        return filterExists
+        self.commitContext()
     }
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
         offsets.map({ filters[$0] }).forEach({ self.context.delete($0) })
-        self.saveContext()
+        self.commitContext()
     }
     
     func deleteFilters(_ filters: Set<Filter>) {
         filters.forEach({ self.context.delete($0) })
-        self.saveContext()
+        self.commitContext()
     }
     
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
         filter.denyFolderType = denyFolder
-        self.saveContext()
+        self.commitContext()
     }
     
-    func languages(for type: LanguageListView.Mode) -> [NLLanguage] {
-        var supportedLanguages: [NLLanguage] = []
-        
-        switch type {
-        case .blockLanguage:
-            let remainingSupportedLanguages = NLLanguage.allSupportedCases
-                .filter({ !self.isDuplicateFilter(text: $0.filterText, type: .denyLanguage) })
-                .sorted(by: { $0.rawValue < $1.rawValue })
-            supportedLanguages.append(contentsOf: remainingSupportedLanguages)
-            
-        case .automaticBlocking:
-            supportedLanguages.append(.english)
-            supportedLanguages.append(.hebrew)
-            supportedLanguages.sort(by: { $0.rawValue < $1.rawValue })
-        }
-
-        return supportedLanguages
-    }
-    
-    func getFrequentlyAskedQuestions() -> [QuestionViewModel] {
-        return [QuestionViewModel(text: "faq_question_0"~, answer: "faq_answer_0"~, action: .activateFilters),
-                QuestionViewModel(text: "faq_question_1"~, answer: "faq_answer_1"~),
-                QuestionViewModel(text: "faq_question_2"~, answer: "faq_answer_2"~),
-                QuestionViewModel(text: "faq_question_3"~, answer: "faq_answer_3"~),
-                QuestionViewModel(text: "faq_question_4"~, answer: "faq_answer_4"~),
-                QuestionViewModel(text: "faq_question_5"~, answer: "faq_answer_5"~)]
-    }
-    
-    func getFilters() -> [Filter] {
-        let request: NSFetchRequest<Filter> = Filter.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
-                                   NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
-        
-        
-        guard let filters = try? self.context.fetch(request) else { return [] }
-        
-        return filters
-    }
-    
-    func initAutomaticFiltering() {
-        #warning("Adi - Missing tests")
-        self.initAutomaticFilteringLanguages()
-        self.initAutomaticFilteringRules()
-        
-        self.saveContext()
-    }
-    
-    func languageAutomaticState(for language: NLLanguage) -> Bool {
-        let request: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
-        request.predicate = NSPredicate(format: "lang == %@", language.rawValue)
-        guard let automaticFiltersLanguage = try? self.context.fetch(request).first else { return false }
-        
-        return automaticFiltersLanguage.isActive
-    }
-    
-    func setLanguageAtumaticState(for language: NLLanguage, value: Bool) {
-        let request: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
-        request.predicate = NSPredicate(format: "lang == %@", language.rawValue)
-        guard let automaticFiltersLanguage = try? self.context.fetch(request).first else { return }
-        
-        automaticFiltersLanguage.isActive = value
-        self.saveContext()
-    }
-    
-    func cacheAutomaticFilterList(_ filterList: AutomaticFilterList) {
+    func saveCache(with filterList: AutomaticFilterList) {
         self.deleteExistingCaches()
         
         let newCache = AutomaticFiltersCache(context: self.context)
@@ -346,55 +166,21 @@ class PersistanceManager: PersistanceManagerProtocol {
         newCache.filtersData = filterList.encoded
         newCache.age = Date()
         
-        self.saveContext()
+        self.commitContext()
     }
     
     func isCacheStale(comparedTo newFilterList: AutomaticFilterList) -> Bool {
-        let request: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
-        guard let cache = try? self.context.fetch(request).first else { return true }
-        let isStale = cache.hashed != newFilterList.hashed
+        let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
+        guard let automaticFiltersCache = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.firstObject as? AutomaticFiltersCache else { return true }
+        
+        let isStale = automaticFiltersCache.hashed != newFilterList.hashed
         
         if !isStale {
-            cache.age = Date()
-            self.saveContext()
+            automaticFiltersCache.age = Date()
+            self.commitContext()
         }
         
         return isStale
-    }
-    
-    func automaticRuleState(for rule: RuleType) -> Bool {
-        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
-        request.predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
-        guard let automaticFiltersRule = try? self.context.fetch(request).first else { return false }
-        
-        return automaticFiltersRule.isActive
-    }
-    
-    func setAutomaticRuleState(for rule: RuleType, value: Bool) {
-        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
-        request.predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
-        guard let automaticFiltersRule = try? self.context.fetch(request).first else { return }
-        
-        automaticFiltersRule.isActive = value
-        self.saveContext()
-    }
-    
-    func selectedChoice(for rule: RuleType) -> Int {
-        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
-        request.predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
-        guard let automaticFiltersRule = try? self.context.fetch(request).first else { return 0 }
-        
-        return Int(automaticFiltersRule.selectedChoice)
-    }
-    
-    func setSelectedChoice(for rule: RuleType, choice: Int) {
-        let request: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
-        request.predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
-        guard let automaticFiltersRule = try? self.context.fetch(request).first else { return }
-        
-        automaticFiltersRule.selectedChoice = Int64(choice)
-        self.saveContext()
     }
     
     func loadDebugData() {
@@ -430,6 +216,91 @@ class PersistanceManager: PersistanceManagerProtocol {
         langFilter.filterType = .denyLanguage
         langFilter.text = NLLanguage.arabic.filterText
         
-        self.saveContext()
+        self.commitContext()
     }
+    
+    //MARK: - Private -
+    private let container: NSPersistentCloudKitContainer
+    
+    private func fetch<T: NSManagedObject>(_ entity: T.Type,
+                                           predicate: NSPredicate? = nil,
+                                           sortDescriptor: [NSSortDescriptor]? = nil) -> NSMutableArray? {
+
+        let fetchRequest = NSFetchRequest<T>(entityName: NSStringFromClass(T.self))
+        if let predicate = predicate { fetchRequest.predicate = predicate }
+        if let sortDescriptor = sortDescriptor { fetchRequest.sortDescriptors = sortDescriptor }
+        fetchRequest.returnsObjectsAsFaults = false
+
+        do {
+            let searchResult = try self.context.fetch(fetchRequest)
+            
+            if searchResult.count > 0 {
+                return NSMutableArray(array: searchResult)
+            } else {
+                return nil
+            }
+
+        } catch {
+            print("ERROR! While fetching \(entity): \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
+    private func deleteExistingCaches() {
+        let request: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
+        guard let caches = try? self.context.fetch(request) else { return }
+        
+        for cache in caches {
+            self.context.delete(cache)
+        }
+    }
+    
+    private func initAutomaticFiltersLanguage(languages: [NLLanguage]) {
+        let automaticFiltersLanguageRecords = self.fetchAutomaticFiltersLanguageRecords()
+        var uninitializedLanguages: [NLLanguage] = languages
+
+        for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords {
+            if let langRawValue = automaticFiltersLanguageRecord.lang {
+                let lang = NLLanguage(langRawValue)
+                
+                if !uninitializedLanguages.contains(lang) {
+                    self.context.delete(automaticFiltersLanguageRecord)
+                }
+                else {
+                    uninitializedLanguages.removeAll(where: { $0 == lang })
+                }
+            }
+        }
+        
+        for uninitializedLanguage in uninitializedLanguages {
+            let newLang = AutomaticFiltersLanguage(context: self.context)
+            newLang.lang = uninitializedLanguage.rawValue
+            newLang.isActive = false
+        }
+    }
+    
+    private func initAutomaticFiltersRule(rules: [RuleType]) {
+        let automaticFiltersRuleRecords = self.fetchAutomaticFiltersRuleRecords()
+        var uninitializedRules: [RuleType] = rules
+
+        for automaticFiltersRuleRecord in automaticFiltersRuleRecords {
+            if let rule = automaticFiltersRuleRecord.ruleType {
+
+                if !uninitializedRules.contains(rule) {
+                    self.context.delete(automaticFiltersRuleRecord)
+                }
+                else {
+                    uninitializedRules.removeAll(where: { $0 == rule })
+                }
+            }
+        }
+        
+        for uninitializedRule in uninitializedRules {
+            let newRule = AutomaticFiltersRule(context: self.context)
+            newRule.ruleId = uninitializedRule.rawValue
+            newRule.selectedChoice = uninitializedRule == .shortSender ? 6 : 0
+            newRule.isActive = false
+        }
+    }
+    
 }

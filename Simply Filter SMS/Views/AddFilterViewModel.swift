@@ -12,13 +12,14 @@ class AddFilterViewModel: ObservableObject {
     
     private var persistanceManager: PersistanceManagerProtocol
     
-    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
+    init(isAllUnknownFilteringOn: Bool,
+         persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
         self.persistanceManager = persistanceManager
-        self.isAllUnknownFilteringOn = persistanceManager.automaticRuleState(for: .allUnknown) == true
+        self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
     }
     
-    func isDuplicateFilter(text: String, type: FilterType) -> Bool {
-        return self.persistanceManager.isDuplicateFilter(text: text, type: type)
+    func isDuplicateFilter(text: String) -> Bool {
+        return self.persistanceManager.isDuplicateFilter(text: text)
     }
     
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType) {

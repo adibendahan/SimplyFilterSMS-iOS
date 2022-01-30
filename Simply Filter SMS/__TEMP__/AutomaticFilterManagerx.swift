@@ -72,17 +72,6 @@ extension URL {
     static let appBaseURL = URL(string: "https://simply-filter-sms.s3.us-east-2.amazonaws.com")!
 }
 
-
-protocol AutomaticFilterManagerProtocol {
-    var availableRules: [RuleType] { get }
-    
-    func automaticRuleState(for rule: RuleType) -> Bool
-    func setAutomaticRuleState(for rule: RuleType, value: Bool)
-    
-    func fetchAutomaticFilterList(completion: @escaping (AutomaticFilterList?) -> ())
-    func forceUpdateAutomaticFilters(completion: (()->())?)
-}
-
 class URLRequestExecutor {
     func execute<T>(type: T.Type,
                     baseURL: URL,
@@ -121,79 +110,3 @@ class AutomaticFiltersRequest: URLRequestProtocol {
     var errorDomain: String = "com.grizz.apps.dev.Simply-Filter-SMS.AutomaticFiltersRequest"
 }
 
-class AutomaticFilterManager: AutomaticFilterManagerProtocol {
-    
-    private let urlRequestExecutor = URLRequestExecutor()
-    private let persistanceManager: PersistanceManagerProtocol
-    
-    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
-        self.persistanceManager = persistanceManager
-        
-        persistanceManager.initAutomaticFiltering()
-        self.fetchFiltersIfNeeded()
-    }
-    
-    func fetchAutomaticFilterList(completion: @escaping (AutomaticFilterList?) -> ()) {
-        
-        self.urlRequestExecutor.execute(type: AutomaticFilterList.self,
-                                        baseURL: .appBaseURL,
-                                        request: AutomaticFiltersRequest()) { result in
-            
-            switch result {
-            case .success(let filterList):
-                completion(filterList)
-            case .failure(let error):
-                print("ERROR: \(error)")
-                completion(nil)
-            }
-        }
-    }
-    
-    func forceUpdateAutomaticFilters(completion: (()->())?) {
-        self.fetchAutomaticFilterList { [weak self] automaticFilterList in
-            guard let automaticFilterList = automaticFilterList else { return }
-            
-            self?.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
-            completion?()
-        }
-    }
-    
-    var availableRules: [RuleType] {
-        return RuleType.allCases
-    }
-    
-    func automaticRuleState(for rule: RuleType) -> Bool {
-        return self.persistanceManager.automaticRuleState(for: rule)
-    }
-    
-    func setAutomaticRuleState(for rule: RuleType, value: Bool) {
-        self.persistanceManager.setAutomaticRuleState(for: rule, value: value)
-    }
-    
-    private func updateCacheIfNeeded(newFilterList: AutomaticFilterList, force: Bool = false) {
-        guard force || self.persistanceManager.isCacheStale(comparedTo: newFilterList) else { return }
-        self.persistanceManager.cacheAutomaticFilterList(newFilterList)
-    }
-    
-    private var shouldFetchFilters: Bool {
-        var shouldFetchFilters = true
-        
-        if let cacheAge = self.persistanceManager.automaticFiltersCacheAge,
-           cacheAge.daysBetween(date: Date()) < 3 {
-            
-            shouldFetchFilters = false
-        }
-        
-        return shouldFetchFilters
-    }
-    
-    private func fetchFiltersIfNeeded() {
-        guard self.shouldFetchFilters else { return }
-        
-        self.fetchAutomaticFilterList { [weak self] automaticFilterList in
-            guard let automaticFilterList = automaticFilterList else { return }
-            
-            self?.updateCacheIfNeeded(newFilterList: automaticFilterList)
-        }
-    }
-}

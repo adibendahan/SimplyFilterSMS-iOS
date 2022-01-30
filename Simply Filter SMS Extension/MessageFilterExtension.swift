@@ -111,7 +111,7 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
         let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
         let cacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
         
-        guard let automaticFiltersLanguages = try? self.persistentContainer.viewContext.fetch(languageRequest),
+        guard let automaticFiltersLanguageRecords = try? self.persistentContainer.viewContext.fetch(languageRequest),
               let cacheRow = try? self.persistentContainer.viewContext.fetch(cacheRequest).first,
               let filtersData = cacheRow.filtersData,
               let automaticFilterList = AutomaticFilterList(base64String: filtersData) else {
@@ -120,9 +120,9 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
                   return .none
               }
         
-        for automaticFiltersLanguage in automaticFiltersLanguages {
-            if automaticFiltersLanguage.isActive,
-               let langRawValue = automaticFiltersLanguage.lang,
+        for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords {
+            if automaticFiltersLanguageRecord.isActive,
+               let langRawValue = automaticFiltersLanguageRecord.lang,
                let filterList = automaticFilterList.filterList[langRawValue] {
                 
                 for filter in filterList {

@@ -24,7 +24,7 @@ class FilterListViewModel: ObservableObject {
          defaultsManager: DefaultsManagerProtocol = AppManager.shared.defaultsManager,
          automaticFilterManager: AutomaticFilterManagerProtocol = AppManager.shared.automaticFiltersManager) {
         
-        let isAutomaticFilteringOn = persistanceManager.isAutomaticFilteringOn
+        let isAutomaticFilteringOn = automaticFilterManager.isAutomaticFilteringOn
         
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
@@ -36,7 +36,7 @@ class FilterListViewModel: ObservableObject {
         self.isAllUnknownFilteringOn = automaticFilterManager.automaticRuleState(for: .allUnknown)
         
         if isAutomaticFilteringOn {
-            self.activeLanguages = persistanceManager.activeAutomaticLanguages
+            self.activeLanguages = automaticFilterManager.activeAutomaticFiltersTitle
         }
     }
     
@@ -51,17 +51,17 @@ class FilterListViewModel: ObservableObject {
     }
     
     func refresh() {
-        let fetchedFilters = self.persistanceManager.getFilters()
+        let fetchedFilters = self.persistanceManager.fetchFilterRecords()
         
         for filterType in FilterType.allCases {
             filters[filterType] = fetchedFilters.filter({ $0.filterType == filterType })
         }
         
-        self.isAppFirstRun = defaultsManager.isAppFirstRun
-        let isAutomaticFilteringOn = persistanceManager.isAutomaticFilteringOn
+        self.isAppFirstRun = self.defaultsManager.isAppFirstRun
+        let isAutomaticFilteringOn = self.automaticFilterManager.isAutomaticFilteringOn
         self.isAutomaticFilteringOn = isAutomaticFilteringOn
-        self.activeLanguages = isAutomaticFilteringOn ? persistanceManager.activeAutomaticLanguages : nil
-        self.isAllUnknownFilteringOn = persistanceManager.automaticRuleState(for: .allUnknown)
+        self.activeLanguages = isAutomaticFilteringOn ? self.automaticFilterManager.activeAutomaticFiltersTitle : nil
+        self.isAllUnknownFilteringOn = self.automaticFilterManager.automaticRuleState(for: .allUnknown)
     }
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {

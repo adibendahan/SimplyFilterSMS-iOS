@@ -24,19 +24,19 @@ class LanguageListViewModel: ObservableObject {
          persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
          automaticFilterManager: AutomaticFilterManagerProtocol = AppManager.shared.automaticFiltersManager) {
         
-        let cacheAge = persistanceManager.automaticFiltersCacheAge ?? nil
+        let cacheAge = automaticFilterManager.automaticFiltersCacheAge ?? nil
         
         self.automaticFilterManager = automaticFilterManager
         self.persistanceManager = persistanceManager
         self.mode = mode
         self.lastUpdate = cacheAge
         self.footer = LanguageListViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
-        self.shortSenderChoice = persistanceManager.selectedChoice(for: .shortSender)
+        self.shortSenderChoice = automaticFilterManager.selectedChoice(for: .shortSender)
         
         switch mode {
         case .automaticBlocking:
             self.title = "autoFilter_title"~
-            self.rules = automaticFilterManager.availableRules.map({ StatefulItem<RuleType>(item: $0,
+            self.rules = automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
                                                                                             getter: self.automaticFilterManager.automaticRuleState,
                                                                                             setter: self.automaticFilterManager.setAutomaticRuleState) })
         case .blockLanguage:
@@ -66,17 +66,18 @@ class LanguageListViewModel: ObservableObject {
     }
     
     func refresh() {
-        let cacheAge = persistanceManager.automaticFiltersCacheAge ?? nil
+        let cacheAge = self.automaticFilterManager.automaticFiltersCacheAge ?? nil
         
         self.lastUpdate = cacheAge
         self.footer = LanguageListViewModel.updatedFooter(for: self.mode, cacheAge: cacheAge)
-        self.shortSenderChoice = persistanceManager.selectedChoice(for: .shortSender)
-        self.languages = self.persistanceManager.languages(for: self.mode).map({ StatefulItem<NLLanguage>(item: $0,
-                                                                                                          getter: self.persistanceManager.languageAutomaticState,
-                                                                                                          setter: self.persistanceManager.setLanguageAtumaticState) })
+        self.shortSenderChoice = self.automaticFilterManager.selectedChoice(for: .shortSender)
+        self.languages = self.automaticFilterManager.languages(for: self.mode)
+            .map({ StatefulItem<NLLanguage>(item: $0,
+                                            getter: self.automaticFilterManager.languageAutomaticState,
+                                            setter: self.automaticFilterManager.setLanguageAtumaticState) })
         
         if self.mode == .automaticBlocking {
-            self.rules = self.automaticFilterManager.availableRules.map({ StatefulItem<RuleType>(item: $0,
+            self.rules = self.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
                                                                                                  getter: self.automaticFilterManager.automaticRuleState,
                                                                                                  setter: self.automaticFilterManager.setAutomaticRuleState) })
         }
@@ -95,7 +96,7 @@ class LanguageListViewModel: ObservableObject {
     }
     
     func setSelectedChoice(for rule: RuleType, choice: Int) {
-        self.persistanceManager.setSelectedChoice(for: rule, choice: choice)
+        self.automaticFilterManager.setSelectedChoice(for: rule, choice: choice)
         self.refresh()
     }
 }
