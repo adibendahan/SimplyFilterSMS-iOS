@@ -11,7 +11,7 @@ import XCTest
 
 class FilterListViewModelTests: XCTestCase {
     
-    private var testSubject: FilterListViewModel = FilterListViewModel()
+    private var testSubject: FilterListViewModel = FilterListViewModel(filterType: .deny)
     private var persistanceManager = mock_PersistanceManager()
     private var defaultsManager = mock_DefaultsManager()
     
@@ -21,7 +21,7 @@ class FilterListViewModelTests: XCTestCase {
 
         self.persistanceManager = mock_PersistanceManager()
         self.defaultsManager = mock_DefaultsManager()
-        self.testSubject = FilterListViewModel(persistanceManager: self.persistanceManager, defaultsManager: self.defaultsManager)
+        self.testSubject = FilterListViewModel(filterType: .deny, persistanceManager: self.persistanceManager)
         self.persistanceManager.resetCounters()
         self.defaultsManager.resetCounters()
     }
@@ -36,34 +36,10 @@ class FilterListViewModelTests: XCTestCase {
         self.testSubject.refresh()
         
         // Verify
-        XCTAssert(self.persistanceManager.fetchFilterRecordsCounter == 1)
-        XCTAssert(self.defaultsManager.isAppFirstRunGetCounter == 1)
+        XCTAssertEqual(self.persistanceManager.fetchFilterRecordsForTypeCounter, 1)
         #warning("Adi - Incomplete test: add appFilterManager usage test.")
     }
 
-    func test_isEmpty() {
-        // Prepare
-        self.persistanceManager.fetchFilterRecordsClosure = { return [] }
-        var isEmpty = false
-        
-        // Act
-        isEmpty = self.testSubject.isEmpty
-        
-        // Verify
-        XCTAssert(isEmpty == true)
-     
-        // Prepare
-        let filter = self.makeFilter()
-        self.persistanceManager.fetchFilterRecordsClosure = { return [filter] }
-        self.testSubject.refresh()
-        
-        // Act
-        isEmpty = self.testSubject.isEmpty
-        
-        // Verify
-        XCTAssert(isEmpty == false)
-    }
-    
     func test_deleteFiltersOffsets() {
         // Prepare
         let filter = self.makeFilter()
@@ -72,8 +48,8 @@ class FilterListViewModelTests: XCTestCase {
         self.testSubject.deleteFilters(withOffsets: IndexSet(arrayLiteral: 0), in: [filter])
         
         // Verify
-        XCTAssert(self.persistanceManager.deleteFiltersOffsetsCounter == 1)
-        XCTAssert(self.testSubject.isEmpty == true) // Verify refresh
+        XCTAssertEqual(self.persistanceManager.deleteFiltersOffsetsCounter, 1)
+        XCTAssertTrue(self.testSubject.filters.isEmpty) // Verify refresh
     }
     
     func test_deleteFilters() {
@@ -84,8 +60,8 @@ class FilterListViewModelTests: XCTestCase {
         self.testSubject.deleteFilters(Set(arrayLiteral: filter))
         
         // Verify
-        XCTAssert(self.persistanceManager.deleteFiltersCounter == 1)
-        XCTAssert(self.testSubject.isEmpty == true) // Verify refresh
+        XCTAssertEqual(self.persistanceManager.deleteFiltersCounter, 1)
+        XCTAssertTrue(self.testSubject.filters.isEmpty) // Verify refresh
     }
     
     func test_updateFilter() {
@@ -96,7 +72,7 @@ class FilterListViewModelTests: XCTestCase {
         self.testSubject.updateFilter(filter, denyFolder: .promotion)
         
         // Verify
-        XCTAssert(self.persistanceManager.updateFilterCounter == 1)
+        XCTAssertEqual(self.persistanceManager.updateFilterCounter, 1)
     }
     
     private func makeFilter() -> Filter {

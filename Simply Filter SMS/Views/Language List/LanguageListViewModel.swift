@@ -9,14 +9,11 @@ import Foundation
 import NaturalLanguage
 
 class LanguageListViewModel: ObservableObject {
-    @Published var languages: [StatefulItem<NLLanguage>] = []
+    @Published var languages: [StatefulItem<NLLanguage>]
     @Published var mode: LanguageListView.Mode
     @Published var title: String
     @Published var footer: String
     @Published var lastUpdate: Date?
-    @Published var rules: [StatefulItem<RuleType>] = []
-    @Published var shortSenderChoice: Int
-    @Published var isAllUnknownFilteringOn: Bool
     
     private let persistanceManager: PersistanceManagerProtocol
     private let automaticFilterManager: AutomaticFilterManagerProtocol
@@ -32,18 +29,18 @@ class LanguageListViewModel: ObservableObject {
         self.mode = mode
         self.lastUpdate = cacheAge
         self.footer = LanguageListViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
-        self.shortSenderChoice = automaticFilterManager.selectedChoice(for: .shortSender)
-        self.isAllUnknownFilteringOn = automaticFilterManager.automaticRuleState(for: .allUnknown)
         
         switch mode {
         case .automaticBlocking:
             self.title = "autoFilter_title"~
-            self.rules = automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
-                                                                                   getter: self.automaticFilterManager.automaticRuleState,
-                                                                                   setter: self.setAutomaticRuleState) })
         case .blockLanguage:
             self.title = "filterList_menu_filterLanguage"~
         }
+        
+        self.languages = automaticFilterManager.languages(for: mode)
+            .map({ StatefulItem<NLLanguage>(item: $0,
+                                            getter: automaticFilterManager.languageAutomaticState,
+                                            setter: automaticFilterManager.setLanguageAtumaticState) })
     }
     
     private static func updatedFooter(for mode: LanguageListView.Mode, cacheAge: Date?) -> String {
@@ -72,18 +69,10 @@ class LanguageListViewModel: ObservableObject {
         
         self.lastUpdate = cacheAge
         self.footer = LanguageListViewModel.updatedFooter(for: self.mode, cacheAge: cacheAge)
-        self.shortSenderChoice = self.automaticFilterManager.selectedChoice(for: .shortSender)
-        self.isAllUnknownFilteringOn = automaticFilterManager.automaticRuleState(for: .allUnknown)
         self.languages = self.automaticFilterManager.languages(for: self.mode)
             .map({ StatefulItem<NLLanguage>(item: $0,
                                             getter: self.automaticFilterManager.languageAutomaticState,
                                             setter: self.automaticFilterManager.setLanguageAtumaticState) })
-        
-        if self.mode == .automaticBlocking {
-            self.rules = self.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
-                                                                                        getter: self.automaticFilterManager.automaticRuleState,
-                                                                                        setter: self.setAutomaticRuleState) })
-        }
     }
     
     func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
@@ -96,15 +85,5 @@ class LanguageListViewModel: ObservableObject {
                 self?.refresh()
             }
         }
-    }
-    
-    func setSelectedChoice(for rule: RuleType, choice: Int) {
-        self.automaticFilterManager.setSelectedChoice(for: rule, choice: choice)
-        self.refresh()
-    }
-    
-    private func setAutomaticRuleState(for rule: RuleType, value: Bool) {
-        self.automaticFilterManager.setAutomaticRuleState(for: rule, value: value)
-        self.refresh()
     }
 }

@@ -23,98 +23,93 @@ struct HelpView: View {
     
     var body: some View {
         NavigationView {
-            GeometryReader { geometry in
-                ZStack (alignment: .bottom) {
-                    ScrollView {
-                        VStack (alignment: .leading) {
-                            Spacer()
-                                .frame(height: 12, alignment: .top)
-                            
-                            Text("faq_subtitle"~)
-                            
-                            HStack {
-                                if MFMailComposeViewController.canSendMail() {
-                                    Button {
-                                        self.isShowingMailView = true
-                                    } label: {
-                                        HStack (alignment: .center){
-                                            Spacer()
-                                            
-                                            Image(systemName: "envelope")
-                                                .resizable()
-                                                .frame(width: 25, height: 20, alignment: .leading)
-                                                .aspectRatio(contentMode: .fit)
-                                                .foregroundColor(.blue)
-                                            
-                                            Text("aboutView_sendMail"~)
-                                                .foregroundColor(.primary)
-                                            
-                                            Spacer()
-                                        }
-                                    }
-                                }
-                                
-                                Link(destination: URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!) {
-                                    HStack {
-                                        Spacer()
-                                        
-                                        Image("GitHub")
-                                            .resizable()
-                                            .frame(width: 26, height: 26, alignment: .center)
-                                            .aspectRatio(contentMode: .fit)
-                                        
-                                        Text("aboutView_github"~)
-                                            .foregroundColor(.primary)
-                                        
-                                        Spacer()
-                                    }
-                                }
-                            }
-                            
-                            Spacer(minLength: 24)
-                            
-                            ForEach (self.model.questions) { question in
-                                if question.action != .none {
-                                    QuestionView(
-                                        model: QuestionViewModel(text: question.text,
-                                                                 answer: question.answer,
-                                                                 action: question.action,
-                                                                 onAction: {
-                                                                     switch question.action {
-                                                                     case .activateFilters:
-                                                                         isShowingEnableExtensionView = true
-                                                                     default:
-                                                                         break
-                                                                     }
-                                    }))
-                                }
-                                else {
-                                    QuestionView(model: question)
-                                }
-                            }
-                            Spacer()
-                                .padding(.bottom, 50)
-                        } // VStack
-                    } // ScrollView
-                    .padding(.horizontal, 16)
-                    .background(Color.listBackgroundColor(for: colorScheme))
-                    .navigationTitle(self.model.title)
-                    .toolbar {
-                        ToolbarItem {
+            ScrollView {
+                VStack (alignment: .leading) {
+                    Spacer()
+                        .frame(height: 12, alignment: .top)
+                    
+                    Text("faq_subtitle"~)
+                    
+                    HStack {
+                        if MFMailComposeViewController.canSendMail() {
                             Button {
-                                dismiss()
+                                self.isShowingMailView = true
                             } label: {
-                                Image(systemName: "xmark")
-                                    .foregroundColor(.secondary)
+                                HStack (alignment: .center){
+                                    Spacer()
+                                    
+                                    Image(systemName: "envelope")
+                                        .resizable()
+                                        .frame(width: 25, height: 20, alignment: .leading)
+                                        .aspectRatio(contentMode: .fit)
+                                        .foregroundColor(.blue)
+                                    
+                                    Text("aboutView_sendMail"~)
+                                        .foregroundColor(.primary)
+                                    
+                                    Spacer()
+                                }
                             }
-                            .contentShape(Rectangle())
+                        }
+                        
+                        Link(destination: URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!) {
+                            HStack {
+                                Spacer()
+                                
+                                Image("GitHub")
+                                    .resizable()
+                                    .frame(width: 26, height: 26, alignment: .center)
+                                    .aspectRatio(contentMode: .fit)
+                                
+                                Text("aboutView_github"~)
+                                    .foregroundColor(.primary)
+                                
+                                Spacer()
+                            }
                         }
                     }
                     
-                    FooterView()
-                } // ZStack
-            } // GeometryReader
+                    Spacer(minLength: 24)
+                    
+                    ForEach (self.model.questions) { question in
+                        if question.action != .none {
+                            QuestionView(
+                                model: QuestionViewModel(text: question.text,
+                                                         answer: question.answer,
+                                                         action: question.action,
+                                                         onAction: {
+                                                             switch question.action {
+                                                             case .activateFilters:
+                                                                 isShowingEnableExtensionView = true
+                                                             default:
+                                                                 break
+                                                             }
+                                                         }))
+                        }
+                        else {
+                            QuestionView(model: question)
+                        }
+                    }
+                    Spacer()
+                        .padding(.bottom, 50)
+                } // VStack
+            } // ScrollView
+            .padding(.horizontal, 16)
+            .background(Color.listBackgroundColor(for: colorScheme))
+            .navigationTitle(self.model.title)
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.secondary)
+                    }
+                    .contentShape(Rectangle())
+                }
+            }
         } // NavigationView
+        .modifier(EmbeddedFooterView())
         .sheet(isPresented: $isShowingMailView) {
             MailView(isShowing: self.$isShowingMailView, result: self.$result)
                 .edgesIgnoringSafeArea(.bottom)

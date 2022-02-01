@@ -13,6 +13,8 @@ import NaturalLanguage
 
 class mock_PersistanceManager: PersistanceManagerProtocol {
 
+    
+
     var addFilterCounter = 0
     var isDuplicateFilterCounter = 0
     var deleteFiltersOffsetsCounter = 0
@@ -23,6 +25,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var saveCacheCounter = 0
     var isCacheStaleCounter = 0
     var commitContextCounter = 0
+    var fetchFilterRecordsForTypeCounter = 0
     var fetchAutomaticFiltersLanguageRecordsCounter = 0
     var fetchAutomaticFiltersRuleRecordsCounter = 0
     var fetchAutomaticFiltersCacheRecordsCounter = 0
@@ -39,6 +42,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var saveCacheClosure: ((AutomaticFilterList) -> ())?
     var isCacheStaleClosure: ((AutomaticFilterList) -> (Bool))?
     var commitContextClosure: (() -> ())?
+    var fetchFilterRecordsForTypeClosure: ((FilterType) -> ([Filter]))?
     var fetchAutomaticFiltersLanguageRecordsClosure: (() -> ([AutomaticFiltersLanguage]))?
     var fetchAutomaticFiltersRuleRecordsClosure: (() -> ([AutomaticFiltersRule]))?
     var fetchAutomaticFiltersCacheRecordsClosure: (() -> ([AutomaticFiltersCache]))?
@@ -73,6 +77,11 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     func fetchFilterRecords() -> [Filter] {
         self.fetchFilterRecordsCounter += 1
         return self.fetchFilterRecordsClosure?() ?? []
+    }
+    
+    func fetchFilterRecords(for filterType: FilterType) -> [Filter] {
+        self.fetchFilterRecordsForTypeCounter += 1
+        return self.fetchFilterRecordsForTypeClosure?(filterType) ?? []
     }
 
     func initAutomaticFiltering(languages: [NLLanguage], rules: [RuleType]) {

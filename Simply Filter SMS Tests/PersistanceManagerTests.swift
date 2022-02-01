@@ -52,6 +52,28 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssertEqual(filters[0].filterType, .allow)
     }
     
+    func test_fetchFilterRecordsForType() {
+        // Prepare
+        self.persistanceManager.addFilter(text: "1", type: .deny, denyFolder: .junk)
+        self.persistanceManager.addFilter(text: "2", type: .allow, denyFolder: .junk)
+        self.persistanceManager.addFilter(text: "3", type: .allow, denyFolder: .junk)
+        
+        // Act
+        let allowFilters = self.persistanceManager.fetchFilterRecords(for: .allow)
+        let denyFilters = self.persistanceManager.fetchFilterRecords(for: .deny)
+        
+        // Verify
+        XCTAssertEqual(allowFilters.count, 2)
+        XCTAssertEqual(denyFilters.count, 1)
+        XCTAssertEqual(denyFilters[0].text, "1")
+        XCTAssertEqual(denyFilters[0].filterType, .deny)
+        XCTAssertEqual(denyFilters[0].denyFolderType, .junk)
+        XCTAssertEqual(allowFilters[0].text, "2")
+        XCTAssertEqual(allowFilters[0].filterType, .allow)
+        XCTAssertEqual(allowFilters[1].text, "3")
+        XCTAssertEqual(allowFilters[1].filterType, .allow)
+    }
+    
     
     func test_fetchAutomaticFiltersLanguageRecords() {
         // Prepare

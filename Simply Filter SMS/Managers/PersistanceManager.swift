@@ -65,6 +65,19 @@ class PersistanceManager: PersistanceManagerProtocol {
         return filters
     }
     
+    func fetchFilterRecords(for filterType: FilterType) -> [Filter] {
+        let sortDescriptor = [NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
+        let predicate = NSPredicate(format: "type == %ld", filterType.rawValue)
+        var filters: [Filter] = []
+        
+        self.fetch(Filter.self, predicate: predicate, sortDescriptor: sortDescriptor)?.forEach {
+            guard let filter = $0 as? Filter else { return }
+            filters.append(filter)
+        }
+        
+        return filters
+    }
+    
     func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage] {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersLanguage.lang, ascending: true)]
         var automaticFiltersLanguageRecords: [AutomaticFiltersLanguage] = []

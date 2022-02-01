@@ -13,6 +13,7 @@
 "general_null" = "(null)";
 "general_copyright" = "© %ld Adi Ben-Dahan. All rights reserved.";
 "general_close" = "Close";
+"general_active_count" = "%ld active";
 
 //MARK: Languages
 "lang_supported" = "Supported Languages";
@@ -22,20 +23,22 @@
 
 //MARK: Filter List View
 "filterList_filters" = "Filters";
-"filterList_allowed" = "Allowed text";
-"filterList_denied" = "Blocked text";
+"filterList_allowed" = "Allowed texts";
+"filterList_denied" = "Blocked texts";
 "filterList_menu_filterLanguage" = "Block a language";
 "filterList_menu_enableExtension" = "Help";
 "filterList_menu_about" = "About";
 "filterList_menu_debug" = "Load debug data";
-"filterList_deniedLanguage" = "Blocked Language";
+"filterList_deniedLanguage" = "Blocked languages";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
 "filterList_folder" = "Folder";
+"filterList_text" = "Text";
 
 
 //MARK: Add Filter View
 "addFilter_add" = "Add";
 "addFilter_addFilter" = "Add filter";
+"addFilter_addLanguage" = "Add language";
 "addFilter_text" = "Type a word";
 "addFilter_text_caption" = "Filter messages containing (at least 3 characters): ";
 "addFilter_type" = "Type";
@@ -90,19 +93,21 @@
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "Automatic Filtering";
-"autoFilter_lastUpdated" = "***Updated on %@***";
+"autoFilter_lastUpdated" = "Updated on %@";
 "autoFilter_forceUpdate" = "Force update";
 "autoFilter_neverUpdated" = "Never";
 "autoFilter_ON" = "ON";
 "autoFilter_OFF" = "OFF";
-"autoFilter_allUnknown" = "Filter All Unknown";
-"autoFilter_links" = "Filter Links";
+"autoFilter_allUnknown" = "Block All Unknown";
+"autoFilter_links" = "Block Links";
 "autoFilter_numbersOnly" = "Allow Numbers Only";
-"autoFilter_shortSender" = "Filter Short Senders";
+"autoFilter_shortSender" = "Block Short Senders";
 "autoFilter_shortSender_desc" = "Atleast %ld characters";
 "autoFilter_shortSender_change" = "Tap to change";
 "autoFilter_shortSender_action" = "Select new limit";
 "autoFilter_allUnknown_shortTitle" = "All unknwon senders (except Allowed Text)";
 "autoFilter_links_shortTitle" = "Links";
 "autoFilter_numbersOnly_shortTitle" = "Numbers only";
-"autoFilter_shortSender_shortTitle" = "Short numbers";
+"autoFilter_shortSender_shortTitle" = "Short senders";
+"autoFilter_smartFilters" = "Smart filters";
+"autoFilter_yourFilters" = "Your filters";

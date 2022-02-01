@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct FooterView: View {
+    var onTap: (() ->())? = nil
+    
     var body: some View {
         VStack (alignment: .center, spacing: 0) {
             Rectangle()
@@ -22,11 +24,26 @@ struct FooterView: View {
         }
         .background(.ultraThinMaterial)
         .frame(maxHeight: .infinity, alignment: .bottom)
+        .onTapGesture {
+            self.onTap?()
+        }
+    }
+}
+
+struct EmbeddedFooterView: ViewModifier {
+    var onTap: (() ->())? = nil
+    
+    func body(content: Content) -> some View {
+        ZStack (alignment: .bottom) {
+            content
+            FooterView(onTap: onTap)
+        }
     }
 }
 
 struct FooterView_Previews: PreviewProvider {
     static var previews: some View {
-        FooterView()
+        EmptyView()
+            .modifier(EmbeddedFooterView())
     }
 }

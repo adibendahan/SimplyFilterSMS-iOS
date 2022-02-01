@@ -33,11 +33,11 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     var sortIndex: Int {
         switch self {
         case .deny:
-            return 2
+            return 1
         case .allow:
             return 0
         case .denyLanguage:
-            return 1
+            return 2
         }
     }
     
@@ -63,6 +63,28 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     
     var allowedWhenAllSendersBlocked: Bool {
         return self == .allow
+    }
+    
+    var iconName: String {
+        switch self {
+        case .deny:
+            return "person.crop.circle.badge.xmark"
+        case .allow:
+            return "person.crop.circle.badge.checkmark"
+        case .denyLanguage:
+            return "globe"
+        }
+    }
+    
+    var iconColor: Color {
+        switch self {
+        case .deny:
+            return Color(.sRGB, red: 231/255, green: 76/255, blue: 60/255, opacity: 1.0)
+        case .allow:
+            return Color(.sRGB, red: 39/255, green: 174/255, blue: 96/255, opacity: 1.0)
+        case .denyLanguage:
+            return Color(.sRGB, red: 41/255, green: 128/255, blue: 185/255, opacity: 1.0)
+        }
     }
 }
 
@@ -123,6 +145,19 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
         }
     }
     
+    var sortIndex: Int {
+        switch self {
+        case .allUnknown:
+            return 0
+        case .links:
+            return 1
+        case .numbersOnly:
+            return 3
+        case .shortSender:
+            return 2
+        }
+    }
+    
     var icon: String {
         switch self {
         case .allUnknown:
@@ -139,13 +174,13 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
     var iconColor: Color {
         switch self {
         case .allUnknown:
-            return .red
+            return Color(.sRGB, red: 192/255, green: 57/255, blue: 43/255, opacity: 1.0)
         case .links:
             return .accentColor
         case .numbersOnly:
-            return .green
+            return .primary.opacity(0.4)//Color(.sRGB, red: 165/255, green: 177/255, blue: 194/255, opacity: 1.0)
         case .shortSender:
-            return .orange
+            return Color(.sRGB, red: 230/255, green: 126/255, blue: 34/255, opacity: 1.0)
         }
     }
     

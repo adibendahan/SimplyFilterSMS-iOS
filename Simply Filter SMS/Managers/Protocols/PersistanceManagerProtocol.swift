@@ -19,6 +19,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     
     //MARK: - Fetching -
     func fetchFilterRecords() -> [Filter]
+    func fetchFilterRecords(for filterType: FilterType) -> [Filter]
     func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage]
     func fetchAutomaticFiltersRuleRecords() -> [AutomaticFiltersRule]
     func fetchAutomaticFiltersCacheRecords() -> [AutomaticFiltersCache]

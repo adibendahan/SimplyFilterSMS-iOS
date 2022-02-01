@@ -60,8 +60,6 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     var activeAutomaticFiltersTitle: String? {
-        guard self.automaticRuleState(for: .allUnknown) == false else { return RuleType.allUnknown.shortTitle }
-        
         var activeLanguagesString = ""
         var automaticFilterNames: [String] = []
         
@@ -79,17 +77,6 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
                     
                     automaticFilterNames.append(localizedName)
                 }
-            }
-        }
-        
-        let automaticFiltersRuleRecords = self.persistanceManager.fetchAutomaticFiltersRuleRecords()
-        
-        for automaticFiltersRuleRecord in automaticFiltersRuleRecords {
-            if automaticFiltersRuleRecord.isActive,
-               let rule = automaticFiltersRuleRecord.ruleType,
-               let shortTitle = rule.shortTitle {
-                
-                automaticFilterNames.append(shortTitle)
             }
         }
         
