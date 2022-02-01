@@ -113,3 +113,13 @@
 "autoFilter_yourFilters" = "Your filters";
 "autoFilter_email_shortTitle" = "Email";
 "autoFilter_email" = "Block Email Senders";
+
+// MARK: Test Filters
+"testFilters_title" = "Test your filters";
+"testFilters_action" = "Test";
+"testFilters_messageTitle" = "Message";
+"testFilters_senderTitle" = "Sender (optional)";
+"testFilters_resultAllowed" = "It's allowed! 🥳";
+"testFilters_resultJunk" = "It's junk! 😈";
+"testFilters_resultPromotion" = "It's a promotion! 📢";
+"testFilters_resultTransaction" = "It's a transaction! 🧾";

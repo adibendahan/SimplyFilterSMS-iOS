@@ -172,24 +172,3 @@ class MessageEvaluationManagerTests: XCTestCase {
         try? self.testSubject.context.save()
     }
 }
-
-private extension ILMessageFilterAction {
-    var name: String {
-        switch self {
-        case .none:
-            return "None"
-        case .allow:
-            return "Allow"
-        case .junk:
-            return "Junk"
-        case .filter:
-            return "Filter"
-        case .promotion:
-            return "Promotion"
-        case .transaction:
-            return "Transaction"
-        @unknown default:
-            return "Unknown"
-        }
-    }
-}

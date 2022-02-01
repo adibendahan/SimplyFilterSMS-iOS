@@ -173,3 +173,19 @@
 "autoFilter_email" = "חסום הודעות דואר אלקטרוני";
 
 "autoFilter_email_shortTitle" = "דואר אלקטרוני";
+
+"testFilters_title" = "בחנו את הפילטרים שלכם";
+
+"testFilters_messageTitle" = "הודעה";
+
+"testFilters_senderTitle" = "שולח (אופציונאלי)";
+
+"testFilters_resultAllowed" = "זו הודעה תקינה! 🥳";
+
+"testFilters_resultJunk" = "זו הודעת זבל! 😈";
+
+"testFilters_resultPromotion" = "זו הודעה פרסומית! 📢";
+
+"testFilters_resultTransaction" = "זו הודעה על פעולה! 🧾";
+
+"testFilters_action" = "לחצו לבדיקה";

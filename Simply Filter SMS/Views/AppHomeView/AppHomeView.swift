@@ -20,7 +20,7 @@ struct AppHomeView: View {
     
     enum SheetView: Int, Identifiable {
         var id: Self { self }
-        case about=0, help
+        case about=0, help, testFilters
     }
     
     @StateObject var model: AppHomeViewModel
@@ -216,6 +216,9 @@ struct AppHomeView: View {
                 
             case .help:
                 HelpView(model: HelpViewModel())
+                
+            case .testFilters:
+                TestFiltersView()
             }
         }
         .fullScreenCover(
@@ -252,6 +255,12 @@ struct AppHomeView: View {
                 } label: {
                     Label("filterList_menu_debug"~, systemImage: "chevron.left.forwardslash.chevron.right")
                 }
+            }
+            
+            Button {
+                presentedSheet = .testFilters
+            } label: {
+                Label("testFilters_title"~, systemImage: "arrow.up.message")
             }
             
             Button {

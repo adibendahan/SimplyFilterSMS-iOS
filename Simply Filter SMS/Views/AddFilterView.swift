@@ -12,6 +12,10 @@ struct AddFilterView: View {
     @Environment(\.dismiss)
     var dismiss
     
+    private enum Field: Int, Hashable {
+        case text
+    }
+    
     @FocusState private var focusedField: Field?
     @StateObject var model: AddFilterViewModel
     
@@ -136,10 +140,6 @@ struct AddFilterView: View {
             }
         }
     }
-}
-
-private enum Field: Int, Hashable {
-    case text
 }
 
 struct AddFilterView_Previews: PreviewProvider {

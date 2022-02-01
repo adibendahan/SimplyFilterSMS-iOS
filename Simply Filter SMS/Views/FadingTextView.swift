@@ -46,7 +46,7 @@ struct FadingTextView: View {
             return
         }
         
-        guard self.currentText != self.model.text, self.currentText?.isEmpty == false else {
+        guard self.currentText != self.model.text else {
             self.currentText = self.model.text
             return
         }
