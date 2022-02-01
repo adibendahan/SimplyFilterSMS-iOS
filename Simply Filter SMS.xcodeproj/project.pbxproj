@@ -14,6 +14,11 @@
 		69118BFB279E0AD0001F2613 /* TwoButtonPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69118BFA279E0AD0001F2613 /* TwoButtonPageViewModel.swift */; };
 		69118BFD279E0AFB001F2613 /* ScreenshotPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69118BFC279E0AFB001F2613 /* ScreenshotPageViewModel.swift */; };
 		69118BFF279E0E26001F2613 /* AutomaticFilterManagerx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69118BFE279E0E26001F2613 /* AutomaticFilterManagerx.swift */; };
+		69189C1327A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C1227A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift */; };
+		69189C1527A97F7400C8FFA5 /* MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */; };
+		69189C1727A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C1627A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift */; };
+		69189C1827A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C1627A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift */; };
+		69189C1927A98A7000C8FFA5 /* MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */; };
 		6941FE13277DE78B00B99539 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6941FE15277DE78B00B99539 /* Localizable.strings */; };
 		6941FE18277DF88200B99539 /* EnableExtensionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE17277DF88200B99539 /* EnableExtensionView.swift */; };
 		6941FE1A277E19CC00B99539 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE19277E19CC00B99539 /* AboutView.swift */; };
@@ -104,6 +109,9 @@
 		69118BFC279E0AFB001F2613 /* ScreenshotPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPageViewModel.swift; sourceTree = "<group>"; };
 		69118BFE279E0E26001F2613 /* AutomaticFilterManagerx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFilterManagerx.swift; sourceTree = "<group>"; };
 		6916BE7427A176650096CC8D /* Simply_Filter_SMS 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Simply_Filter_SMS 3.xcdatamodel"; sourceTree = "<group>"; };
+		69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEvaluationManager.swift; sourceTree = "<group>"; };
+		69189C1227A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEvaluationManagerTests.swift; sourceTree = "<group>"; };
+		69189C1627A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEvaluationManagerProtocol.swift; sourceTree = "<group>"; };
 		6941FE14277DE78B00B99539 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6941FE16277DE78E00B99539 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6941FE17277DF88200B99539 /* EnableExtensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionView.swift; sourceTree = "<group>"; };
@@ -186,6 +194,7 @@
 		694E53DD27A42EA8009A7E0E /* Simply Filter SMS Tests */ = {
 			isa = PBXGroup;
 			children = (
+				69189C1227A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift */,
 				694E53E727A4300E009A7E0E /* PersistanceManagerTests.swift */,
 				694E53EB27A4A68F009A7E0E /* FilterListViewModelTests.swift */,
 				694E53E527A42EEB009A7E0E /* mock_DefaultsManager.swift */,
@@ -218,6 +227,7 @@
 				69AA2C51279D755200CEABE5 /* PersistanceManagerProtocol.swift */,
 				69AA2C56279D78E700CEABE5 /* DefaultsManagerProtocol.swift */,
 				6982FE8827A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift */,
+				69189C1627A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -248,6 +258,7 @@
 				69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */,
 				69AA2C58279D793600CEABE5 /* DefaultsManager.swift */,
 				6982FE8A27A6FBA000BF6AA4 /* AutomaticFilterManager.swift */,
+				69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -537,6 +548,7 @@
 			files = (
 				694E53E627A42EEB009A7E0E /* mock_DefaultsManager.swift in Sources */,
 				694E53E827A4300E009A7E0E /* PersistanceManagerTests.swift in Sources */,
+				69189C1327A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift in Sources */,
 				694E53EC27A4A68F009A7E0E /* FilterListViewModelTests.swift in Sources */,
 				694E53EA27A4A106009A7E0E /* mock_PersistanceManager.swift in Sources */,
 			);
@@ -551,9 +563,11 @@
 				699F55802778BB3100AD7C64 /* AddFilterView.swift in Sources */,
 				69AA2C57279D78E700CEABE5 /* DefaultsManagerProtocol.swift in Sources */,
 				69AA2C5F279D9B5800CEABE5 /* FilterListViewModel.swift in Sources */,
+				69189C1727A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */,
 				69CD70CC2770D4D100F91A2F /* FilterListView.swift in Sources */,
 				69118BFB279E0AD0001F2613 /* TwoButtonPageViewModel.swift in Sources */,
 				6982FE8B27A6FBA000BF6AA4 /* AutomaticFilterManager.swift in Sources */,
+				69189C1527A97F7400C8FFA5 /* MessageEvaluationManager.swift in Sources */,
 				69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */,
 				6943DBE327A3704E0024C791 /* AddFilterViewModel.swift in Sources */,
 				690F054E278200B60036553B /* ButtonStyles.swift in Sources */,
@@ -594,10 +608,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				695D5BC4278E01C00037C926 /* Extensions.swift in Sources */,
+				69189C1927A98A7000C8FFA5 /* MessageEvaluationManager.swift in Sources */,
 				698FFA5627A3086F00C0B2E8 /* AutomaticFilterList.swift in Sources */,
 				69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */,
 				69DB7018277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */,
 				694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */,
+				69189C1827A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */,
 				69DB7015277A1F0200245DBA /* Constsants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

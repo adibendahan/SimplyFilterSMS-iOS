@@ -32,10 +32,10 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     
     var sortIndex: Int {
         switch self {
-        case .deny:
-            return 1
         case .allow:
             return 0
+        case .deny:
+            return 1
         case .denyLanguage:
             return 2
         }
@@ -153,10 +153,10 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return 0
         case .links:
             return 1
-        case .numbersOnly:
-            return 3
         case .shortSender:
             return 2
+        case .numbersOnly:
+            return 3
         case .email:
             return 4
         }

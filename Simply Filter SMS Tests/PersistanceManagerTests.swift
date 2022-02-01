@@ -22,7 +22,7 @@ class PersistanceManagerTests: XCTestCase {
                                                 name: NSNotification.Name.NSManagedObjectContextDidSave ,
                                                 object: nil )
         
-        self.persistanceManager = PersistanceManager(inMemory: true)
+        self.testSubject = PersistanceManager(inMemory: true)
     }
     
     override func tearDown() {
@@ -37,11 +37,11 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchFilterRecords() {
         // Prepare
-        self.persistanceManager.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        self.persistanceManager.addFilter(text: "2", type: .allow, denyFolder: .junk)
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "2", type: .allow, denyFolder: .junk)
         
         // Act
-        let filters = self.persistanceManager.fetchFilterRecords()
+        let filters = self.testSubject.fetchFilterRecords()
         
         // Verify
         XCTAssertEqual(filters.count, 2)
@@ -54,13 +54,13 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchFilterRecordsForType() {
         // Prepare
-        self.persistanceManager.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        self.persistanceManager.addFilter(text: "2", type: .allow, denyFolder: .junk)
-        self.persistanceManager.addFilter(text: "3", type: .allow, denyFolder: .junk)
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "2", type: .allow, denyFolder: .junk)
+        self.testSubject.addFilter(text: "3", type: .allow, denyFolder: .junk)
         
         // Act
-        let allowFilters = self.persistanceManager.fetchFilterRecords(for: .allow)
-        let denyFilters = self.persistanceManager.fetchFilterRecords(for: .deny)
+        let allowFilters = self.testSubject.fetchFilterRecords(for: .allow)
+        let denyFilters = self.testSubject.fetchFilterRecords(for: .deny)
         
         // Verify
         XCTAssertEqual(allowFilters.count, 2)
@@ -77,10 +77,10 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchAutomaticFiltersLanguageRecords() {
         // Prepare
-        self.persistanceManager.initAutomaticFiltering(languages: [.hebrew, .english], rules: [])
+        self.testSubject.initAutomaticFiltering(languages: [.hebrew, .english], rules: [])
         
         // Act
-        let languages = self.persistanceManager.fetchAutomaticFiltersLanguageRecords()
+        let languages = self.testSubject.fetchAutomaticFiltersLanguageRecords()
         
         // Verify
         XCTAssertEqual(languages.count, 2)
@@ -92,10 +92,10 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchAutomaticFiltersRuleRecords() {
         // Prepare
-        self.persistanceManager.initAutomaticFiltering(languages: [], rules: [.shortSender, .links])
+        self.testSubject.initAutomaticFiltering(languages: [], rules: [.shortSender, .links])
 
         // Act
-        let rules = self.persistanceManager.fetchAutomaticFiltersRuleRecords()
+        let rules = self.testSubject.fetchAutomaticFiltersRuleRecords()
 
         // Verify
         XCTAssertEqual(rules.count, 2)
@@ -108,14 +108,14 @@ class PersistanceManagerTests: XCTestCase {
         let cacheAge = Date()
         let filtersList = AutomaticFilterList(filterList: ["he" : ["word"]])
         
-        let existingCache = AutomaticFiltersCache(context: self.persistanceManager.context)
+        let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
         existingCache.uuid = UUID()
         existingCache.hashed = filtersList.hashed
         existingCache.filtersData = filtersList.encoded
         existingCache.age = cacheAge
 
         // Act
-        let cache = self.persistanceManager.fetchAutomaticFiltersCacheRecords()
+        let cache = self.testSubject.fetchAutomaticFiltersCacheRecords()
 
         // Verify
         XCTAssertEqual(cache.count, 1)
@@ -126,11 +126,11 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchAutomaticFiltersLanguageRecord() {
         // Prepare
-        self.persistanceManager.initAutomaticFiltering(languages: [.hebrew], rules: [])
+        self.testSubject.initAutomaticFiltering(languages: [.hebrew], rules: [])
         
         // Act
-        let hebrew = self.persistanceManager.fetchAutomaticFiltersLanguageRecord(for: .hebrew)
-        let english = self.persistanceManager.fetchAutomaticFiltersLanguageRecord(for: .english)
+        let hebrew = self.testSubject.fetchAutomaticFiltersLanguageRecord(for: .hebrew)
+        let english = self.testSubject.fetchAutomaticFiltersLanguageRecord(for: .english)
         
         // Verify
         XCTAssertFalse(hebrew?.isActive ?? true)
@@ -141,11 +141,11 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchAutomaticFiltersRuleRecord() {
         // Prepare
-        self.persistanceManager.initAutomaticFiltering(languages: [], rules: [.links])
+        self.testSubject.initAutomaticFiltering(languages: [], rules: [.links])
         
         // Act
-        let links = self.persistanceManager.fetchAutomaticFiltersRuleRecord(for: .links)
-        let shortSender = self.persistanceManager.fetchAutomaticFiltersRuleRecord(for: .shortSender)
+        let links = self.testSubject.fetchAutomaticFiltersRuleRecord(for: .links)
+        let shortSender = self.testSubject.fetchAutomaticFiltersRuleRecord(for: .shortSender)
         
         // Verify
         XCTAssertFalse(links?.isActive ?? true)
@@ -156,7 +156,7 @@ class PersistanceManagerTests: XCTestCase {
     func test_initAutomaticFiltering_languages() {
         // Prepare
         let unsupportedLanguage = NLLanguage.german
-        let context = self.persistanceManager.context
+        let context = self.testSubject.context
         let unsupported = AutomaticFiltersLanguage(context: context)
         unsupported.lang = unsupportedLanguage.rawValue
         unsupported.isActive = true
@@ -168,26 +168,26 @@ class PersistanceManagerTests: XCTestCase {
         self.expectingSaveContext()
         
         // Act
-        self.persistanceManager.initAutomaticFiltering(languages: [.hebrew, .english], rules: [])
+        self.testSubject.initAutomaticFiltering(languages: [.hebrew, .english], rules: [])
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertNil(self.persistanceManager.fetchAutomaticFiltersLanguageRecord(for: .german))
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecord(for: .hebrew)?.lang, NLLanguage.hebrew.rawValue)
+        XCTAssertNil(self.testSubject.fetchAutomaticFiltersLanguageRecord(for: .german))
+        XCTAssertEqual(self.testSubject.fetchAutomaticFiltersLanguageRecord(for: .hebrew)?.lang, NLLanguage.hebrew.rawValue)
         
-        let languages = try? self.persistanceManager.context.fetch(AutomaticFiltersLanguage.fetchRequest())
+        let languages = try? self.testSubject.context.fetch(AutomaticFiltersLanguage.fetchRequest())
         XCTAssertEqual(languages?.count, 2)
         
         let unsupportedLanguageFetch = AutomaticFiltersLanguage.fetchRequest()
         unsupportedLanguageFetch.predicate = NSPredicate(format: "lang == %@", unsupportedLanguage.rawValue)
-        let result = try? self.persistanceManager.context.fetch(unsupportedLanguageFetch)
+        let result = try? self.testSubject.context.fetch(unsupportedLanguageFetch)
         XCTAssertTrue(result?.isEmpty ?? false)
     }
     
     func test_initAutomaticFiltering_rules() {
         // Prepare
         let unsupportedRuleId = Int64(1000)
-        let context = self.persistanceManager.context
+        let context = self.testSubject.context
         let unsupported = AutomaticFiltersRule(context: context)
         unsupported.ruleId = unsupportedRuleId
         unsupported.isActive = true
@@ -199,19 +199,19 @@ class PersistanceManagerTests: XCTestCase {
         self.expectingSaveContext()
         
         // Act
-        self.persistanceManager.initAutomaticFiltering(languages: [], rules: [.links, .numbersOnly])
+        self.testSubject.initAutomaticFiltering(languages: [], rules: [.links, .numbersOnly])
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersRuleRecord(for: .links)?.ruleId, supported.ruleId)
-        XCTAssertTrue(self.persistanceManager.fetchAutomaticFiltersRuleRecord(for: .links)?.isActive ?? false)
+        XCTAssertEqual(self.testSubject.fetchAutomaticFiltersRuleRecord(for: .links)?.ruleId, supported.ruleId)
+        XCTAssertTrue(self.testSubject.fetchAutomaticFiltersRuleRecord(for: .links)?.isActive ?? false)
         
-        let rules = try? self.persistanceManager.context.fetch(AutomaticFiltersRule.fetchRequest())
+        let rules = try? self.testSubject.context.fetch(AutomaticFiltersRule.fetchRequest())
         XCTAssertEqual(rules?.count, 2)
         
         let unsupportedRuleFetch = AutomaticFiltersRule.fetchRequest()
         unsupportedRuleFetch.predicate = NSPredicate(format: "ruleId == %ld", unsupportedRuleId)
-        let result = try? self.persistanceManager.context.fetch(unsupportedRuleFetch)
+        let result = try? self.testSubject.context.fetch(unsupportedRuleFetch)
         XCTAssertTrue(result?.isEmpty ?? false)
     }
     
@@ -221,16 +221,16 @@ class PersistanceManagerTests: XCTestCase {
         var isDuplicateFilter = true
         
         // Act
-        isDuplicateFilter = self.persistanceManager.isDuplicateFilter(text: filterName)
+        isDuplicateFilter = self.testSubject.isDuplicateFilter(text: filterName)
         
         // Verify
         XCTAssertFalse(isDuplicateFilter)
         
         // Prepare
-        self.persistanceManager.addFilter(text: filterName, type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: filterName, type: .deny, denyFolder: .junk)
         
         // Act
-        isDuplicateFilter = self.persistanceManager.isDuplicateFilter(text: filterName)
+        isDuplicateFilter = self.testSubject.isDuplicateFilter(text: filterName)
         
         // Verify
         XCTAssertTrue(isDuplicateFilter)
@@ -242,11 +242,11 @@ class PersistanceManagerTests: XCTestCase {
         self.expectingSaveContext()
 
         // Execute
-        self.persistanceManager.addFilter(text: filterName, type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: filterName, type: .deny, denyFolder: .junk)
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertTrue(self.persistanceManager.isDuplicateFilter(text: filterName))
+        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: filterName))
     }
     
     func test_addFilter_allow() {
@@ -255,64 +255,64 @@ class PersistanceManagerTests: XCTestCase {
         self.expectingSaveContext()
 
         // Act
-        self.persistanceManager.addFilter(text: filterName, type: .allow, denyFolder: .junk)
+        self.testSubject.addFilter(text: filterName, type: .allow, denyFolder: .junk)
 
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertTrue(self.persistanceManager.isDuplicateFilter(text: filterName))
+        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: filterName))
     }
     
     func test_deleteFiltersWithOffsets() {
         // Prepare
-        self.persistanceManager.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        self.persistanceManager.addFilter(text: "2", type: .deny, denyFolder: .junk)
-        self.persistanceManager.addFilter(text: "3", type: .deny, denyFolder: .junk)
-        let filters = self.persistanceManager.fetchFilterRecords()
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "2", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "3", type: .deny, denyFolder: .junk)
+        let filters = self.testSubject.fetchFilterRecords()
         let indexSetToDelete = IndexSet(arrayLiteral: 0, 2)
         self.expectingSaveContext()
         
         // Act
-        self.persistanceManager.deleteFilters(withOffsets: indexSetToDelete, in: filters)
+        self.testSubject.deleteFilters(withOffsets: indexSetToDelete, in: filters)
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssert(self.persistanceManager.isDuplicateFilter(text: "1") == false)
-        XCTAssert(self.persistanceManager.isDuplicateFilter(text: "2") == true)
-        XCTAssert(self.persistanceManager.isDuplicateFilter(text: "3") == false)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "1") == false)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "2") == true)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "3") == false)
     }
     
     func test_deleteFiltersSet() {
         // Prepare
-        self.persistanceManager.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        self.persistanceManager.addFilter(text: "2", type: .deny, denyFolder: .junk)
-        let filters = self.persistanceManager.fetchFilterRecords()
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "2", type: .deny, denyFolder: .junk)
+        let filters = self.testSubject.fetchFilterRecords()
         let setToDelete: Set<Filter> = Set(arrayLiteral: filters[0], filters[1])
-        self.persistanceManager.addFilter(text: "3", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "3", type: .deny, denyFolder: .junk)
         self.expectingSaveContext()
         
         // Act
-        self.persistanceManager.deleteFilters(setToDelete)
+        self.testSubject.deleteFilters(setToDelete)
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssert(self.persistanceManager.isDuplicateFilter(text: "1") == false)
-        XCTAssert(self.persistanceManager.isDuplicateFilter(text: "2") == false)
-        XCTAssert(self.persistanceManager.isDuplicateFilter(text: "3") == true)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "1") == false)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "2") == false)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "3") == true)
     }
 
     
     func test_updateFilter() {
         // Prepare
-        self.persistanceManager.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        let filter = self.persistanceManager.fetchFilterRecords().first!
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
+        let filter = self.testSubject.fetchFilterRecords().first!
         self.expectingSaveContext()
         
         // Act
-        self.persistanceManager.updateFilter(filter, denyFolder: .promotion)
+        self.testSubject.updateFilter(filter, denyFolder: .promotion)
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        let updatedFilter = self.persistanceManager.fetchFilterRecords().first!
+        let updatedFilter = self.testSubject.fetchFilterRecords().first!
         XCTAssert(updatedFilter.denyFolderType == .promotion)
     }
 
@@ -322,7 +322,7 @@ class PersistanceManagerTests: XCTestCase {
         let newerfiltersList = AutomaticFilterList(filterList: ["he" : ["word", "word2"]])
         let oldDate = Date()
         
-        let existingCache = AutomaticFiltersCache(context: self.persistanceManager.context)
+        let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
         existingCache.uuid = UUID()
         existingCache.hashed = filtersList.hashed
         existingCache.filtersData = filtersList.encoded
@@ -331,12 +331,12 @@ class PersistanceManagerTests: XCTestCase {
         self.expectingSaveContext()
         
         // Act
-        self.persistanceManager.saveCache(with: newerfiltersList)
+        self.testSubject.saveCache(with: newerfiltersList)
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
         
-        let newCache = try? self.persistanceManager.context.fetch(AutomaticFiltersCache.fetchRequest()).first
+        let newCache = try? self.testSubject.context.fetch(AutomaticFiltersCache.fetchRequest()).first
         
         XCTAssertEqual(newCache?.filtersData, newerfiltersList.encoded)
         XCTAssertEqual(newCache?.hashed, newerfiltersList.hashed)
@@ -349,15 +349,15 @@ class PersistanceManagerTests: XCTestCase {
         let filtersList_same = AutomaticFilterList(filterList: ["he" : ["word"]])
         let filtersList_diff = AutomaticFilterList(filterList: ["he" : ["word", "word2"]])
         let oldDate = Date()
-        let existingCache = AutomaticFiltersCache(context: self.persistanceManager.context)
+        let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
         existingCache.uuid = UUID()
         existingCache.hashed = filtersList.hashed
         existingCache.filtersData = filtersList.encoded
         existingCache.age = oldDate
         
         // Act
-        let expectFalse = self.persistanceManager.isCacheStale(comparedTo: filtersList_same)
-        let expectTrue = self.persistanceManager.isCacheStale(comparedTo: filtersList_diff)
+        let expectFalse = self.testSubject.isCacheStale(comparedTo: filtersList_same)
+        let expectTrue = self.testSubject.isCacheStale(comparedTo: filtersList_diff)
         
         // Verify
         XCTAssertFalse(expectFalse)
@@ -366,7 +366,7 @@ class PersistanceManagerTests: XCTestCase {
     
     
     // MARK: Private Variables and Helpers
-    private var persistanceManager: PersistanceManagerProtocol = PersistanceManager(inMemory: true)
+    private var testSubject: PersistanceManagerProtocol = PersistanceManager(inMemory: true)
     private var saveNotificationCompleteHandler: ((Notification)->())?
 
     private func waitForSavedNotification(completeHandler: @escaping ((Notification)->()) ) {
@@ -380,25 +380,27 @@ class PersistanceManagerTests: XCTestCase {
             expectASave.fulfill()
         }
     }
+    
     private func flushEntity(name: String) {
         let fetchRequest:NSFetchRequest<NSFetchRequestResult> = NSFetchRequest<NSFetchRequestResult>(entityName: name)
-        let objs = try! self.persistanceManager.context.fetch(fetchRequest)
+        let objs = try! self.testSubject.context.fetch(fetchRequest)
         
         for case let obj as NSManagedObject in objs {
-            self.persistanceManager.context.delete(obj)
+            self.testSubject.context.delete(obj)
         }
     }
+    
     private func flushPersistanceManager() {
         self.flushEntity(name: "Filter")
         self.flushEntity(name: "AutomaticFiltersCache")
         self.flushEntity(name: "AutomaticFiltersLanguage")
+        self.flushEntity(name: "AutomaticFiltersRule")
         
         do {
-            try self.persistanceManager.context.save()
+            try self.testSubject.context.save()
         } catch {
             XCTAssert(false, "flushPersistanceManager failed")
         }
-        
     }
     
     @objc func contextSaved(notification: Notification) {
