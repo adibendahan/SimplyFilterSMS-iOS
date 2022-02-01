@@ -43,9 +43,9 @@ struct AppHomeView: View {
                             
                             HStack {
                                 Image(systemName: "bolt.shield.fill")
-                                    .foregroundColor(Color(.sRGB, red: 60/255, green: 64/255, blue: 168/255, opacity: 1.0))
+                                    .foregroundColor(.indigo)
                                     .font(.system(size: 30))
-                                    .padding(.trailing, 2)
+                                    .padding(.trailing, 1)
 
                                 VStack (alignment: .leading) {
                                     Text("autoFilter_title"~)
@@ -54,7 +54,7 @@ struct AppHomeView: View {
                                     if !self.model.activeLanguages.isEmpty {
                                         FadingTextView(model: self.activeLanguagesModel)
                                             .font(.caption2)
-                                            .lineLimit(1)
+                                            .lineLimit(2)
                                     }
                                 }
                                 
@@ -79,7 +79,7 @@ struct AppHomeView: View {
                             }
                             .padding(.vertical, 12)
                         } // Navigation Link
-                        .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 20))
+                        .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
                 } header: {
                     Spacer()
                 } // Section

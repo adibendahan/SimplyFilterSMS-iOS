@@ -79,11 +79,11 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     var iconColor: Color {
         switch self {
         case .deny:
-            return Color(.sRGB, red: 231/255, green: 76/255, blue: 60/255, opacity: 1.0)
+            return .red
         case .allow:
-            return Color(.sRGB, red: 39/255, green: 174/255, blue: 96/255, opacity: 1.0)
+            return .green
         case .denyLanguage:
-            return Color(.sRGB, red: 41/255, green: 128/255, blue: 185/255, opacity: 1.0)
+            return .cyan
         }
     }
 }
@@ -128,7 +128,7 @@ enum DenyFolderType: Int64, CaseIterable, Identifiable {
 }
 
 enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
-    case allUnknown=0, links, numbersOnly, shortSender
+    case allUnknown=0, links, numbersOnly, shortSender, email
     
     var id: Self { self }
     
@@ -142,6 +142,8 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return "autoFilter_numbersOnly"~
         case .shortSender:
             return "autoFilter_shortSender"~
+        case .email:
+            return "autoFilter_email"~
         }
     }
     
@@ -155,6 +157,8 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return 3
         case .shortSender:
             return 2
+        case .email:
+            return 4
         }
     }
     
@@ -168,19 +172,23 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return "number.circle.fill"
         case .shortSender:
             return "textformat.123"
+        case .email:
+            return "envelope.fill"
         }
     }
     
     var iconColor: Color {
         switch self {
         case .allUnknown:
-            return Color(.sRGB, red: 192/255, green: 57/255, blue: 43/255, opacity: 1.0)
+            return .red
         case .links:
-            return .accentColor
+            return .blue
         case .numbersOnly:
-            return .primary.opacity(0.4)//Color(.sRGB, red: 165/255, green: 177/255, blue: 194/255, opacity: 1.0)
+            return .brown
         case .shortSender:
-            return Color(.sRGB, red: 230/255, green: 126/255, blue: 34/255, opacity: 1.0)
+            return .orange
+        case .email:
+            return .purple.opacity(0.8)
         }
     }
     
@@ -221,6 +229,8 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return "autoFilter_numbersOnly_shortTitle"~
         case .shortSender:
             return "autoFilter_shortSender_shortTitle"~
+        case .email:
+            return "autoFilter_email_shortTitle"~
         }
     }
 

@@ -111,3 +111,5 @@
 "autoFilter_shortSender_shortTitle" = "Short senders";
 "autoFilter_smartFilters" = "Smart filters";
 "autoFilter_yourFilters" = "Your filters";
+"autoFilter_email_shortTitle" = "Email";
+"autoFilter_email" = "Block Email Senders";
