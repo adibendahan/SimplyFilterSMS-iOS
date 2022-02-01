@@ -21,6 +21,7 @@ let kAppWorkingDirectory = "Simply-Filter-SMS"
 let kDatabaseFilename = "CoreData.sqlite"
 let kAppGroupContainer = "group.com.grizz.apps.dev.simply-filter-sms"
 let kSupportEmail = "grizz.apps.dev@gmail.com"
+let kUpdateAutomaticFiltersMinDays = 3
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
 

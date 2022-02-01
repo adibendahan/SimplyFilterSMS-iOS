@@ -112,7 +112,7 @@ struct AddFilterView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(FilledButton())
-                    .disabled(filterText.count < 3 || isDuplicate)
+                    .disabled(filterText.count < kUpdateAutomaticFiltersMinDays || isDuplicate)
                     .contentShape(Rectangle())
                 } // VStack
                 .padding(.horizontal, 16)

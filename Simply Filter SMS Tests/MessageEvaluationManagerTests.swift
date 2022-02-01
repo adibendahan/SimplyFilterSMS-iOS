@@ -66,7 +66,7 @@ class MessageEvaluationManagerTests: XCTestCase {
             let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender)
             
             XCTAssert(testCase.expectedAction == actualAction,
-                      "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.name) != \(actualAction.name).")
+                      "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.debugName) != \(actualAction.debugName).")
         }
     }
     
@@ -84,7 +84,7 @@ class MessageEvaluationManagerTests: XCTestCase {
             let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender)
             
             XCTAssert(testCase.expectedAction == actualAction,
-                      "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.name) != \(actualAction.name).")
+                      "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.debugName) != \(actualAction.debugName).")
         }
     }
     

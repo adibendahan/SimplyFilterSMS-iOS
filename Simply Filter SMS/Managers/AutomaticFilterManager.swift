@@ -37,20 +37,6 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
                 }
             }
         }
-
-        if !isAutomaticFilteringOn {
-            let automaticFiltersRuleRecords = self.persistanceManager.fetchAutomaticFiltersRuleRecords()
-            
-            for automaticFiltersRuleRecord in automaticFiltersRuleRecords {
-                if let _ = automaticFiltersRuleRecord.ruleType {
-                    
-                    if automaticFiltersRuleRecord.isActive == true {
-                        isAutomaticFilteringOn = true
-                        break
-                    }
-                }
-            }
-        }
         
         return isAutomaticFilteringOn
     }
@@ -190,7 +176,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         var shouldFetchFilters = true
         
         if let cacheAge = self.automaticFiltersCacheAge,
-           cacheAge.daysBetween(date: Date()) < 3 {
+           cacheAge.daysBetween(date: Date()) < kUpdateAutomaticFiltersMinDays {
             
             shouldFetchFilters = false
         }
