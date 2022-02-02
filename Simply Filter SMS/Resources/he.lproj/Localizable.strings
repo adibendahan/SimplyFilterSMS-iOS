@@ -12,7 +12,7 @@
 
 "lang_allBlocked" = "כל השפות הנתמכות כבר חסומות!";
 
-"lang_how" = "\nעיבוד וזיהוי השפה נעשה **לוקאלית** ע״י מנוע השפות של מערכת ההפעלה. הודעה תחסם רק אם **השפה הדומיננטית** של הטקסט נמצאת ברשימת השפות החסומות.";
+"lang_how" = "עיבוד וזיהוי השפה נעשה **לוקאלית** ע״י מנוע השפות של מערכת ההפעלה. הודעה תחסם רק אם **השפה הדומיננטית** של הטקסט נמצאת ברשימת השפות החסומות.";
 
 "filterList_filters" = "פילטרים";
 
@@ -189,3 +189,11 @@
 "testFilters_resultTransaction" = "זו הודעה על פעולה! 🧾";
 
 "testFilters_action" = "לחצו לבדיקה";
+
+"help_automaticFiltering_question" = "איך עובד הסינון האוטומטי של ההודעות?";
+
+"help_automaticFiltering" = "סינון אוטומטי משתמש ברשימה מוכנה של מילים על מנת לקבוע האם הודעה היא זבל או לא. הרשימה מתעדכנת עם מילים חדשות לעיתים. הפילטרים האחרים שלך עדיין פעילים גם כאשר סינון אוטומטי מופעל.";
+
+"help_deny" = "הוסיפו ביטויים שיגרמו להודעה להיחשב כזבל, אתם יכולים גם לבחור את התיקייה אליה ההודעה תסונן.";
+
+"help_allow" = "הוסיפו ביטויים שיגרמו להודעה להיחשב כהודעה רגילה. מומלץ להוסיף ביטויים יחודיים שמאפיינים אתכם כגון שם פרטי ושם משפחה. ביטויים שמופיעים ברשימה הזאת מקבלים את התיעדוף הכי גבוה כאשר הודעה מסוננת.";

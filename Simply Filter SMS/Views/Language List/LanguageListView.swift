@@ -61,21 +61,30 @@ struct LanguageListView: View {
             } header: {
                 Text("lang_supported"~)
             } footer: {
-                HStack {
-                    Text(.init(self.model.footer))
-                    
-                    if self.model.mode == .automaticBlocking,
-                       let lastUpdate = self.model.lastUpdate,
-                       lastUpdate.daysBetween(date: Date()) > 0 {
+                VStack {
+                    HStack {
+                        Text(.init(self.model.footer))
                         
-                        Button {
-                            self.model.forceUpdateFilters()
-                        } label: {
-                            Text("autoFilter_forceUpdate"~)
+                        if self.model.mode == .automaticBlocking,
+                           let lastUpdate = self.model.lastUpdate,
+                           lastUpdate.daysBetween(date: Date()) > 0 {
+                            
+                            Button {
+                                self.model.forceUpdateFilters()
+                            } label: {
+                                Text("autoFilter_forceUpdate"~)
+                            }
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    if let helpText = self.model.footerSecondLine {
+                        Spacer(minLength: 20)
+                        
+                        Text(helpText)
+                            .multilineTextAlignment(.leading)
+                    }
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
             } // Section
         } // List
         .listStyle(.insetGrouped)

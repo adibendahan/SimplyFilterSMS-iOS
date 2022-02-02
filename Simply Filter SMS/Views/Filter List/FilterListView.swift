@@ -58,8 +58,14 @@ struct FilterListView: View {
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
             } footer: {
-                AddFilterButton()
-                    .padding(.top, self.model.filters.count > 0 ? 0 : 120)
+                VStack {
+                    Text(.init(self.model.footer))
+                    
+                    Spacer()
+                    
+                    AddFilterButton()
+                        .padding(.top, self.model.filters.count > 0 ? 0 : 120)
+                }
             }
         } // List
         .listStyle(InsetGroupedListStyle())

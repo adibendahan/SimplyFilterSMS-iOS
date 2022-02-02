@@ -18,7 +18,7 @@
 //MARK: Languages
 "lang_supported" = "Supported Languages";
 "lang_allBlocked" = "You've blocked all supported languages!";
-"lang_how" = "\nLanguage processing and identification is done **locally** by the NaturalLanguage engine of iOS. A message will be filtered only if the **dominant language** of the text is on the blocked languages list.";
+"lang_how" = "Language processing and identification is done **locally** by the Natural Language engine of iOS. A message will be filtered only if the **dominant language** of the text is on the blocked languages list.";
 
 
 //MARK: Filter List View
@@ -90,6 +90,10 @@
 "faq_answer_4" = "When a text message is tagged as junk it will still be available for reading on the Messages app under the Junk folder.";
 "faq_question_5" = "What's the difference between Junk/Transactions/Promotions folders?";
 "faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customizable in any way. Only messages filtered to the Junk folder will be delivered silently.";
+"help_automaticFiltering_question" = "How does Automatic Filtering work?";
+"help_automaticFiltering" = "Automatic Filtering is using a pre defined list of terms to determine if a message should be sent to the Junk folder or not. The lists are updated periodically with new terms. Your regular filters are still considered when Automatic Filtering is on.";
+"help_deny" = "Add texts that will cause a message to be marked as spam, you can also choose the specific folder you want the message to be stored in.";
+"help_allow" = "Add text that will cause a message to be marked as valid. It is recommended to add uniqe identifying texts like your name here. Text appear on this list have the highest priority when filtering a message.";
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "Automatic Filtering";

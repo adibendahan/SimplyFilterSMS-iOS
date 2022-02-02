@@ -12,6 +12,7 @@ class FilterListViewModel: ObservableObject {
     @Published var filterType: FilterType
     @Published var isAllUnknownFilteringOn: Bool
     @Published var canBlockAnotherLanguage: Bool
+    @Published var footer: String
     
     private let persistanceManager: PersistanceManagerProtocol
     private let automaticFilterManager: AutomaticFilterManagerProtocol
@@ -26,6 +27,15 @@ class FilterListViewModel: ObservableObject {
         
         self.isAllUnknownFilteringOn = automaticFilterManager.automaticRuleState(for: .allUnknown)
         self.canBlockAnotherLanguage = !automaticFilterManager.languages(for: .blockLanguage).isEmpty
+        
+        switch filterType {
+        case .deny:
+            self.footer = "help_deny"~
+        case .allow:
+            self.footer = "help_allow"~
+        case .denyLanguage:
+            self.footer = "lang_how"~
+        }
     }
 
     func refresh() {

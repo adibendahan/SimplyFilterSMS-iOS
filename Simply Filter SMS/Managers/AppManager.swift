@@ -35,6 +35,7 @@ class AppManager: AppManagerProtocol {
                 QuestionViewModel(text: "faq_question_2"~, answer: "faq_answer_2"~),
                 QuestionViewModel(text: "faq_question_3"~, answer: "faq_answer_3"~),
                 QuestionViewModel(text: "faq_question_4"~, answer: "faq_answer_4"~),
-                QuestionViewModel(text: "faq_question_5"~, answer: "faq_answer_5"~)]
+                QuestionViewModel(text: "faq_question_5"~, answer: "faq_answer_5"~),
+                QuestionViewModel(text: "help_automaticFiltering_question"~, answer: "help_automaticFiltering"~)]
     }
 }

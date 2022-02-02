@@ -14,6 +14,7 @@ class LanguageListViewModel: ObservableObject {
     @Published var title: String
     @Published var footer: String
     @Published var lastUpdate: Date?
+    @Published var footerSecondLine: String?
     
     private let persistanceManager: PersistanceManagerProtocol
     private let automaticFilterManager: AutomaticFilterManagerProtocol
@@ -29,12 +30,15 @@ class LanguageListViewModel: ObservableObject {
         self.mode = mode
         self.lastUpdate = cacheAge
         self.footer = LanguageListViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
+
         
         switch mode {
         case .automaticBlocking:
             self.title = "autoFilter_title"~
+            self.footerSecondLine = "help_automaticFiltering"~
         case .blockLanguage:
             self.title = "filterList_menu_filterLanguage"~
+            self.footerSecondLine = nil
         }
         
         self.languages = automaticFilterManager.languages(for: mode)
