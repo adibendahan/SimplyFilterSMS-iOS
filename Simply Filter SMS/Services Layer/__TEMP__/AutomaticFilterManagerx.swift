@@ -87,9 +87,9 @@ class URLRequestExecutor {
                 return
             }
             
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print(jsonString)
-            }
+//            if let jsonString = String(data: data, encoding: .utf8) {
+//                print(jsonString)
+//            }
             
             do {
                 let response = try JSONDecoder().decode(T.self, from: data)

@@ -185,11 +185,11 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
         case .links:
             return .blue
         case .numbersOnly:
-            return .brown
+            return .purple.opacity(0.8)
         case .shortSender:
             return .orange
         case .email:
-            return .purple.opacity(0.8)
+            return .brown
         }
     }
     

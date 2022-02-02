@@ -8,10 +8,17 @@
 import IdentityLookup
 import CoreData
 import NaturalLanguage
+import OSLog
 
 final class MessageFilterExtension: ILMessageFilterExtension {
+    lazy var logger: Logger = {
+        return Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "extension")
+    }()
+    
     lazy var extensionManager: MessageEvaluationManagerProtocol = {
-        return MessageEvaluationManager()
+        let messageEvaluationManager = MessageEvaluationManager()
+        messageEvaluationManager.setLogger(self.logger)
+        return messageEvaluationManager
     }()
 }
 

@@ -253,7 +253,6 @@
 				69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */,
 				69AA2C58279D793600CEABE5 /* DefaultsManager.swift */,
 				6982FE8A27A6FBA000BF6AA4 /* AutomaticFilterManager.swift */,
-				69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -344,8 +343,9 @@
 			isa = PBXGroup;
 			children = (
 				69DB7013277A1F0200245DBA /* Constsants.swift */,
-				69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */,
 				695D5BC2278E01C00037C926 /* SharedExtensions.swift */,
+				69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */,
+				69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */,
 			);
 			path = "Shared with Extension";
 			sourceTree = "<group>";

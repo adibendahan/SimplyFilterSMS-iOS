@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import OSLog
 
 class AppManager: AppManagerProtocol {
     static let shared: AppManagerProtocol = AppManager()
+    static let logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
     
     var persistanceManager: PersistanceManagerProtocol
     var defaultsManager: DefaultsManagerProtocol
@@ -25,6 +27,8 @@ class AppManager: AppManagerProtocol {
         let persistanceManager = PersistanceManager()
         let defaultsManager = DefaultsManager()
         let messageEvaluationManager = MessageEvaluationManager()
+        
+        messageEvaluationManager.setLogger(AppManager.logger)
         
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager

@@ -153,7 +153,8 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             case .success(let filterList):
                 completion(filterList)
             case .failure(let error):
-                print("ERROR: \(error)")
+                let nsError = error as NSError
+                AppManager.logger.error("ERROR! While fetching Automatic Filter List: \(nsError), \(nsError.userInfo)")
                 completion(nil)
             }
         }

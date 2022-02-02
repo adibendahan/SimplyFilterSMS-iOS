@@ -9,11 +9,22 @@ import Foundation
 import CoreData
 import IdentityLookup
 import NaturalLanguage
+import OSLog
 
+//MARK: - Protocol -
+protocol MessageEvaluationManagerProtocol {
+    var context: NSManagedObjectContext { get }
+    
+    func evaluateMessage(body: String, sender: String) -> ILMessageFilterAction
+    func setLogger(_ logger: Logger)
+}
+
+
+//MARK: - Implementation -
 class MessageEvaluationManager: MessageEvaluationManagerProtocol {
-    private var persistentContainer: NSPersistentContainer?
-    private(set) var context: NSManagedObjectContext
-
+    
+    
+    //MARK: - Initialization -
     init(inMemory: Bool = false) {
         let isReadOnly = inMemory ? false : true
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: isReadOnly)
@@ -24,7 +35,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                print("ERROR! While initializing MessageEvaluationManager: \(error), \(error.userInfo)")
             }
         })
         
@@ -32,26 +43,28 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         self.context = container.viewContext
     }
     
+    
+    //MARK: Public API (MessageEvaluationManagerProtocol)
     func evaluateMessage(body: String, sender: String) -> ILMessageFilterAction {
         var action = ILMessageFilterAction.none
         
-        //MARK: Priority #1 - Allow
+        // Priority #1 - Allow
         action = self.runUserFilters(type: .allow, body: body, sender: sender)
         guard action != .allow else { return action }
         
-        //MARK: Priority #2 - Rules
+        // Priority #2 - Rules
         action = self.runFilterRules(body: body, sender: sender)
         guard !action.isFiltered else { return action }
             
-        //MARK: Priority #3 - Deny
+        // Priority #3 - Deny
         action = self.runUserFilters(type: .deny, body: body, sender: sender)
         guard !action.isFiltered else { return action }
             
-        //MARK: Priority #4 - Deny Language
+        // Priority #4 - Deny Language
         action = self.runUserFilters(type: .denyLanguage, body: body, sender: sender)
         guard !action.isFiltered else { return action }
             
-        //MARK: Priority #5 - Automatic Filtering
+        // Priority #5 - Automatic Filtering
         action = self.runAutomaticFilters(body: body, sender: sender)
         
         if action == .none {
@@ -61,6 +74,15 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         return action
     }
     
+    func setLogger(_ logger: Logger) {
+        self.logger = logger
+    }
+    
+    //MARK: - Private  -
+    private var logger: Logger?
+    private var persistentContainer: NSPersistentContainer?
+    private(set) var context: NSManagedObjectContext
+
     private func runUserFilters(type: FilterType, body: String, sender: String) -> ILMessageFilterAction {
         var action = ILMessageFilterAction.none
         let messageText = "\(sender) \(body)"
@@ -68,7 +90,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         fetchRequest.predicate = NSPredicate(format: "type == %ld", type.rawValue)
         
         guard let filters = try? self.context.fetch(fetchRequest) else {
-            print("ERROR: error while loading rules")
+            self.logger?.error("ERROR! While loading filters on MessageEvaluationManager.runUserFilters")
             return action
         }
         
@@ -133,7 +155,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
               let filtersData = cacheRow.filtersData,
               let automaticFilterList = AutomaticFilterList(base64String: filtersData) else {
                   
-                  print("ERROR: error while loading cache")
+                  self.logger?.error("ERROR! While loading cache on MessageEvaluationManager.runAutomaticFilters")
                   return action
               }
         
@@ -159,7 +181,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         ruleRequest.predicate = NSPredicate(format: "isActive == %@", NSNumber(value: true))
         
         guard let activeAutomaticFiltersRuleRecords = try? self.context.fetch(ruleRequest) else {
-            print("ERROR: error while loading rules")
+            self.logger?.error("ERROR! While loading rules on MessageEvaluationManager.runFilterRules")
             return action
         }
         

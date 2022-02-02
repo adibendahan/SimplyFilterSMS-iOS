@@ -24,7 +24,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
             }
             
             container.viewContext.mergePolicy = NSMergePolicy(merge: .mergeByPropertyStoreTrumpMergePolicyType)
@@ -46,7 +46,7 @@ class PersistanceManager: PersistanceManagerProtocol {
             try self.context.save()
         } catch {
             let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            AppManager.logger.error("ERROR! While commiting context: \(nsError), \(nsError.userInfo)")
         }
     }
     
@@ -254,7 +254,7 @@ class PersistanceManager: PersistanceManagerProtocol {
             }
 
         } catch {
-            print("ERROR! While fetching \(entity): \(error.localizedDescription)")
+            AppManager.logger.error("ERROR! While fetching \(entity): \(error.localizedDescription)")
             return nil
         }
     }
