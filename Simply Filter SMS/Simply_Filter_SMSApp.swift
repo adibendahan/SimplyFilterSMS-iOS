@@ -11,7 +11,7 @@ import SwiftUI
 struct Simply_Filter_SMSApp: App {
     var body: some Scene {
         WindowGroup {
-            AppHomeView(model: AppHomeViewModel())
+            AppHomeView(model: AppHomeView.Model())
         }
     }
 }
