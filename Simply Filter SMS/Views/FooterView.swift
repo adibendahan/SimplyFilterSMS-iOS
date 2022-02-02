@@ -41,6 +41,25 @@ struct EmbeddedFooterView: ViewModifier {
     }
 }
 
+struct EmbeddedCloseButton: ViewModifier {
+    var onTap: (() ->())? = nil
+    
+    func body(content: Content) -> some View {
+        ZStack (alignment: .topTrailing) {
+            content
+            Button {
+                onTap?()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 20))
+                    .foregroundColor(.secondary)
+            }
+            .padding()
+            .contentShape(Rectangle())
+        }
+    }
+}
+
 struct FooterView_Previews: PreviewProvider {
     static var previews: some View {
         EmptyView()

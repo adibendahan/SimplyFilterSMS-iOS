@@ -23,13 +23,13 @@
 
 //MARK: Filter List View
 "filterList_filters" = "Filters";
-"filterList_allowed" = "Allowed texts";
-"filterList_denied" = "Blocked texts";
-"filterList_menu_filterLanguage" = "Block a language";
+"filterList_allowed" = "Allowed Texts";
+"filterList_denied" = "Blocked Texts";
+"filterList_menu_filterLanguage" = "Block a Language";
 "filterList_menu_enableExtension" = "Help";
 "filterList_menu_about" = "About";
-"filterList_menu_debug" = "Load debug data";
-"filterList_deniedLanguage" = "Blocked languages";
+"filterList_menu_debug" = "Load Debug Data";
+"filterList_deniedLanguage" = "Blocked Languages";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
 "filterList_folder" = "Folder";
 "filterList_text" = "Text";
@@ -37,8 +37,8 @@
 
 //MARK: Add Filter View
 "addFilter_add" = "Add";
-"addFilter_addFilter" = "Add filter";
-"addFilter_addLanguage" = "Add language";
+"addFilter_addFilter" = "Add Filter";
+"addFilter_addLanguage" = "Add Language";
 "addFilter_text" = "Type a word";
 "addFilter_text_caption" = "Filter messages containing (at least 3 characters): ";
 "addFilter_type" = "Type";
@@ -47,7 +47,7 @@
 "addFilter_folder_junk" = "Junk";
 "addFilter_folder_transactions" = "Transactions";
 "addFilter_folder_promotions" = "Promotions";
-"addFilter_duplicate" = "Duplicate filter";
+"addFilter_duplicate" = "Duplicate Filter";
 
 //MARK: Enable Extension View
 "enableExtension_step1" = "Step 1";
@@ -94,7 +94,7 @@
 //MARK: Automatic Filtering
 "autoFilter_title" = "Automatic Filtering";
 "autoFilter_lastUpdated" = "Updated on %@";
-"autoFilter_forceUpdate" = "Force update";
+"autoFilter_forceUpdate" = "Force Update";
 "autoFilter_neverUpdated" = "Never";
 "autoFilter_ON" = "ON";
 "autoFilter_OFF" = "OFF";
@@ -115,11 +115,11 @@
 "autoFilter_email" = "Block Email Senders";
 
 // MARK: Test Filters
-"testFilters_title" = "Test your filters";
+"testFilters_title" = "Test Your Filters";
 "testFilters_action" = "Test";
 "testFilters_messageTitle" = "Message";
 "testFilters_senderTitle" = "Sender (optional)";
-"testFilters_resultAllowed" = "It's allowed! 🥳";
-"testFilters_resultJunk" = "It's junk! 😈";
-"testFilters_resultPromotion" = "It's a promotion! 📢";
-"testFilters_resultTransaction" = "It's a transaction! 🧾";
+"testFilters_resultAllowed" = "It's Allowed! 🥳";
+"testFilters_resultJunk" = "It's Junk! 😈";
+"testFilters_resultPromotion" = "It's a Promotion! 📢";
+"testFilters_resultTransaction" = "It's a Transaction! 🧾";

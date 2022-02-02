@@ -156,9 +156,9 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return 1
         case .shortSender:
             return 2
-        case .numbersOnly:
-            return 3
         case .email:
+            return 3
+        case .numbersOnly:
             return 4
         }
     }

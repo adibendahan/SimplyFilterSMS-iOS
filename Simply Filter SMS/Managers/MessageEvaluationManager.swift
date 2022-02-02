@@ -171,13 +171,13 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     break
                     
                 case .links:
-                    if body.contains("http") {
+                    if let _ = body.range(of: "http", options: .caseInsensitive) {
                         action = .junk
                         break
                     }
                     
                 case .numbersOnly:
-                    if sender.rangeOfCharacter(from: NSCharacterSet.letters) != nil {
+                    if let _ = sender.rangeOfCharacter(from: NSCharacterSet.letters) {
                         action = .junk
                         break
                     }

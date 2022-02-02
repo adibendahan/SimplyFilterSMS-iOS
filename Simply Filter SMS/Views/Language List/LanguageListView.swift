@@ -80,6 +80,7 @@ struct LanguageListView: View {
         } // List
         .listStyle(.insetGrouped)
         .navigationTitle(self.model.title)
+        .navigationBarTitleDisplayMode(self.model.mode == .blockLanguage ? .large : .inline)
         .toolbar {
             ToolbarItem {
                 Button {

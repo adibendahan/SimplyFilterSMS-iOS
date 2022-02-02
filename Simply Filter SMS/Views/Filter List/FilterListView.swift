@@ -43,7 +43,7 @@ struct FilterListView: View {
                     self.model.deleteFilters(withOffsets: $0, in: self.model.filters)
                 }
             } header: {
-                if self.model.filterType.supportsFolders {
+                if self.model.filterType.supportsFolders && !self.model.filters.isEmpty {
                     HStack {
                         Text("filterList_text"~)
                         
@@ -55,6 +55,7 @@ struct FilterListView: View {
                 }
                 else {
                     Spacer()
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
             } footer: {
                 AddFilterButton()
@@ -65,6 +66,7 @@ struct FilterListView: View {
         .navigationBarItems(trailing: EditButton())
         .navigationBarItems(trailing: NavigationBarTrailingItem())
         .navigationTitle(self.model.filterType.name)
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $presentedSheet) { // onDismiss:
             self.presentedSheet = nil
             guard self.viewDidAppear else { return }

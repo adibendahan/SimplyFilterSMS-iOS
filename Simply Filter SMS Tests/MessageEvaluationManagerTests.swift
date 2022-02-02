@@ -59,7 +59,8 @@ class MessageEvaluationManagerTests: XCTestCase {
                                             MessageTestCase(sender: "1234567", body: "مح لزواره الكرام بتحويل الكتابة العربي الى עם עברית", expectedAction: .junk),
                                             MessageTestCase(sender: "", body: "asdasdasdasd", expectedAction: .junk),
                                             MessageTestCase(sender: "1234567", body: "סינון אוטומטי קורונה", expectedAction: .junk),
-                                            MessageTestCase(sender: "1234567", body: "סינון אוטומטי spam", expectedAction: .allow)]
+                                            MessageTestCase(sender: "1234567", body: "סינון אוטומטי spam", expectedAction: .allow),
+                                            MessageTestCase(sender: "1234567", body: "htTp://", expectedAction: .junk)]
         
         for testCase in testCases {
             

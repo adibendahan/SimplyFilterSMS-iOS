@@ -82,6 +82,7 @@ struct AppHomeView: View {
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
                 } header: {
                     Spacer()
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 } // Section
                 .disabled(self.model.isAllUnknownFilteringOn)
                 
