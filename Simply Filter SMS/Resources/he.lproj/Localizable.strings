@@ -12,13 +12,13 @@
 
 "lang_allBlocked" = "כל השפות הנתמכות כבר חסומות!";
 
-"lang_how" = "\nעיבוד וזיהוי השפה נעשה **לוקאלית** ע״י מנוע השפות של מערכת ההפעלה. הודעה תחסם רק אם **השפה הדומיננטית** של הטקסט נמצאת ברשימת השפות החסומות.";
+"lang_how" = "עיבוד וזיהוי השפה נעשה **לוקאלית** ע״י מנוע השפות של מערכת ההפעלה. הודעה תחסם רק אם **השפה הדומיננטית** של הטקסט נמצאת ברשימת השפות החסומות.";
 
 "filterList_filters" = "פילטרים";
 
-"filterList_allowed" = "טקסט מאופשר";
+"filterList_allowed" = "טקסטים מאופשרים";
 
-"filterList_denied" = "טקסט חסום";
+"filterList_denied" = "טקסטים חסומים";
 
 "filterList_menu_filterLanguage" = "חסימת שפה";
 
@@ -28,7 +28,7 @@
 
 "filterList_menu_debug" = "טעינת נתוני דיבאג";
 
-"filterList_deniedLanguage" = "שפה חסומה";
+"filterList_deniedLanguage" = "שפות חסומות";
 
 "filterList_deleteFiltersCount" = "מחיקה (%ld)";
 
@@ -128,7 +128,7 @@
 
 "autoFilter_title" = "סינון אוטומטי";
 
-"autoFilter_lastUpdated" = "***עודכן לארונה ב %@.***";
+"autoFilter_lastUpdated" = "עודכן לארונה ב %@";
 
 "autoFilter_forceUpdate" = "עדכן עכשיו";
 
@@ -138,3 +138,62 @@
 
 "autoFilter_OFF" = "כבוי";
 
+"autoFilter_allUnknown" = "אפשר הודעות מאנשי קשר בלבד";
+
+"autoFilter_links" = "חסום קישורים";
+
+"autoFilter_numbersOnly" = "אפשר מספרים בלבד";
+
+"autoFilter_shortSender" = "חסום שולחים קצרים";
+
+"autoFilter_shortSender_desc" = "לפחות %ld תווים";
+
+"autoFilter_shortSender_change" = "לחצו בכדי לשנות";
+
+"autoFilter_shortSender_action" = "בחרו הגבלה חדשה";
+
+"autoFilter_allUnknown_shortTitle" = "אנשי קשר בלבד (למעט טקסט מאופשר)";
+
+"autoFilter_links_shortTitle" = "קישורים";
+
+"autoFilter_numbersOnly_shortTitle" = "מספרים בלבד";
+
+"autoFilter_shortSender_shortTitle" = "שולחים קצרים";
+
+"general_active_count" = "%ld פעילים";
+
+"filterList_text" = "טקסט";
+
+"addFilter_addLanguage" = "הוספת שפה";
+
+"autoFilter_smartFilters" = "פילטרים חכמים";
+
+"autoFilter_yourFilters" = "הפילטרים שלך";
+
+"autoFilter_email" = "חסום הודעות דואר אלקטרוני";
+
+"autoFilter_email_shortTitle" = "דואר אלקטרוני";
+
+"testFilters_title" = "בחנו את הפילטרים שלכם";
+
+"testFilters_messageTitle" = "הודעה";
+
+"testFilters_senderTitle" = "שולח (אופציונאלי)";
+
+"testFilters_resultAllowed" = "זו הודעה תקינה! 🥳";
+
+"testFilters_resultJunk" = "זו הודעת זבל! 😈";
+
+"testFilters_resultPromotion" = "זו הודעה פרסומית! 📢";
+
+"testFilters_resultTransaction" = "זו הודעה על פעולה! 🧾";
+
+"testFilters_action" = "לחצו לבדיקה";
+
+"help_automaticFiltering_question" = "איך עובד הסינון האוטומטי של ההודעות?";
+
+"help_automaticFiltering" = "סינון אוטומטי משתמש ברשימה מוכנה של מילים על מנת לקבוע האם הודעה היא זבל או לא. הרשימה מתעדכנת עם מילים חדשות לעיתים. הפילטרים האחרים שלך עדיין פעילים גם כאשר סינון אוטומטי מופעל.";
+
+"help_deny" = "הוסיפו ביטויים שיגרמו להודעה להיחשב כזבל, אתם יכולים גם לבחור את התיקייה אליה ההודעה תסונן.";
+
+"help_allow" = "הוסיפו ביטויים שיגרמו להודעה להיחשב כהודעה רגילה. מומלץ להוסיף ביטויים יחודיים שמאפיינים אתכם כגון שם פרטי ושם משפחה. ביטויים שמופיעים ברשימה הזאת מקבלים את התיעדוף הכי גבוה כאשר הודעה מסוננת.";
