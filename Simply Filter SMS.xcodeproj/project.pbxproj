@@ -193,17 +193,25 @@
 			path = "Services Layer";
 			sourceTree = "<group>";
 		};
+		690F09CA27AC33E900BA481F /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				690F09C627AC308600BA481F /* mock_AppManager.swift */,
+				694E53E927A4A106009A7E0E /* mock_PersistanceManager.swift */,
+				694E53E527A42EEB009A7E0E /* mock_DefaultsManager.swift */,
+				690F09C827AC310600BA481F /* mock_AutomaticFilterManager.swift */,
+				6987D7FE27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		694E53DD27A42EA8009A7E0E /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				69189C1227A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift */,
 				694E53E727A4300E009A7E0E /* PersistanceManagerTests.swift */,
 				694E53EB27A4A68F009A7E0E /* FilterListViewModelTests.swift */,
-				694E53E527A42EEB009A7E0E /* mock_DefaultsManager.swift */,
-				690F09C627AC308600BA481F /* mock_AppManager.swift */,
-				690F09C827AC310600BA481F /* mock_AutomaticFilterManager.swift */,
-				694E53E927A4A106009A7E0E /* mock_PersistanceManager.swift */,
-				6987D7FE27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift */,
+				690F09CA27AC33E900BA481F /* Mocks */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
