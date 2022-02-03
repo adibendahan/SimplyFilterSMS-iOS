@@ -9,21 +9,30 @@ import Foundation
 import XCTest
 import IdentityLookup
 import CoreData
+import OSLog
 @testable import Simply_Filter_SMS
 
 class mock_MessageEvaluationManager: MessageEvaluationManagerProtocol {
 
     var evaluateMessageCounter = 0
-
+    var setLoggerCounter = 0
+    
     var evaluateMessageClosure: ((String, String) -> (ILMessageFilterAction))?
+    var setLoggerClosure: ((Logger) -> ())?
     
     func evaluateMessage(body: String, sender: String) -> ILMessageFilterAction {
         self.evaluateMessageCounter += 1
         return self.evaluateMessageClosure?(body, sender) ?? .none
     }
     
+    func setLogger(_ logger: Logger) {
+        self.setLoggerCounter += 1
+        self.setLoggerClosure?(logger)
+    }
+    
     func resetCounters() {
         self.evaluateMessageCounter = 0
+        self.setLoggerCounter = 0
     }
     
     //MARK: Helpers

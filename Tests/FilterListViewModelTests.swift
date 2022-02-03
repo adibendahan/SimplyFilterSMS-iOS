@@ -11,17 +11,23 @@ import XCTest
 
 class FilterListViewModelTests: XCTestCase {
     
-    private var testSubject: FilterListView.Model = FilterListView.Model(filterType: .deny)
+    private var testSubject: FilterListView.ViewModel = FilterListView.ViewModel(filterType: .deny)
     private var persistanceManager = mock_PersistanceManager()
     private var defaultsManager = mock_DefaultsManager()
+    private var appManager = mock_AppManager()
     
     //MARK: Test Lifecycle
     override func setUp() {
         super.setUp()
 
+        let appManager = mock_AppManager()
+        self.appManager = appManager
         self.persistanceManager = mock_PersistanceManager()
         self.defaultsManager = mock_DefaultsManager()
-        self.testSubject = FilterListView.Model(filterType: .deny, persistanceManager: self.persistanceManager)
+        appManager.persistanceManager = self.persistanceManager
+        appManager.defaultsManager = self.defaultsManager
+        
+        self.testSubject = FilterListView.ViewModel(filterType: .deny, appManager: appManager)
         self.persistanceManager.resetCounters()
         self.defaultsManager.resetCounters()
     }

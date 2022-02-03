@@ -14,7 +14,7 @@ struct EnableExtensionView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @StateObject var model: Model
+    @StateObject var model: ViewModel
     @State var coordinator: PageCoordinator?
     @State var appManager: AppManagerProtocol = AppManager.shared
     @State private var tabSelection = 0
@@ -110,33 +110,29 @@ extension EnableExtensionView {
 }
 
 
-//MARK: - Model -
+//MARK: - ViewModel -
 extension EnableExtensionView {
     
-    class Model: ObservableObject {
+    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
         @Published var welcomePage: TwoButtonPageView.Model? = nil
         @Published var screenshotPages: [ScreenshotPageView.Model]
         @Published var readyPage: TwoButtonPageView.Model
         
         var isAppFirstRun: Bool {
             get {
-                self.defaultsManager.isAppFirstRun
+                self.appManager.defaultsManager.isAppFirstRun
             }
             set {
-                self.defaultsManager.isAppFirstRun = newValue
+                self.appManager.defaultsManager.isAppFirstRun = newValue
             }
         }
         
         var welcomeTagOffset: Int {
             return self.welcomePage == nil ? 0 : 1
         }
-        
-        private var defaultsManager: DefaultsManagerProtocol
-        
+
         init(showWelcome: Bool,
-             defaultsManager: DefaultsManagerProtocol = AppManager.shared.defaultsManager) {
-            
-            self.defaultsManager = defaultsManager
+             appManager: AppManagerProtocol = AppManager.shared) {
             
             // welcomePage:
             if showWelcome {
@@ -173,6 +169,8 @@ extension EnableExtensionView {
                 cancelText: "enableExtension_ready_cancel"~,
                 cancelAction: .dismiss,
                 image: "enableExtension_screenshot4")
+            
+            super.init(appManager: appManager)
         }
     }
 }
@@ -181,7 +179,7 @@ extension EnableExtensionView {
 //MARK: - Preview -
 struct EnableExtensionView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = EnableExtensionView.Model(showWelcome: false)
+        let model = EnableExtensionView.ViewModel(showWelcome: false)
         EnableExtensionView(model: model)
     }
 }

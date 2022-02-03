@@ -19,7 +19,7 @@ struct AddFilterView: View {
     }
     
     @FocusState private var focusedField: Field?
-    @StateObject var model: Model
+    @StateObject var model: ViewModel
     
     @State private var filterText = ""
     @State private var selectedFilterType = FilterType.deny
@@ -145,26 +145,24 @@ struct AddFilterView: View {
 }
 
 
-//MARK: - Model -
+//MARK: - ViewModel -
 extension AddFilterView {
     
-    class Model: ObservableObject {
+    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
         @Published var isAllUnknownFilteringOn: Bool
-        
-        private var persistanceManager: PersistanceManagerProtocol
-        
-        init(isAllUnknownFilteringOn: Bool,
-             persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
-            self.persistanceManager = persistanceManager
-            self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
+
+        override init(appManager: AppManagerProtocol = AppManager.shared) {
+            self.isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
+            
+            super.init(appManager: appManager)
         }
         
         func isDuplicateFilter(text: String) -> Bool {
-            return self.persistanceManager.isDuplicateFilter(text: text)
+            return self.appManager.persistanceManager.isDuplicateFilter(text: text)
         }
         
         func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType) {
-            self.persistanceManager.addFilter(text: text, type: type, denyFolder: denyFolder)
+            self.appManager.persistanceManager.addFilter(text: text, type: type, denyFolder: denyFolder)
         }
     }
 }
@@ -175,8 +173,7 @@ struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
             AddFilterView(
-                model: AddFilterView.Model(isAllUnknownFilteringOn: false,
-                                           persistanceManager: AppManager.shared.previewsPersistanceManager))
+                model: AddFilterView.ViewModel(appManager: AppManager.previews))
         }
     }
 }

@@ -25,7 +25,7 @@ struct AppHomeView: View {
         case about=0, help, testFilters
     }
     
-    @StateObject var model: Model
+    @StateObject var model: ViewModel
     
     @State private var presentedSheet: SheetView? = nil
     @State private var isPresentingFullScreenWelcome = false
@@ -39,7 +39,7 @@ struct AppHomeView: View {
                 //MARK: Automatic Filtering
                 Section {
                     NavigationLink(
-                        destination: LanguageListView(model: LanguageListView.Model(mode: .automaticBlocking)),
+                        destination: LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking)),
                         tag: "AutomaticFilteringLanguageView",
                         selection: $model.activeNavigationTag) {
                             
@@ -151,7 +151,7 @@ struct AppHomeView: View {
                 Section {
                     ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
                         NavigationLink (tag: "\(filterType.rawValue)", selection: $model.activeNavigationTag) {
-                            FilterListView(model: FilterListView.Model(filterType: filterType))
+                            FilterListView(model: FilterListView.ViewModel(filterType: filterType))
                         } label: {
                             HStack {
                                 Image(systemName: filterType.iconName)
@@ -218,10 +218,10 @@ struct AppHomeView: View {
                 AboutView()
                 
             case .help:
-                HelpView(model: HelpView.Model())
+                HelpView(model: HelpView.ViewModel())
                 
             case .testFilters:
-                TestFiltersView(model: TestFiltersView.Model())
+                TestFiltersView(model: TestFiltersView.ViewModel())
             }
         }
         .fullScreenCover(
@@ -231,7 +231,7 @@ struct AppHomeView: View {
                 self.model.refresh()
             },
             content: {
-                EnableExtensionView(model: EnableExtensionView.Model(showWelcome: true))
+                EnableExtensionView(model: EnableExtensionView.ViewModel(showWelcome: true))
             })
     }
     
@@ -284,10 +284,10 @@ struct AppHomeView: View {
 }
 
 
-//MARK: - Model -
+//MARK: - ViewModel -
 extension AppHomeView {
     
-    class Model: ObservableObject {
+    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
         @Published var filters: [Filter] = []
         @Published var rules: [StatefulItem<RuleType>] = []
         @Published var title: String
@@ -300,29 +300,20 @@ extension AppHomeView {
         @Published var activeLanguages: String
         @Published var automaticFilteringFooter: String
         
-        private let persistanceManager: PersistanceManagerProtocol
-        private let defaultsManager: DefaultsManagerProtocol
-        private let automaticFilterManager: AutomaticFilterManagerProtocol
         
-        init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
-             defaultsManager: DefaultsManagerProtocol = AppManager.shared.defaultsManager,
-             automaticFilterManager: AutomaticFilterManagerProtocol = AppManager.shared.automaticFiltersManager) {
+        override init(appManager: AppManagerProtocol = AppManager.shared) {
             
-            let isAutomaticFilteringOn = automaticFilterManager.isAutomaticFilteringOn
-            let cacheAge = automaticFilterManager.automaticFiltersCacheAge
-            
-            self.automaticFilterManager = automaticFilterManager
-            self.persistanceManager = persistanceManager
-            self.defaultsManager = defaultsManager
+            let isAutomaticFilteringOn = appManager.automaticFilterManager.isAutomaticFilteringOn
+            let cacheAge = appManager.automaticFilterManager.automaticFiltersCacheAge
             
             self.title = "filterList_filters"~
-            self.isAppFirstRun = defaultsManager.isAppFirstRun
+            self.isAppFirstRun = appManager.defaultsManager.isAppFirstRun
             self.isAutomaticFilteringOn = isAutomaticFilteringOn
-            self.isAllUnknownFilteringOn = automaticFilterManager.automaticRuleState(for: .allUnknown)
+            self.isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.lastUpdate = cacheAge
-            self.shortSenderChoice = automaticFilterManager.selectedChoice(for: .shortSender)
+            self.shortSenderChoice = appManager.automaticFilterManager.selectedChoice(for: .shortSender)
             self.activeNavigationTag = nil
-            self.activeLanguages = isAutomaticFilteringOn ? automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
+            self.activeLanguages = isAutomaticFilteringOn ? appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
             
             if let cacheAge = cacheAge {
                 let formatter = DateFormatter()
@@ -336,33 +327,36 @@ extension AppHomeView {
                 self.automaticFilteringFooter = ""
             }
             
-            self.filters = persistanceManager.fetchFilterRecords()
-            self.rules = automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
-                                                                                   getter: self.automaticFilterManager.automaticRuleState,
-                                                                                   setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
+            super.init(appManager: appManager)
+            
+            self.filters = appManager.persistanceManager.fetchFilterRecords()
+            self.rules = appManager.automaticFilterManager.rules.map({
+                StatefulItem<RuleType>(item: $0,
+                                       getter: self.appManager.automaticFilterManager.automaticRuleState,
+                                       setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
         }
         
         func refresh() {
-            let isAutomaticFilteringOn = self.automaticFilterManager.isAutomaticFilteringOn
-            let cacheAge = automaticFilterManager.automaticFiltersCacheAge ?? nil
+            let isAutomaticFilteringOn = self.appManager.automaticFilterManager.isAutomaticFilteringOn
+            let cacheAge = self.appManager.automaticFilterManager.automaticFiltersCacheAge ?? nil
             
             self.title = "filterList_filters"~
             
-            self.isAppFirstRun = self.defaultsManager.isAppFirstRun
+            self.isAppFirstRun = self.appManager.defaultsManager.isAppFirstRun
             self.isAutomaticFilteringOn = isAutomaticFilteringOn
-            self.isAllUnknownFilteringOn = self.automaticFilterManager.automaticRuleState(for: .allUnknown)
+            self.isAllUnknownFilteringOn = self.appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.lastUpdate = cacheAge
-            self.shortSenderChoice = self.automaticFilterManager.selectedChoice(for: .shortSender)
-            self.activeLanguages = isAutomaticFilteringOn ? self.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
-            self.filters = persistanceManager.fetchFilterRecords()
-            self.rules = self.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
-                                                                                        getter: self.automaticFilterManager.automaticRuleState,
+            self.shortSenderChoice = self.appManager.automaticFilterManager.selectedChoice(for: .shortSender)
+            self.activeLanguages = isAutomaticFilteringOn ? self.appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
+            self.filters = self.appManager.persistanceManager.fetchFilterRecords()
+            self.rules = self.appManager.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
+                                                                                        getter: self.appManager.automaticFilterManager.automaticRuleState,
                                                                                         setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
             
         }
         
         func setSelectedChoice(for rule: RuleType, choice: Int) {
-            self.automaticFilterManager.setSelectedChoice(for: rule, choice: choice)
+            self.appManager.automaticFilterManager.setSelectedChoice(for: rule, choice: choice)
             self.refresh()
         }
         
@@ -371,7 +365,7 @@ extension AppHomeView {
         }
         
         func forceUpdateFilters() {
-            self.automaticFilterManager.forceUpdateAutomaticFilters { [weak self] in
+            self.appManager.automaticFilterManager.forceUpdateAutomaticFilters { [weak self] in
                 DispatchQueue.main.async {
                     self?.refresh()
                 }
@@ -379,12 +373,12 @@ extension AppHomeView {
         }
         
         func loadDebugData() {
-            self.persistanceManager.loadDebugData()
+            self.appManager.persistanceManager.loadDebugData()
             self.refresh()
         }
         
         private func setAutomaticRuleState(for rule: RuleType, value: Bool) {
-            self.automaticFilterManager.setAutomaticRuleState(for: rule, value: value)
+            self.appManager.automaticFilterManager.setAutomaticRuleState(for: rule, value: value)
             self.refresh()
         }
     }
@@ -394,6 +388,6 @@ extension AppHomeView {
 //MARK: - Preview -
 struct AppHomeView_Previews: PreviewProvider {
     static var previews: some View {
-        AppHomeView(model: AppHomeView.Model(persistanceManager: AppManager.shared.previewsPersistanceManager))
+        AppHomeView(model: AppHomeView.ViewModel(appManager: AppManager.previews))
     }
 }

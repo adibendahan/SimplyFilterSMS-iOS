@@ -23,7 +23,7 @@ struct LanguageListView: View {
         case blockLanguage, automaticBlocking
     }
     
-    @StateObject var model: Model
+    @StateObject var model: ViewModel
     
     var body: some View {
         switch self.model.mode {
@@ -116,10 +116,10 @@ struct LanguageListView: View {
 }
 
 
-//MARK: - Model -
+//MARK: - ViewModel -
 extension LanguageListView {
     
-    class Model: ObservableObject {
+    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
         @Published var languages: [StatefulItem<NLLanguage>]
         @Published var mode: LanguageListView.Mode
         @Published var title: String
@@ -127,20 +127,14 @@ extension LanguageListView {
         @Published var lastUpdate: Date?
         @Published var footerSecondLine: String?
         
-        private let persistanceManager: PersistanceManagerProtocol
-        private let automaticFilterManager: AutomaticFilterManagerProtocol
-        
         init(mode: LanguageListView.Mode,
-             persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
-             automaticFilterManager: AutomaticFilterManagerProtocol = AppManager.shared.automaticFiltersManager) {
+             appManager: AppManagerProtocol = AppManager.shared) {
             
-            let cacheAge = automaticFilterManager.automaticFiltersCacheAge ?? nil
+            let cacheAge = appManager.automaticFilterManager.automaticFiltersCacheAge ?? nil
             
-            self.automaticFilterManager = automaticFilterManager
-            self.persistanceManager = persistanceManager
-            self.mode = mode
+            self.mode = .blockLanguage
             self.lastUpdate = cacheAge
-            self.footer = Model.updatedFooter(for: mode, cacheAge: cacheAge)
+            self.footer = ViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
             
             
             switch mode {
@@ -152,10 +146,12 @@ extension LanguageListView {
                 self.footerSecondLine = nil
             }
             
-            self.languages = automaticFilterManager.languages(for: mode)
+            self.languages = appManager.automaticFilterManager.languages(for: mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
-                                                getter: automaticFilterManager.languageAutomaticState,
-                                                setter: automaticFilterManager.setLanguageAtumaticState) })
+                                                getter: appManager.automaticFilterManager.languageAutomaticState,
+                                                setter: appManager.automaticFilterManager.setLanguageAtumaticState) })
+            
+            super.init(appManager: appManager)
         }
         
         private static func updatedFooter(for mode: LanguageListView.Mode, cacheAge: Date?) -> String {
@@ -180,22 +176,22 @@ extension LanguageListView {
         }
         
         func refresh() {
-            let cacheAge = self.automaticFilterManager.automaticFiltersCacheAge ?? nil
+            let cacheAge = self.appManager.automaticFilterManager.automaticFiltersCacheAge ?? nil
             
             self.lastUpdate = cacheAge
-            self.footer = Model.updatedFooter(for: self.mode, cacheAge: cacheAge)
-            self.languages = self.automaticFilterManager.languages(for: self.mode)
+            self.footer = ViewModel.updatedFooter(for: self.mode, cacheAge: cacheAge)
+            self.languages = self.appManager.automaticFilterManager.languages(for: self.mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
-                                                getter: self.automaticFilterManager.languageAutomaticState,
-                                                setter: self.automaticFilterManager.setLanguageAtumaticState) })
+                                                getter: self.appManager.automaticFilterManager.languageAutomaticState,
+                                                setter: self.appManager.automaticFilterManager.setLanguageAtumaticState) })
         }
         
         func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
-            self.persistanceManager.addFilter(text: text, type: type, denyFolder: denyFolder)
+            self.appManager.persistanceManager.addFilter(text: text, type: type, denyFolder: denyFolder)
         }
         
         func forceUpdateFilters() {
-            self.automaticFilterManager.forceUpdateAutomaticFilters { [weak self] in
+            self.appManager.automaticFilterManager.forceUpdateAutomaticFilters { [weak self] in
                 DispatchQueue.main.async {
                     self?.refresh()
                 }
@@ -208,8 +204,7 @@ extension LanguageListView {
 //MARK: - Preview -
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = LanguageListView.Model(mode: .automaticBlocking,
-                                           persistanceManager: AppManager.shared.previewsPersistanceManager)
+        let model = LanguageListView.ViewModel(mode: .automaticBlocking, appManager: AppManager.previews)
         LanguageListView(model: model)
     }
 }

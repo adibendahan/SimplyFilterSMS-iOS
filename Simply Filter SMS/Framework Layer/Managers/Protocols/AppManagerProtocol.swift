@@ -13,11 +13,11 @@ protocol AppManagerProtocol {
     
     var persistanceManager: PersistanceManagerProtocol { get }
     var defaultsManager: DefaultsManagerProtocol { get set }
-    var automaticFiltersManager: AutomaticFilterManagerProtocol { get }
+    var automaticFilterManager: AutomaticFilterManagerProtocol { get }
     var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
     
     func getFrequentlyAskedQuestions() -> [QuestionView.Model]
 
     //MARK: Debug
-    var previewsPersistanceManager: PersistanceManagerProtocol { get }
+    static var previews: AppManagerProtocol { get }
 }

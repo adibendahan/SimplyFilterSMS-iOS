@@ -27,7 +27,7 @@ struct FilterListView: View {
         case addFilter=0, addLanguageFilter
     }
     
-    @StateObject var model: Model
+    @StateObject var model: ViewModel
     
     @State private var selectedFilters: Set<Filter> = Set()
     @State private var editMode: EditMode = .inactive
@@ -84,10 +84,10 @@ struct FilterListView: View {
         } content: { presentedSheet in
             switch (presentedSheet) {
             case .addFilter:
-                AddFilterView(model: AddFilterView.Model(isAllUnknownFilteringOn: self.model.isAllUnknownFilteringOn))
+                AddFilterView(model: AddFilterView.ViewModel())
                 
             case .addLanguageFilter:
-                let model = LanguageListView.Model(mode: .blockLanguage)
+                let model = LanguageListView.ViewModel(mode: .blockLanguage)
                 LanguageListView(model: model)
             }
         }
@@ -216,29 +216,23 @@ struct FilterListView: View {
 }
 
 
-//MARK: - Model -
+//MARK: - ViewModel -
 extension FilterListView {
     
-    class Model: ObservableObject {
+    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
         @Published var filters: [Filter] = []
         @Published var filterType: FilterType
         @Published var isAllUnknownFilteringOn: Bool
         @Published var canBlockAnotherLanguage: Bool
         @Published var footer: String
         
-        private let persistanceManager: PersistanceManagerProtocol
-        private let automaticFilterManager: AutomaticFilterManagerProtocol
-        
         init(filterType: FilterType,
-             persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
-             automaticFilterManager: AutomaticFilterManagerProtocol = AppManager.shared.automaticFiltersManager) {
+             appManager: AppManagerProtocol = AppManager.shared) {
             
             self.filterType = filterType
-            self.persistanceManager = persistanceManager
-            self.automaticFilterManager = automaticFilterManager
             
-            self.isAllUnknownFilteringOn = automaticFilterManager.automaticRuleState(for: .allUnknown)
-            self.canBlockAnotherLanguage = !automaticFilterManager.languages(for: .blockLanguage).isEmpty
+            self.isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
+            self.canBlockAnotherLanguage = !appManager.automaticFilterManager.languages(for: .blockLanguage).isEmpty
             
             switch filterType {
             case .deny:
@@ -248,28 +242,30 @@ extension FilterListView {
             case .denyLanguage:
                 self.footer = "lang_how"~
             }
+            
+            super.init(appManager: appManager)
         }
         
         func refresh() {
-            let fetchedFilters = self.persistanceManager.fetchFilterRecords(for: self.filterType)
+            let fetchedFilters = self.appManager.persistanceManager.fetchFilterRecords(for: self.filterType)
             
             self.filters = fetchedFilters.filter({ $0.filterType == self.filterType })
-            self.isAllUnknownFilteringOn = self.automaticFilterManager.automaticRuleState(for: .allUnknown)
-            self.canBlockAnotherLanguage = !self.automaticFilterManager.languages(for: .blockLanguage).isEmpty
+            self.isAllUnknownFilteringOn = self.appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
+            self.canBlockAnotherLanguage = !self.appManager.automaticFilterManager.languages(for: .blockLanguage).isEmpty
         }
         
         func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
-            self.persistanceManager.deleteFilters(withOffsets: offsets, in: filters)
+            self.appManager.persistanceManager.deleteFilters(withOffsets: offsets, in: filters)
             self.refresh()
         }
         
         func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
-            self.persistanceManager.updateFilter(filter, denyFolder: denyFolder)
+            self.appManager.persistanceManager.updateFilter(filter, denyFolder: denyFolder)
             self.refresh()
         }
         
         func deleteFilters(_ filters: Set<Filter>) {
-            self.persistanceManager.deleteFilters(filters)
+            self.appManager.persistanceManager.deleteFilters(filters)
             self.refresh()
         }
     }
@@ -279,7 +275,7 @@ extension FilterListView {
 //MARK: - Preview -
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = FilterListView.Model(filterType: .deny, persistanceManager: AppManager.shared.previewsPersistanceManager)
+        let model = FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews)
         return FilterListView(model: model)
     }
 }

@@ -20,7 +20,7 @@ struct TestFiltersView: View {
     }
     
     @FocusState private var focusedField: Field?
-    @StateObject var model: Model
+    @StateObject var model: ViewModel
     
     var body: some View {
         NavigationView {
@@ -101,10 +101,10 @@ struct TestFiltersView: View {
 }
 
 
-//MARK: - Model -
+//MARK: - ViewModel -
 extension TestFiltersView {
     
-    class Model: ObservableObject {
+    class ViewModel: ObservableObject {
         @Published var fadeTextModel: FadingTextView.Model
         @Published var text: String = ""
         @Published var sender: String = ""
@@ -129,7 +129,7 @@ extension TestFiltersView {
 struct TestFiltersView_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
-            TestFiltersView(model: TestFiltersView.Model())
+            TestFiltersView(model: TestFiltersView.ViewModel())
         }
     }
 }

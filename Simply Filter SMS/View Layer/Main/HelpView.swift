@@ -18,7 +18,7 @@ struct HelpView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
-    @StateObject var model: Model
+    @StateObject var model: ViewModel
     @State var result: Result<MFMailComposeResult, Error>? = nil
     @State var isShowingMailView = false
     @State var isShowingEnableExtensionView = false
@@ -117,25 +117,24 @@ struct HelpView: View {
                 .edgesIgnoringSafeArea(.bottom)
         }
         .sheet(isPresented: $isShowingEnableExtensionView) {
-            EnableExtensionView(model: EnableExtensionView.Model(showWelcome: false))
+            EnableExtensionView(model: EnableExtensionView.ViewModel(showWelcome: false))
         }
     }
 }
 
 
-//MARK: - Model -
+//MARK: - ViewModel -
 extension HelpView {
     
-    class Model: ObservableObject {
+    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
         @Published var questions: [QuestionView.Model]
         @Published var title: String
-        
-        private let appManager: AppManagerProtocol
-        
-        init(appManager: AppManagerProtocol = AppManager.shared) {
-            self.appManager = appManager
+
+        override init(appManager: AppManagerProtocol = AppManager.shared) {
             self.title = "filterList_menu_enableExtension"~
             self.questions = appManager.getFrequentlyAskedQuestions()
+            
+            super.init(appManager: appManager)
         }
     }
 }
@@ -144,7 +143,7 @@ extension HelpView {
 //MARK: - Preview -
 struct FrequentlyAskedView_Previews: PreviewProvider {
     static var previews: some View {
-        HelpView(model: HelpView.Model(appManager: AppManager.shared))
+        HelpView(model: HelpView.ViewModel(appManager: AppManager.previews))
     }
 }
 
