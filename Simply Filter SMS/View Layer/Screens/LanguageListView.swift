@@ -19,10 +19,7 @@ struct LanguageListView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    enum Mode {
-        case blockLanguage, automaticBlocking
-    }
-    
+    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
     
     var body: some View {
@@ -109,9 +106,6 @@ struct LanguageListView: View {
                 .contentShape(Rectangle())
             }
         }
-        .onAppear {
-            self.model.refresh()
-        }
     }
 }
 
@@ -119,8 +113,12 @@ struct LanguageListView: View {
 //MARK: - ViewModel -
 extension LanguageListView {
     
-    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
-        @Published var languages: [StatefulItem<NLLanguage>]
+    enum Mode {
+        case blockLanguage, automaticBlocking
+    }
+    
+    class ViewModel: BaseViewModel, ObservableObject {
+        @Published var languages: [StatefulItem<NLLanguage>] = []
         @Published var mode: LanguageListView.Mode
         @Published var title: String
         @Published var footer: String
@@ -132,7 +130,7 @@ extension LanguageListView {
             
             let cacheAge = appManager.automaticFilterManager.automaticFiltersCacheAge ?? nil
             
-            self.mode = .blockLanguage
+            self.mode = mode
             self.lastUpdate = cacheAge
             self.footer = ViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
             
@@ -145,7 +143,7 @@ extension LanguageListView {
                 self.title = "filterList_menu_filterLanguage"~
                 self.footerSecondLine = nil
             }
-            
+
             self.languages = appManager.automaticFilterManager.languages(for: mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: appManager.automaticFilterManager.languageAutomaticState,
@@ -204,7 +202,7 @@ extension LanguageListView {
 //MARK: - Preview -
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = LanguageListView.ViewModel(mode: .automaticBlocking, appManager: AppManager.previews)
-        LanguageListView(model: model)
+        let model = LanguageListView.ViewModel(mode: .automaticBlocking, appManager: AppManager.previews())
+        LanguageListView(router: AppRouter(appManager: AppManager.previews()), model: model)
     }
 }

@@ -30,6 +30,7 @@ class FilterListViewModelTests: XCTestCase {
         self.testSubject = FilterListView.ViewModel(filterType: .deny, appManager: appManager)
         self.persistanceManager.resetCounters()
         self.defaultsManager.resetCounters()
+        self.appManager.resetCounters()
     }
     
     //MARK: Tests

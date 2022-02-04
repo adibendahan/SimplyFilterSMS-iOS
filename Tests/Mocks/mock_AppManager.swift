@@ -12,7 +12,6 @@ import OSLog
 
 class mock_AppManager: AppManagerProtocol {
     static var logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "tests")
-    static var previews: AppManagerProtocol = mock_AppManager()
 
     var persistanceManager: PersistanceManagerProtocol = mock_PersistanceManager()
     var defaultsManager: DefaultsManagerProtocol = mock_DefaultsManager()
@@ -24,5 +23,9 @@ class mock_AppManager: AppManagerProtocol {
     
     func getFrequentlyAskedQuestions() -> [QuestionView.Model] {
         return self.getFrequentlyAskedQuestionsClosuer?() ?? []
+    }
+    
+    func resetCounters() {
+        self.getFrequentlyAskedQuestionsCounter = 0
     }
 }

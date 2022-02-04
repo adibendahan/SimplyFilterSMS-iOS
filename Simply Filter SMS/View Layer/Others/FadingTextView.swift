@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FadingTextView: View {
     
-    class Model: ObservableObject {
+    class ViewModel: ObservableObject {
         @Published var duration: Double
         @Published var text: String
         
@@ -19,7 +19,7 @@ struct FadingTextView: View {
         }
     }
     
-    @StateObject var model: FadingTextView.Model
+    @StateObject var model: ViewModel
     
     @State private var currentText: String? = nil
     @State private var isVisible: Bool = true
@@ -64,6 +64,6 @@ struct FadingTextView: View {
 
 struct FadingTextView_Previews: PreviewProvider {
     static var previews: some View {
-        FadingTextView(model: FadingTextView.Model(text: "Hello, World!"))
+        FadingTextView(model: FadingTextView.ViewModel(text: "Hello, World!"))
     }
 }

@@ -15,11 +15,8 @@ struct TestFiltersView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    enum Field: Int, Hashable, Equatable {
-        case text, sender
-    }
-    
     @FocusState private var focusedField: Field?
+    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
     
     var body: some View {
@@ -104,21 +101,23 @@ struct TestFiltersView: View {
 //MARK: - ViewModel -
 extension TestFiltersView {
     
-    class ViewModel: ObservableObject {
-        @Published var fadeTextModel: FadingTextView.Model
+    enum Field: Int, Hashable, Equatable {
+        case text, sender
+    }
+    
+    class ViewModel: BaseViewModel, ObservableObject {
+        @Published var fadeTextModel: FadingTextView.ViewModel
         @Published var text: String = ""
         @Published var sender: String = ""
         
-        private var messageEvaluationManager: MessageEvaluationManagerProtocol
-        
-        init(messageEvaluationManager: MessageEvaluationManagerProtocol = AppManager.shared.messageEvaluationManager) {
-            self.messageEvaluationManager = messageEvaluationManager
-            self.fadeTextModel = FadingTextView.Model()
+        override init(appManager: AppManagerProtocol) {
+            self.fadeTextModel = FadingTextView.ViewModel()
+            super.init(appManager: appManager)
         }
         
         func evaluateMessage() {
             let sender = self.sender.isEmpty ? "1234567" : self.sender
-            let action = self.messageEvaluationManager.evaluateMessage(body: self.text, sender: sender)
+            let action = self.appManager.messageEvaluationManager.evaluateMessage(body: self.text, sender: sender)
             self.fadeTextModel.text = action.testResult
         }
     }
@@ -129,7 +128,8 @@ extension TestFiltersView {
 struct TestFiltersView_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
-            TestFiltersView(model: TestFiltersView.ViewModel())
+            TestFiltersView(router: AppRouter(appManager: AppManager.previews()),
+                            model: TestFiltersView.ViewModel(appManager: AppManager.previews()))
         }
     }
 }

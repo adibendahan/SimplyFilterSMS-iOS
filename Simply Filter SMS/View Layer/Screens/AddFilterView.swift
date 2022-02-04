@@ -14,23 +14,15 @@ struct AddFilterView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    private enum Field: Int, Hashable {
-        case text
-    }
-    
-    @FocusState private var focusedField: Field?
+    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
-    
-    @State private var filterText = ""
-    @State private var selectedFilterType = FilterType.deny
-    @State private var selectedDenyFolderType = DenyFolderType.junk
-    @State private var isDismissing = false
+    @FocusState private var focusedField: Field?
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
-                    let isDuplicate = self.model.isDuplicateFilter(text: filterText)
+                    let isDuplicate = self.model.isDuplicateFilter(text: self.model.filterText)
                     
                     Spacer()
                     
@@ -42,10 +34,10 @@ struct AddFilterView: View {
                     
                     HStack (alignment: .center) {
                         
-                        TextField("addFilter_text"~, text: $filterText)
+                        TextField("addFilter_text"~, text: $model.filterText)
                             .focused($focusedField, equals: .text)
                         
-                        if (!self.isDismissing && isDuplicate) {
+                        if isDuplicate {
                             HStack {
                                 Image(systemName: "xmark.octagon")
                                     .foregroundColor(.red.opacity(0.8))
@@ -68,7 +60,7 @@ struct AddFilterView: View {
                         .italic()
                         .bold()
                     
-                    Picker("addFilter_type"~, selection: $selectedFilterType.animation()) {
+                    Picker("addFilter_type"~, selection: $model.selectedFilterType.animation()) {
                         
                         if !self.model.isAllUnknownFilteringOn {
                             Text("general_deny"~)
@@ -80,7 +72,7 @@ struct AddFilterView: View {
                     }
                     .pickerStyle(.segmented)
                     
-                    if selectedFilterType == FilterType.deny {
+                    if self.model.selectedFilterType == FilterType.deny {
                         Spacer()
                         
                         Text("addFilter_folder_caption"~)
@@ -89,7 +81,7 @@ struct AddFilterView: View {
                             .italic()
                             .bold()
                         
-                        Picker(selection: $selectedDenyFolderType, label: Text("addFilter_folder_caption"~)) {
+                        Picker(selection: $model.selectedDenyFolderType, label: Text("addFilter_folder_caption"~)) {
                             ForEach(DenyFolderType.allCases, id: \.rawValue) { folder in
                                 Text(folder.name)
                                     .font(.body)
@@ -103,18 +95,17 @@ struct AddFilterView: View {
                     
                     Button {
                         withAnimation {
-                            self.model.addFilter(text: self.filterText,
-                                                 type: self.selectedFilterType,
-                                                 denyFolder: self.selectedDenyFolderType)
+                            self.model.addFilter(text: self.model.filterText,
+                                                 type: self.model.selectedFilterType,
+                                                 denyFolder: self.model.selectedDenyFolderType)
                             dismiss()
-                            self.isDismissing = true
                         }
                     } label: {
                         Text("addFilter_add"~)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(FilledButton())
-                    .disabled(filterText.count < kUpdateAutomaticFiltersMinDays || isDuplicate)
+                    .disabled(self.model.filterText.count < kUpdateAutomaticFiltersMinDays || isDuplicate)
                     .contentShape(Rectangle())
                 } // VStack
                 .padding(.horizontal, 16)
@@ -136,7 +127,7 @@ struct AddFilterView: View {
                 .padding()
         } // NavigationView
         .onAppear {
-            self.selectedFilterType = self.model.isAllUnknownFilteringOn ? FilterType.allow : FilterType.deny
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                 focusedField = .text
             }
@@ -148,20 +139,31 @@ struct AddFilterView: View {
 //MARK: - ViewModel -
 extension AddFilterView {
     
-    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
+    enum Field: Int, Hashable {
+        case text
+    }
+    
+    class ViewModel: BaseViewModel, ObservableObject {
         @Published var isAllUnknownFilteringOn: Bool
-
+        @Published var filterText = ""
+        @Published var selectedFilterType = FilterType.deny
+        @Published var selectedDenyFolderType = DenyFolderType.junk
+        private var didAddFilter = false
+        
         override init(appManager: AppManagerProtocol = AppManager.shared) {
-            self.isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
+            let isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
+            self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
+            self.selectedFilterType = isAllUnknownFilteringOn ? FilterType.allow : FilterType.deny
             
             super.init(appManager: appManager)
         }
         
         func isDuplicateFilter(text: String) -> Bool {
-            return self.appManager.persistanceManager.isDuplicateFilter(text: text)
+            return !self.didAddFilter && self.appManager.persistanceManager.isDuplicateFilter(text: text)
         }
         
         func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType) {
+            self.didAddFilter = true
             self.appManager.persistanceManager.addFilter(text: text, type: type, denyFolder: denyFolder)
         }
     }
@@ -172,8 +174,8 @@ extension AddFilterView {
 struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
-            AddFilterView(
-                model: AddFilterView.ViewModel(appManager: AppManager.previews))
+            AddFilterView(router: AppRouter(appManager: AppManager.previews()),
+                model: AddFilterView.ViewModel(appManager: AppManager.previews()))
         }
     }
 }

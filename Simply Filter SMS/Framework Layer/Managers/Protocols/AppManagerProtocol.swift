@@ -17,7 +17,4 @@ protocol AppManagerProtocol {
     var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
     
     func getFrequentlyAskedQuestions() -> [QuestionView.Model]
-
-    //MARK: Debug
-    static var previews: AppManagerProtocol { get }
 }

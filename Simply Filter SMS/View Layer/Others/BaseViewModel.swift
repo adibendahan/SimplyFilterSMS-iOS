@@ -7,10 +7,10 @@
 
 import Foundation
 
-open class BaseViewModel<S> {
-    var appManager: S
+open class BaseViewModel {
+    var appManager: AppManagerProtocol
     
-    init(appManager: S) {
+    init(appManager: AppManagerProtocol) {
         self.appManager = appManager
     }
 }

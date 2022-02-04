@@ -22,24 +22,15 @@ struct FilterListView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
-    enum SheetView: Int, Identifiable {
-        var id: Self { self }
-        case addFilter=0, addLanguageFilter
-    }
-    
+    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
     
-    @State private var selectedFilters: Set<Filter> = Set()
-    @State private var editMode: EditMode = .inactive
-    @State private var presentedSheet: SheetView? = nil
-    @State private var viewDidAppear = false
-    
     var body: some View {
-        List (selection: $selectedFilters) {
+        List (selection: $model.selectedFilters) {
             Section {
                 ForEach(self.model.filters, id: \.self) { filter in
                     self.FilterView(filter)
-                        .environment(\.editMode, self.$editMode)
+                        .environment(\.editMode, $model.editMode)
                 }
                 .onDelete {
                     self.model.deleteFilters(withOffsets: $0, in: self.model.filters)
@@ -75,27 +66,12 @@ struct FilterListView: View {
         .navigationBarItems(trailing: NavigationBarTrailingItem())
         .navigationTitle(self.model.filterType.name)
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(item: $presentedSheet) { // onDismiss:
-            self.presentedSheet = nil
-            guard self.viewDidAppear else { return }
-            withAnimation {
+        .onReceive(self.router.$sheetScreen, perform: { sheetScreen in
+            if sheetScreen == nil {
                 self.model.refresh()
             }
-        } content: { presentedSheet in
-            switch (presentedSheet) {
-            case .addFilter:
-                AddFilterView(model: AddFilterView.ViewModel())
-                
-            case .addLanguageFilter:
-                let model = LanguageListView.ViewModel(mode: .blockLanguage)
-                LanguageListView(model: model)
-            }
-        }
-        .onAppear() {
-            self.model.refresh()
-            self.viewDidAppear = true
-        }
-        .environment(\.editMode, $editMode)
+        })
+        .environment(\.editMode, $model.editMode)
     }
     
     @ViewBuilder
@@ -152,17 +128,17 @@ struct FilterListView: View {
     @ViewBuilder
     private func NavigationBarTrailingItem() -> some View {
         
-        if self.editMode.isEditing && self.selectedFilters.count > 0 {
+        if self.model.editMode.isEditing && self.model.selectedFilters.count > 0 {
             Button(
                 action: {
                     withAnimation {
-                        self.model.deleteFilters(selectedFilters)
-                        self.selectedFilters = Set()
+                        self.model.deleteFilters(self.model.selectedFilters)
+                        self.model.selectedFilters = Set()
                         self.model.refresh()
                     }
                 },
                 label: {
-                    Text(String(format: "filterList_deleteFiltersCount"~, selectedFilters.count))
+                    Text(String(format: "filterList_deleteFiltersCount"~, self.model.selectedFilters.count))
                         .foregroundColor(.red)
                 })
         }
@@ -178,9 +154,9 @@ struct FilterListView: View {
             Button {
                 switch self.model.filterType {
                 case .deny, .allow:
-                    presentedSheet = .addFilter
+                    self.router.sheetScreen = .addFilter
                 case .denyLanguage:
-                    presentedSheet = .addLanguageFilter
+                    self.router.sheetScreen = .addLanguageFilter
                 }
                 
             } label: {
@@ -219,12 +195,14 @@ struct FilterListView: View {
 //MARK: - ViewModel -
 extension FilterListView {
     
-    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
-        @Published var filters: [Filter] = []
+    class ViewModel: BaseViewModel, ObservableObject {
+        @Published var filters: [Filter]
         @Published var filterType: FilterType
         @Published var isAllUnknownFilteringOn: Bool
         @Published var canBlockAnotherLanguage: Bool
         @Published var footer: String
+        @Published var selectedFilters: Set<Filter> = Set()
+        @Published var editMode: EditMode = .inactive
         
         init(filterType: FilterType,
              appManager: AppManagerProtocol = AppManager.shared) {
@@ -242,6 +220,9 @@ extension FilterListView {
             case .denyLanguage:
                 self.footer = "lang_how"~
             }
+            
+            let fetchedFilters = appManager.persistanceManager.fetchFilterRecords(for: filterType)
+            self.filters = fetchedFilters.filter({ $0.filterType == filterType })
             
             super.init(appManager: appManager)
         }
@@ -275,7 +256,10 @@ extension FilterListView {
 //MARK: - Preview -
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews)
-        return FilterListView(model: model)
+        let model = FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews())
+        
+        NavigationView {
+            FilterListView(router: AppRouter(appManager: AppManager.previews()), model: model)
+        }
     }
 }

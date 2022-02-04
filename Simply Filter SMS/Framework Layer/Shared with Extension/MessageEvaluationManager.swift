@@ -46,6 +46,8 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     
     //MARK: Public API (MessageEvaluationManagerProtocol)
     func evaluateMessage(body: String, sender: String) -> ILMessageFilterAction {
+        let body = body.lowercased()
+        let sender = sender.lowercased()
         var action = ILMessageFilterAction.none
         
         // Priority #1 - Allow

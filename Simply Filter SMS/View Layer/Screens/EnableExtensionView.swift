@@ -14,14 +14,13 @@ struct EnableExtensionView: View {
     @Environment(\.dismiss)
     var dismiss
     
+    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
-    @State var coordinator: PageCoordinator?
-    @State var appManager: AppManagerProtocol = AppManager.shared
-    @State private var tabSelection = 0
+    @State private var coordinator: PageCoordinator?
     
     var body: some View {
         NavigationView {
-            TabView (selection: $tabSelection) {
+            TabView (selection: $model.tabSelection) {
                 if let welcomeModel = self.model.welcomePage {
                     TwoButtonPageView(model: welcomeModel, coordinator: self.coordinator)
                         .tag(0)
@@ -59,7 +58,7 @@ struct EnableExtensionView: View {
 
     private func nextTab() {
         withAnimation {
-            tabSelection = tabSelection + 1
+            self.model.tabSelection = self.model.tabSelection + 1
         }
     }
     
@@ -113,10 +112,11 @@ extension EnableExtensionView {
 //MARK: - ViewModel -
 extension EnableExtensionView {
     
-    class ViewModel: BaseViewModel<AppManagerProtocol>, ObservableObject {
+    class ViewModel: BaseViewModel, ObservableObject {
         @Published var welcomePage: TwoButtonPageView.Model? = nil
         @Published var screenshotPages: [ScreenshotPageView.Model]
         @Published var readyPage: TwoButtonPageView.Model
+        @Published var tabSelection = 0
         
         var isAppFirstRun: Bool {
             get {
@@ -180,6 +180,7 @@ extension EnableExtensionView {
 struct EnableExtensionView_Previews: PreviewProvider {
     static var previews: some View {
         let model = EnableExtensionView.ViewModel(showWelcome: false)
-        EnableExtensionView(model: model)
+        let router = AppRouter(appManager: AppManager.previews())
+        EnableExtensionView(router: router, model: model)
     }
 }

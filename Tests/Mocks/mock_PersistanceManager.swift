@@ -143,9 +143,17 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.deleteFiltersOffsetsCounter = 0
         self.deleteFiltersCounter = 0
         self.updateFilterCounter = 0
+        self.fetchFilterRecordsCounter = 0
         self.initAutomaticFilteringCounter = 0
         self.saveCacheCounter = 0
         self.isCacheStaleCounter = 0
+        self.commitContextCounter = 0
+        self.fetchFilterRecordsForTypeCounter = 0
+        self.fetchAutomaticFiltersLanguageRecordsCounter = 0
+        self.fetchAutomaticFiltersRuleRecordsCounter = 0
+        self.fetchAutomaticFiltersCacheRecordsCounter = 0
+        self.fetchAutomaticFiltersLanguageRecordCounter = 0
+        self.fetchAutomaticFiltersRuleRecordCounter = 0
     }
     
     //MARK: Unused

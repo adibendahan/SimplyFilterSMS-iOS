@@ -11,11 +11,6 @@ import OSLog
 class AppManager: AppManagerProtocol {
     static let shared: AppManagerProtocol = AppManager()
     static let logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
-    static var previews: AppManagerProtocol = {
-        let previewsAppManager = AppManager(inMemory: true)
-        previewsAppManager.persistanceManager.loadDebugData()
-        return previewsAppManager
-    }()
     
     var persistanceManager: PersistanceManagerProtocol
     var defaultsManager: DefaultsManagerProtocol
@@ -43,5 +38,13 @@ class AppManager: AppManagerProtocol {
                 QuestionView.Model(text: "faq_question_4"~, answer: "faq_answer_4"~),
                 QuestionView.Model(text: "faq_question_5"~, answer: "faq_answer_5"~),
                 QuestionView.Model(text: "help_automaticFiltering_question"~, answer: "help_automaticFiltering"~)]
+    }
+    
+    
+    //MARK: - Previews -
+    static func previews() -> AppManagerProtocol {
+        let previewsManager = AppManager(inMemory: true)
+        previewsManager.persistanceManager.loadDebugData()
+        return previewsManager
     }
 }

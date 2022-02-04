@@ -60,7 +60,8 @@ class MessageEvaluationManagerTests: XCTestCase {
                                             MessageTestCase(sender: "", body: "asdasdasdasd", expectedAction: .junk),
                                             MessageTestCase(sender: "1234567", body: "סינון אוטומטי קורונה", expectedAction: .junk),
                                             MessageTestCase(sender: "1234567", body: "סינון אוטומטי spam", expectedAction: .allow),
-                                            MessageTestCase(sender: "1234567", body: "htTp://", expectedAction: .junk)]
+                                            MessageTestCase(sender: "1234567", body: "htTp://", expectedAction: .junk),
+                                            MessageTestCase(sender: "1234567", body: "Bet", expectedAction: .transaction)]
         
         for testCase in testCases {
             
@@ -125,7 +126,7 @@ class MessageEvaluationManagerTests: XCTestCase {
                  AllowEntry(text: "הימור", folder: .transaction),
                  AllowEntry(text: "גנץ", folder: .junk),
                  AllowEntry(text: "Weed", folder: .junk),
-                 AllowEntry(text: "Bet", folder: .junk)].map { entry -> Filter in
+                 AllowEntry(text: "Bet", folder: .transaction)].map { entry -> Filter in
             let newFilter = Filter(context: self.testSubject.context)
             newFilter.uuid = UUID()
             newFilter.filterType = .deny
