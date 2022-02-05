@@ -179,8 +179,7 @@ extension EnableExtensionView {
 //MARK: - Preview -
 struct EnableExtensionView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = EnableExtensionView.ViewModel(showWelcome: false)
-        let router = AppRouter(appManager: AppManager.previews())
-        EnableExtensionView(router: router, model: model)
+        let router = AppRouter(screen: .enableExtension, appManager: AppManager.previews)
+        AppRouterView(router: router)
     }
 }

@@ -173,9 +173,7 @@ extension AddFilterView {
 //MARK: - Preview -
 struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
-        return ZStack {
-            AddFilterView(router: AppRouter(appManager: AppManager.previews()),
-                model: AddFilterView.ViewModel(appManager: AppManager.previews()))
-        }
+        let router = AppRouter(screen: .addDenyFilter, appManager: AppManager.previews)
+        AppRouterView(router: router)
     }
 }

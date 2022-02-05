@@ -28,8 +28,10 @@ struct LanguageListView: View {
             NavigationView {
                 self.makeBody()
             }
+            .modifier(EmbeddedFooterView(onTap: { self.router.sheetScreen = .about }))
         case .automaticBlocking:
             self.makeBody()
+                .modifier(EmbeddedFooterView(onTap: { self.router.sheetScreen = .about }))
         }
     }
     
@@ -202,7 +204,12 @@ extension LanguageListView {
 //MARK: - Preview -
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = LanguageListView.ViewModel(mode: .automaticBlocking, appManager: AppManager.previews())
-        LanguageListView(router: AppRouter(appManager: AppManager.previews()), model: model)
+        let mode1 = AppRouter(screen: .denyLanguageFilterList, appManager: AppManager.previews)
+        NavigationView {
+            AppRouterView(router: mode1)
+        }
+        
+        let mode2 = AppRouter(screen: .automaticBlocking, appManager: AppManager.previews)
+        AppRouterView(router: mode2)
     }
 }

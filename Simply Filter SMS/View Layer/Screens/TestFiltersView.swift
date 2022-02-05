@@ -127,9 +127,7 @@ extension TestFiltersView {
 //MARK: - Preview -
 struct TestFiltersView_Previews: PreviewProvider {
     static var previews: some View {
-        return ZStack {
-            TestFiltersView(router: AppRouter(appManager: AppManager.previews()),
-                            model: TestFiltersView.ViewModel(appManager: AppManager.previews()))
-        }
+        let router = AppRouter(screen: .testFilters, appManager: AppManager.previews)
+        AppRouterView(router: router)
     }
 }

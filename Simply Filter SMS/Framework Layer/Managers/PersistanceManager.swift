@@ -197,12 +197,15 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func loadDebugData() {
+        let ensureOnlyOnceOnPreviews = "נתניהו"
+        guard !self.isDuplicateFilter(text: ensureOnlyOnceOnPreviews) else { return }
+        
         struct AllowEntry {
             let text: String
             let folder: DenyFolderType
         }
         
-        let _ = [AllowEntry(text: "נתניהו", folder: .junk),
+        let _ = [AllowEntry(text: ensureOnlyOnceOnPreviews, folder: .junk),
                  AllowEntry(text: "הלוואה", folder: .junk),
                  AllowEntry(text: "הימור", folder: .junk),
                  AllowEntry(text: "גנץ", folder: .junk),

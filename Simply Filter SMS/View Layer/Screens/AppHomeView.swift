@@ -25,165 +25,174 @@ struct AppHomeView: View {
     @StateObject private var subtitleModel = FadingTextView.ViewModel()
     
     var body: some View {
-        List {
-            
-            //MARK: Automatic Filtering
-            Section {
-                NavigationLink(
-                    destination: router.languageListView(mode: .automaticBlocking),
-                    tag: .automaticBlocking,
-                    selection: $router.navigationScreen) {
-                        
-                        HStack {
-                            Image(systemName: "bolt.shield.fill")
-                                .foregroundColor(.indigo)
-                                .font(.system(size: 30))
-                                .padding(.trailing, 1)
+        NavigationView {
+            List {
+                
+                //MARK: Automatic Filtering
+                Section {
+                    let screen = Screen.automaticBlocking
+                    
+                    NavigationLink(
+                        destination: router.make(screen: screen),
+                        tag: screen,
+                        selection: $router.navigationScreen) {
                             
-                            VStack (alignment: .leading) {
-                                Text("autoFilter_title"~)
-                                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                            HStack {
+                                Image(systemName: "bolt.shield.fill")
+                                    .foregroundColor(.indigo)
+                                    .font(.system(size: 30))
+                                    .padding(.trailing, 1)
                                 
-                                if !self.model.subtitle.isEmpty {
-                                    FadingTextView(model: self.subtitleModel)
-                                        .font(.caption2)
-                                        .lineLimit(2)
+                                VStack (alignment: .leading) {
+                                    Text("autoFilter_title"~)
+                                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                                    
+                                    if !self.model.subtitle.isEmpty {
+                                        FadingTextView(model: self.subtitleModel)
+                                            .font(.caption2)
+                                            .lineLimit(2)
+                                    }
+                                }
+                                
+                                Spacer()
+                                
+                                if self.model.isAutomaticFilteringOn {
+                                    Text("autoFilter_ON"~)
+                                        .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+                                        .background(Color.green.opacity(0.1))
+                                        .foregroundColor(.green)
+                                        .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                                        .font(.system(size: 16, weight: .heavy, design: .default))
+                                }
+                                else {
+                                    Text("autoFilter_OFF"~)
+                                        .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+                                        .background(Color.red.opacity(0.1))
+                                        .foregroundColor(.red)
+                                        .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                                        .font(.system(size: 16, weight: .heavy, design: .default))
                                 }
                             }
+                            .padding(.vertical, 12)
+                        } // Navigation Link
+                        .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
+                } header: {
+                    Spacer()
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                } // Section
+                .disabled(self.model.isAllUnknownFilteringOn)
+                
+                
+                //MARK: Smart Filters
+                Section {
+                    ForEach($model.rules.indices) { index in
+                        Button { } label: {
+                            let rule = model.rules[index].item
                             
-                            Spacer()
-                            
-                            if self.model.isAutomaticFilteringOn {
-                                Text("autoFilter_ON"~)
-                                    .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-                                    .background(Color.green.opacity(0.1))
-                                    .foregroundColor(.green)
-                                    .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                                    .font(.system(size: 16, weight: .heavy, design: .default))
-                            }
-                            else {
-                                Text("autoFilter_OFF"~)
-                                    .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-                                    .background(Color.red.opacity(0.1))
-                                    .foregroundColor(.red)
-                                    .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                                    .font(.system(size: 16, weight: .heavy, design: .default))
-                            }
-                        }
-                        .padding(.vertical, 12)
-                    } // Navigation Link
-                    .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
-            } header: {
-                Spacer()
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-            } // Section
-            .disabled(self.model.isAllUnknownFilteringOn)
-            
-            
-            //MARK: Smart Filters
-            Section {
-                ForEach($model.rules.indices) { index in
-                    Button { } label: {
-                        let rule = model.rules[index].item
-                        
-                        Toggle(isOn: $model.rules[index].state) {
-                            HStack {
-                                Image(systemName: rule.icon)
-                                    .accentColor(rule.iconColor)
-                                    .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-                                    .font(rule.isDestructive ? Font.body.bold() : .body)
-                                
-                                VStack (alignment: .leading, spacing: 0) {
-                                    Text(rule.title)
-                                        .accentColor(rule.isDestructive && model.rules[index].state ? Color.red : .primary)
+                            Toggle(isOn: $model.rules[index].state) {
+                                HStack {
+                                    Image(systemName: rule.icon)
+                                        .accentColor(rule.iconColor)
+                                        .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
+                                        .font(rule.isDestructive ? Font.body.bold() : .body)
                                     
-                                    if let subtitle = rule.subtitle,
-                                       let action = rule.action,
-                                       let actionTitle = rule.actionTitle {
+                                    VStack (alignment: .leading, spacing: 0) {
+                                        Text(rule.title)
+                                            .accentColor(rule.isDestructive && model.rules[index].state ? Color.red : .primary)
                                         
-                                        HStack (alignment: .center, spacing: 4) {
-                                            Text(String(format: subtitle, self.model.shortSenderChoice))
-                                                .font(.caption2)
-                                                .accentColor(.secondary)
+                                        if let subtitle = rule.subtitle,
+                                           let action = rule.action,
+                                           let actionTitle = rule.actionTitle {
                                             
-                                            Menu {
-                                                Text(actionTitle)
-                                                
-                                                Divider()
-                                                
-                                                ForEach(3...6, id: \.self) { index in
-                                                    Button {
-                                                        self.model.setSelectedChoice(for: rule, choice: index)
-                                                    } label: {
-                                                        Text("\(index)")
-                                                    }
-                                                }
-                                            } label: {
-                                                Text(action)
+                                            HStack (alignment: .center, spacing: 4) {
+                                                Text(String(format: subtitle, self.model.shortSenderChoice))
                                                     .font(.caption2)
+                                                    .accentColor(.secondary)
+                                                
+                                                Menu {
+                                                    Text(actionTitle)
+                                                    
+                                                    Divider()
+                                                    
+                                                    ForEach(3...6, id: \.self) { index in
+                                                        Button {
+                                                            self.model.setSelectedChoice(for: rule, choice: index)
+                                                        } label: {
+                                                            Text("\(index)")
+                                                        }
+                                                    }
+                                                } label: {
+                                                    Text(action)
+                                                        .font(.caption2)
+                                                }
                                             }
                                         }
                                     }
+                                    .padding(.leading, 8)
                                 }
-                                .padding(.leading, 8)
-                            }
-                        } // Toggle
-                        .tint(rule == .allUnknown && model.rules[index].state ? .red : .accentColor)
-                        .disabled(self.model.isAllUnknownFilteringOn && rule != .allUnknown)
-                    } // Button
-                } // ForEach
+                            } // Toggle
+                            .tint(rule == .allUnknown && model.rules[index].state ? .red : .accentColor)
+                            .disabled(self.model.isAllUnknownFilteringOn && rule != .allUnknown)
+                        } // Button
+                    } // ForEach
+                    
+                } header: {
+                    Text("autoFilter_smartFilters"~)
+                } // Section
                 
-            } header: {
-                Text("autoFilter_smartFilters"~)
-            } // Section
-            
-            
-            //MARK: User Filters
-            Section {
-                ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
-                    NavigationLink (tag: .filterList(filterType),
-                                    selection: $router.navigationScreen) {
-                        self.router.filterListView(for: filterType)
-                    } label: {
-                        HStack {
-                            Image(systemName: filterType.iconName)
-                                .foregroundColor(filterType.iconColor)
-                                .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-                            
-                            Text(filterType.name)
-                                .padding(.leading, 8)
-                            
-                            Spacer()
-                            
-                            Text(String(format: "general_active_count"~, self.model.activeCount(for: filterType)))
-                                .textCase(.uppercase)
-                                .foregroundColor(.secondary)
-                                .font(Font.caption2)
+                
+                //MARK: User Filters
+                Section {
+                    ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
+                        NavigationLink (tag: filterType.screen,
+                                        selection: $router.navigationScreen) {
+                            self.router.make(screen: filterType.screen)
+                        } label: {
+                            HStack {
+                                Image(systemName: filterType.iconName)
+                                    .foregroundColor(filterType.iconColor)
+                                    .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
+                                
+                                Text(filterType.name)
+                                    .padding(.leading, 8)
+                                
+                                Spacer()
+                                
+                                Text(String(format: "general_active_count"~, self.model.activeCount(for: filterType)))
+                                    .textCase(.uppercase)
+                                    .foregroundColor(.secondary)
+                                    .font(Font.caption2)
+                            }
+                        }
+                        .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
+                    }
+                } header: {
+                    Text("autoFilter_yourFilters"~)
+                }
+            } // List
+            .navigationTitle(self.model.title)
+            .listStyle(.insetGrouped)
+            .navigationBarItems(trailing: NavigationBarTrailingItem())
+            .onReceive(self.router.$navigationScreen) { navigationScreen in
+                if navigationScreen == nil {
+                    withAnimation {
+                        self.model.refresh()
+                        
+                        if !isPreview && self.model.isAppFirstRun {
+                            self.router.modalFullScreen = .enableExtension
                         }
                     }
-                    .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
-                }
-            } header: {
-                Text("autoFilter_yourFilters"~)
-            }
-        } // List
-        .navigationTitle(self.model.title)
-        .listStyle(.insetGrouped)
-        .navigationBarItems(trailing: NavigationBarTrailingItem())
-        .onReceive(self.router.$navigationScreen) { navigationScreen in
-            if navigationScreen == nil {
-                withAnimation {
-                    self.model.refresh()
-                    
-                    if !isPreview && self.model.isAppFirstRun {
-                        self.router.modalFullScreen = .enableExtension
-                    }
                 }
             }
-        }
-        .onReceive(self.model.$subtitle) { subtitle in
-            self.subtitleModel.text = subtitle
-        }
+            .onReceive(self.model.$subtitle) { subtitle in
+                self.subtitleModel.text = subtitle
+            }
+        } // NavigationView
+        .navigationViewStyle(StackNavigationViewStyle())
+        .modifier(EmbeddedFooterView {
+            guard self.router.navigationScreen == nil else { return }
+            self.router.sheetScreen = .about 
+        })
     }
     
     @ViewBuilder
@@ -327,9 +336,7 @@ extension AppHomeView {
 //MARK: - Preview -
 struct AppHomeView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            AppHomeView(router: AppRouter(root: .appHome, appManager: AppManager.previews()),
-                        model: AppHomeView.ViewModel(appManager: AppManager.previews()))
-        }
+        let router = AppRouter(screen: .appHome, appManager: AppManager.previews)
+        AppRouterView(router: router)
     }
 }

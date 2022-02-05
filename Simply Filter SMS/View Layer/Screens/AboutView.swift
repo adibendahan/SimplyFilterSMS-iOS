@@ -124,6 +124,7 @@ struct AboutView: View {
 //MARK: - Preview -
 struct AboutView_Previews: PreviewProvider {
     static var previews: some View {
-        AboutView(router: AppRouter(appManager: AppManager.previews()))
+        let router = AppRouter(screen: .about, appManager: AppManager.previews)
+        AppRouterView(router: router)
     }
 }

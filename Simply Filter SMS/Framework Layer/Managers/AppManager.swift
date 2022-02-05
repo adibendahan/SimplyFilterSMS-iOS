@@ -42,9 +42,9 @@ class AppManager: AppManagerProtocol {
     
     
     //MARK: - Previews -
-    static func previews() -> AppManagerProtocol {
-        let previewsManager = AppManager(inMemory: true)
-        previewsManager.persistanceManager.loadDebugData()
-        return previewsManager
+    static private var inMemoryManager = AppManager(inMemory: true)
+    static var previews: AppManagerProtocol {
+        inMemoryManager.persistanceManager.loadDebugData()
+        return inMemoryManager
     }
 }

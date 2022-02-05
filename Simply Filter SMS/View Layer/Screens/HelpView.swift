@@ -22,28 +22,46 @@ struct HelpView: View {
     @StateObject var model: ViewModel
     
     var body: some View {
-        ScrollView {
-            VStack (alignment: .leading) {
-                Spacer()
-                    .frame(height: 12, alignment: .top)
-                
-                Text("faq_subtitle"~)
-                
-                HStack {
-                    if MFMailComposeViewController.canSendMail() {
-                        Button {
-                            self.router.composeMailScreen = true
-                        } label: {
-                            HStack (alignment: .center){
+        NavigationView {
+            ScrollView {
+                VStack (alignment: .leading) {
+                    Spacer()
+                        .frame(height: 12, alignment: .top)
+                    
+                    Text("faq_subtitle"~)
+                    
+                    HStack {
+                        if MFMailComposeViewController.canSendMail() {
+                            Button {
+                                self.router.composeMailScreen = true
+                            } label: {
+                                HStack (alignment: .center){
+                                    Spacer()
+                                    
+                                    Image(systemName: "envelope")
+                                        .resizable()
+                                        .frame(width: 25, height: 20, alignment: .leading)
+                                        .aspectRatio(contentMode: .fit)
+                                        .foregroundColor(.blue)
+                                    
+                                    Text("aboutView_sendMail"~)
+                                        .foregroundColor(.primary)
+                                    
+                                    Spacer()
+                                }
+                            }
+                        }
+                        
+                        Link(destination: URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!) {
+                            HStack {
                                 Spacer()
                                 
-                                Image(systemName: "envelope")
+                                Image("GitHub")
                                     .resizable()
-                                    .frame(width: 25, height: 20, alignment: .leading)
+                                    .frame(width: 26, height: 26, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
-                                    .foregroundColor(.blue)
                                 
-                                Text("aboutView_sendMail"~)
+                                Text("aboutView_github"~)
                                     .foregroundColor(.primary)
                                 
                                 Spacer()
@@ -51,63 +69,48 @@ struct HelpView: View {
                         }
                     }
                     
-                    Link(destination: URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!) {
-                        HStack {
-                            Spacer()
-                            
-                            Image("GitHub")
-                                .resizable()
-                                .frame(width: 26, height: 26, alignment: .center)
-                                .aspectRatio(contentMode: .fit)
-                            
-                            Text("aboutView_github"~)
-                                .foregroundColor(.primary)
-                            
-                            Spacer()
+                    Spacer(minLength: 24)
+                    
+                    ForEach (self.model.questions) { question in
+                        if question.action != .none {
+                            QuestionView(
+                                model: QuestionView.Model(text: question.text,
+                                                          answer: question.answer,
+                                                          action: question.action,
+                                                          onAction: {
+                                                              switch question.action {
+                                                              case .activateFilters:
+                                                                  self.router.sheetScreen = .enableExtension
+                                                              default:
+                                                                  break
+                                                              }
+                                                          }))
+                        }
+                        else {
+                            QuestionView(model: question)
                         }
                     }
-                }
-                
-                Spacer(minLength: 24)
-                
-                ForEach (self.model.questions) { question in
-                    if question.action != .none {
-                        QuestionView(
-                            model: QuestionView.Model(text: question.text,
-                                                      answer: question.answer,
-                                                      action: question.action,
-                                                      onAction: {
-                                                          switch question.action {
-                                                          case .activateFilters:
-                                                              self.router.sheetScreen = .enableExtension
-                                                          default:
-                                                              break
-                                                          }
-                                                      }))
+                    Spacer()
+                        .padding(.bottom, 50)
+                } // VStack
+            } // ScrollView
+            .padding(.horizontal, 16)
+            .background(Color.listBackgroundColor(for: colorScheme))
+            .navigationTitle(self.model.title)
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.secondary)
                     }
-                    else {
-                        QuestionView(model: question)
-                    }
+                    .contentShape(Rectangle())
                 }
-                Spacer()
-                    .padding(.bottom, 50)
-            } // VStack
-        } // ScrollView
-        .padding(.horizontal, 16)
-        .background(Color.listBackgroundColor(for: colorScheme))
-        .navigationTitle(self.model.title)
-        .toolbar {
-            ToolbarItem {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.secondary)
-                }
-                .contentShape(Rectangle())
             }
         }
-        .modifier(EmbeddedFooterView())
+        .navigationViewStyle(StackNavigationViewStyle())
+        .modifier(EmbeddedFooterView(onTap: { self.router.sheetScreen = .about }))
     }
 }
 
@@ -132,8 +135,8 @@ extension HelpView {
 //MARK: - Preview -
 struct FrequentlyAskedView_Previews: PreviewProvider {
     static var previews: some View {
-        HelpView(router: AppRouter(appManager: AppManager.previews()),
-                 model: HelpView.ViewModel(appManager: AppManager.previews()))
+        HelpView(router: AppRouter(appManager: AppManager.previews),
+                 model: HelpView.ViewModel(appManager: AppManager.previews))
     }
 }
 

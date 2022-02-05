@@ -27,6 +27,8 @@
 		6941FE1A277E19CC00B99539 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE19277E19CC00B99539 /* AboutView.swift */; };
 		6941FE1C277FDBE700B99539 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE1B277FDBE700B99539 /* MailView.swift */; };
 		694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */; };
+		694E1E8B27AEE16D00264524 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E1E8A27AEE16D00264524 /* Screen.swift */; };
+		694E1E8D27AEE1AE00264524 /* AppRouterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E1E8C27AEE1AE00264524 /* AppRouterView.swift */; };
 		694E53E627A42EEB009A7E0E /* mock_DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E53E527A42EEB009A7E0E /* mock_DefaultsManager.swift */; };
 		694E53E827A4300E009A7E0E /* PersistanceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E53E727A4300E009A7E0E /* PersistanceManagerTests.swift */; };
 		694E53EA27A4A106009A7E0E /* mock_PersistanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E53E927A4A106009A7E0E /* mock_PersistanceManager.swift */; };
@@ -118,6 +120,8 @@
 		6941FE17277DF88200B99539 /* EnableExtensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionView.swift; sourceTree = "<group>"; };
 		6941FE19277E19CC00B99539 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		6941FE1B277FDBE700B99539 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
+		694E1E8A27AEE16D00264524 /* Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
+		694E1E8C27AEE1AE00264524 /* AppRouterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouterView.swift; sourceTree = "<group>"; };
 		694E53DC27A42EA8009A7E0E /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		694E53E527A42EEB009A7E0E /* mock_DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_DefaultsManager.swift; sourceTree = "<group>"; };
 		694E53E727A4300E009A7E0E /* PersistanceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceManagerTests.swift; sourceTree = "<group>"; };
@@ -351,7 +355,9 @@
 		69DB7011277A1EBE00245DBA /* View Layer */ = {
 			isa = PBXGroup;
 			children = (
+				694E1E8A27AEE16D00264524 /* Screen.swift */,
 				690F09CB27AC355C00BA481F /* AppRouter.swift */,
+				694E1E8C27AEE1AE00264524 /* AppRouterView.swift */,
 				6987D80027AAD60500B3DB84 /* Screens */,
 				69FF9C8427921D59007FA2DB /* Others */,
 			);
@@ -567,6 +573,7 @@
 				69189C1527A97F7400C8FFA5 /* MessageEvaluationManager.swift in Sources */,
 				69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */,
 				690F054E278200B60036553B /* ButtonStyles.swift in Sources */,
+				694E1E8D27AEE1AE00264524 /* AppRouterView.swift in Sources */,
 				6941FE18277DF88200B99539 /* EnableExtensionView.swift in Sources */,
 				69AA2C59279D793600CEABE5 /* DefaultsManager.swift in Sources */,
 				6941FE1A277E19CC00B99539 /* AboutView.swift in Sources */,
@@ -582,6 +589,7 @@
 				69CD70D62770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld in Sources */,
 				69118BF9279DFAEB001F2613 /* ScreenshotPageView.swift in Sources */,
 				69118BF7279DF3B3001F2613 /* TwoButtonPageView.swift in Sources */,
+				694E1E8B27AEE16D00264524 /* Screen.swift in Sources */,
 				690F055327822DFA0036553B /* AppExtensions.swift in Sources */,
 				6982FE8927A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift in Sources */,
 				690F09CC27AC355C00BA481F /* AppRouter.swift in Sources */,

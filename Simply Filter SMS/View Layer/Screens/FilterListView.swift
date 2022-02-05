@@ -153,8 +153,10 @@ struct FilterListView: View {
             
             Button {
                 switch self.model.filterType {
-                case .deny, .allow:
-                    self.router.sheetScreen = .addFilter
+                case .deny:
+                    self.router.sheetScreen = .addDenyFilter
+                case .allow:
+                    self.router.sheetScreen = .addAllowFilter
                 case .denyLanguage:
                     self.router.sheetScreen = .addLanguageFilter
                 }
@@ -256,10 +258,9 @@ extension FilterListView {
 //MARK: - Preview -
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews())
-        
+        let router = AppRouter(screen: .allowFilterList, appManager: AppManager.previews)
         NavigationView {
-            FilterListView(router: AppRouter(appManager: AppManager.previews()), model: model)
+            AppRouterView(router: router)
         }
     }
 }
