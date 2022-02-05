@@ -18,7 +18,6 @@ struct HelpView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
-    @StateObject var router: AppRouter// = AppRouter(root: .help)
     @StateObject var model: ViewModel
     
     var body: some View {
@@ -33,7 +32,7 @@ struct HelpView: View {
                     HStack {
                         if MFMailComposeViewController.canSendMail() {
                             Button {
-                                self.router.composeMailScreen = true
+                                self.model.composeMailScreen = true
                             } label: {
                                 HStack (alignment: .center){
                                     Spacer()
@@ -80,7 +79,7 @@ struct HelpView: View {
                                                           onAction: {
                                                               switch question.action {
                                                               case .activateFilters:
-                                                                  self.router.sheetScreen = .enableExtension
+                                                                  self.model.sheetScreen = .enableExtension
                                                               default:
                                                                   break
                                                               }
@@ -110,7 +109,14 @@ struct HelpView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .modifier(EmbeddedFooterView(onTap: { self.router.sheetScreen = .about }))
+        .modifier(EmbeddedFooterView(onTap: { self.model.sheetScreen = .about }))
+        .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
+            sheetScreen.build()
+        }
+        .sheet(isPresented: $model.composeMailScreen) { } content: {
+            MailView(isShowing: $model.composeMailScreen, result: $model.result)
+                            .edgesIgnoringSafeArea(.bottom)
+        }
     }
 }
 
@@ -121,6 +127,9 @@ extension HelpView {
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var questions: [QuestionView.Model]
         @Published var title: String
+        @Published var sheetScreen: Screen? = nil
+        @Published var composeMailScreen: Bool = false
+        @Published var result: Result<MFMailComposeResult, Error>?
         
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             self.title = "filterList_menu_enableExtension"~
@@ -135,8 +144,7 @@ extension HelpView {
 //MARK: - Preview -
 struct FrequentlyAskedView_Previews: PreviewProvider {
     static var previews: some View {
-        HelpView(router: AppRouter(appManager: AppManager.previews),
-                 model: HelpView.ViewModel(appManager: AppManager.previews))
+        HelpView(model: HelpView.ViewModel(appManager: AppManager.previews))
     }
 }
 

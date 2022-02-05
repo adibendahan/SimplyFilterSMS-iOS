@@ -19,7 +19,6 @@ struct LanguageListView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
     
     var body: some View {
@@ -28,10 +27,10 @@ struct LanguageListView: View {
             NavigationView {
                 self.makeBody()
             }
-            .modifier(EmbeddedFooterView(onTap: { self.router.sheetScreen = .about }))
+            .modifier(EmbeddedFooterView(onTap: { self.model.sheetScreen = .about }))
         case .automaticBlocking:
             self.makeBody()
-                .modifier(EmbeddedFooterView(onTap: { self.router.sheetScreen = .about }))
+                .modifier(EmbeddedFooterView(onTap: { self.model.sheetScreen = .about }))
         }
     }
     
@@ -108,6 +107,9 @@ struct LanguageListView: View {
                 .contentShape(Rectangle())
             }
         }
+        .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
+            sheetScreen.build()
+        }
     }
 }
 
@@ -126,6 +128,7 @@ extension LanguageListView {
         @Published var footer: String
         @Published var lastUpdate: Date?
         @Published var footerSecondLine: String?
+        @Published var sheetScreen: Screen? = nil
         
         init(mode: LanguageListView.Mode,
              appManager: AppManagerProtocol = AppManager.shared) {
@@ -204,12 +207,9 @@ extension LanguageListView {
 //MARK: - Preview -
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
-        let mode1 = AppRouter(screen: .denyLanguageFilterList, appManager: AppManager.previews)
         NavigationView {
-            AppRouterView(router: mode1)
-        }
+            LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage, appManager: AppManager.previews))        }
         
-        let mode2 = AppRouter(screen: .automaticBlocking, appManager: AppManager.previews)
-        AppRouterView(router: mode2)
+        LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking, appManager: AppManager.previews))
     }
 }

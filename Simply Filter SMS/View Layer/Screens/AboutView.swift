@@ -18,7 +18,8 @@ struct AboutView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @StateObject var router: AppRouter
+    @State var composeMailScreen: Bool = false
+    @State var result: Result<MFMailComposeResult, Error>?
     
     var body: some View {
         VStack (alignment: .leading) {
@@ -70,7 +71,7 @@ struct AboutView: View {
                     }
                     if MFMailComposeViewController.canSendMail() {
                         Button {
-                            self.router.composeMailScreen = true
+                            self.composeMailScreen = true
                         } label: {
                             HStack {
                                 Image(systemName: "envelope")
@@ -117,6 +118,10 @@ struct AboutView: View {
         .background(Color.listBackgroundColor(for: colorScheme))
         .modifier(EmbeddedFooterView())
         .modifier(EmbeddedCloseButton(onTap: { dismiss() }))
+        .sheet(isPresented: $composeMailScreen) { } content: {
+            MailView(isShowing: $composeMailScreen, result: $result)
+                            .edgesIgnoringSafeArea(.bottom)
+        }
     }
 }
 
@@ -124,7 +129,6 @@ struct AboutView: View {
 //MARK: - Preview -
 struct AboutView_Previews: PreviewProvider {
     static var previews: some View {
-        let router = AppRouter(screen: .about, appManager: AppManager.previews)
-        AppRouterView(router: router)
+        AboutView()
     }
 }

@@ -20,7 +20,6 @@ struct AppHomeView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
-    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
     @StateObject private var subtitleModel = FadingTextView.ViewModel()
     
@@ -33,9 +32,9 @@ struct AppHomeView: View {
                     let screen = Screen.automaticBlocking
                     
                     NavigationLink(
-                        destination: router.make(screen: screen),
+                        destination: screen.build(),
                         tag: screen,
-                        selection: $router.navigationScreen) {
+                        selection: $model.navigationScreen) {
                             
                             HStack {
                                 Image(systemName: "bolt.shield.fill")
@@ -145,8 +144,8 @@ struct AppHomeView: View {
                 Section {
                     ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
                         NavigationLink (tag: filterType.screen,
-                                        selection: $router.navigationScreen) {
-                            self.router.make(screen: filterType.screen)
+                                        selection: $model.navigationScreen) {
+                            filterType.screen.build()
                         } label: {
                             HStack {
                                 Image(systemName: filterType.iconName)
@@ -173,13 +172,13 @@ struct AppHomeView: View {
             .navigationTitle(self.model.title)
             .listStyle(.insetGrouped)
             .navigationBarItems(trailing: NavigationBarTrailingItem())
-            .onReceive(self.router.$navigationScreen) { navigationScreen in
+            .onReceive(self.model.$navigationScreen) { navigationScreen in
                 if navigationScreen == nil {
                     withAnimation {
                         self.model.refresh()
                         
                         if !isPreview && self.model.isAppFirstRun {
-                            self.router.modalFullScreen = .enableExtension
+                            self.model.modalFullScreen = .enableExtension
                         }
                     }
                 }
@@ -190,9 +189,15 @@ struct AppHomeView: View {
         } // NavigationView
         .navigationViewStyle(StackNavigationViewStyle())
         .modifier(EmbeddedFooterView {
-            guard self.router.navigationScreen == nil else { return }
-            self.router.sheetScreen = .about 
+            guard self.model.navigationScreen == nil else { return }
+            self.model.sheetScreen = .about
         })
+        .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
+            sheetScreen.build()
+        }
+        .fullScreenCover(item: $model.modalFullScreen) { } content: { modalFullScreen in
+            modalFullScreen.build()
+        }
     }
     
     @ViewBuilder
@@ -208,19 +213,19 @@ struct AppHomeView: View {
             }
             
             Button {
-                self.router.sheetScreen = .testFilters
+                self.model.sheetScreen = .testFilters
             } label: {
                 Label("testFilters_title"~, systemImage: "arrow.up.message")
             }
             
             Button {
-                self.router.sheetScreen = .help
+                self.model.sheetScreen = .help
             } label: {
                 Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
             }
             
             Button {
-                self.router.sheetScreen = .about
+                self.model.sheetScreen = .about
             } label: {
                 Label("filterList_menu_about"~, systemImage: "info.circle")
             }
@@ -244,6 +249,9 @@ extension AppHomeView {
         @Published var shortSenderChoice: Int
         @Published var activeNavigationTag: String?
         @Published var subtitle: String
+        @Published var navigationScreen: Screen? = nil
+        @Published var modalFullScreen: Screen? = nil
+        @Published var sheetScreen: Screen? = nil
         
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             
@@ -336,7 +344,6 @@ extension AppHomeView {
 //MARK: - Preview -
 struct AppHomeView_Previews: PreviewProvider {
     static var previews: some View {
-        let router = AppRouter(screen: .appHome, appManager: AppManager.previews)
-        AppRouterView(router: router)
+        AppHomeView(model: AppHomeView.ViewModel(appManager: AppManager.previews))
     }
 }

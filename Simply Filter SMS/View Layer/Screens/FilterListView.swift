@@ -22,7 +22,6 @@ struct FilterListView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
-    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
     
     var body: some View {
@@ -66,7 +65,10 @@ struct FilterListView: View {
         .navigationBarItems(trailing: NavigationBarTrailingItem())
         .navigationTitle(self.model.filterType.name)
         .navigationBarTitleDisplayMode(.inline)
-        .onReceive(self.router.$sheetScreen, perform: { sheetScreen in
+        .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
+            sheetScreen.build()
+        }
+        .onReceive(self.model.$sheetScreen, perform: { sheetScreen in
             if sheetScreen == nil {
                 self.model.refresh()
             }
@@ -154,11 +156,11 @@ struct FilterListView: View {
             Button {
                 switch self.model.filterType {
                 case .deny:
-                    self.router.sheetScreen = .addDenyFilter
+                    self.model.sheetScreen = .addDenyFilter
                 case .allow:
-                    self.router.sheetScreen = .addAllowFilter
+                    self.model.sheetScreen = .addAllowFilter
                 case .denyLanguage:
-                    self.router.sheetScreen = .addLanguageFilter
+                    self.model.sheetScreen = .addLanguageFilter
                 }
                 
             } label: {
@@ -205,6 +207,7 @@ extension FilterListView {
         @Published var footer: String
         @Published var selectedFilters: Set<Filter> = Set()
         @Published var editMode: EditMode = .inactive
+        @Published var sheetScreen: Screen? = nil
         
         init(filterType: FilterType,
              appManager: AppManagerProtocol = AppManager.shared) {
@@ -258,9 +261,8 @@ extension FilterListView {
 //MARK: - Preview -
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let router = AppRouter(screen: .allowFilterList, appManager: AppManager.previews)
         NavigationView {
-            AppRouterView(router: router)
+            FilterListView(model: FilterListView.ViewModel(filterType: .allow))
         }
     }
 }

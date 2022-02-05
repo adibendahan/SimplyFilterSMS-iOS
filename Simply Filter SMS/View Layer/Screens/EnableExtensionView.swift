@@ -14,7 +14,6 @@ struct EnableExtensionView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
     @State private var coordinator: PageCoordinator?
     
@@ -179,7 +178,6 @@ extension EnableExtensionView {
 //MARK: - Preview -
 struct EnableExtensionView_Previews: PreviewProvider {
     static var previews: some View {
-        let router = AppRouter(screen: .enableExtension, appManager: AppManager.previews)
-        AppRouterView(router: router)
+        EnableExtensionView(model: EnableExtensionView.ViewModel(showWelcome: false, appManager: AppManager.previews))
     }
 }

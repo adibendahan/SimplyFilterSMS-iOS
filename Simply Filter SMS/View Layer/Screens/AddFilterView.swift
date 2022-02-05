@@ -14,7 +14,6 @@ struct AddFilterView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
     @FocusState private var focusedField: Field?
     
@@ -127,7 +126,6 @@ struct AddFilterView: View {
                 .padding()
         } // NavigationView
         .onAppear {
-            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                 focusedField = .text
             }
@@ -173,7 +171,6 @@ extension AddFilterView {
 //MARK: - Preview -
 struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
-        let router = AppRouter(screen: .addDenyFilter, appManager: AppManager.previews)
-        AppRouterView(router: router)
+        AddFilterView(model: AddFilterView.ViewModel(appManager: AppManager.previews))
     }
 }

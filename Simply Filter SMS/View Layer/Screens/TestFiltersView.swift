@@ -16,7 +16,6 @@ struct TestFiltersView: View {
     var dismiss
     
     @FocusState private var focusedField: Field?
-    @StateObject var router: AppRouter
     @StateObject var model: ViewModel
     
     var body: some View {
@@ -110,7 +109,7 @@ extension TestFiltersView {
         @Published var text: String = ""
         @Published var sender: String = ""
         
-        override init(appManager: AppManagerProtocol) {
+        override init(appManager: AppManagerProtocol = AppManager.shared) {
             self.fadeTextModel = FadingTextView.ViewModel()
             super.init(appManager: appManager)
         }
@@ -127,7 +126,6 @@ extension TestFiltersView {
 //MARK: - Preview -
 struct TestFiltersView_Previews: PreviewProvider {
     static var previews: some View {
-        let router = AppRouter(screen: .testFilters, appManager: AppManager.previews)
-        AppRouterView(router: router)
+        TestFiltersView(model: TestFiltersView.ViewModel(appManager: AppManager.previews))
     }
 }
