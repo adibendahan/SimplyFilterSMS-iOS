@@ -537,7 +537,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which /opt/homebrew/bin/bartycrouch > /dev/null; then\n  /opt/homebrew/bin/bartycrouch update -x\n  /opt/homebrew/bin/bartycrouch lint -x\nelse\n  echo \"warning: BartyCrouch not installed, download it from https://github.com/Flinesoft/BartyCrouch\"\nfi\n";
+			shellScript = "if which bartycrouch > /dev/null; then\n    bartycrouch update -x\n    bartycrouch lint -x\nelse\n    if which /opt/homebrew/bin/bartycrouch > /dev/null; then\n      /opt/homebrew/bin/bartycrouch update -x\n      /opt/homebrew/bin/bartycrouch lint -x\n    else\n      echo \"warning: BartyCrouch not installed, download it from https://github.com/Flinesoft/BartyCrouch\"\n    fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

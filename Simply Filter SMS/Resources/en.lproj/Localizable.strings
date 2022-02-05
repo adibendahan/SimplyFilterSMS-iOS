@@ -93,7 +93,7 @@
 "help_automaticFiltering_question" = "How does Automatic Filtering work?";
 "help_automaticFiltering" = "Automatic Filtering is using a pre defined list of terms to determine if a message should be sent to the Junk folder or not. The lists are updated periodically with new terms. Your regular filters are still considered when Automatic Filtering is on.";
 "help_deny" = "Add texts that will cause a message to be marked as spam, you can also choose the specific folder you want the message to be stored in.";
-"help_allow" = "Add text that will cause a message to be marked as valid. It is recommended to add uniqe identifying texts like your name here. Text appear on this list have the highest priority when filtering a message.";
+"help_allow" = "Add texts that will cause a message to be marked as valid. It is recommended to add uniqe identifying texts like your name here. Text appear on this list have the highest priority when filtering a message.";
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "Automatic Filtering";
