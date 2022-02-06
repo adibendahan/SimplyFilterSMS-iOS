@@ -11,7 +11,7 @@ import SwiftUI
 //MARK: - View -
 struct ScreenshotPageView: View {
     
-    @StateObject var model: Model
+    @StateObject var model: ViewModel
     @State var coordinator: EnableExtensionView.PageCoordinator? = nil
     
     var body: some View {
@@ -56,10 +56,10 @@ struct ScreenshotPageView: View {
 }
 
 
-//MARK: - Model -
+//MARK: - ViewModel -
 extension ScreenshotPageView {
     
-    class Model: ObservableObject {
+    class ViewModel: ObservableObject {
         
         private var id = UUID()
         @Published var title: String
@@ -83,8 +83,8 @@ extension ScreenshotPageView {
     }
 }
 
-extension ScreenshotPageView.Model: Hashable {
-    static func == (lhs: ScreenshotPageView.Model, rhs: ScreenshotPageView.Model) -> Bool {
+extension ScreenshotPageView.ViewModel: Hashable {
+    static func == (lhs: ScreenshotPageView.ViewModel, rhs: ScreenshotPageView.ViewModel) -> Bool {
         lhs.id == rhs.id
     }
     
@@ -97,7 +97,7 @@ extension ScreenshotPageView.Model: Hashable {
 //MARK: - Preview -
 struct ScreenshotPageView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = ScreenshotPageView.Model(title: "enableExtension_step2"~,
+        let model = ScreenshotPageView.ViewModel(title: "enableExtension_step2"~,
                                              text: "enableExtension_step2_desc"~,
                                              image: "enableExtension_screenshot2",
                                              confirmText: "enableExtension_next"~,

@@ -137,19 +137,38 @@ class PersistanceManager: PersistanceManagerProtocol {
         self.commitContext()
     }
     
-    func isDuplicateFilter(text: String) -> Bool {
-        let predicate = NSPredicate(format: "text == %@", text)
+    func isDuplicateFilter(text: String,
+                           filterTarget: FilterTarget = .all,
+                           filterMatching: FilterMatching = .contains,
+                           filterCase: FilterCase = .caseInsensitive) -> Bool {
+        
+        let predicate = NSPredicate(format: "text == %@ AND targetValue == %ld AND matchingValue == %ld AND caseValue == %ld",
+                                    text, filterTarget.rawValue, filterMatching.rawValue, filterCase.rawValue)
         guard let _ = self.fetch(Filter.self, predicate: predicate)?.firstObject as? Filter else { return false }
         return true
     }
     
-    func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
+    func isDuplicateFilter(language: NLLanguage) -> Bool {
+        let predicate = NSPredicate(format: "text == %@", language.filterText)
+        guard let _ = self.fetch(Filter.self, predicate: predicate)?.firstObject as? Filter else { return false }
+        return true
+    }
+    
+    func addFilter(text: String, type: FilterType,
+                   denyFolder: DenyFolderType = .junk,
+                   filterTarget: FilterTarget = .all,
+                   filterMatching: FilterMatching = .contains,
+                   filterCase: FilterCase = .caseInsensitive) {
+        
         guard !self.isDuplicateFilter(text: text) else { return }
         
         let newFilter = Filter(context: self.context)
         newFilter.uuid = UUID()
         newFilter.filterType = type
         newFilter.denyFolderType = denyFolder
+        newFilter.filterMatching = filterMatching
+        newFilter.filterTarget = filterTarget
+        newFilter.filterCase = filterCase
         newFilter.text = text
         
         self.commitContext()
@@ -200,17 +219,17 @@ class PersistanceManager: PersistanceManagerProtocol {
         let ensureOnlyOnceOnPreviews = "נתניהו"
         guard !self.isDuplicateFilter(text: ensureOnlyOnceOnPreviews) else { return }
         
-        struct AllowEntry {
+        struct DenyEntry {
             let text: String
             let folder: DenyFolderType
         }
         
-        let _ = [AllowEntry(text: ensureOnlyOnceOnPreviews, folder: .junk),
-                 AllowEntry(text: "הלוואה", folder: .junk),
-                 AllowEntry(text: "הימור", folder: .junk),
-                 AllowEntry(text: "גנץ", folder: .junk),
-                 AllowEntry(text: "Weed", folder: .junk),
-                 AllowEntry(text: "Bet", folder: .junk)].map { entry -> Filter in
+        let _ = [DenyEntry(text: ensureOnlyOnceOnPreviews, folder: .junk),
+                 DenyEntry(text: "הלוואה", folder: .junk),
+                 DenyEntry(text: "הימור", folder: .junk),
+                 DenyEntry(text: "גנץ", folder: .junk),
+                 DenyEntry(text: "Weed", folder: .junk),
+                 DenyEntry(text: "Bet", folder: .junk)].map { entry -> Filter in
             let newFilter = Filter(context: self.context)
             newFilter.uuid = UUID()
             newFilter.filterType = .deny

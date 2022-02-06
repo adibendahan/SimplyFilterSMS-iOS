@@ -14,29 +14,22 @@ struct AddFilterView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @StateObject var model: ViewModel
+    @ObservedObject var model: ViewModel
     @FocusState private var focusedField: Field?
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
-                    let isDuplicate = self.model.isDuplicateFilter(text: self.model.filterText)
-                    
+
                     Spacer()
-                    
-                    Text("addFilter_text_caption"~)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .italic()
-                        .bold()
-                    
+
                     HStack (alignment: .center) {
                         
                         TextField("addFilter_text"~, text: $model.filterText)
                             .focused($focusedField, equals: .text)
                         
-                        if isDuplicate {
+                        if self.model.isDuplicateFilter {
                             HStack {
                                 Image(systemName: "xmark.octagon")
                                     .foregroundColor(.red.opacity(0.8))
@@ -51,52 +44,105 @@ struct AddFilterView: View {
                         }
                     }
                     
-                    Spacer()
-                    
-                    Text("addFilter_type_caption"~)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .italic()
-                        .bold()
-                    
-                    Picker("addFilter_type"~, selection: $model.selectedFilterType.animation()) {
-                        
-                        if !self.model.isAllUnknownFilteringOn {
-                            Text("general_deny"~)
-                                .tag(FilterType.deny)
+                    if self.model.isExpanded {
+                        if self.model.filterType == FilterType.deny {
+                            
+                            Spacer()
+                            
+                            Text(DenyFolderType.title)
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                                .italic()
+                                .bold()
+                            
+                            Picker(selection: $model.selectedDenyFolderType, label: Text(DenyFolderType.title)) {
+                                ForEach(DenyFolderType.allCases, id: \.rawValue) { folder in
+                                    Text(folder.name)
+                                        .font(.body)
+                                        .tag(folder)
+                                }
+                            }
+                            .pickerStyle(.segmented)
                         }
                         
-                        Text("general_allow"~)
-                            .tag(FilterType.allow)
-                    }
-                    .pickerStyle(.segmented)
-                    
-                    if self.model.selectedFilterType == FilterType.deny {
                         Spacer()
                         
-                        Text("addFilter_folder_caption"~)
+                        Text(FilterTarget.title)
                             .font(.footnote)
                             .foregroundColor(.secondary)
                             .italic()
                             .bold()
                         
-                        Picker(selection: $model.selectedDenyFolderType, label: Text("addFilter_folder_caption"~)) {
-                            ForEach(DenyFolderType.allCases, id: \.rawValue) { folder in
-                                Text(folder.name)
+                        Picker(selection: $model.selectedFilterTarget, label: Text(FilterTarget.title)) {
+                            ForEach(FilterTarget.allCases, id: \.rawValue) { target in
+                                Text(target.name)
                                     .font(.body)
-                                    .tag(folder)
+                                    .tag(target)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        
+                        Spacer()
+                        
+                        Text(FilterMatching.title)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .italic()
+                            .bold()
+                        
+                        Picker(selection: $model.selectedFilterMatching, label: Text(FilterMatching.title)) {
+                            ForEach(FilterMatching.allCases, id: \.rawValue) { matching in
+                                Text(matching.name)
+                                    .font(.body)
+                                    .tag(matching)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        
+                        Spacer()
+                        
+                        Text(FilterCase.title)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .italic()
+                            .bold()
+                        
+                        Picker(selection: $model.selectedFilterCase, label: Text(FilterCase.title)) {
+                            ForEach(FilterCase.allCases, id: \.rawValue) { filterCase in
+                                Text(filterCase.name)
+                                    .font(.body)
+                                    .tag(filterCase)
                             }
                         }
                         .pickerStyle(.segmented)
                     }
-                    
-                    Spacer()
+
+                    Button {
+                        withAnimation {
+                            self.model.isExpanded.toggle()
+                        }
+                    } label: {
+                        HStack (alignment: .center, spacing: 8) {
+                            Spacer()
+                            
+                            Text(self.model.isExpanded ? "addFilter_less"~ : "addFilter_more"~)
+                                .font(.footnote)
+                                .bold()
+                                .foregroundColor(.primary)
+
+                            Image(systemName: "arrowtriangle.down.circle")
+                                .font(.caption)
+                                .rotationEffect(.degrees(self.model.isExpanded ? 180 : 0))
+                            
+                            Spacer()
+                        }
+                    }
+                    .padding(.vertical, 6)
+                    .contentShape(Rectangle())
                     
                     Button {
                         withAnimation {
-                            self.model.addFilter(text: self.model.filterText,
-                                                 type: self.model.selectedFilterType,
-                                                 denyFolder: self.model.selectedDenyFolderType)
+                            self.model.addFilter()
                             dismiss()
                         }
                     } label: {
@@ -104,11 +150,11 @@ struct AddFilterView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(FilledButton())
-                    .disabled(self.model.filterText.count < kUpdateAutomaticFiltersMinDays || isDuplicate)
+                    .disabled(self.model.filterText.count < kUpdateAutomaticFiltersMinDays || self.model.isDuplicateFilter)
                     .contentShape(Rectangle())
                 } // VStack
                 .padding(.horizontal, 16)
-                .navigationTitle("addFilter_addFilter"~)
+                .navigationTitle(self.model.title)
                 .toolbar {
                     ToolbarItem {
                         Button {
@@ -144,25 +190,51 @@ extension AddFilterView {
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var isAllUnknownFilteringOn: Bool
         @Published var filterText = ""
-        @Published var selectedFilterType = FilterType.deny
+        @Published var title: String
+        @Published var filterType: FilterType
         @Published var selectedDenyFolderType = DenyFolderType.junk
+        @Published var isExpanded = false
+        @Published var selectedFilterTarget = FilterTarget.all
+        @Published var selectedFilterMatching = FilterMatching.contains
+        @Published var selectedFilterCase = FilterCase.caseInsensitive
+        
         private var didAddFilter = false
         
-        override init(appManager: AppManagerProtocol = AppManager.shared) {
+        init(filterType: FilterType,
+                      appManager: AppManagerProtocol = AppManager.shared) {
+            
+            self.filterType = filterType
+            
+            switch filterType {
+            case .deny:
+                self.title = "addFilter_addFilter_deny"~
+            case .allow:
+                self.title = "addFilter_addFilter_allow"~
+            case .denyLanguage:
+                self.title = "addFilter_addFilter_deny"~
+            }
+            
             let isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
-            self.selectedFilterType = isAllUnknownFilteringOn ? FilterType.allow : FilterType.deny
             
             super.init(appManager: appManager)
         }
         
-        func isDuplicateFilter(text: String) -> Bool {
-            return !self.didAddFilter && self.appManager.persistanceManager.isDuplicateFilter(text: text)
+        var isDuplicateFilter: Bool {
+            return !self.didAddFilter && self.appManager.persistanceManager.isDuplicateFilter(text: self.filterText,
+                                                                                              filterTarget: self.selectedFilterTarget,
+                                                                                              filterMatching: self.selectedFilterMatching,
+                                                                                              filterCase: self.selectedFilterCase)
         }
         
-        func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType) {
+        func addFilter() {
             self.didAddFilter = true
-            self.appManager.persistanceManager.addFilter(text: text, type: type, denyFolder: denyFolder)
+            self.appManager.persistanceManager.addFilter(text: self.filterText,
+                                                         type: self.filterType,
+                                                         denyFolder: self.selectedDenyFolderType,
+                                                         filterTarget: self.selectedFilterTarget,
+                                                         filterMatching: self.selectedFilterMatching,
+                                                         filterCase: self.selectedFilterCase)
         }
     }
 }
@@ -171,6 +243,8 @@ extension AddFilterView {
 //MARK: - Preview -
 struct AddFilterView_Previews: PreviewProvider {
     static var previews: some View {
-        AddFilterView(model: AddFilterView.ViewModel(appManager: AppManager.previews))
+        ZStack {
+            AddFilterView(model: AddFilterView.ViewModel(filterType: .deny, appManager: AppManager.previews))
+        }
     }
 }

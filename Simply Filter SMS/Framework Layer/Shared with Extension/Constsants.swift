@@ -126,6 +126,78 @@ enum DenyFolderType: Int64, CaseIterable, Identifiable {
             return .promotion
         }
     }
+    
+    static var title: String {
+        return "addFilter_folder_caption"~
+    }
+}
+
+enum FilterTarget: Int64, CaseIterable, Identifiable {
+    var id: Int64 { return self.rawValue }
+    
+    case all=0, sender, body
+    
+    var name: String {
+        switch self {
+        case .all:
+            return "addFilter_target_all"~
+        case .sender:
+            return "addFilter_target_sender"~
+        case .body:
+            return "addFilter_target_body"~
+        }
+    }
+    
+    static var title: String {
+        return "addFilter_target_title"~
+    }
+}
+
+enum FilterMatching: Int64, CaseIterable, Identifiable {
+    var id: Int64 { return self.rawValue }
+    
+    case contains=0, exact
+    
+    var name: String {
+        switch self {
+        case .contains:
+            return "addFilter_match_contains"~
+        case .exact:
+            return "addFilter_match_exact"~
+        }
+    }
+    
+    static var title: String {
+        return "addFilter_match_title"~
+    }
+}
+
+enum FilterCase: Int64, CaseIterable, Identifiable {
+    var id: Int64 { return self.rawValue }
+    
+    case caseInsensitive=0, caseSensitive
+    
+    var name: String {
+        switch self {
+        case .caseInsensitive:
+            return "addFilter_case_insensitive"~
+        case .caseSensitive:
+            return "addFilter_case_sensitive"~
+        }
+    }
+    
+    var compareOption: NSString.CompareOptions {
+        switch self {
+        case .caseInsensitive:
+            return .caseInsensitive
+        case .caseSensitive:
+            return .literal
+        }
+    }
+    
+    static var title: String {
+        return "addFilter_case_title"~
+    }
 }
 
 enum RuleType: Int64, CaseIterable, Equatable, Identifiable {

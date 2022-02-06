@@ -26,7 +26,7 @@ enum Screen: Int, Identifiable {
             HelpView(model: HelpView.ViewModel())
             
         case .about:
-            AboutView()
+            AboutView(model: AboutView.ViewModel())
             
         case .enableExtension:
             EnableExtensionView(model: EnableExtensionView.ViewModel(showWelcome: false))
@@ -38,10 +38,10 @@ enum Screen: Int, Identifiable {
             LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage))
             
         case .addAllowFilter:
-            AddFilterView(model: AddFilterView.ViewModel())
+            AddFilterView(model: AddFilterView.ViewModel(filterType: .allow))
             
         case .addDenyFilter:
-            AddFilterView(model: AddFilterView.ViewModel())
+            AddFilterView(model: AddFilterView.ViewModel(filterType: .deny))
             
         case .automaticBlocking:
             LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking))

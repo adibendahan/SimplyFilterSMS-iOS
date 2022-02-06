@@ -14,7 +14,7 @@ struct QuestionView: View {
     @Environment(\.layoutDirection)
     var layoutDirection
     
-    @StateObject var model: QuestionView.Model
+    @StateObject var model: ViewModel
 
     var body: some View {
         VStack (alignment: .leading) {
@@ -64,7 +64,7 @@ struct QuestionView: View {
 //MARK: - Model -
 extension QuestionView {
     
-    class Model: ObservableObject, Identifiable {
+    class ViewModel: ObservableObject, Identifiable {
         enum QuestionAction {
             case none, activateFilters
         }
@@ -95,7 +95,7 @@ extension QuestionView {
 struct QuestionView_Previews: PreviewProvider {
     static var previews: some View {
         
-        let model = QuestionView.Model(text: "Question text?", answer: "Short answer.")
+        let model = QuestionView.ViewModel(text: "Question text?", answer: "Short answer.")
         QuestionView(model: model)
             .padding()
     }

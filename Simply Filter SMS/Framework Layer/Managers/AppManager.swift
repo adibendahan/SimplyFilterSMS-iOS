@@ -30,21 +30,26 @@ class AppManager: AppManagerProtocol {
         self.messageEvaluationManager = messageEvaluationManager
     }
     
-    func getFrequentlyAskedQuestions() -> [QuestionView.Model] {
-        return [QuestionView.Model(text: "faq_question_0"~, answer: "faq_answer_0"~, action: .activateFilters),
-                QuestionView.Model(text: "faq_question_1"~, answer: "faq_answer_1"~),
-                QuestionView.Model(text: "faq_question_2"~, answer: "faq_answer_2"~),
-                QuestionView.Model(text: "faq_question_3"~, answer: "faq_answer_3"~),
-                QuestionView.Model(text: "faq_question_4"~, answer: "faq_answer_4"~),
-                QuestionView.Model(text: "faq_question_5"~, answer: "faq_answer_5"~),
-                QuestionView.Model(text: "help_automaticFiltering_question"~, answer: "help_automaticFiltering"~)]
+    func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel] {
+        return [QuestionView.ViewModel(text: "faq_question_0"~, answer: "faq_answer_0"~, action: .activateFilters),
+                QuestionView.ViewModel(text: "faq_question_1"~, answer: "faq_answer_1"~),
+                QuestionView.ViewModel(text: "faq_question_2"~, answer: "faq_answer_2"~),
+                QuestionView.ViewModel(text: "faq_question_3"~, answer: "faq_answer_3"~),
+                QuestionView.ViewModel(text: "faq_question_4"~, answer: "faq_answer_4"~),
+                QuestionView.ViewModel(text: "faq_question_5"~, answer: "faq_answer_5"~),
+                QuestionView.ViewModel(text: "help_automaticFiltering_question"~, answer: "help_automaticFiltering"~)]
     }
     
     
     //MARK: - Previews -
     static private var inMemoryManager = AppManager(inMemory: true)
+    static private var didLoadDebugData = false
     static var previews: AppManagerProtocol {
-        inMemoryManager.persistanceManager.loadDebugData()
+        if !didLoadDebugData {
+            inMemoryManager.persistanceManager.loadDebugData()
+            didLoadDebugData = true
+        }
+        
         return inMemoryManager
     }
 }

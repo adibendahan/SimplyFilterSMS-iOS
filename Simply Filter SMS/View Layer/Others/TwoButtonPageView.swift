@@ -11,7 +11,7 @@ import SwiftUI
 //MARK: - View -
 struct TwoButtonPageView: View {
     
-    @StateObject var model: Model
+    @StateObject var model: ViewModel
     @State var coordinator: EnableExtensionView.PageCoordinator? = nil
     
     var body: some View {
@@ -67,10 +67,10 @@ struct TwoButtonPageView: View {
 }
 
 
-//MARK: - Model -
+//MARK: - ViewModel -
 extension TwoButtonPageView {
     
-    class Model: ObservableObject {
+    class ViewModel: ObservableObject {
         
         private var id = UUID()
         @Published var title: String
@@ -100,8 +100,8 @@ extension TwoButtonPageView {
     }
 }
 
-extension TwoButtonPageView.Model: Hashable {
-    static func == (lhs: TwoButtonPageView.Model, rhs: TwoButtonPageView.Model) -> Bool {
+extension TwoButtonPageView.ViewModel: Hashable {
+    static func == (lhs: TwoButtonPageView.ViewModel, rhs: TwoButtonPageView.ViewModel) -> Bool {
         lhs.id == rhs.id
     }
     
@@ -114,7 +114,7 @@ extension TwoButtonPageView.Model: Hashable {
 //MARK: - Preview -
 struct SingleButtonPage_Previews: PreviewProvider {
     static var previews: some View {
-        let model = TwoButtonPageView.Model(title: "enableExtension_welcome"~,
+        let model = TwoButtonPageView.ViewModel(title: "enableExtension_welcome"~,
                                             text: "enableExtension_welcome_desc"~,
                                             confirmText: "enableExtension_welcome_callToAction"~,
                                             confirmAction: .nextPage,

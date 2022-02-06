@@ -29,8 +29,18 @@ protocol PersistanceManagerProtocol: AnyObject {
     
     //MARK: - Helpers -
     func initAutomaticFiltering(languages: [NLLanguage], rules: [RuleType])
-    func isDuplicateFilter(text: String) -> Bool
-    func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType)
+    func isDuplicateFilter(language: NLLanguage) -> Bool
+    func isDuplicateFilter(text: String,
+                           filterTarget: FilterTarget,
+                           filterMatching: FilterMatching,
+                           filterCase: FilterCase) -> Bool
+    
+    func addFilter(text: String, type: FilterType,
+                   denyFolder: DenyFolderType,
+                   filterTarget: FilterTarget,
+                   filterMatching: FilterMatching,
+                   filterCase: FilterCase)
+    
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter])
     func deleteFilters(_ filters: Set<Filter>)
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType)

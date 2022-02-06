@@ -19,9 +19,9 @@ class mock_AppManager: AppManagerProtocol {
     var messageEvaluationManager: MessageEvaluationManagerProtocol = mock_MessageEvaluationManager()
     
     var getFrequentlyAskedQuestionsCounter = 0
-    var getFrequentlyAskedQuestionsClosuer: (() -> ([QuestionView.Model]))?
+    var getFrequentlyAskedQuestionsClosuer: (() -> ([QuestionView.ViewModel]))?
     
-    func getFrequentlyAskedQuestions() -> [QuestionView.Model] {
+    func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel] {
         return self.getFrequentlyAskedQuestionsClosuer?() ?? []
     }
     

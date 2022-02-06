@@ -90,6 +90,52 @@ class MessageEvaluationManagerTests: XCTestCase {
         }
     }
     
+    func test_evaluateMessage_advanced() {
+        self.flushPersistanceManager()
+        
+        let advancedFilter = Filter(context: self.testSubject.context)
+        advancedFilter.filterMatching = .exact
+        advancedFilter.filterTarget = .body
+        advancedFilter.filterCase = .caseSensitive
+        advancedFilter.text = "Discount"
+        advancedFilter.denyFolderType = .transaction
+        advancedFilter.filterType = .deny
+        
+        let advancedFilter2 = Filter(context: self.testSubject.context)
+        advancedFilter2.filterMatching = .exact
+        advancedFilter2.filterTarget = .sender
+        advancedFilter2.filterCase = .caseInsensitive
+        advancedFilter2.text = "Apple"
+        advancedFilter2.filterType = .allow
+        
+        let advancedFilter3 = Filter(context: self.testSubject.context)
+        advancedFilter3.filterMatching = .contains
+        advancedFilter3.filterTarget = .sender
+        advancedFilter3.filterCase = .caseSensitive
+        advancedFilter3.text = "Wallmart"
+        advancedFilter3.filterType = .allow
+
+        
+        let testCases: [MessageTestCase] = [MessageTestCase(sender: "1234567", body: "A message from @##43432@Discount2 Banks! Store", expectedAction: .transaction),
+                                            MessageTestCase(sender: "1234567", body: "A message from @##4@1 Discount", expectedAction: .transaction),
+                                            MessageTestCase(sender: "1234567", body: "A message from @##4@1 Discounted", expectedAction: .allow),
+                                            MessageTestCase(sender: "1234567", body: "Discount", expectedAction: .transaction),
+                                            MessageTestCase(sender: "1234567", body: "discount", expectedAction: .allow),
+                                            MessageTestCase(sender: "Apple", body: "discount", expectedAction: .allow),
+                                            MessageTestCase(sender: "Wallmart", body: "Discount", expectedAction: .allow),
+                                            MessageTestCase(sender: "Wallmart Store", body: "Discount", expectedAction: .allow),
+                                            MessageTestCase(sender: "Apple Store", body: "Discount", expectedAction: .allow),
+                                            MessageTestCase(sender: "WallmarT Store", body: "Discount", expectedAction: .transaction)]
+        
+        for testCase in testCases {
+            
+            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender)
+            
+            XCTAssert(testCase.expectedAction == actualAction,
+                      "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.debugName) != \(actualAction.debugName).")
+        }
+    }
+    
     // MARK: Private Variables and Helpers
     private var testSubject: MessageEvaluationManagerProtocol = MessageEvaluationManager(inMemory: true)
     
@@ -170,7 +216,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         let automaticFiltersLanguageEN = AutomaticFiltersLanguage(context: self.testSubject.context)
         automaticFiltersLanguageEN.lang = NLLanguage.english.rawValue
         automaticFiltersLanguageEN.isActive = false
-
+        
         try? self.testSubject.context.save()
     }
 }

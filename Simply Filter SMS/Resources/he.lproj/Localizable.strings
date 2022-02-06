@@ -36,11 +36,7 @@
 
 "addFilter_add" = "הוספה";
 
-"addFilter_addFilter" = "הוספת פילטר";
-
 "addFilter_text" = "הקלידו מילה";
-
-"addFilter_text_caption" = "סנן הודעות שמכילות (מינימום 3 תווים):";
 
 "addFilter_type" = "סוג פילטר";
 
@@ -197,3 +193,31 @@
 "help_deny" = "הוסיפו טקסטים שיגרמו להודעה להיחשב כזבל, אתם יכולים גם לבחור את התיקייה אליה ההודעה תסונן.";
 
 "help_allow" = "הוסיפו טקסטים שיגרמו להודעה להיחשב כהודעה רגילה. מומלץ להוסיף טקסטים יחודיים שמאפיינים אתכם כגון שם פרטי ושם משפחה. טקסטים שמופיעים ברשימה הזאת מקבלים את התיעדוף הכי גבוה כאשר הודעה מסוננת.";
+
+"addFilter_addFilter_allow" = "הוספת טקסט מאופשר";
+
+"addFilter_addFilter_deny" = "הוספת טקסט חסום";
+
+"addFilter_target_all" = "שולח + הודעה";
+
+"addFilter_target_sender" = "שולח";
+
+"addFilter_target_body" = "הודעה";
+
+"addFilter_more" = "הראה אפשרויות נוספות";
+
+"addFilter_less" = "הראה פחות";
+
+"addFilter_target_title" = "בחרו חלק בהודעה:";
+
+"addFilter_case_title" = "בחרו האם להתחשב באותיות רישיות:";
+
+"addFilter_case_sensitive" = "להתחשב";
+
+"addFilter_case_insensitive" = "לא להתחשב";
+
+"addFilter_match_title" = "בחרו סוג השוואה:";
+
+"addFilter_match_exact" = "מדויק";
+
+"addFilter_match_contains" = "מכיל";

@@ -16,5 +16,5 @@ protocol AppManagerProtocol {
     var automaticFilterManager: AutomaticFilterManagerProtocol { get }
     var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
     
-    func getFrequentlyAskedQuestions() -> [QuestionView.Model]
+    func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel]
 }

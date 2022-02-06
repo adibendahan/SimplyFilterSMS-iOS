@@ -14,25 +14,24 @@ struct EnableExtensionView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @StateObject var model: ViewModel
-    @State private var coordinator: PageCoordinator?
+    @ObservedObject var model: ViewModel
     
     var body: some View {
         NavigationView {
             TabView (selection: $model.tabSelection) {
                 if let welcomeModel = self.model.welcomePage {
-                    TwoButtonPageView(model: welcomeModel, coordinator: self.coordinator)
+                    TwoButtonPageView(model: welcomeModel, coordinator: self.model.coordinator)
                         .tag(0)
                 }
                 
                 ForEach(self.model.screenshotPages.indices) { index in
                     if let screenshotModel = self.model.screenshotPages[index] {
-                        ScreenshotPageView(model: screenshotModel, coordinator: self.coordinator)
+                        ScreenshotPageView(model: screenshotModel, coordinator: self.model.coordinator)
                             .tag(self.model.welcomeTagOffset + index)
                     }
                 }
                 
-                TwoButtonPageView(model: self.model.readyPage, coordinator: self.coordinator)
+                TwoButtonPageView(model: self.model.readyPage, coordinator: self.model.coordinator)
                     .tag(self.model.welcomeTagOffset + self.model.screenshotPages.count)
 
             } // TabView
@@ -51,7 +50,7 @@ struct EnableExtensionView: View {
             }
         } // NavigationView
         .onAppear {
-            self.coordinator = PageCoordinator(presenter: self)
+            self.model.coordinator = PageCoordinator(presenter: self)
         }
     }
 
@@ -112,10 +111,11 @@ extension EnableExtensionView {
 extension EnableExtensionView {
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var welcomePage: TwoButtonPageView.Model? = nil
-        @Published var screenshotPages: [ScreenshotPageView.Model]
-        @Published var readyPage: TwoButtonPageView.Model
+        @Published var welcomePage: TwoButtonPageView.ViewModel? = nil
+        @Published var screenshotPages: [ScreenshotPageView.ViewModel]
+        @Published var readyPage: TwoButtonPageView.ViewModel
         @Published var tabSelection = 0
+        @Published var coordinator: PageCoordinator?
         
         var isAppFirstRun: Bool {
             get {
@@ -135,7 +135,7 @@ extension EnableExtensionView {
             
             // welcomePage:
             if showWelcome {
-                self.welcomePage = TwoButtonPageView.Model(
+                self.welcomePage = TwoButtonPageView.ViewModel(
                     title: "enableExtension_welcome"~,
                     text: "enableExtension_welcome_desc"~,
                     confirmText: "enableExtension_welcome_callToAction"~,
@@ -145,9 +145,9 @@ extension EnableExtensionView {
             }
             
             // screenshotPages:
-            var pages: [ScreenshotPageView.Model] = []
+            var pages: [ScreenshotPageView.ViewModel] = []
             for index in 1...3 {
-                let model = ScreenshotPageView.Model(
+                let model = ScreenshotPageView.ViewModel(
                     title: "enableExtension_step\(index)"~,
                     text: "enableExtension_step\(index)_desc"~,
                     image: "enableExtension_screenshot\(index)",
@@ -160,7 +160,7 @@ extension EnableExtensionView {
             self.screenshotPages = pages
             
             // readyPage:
-            self.readyPage = TwoButtonPageView.Model(
+            self.readyPage = TwoButtonPageView.ViewModel(
                 title: "enableExtension_ready"~,
                 text: String(format: "enableExtension_ready_desc"~, "enableExtension_ready_callToAction"~, "enableExtension_ready_cancel"~),
                 confirmText: "enableExtension_ready_callToAction"~,

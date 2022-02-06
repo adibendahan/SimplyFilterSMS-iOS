@@ -18,8 +18,7 @@ struct AboutView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @State var composeMailScreen: Bool = false
-    @State var result: Result<MFMailComposeResult, Error>?
+    @ObservedObject var model: ViewModel
     
     var body: some View {
         VStack (alignment: .leading) {
@@ -40,8 +39,8 @@ struct AboutView: View {
                         .padding(.top, -20)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.top, 46)
             
             List {
                 Section {
@@ -71,7 +70,7 @@ struct AboutView: View {
                     }
                     if MFMailComposeViewController.canSendMail() {
                         Button {
-                            self.composeMailScreen = true
+                            self.model.composeMailScreen = true
                         } label: {
                             HStack {
                                 Image(systemName: "envelope")
@@ -118,17 +117,26 @@ struct AboutView: View {
         .background(Color.listBackgroundColor(for: colorScheme))
         .modifier(EmbeddedFooterView())
         .modifier(EmbeddedCloseButton(onTap: { dismiss() }))
-        .sheet(isPresented: $composeMailScreen) { } content: {
-            MailView(isShowing: $composeMailScreen, result: $result)
+        .sheet(isPresented: $model.composeMailScreen) { } content: {
+            MailView(isShowing: $model.composeMailScreen, result: $model.result)
                             .edgesIgnoringSafeArea(.bottom)
         }
     }
 }
 
 
+//MARK: - ViewModel -
+extension AboutView {
+    
+    class ViewModel: BaseViewModel, ObservableObject {
+        @Published var composeMailScreen: Bool = false
+        @Published var result: Result<MFMailComposeResult, Error>?
+    }
+}
+
 //MARK: - Preview -
 struct AboutView_Previews: PreviewProvider {
     static var previews: some View {
-        AboutView()
+        AboutView(model: AboutView.ViewModel(appManager: AppManager.previews))
     }
 }

@@ -16,7 +16,7 @@ struct TestFiltersView: View {
     var dismiss
     
     @FocusState private var focusedField: Field?
-    @StateObject var model: ViewModel
+    @ObservedObject var model: ViewModel
     
     var body: some View {
         NavigationView {
@@ -126,6 +126,8 @@ extension TestFiltersView {
 //MARK: - Preview -
 struct TestFiltersView_Previews: PreviewProvider {
     static var previews: some View {
-        TestFiltersView(model: TestFiltersView.ViewModel(appManager: AppManager.previews))
+        ZStack {
+            TestFiltersView(model: TestFiltersView.ViewModel(appManager: AppManager.previews))
+        }
     }
 }

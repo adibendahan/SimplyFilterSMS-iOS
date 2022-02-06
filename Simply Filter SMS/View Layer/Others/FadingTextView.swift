@@ -19,7 +19,7 @@ struct FadingTextView: View {
         }
     }
     
-    @StateObject var model: ViewModel
+    @ObservedObject var model: ViewModel
     
     @State private var currentText: String? = nil
     @State private var isVisible: Bool = true

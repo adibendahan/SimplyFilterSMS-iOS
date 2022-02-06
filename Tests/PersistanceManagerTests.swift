@@ -37,8 +37,8 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchFilterRecords() {
         // Prepare
-        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        self.testSubject.addFilter(text: "2", type: .allow, denyFolder: .junk)
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.testSubject.addFilter(text: "2", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         
         // Act
         let filters = self.testSubject.fetchFilterRecords()
@@ -54,9 +54,9 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchFilterRecordsForType() {
         // Prepare
-        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        self.testSubject.addFilter(text: "2", type: .allow, denyFolder: .junk)
-        self.testSubject.addFilter(text: "3", type: .allow, denyFolder: .junk)
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.testSubject.addFilter(text: "2", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.testSubject.addFilter(text: "3", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         
         // Act
         let allowFilters = self.testSubject.fetchFilterRecords(for: .allow)
@@ -221,16 +221,16 @@ class PersistanceManagerTests: XCTestCase {
         var isDuplicateFilter = true
         
         // Act
-        isDuplicateFilter = self.testSubject.isDuplicateFilter(text: filterName)
+        isDuplicateFilter = self.testSubject.isDuplicateFilter(text: filterName, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         
         // Verify
         XCTAssertFalse(isDuplicateFilter)
         
         // Prepare
-        self.testSubject.addFilter(text: filterName, type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: filterName, type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         
         // Act
-        isDuplicateFilter = self.testSubject.isDuplicateFilter(text: filterName)
+        isDuplicateFilter = self.testSubject.isDuplicateFilter(text: filterName, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         
         // Verify
         XCTAssertTrue(isDuplicateFilter)
@@ -242,11 +242,11 @@ class PersistanceManagerTests: XCTestCase {
         self.expectingSaveContext()
 
         // Execute
-        self.testSubject.addFilter(text: filterName, type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: filterName, type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: filterName))
+        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: filterName, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive))
     }
     
     func test_addFilter_allow() {
@@ -255,18 +255,18 @@ class PersistanceManagerTests: XCTestCase {
         self.expectingSaveContext()
 
         // Act
-        self.testSubject.addFilter(text: filterName, type: .allow, denyFolder: .junk)
+        self.testSubject.addFilter(text: filterName, type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
 
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: filterName))
+        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: filterName, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive))
     }
     
     func test_deleteFiltersWithOffsets() {
         // Prepare
-        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        self.testSubject.addFilter(text: "2", type: .deny, denyFolder: .junk)
-        self.testSubject.addFilter(text: "3", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.testSubject.addFilter(text: "2", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.testSubject.addFilter(text: "3", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         let filters = self.testSubject.fetchFilterRecords()
         let indexSetToDelete = IndexSet(arrayLiteral: 0, 2)
         self.expectingSaveContext()
@@ -276,18 +276,18 @@ class PersistanceManagerTests: XCTestCase {
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssert(self.testSubject.isDuplicateFilter(text: "1") == false)
-        XCTAssert(self.testSubject.isDuplicateFilter(text: "2") == true)
-        XCTAssert(self.testSubject.isDuplicateFilter(text: "3") == false)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "1", filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive) == false)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "2", filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive) == true)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "3", filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive) == false)
     }
     
     func test_deleteFiltersSet() {
         // Prepare
-        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
-        self.testSubject.addFilter(text: "2", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.testSubject.addFilter(text: "2", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         let filters = self.testSubject.fetchFilterRecords()
         let setToDelete: Set<Filter> = Set(arrayLiteral: filters[0], filters[1])
-        self.testSubject.addFilter(text: "3", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "3", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         self.expectingSaveContext()
         
         // Act
@@ -295,15 +295,15 @@ class PersistanceManagerTests: XCTestCase {
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssert(self.testSubject.isDuplicateFilter(text: "1") == false)
-        XCTAssert(self.testSubject.isDuplicateFilter(text: "2") == false)
-        XCTAssert(self.testSubject.isDuplicateFilter(text: "3") == true)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "1", filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive) == false)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "2", filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive) == false)
+        XCTAssert(self.testSubject.isDuplicateFilter(text: "3", filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive) == true)
     }
 
     
     func test_updateFilter() {
         // Prepare
-        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk)
+        self.testSubject.addFilter(text: "1", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         let filter = self.testSubject.fetchFilterRecords().first!
         self.expectingSaveContext()
         

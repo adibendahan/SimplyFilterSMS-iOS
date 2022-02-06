@@ -37,10 +37,10 @@
 
 //MARK: Add Filter View
 "addFilter_add" = "Add";
-"addFilter_addFilter" = "Add Filter";
+"addFilter_addFilter_allow" = "Add Allowed Text";
+"addFilter_addFilter_deny" = "Add Blocked Text";
 "addFilter_addLanguage" = "Add Language";
-"addFilter_text" = "Type a word";
-"addFilter_text_caption" = "Filter messages containing (at least 3 characters): ";
+"addFilter_text" = "Type a word (at least 3 characters)";
 "addFilter_type" = "Type";
 "addFilter_type_caption" = "Select an action:";
 "addFilter_folder_caption" = "Select a destination folder:";
@@ -48,6 +48,18 @@
 "addFilter_folder_transactions" = "Transactions";
 "addFilter_folder_promotions" = "Promotions";
 "addFilter_duplicate" = "Duplicate Filter";
+"addFilter_more" = "See more options";
+"addFilter_less" = "See less";
+"addFilter_target_all" = "Sender + Body";
+"addFilter_target_sender" = "Sender";
+"addFilter_target_body" = "Body";
+"addFilter_target_title" = "Select a target:";
+"addFilter_case_title" = "Select case sensitivity:";
+"addFilter_case_sensitive" = "Case Sensitive";
+"addFilter_case_insensitive" = "Case Insensitive";
+"addFilter_match_title" = "Select matching type:";
+"addFilter_match_exact" = "Exact";
+"addFilter_match_contains" = "Contains";
 
 //MARK: Enable Extension View
 "enableExtension_step1" = "Step 1";
@@ -106,7 +118,7 @@
 "autoFilter_links" = "Block Links";
 "autoFilter_numbersOnly" = "Allow Numbers Only";
 "autoFilter_shortSender" = "Block Short Senders";
-"autoFilter_shortSender_desc" = "Atleast %ld characters";
+"autoFilter_shortSender_desc" = "At least %ld characters";
 "autoFilter_shortSender_change" = "Tap to change";
 "autoFilter_shortSender_action" = "Select new limit";
 "autoFilter_allUnknown_shortTitle" = "All unknwon senders (except Allowed Text)";

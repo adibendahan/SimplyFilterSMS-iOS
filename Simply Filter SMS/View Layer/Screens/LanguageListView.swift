@@ -19,7 +19,7 @@ struct LanguageListView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @StateObject var model: ViewModel
+    @ObservedObject var model: ViewModel
     
     var body: some View {
         switch self.model.mode {
@@ -45,7 +45,7 @@ struct LanguageListView: View {
                         switch self.model.mode {
                         case .blockLanguage:
                             Button {
-                                self.model.addFilter(text: language.filterText, type: .denyLanguage)
+                                self.model.addFilter(language: language)
                                 dismiss()
                             } label: {
                                 Text(localizedName)
@@ -189,8 +189,13 @@ extension LanguageListView {
                                                 setter: self.appManager.automaticFilterManager.setLanguageAtumaticState) })
         }
         
-        func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType = .junk) {
-            self.appManager.persistanceManager.addFilter(text: text, type: type, denyFolder: denyFolder)
+        func addFilter(language: NLLanguage) {
+            self.appManager.persistanceManager.addFilter(text: language.filterText,
+                                                         type: .denyLanguage,
+                                                         denyFolder: .junk,
+                                                         filterTarget: .body,
+                                                         filterMatching: .contains,
+                                                         filterCase: .caseInsensitive)
         }
         
         func forceUpdateFilters() {
@@ -207,9 +212,10 @@ extension LanguageListView {
 //MARK: - Preview -
 struct LanguageListView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage, appManager: AppManager.previews))        }
+        LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage, appManager: AppManager.previews))
         
-        LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking, appManager: AppManager.previews))
+        NavigationView {
+            LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking, appManager: AppManager.previews))
+        }
     }
 }

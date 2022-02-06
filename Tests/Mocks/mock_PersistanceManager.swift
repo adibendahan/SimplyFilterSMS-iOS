@@ -15,6 +15,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
 
     var addFilterCounter = 0
     var isDuplicateFilterCounter = 0
+    var isDuplicateFilterLanguageCounter = 0
     var deleteFiltersOffsetsCounter = 0
     var deleteFiltersCounter = 0
     var updateFilterCounter = 0
@@ -30,8 +31,9 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchAutomaticFiltersLanguageRecordCounter = 0
     var fetchAutomaticFiltersRuleRecordCounter = 0
     
-    var addFilterClosure: ((String, FilterType, DenyFolderType) -> ())?
-    var isDuplicateFilterClosure: ((String) -> (Bool))?
+    var addFilterClosure: ((String, FilterType, DenyFolderType, FilterTarget, FilterMatching, FilterCase) -> ())?
+    var isDuplicateFilterClosure: ((String, FilterTarget, FilterMatching, FilterCase) -> (Bool))?
+    var isDuplicateFilterLanguageClosure: ((NLLanguage) -> (Bool))?
     var deleteFiltersOffsetsClosure: ((IndexSet, [Filter]) -> ())?
     var deleteFiltersClosure: ((Set<Filter>) -> ())?
     var updateFilterClosure: ((Filter, DenyFolderType) -> ())?
@@ -47,16 +49,31 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage?))?
     var fetchAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule?))?
     
-    func addFilter(text: String, type: FilterType, denyFolder: DenyFolderType) {
+    func addFilter(text: String,
+                   type: FilterType,
+                   denyFolder: DenyFolderType,
+                   filterTarget: FilterTarget,
+                   filterMatching: FilterMatching,
+                   filterCase: FilterCase) {
+        
         self.addFilterCounter += 1
-        self.addFilterClosure?(text, type, denyFolder)
+        self.addFilterClosure?(text, type, denyFolder, filterTarget, filterMatching, filterCase)
     }
 
-    func isDuplicateFilter(text: String) -> Bool {
+    func isDuplicateFilter(text: String,
+                           filterTarget: FilterTarget,
+                           filterMatching: FilterMatching,
+                           filterCase: FilterCase) -> Bool {
+        
         self.isDuplicateFilterCounter += 1
-        return self.isDuplicateFilterClosure?(text) ?? false
+        return self.isDuplicateFilterClosure?(text, filterTarget, filterMatching, filterCase) ?? false
     }
 
+    func isDuplicateFilter(language: NLLanguage) -> Bool {
+        self.isDuplicateFilterLanguageCounter += 1
+        return self.isDuplicateFilterLanguageClosure?(language) ?? false
+    }
+    
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
         self.deleteFiltersOffsetsCounter += 1
         self.deleteFiltersOffsetsClosure?(offsets, filters)

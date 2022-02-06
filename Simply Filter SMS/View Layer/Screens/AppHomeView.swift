@@ -20,7 +20,7 @@ struct AppHomeView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
-    @StateObject var model: ViewModel
+    @ObservedObject var model: ViewModel
     @StateObject private var subtitleModel = FadingTextView.ViewModel()
     
     var body: some View {
@@ -290,6 +290,7 @@ extension AppHomeView {
             self.rules = self.appManager.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
                                                                                                    getter: self.appManager.automaticFilterManager.automaticRuleState,
                                                                                                    setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
+            self.animationTimer?.invalidate()
             self.animateLastUpdatedIfNeeded()
         }
         
@@ -315,22 +316,41 @@ extension AppHomeView {
             self.refresh()
         }
         
+        private var didAnimateSubtitle = false
+        private var animationTimer: Timer?
+        
         private func animateLastUpdatedIfNeeded() {
-            guard self.isAutomaticFilteringOn,
+            guard self.animationTimer == nil,
+                  !self.didAnimateSubtitle,
+                  self.isAutomaticFilteringOn,
                   let lastUpdate = self.appManager.automaticFilterManager.automaticFiltersCacheAge else { return }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                let formatter = DateFormatter()
-                formatter.locale = Locale.current
-                formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ddMMyyyy", options: 0, locale: Locale.current)
-                let text = String(format: "autoFilter_lastUpdated"~, formatter.string(from: lastUpdate))
-                self.subtitle = text
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            var runCount = 0
+
+            let timer = Timer.scheduledTimer(withTimeInterval: 6, repeats: true) { timer in
+                guard timer.isValid,
+                      self.navigationScreen == nil,
+                      self.sheetScreen == nil,
+                      self.modalFullScreen == nil else { return }
+                                
+                if runCount == 0 {
+                    let formatter = DateFormatter()
+                    formatter.locale = Locale.current
+                    formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ddMMyyyy", options: 0, locale: Locale.current)
+                    let text = String(format: "autoFilter_lastUpdated"~, formatter.string(from: lastUpdate))
+                    self.subtitle = text
+                    runCount += 1
+                }
+                else if runCount == 1 {
                     let text = self.appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? ""
                     self.subtitle = text
+                    runCount += 1
+                    self.didAnimateSubtitle = true
+                    timer.invalidate()
                 }
             }
+            
+            self.animationTimer = timer
         }
         
         private func setAutomaticRuleState(for rule: RuleType, value: Bool) {

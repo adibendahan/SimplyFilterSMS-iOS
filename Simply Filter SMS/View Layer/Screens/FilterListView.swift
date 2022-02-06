@@ -22,7 +22,7 @@ struct FilterListView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
-    @StateObject var model: ViewModel
+    @ObservedObject var model: ViewModel
     
     var body: some View {
         List (selection: $model.selectedFilters) {
@@ -172,7 +172,7 @@ struct FilterListView: View {
                         .imageScale(.large)
                         .font(.system(size: 20, weight: .bold))
                     
-                    Text("addFilter_addFilter"~)
+                    Text(self.model.filterType == .deny ? "addFilter_addFilter_deny"~ : "addFilter_addFilter_allow"~)
                         .font(.body)
                     
                 case .denyLanguage:
@@ -262,7 +262,7 @@ extension FilterListView {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            FilterListView(model: FilterListView.ViewModel(filterType: .allow))
+            FilterListView(model: FilterListView.ViewModel(filterType: .allow, appManager: AppManager.previews))
         }
     }
 }

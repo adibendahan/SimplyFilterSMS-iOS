@@ -18,7 +18,7 @@ struct HelpView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
-    @StateObject var model: ViewModel
+    @ObservedObject var model: ViewModel
     
     var body: some View {
         NavigationView {
@@ -73,17 +73,17 @@ struct HelpView: View {
                     ForEach (self.model.questions) { question in
                         if question.action != .none {
                             QuestionView(
-                                model: QuestionView.Model(text: question.text,
-                                                          answer: question.answer,
-                                                          action: question.action,
-                                                          onAction: {
-                                                              switch question.action {
-                                                              case .activateFilters:
-                                                                  self.model.sheetScreen = .enableExtension
-                                                              default:
-                                                                  break
-                                                              }
-                                                          }))
+                                model: QuestionView.ViewModel(text: question.text,
+                                                              answer: question.answer,
+                                                              action: question.action,
+                                                              onAction: {
+                                                                  switch question.action {
+                                                                  case .activateFilters:
+                                                                      self.model.sheetScreen = .enableExtension
+                                                                  default:
+                                                                      break
+                                                                  }
+                                                              }))
                         }
                         else {
                             QuestionView(model: question)
@@ -125,7 +125,7 @@ struct HelpView: View {
 extension HelpView {
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var questions: [QuestionView.Model]
+        @Published var questions: [QuestionView.ViewModel]
         @Published var title: String
         @Published var sheetScreen: Screen? = nil
         @Published var composeMailScreen: Bool = false

@@ -36,6 +36,33 @@ extension Filter {
             self.folderType = newValue.rawValue
         }
     }
+    
+    var filterMatching: FilterMatching {
+        get {
+            return FilterMatching(rawValue: self.matchingValue) ?? .contains
+        }
+        set {
+            self.matchingValue = newValue.rawValue
+        }
+    }
+    
+    var filterCase: FilterCase {
+        get {
+            return FilterCase(rawValue: self.caseValue) ?? .caseInsensitive
+        }
+        set {
+            self.caseValue = newValue.rawValue
+        }
+    }
+    
+    var filterTarget: FilterTarget {
+        get {
+            return FilterTarget(rawValue: self.targetValue) ?? .all
+        }
+        set {
+            self.targetValue = newValue.rawValue
+        }
+    }
 }
 
 extension AutomaticFiltersRule {
@@ -141,4 +168,11 @@ extension ILMessageFilterAction {
         }
     }
 #endif
+}
+
+extension String {
+    func index(at position: Int, from start: Index? = nil) -> Index? {
+        let startingIndex = start ?? startIndex
+        return index(startingIndex, offsetBy: position, limitedBy: endIndex)
+    }
 }

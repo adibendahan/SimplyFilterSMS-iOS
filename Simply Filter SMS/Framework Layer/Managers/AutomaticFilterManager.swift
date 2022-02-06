@@ -97,7 +97,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         switch type {
         case .blockLanguage:
             let remainingSupportedLanguages = NLLanguage.allSupportedCases
-                .filter({ !self.persistanceManager.isDuplicateFilter(text: $0.filterText) })
+                .filter({ !self.persistanceManager.isDuplicateFilter(language: $0) })
                 .sorted(by: { $0.rawValue < $1.rawValue })
             supportedLanguages.append(contentsOf: remainingSupportedLanguages)
             
