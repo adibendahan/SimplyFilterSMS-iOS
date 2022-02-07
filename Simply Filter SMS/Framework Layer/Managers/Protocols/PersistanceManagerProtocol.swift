@@ -44,6 +44,9 @@ protocol PersistanceManagerProtocol: AnyObject {
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter])
     func deleteFilters(_ filters: Set<Filter>)
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType)
+    func updateFilter(_ filter: Filter, filterMatching: FilterMatching)
+    func updateFilter(_ filter: Filter, filterCase: FilterCase)
+    func updateFilter(_ filter: Filter, filterTarget: FilterTarget)
     func saveCache(with filterList: AutomaticFilterList)
     func isCacheStale(comparedTo newFilterList: AutomaticFilterList) -> Bool
 

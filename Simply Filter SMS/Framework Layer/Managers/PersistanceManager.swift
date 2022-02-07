@@ -160,7 +160,10 @@ class PersistanceManager: PersistanceManagerProtocol {
                    filterMatching: FilterMatching = .contains,
                    filterCase: FilterCase = .caseInsensitive) {
         
-        guard !self.isDuplicateFilter(text: text) else { return }
+        guard !self.isDuplicateFilter(text: text,
+                                      filterTarget: filterTarget,
+                                      filterMatching: filterMatching,
+                                      filterCase: filterCase) else { return }
         
         let newFilter = Filter(context: self.context)
         newFilter.uuid = UUID()
@@ -186,6 +189,21 @@ class PersistanceManager: PersistanceManagerProtocol {
     
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
         filter.denyFolderType = denyFolder
+        self.commitContext()
+    }
+    
+    func updateFilter(_ filter: Filter, filterMatching: FilterMatching) {
+        filter.filterMatching = filterMatching
+        self.commitContext()
+    }
+    
+    func updateFilter(_ filter: Filter, filterCase: FilterCase) {
+        filter.filterCase = filterCase
+        self.commitContext()
+    }
+    
+    func updateFilter(_ filter: Filter, filterTarget: FilterTarget) {
+        filter.filterTarget = filterTarget
         self.commitContext()
     }
     
@@ -216,42 +234,17 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func loadDebugData() {
-        let ensureOnlyOnceOnPreviews = "נתניהו"
-        guard !self.isDuplicateFilter(text: ensureOnlyOnceOnPreviews) else { return }
-        
-        struct DenyEntry {
-            let text: String
-            let folder: DenyFolderType
-        }
-        
-        let _ = [DenyEntry(text: ensureOnlyOnceOnPreviews, folder: .junk),
-                 DenyEntry(text: "הלוואה", folder: .junk),
-                 DenyEntry(text: "הימור", folder: .junk),
-                 DenyEntry(text: "גנץ", folder: .junk),
-                 DenyEntry(text: "Weed", folder: .junk),
-                 DenyEntry(text: "Bet", folder: .junk)].map { entry -> Filter in
-            let newFilter = Filter(context: self.context)
-            newFilter.uuid = UUID()
-            newFilter.filterType = .deny
-            newFilter.denyFolderType = entry.folder
-            newFilter.text = entry.text
-            return newFilter
-        }
-        
-        let _ = ["Adi", "דהאן", "דהן", "עדי"].map { allowText -> Filter in
-            let newFilter = Filter(context: self.context)
-            newFilter.uuid = UUID()
-            newFilter.filterType = .allow
-            newFilter.text = allowText
-            return newFilter
-        }
-        
-        let langFilter = Filter(context: self.context)
-        langFilter.uuid = UUID()
-        langFilter.filterType = .denyLanguage
-        langFilter.text = NLLanguage.arabic.filterText
-        
-        self.commitContext()
+        self.addFilter(text: "נתניהו", type: .deny, denyFolder: .promotion, filterTarget: .body, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.addFilter(text: "הלוואה", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.addFilter(text: "הימור", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.addFilter(text: "גנץ", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        self.addFilter(text: "Weed", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
+        self.addFilter(text: "Bet", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
+        self.addFilter(text: "Adi", type: .allow, denyFolder: .junk, filterTarget: .body, filterMatching: .exact, filterCase: .caseInsensitive)
+        self.addFilter(text: "עדי", type: .allow, denyFolder: .junk, filterTarget: .body, filterMatching: .exact, filterCase: .caseInsensitive)
+        self.addFilter(text: "דהן", type: .allow, denyFolder: .junk, filterTarget: .body, filterMatching: .exact, filterCase: .caseInsensitive)
+        self.addFilter(text: "דהאן", type: .allow, denyFolder: .junk, filterTarget: .body, filterMatching: .exact, filterCase: .caseInsensitive)
+        self.addFilter(text: NLLanguage.arabic.filterText, type: .denyLanguage, denyFolder: .junk, filterTarget: .body, filterMatching: .contains, filterCase: .caseInsensitive)
     }
     
     //MARK: - Private -

@@ -28,8 +28,10 @@ struct FilterListView: View {
         List (selection: $model.selectedFilters) {
             Section {
                 ForEach(self.model.filters, id: \.self) { filter in
-                    self.FilterView(filter)
-                        .environment(\.editMode, $model.editMode)
+                    FilterListRowView(model: FilterListRowView.ViewModel(filter: filter,
+                                                                         onUpdate: { withAnimation { self.model.refresh() } },
+                                                                         appManager: self.model.appManager))
+                    .environment(\.editMode, $model.editMode)
                 }
                 .onDelete {
                     self.model.deleteFilters(withOffsets: $0, in: self.model.filters)
@@ -41,7 +43,7 @@ struct FilterListView: View {
                         
                         Spacer()
                         
-                        Text("filterList_folder"~)
+                        Text("filterList_options"~)
                             .padding(.trailing, 8)
                     }
                 }
@@ -77,59 +79,7 @@ struct FilterListView: View {
     }
     
     @ViewBuilder
-    private func FilterView(_ filter: Filter) -> some View {
-        
-        if filter.filterType.supportsFolders {
-            HStack (alignment: .center , spacing: 0) {
-                
-                if filter.filterType == .denyLanguage,
-                   let filterText = filter.text,
-                   let blockedLanguage = NLLanguage(filterText: filterText),
-                   blockedLanguage != .undetermined,
-                   let localizedName = blockedLanguage.localizedName {
-                    
-                    Text(localizedName)
-                }
-                else {
-                    Text(filter.text ?? "general_null"~)
-                }
-                
-                Spacer()
-                
-                Menu {
-                    ForEach(DenyFolderType.allCases) { folder in
-                        Button {
-                            self.model.updateFilter(filter, denyFolder: folder)
-                        } label: {
-                            Label {
-                                Text(folder.name)
-                            } icon: {
-                                Image(systemName: folder.iconName)
-                            }
-                        }
-                    }
-                } label: {
-                    HStack {
-                        Image(systemName: filter.denyFolderType.iconName)
-                        
-                        Text(filter.denyFolderType.name)
-                            .font(.footnote)
-                    }
-                    .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-                    .background(Color.secondary.opacity(0.1))
-                    .foregroundColor(.red)
-                    .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                } // Menu
-            } // HStack
-        }
-        else {
-            Text(filter.text ?? "general_null"~)
-        }
-    }
-    
-    @ViewBuilder
     private func NavigationBarTrailingItem() -> some View {
-        
         if self.model.editMode.isEditing && self.model.selectedFilters.count > 0 {
             Button(
                 action: {
@@ -245,11 +195,6 @@ extension FilterListView {
             self.refresh()
         }
         
-        func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
-            self.appManager.persistanceManager.updateFilter(filter, denyFolder: denyFolder)
-            self.refresh()
-        }
-        
         func deleteFilters(_ filters: Set<Filter>) {
             self.appManager.persistanceManager.deleteFilters(filters)
             self.refresh()
@@ -262,7 +207,7 @@ extension FilterListView {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            FilterListView(model: FilterListView.ViewModel(filterType: .allow, appManager: AppManager.previews))
+            FilterListView(model: FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews))
         }
     }
 }

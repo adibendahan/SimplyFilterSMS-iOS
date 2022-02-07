@@ -71,17 +71,6 @@ class FilterListViewModelTests: XCTestCase {
         XCTAssertTrue(self.testSubject.filters.isEmpty) // Verify refresh
     }
     
-    func test_updateFilter() {
-        // Prepare
-        let filter = self.makeFilter()
-        
-        // Act
-        self.testSubject.updateFilter(filter, denyFolder: .promotion)
-        
-        // Verify
-        XCTAssertEqual(self.persistanceManager.updateFilterCounter, 1)
-    }
-    
     private func makeFilter() -> Filter {
         let filter = Filter(context: self.persistanceManager.context)
         filter.denyFolderType = .junk

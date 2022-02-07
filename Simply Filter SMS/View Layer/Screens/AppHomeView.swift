@@ -29,7 +29,7 @@ struct AppHomeView: View {
                 
                 //MARK: Automatic Filtering
                 Section {
-                    let screen = Screen.automaticBlocking
+                    let screen: Screen = .automaticBlocking
                     
                     NavigationLink(
                         destination: screen.build(),

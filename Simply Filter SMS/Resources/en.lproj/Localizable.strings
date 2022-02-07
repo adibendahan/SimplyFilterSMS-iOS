@@ -33,7 +33,7 @@
 "filterList_deleteFiltersCount" = "Delete (%ld)";
 "filterList_folder" = "Folder";
 "filterList_text" = "Text";
-
+"filterList_options" = "Tap to change options";
 
 //MARK: Add Filter View
 "addFilter_add" = "Add";

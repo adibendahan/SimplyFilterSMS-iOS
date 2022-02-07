@@ -18,7 +18,10 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var isDuplicateFilterLanguageCounter = 0
     var deleteFiltersOffsetsCounter = 0
     var deleteFiltersCounter = 0
-    var updateFilterCounter = 0
+    var updateFilterDenyFolderCounter = 0
+    var updateFilterCaseCounter = 0
+    var updateFilterTargetCounter = 0
+    var updateFilterMatchingCounter = 0
     var fetchFilterRecordsCounter = 0
     var initAutomaticFilteringCounter = 0
     var saveCacheCounter = 0
@@ -36,7 +39,10 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var isDuplicateFilterLanguageClosure: ((NLLanguage) -> (Bool))?
     var deleteFiltersOffsetsClosure: ((IndexSet, [Filter]) -> ())?
     var deleteFiltersClosure: ((Set<Filter>) -> ())?
-    var updateFilterClosure: ((Filter, DenyFolderType) -> ())?
+    var updateFilterDenyFolderClosure: ((Filter, DenyFolderType) -> ())?
+    var updateFilterCaseClosure: ((Filter, FilterCase) -> ())?
+    var updateFilterTargetClosure: ((Filter, FilterTarget) -> ())?
+    var updateFilterMatchingClosure: ((Filter, FilterMatching) -> ())?
     var fetchFilterRecordsClosure: (() -> ([Filter]))?
     var initAutomaticFilteringClosure: (([NLLanguage], [RuleType]) -> ())?
     var saveCacheClosure: ((AutomaticFilterList) -> ())?
@@ -85,8 +91,23 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     }
 
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
-        self.updateFilterCounter += 1
-        self.updateFilterClosure?(filter, denyFolder)
+        self.updateFilterDenyFolderCounter += 1
+        self.updateFilterDenyFolderClosure?(filter, denyFolder)
+    }
+    
+    func updateFilter(_ filter: Filter, filterMatching: FilterMatching) {
+        self.updateFilterMatchingCounter += 1
+        self.updateFilterMatchingClosure?(filter, filterMatching)
+    }
+    
+    func updateFilter(_ filter: Filter, filterCase: FilterCase) {
+        self.updateFilterCaseCounter += 1
+        self.updateFilterCaseClosure?(filter, filterCase)
+    }
+    
+    func updateFilter(_ filter: Filter, filterTarget: FilterTarget) {
+        self.updateFilterTargetCounter += 1
+        self.updateFilterTargetClosure?(filter, filterTarget)
     }
 
     func fetchFilterRecords() -> [Filter] {
@@ -159,7 +180,10 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.isDuplicateFilterCounter = 0
         self.deleteFiltersOffsetsCounter = 0
         self.deleteFiltersCounter = 0
-        self.updateFilterCounter = 0
+        self.updateFilterDenyFolderCounter = 0
+        self.updateFilterCaseCounter = 0
+        self.updateFilterMatchingCounter = 0
+        self.updateFilterTargetCounter = 0
         self.fetchFilterRecordsCounter = 0
         self.initAutomaticFilteringCounter = 0
         self.saveCacheCounter = 0

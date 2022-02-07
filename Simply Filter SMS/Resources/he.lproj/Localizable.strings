@@ -221,3 +221,5 @@
 "addFilter_match_exact" = "מדויק";
 
 "addFilter_match_contains" = "מכיל";
+
+"filterList_options" = "לחצו בכדי לשנות אפשרויות";
