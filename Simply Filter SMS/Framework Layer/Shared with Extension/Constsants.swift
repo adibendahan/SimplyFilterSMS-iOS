@@ -62,6 +62,15 @@ enum FilterType: Int64, CaseIterable, Identifiable {
         }
     }
     
+    var supportsAdvancedOptions: Bool {
+        switch self {
+        case .deny, .allow:
+            return true
+        case .denyLanguage:
+            return false
+        }
+    }
+    
     var allowedWhenAllSendersBlocked: Bool {
         return self == .allow
     }
@@ -148,6 +157,15 @@ enum FilterTarget: Int64, CaseIterable, Identifiable {
         }
     }
     
+    var multilineName: String {
+        switch self {
+        case .all:
+            return "addFilter_target_all_multiline"~
+        default:
+            return self.name
+        }
+    }
+    
     static var title: String {
         return "addFilter_target_title"~
     }
@@ -164,6 +182,24 @@ enum FilterMatching: Int64, CaseIterable, Identifiable {
             return "addFilter_match_contains"~
         case .exact:
             return "addFilter_match_exact"~
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .contains:
+            return "equal.circle"
+        case .exact:
+            return "equal.circle.fill"
+        }
+    }
+    
+    var other: FilterMatching {
+        switch self {
+        case .contains:
+            return .exact
+        case .exact:
+            return .contains
         }
     }
     
@@ -192,6 +228,15 @@ enum FilterCase: Int64, CaseIterable, Identifiable {
             return .caseInsensitive
         case .caseSensitive:
             return .literal
+        }
+    }
+    
+    var other: FilterCase {
+        switch self {
+        case .caseInsensitive:
+            return .caseSensitive
+        case .caseSensitive:
+            return .caseInsensitive
         }
     }
     

@@ -222,4 +222,8 @@
 
 "addFilter_match_contains" = "מכיל";
 
-"filterList_options" = "לחצו בכדי לשנות אפשרויות";
+"filterList_options" = "אפשרויות";
+
+"addFilter_target_all_multiline" = "שולח +\nהודעה";
+
+"general_lang" = "שפה";

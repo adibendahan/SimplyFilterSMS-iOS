@@ -37,19 +37,13 @@ struct FilterListView: View {
                     self.model.deleteFilters(withOffsets: $0, in: self.model.filters)
                 }
             } header: {
-                if self.model.filterType.supportsFolders && !self.model.filters.isEmpty {
-                    HStack {
-                        Text("filterList_text"~)
-                        
-                        Spacer()
-                        
-                        Text("filterList_options"~)
-                            .padding(.trailing, 8)
-                    }
-                }
-                else {
+                HStack {
+                    Text(self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~)
+                    
                     Spacer()
-                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    
+                    Text(self.model.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~)
+                        .padding(.trailing, 8)
                 }
             } footer: {
                 VStack {
@@ -207,7 +201,7 @@ extension FilterListView {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            FilterListView(model: FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews))
+            FilterListView(model: FilterListView.ViewModel(filterType: .allow, appManager: AppManager.previews))
         }
     }
 }

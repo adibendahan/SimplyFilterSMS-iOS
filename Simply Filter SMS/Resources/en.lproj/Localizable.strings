@@ -14,6 +14,7 @@
 "general_copyright" = "© %ld Adi Ben-Dahan. All rights reserved.";
 "general_close" = "Close";
 "general_active_count" = "%ld active";
+"general_lang" = "Language";
 
 //MARK: Languages
 "lang_supported" = "Supported Languages";
@@ -33,7 +34,7 @@
 "filterList_deleteFiltersCount" = "Delete (%ld)";
 "filterList_folder" = "Folder";
 "filterList_text" = "Text";
-"filterList_options" = "Tap to change options";
+"filterList_options" = "Options";
 
 //MARK: Add Filter View
 "addFilter_add" = "Add";
@@ -51,6 +52,7 @@
 "addFilter_more" = "See more options";
 "addFilter_less" = "See less";
 "addFilter_target_all" = "Sender + Body";
+"addFilter_target_all_multiline" = "Sender +\nBody";
 "addFilter_target_sender" = "Sender";
 "addFilter_target_body" = "Body";
 "addFilter_target_title" = "Select a target:";
