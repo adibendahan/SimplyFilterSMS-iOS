@@ -128,15 +128,33 @@ class PersistanceManager: PersistanceManagerProtocol {
         return automaticFiltersRuleRecord
     }
     
-
-    //MARK: Helpers
-    func initAutomaticFiltering(languages: [NLLanguage], rules: [RuleType]) {
-        self.initAutomaticFiltersLanguage(languages: languages)
-        self.initAutomaticFiltersRule(rules: rules)
-        
-        self.commitContext()
+    func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule {
+        if let existing = self.fetchAutomaticFiltersRuleRecord(for: rule) {
+            return existing
+        }
+        else {
+            let newRule = AutomaticFiltersRule(context: self.context)
+            newRule.ruleId = rule.rawValue
+            newRule.ruleType = rule
+            newRule.isActive = false
+            return newRule
+        }
     }
     
+    func ensuredAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage {
+        if let existing = self.fetchAutomaticFiltersLanguageRecord(for: language) {
+            return existing
+        }
+        else {
+            let newLanguage = AutomaticFiltersLanguage(context: self.context)
+            newLanguage.lang = language.rawValue
+            newLanguage.isActive = false
+            return newLanguage
+        }
+    }
+    
+
+    //MARK: Helpers
     func isDuplicateFilter(text: String,
                            filterTarget: FilterTarget = .all,
                            filterMatching: FilterMatching = .contains,
@@ -282,56 +300,4 @@ class PersistanceManager: PersistanceManagerProtocol {
             self.context.delete(cache)
         }
     }
-    
-    private func initAutomaticFiltersLanguage(languages: [NLLanguage]) {
-        let automaticFiltersLanguageRecords = self.fetchAutomaticFiltersLanguageRecords()
-        var uninitializedLanguages: [NLLanguage] = languages
-
-        for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords {
-            if let langRawValue = automaticFiltersLanguageRecord.lang {
-                let lang = NLLanguage(langRawValue)
-                
-                if !uninitializedLanguages.contains(lang) {
-                    self.context.delete(automaticFiltersLanguageRecord)
-                }
-                else {
-                    uninitializedLanguages.removeAll(where: { $0 == lang })
-                }
-            }
-        }
-        
-        for uninitializedLanguage in uninitializedLanguages {
-            let newLang = AutomaticFiltersLanguage(context: self.context)
-            newLang.lang = uninitializedLanguage.rawValue
-            newLang.isActive = false
-        }
-    }
-    
-    private func initAutomaticFiltersRule(rules: [RuleType]) {
-        let automaticFiltersRuleRecords = self.fetchAutomaticFiltersRuleRecords()
-        var uninitializedRules: [RuleType] = rules
-
-        for automaticFiltersRuleRecord in automaticFiltersRuleRecords {
-            if let rule = automaticFiltersRuleRecord.ruleType {
-
-                if !uninitializedRules.contains(rule) {
-                    self.context.delete(automaticFiltersRuleRecord)
-                }
-                else {
-                    uninitializedRules.removeAll(where: { $0 == rule })
-                }
-            }
-            else {
-                self.context.delete(automaticFiltersRuleRecord)
-            }
-        }
-        
-        for uninitializedRule in uninitializedRules {
-            let newRule = AutomaticFiltersRule(context: self.context)
-            newRule.ruleId = uninitializedRule.rawValue
-            newRule.selectedChoice = uninitializedRule == .shortSender ? 6 : 0
-            newRule.isActive = false
-        }
-    }
-    
 }

@@ -23,7 +23,6 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var updateFilterTargetCounter = 0
     var updateFilterMatchingCounter = 0
     var fetchFilterRecordsCounter = 0
-    var initAutomaticFilteringCounter = 0
     var saveCacheCounter = 0
     var isCacheStaleCounter = 0
     var commitContextCounter = 0
@@ -33,6 +32,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchAutomaticFiltersCacheRecordsCounter = 0
     var fetchAutomaticFiltersLanguageRecordCounter = 0
     var fetchAutomaticFiltersRuleRecordCounter = 0
+    var ensuredAutomaticFiltersLanguageRecordCounter = 0
+    var ensuredAutomaticFiltersRuleRecordCounter = 0
     
     var addFilterClosure: ((String, FilterType, DenyFolderType, FilterTarget, FilterMatching, FilterCase) -> ())?
     var isDuplicateFilterClosure: ((String, FilterTarget, FilterMatching, FilterCase) -> (Bool))?
@@ -44,7 +45,6 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var updateFilterTargetClosure: ((Filter, FilterTarget) -> ())?
     var updateFilterMatchingClosure: ((Filter, FilterMatching) -> ())?
     var fetchFilterRecordsClosure: (() -> ([Filter]))?
-    var initAutomaticFilteringClosure: (([NLLanguage], [RuleType]) -> ())?
     var saveCacheClosure: ((AutomaticFilterList) -> ())?
     var isCacheStaleClosure: ((AutomaticFilterList) -> (Bool))?
     var commitContextClosure: (() -> ())?
@@ -54,6 +54,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchAutomaticFiltersCacheRecordsClosure: (() -> ([AutomaticFiltersCache]))?
     var fetchAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage?))?
     var fetchAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule?))?
+    var ensuredAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage))?
+    var ensuredAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule))?
     
     func addFilter(text: String,
                    type: FilterType,
@@ -119,11 +121,6 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.fetchFilterRecordsForTypeCounter += 1
         return self.fetchFilterRecordsForTypeClosure?(filterType) ?? []
     }
-
-    func initAutomaticFiltering(languages: [NLLanguage], rules: [RuleType]) {
-        self.initAutomaticFilteringCounter += 1
-        self.initAutomaticFilteringClosure?(languages, rules)
-    }
     
     func saveCache(with filterList: AutomaticFilterList) {
         self.saveCacheCounter += 1
@@ -164,6 +161,16 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.fetchAutomaticFiltersRuleRecordCounter += 1
         return self.fetchAutomaticFiltersRuleRecordClosure?(rule) ?? nil
     }
+    
+    func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule {
+        self.ensuredAutomaticFiltersRuleRecordCounter += 1
+        return self.ensuredAutomaticFiltersRuleRecordClosure?(rule) ?? AutomaticFiltersRule(context: self.context)
+    }
+    
+    func ensuredAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage {
+        self.ensuredAutomaticFiltersLanguageRecordCounter += 1
+        return self.ensuredAutomaticFiltersLanguageRecordClosure?(language) ?? AutomaticFiltersLanguage(context: self.context)
+    }
 
     //MARK: Helpers
     private var persistance = PersistanceManager(inMemory: true)
@@ -185,7 +192,6 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.updateFilterMatchingCounter = 0
         self.updateFilterTargetCounter = 0
         self.fetchFilterRecordsCounter = 0
-        self.initAutomaticFilteringCounter = 0
         self.saveCacheCounter = 0
         self.isCacheStaleCounter = 0
         self.commitContextCounter = 0
@@ -195,6 +201,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.fetchAutomaticFiltersCacheRecordsCounter = 0
         self.fetchAutomaticFiltersLanguageRecordCounter = 0
         self.fetchAutomaticFiltersRuleRecordCounter = 0
+        self.ensuredAutomaticFiltersRuleRecordCounter = 0
+        self.ensuredAutomaticFiltersLanguageRecordCounter = 0
     }
     
     //MARK: Unused

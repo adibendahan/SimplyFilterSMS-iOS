@@ -13,8 +13,6 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     //MARK: - Initialization -
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
         self.persistanceManager = persistanceManager
-        
-        self.initAutomaticFiltering()
     }
     
     
@@ -116,7 +114,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     func setLanguageAtumaticState(for language: NLLanguage, value: Bool) {
-        guard let automaticFiltersLanguage = self.persistanceManager.fetchAutomaticFiltersLanguageRecord(for: language) else { return }
+        let automaticFiltersLanguage = self.persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         automaticFiltersLanguage.isActive = value
         self.persistanceManager.commitContext()
     }
@@ -127,7 +125,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     func setAutomaticRuleState(for rule: RuleType, value: Bool) {
-        guard let automaticFiltersRule = self.persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
+        let automaticFiltersRule = self.persistanceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
         automaticFiltersRule.isActive = value
         self.persistanceManager.commitContext()
     }
@@ -198,11 +196,5 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             
             self?.updateCacheIfNeeded(newFilterList: automaticFilterList)
         }
-    }
-    
-    private func initAutomaticFiltering() {
-        let languages = self.languages(for: .automaticBlocking)
-        self.persistanceManager.initAutomaticFiltering(languages: languages, rules: RuleType.allCases)
-        self.fetchFiltersIfNeeded()
     }
 }

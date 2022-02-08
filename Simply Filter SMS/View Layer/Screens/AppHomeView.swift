@@ -192,10 +192,14 @@ struct AppHomeView: View {
             guard self.model.navigationScreen == nil else { return }
             self.model.sheetScreen = .about
         })
-        .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
+        .sheet(item: $model.sheetScreen) {
+            self.model.refresh()
+        } content: { sheetScreen in
             sheetScreen.build()
         }
-        .fullScreenCover(item: $model.modalFullScreen) { } content: { modalFullScreen in
+        .fullScreenCover(item: $model.modalFullScreen) {
+            self.model.refresh()
+        } content: { modalFullScreen in
             modalFullScreen.build()
         }
     }

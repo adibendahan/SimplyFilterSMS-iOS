@@ -25,10 +25,11 @@ protocol PersistanceManagerProtocol: AnyObject {
     func fetchAutomaticFiltersCacheRecords() -> [AutomaticFiltersCache]
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage?
     func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule?
+    func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule
+    func ensuredAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage
     
     
     //MARK: - Helpers -
-    func initAutomaticFiltering(languages: [NLLanguage], rules: [RuleType])
     func isDuplicateFilter(language: NLLanguage) -> Bool
     func isDuplicateFilter(text: String,
                            filterTarget: FilterTarget,

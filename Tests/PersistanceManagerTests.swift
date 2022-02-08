@@ -77,7 +77,13 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchAutomaticFiltersLanguageRecords() {
         // Prepare
-        self.testSubject.initAutomaticFiltering(languages: [.hebrew, .english], rules: [])
+        let lang1 = AutomaticFiltersLanguage(context: self.testSubject.context)
+        lang1.lang = NLLanguage.hebrew.rawValue
+        lang1.isActive = false
+        
+        let lang2 = AutomaticFiltersLanguage(context: self.testSubject.context)
+        lang2.lang = NLLanguage.english.rawValue
+        lang2.isActive = false
         
         // Act
         let languages = self.testSubject.fetchAutomaticFiltersLanguageRecords()
@@ -92,7 +98,13 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchAutomaticFiltersRuleRecords() {
         // Prepare
-        self.testSubject.initAutomaticFiltering(languages: [], rules: [.shortSender, .links])
+        let rule1 = AutomaticFiltersRule(context: self.testSubject.context)
+        rule1.ruleId = RuleType.links.rawValue
+        rule1.isActive = false
+        
+        let rule2 = AutomaticFiltersRule(context: self.testSubject.context)
+        rule2.ruleId = RuleType.shortSender.rawValue
+        rule2.isActive = false
 
         // Act
         let rules = self.testSubject.fetchAutomaticFiltersRuleRecords()
@@ -126,7 +138,9 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchAutomaticFiltersLanguageRecord() {
         // Prepare
-        self.testSubject.initAutomaticFiltering(languages: [.hebrew], rules: [])
+        let supported = AutomaticFiltersLanguage(context: self.testSubject.context)
+        supported.lang = NLLanguage.hebrew.rawValue
+        supported.isActive = false
         
         // Act
         let hebrew = self.testSubject.fetchAutomaticFiltersLanguageRecord(for: .hebrew)
@@ -141,7 +155,9 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_fetchAutomaticFiltersRuleRecord() {
         // Prepare
-        self.testSubject.initAutomaticFiltering(languages: [], rules: [.links])
+        let supported = AutomaticFiltersRule(context: self.testSubject.context)
+        supported.ruleId = RuleType.links.rawValue
+        supported.isActive = false
         
         // Act
         let links = self.testSubject.fetchAutomaticFiltersRuleRecord(for: .links)
@@ -151,68 +167,6 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssertFalse(links?.isActive ?? true)
         XCTAssertEqual(links?.ruleId, RuleType.links.rawValue)
         XCTAssertNil(shortSender)
-    }
-    
-    func test_initAutomaticFiltering_languages() {
-        // Prepare
-        let unsupportedLanguage = NLLanguage.german
-        let context = self.testSubject.context
-        let unsupported = AutomaticFiltersLanguage(context: context)
-        unsupported.lang = unsupportedLanguage.rawValue
-        unsupported.isActive = true
-        
-        let supported = AutomaticFiltersLanguage(context: context)
-        supported.lang = NLLanguage.hebrew.rawValue
-        supported.isActive = true
-        
-        self.expectingSaveContext()
-        
-        // Act
-        self.testSubject.initAutomaticFiltering(languages: [.hebrew, .english], rules: [])
-        
-        // Verify
-        self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertNil(self.testSubject.fetchAutomaticFiltersLanguageRecord(for: .german))
-        XCTAssertEqual(self.testSubject.fetchAutomaticFiltersLanguageRecord(for: .hebrew)?.lang, NLLanguage.hebrew.rawValue)
-        
-        let languages = try? self.testSubject.context.fetch(AutomaticFiltersLanguage.fetchRequest())
-        XCTAssertEqual(languages?.count, 2)
-        
-        let unsupportedLanguageFetch = AutomaticFiltersLanguage.fetchRequest()
-        unsupportedLanguageFetch.predicate = NSPredicate(format: "lang == %@", unsupportedLanguage.rawValue)
-        let result = try? self.testSubject.context.fetch(unsupportedLanguageFetch)
-        XCTAssertTrue(result?.isEmpty ?? false)
-    }
-    
-    func test_initAutomaticFiltering_rules() {
-        // Prepare
-        let unsupportedRuleId = Int64(1000)
-        let context = self.testSubject.context
-        let unsupported = AutomaticFiltersRule(context: context)
-        unsupported.ruleId = unsupportedRuleId
-        unsupported.isActive = true
-        
-        let supported = AutomaticFiltersRule(context: context)
-        supported.ruleId = RuleType.links.rawValue
-        supported.isActive = true
-        
-        self.expectingSaveContext()
-        
-        // Act
-        self.testSubject.initAutomaticFiltering(languages: [], rules: [.links, .numbersOnly])
-        
-        // Verify
-        self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertEqual(self.testSubject.fetchAutomaticFiltersRuleRecord(for: .links)?.ruleId, supported.ruleId)
-        XCTAssertTrue(self.testSubject.fetchAutomaticFiltersRuleRecord(for: .links)?.isActive ?? false)
-        
-        let rules = try? self.testSubject.context.fetch(AutomaticFiltersRule.fetchRequest())
-        XCTAssertEqual(rules?.count, 2)
-        
-        let unsupportedRuleFetch = AutomaticFiltersRule.fetchRequest()
-        unsupportedRuleFetch.predicate = NSPredicate(format: "ruleId == %ld", unsupportedRuleId)
-        let result = try? self.testSubject.context.fetch(unsupportedRuleFetch)
-        XCTAssertTrue(result?.isEmpty ?? false)
     }
     
     func test_isDuplicateFilter() {
