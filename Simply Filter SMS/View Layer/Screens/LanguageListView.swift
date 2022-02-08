@@ -122,12 +122,12 @@ extension LanguageListView {
     }
     
     class ViewModel: BaseViewModel, ObservableObject {
+        @Published private(set) var mode: LanguageListView.Mode
+        @Published private(set) var title: String
+        @Published private(set) var footer: String
+        @Published private(set) var lastUpdate: Date?
+        @Published private(set) var footerSecondLine: String?
         @Published var languages: [StatefulItem<NLLanguage>] = []
-        @Published var mode: LanguageListView.Mode
-        @Published var title: String
-        @Published var footer: String
-        @Published var lastUpdate: Date?
-        @Published var footerSecondLine: String?
         @Published var sheetScreen: Screen? = nil
         
         init(mode: LanguageListView.Mode,

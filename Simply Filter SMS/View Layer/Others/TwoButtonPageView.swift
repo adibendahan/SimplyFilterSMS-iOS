@@ -72,14 +72,13 @@ extension TwoButtonPageView {
     
     class ViewModel: ObservableObject {
         
-        private var id = UUID()
-        @Published var title: String
-        @Published var text: String
-        @Published var confirmText: String
-        @Published var confirmAction: EnableExtensionView.PageCoordinator.Action
-        @Published var cancelText: String
-        @Published var cancelAction: EnableExtensionView.PageCoordinator.Action
-        @Published var image: String? = nil
+        @Published private(set) var title: String
+        @Published private(set) var text: String
+        @Published private(set) var confirmText: String
+        @Published private(set) var confirmAction: EnableExtensionView.PageCoordinator.Action
+        @Published private(set) var cancelText: String
+        @Published private(set) var cancelAction: EnableExtensionView.PageCoordinator.Action
+        @Published private(set) var image: String? = nil
         
         init(title: String,
              text: String,
@@ -102,11 +101,11 @@ extension TwoButtonPageView {
 
 extension TwoButtonPageView.ViewModel: Hashable {
     static func == (lhs: TwoButtonPageView.ViewModel, rhs: TwoButtonPageView.ViewModel) -> Bool {
-        lhs.id == rhs.id
+        lhs.title == rhs.title
     }
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(title)
     }
 }
 

@@ -61,12 +61,11 @@ extension ScreenshotPageView {
     
     class ViewModel: ObservableObject {
         
-        private var id = UUID()
-        @Published var title: String
-        @Published var text: String
-        @Published var image: String
-        @Published var confirmText: String
-        @Published var confirmAction: EnableExtensionView.PageCoordinator.Action
+        @Published private(set) var title: String
+        @Published private(set) var text: String
+        @Published private(set) var image: String
+        @Published private(set) var confirmText: String
+        @Published private(set) var confirmAction: EnableExtensionView.PageCoordinator.Action
         
         init(title: String,
              text: String,
@@ -85,11 +84,11 @@ extension ScreenshotPageView {
 
 extension ScreenshotPageView.ViewModel: Hashable {
     static func == (lhs: ScreenshotPageView.ViewModel, rhs: ScreenshotPageView.ViewModel) -> Bool {
-        lhs.id == rhs.id
+        lhs.title == rhs.title
     }
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(title)
     }
 }
 

@@ -15,6 +15,8 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("isAppFirstRun", defaultValue: true)
     var isAppFirstRun: Bool
 
+    @StoredDefault("isExpandedAddFilter", defaultValue: false)
+    var isExpandedAddFilter: Bool
     
     //MARK: - Stored Defaults Removal -
     init() {

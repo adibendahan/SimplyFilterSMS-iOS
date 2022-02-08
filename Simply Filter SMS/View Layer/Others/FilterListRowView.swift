@@ -42,10 +42,10 @@ struct FilterListRowView: View {
                     }
                 } label: {
                     Text(self.model.filter.filterTarget.multilineName.uppercased())
-                        .frame(width: 40, height: 20, alignment: .center)
-                        .font(.system(size: 7, weight: .semibold, design: .default))
+                        .frame(width: 44, height: 20, alignment: .center)
+                        .font(.system(size: 8, weight: .semibold, design: .default))
                         .multilineTextAlignment(.center)
-                        .padding(EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6))
+                        .padding(EdgeInsets(top: 6, leading: 4, bottom: 6, trailing: 4))
                         .background(Color.secondary.opacity(0.1))
                         .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                         .foregroundColor(.secondary)

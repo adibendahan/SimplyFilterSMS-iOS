@@ -240,15 +240,14 @@ struct AppHomeView: View {
 extension AppHomeView {
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var filters: [Filter]
+        @Published private(set) var filters: [Filter]
+        @Published private(set) var title: String
+        @Published private(set) var isAppFirstRun: Bool
+        @Published private(set) var isAutomaticFilteringOn: Bool
+        @Published private(set) var isAllUnknownFilteringOn: Bool
+        @Published private(set) var shortSenderChoice: Int
+        @Published private(set) var subtitle: String
         @Published var rules: [StatefulItem<RuleType>]
-        @Published var title: String
-        @Published var isAppFirstRun: Bool
-        @Published var isAutomaticFilteringOn: Bool
-        @Published var isAllUnknownFilteringOn: Bool
-        @Published var shortSenderChoice: Int
-        @Published var activeNavigationTag: String?
-        @Published var subtitle: String
         @Published var navigationScreen: Screen? = nil
         @Published var modalFullScreen: Screen? = nil
         @Published var sheetScreen: Screen? = nil
@@ -263,7 +262,6 @@ extension AppHomeView {
             self.isAutomaticFilteringOn = isAutomaticFilteringOn
             self.isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.shortSenderChoice = appManager.automaticFilterManager.selectedChoice(for: .shortSender)
-            self.activeNavigationTag = nil
             self.filters = appManager.persistanceManager.fetchFilterRecords()
             self.rules = []
             

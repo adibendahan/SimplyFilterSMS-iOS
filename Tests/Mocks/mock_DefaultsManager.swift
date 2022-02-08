@@ -13,8 +13,11 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     
     var isAppFirstRunGetCounter = 0
     var isAppFirstRunSetCounter = 0
+    var isExpandedAddFilterGetCounter = 0
+    var isExpandedAddFilterSetCounter = 0
     
     var isAppFirstRunClosure: (() -> (Bool))?
+    var isExpandedAddFilterClosure: (() -> (Bool))?
     
     var isAppFirstRun: Bool {
         get {
@@ -26,8 +29,20 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
     }
     
+    var isExpandedAddFilter: Bool {
+        get {
+            self.isExpandedAddFilterGetCounter += 1
+            return self.isExpandedAddFilterClosure?() ?? false
+        }
+        set {
+            self.isExpandedAddFilterSetCounter += 1
+        }
+    }
+    
     func resetCounters() {
         self.isAppFirstRunGetCounter = 0
         self.isAppFirstRunSetCounter = 0
+        self.isExpandedAddFilterGetCounter = 0
+        self.isExpandedAddFilterSetCounter = 0
     }
 }

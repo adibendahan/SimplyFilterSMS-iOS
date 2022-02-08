@@ -65,6 +65,7 @@ struct TestFiltersView: View {
                     .buttonStyle(FilledButton())
                     .listRowSeparator(.hidden)
                     .padding(.bottom, 8)
+                    .disabled(self.model.text.isEmpty && self.model.sender.isEmpty)
                 } header: {
                     Spacer()
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -105,7 +106,7 @@ extension TestFiltersView {
     }
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var fadeTextModel: FadingTextView.ViewModel
+        @Published private(set) var fadeTextModel: FadingTextView.ViewModel
         @Published var text: String = ""
         @Published var sender: String = ""
         

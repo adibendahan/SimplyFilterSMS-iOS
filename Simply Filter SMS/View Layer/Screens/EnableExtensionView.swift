@@ -111,9 +111,9 @@ extension EnableExtensionView {
 extension EnableExtensionView {
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var welcomePage: TwoButtonPageView.ViewModel? = nil
-        @Published var screenshotPages: [ScreenshotPageView.ViewModel]
-        @Published var readyPage: TwoButtonPageView.ViewModel
+        @Published private(set) var welcomePage: TwoButtonPageView.ViewModel? = nil
+        @Published private(set) var screenshotPages: [ScreenshotPageView.ViewModel]
+        @Published private(set) var readyPage: TwoButtonPageView.ViewModel
         @Published var tabSelection = 0
         @Published var coordinator: PageCoordinator?
         

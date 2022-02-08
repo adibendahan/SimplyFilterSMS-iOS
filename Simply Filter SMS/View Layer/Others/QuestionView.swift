@@ -69,12 +69,12 @@ extension QuestionView {
             case none, activateFilters
         }
         
-        let id: UUID = UUID()
+        var id: String  { self.text }
         
-        @Published var text: String
-        @Published var answer: String
-        @Published var action: QuestionAction
-        @Published var onAction: (() -> ())? = nil
+        @Published private(set) var text: String
+        @Published private(set) var answer: String
+        @Published private(set) var action: QuestionAction
+        @Published private(set) var onAction: (() -> ())? = nil
         @Published var isExpanded: Bool = false
         
         init(text: String,

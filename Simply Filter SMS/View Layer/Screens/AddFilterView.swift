@@ -188,15 +188,19 @@ extension AddFilterView {
     }
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var isAllUnknownFilteringOn: Bool
+        @Published private(set) var isAllUnknownFilteringOn: Bool
+        @Published private(set) var title: String
+        @Published private(set) var filterType: FilterType
         @Published var filterText = ""
-        @Published var title: String
-        @Published var filterType: FilterType
         @Published var selectedDenyFolderType = DenyFolderType.junk
-        @Published var isExpanded = false
         @Published var selectedFilterTarget = FilterTarget.all
         @Published var selectedFilterMatching = FilterMatching.contains
         @Published var selectedFilterCase = FilterCase.caseInsensitive
+        @Published var isExpanded: Bool {
+            didSet {
+                self.appManager.defaultsManager.isExpandedAddFilter = self.isExpanded
+            }
+        }
         
         private var didAddFilter = false
         
@@ -216,6 +220,7 @@ extension AddFilterView {
             
             let isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
+            self.isExpanded = appManager.defaultsManager.isExpandedAddFilter
             
             super.init(appManager: appManager)
         }

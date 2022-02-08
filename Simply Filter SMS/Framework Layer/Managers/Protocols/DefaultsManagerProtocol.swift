@@ -10,6 +10,7 @@ import NaturalLanguage
 
 protocol DefaultsManagerProtocol {
     var isAppFirstRun: Bool { get set }
+    var isExpandedAddFilter: Bool { get set }
 }
 
 protocol PropertyListValue {}

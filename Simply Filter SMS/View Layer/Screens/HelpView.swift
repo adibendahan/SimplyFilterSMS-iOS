@@ -125,8 +125,8 @@ struct HelpView: View {
 extension HelpView {
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var questions: [QuestionView.ViewModel]
-        @Published var title: String
+        @Published private(set) var questions: [QuestionView.ViewModel]
+        @Published private(set) var title: String
         @Published var sheetScreen: Screen? = nil
         @Published var composeMailScreen: Bool = false
         @Published var result: Result<MFMailComposeResult, Error>?

@@ -144,11 +144,11 @@ struct FilterListView: View {
 extension FilterListView {
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var filters: [Filter]
-        @Published var filterType: FilterType
-        @Published var isAllUnknownFilteringOn: Bool
-        @Published var canBlockAnotherLanguage: Bool
-        @Published var footer: String
+        @Published private(set) var filters: [Filter]
+        @Published private(set) var filterType: FilterType
+        @Published private(set) var isAllUnknownFilteringOn: Bool
+        @Published private(set) var canBlockAnotherLanguage: Bool
+        @Published private(set) var footer: String
         @Published var selectedFilters: Set<Filter> = Set()
         @Published var editMode: EditMode = .inactive
         @Published var sheetScreen: Screen? = nil
