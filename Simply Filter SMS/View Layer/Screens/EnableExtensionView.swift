@@ -40,7 +40,7 @@ struct EnableExtensionView: View {
             .toolbar {
                 ToolbarItem {
                     Button {
-                        dismiss()
+                        self.dismissView()
                     } label: {
                         Image(systemName: "xmark")
                             .foregroundColor(.secondary)
@@ -116,13 +116,9 @@ extension EnableExtensionView {
         @Published private(set) var readyPage: TwoButtonPageView.ViewModel
         @Published var tabSelection = 0
         @Published var coordinator: PageCoordinator?
-        
-        var isAppFirstRun: Bool {
-            get {
-                self.appManager.defaultsManager.isAppFirstRun
-            }
-            set {
-                self.appManager.defaultsManager.isAppFirstRun = newValue
+        @Published var isAppFirstRun: Bool {
+            didSet {
+                self.appManager.defaultsManager.isAppFirstRun = self.isAppFirstRun
             }
         }
         
@@ -169,6 +165,7 @@ extension EnableExtensionView {
                 cancelAction: .dismiss,
                 image: "enableExtension_screenshot4")
             
+            self.isAppFirstRun = appManager.defaultsManager.isAppFirstRun
             super.init(appManager: appManager)
         }
     }
