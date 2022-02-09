@@ -9,8 +9,12 @@ import Foundation
 import NaturalLanguage
 
 protocol DefaultsManagerProtocol {
+    // Stored:
     var isAppFirstRun: Bool { get set }
     var isExpandedAddFilter: Bool { get set }
+    
+    // Session:
+    var lastOfflineNotificationDismiss: Date? { get set }
 }
 
 protocol PropertyListValue {}

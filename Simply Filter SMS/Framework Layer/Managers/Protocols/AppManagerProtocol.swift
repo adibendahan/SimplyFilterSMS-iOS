@@ -15,6 +15,7 @@ protocol AppManagerProtocol {
     var defaultsManager: DefaultsManagerProtocol { get set }
     var automaticFilterManager: AutomaticFilterManagerProtocol { get }
     var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
+    var networkSyncManager: NetworkSyncManagerProtocol { get }
     
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel]
 }

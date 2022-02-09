@@ -15,7 +15,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     var context: NSManagedObjectContext { get }
     
     func commitContext()
-    
+    func reloadContainer()
     
     //MARK: - Fetching -
     func fetchFilterRecords() -> [Filter]

@@ -29,6 +29,8 @@ class PersistanceManager: PersistanceManagerProtocol {
             
             container.viewContext.mergePolicy = NSMergePolicy(merge: .mergeByPropertyStoreTrumpMergePolicyType)
             container.viewContext.automaticallyMergesChangesFromParent = true
+            storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+            storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
         })
     }
     
@@ -50,6 +52,22 @@ class PersistanceManager: PersistanceManagerProtocol {
         }
     }
     
+    func reloadContainer() {
+        guard container.persistentStoreDescriptions.first!.url != URL(fileURLWithPath: "/dev/null") else { return }
+        let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
+        self.container = container
+
+        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error as NSError? {
+                AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
+            }
+            
+            container.viewContext.mergePolicy = NSMergePolicy(merge: .mergeByPropertyStoreTrumpMergePolicyType)
+            container.viewContext.automaticallyMergesChangesFromParent = true
+            storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+            storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+        })
+    }
     
     //MARK: Fetching
     func fetchFilterRecords() -> [Filter] {
@@ -266,7 +284,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     //MARK: - Private -
-    private let container: NSPersistentCloudKitContainer
+    private var container: NSPersistentCloudKitContainer
     
     private func fetch<T: NSManagedObject>(_ entity: T.Type,
                                            predicate: NSPredicate? = nil,

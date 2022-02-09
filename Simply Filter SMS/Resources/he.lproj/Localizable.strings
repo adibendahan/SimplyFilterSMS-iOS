@@ -227,3 +227,13 @@
 "addFilter_target_all_multiline" = "שולח +\nהודעה";
 
 "general_lang" = "שפה";
+
+"notification_offline_title" = "הסנכרון ל-iCloud מושהה";
+
+"notification_offline_subtitle" = "המכשיר אינו מחובר לרשת";
+
+"notification_sync_title" = "הסנכרון ל-iCloud פועל";
+
+"notification_sync_subtitle" = "המידע על המכשיר עודכן בהצלחה";
+
+"notification_hide" = "הסתר";

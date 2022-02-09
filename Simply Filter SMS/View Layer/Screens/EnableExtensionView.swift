@@ -14,7 +14,7 @@ struct EnableExtensionView: View {
     @Environment(\.dismiss)
     var dismiss
     
-    @ObservedObject var model: ViewModel
+    @StateObject var model: ViewModel
     
     var body: some View {
         NavigationView {
@@ -50,7 +50,9 @@ struct EnableExtensionView: View {
             }
         } // NavigationView
         .onAppear {
-            self.model.coordinator = PageCoordinator(presenter: self)
+            if self.model.coordinator == nil {
+                self.model.coordinator = PageCoordinator(presenter: self)
+            }
         }
     }
 

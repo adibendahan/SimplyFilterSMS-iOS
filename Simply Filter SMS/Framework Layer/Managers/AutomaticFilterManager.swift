@@ -20,10 +20,10 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     var isAutomaticFilteringOn: Bool {
         var isAutomaticFilteringOn = false
         
-        let automaticFiltersLanguageRecords = self.persistanceManager.fetchAutomaticFiltersLanguageRecords()
+        let automaticFiltersLanguageRecords = self.persistanceManager?.fetchAutomaticFiltersLanguageRecords()
         let supportedLanguages: [NLLanguage] = self.languages(for: .automaticBlocking)
         
-        for automaticFilterLanguage in automaticFiltersLanguageRecords {
+        for automaticFilterLanguage in automaticFiltersLanguageRecords ?? [] {
             if let langRawValue = automaticFilterLanguage.lang {
                 let lang = NLLanguage(rawValue: langRawValue)
                 
@@ -47,10 +47,10 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         var activeLanguagesString = ""
         var automaticFilterNames: [String] = []
         
-        let automaticFiltersLanguageRecords = self.persistanceManager.fetchAutomaticFiltersLanguageRecords()
+        let automaticFiltersLanguageRecords = self.persistanceManager?.fetchAutomaticFiltersLanguageRecords()
         let supportedLanguages = self.languages(for: .automaticBlocking)
         
-        for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords {
+        for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords ?? [] {
             if let langRawValue = automaticFiltersLanguageRecord.lang,
                automaticFiltersLanguageRecord.isActive == true {
                 
@@ -84,18 +84,20 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     var automaticFiltersCacheAge: Date? {
-        guard let cache = self.persistanceManager.fetchAutomaticFiltersCacheRecords().first else { return nil }
+        guard let persistanceManager = self.persistanceManager,
+              let cache = persistanceManager.fetchAutomaticFiltersCacheRecords().first else { return nil }
         
         return cache.age
     }
     
     func languages(for type: LanguageListView.Mode) -> [NLLanguage] {
+        guard let persistanceManager = self.persistanceManager else { return [] }
         var supportedLanguages: [NLLanguage] = []
         
         switch type {
         case .blockLanguage:
             let remainingSupportedLanguages = NLLanguage.allSupportedCases
-                .filter({ !self.persistanceManager.isDuplicateFilter(language: $0) })
+                .filter({ !persistanceManager.isDuplicateFilter(language: $0) })
                 .sorted(by: { $0.rawValue < $1.rawValue })
             supportedLanguages.append(contentsOf: remainingSupportedLanguages)
             
@@ -109,36 +111,42 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     func languageAutomaticState(for language: NLLanguage) -> Bool {
-        guard let automaticFiltersLanguage = self.persistanceManager.fetchAutomaticFiltersLanguageRecord(for: language) else { return false }
+        guard let persistanceManager = self.persistanceManager,
+              let automaticFiltersLanguage = persistanceManager.fetchAutomaticFiltersLanguageRecord(for: language) else { return false }
         return automaticFiltersLanguage.isActive
     }
     
     func setLanguageAtumaticState(for language: NLLanguage, value: Bool) {
-        let automaticFiltersLanguage = self.persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
+        guard let persistanceManager = self.persistanceManager else { return }
+        let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         automaticFiltersLanguage.isActive = value
-        self.persistanceManager.commitContext()
+        persistanceManager.commitContext()
     }
     
     func automaticRuleState(for rule: RuleType) -> Bool {
-        guard let automaticFiltersRule = self.persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return false }
+        guard let persistanceManager = self.persistanceManager,
+              let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return false }
         return automaticFiltersRule.isActive
     }
     
     func setAutomaticRuleState(for rule: RuleType, value: Bool) {
-        let automaticFiltersRule = self.persistanceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
+        guard let persistanceManager = self.persistanceManager else { return }
+        let automaticFiltersRule = persistanceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
         automaticFiltersRule.isActive = value
-        self.persistanceManager.commitContext()
+        persistanceManager.commitContext()
     }
 
     func selectedChoice(for rule: RuleType) -> Int {
-        guard let automaticFiltersRule = self.persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return 0 }
+        guard let persistanceManager = self.persistanceManager,
+              let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return 0 }
         return Int(automaticFiltersRule.selectedChoice)
     }
     
     func setSelectedChoice(for rule: RuleType, choice: Int) {
-        guard let automaticFiltersRule = self.persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
+        guard let persistanceManager = self.persistanceManager,
+              let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
         automaticFiltersRule.selectedChoice = Int64(choice)
-        self.persistanceManager.commitContext()
+        persistanceManager.commitContext()
     }
     
     func fetchAutomaticFilterList(completion: @escaping (AutomaticFilterList?) -> ()) {
@@ -170,7 +178,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     //MARK: - Private  -
     
     private let urlRequestExecutor = URLRequestExecutor()
-    private let persistanceManager: PersistanceManagerProtocol
+    private weak var persistanceManager: PersistanceManagerProtocol?
     private var shouldFetchFilters: Bool {
         var shouldFetchFilters = true
         
@@ -184,8 +192,10 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     private func updateCacheIfNeeded(newFilterList: AutomaticFilterList, force: Bool = false) {
-        guard force || self.persistanceManager.isCacheStale(comparedTo: newFilterList) else { return }
-        self.persistanceManager.saveCache(with: newFilterList)
+        guard let persistanceManager = self.persistanceManager,
+              force || persistanceManager.isCacheStale(comparedTo: newFilterList) else { return }
+        
+        persistanceManager.saveCache(with: newFilterList)
     }
     
     private func fetchFiltersIfNeeded() {

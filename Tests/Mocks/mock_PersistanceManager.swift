@@ -13,6 +13,8 @@ import NaturalLanguage
 
 class mock_PersistanceManager: PersistanceManagerProtocol {
 
+    
+
     var addFilterCounter = 0
     var isDuplicateFilterCounter = 0
     var isDuplicateFilterLanguageCounter = 0
@@ -34,6 +36,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchAutomaticFiltersRuleRecordCounter = 0
     var ensuredAutomaticFiltersLanguageRecordCounter = 0
     var ensuredAutomaticFiltersRuleRecordCounter = 0
+    var reloadContainerCounter = 0
     
     var addFilterClosure: ((String, FilterType, DenyFolderType, FilterTarget, FilterMatching, FilterCase) -> ())?
     var isDuplicateFilterClosure: ((String, FilterTarget, FilterMatching, FilterCase) -> (Bool))?
@@ -56,6 +59,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule?))?
     var ensuredAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage))?
     var ensuredAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule))?
+    var reloadContainerClosure: (() -> ())?
     
     func addFilter(text: String,
                    type: FilterType,
@@ -170,6 +174,11 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     func ensuredAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage {
         self.ensuredAutomaticFiltersLanguageRecordCounter += 1
         return self.ensuredAutomaticFiltersLanguageRecordClosure?(language) ?? AutomaticFiltersLanguage(context: self.context)
+    }
+    
+    func reloadContainer() {
+        self.reloadContainerCounter += 1
+        self.reloadContainerClosure?()
     }
 
     //MARK: Helpers

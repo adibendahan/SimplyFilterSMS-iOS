@@ -7,6 +7,7 @@
 
 import Foundation
 import OSLog
+import Network
 
 class AppManager: AppManagerProtocol {
     static let shared: AppManagerProtocol = AppManager()
@@ -16,6 +17,7 @@ class AppManager: AppManagerProtocol {
     var defaultsManager: DefaultsManagerProtocol
     var automaticFilterManager: AutomaticFilterManagerProtocol
     var messageEvaluationManager: MessageEvaluationManagerProtocol
+    var networkSyncManager: NetworkSyncManagerProtocol
     
     init(inMemory: Bool = false) {
         let persistanceManager = PersistanceManager(inMemory: inMemory)
@@ -28,6 +30,7 @@ class AppManager: AppManagerProtocol {
         self.defaultsManager = defaultsManager
         self.automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager)
         self.messageEvaluationManager = messageEvaluationManager
+        self.networkSyncManager = NetworkSyncManager(persistanceManager: persistanceManager)
     }
     
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel] {
@@ -39,7 +42,6 @@ class AppManager: AppManagerProtocol {
                 QuestionView.ViewModel(text: "faq_question_5"~, answer: "faq_answer_5"~),
                 QuestionView.ViewModel(text: "help_automaticFiltering_question"~, answer: "help_automaticFiltering"~)]
     }
-    
     
     //MARK: - Previews -
     static private var inMemoryManager = AppManager(inMemory: true)

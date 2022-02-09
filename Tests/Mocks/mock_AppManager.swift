@@ -17,6 +17,7 @@ class mock_AppManager: AppManagerProtocol {
     var defaultsManager: DefaultsManagerProtocol = mock_DefaultsManager()
     var automaticFilterManager: AutomaticFilterManagerProtocol = mock_AutomaticFilterManager()
     var messageEvaluationManager: MessageEvaluationManagerProtocol = mock_MessageEvaluationManager()
+    var networkSyncManager: NetworkSyncManagerProtocol = mock_NetworkSyncManager()
     
     var getFrequentlyAskedQuestionsCounter = 0
     var getFrequentlyAskedQuestionsClosuer: (() -> ([QuestionView.ViewModel]))?

@@ -11,13 +11,18 @@ import XCTest
 
 class mock_DefaultsManager: DefaultsManagerProtocol {
     
+    
+    
     var isAppFirstRunGetCounter = 0
     var isAppFirstRunSetCounter = 0
     var isExpandedAddFilterGetCounter = 0
     var isExpandedAddFilterSetCounter = 0
+    var lastOfflineNotificationDismissGetCounter = 0
+    var lastOfflineNotificationDismissSetCounter = 0
     
     var isAppFirstRunClosure: (() -> (Bool))?
     var isExpandedAddFilterClosure: (() -> (Bool))?
+    var lastOfflineNotificationDismissClosure: (() -> (Date?))?
     
     var isAppFirstRun: Bool {
         get {
@@ -36,6 +41,16 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
         set {
             self.isExpandedAddFilterSetCounter += 1
+        }
+    }
+    
+    var lastOfflineNotificationDismiss: Date? {
+        get {
+            self.lastOfflineNotificationDismissGetCounter += 1
+            return self.lastOfflineNotificationDismissClosure?() ?? Date()
+        }
+        set {
+            self.lastOfflineNotificationDismissSetCounter += 1
         }
     }
     

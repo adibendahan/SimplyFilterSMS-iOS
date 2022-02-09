@@ -141,3 +141,9 @@
 "testFilters_resultJunk" = "It's Junk! 😈";
 "testFilters_resultPromotion" = "It's a Promotion! 📢";
 "testFilters_resultTransaction" = "It's a Transaction! 🧾";
+
+"notification_offline_title" = "iCloud sync is paused";
+"notification_offline_subtitle" = "Your device has no network";
+"notification_sync_title" = "iCloud sync is on";
+"notification_sync_subtitle" = "Local device data was updated";
+"notification_hide" = "Hide";

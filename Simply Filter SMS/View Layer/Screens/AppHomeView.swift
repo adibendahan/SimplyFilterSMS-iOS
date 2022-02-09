@@ -21,7 +21,6 @@ struct AppHomeView: View {
     var colorScheme: ColorScheme
     
     @ObservedObject var model: ViewModel
-    @StateObject private var subtitleModel = FadingTextView.ViewModel()
     
     var body: some View {
         NavigationView {
@@ -47,7 +46,7 @@ struct AppHomeView: View {
                                         .font(.system(size: 20, weight: .bold, design: .rounded))
                                     
                                     if !self.model.subtitle.isEmpty {
-                                        FadingTextView(model: self.subtitleModel)
+                                        Text(self.model.subtitle)
                                             .font(.caption2)
                                             .lineLimit(2)
                                     }
@@ -183,15 +182,13 @@ struct AppHomeView: View {
                     }
                 }
             }
-            .onReceive(self.model.$subtitle) { subtitle in
-                self.subtitleModel.text = subtitle
-            }
         } // NavigationView
         .navigationViewStyle(StackNavigationViewStyle())
         .modifier(EmbeddedFooterView {
             guard self.model.navigationScreen == nil else { return }
             self.model.sheetScreen = .about
         })
+        .modifier(EmbeddedNotificationView(model: self.model.notification))
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
         } content: { sheetScreen in
@@ -201,6 +198,9 @@ struct AppHomeView: View {
             self.model.refresh()
         } content: { modalFullScreen in
             modalFullScreen.build()
+        }
+        .onAppear {
+            self.model.startMonitoring()
         }
     }
     
@@ -253,8 +253,25 @@ extension AppHomeView {
         @Published private(set) var subtitle: String
         @Published var rules: [StatefulItem<RuleType>]
         @Published var navigationScreen: Screen? = nil
-        @Published var modalFullScreen: Screen? = nil
-        @Published var sheetScreen: Screen? = nil
+        @Published var notification: NotificationView.ViewModel
+        @Published var modalFullScreen: Screen? = nil {
+            didSet {
+                if self.modalFullScreen == nil,
+                   let pendingNotification = self.pendingNotification {
+                    self.showNotification(pendingNotification)
+                    self.pendingNotification = nil
+                }
+            }
+        }
+        @Published var sheetScreen: Screen? = nil {
+            didSet {
+                if self.sheetScreen == nil,
+                   let pendingNotification = self.pendingNotification {
+                    self.showNotification(pendingNotification)
+                    self.pendingNotification = nil
+                }
+            }
+        }
         
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             
@@ -268,7 +285,7 @@ extension AppHomeView {
             self.shortSenderChoice = appManager.automaticFilterManager.selectedChoice(for: .shortSender)
             self.filters = appManager.persistanceManager.fetchFilterRecords()
             self.rules = []
-            
+            self.notification = NotificationView.ViewModel(notification: .offline)
             super.init(appManager: appManager)
             
             self.rules = appManager.automaticFilterManager.rules
@@ -292,8 +309,6 @@ extension AppHomeView {
             self.rules = self.appManager.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
                                                                                                    getter: self.appManager.automaticFilterManager.automaticRuleState,
                                                                                                    setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
-            self.animationTimer?.invalidate()
-            self.animateLastUpdatedIfNeeded()
         }
         
         func setSelectedChoice(for rule: RuleType, choice: Int) {
@@ -313,46 +328,81 @@ extension AppHomeView {
             }
         }
         
+        func showNotification(_ notification: NotificationView.Notification) {
+            guard self.modalFullScreen == nil && self.sheetScreen == nil else {
+                self.pendingNotification = notification
+                return
+            }
+            
+            if !self.notification.show {
+                self.notification.setNotification(notification)
+                self.notification.setOnButtonTap {
+                    self.appManager.defaultsManager.lastOfflineNotificationDismiss = Date()
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    withAnimation {
+                        self.notification.show = true
+                    }
+                }
+            }
+            else {
+                withAnimation {
+                    self.notification.setNotification(notification)
+                }
+            }
+            
+            if let timeout = notification.timeout {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1 + timeout) {
+                    withAnimation {
+                        self.notification.show = false
+                    }
+                }
+            }
+        }
+
+        func startMonitoring() {
+            if self.appManager.networkSyncManager.networkStatus != .online,
+               !self.userIgnoresNetworkStatus {
+                self.showNotification(.offline)
+            }
+            
+            if !didAddSyncObserver {
+                self.didAddSyncObserver = true
+                NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { notification in
+                    self.refresh()
+                    self.showNotification(.cloudSyncOperationComplete)
+                }
+            }
+
+            if !self.didAddNetworkObserver {
+                self.didAddNetworkObserver = true
+                NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { notification in
+                    guard let networkStatus = notification.object as? NetworkStatus else { return }
+                    
+                    if networkStatus == .online {
+                        self.notification.show = false
+                    }
+                    else {
+                        if !self.userIgnoresNetworkStatus {
+                            self.showNotification(.offline)
+                        }
+                    }
+                }
+            }
+        }
+
         func loadDebugData() {
             self.appManager.persistanceManager.loadDebugData()
             self.refresh()
         }
-        
-        private var didAnimateSubtitle = false
-        private var animationTimer: Timer?
-        
-        private func animateLastUpdatedIfNeeded() {
-            guard self.animationTimer == nil,
-                  !self.didAnimateSubtitle,
-                  self.isAutomaticFilteringOn,
-                  let lastUpdate = self.appManager.automaticFilterManager.automaticFiltersCacheAge else { return }
-            
-            var runCount = 0
 
-            let timer = Timer.scheduledTimer(withTimeInterval: 6, repeats: true) { timer in
-                guard timer.isValid,
-                      self.navigationScreen == nil,
-                      self.sheetScreen == nil,
-                      self.modalFullScreen == nil else { return }
-                                
-                if runCount == 0 {
-                    let formatter = DateFormatter()
-                    formatter.locale = Locale.current
-                    formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ddMMyyyy", options: 0, locale: Locale.current)
-                    let text = String(format: "autoFilter_lastUpdated"~, formatter.string(from: lastUpdate))
-                    self.subtitle = text
-                    runCount += 1
-                }
-                else if runCount == 1 {
-                    let text = self.appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? ""
-                    self.subtitle = text
-                    runCount += 1
-                    self.didAnimateSubtitle = true
-                    timer.invalidate()
-                }
-            }
-            
-            self.animationTimer = timer
+        private var didAddNetworkObserver = false
+        private var didAddSyncObserver = false
+        private var pendingNotification: NotificationView.Notification?
+        private var userIgnoresNetworkStatus: Bool {
+            guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }
+            return Date().minutesBetween(date: lastOfflineNotificationDismiss) < kHideiClouldStatusMemory
         }
         
         private func setAutomaticRuleState(for rule: RuleType, value: Bool) {
