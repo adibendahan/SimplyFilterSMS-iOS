@@ -24,7 +24,7 @@ struct EnableExtensionView: View {
                         .tag(0)
                 }
                 
-                ForEach(self.model.screenshotPages.indices) { index in
+                ForEach(self.model.screenshotPages.indices, id: \.self) { index in
                     if let screenshotModel = self.model.screenshotPages[index] {
                         ScreenshotPageView(model: screenshotModel, coordinator: self.model.coordinator)
                             .tag(self.model.welcomeTagOffset + index)

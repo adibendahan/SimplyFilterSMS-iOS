@@ -160,31 +160,22 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         automaticFiltersRule.selectedChoice = Int64(choice)
         persistanceManager.commitContext()
     }
-    
-    func fetchAutomaticFilterList(completion: @escaping (AutomaticFilterList?) -> ()) {
-    
-        self.urlRequestExecutor.execute(type: AutomaticFilterList.self,
-                                        baseURL: .appBaseURL,
-                                        request: AutomaticFiltersRequest()) { result in
-            
-            switch result {
-            case .success(let filterList):
-                completion(filterList)
-            case .failure(let error):
-                let nsError = error as NSError
-                AppManager.logger.error("ERROR! While fetching Automatic Filter List: \(nsError), \(nsError.userInfo)")
-                completion(nil)
-            }
+        
+    func fetchAutomaticFilterList() async -> AutomaticFilterList? {
+        do {
+            let response = try await self.urlRequestExecutor.execute(type: AutomaticFilterList.self, baseURL: .appBaseURL, request: AutomaticFiltersRequest())
+            return response
+        } catch (let error) {
+            let nsError = error as NSError
+            AppManager.logger.error("ERROR! While fetching Automatic Filter List: \(nsError), \(nsError.userInfo)")
         }
+        
+        return nil
     }
     
-    func forceUpdateAutomaticFilters(completion: (()->())?) {
-        self.fetchAutomaticFilterList { [weak self] automaticFilterList in
-            guard let automaticFilterList = automaticFilterList else { return }
-            
-            self?.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
-            completion?()
-        }
+    func forceUpdateAutomaticFilters() async {
+        guard let automaticFilterList = await self.fetchAutomaticFilterList() else { return }
+        self.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
     }
     
     //MARK: - Private  -
@@ -211,13 +202,9 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         persistanceManager.saveCache(with: newFilterList)
     }
     
-    private func fetchFiltersIfNeeded() {
-        guard self.shouldFetchFilters else { return }
-        
-        self.fetchAutomaticFilterList { [weak self] automaticFilterList in
-            guard let automaticFilterList = automaticFilterList else { return }
-            
-            self?.updateCacheIfNeeded(newFilterList: automaticFilterList)
-        }
+    private func fetchFiltersIfNeeded() async {
+        guard self.shouldFetchFilters,
+        let automaticFilterList = await self.fetchAutomaticFilterList() else { return }
+        self.updateCacheIfNeeded(newFilterList: automaticFilterList)
     }
 }

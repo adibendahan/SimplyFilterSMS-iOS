@@ -48,11 +48,11 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         
     }
     
-    func fetchAutomaticFilterList(completion: @escaping (AutomaticFilterList?) -> ()) {
-        
+    func fetchAutomaticFilterList() async -> AutomaticFilterList? {
+        return nil
     }
     
-    func forceUpdateAutomaticFilters(completion: (() -> ())?) {
+    func forceUpdateAutomaticFilters() async {
         
     }
 }

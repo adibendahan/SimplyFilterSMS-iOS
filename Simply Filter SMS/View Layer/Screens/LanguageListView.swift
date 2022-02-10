@@ -38,7 +38,7 @@ struct LanguageListView: View {
     func makeBody() -> some View {
         List {
             Section {
-                ForEach (self.model.languages.indices) { index in
+                ForEach (self.model.languages.indices, id: \.self) { index in
                     let language = model.languages[index].item
                     
                     if let localizedName = language.localizedName {
@@ -86,7 +86,9 @@ struct LanguageListView: View {
                            lastUpdate.daysBetween(date: Date()) > 0 {
                             
                             Button {
-                                self.model.forceUpdateFilters()
+                                Task {
+                                    await self.model.forceUpdateFilters()
+                                }
                             } label: {
                                 Text("autoFilter_forceUpdate"~)
                             }
@@ -214,12 +216,9 @@ extension LanguageListView {
                                                          filterCase: .caseInsensitive)
         }
         
-        func forceUpdateFilters() {
-            self.appManager.automaticFilterManager.forceUpdateAutomaticFilters { [weak self] in
-                DispatchQueue.main.async {
-                    self?.refresh()
-                }
-            }
+        func forceUpdateFilters() async {
+            await self.appManager.automaticFilterManager.forceUpdateAutomaticFilters()
+            self.refresh()
         }
     }
 }

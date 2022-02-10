@@ -26,7 +26,7 @@ enum HTTPMethod: String {
     case patch = "PATCH"
 }
 
-enum Task {
+enum HTTPTask {
     case requestPlain
     case requestParameters(bodyParameters: BodyParameters?, urlParameters: URLParameters?)
 }
@@ -34,7 +34,7 @@ enum Task {
 protocol URLRequestProtocol {
     var path: String { get }
     var method: HTTPMethod { get }
-    var task: Task { get }
+    var task: HTTPTask { get }
     var errorDomain: String { get }
 }
 
@@ -76,38 +76,24 @@ extension URL {
 class URLRequestExecutor {
     func execute<T>(type: T.Type,
                     baseURL: URL,
-                    request: URLRequestProtocol,
-                    completion: @escaping (Result<T, RequestError>) -> ()) where T: Decodable {
+                    request: URLRequestProtocol) async throws -> T where T: Decodable {
         
         let request = URLRequest(baseURL: baseURL, request: request)
+        let (data, _) = try await URLSession.shared.data(for: request)
         
-        let task = URLSession.shared.dataTask(with: request, completionHandler: { data, response, error -> Void in
-            guard let data = data else {
-                completion(.failure(.noData))
-                return
-            }
-            
-//            if let jsonString = String(data: data, encoding: .utf8) {
-//                print(jsonString)
-//            }
-            
-            do {
-                let response = try JSONDecoder().decode(T.self, from: data)
-                completion(.success(response))
-            }
-            catch {
-                completion(.failure(.unknown))
-            }
-        })
-        
-        task.resume()
+        do {
+            let decodedData = try JSONDecoder().decode(T.self, from: data)
+            return decodedData
+        } catch {
+            throw RequestError.noData
+        }
     }
 }
 
 class AutomaticFiltersRequest: URLRequestProtocol {
     var path: String = "/0.0.1/AutomaticFilterList.json"
     var method: HTTPMethod = .get
-    var task: Task = .requestPlain
+    var task: HTTPTask = .requestPlain
     var errorDomain: String = "com.grizz.apps.dev.Simply-Filter-SMS.AutomaticFiltersRequest"
 }
 

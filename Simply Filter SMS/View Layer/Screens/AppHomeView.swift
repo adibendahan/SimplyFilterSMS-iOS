@@ -83,7 +83,7 @@ struct AppHomeView: View {
                 
                 //MARK: Smart Filters
                 Section {
-                    ForEach($model.rules.indices) { index in
+                    ForEach($model.rules.indices, id: \.self) { index in
                         Button { } label: {
                             let rule = model.rules[index].item
                             
@@ -318,14 +318,6 @@ extension AppHomeView {
         
         func activeCount(for filterType: FilterType) -> Int {
             return self.filters.filter({ $0.filterType == filterType }).count
-        }
-        
-        func forceUpdateFilters() {
-            self.appManager.automaticFilterManager.forceUpdateAutomaticFilters { [weak self] in
-                DispatchQueue.main.async {
-                    self?.refresh()
-                }
-            }
         }
         
         func showNotification(_ notification: NotificationView.Notification) {
