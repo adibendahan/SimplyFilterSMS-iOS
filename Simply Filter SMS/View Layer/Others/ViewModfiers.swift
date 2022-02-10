@@ -50,14 +50,18 @@ struct EmbeddedNotificationView: ViewModifier {
         ZStack (alignment: .top) {
             content
             NotificationView(model: model)
-                .offset(y: offset)
-                .animation(.interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: 25), value: offset)
+                .offset(y: self.offset)
+                .animation(.interpolatingSpring(mass: 1, stiffness: offset == kShowOffset ? 200 : 0, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
                 .onTapGesture {
-                    self.setShow(false)
+                    withAnimation {
+                        self.model.show = false
+                    }
                 }
         }
         .onReceive(model.$show) { show in
-            self.setShow(show)
+            withAnimation {
+                self.setShow(show)
+            }
         }
     }
     

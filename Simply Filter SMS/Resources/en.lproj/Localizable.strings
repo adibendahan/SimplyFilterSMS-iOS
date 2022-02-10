@@ -147,3 +147,5 @@
 "notification_sync_title" = "iCloud sync is on";
 "notification_sync_subtitle" = "Local device data was updated";
 "notification_hide" = "Hide";
+"notification_automatic_title" = "Automatic Filtering";
+"notification_automatic_subtitle" = "Filters were updated";

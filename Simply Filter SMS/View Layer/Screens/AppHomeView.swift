@@ -367,16 +367,13 @@ extension AppHomeView {
                 self.showNotification(.offline)
             }
             
-            if !didAddSyncObserver {
-                self.didAddSyncObserver = true
-                NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { notification in
+            if !didAddObservers {
+                self.didAddObservers = true
+                NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { _ in
                     self.refresh()
                     self.showNotification(.cloudSyncOperationComplete)
                 }
-            }
-
-            if !self.didAddNetworkObserver {
-                self.didAddNetworkObserver = true
+                
                 NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { notification in
                     guard let networkStatus = notification.object as? NetworkStatus else { return }
                     
@@ -389,6 +386,11 @@ extension AppHomeView {
                         }
                     }
                 }
+                
+                NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { _ in
+                    guard self.isAutomaticFilteringOn else { return }
+                    self.showNotification(.automaticFiltersUpdated)
+                }
             }
         }
 
@@ -397,8 +399,7 @@ extension AppHomeView {
             self.refresh()
         }
 
-        private var didAddNetworkObserver = false
-        private var didAddSyncObserver = false
+        private var didAddObservers = false
         private var pendingNotification: NotificationView.Notification?
         private var userIgnoresNetworkStatus: Bool {
             guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }

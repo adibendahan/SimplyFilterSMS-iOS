@@ -50,7 +50,7 @@ struct NotificationView: View {
                     let horizontalAmount = value.translation.width as CGFloat
                     let verticalAmount = value.translation.height as CGFloat
                     
-                    if abs(horizontalAmount) < abs(verticalAmount) && verticalAmount < -10  {
+                    if abs(horizontalAmount) < abs(verticalAmount) && verticalAmount < -20  {
                         self.model.onButtonTap?()
                     }
                 })
@@ -107,7 +107,7 @@ struct NotificationView: View {
     }
     
     enum Notification {
-        case offline, cloudSyncOperationComplete
+        case offline, cloudSyncOperationComplete, automaticFiltersUpdated
         
         var icon: String {
             switch self {
@@ -115,6 +115,8 @@ struct NotificationView: View {
                 return "icloud.slash.fill"
             case .cloudSyncOperationComplete:
                 return "icloud.and.arrow.down.fill"
+            case .automaticFiltersUpdated:
+                return "bolt.shield.fill"
             }
         }
         
@@ -124,6 +126,8 @@ struct NotificationView: View {
                 return .red.opacity(0.4)
             case .cloudSyncOperationComplete:
                 return .green.opacity(0.6)
+            case .automaticFiltersUpdated:
+                return .indigo.opacity(0.6)
             }
         }
         
@@ -134,6 +138,8 @@ struct NotificationView: View {
                 return "notification_offline_title"~
             case .cloudSyncOperationComplete:
                 return "notification_sync_title"~
+            case .automaticFiltersUpdated:
+                return "notification_automatic_title"~
             }
         }
         
@@ -143,6 +149,8 @@ struct NotificationView: View {
                 return "notification_offline_subtitle"~
             case .cloudSyncOperationComplete:
                 return "notification_sync_subtitle"~
+            case .automaticFiltersUpdated:
+                return "notification_automatic_subtitle"~
             }
         }
         
@@ -154,7 +162,7 @@ struct NotificationView: View {
             switch self {
             case .offline:
                 return nil
-            case .cloudSyncOperationComplete:
+            case .cloudSyncOperationComplete, .automaticFiltersUpdated:
                 return 6
             }
         }
@@ -163,10 +171,14 @@ struct NotificationView: View {
 
 struct NotificationToastView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = NotificationView.ViewModel(notification: .cloudSyncOperationComplete)
+        let model = NotificationView.ViewModel(notification: .automaticFiltersUpdated)
         NavigationView {
-            Button("Tap me") {
-                model.show.toggle()
+            List {
+                Button("Tap me") {
+                    withAnimation {
+                        model.show = true
+                    }
+                }
             }
             .navigationTitle("Preview")
         }

@@ -13,6 +13,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     
     //MARK: - Context -
     var context: NSManagedObjectContext { get }
+    var fingerprint: String { get }
     
     func commitContext()
     func reloadContainer()

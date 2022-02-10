@@ -12,9 +12,7 @@ import NaturalLanguage
 @testable import Simply_Filter_SMS
 
 class mock_PersistanceManager: PersistanceManagerProtocol {
-
     
-
     var addFilterCounter = 0
     var isDuplicateFilterCounter = 0
     var isDuplicateFilterLanguageCounter = 0
@@ -37,6 +35,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var ensuredAutomaticFiltersLanguageRecordCounter = 0
     var ensuredAutomaticFiltersRuleRecordCounter = 0
     var reloadContainerCounter = 0
+    var fingerprintGetCounter = 0
+    var fingerprintSetCounter = 0
     
     var addFilterClosure: ((String, FilterType, DenyFolderType, FilterTarget, FilterMatching, FilterCase) -> ())?
     var isDuplicateFilterClosure: ((String, FilterTarget, FilterMatching, FilterCase) -> (Bool))?
@@ -60,6 +60,18 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var ensuredAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage))?
     var ensuredAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule))?
     var reloadContainerClosure: (() -> ())?
+    var fingerprintClosure: (() -> (String))?
+    
+
+    var fingerprint: String {
+        get {
+            self.fingerprintGetCounter += 1
+            return self.fingerprintClosure?() ?? ""
+        }
+        set {
+            self.fingerprintSetCounter += 1
+        }
+    }
     
     func addFilter(text: String,
                    type: FilterType,
@@ -212,6 +224,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.fetchAutomaticFiltersRuleRecordCounter = 0
         self.ensuredAutomaticFiltersRuleRecordCounter = 0
         self.ensuredAutomaticFiltersLanguageRecordCounter = 0
+        self.fingerprintSetCounter = 0
+        self.fingerprintGetCounter = 0
     }
     
     //MARK: Unused

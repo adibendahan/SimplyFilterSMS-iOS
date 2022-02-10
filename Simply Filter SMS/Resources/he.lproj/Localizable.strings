@@ -237,3 +237,7 @@
 "notification_sync_subtitle" = "המידע על המכשיר עודכן בהצלחה";
 
 "notification_hide" = "הסתר";
+
+"notification_automatic_title" = "סינון אוטומטי";
+
+"notification_automatic_subtitle" = "עודכנו פילטרים חדשים";

@@ -41,6 +41,14 @@ class PersistanceManager: PersistanceManagerProtocol {
         return self.container.viewContext
     }
     
+    var fingerprint: String {
+        var fingerprint = ""
+        fingerprint.append(self.fetchFilterRecords().map({ "\($0.uuid?.uuidString ?? "")" }).joined())
+        fingerprint.append(self.fetchAutomaticFiltersRuleRecords().map({ "\($0.ruleId)\($0.isActive)" }).joined())
+        fingerprint.append(self.fetchAutomaticFiltersLanguageRecords().map({ "\($0.lang ?? "")\($0.isActive)" }).joined())
+        return fingerprint
+    }
+    
     func commitContext() {
         guard self.context.hasChanges else { return }
         

@@ -16,11 +16,12 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
     var syncStatus: SyncStatus = .unknown
     
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
+        let kNone = self.kNone
         let monitor = NWPathMonitor()
         let queue = DispatchQueue(label: "MonitorNetwork")
         
         self.persistanceManager = persistanceManager
-        self.preSyncFiltersCount = persistanceManager.fetchFilterRecords().count
+        self.preSyncFingerprint = persistanceManager.fingerprint
         self.networkMonitor = monitor
         
         monitor.pathUpdateHandler = self.onNetworkChange
@@ -39,11 +40,11 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
 
                 case .import:
                     if cloudEvent.endDate == nil {
-                        self.preSyncFiltersCount = self.persistanceManager?.fetchFilterRecords().count ?? -1
+                        self.preSyncFingerprint = self.persistanceManager?.fingerprint ?? kNone
                     }
                     else if cloudEvent.succeeded &&
-                                self.preSyncFiltersCount != -1 &&
-                                self.preSyncFiltersCount != self.persistanceManager?.fetchFilterRecords().count ?? self.preSyncFiltersCount {
+                                self.preSyncFingerprint != kNone &&
+                                self.preSyncFingerprint != self.persistanceManager?.fingerprint ?? self.preSyncFingerprint {
                         
                         NotificationCenter.default.post(name: .cloudSyncOperationComplete, object: nil)
                     }
@@ -58,9 +59,10 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
             .store(in: &disposables)
     }
     
+    private let kNone = "none"
     private weak var persistanceManager: PersistanceManagerProtocol?
     private var networkMonitor: NWPathMonitor
-    private var preSyncFiltersCount: Int
+    private var preSyncFingerprint: String
     private var disposables = Set<AnyCancellable>()
     
     private func onNetworkChange(_ newPath: NWPath) {

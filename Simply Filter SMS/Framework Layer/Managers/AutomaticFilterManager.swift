@@ -195,6 +195,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         guard let persistanceManager = self.persistanceManager,
               force || persistanceManager.isCacheStale(comparedTo: newFilterList) else { return }
         
+        NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
         persistanceManager.saveCache(with: newFilterList)
     }
     
