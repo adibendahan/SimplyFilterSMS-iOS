@@ -11,6 +11,10 @@ import Foundation
 struct NotificationView: View {
     
     @ObservedObject var model: ViewModel
+    @State private var offset: CGFloat = -200
+    
+    private let kHideOffset: CGFloat = -200
+    private let kShowOffset: CGFloat = 25
     
     var body: some View {
         HStack (alignment: .center, spacing: 8) {
@@ -62,6 +66,27 @@ struct NotificationView: View {
                         self.model.onButtonTap?()
                     }
                 })
+        .offset(y: self.offset)
+        .animation(.interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
+        .onTapGesture {
+            withAnimation {
+                self.model.show = false
+            }
+        }
+        .onReceive(model.$show) { show in
+            withAnimation {
+                self.setShow(show)
+            }
+        }
+    }
+    
+    private func setShow(_ show: Bool) {
+        if show && self.offset == kHideOffset {
+            self.offset = kShowOffset
+        }
+        else if !show && self.offset == kShowOffset {
+            self.offset = kHideOffset
+        }
     }
     
     class ViewModel: ObservableObject {
@@ -175,9 +200,7 @@ struct NotificationToastView_Previews: PreviewProvider {
         NavigationView {
             List {
                 Button("Tap me") {
-                    withAnimation {
-                        model.show = true
-                    }
+                    model.show = true
                 }
             }
             .navigationTitle("Preview")

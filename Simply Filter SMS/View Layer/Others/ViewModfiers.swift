@@ -40,37 +40,12 @@ struct EmbeddedCloseButton: ViewModifier {
 }
 
 struct EmbeddedNotificationView: ViewModifier {
-    @ObservedObject var model: NotificationView.ViewModel
-    @State private var offset: CGFloat = -200
-    
-    let kHideOffset: CGFloat = -200
-    let kShowOffset: CGFloat = 25
+    var model: NotificationView.ViewModel
     
     func body(content: Content) -> some View {
         ZStack (alignment: .top) {
             content
             NotificationView(model: model)
-                .offset(y: self.offset)
-                .animation(.interpolatingSpring(mass: 1, stiffness: offset == kShowOffset ? 200 : 0, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
-                .onTapGesture {
-                    withAnimation {
-                        self.model.show = false
-                    }
-                }
-        }
-        .onReceive(model.$show) { show in
-            withAnimation {
-                self.setShow(show)
-            }
-        }
-    }
-    
-    private func setShow(_ show: Bool) {
-        if show && self.offset == kHideOffset {
-            self.offset = kShowOffset
-        }
-        else if !show && self.offset == kShowOffset {
-            self.offset = kHideOffset
         }
     }
 }
