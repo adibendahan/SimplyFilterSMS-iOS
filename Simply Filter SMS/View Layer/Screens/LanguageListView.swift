@@ -189,7 +189,7 @@ extension LanguageListView {
                 }
                 else
                 {
-                    return String(format: "autoFilter_lastUpdated"~, "autoFilter_neverUpdated"~)
+                    return ""
                 }
             }
         }
