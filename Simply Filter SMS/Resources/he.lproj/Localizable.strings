@@ -241,3 +241,5 @@
 "notification_automatic_title" = "סינון אוטומטי";
 
 "notification_automatic_subtitle" = "עודכנו פילטרים חדשים";
+
+"autoFilter_empty" = "***הפעילו את האפליקציה כאשר אתם אונליין לפחות פעם אחת על מנת לעדכן את רשימת הפילטרים האוטומטים***";

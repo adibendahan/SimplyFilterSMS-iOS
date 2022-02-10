@@ -58,8 +58,24 @@ struct LanguageListView: View {
                         }
                     }
                 }
+                
+                if self.model.mode == .automaticBlocking &&
+                    self.model.languages.count == 0 {
+                    
+                    HStack {
+                        Image(systemName: "wifi.exclamationmark")
+                            .font(.system(size: 30))
+                            .foregroundColor(.red)
+
+                        Text(.init("autoFilter_empty"~))
+                            .padding()
+                    }
+                }
+                
             } header: {
-                Text("lang_supported"~)
+                if !self.model.languages.isEmpty {
+                    Text("lang_supported"~)
+                }
             } footer: {
                 VStack {
                     HStack {

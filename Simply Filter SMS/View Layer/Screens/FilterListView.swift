@@ -37,13 +37,15 @@ struct FilterListView: View {
                     self.model.deleteFilters(withOffsets: $0, in: self.model.filters)
                 }
             } header: {
-                HStack {
-                    Text(self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~)
-                    
-                    Spacer()
-                    
-                    Text(self.model.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~)
-                        .padding(.trailing, 8)
+                if self.model.filters.count > 0 {
+                    HStack {
+                        Text(self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~)
+                        
+                        Spacer()
+                        
+                        Text(self.model.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~)
+                            .padding(.trailing, 8)
+                    }
                 }
             } footer: {
                 VStack {

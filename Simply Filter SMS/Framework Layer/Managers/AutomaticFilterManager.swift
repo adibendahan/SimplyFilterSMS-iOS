@@ -102,8 +102,20 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             supportedLanguages.append(contentsOf: remainingSupportedLanguages)
             
         case .automaticBlocking:
-            supportedLanguages.append(.english)
-            supportedLanguages.append(.hebrew)
+            if let persistanceManager = self.persistanceManager,
+               let cache = persistanceManager.fetchAutomaticFiltersCacheRecords().first?.filtersData,
+               let automaticFilters = AutomaticFilterList(base64String: cache) {
+                
+                for langRawValue in automaticFilters.filterList.keys {
+                    let language = NLLanguage(langRawValue)
+                    
+                    if language != .undetermined {
+                        supportedLanguages.append(language)
+                    }
+                }
+            
+            }
+
             supportedLanguages.sort(by: { $0.rawValue < $1.rawValue })
         }
 
