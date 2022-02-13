@@ -1,17 +1,11 @@
 //
-//  URLRequestExecutorProtocol.swift
+//  URLRequestProtocol.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 13/02/2022.
 //
 
 import Foundation
-
-protocol URLRequestExecutorProtocol {
-    func execute<T>(type: T.Type,
-                    baseURL: URL,
-                    request: URLRequestProtocol) async throws -> T where T: Decodable
-}
 
 protocol URLRequestProtocol {
     var path: String { get }

@@ -18,19 +18,23 @@ class AppManager: AppManagerProtocol {
     var automaticFilterManager: AutomaticFilterManagerProtocol
     var messageEvaluationManager: MessageEvaluationManagerProtocol
     var networkSyncManager: NetworkSyncManagerProtocol
+    var amazonS3Service: AmazonS3ServiceProtocol
     
     init(inMemory: Bool = false) {
         let persistanceManager = PersistanceManager(inMemory: inMemory)
         let defaultsManager = DefaultsManager()
         let messageEvaluationManager = MessageEvaluationManager()
+        let amazonS3Service = AmazonS3Service()
         
         messageEvaluationManager.setLogger(AppManager.logger)
         
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
-        self.automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager)
+        self.automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager,
+                                                             amazonS3Service: amazonS3Service)
         self.messageEvaluationManager = messageEvaluationManager
         self.networkSyncManager = NetworkSyncManager(persistanceManager: persistanceManager)
+        self.amazonS3Service = amazonS3Service
     }
     
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel] {

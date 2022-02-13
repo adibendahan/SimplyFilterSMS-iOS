@@ -11,8 +11,10 @@ import NaturalLanguage
 class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     
     //MARK: - Initialization -
-    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
+    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
+         amazonS3Service: AmazonS3ServiceProtocol = AppManager.shared.amazonS3Service) {
         self.persistanceManager = persistanceManager
+        self.amazonS3Service = amazonS3Service
         
         self.fetchFiltersIfNeeded()
     }
@@ -130,7 +132,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         return automaticFiltersLanguage.isActive
     }
     
-    func setLanguageAtumaticState(for language: NLLanguage, value: Bool) {
+    func setLanguageAutmaticState(for language: NLLanguage, value: Bool) {
         guard let persistanceManager = self.persistanceManager else { return }
         let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         automaticFiltersLanguage.isActive = value
@@ -162,27 +164,15 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         automaticFiltersRule.selectedChoice = Int64(choice)
         persistanceManager.commitContext()
     }
-        
-    func fetchAutomaticFilterList() async -> AutomaticFilterListsResponse? {
-        do {
-            let response = try await self.urlRequestExecutor.execute(type: AutomaticFilterListsResponse.self, baseURL: .appBaseURL, request: AutomaticFilterListsRequest())
-            return response
-        } catch (let error) {
-            let nsError = error as NSError
-            AppManager.logger.error("ERROR! While fetching Automatic Filter List: \(nsError), \(nsError.userInfo)")
-        }
-        
-        return nil
-    }
     
     func forceUpdateAutomaticFilters() async {
-        guard let automaticFilterList = await self.fetchAutomaticFilterList() else { return }
+        guard let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() else { return }
         self.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
     }
     
     //MARK: - Private  -
     
-    private let urlRequestExecutor = URLRequestExecutor()
+    private weak var amazonS3Service: AmazonS3ServiceProtocol?
     private weak var persistanceManager: PersistanceManagerProtocol?
     private var shouldFetchFilters: Bool {
         var shouldFetchFilters = true
@@ -208,7 +198,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         guard self.shouldFetchFilters else { return }
         
         Task(priority: .background) {
-            if let automaticFilterList = await self.fetchAutomaticFilterList() {
+            if let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() {
                 self.updateCacheIfNeeded(newFilterList: automaticFilterList)
             }
         }

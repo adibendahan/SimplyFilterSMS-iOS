@@ -95,7 +95,7 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         return self.languageAutomaticStateClosure?(language) ?? false
     }
     
-    func setLanguageAtumaticState(for language: NLLanguage, value: Bool) {
+    func setLanguageAutmaticState(for language: NLLanguage, value: Bool) {
         self.setLanguageAtumaticStateCounter += 1
         self.setLanguageAtumaticStateClosure?(language, value)
     }
@@ -128,5 +128,25 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
     func forceUpdateAutomaticFilters() async {
         self.forceUpdateAutomaticFiltersCounter += 1
         self.forceUpdateAutomaticFiltersClosure?()
+    }
+    
+    func resetCounters() {
+        self.isAutomaticFilteringOnGetCounter = 0
+        self.isAutomaticFilteringOnSetCounter = 0
+        self.rulesGetCounter = 0
+        self.rulesSetCounter = 0
+        self.activeAutomaticFiltersTitleGetCounter = 0
+        self.activeAutomaticFiltersTitleSetCounter = 0
+        self.automaticFiltersCacheAgeGetCounter = 0
+        self.automaticFiltersCacheAgeSetCounter = 0
+        self.languagesCounter = 0
+        self.languageAutomaticStateCounter = 0
+        self.setLanguageAtumaticStateCounter = 0
+        self.automaticRuleStateCounter = 0
+        self.setAutomaticRuleStateCounter = 0
+        self.selectedChoiceCounter = 0
+        self.setSelectedChoiceCounter = 0
+        self.fetchAutomaticFilterListCounter = 0
+        self.forceUpdateAutomaticFiltersCounter = 0
     }
 }

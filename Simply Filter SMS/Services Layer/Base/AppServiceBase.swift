@@ -8,7 +8,7 @@
 import Foundation
 
 
-class URLRequestExecutor: URLRequestExecutorProtocol {
+class AppServiceBase {
     func execute<T>(type: T.Type,
                     baseURL: URL,
                     request: URLRequestProtocol) async throws -> T where T: Decodable {

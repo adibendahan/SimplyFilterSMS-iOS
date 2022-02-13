@@ -16,11 +16,10 @@ protocol AutomaticFilterManagerProtocol {
     
     func languages(for type: LanguageListView.Mode) -> [NLLanguage]
     func languageAutomaticState(for language: NLLanguage) -> Bool
-    func setLanguageAtumaticState(for language: NLLanguage, value: Bool)
+    func setLanguageAutmaticState(for language: NLLanguage, value: Bool)
     func automaticRuleState(for rule: RuleType) -> Bool
     func setAutomaticRuleState(for rule: RuleType, value: Bool)
     func selectedChoice(for rule: RuleType) -> Int
     func setSelectedChoice(for rule: RuleType, choice: Int)
-    func fetchAutomaticFilterList() async -> AutomaticFilterListsResponse?
     func forceUpdateAutomaticFilters() async
 }

@@ -16,6 +16,7 @@ protocol AppManagerProtocol {
     var automaticFilterManager: AutomaticFilterManagerProtocol { get }
     var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
     var networkSyncManager: NetworkSyncManagerProtocol { get }
+    var amazonS3Service: AmazonS3ServiceProtocol { get }
     
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel]
 }

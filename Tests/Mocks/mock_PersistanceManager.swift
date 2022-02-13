@@ -228,6 +228,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.fingerprintGetCounter = 0
     }
     
-    //MARK: Unused
-    func loadDebugData() {}
+    func loadDebugData() {
+        self.persistance.loadDebugData()
+    }
 }

@@ -14,6 +14,7 @@ class FilterListViewModelTests: XCTestCase {
     private var testSubject: FilterListView.ViewModel = FilterListView.ViewModel(filterType: .deny)
     private var persistanceManager = mock_PersistanceManager()
     private var defaultsManager = mock_DefaultsManager()
+    private var automaticFilterManager = mock_AutomaticFilterManager()
     private var appManager = mock_AppManager()
     
     //MARK: Test Lifecycle
@@ -26,10 +27,12 @@ class FilterListViewModelTests: XCTestCase {
         self.defaultsManager = mock_DefaultsManager()
         appManager.persistanceManager = self.persistanceManager
         appManager.defaultsManager = self.defaultsManager
+        appManager.automaticFilterManager = self.automaticFilterManager
         
         self.testSubject = FilterListView.ViewModel(filterType: .deny, appManager: appManager)
         self.persistanceManager.resetCounters()
         self.defaultsManager.resetCounters()
+        self.automaticFilterManager.resetCounters()
         self.appManager.resetCounters()
     }
     
@@ -38,13 +41,28 @@ class FilterListViewModelTests: XCTestCase {
     func test_refresh() {
         // Prepare
         self.defaultsManager.isAppFirstRunClosure = { return false }
+        self.automaticFilterManager.automaticRuleStateClosure = { ruleType in
+            switch ruleType {
+            case .allUnknown:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        self.automaticFilterManager.languagesClosure = { _ in
+            return [.hebrew, .english]
+        }
         
         // Act
         self.testSubject.refresh()
         
         // Verify
         XCTAssertEqual(self.persistanceManager.fetchFilterRecordsForTypeCounter, 1)
-        #warning("Adi - Incomplete test: add appFilterManager usage test.")
+        XCTAssertEqual(self.automaticFilterManager.automaticRuleStateCounter, 1)
+        XCTAssertEqual(self.automaticFilterManager.languagesCounter, 1)
+        XCTAssertEqual(self.testSubject.isAllUnknownFilteringOn, true)
+        XCTAssertEqual(self.testSubject.canBlockAnotherLanguage, true)
     }
 
     func test_deleteFiltersOffsets() {

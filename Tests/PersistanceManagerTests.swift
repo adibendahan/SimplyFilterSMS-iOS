@@ -118,7 +118,7 @@ class PersistanceManagerTests: XCTestCase {
     func test_fetchAutomaticFiltersCacheRecords() {
         // Prepare
         let cacheAge = Date()
-        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
+        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
         
         let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
         existingCache.uuid = UUID()
@@ -272,8 +272,8 @@ class PersistanceManagerTests: XCTestCase {
 
     func test_saveCache() {
         // Prepare
-        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        let newerfiltersList = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
+        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
+        let newerfiltersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
         let oldDate = Date()
         
         let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
@@ -299,9 +299,9 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_isCacheStale() {
         // Prepare
-        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        let filtersList_same = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        let filtersList_diff = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
+        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
+        let filtersList_same = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
+        let filtersList_diff = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
         let oldDate = Date()
         let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
         existingCache.uuid = UUID()
@@ -361,195 +361,3 @@ class PersistanceManagerTests: XCTestCase {
         self.saveNotificationCompleteHandler?(notification)
     }
 }
-
-
-
-#warning("Adi - Move to AppFilterManagerTests.")
-//    func test_languagesForBlockLanguage() {
-//        // Prepare
-//        let supportedLanguagesForBlocking = NLLanguage.allSupportedCases
-//        var availableLanguagesForBlocikng: [NLLanguage] = []
-//
-//        // Act
-//        availableLanguagesForBlocikng = self.persistanceManager.languages(for: .blockLanguage)
-//
-//        // Verify
-//        XCTAssert(Set(supportedLanguagesForBlocking).isSubset(of: Set(availableLanguagesForBlocikng)))
-//        XCTAssert(supportedLanguagesForBlocking.count == availableLanguagesForBlocikng.count)
-//
-//        // Prepare
-//        self.persistanceManager.addFilter(text: NLLanguage.arabic.filterText, type: .denyLanguage, denyFolder: .junk)
-//
-//        // Act
-//        availableLanguagesForBlocikng = self.persistanceManager.languages(for: .blockLanguage)
-//
-//        // Verify
-//        XCTAssert(Set(availableLanguagesForBlocikng).isSubset(of: Set(supportedLanguagesForBlocking)))
-//        XCTAssert(supportedLanguagesForBlocking.count-1 == availableLanguagesForBlocikng.count)
-//
-//    }
-    
-//    func test_languagesForAutomaticBlocking() {
-//        // Prepare
-//        let supportedLanguagesForAutomaticBlocking = [NLLanguage.english, .hebrew]
-//        var availableLanguagesForAutomaticBlocking: [NLLanguage] = []
-//
-//        // Act
-//        availableLanguagesForAutomaticBlocking = self.persistanceManager.languages(for: .automaticBlocking)
-//
-//        // Verify
-//        XCTAssert(Set(supportedLanguagesForAutomaticBlocking).isSubset(of: Set(availableLanguagesForAutomaticBlocking)))
-//        XCTAssert(supportedLanguagesForAutomaticBlocking.count == availableLanguagesForAutomaticBlocking.count)
-//        XCTAssert(supportedLanguagesForAutomaticBlocking.first == availableLanguagesForAutomaticBlocking.first)
-//    }
-    
-//    func test_isAutomaticFilteringOn() {
-//        // Prepare
-//        self.persistanceManager.initAutomaticFiltering()
-//        var isAutomaticFilteringOn = true
-//
-//        // Act
-//        isAutomaticFilteringOn = self.persistanceManager.isAutomaticFilteringOn
-//
-//        // Verify
-//        XCTAssert(isAutomaticFilteringOn == false)
-//
-//        // Prepare
-//
-//        self.persistanceManager.setLanguageAtumaticState(for: .hebrew, value: true)
-//
-//        // Act
-//        isAutomaticFilteringOn = self.persistanceManager.isAutomaticFilteringOn
-//
-//        // Verify
-//        XCTAssert(isAutomaticFilteringOn == true)
-//
-//        // Prepare
-//        self.persistanceManager.setLanguageAtumaticState(for: .hebrew, value: false)
-//
-//        // Act
-//        isAutomaticFilteringOn = self.persistanceManager.isAutomaticFilteringOn
-//
-//        // Verify
-//        XCTAssert(isAutomaticFilteringOn == false)
-//    }
-    
-//    func test_automaticFiltersCacheAge() {
-//        // Prepare
-//        var automaticFiltersCacheAge: Date? = Date()
-//
-//        // Act
-//        automaticFiltersCacheAge = self.persistanceManager.automaticFiltersCacheAge
-//
-//        // Verify
-//        XCTAssert(automaticFiltersCacheAge == nil)
-//
-//        // Prepare
-//        self.persistanceManager.saveCache(with: AutomaticFilterList(filterList: ["he": ["word"]]))
-//
-//        // Act
-//        automaticFiltersCacheAge = self.persistanceManager.automaticFiltersCacheAge
-//
-//        // Verify
-//        if let automaticFiltersCacheAge = automaticFiltersCacheAge {
-//            print(abs(automaticFiltersCacheAge.timeIntervalSinceNow))
-//            XCTAssert(abs(automaticFiltersCacheAge.timeIntervalSinceNow) < 1)
-//        }
-//        else {
-//            XCTAssert(false, "automaticFiltersCacheAge is nil")
-//        }
-//    }
-    
-//    func test_activeAutomaticLanguages() {
-//        // Prepare
-//        self.persistanceManager.initAutomaticFiltering()
-//        var activeAutomaticLanguages: String? = ""
-//
-//        // Act
-//        activeAutomaticLanguages = self.persistanceManager.activeAutomaticLanguages
-//
-//        // Verify
-//        XCTAssert(activeAutomaticLanguages == nil)
-//
-//        // Prepare
-//        self.persistanceManager.setLanguageAtumaticState(for: .hebrew, value: true)
-//        self.persistanceManager.setLanguageAtumaticState(for: .english, value: true)
-//
-//        // Act
-//        activeAutomaticLanguages = self.persistanceManager.activeAutomaticLanguages
-//
-//        // Verify
-//        XCTAssert(activeAutomaticLanguages == "\(NLLanguage.english.localizedName!), \(NLLanguage.hebrew.localizedName!).")
-//
-//        // Prepare
-//        self.persistanceManager.setLanguageAtumaticState(for: .hebrew, value: false)
-//
-//        // Act
-//        activeAutomaticLanguages = self.persistanceManager.activeAutomaticLanguages
-//
-//        // Verify
-//        XCTAssert(activeAutomaticLanguages == NLLanguage.english.localizedName)
-//    }
-//    func test_initAutomaticFiltering() {
-//        // Prepare
-//        let unsupportedLanguage = NLLanguage.german
-//        let context = self.persistanceManager.context
-//        let unsupported = AutomaticFiltersLanguage(context: context)
-//        unsupported.lang = unsupportedLanguage.rawValue
-//        unsupported.isActive = true
-//
-//        let supported = AutomaticFiltersLanguage(context: context)
-//        supported.lang = NLLanguage.hebrew.rawValue
-//        supported.isActive = true
-//
-//        self.expectingSaveContext()
-//
-//        // Act
-//        self.persistanceManager.initAutomaticFiltering()
-//
-//        // Verify
-//        self.waitForExpectations(timeout: 1, handler: nil)
-//        XCTAssert(self.persistanceManager.isAutomaticFilteringOn == true)
-//        XCTAssert(self.persistanceManager.languageAutomaticState(for: .hebrew) == true)
-//        XCTAssert(self.persistanceManager.languageAutomaticState(for: .english) == false)
-//
-//        let languages = try? self.persistanceManager.context.fetch(AutomaticFiltersLanguage.fetchRequest())
-//        XCTAssert(languages?.count == 2)
-//
-//        let unsupportedLanguageFetch = AutomaticFiltersLanguage.fetchRequest()
-//        unsupportedLanguageFetch.predicate = NSPredicate(format: "lang == %@", unsupportedLanguage.rawValue)
-//        let result = try? self.persistanceManager.context.fetch(unsupportedLanguageFetch)
-//        XCTAssert(result?.isEmpty == true)
-//    }
-    
-//    func test_languageAutomaticState() {
-//        // Prepare
-//        let supported = AutomaticFiltersLanguage(context: self.persistanceManager.context)
-//        supported.lang = NLLanguage.hebrew.rawValue
-//        supported.isActive = true
-//
-//        self.persistanceManager.initAutomaticFiltering()
-//
-//        // Verify
-//        XCTAssert(self.persistanceManager.languageAutomaticState(for: .english) == false)
-//        XCTAssert(self.persistanceManager.languageAutomaticState(for: .hebrew) == true)
-//    }
-//
-//    func test_setLanguageAtumaticState() {
-//        // Prepare
-//        self.persistanceManager.initAutomaticFiltering()
-//        self.expectingSaveContext()
-//
-//        // Verify
-//        XCTAssert(self.persistanceManager.languageAutomaticState(for: .english) == false)
-//        XCTAssert(self.persistanceManager.languageAutomaticState(for: .hebrew) == false)
-//
-//        // Act
-//        self.persistanceManager.setLanguageAtumaticState(for: .hebrew, value: true)
-//        self.persistanceManager.setLanguageAtumaticState(for: .english, value: true)
-//
-//        // Verify
-//        self.waitForExpectations(timeout: 1, handler: nil)
-//        XCTAssert(self.persistanceManager.languageAutomaticState(for: .english) == true)
-//        XCTAssert(self.persistanceManager.languageAutomaticState(for: .hebrew) == true)
-//    }

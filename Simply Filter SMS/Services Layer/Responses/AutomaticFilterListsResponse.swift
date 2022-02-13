@@ -8,16 +8,17 @@
 import Foundation
 import CryptoKit
 
+
 struct AutomaticFilterListsResponse: Codable {
-    
+
     enum CodingKeys: String, CodingKey {
         case filterLists = "filter_lists"
     }
     
-    let filterLists: [String : LenguageFilterListResponse]
+    let filterLists: [String : LanguageFilterListResponse]
 }
 
-struct LenguageFilterListResponse: Codable {
+struct LanguageFilterListResponse: Codable {
     
     enum CodingKeys: String, CodingKey {
         case allowSenders = "allow_sender"

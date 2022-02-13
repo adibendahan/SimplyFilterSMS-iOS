@@ -201,8 +201,8 @@ class MessageEvaluationManagerTests: XCTestCase {
             automaticFilterRule.selectedChoice = rule == .shortSender ? 5 : 0
         }
         
-        let filtersList = AutomaticFilterListsResponse(filterLists: [NLLanguage.hebrew.rawValue : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["קורונה", "חדשות"]),
-                                                                     NLLanguage.english.rawValue : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["test1", "spam"])])
+        let filtersList = AutomaticFilterListsResponse(filterLists: [NLLanguage.hebrew.rawValue : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["קורונה", "חדשות"]),
+                                                                     NLLanguage.english.rawValue : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["test1", "spam"])])
         let cache = AutomaticFiltersCache(context: self.testSubject.context)
         cache.uuid = UUID()
         cache.hashed = filtersList.hashed

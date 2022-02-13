@@ -170,7 +170,7 @@ extension LanguageListView {
             self.languages = appManager.automaticFilterManager.languages(for: mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: appManager.automaticFilterManager.languageAutomaticState,
-                                                setter: appManager.automaticFilterManager.setLanguageAtumaticState) })
+                                                setter: appManager.automaticFilterManager.setLanguageAutmaticState) })
             
             super.init(appManager: appManager)
         }
@@ -204,7 +204,7 @@ extension LanguageListView {
             self.languages = self.appManager.automaticFilterManager.languages(for: self.mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: self.appManager.automaticFilterManager.languageAutomaticState,
-                                                setter: self.appManager.automaticFilterManager.setLanguageAtumaticState) })
+                                                setter: self.appManager.automaticFilterManager.setLanguageAutmaticState) })
         }
         
         func addFilter(language: NLLanguage) {
