@@ -1,25 +1,38 @@
 //
-//  AutomaticFilterList.swift
+//  AutomaticFilterListResponse.swift
 //  Simply Filter SMS
 //
-//  Created by Adi Ben-Dahan on 26/01/2022.
+//  Created by Adi Ben-Dahan on 13/02/2022.
 //
 
-#warning("Hod - Temp implementation")
 import Foundation
 import CryptoKit
 
-struct AutomaticFilterList: Codable {
+struct AutomaticFilterListsResponse: Codable {
     
     enum CodingKeys: String, CodingKey {
-        case filterList = "filteredLists"
+        case filterLists = "filterLists"
     }
     
-    let filterList: [String : [String]]
+    let filterLists: [String : LenguageFilterListResponse]
 }
 
+struct LenguageFilterListResponse: Codable {
+    
+    enum CodingKeys: String, CodingKey {
+        case allowSenders = "allow_sender"
+        case allowBody = "allow_body"
+        case denySender = "deny_sender"
+        case denyBody = "deny_body"
+    }
+    
+    let allowSenders: [String]
+    let allowBody: [String]
+    let denySender: [String]
+    let denyBody: [String]
+}
 
-extension AutomaticFilterList {
+extension AutomaticFilterListsResponse {
     var hashed: String {
         guard let encodedData = try? JSONEncoder().encode(self) else { return "" }
         let digest = SHA256.hash(data: encodedData)

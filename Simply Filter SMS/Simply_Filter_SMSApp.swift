@@ -21,6 +21,9 @@ struct Simply_Filter_SMSApp: App {
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         application.registerForRemoteNotifications()
+        var defaultsManager = AppManager.shared.defaultsManager
+        defaultsManager.sessionCounter += 1
+        let _ = defaultsManager.appAge // make sure it's initialized
         return true
     }
 }

@@ -13,6 +13,8 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     //MARK: - Initialization -
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
         self.persistanceManager = persistanceManager
+        
+        self.fetchFiltersIfNeeded()
     }
     
     
@@ -104,9 +106,9 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         case .automaticBlocking:
             if let persistanceManager = self.persistanceManager,
                let cache = persistanceManager.fetchAutomaticFiltersCacheRecords().first?.filtersData,
-               let automaticFilters = AutomaticFilterList(base64String: cache) {
+               let automaticFilters = AutomaticFilterListsResponse(base64String: cache) {
                 
-                for langRawValue in automaticFilters.filterList.keys {
+                for langRawValue in automaticFilters.filterLists.keys {
                     let language = NLLanguage(langRawValue)
                     
                     if language != .undetermined {
@@ -161,9 +163,9 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         persistanceManager.commitContext()
     }
         
-    func fetchAutomaticFilterList() async -> AutomaticFilterList? {
+    func fetchAutomaticFilterList() async -> AutomaticFilterListsResponse? {
         do {
-            let response = try await self.urlRequestExecutor.execute(type: AutomaticFilterList.self, baseURL: .appBaseURL, request: AutomaticFiltersRequest())
+            let response = try await self.urlRequestExecutor.execute(type: AutomaticFilterListsResponse.self, baseURL: .appBaseURL, request: AutomaticFilterListsRequest())
             return response
         } catch (let error) {
             let nsError = error as NSError
@@ -194,7 +196,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         return shouldFetchFilters
     }
     
-    private func updateCacheIfNeeded(newFilterList: AutomaticFilterList, force: Bool = false) {
+    private func updateCacheIfNeeded(newFilterList: AutomaticFilterListsResponse, force: Bool = false) {
         guard let persistanceManager = self.persistanceManager,
               force || persistanceManager.isCacheStale(comparedTo: newFilterList) else { return }
         
@@ -202,9 +204,13 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         persistanceManager.saveCache(with: newFilterList)
     }
     
-    private func fetchFiltersIfNeeded() async {
-        guard self.shouldFetchFilters,
-        let automaticFilterList = await self.fetchAutomaticFilterList() else { return }
-        self.updateCacheIfNeeded(newFilterList: automaticFilterList)
+    private func fetchFiltersIfNeeded() {
+        guard self.shouldFetchFilters else { return }
+        
+        Task(priority: .background) {
+            if let automaticFilterList = await self.fetchAutomaticFilterList() {
+                self.updateCacheIfNeeded(newFilterList: automaticFilterList)
+            }
+        }
     }
 }

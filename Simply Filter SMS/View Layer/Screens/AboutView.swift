@@ -51,21 +51,17 @@ struct AboutView: View {
                 }
                 
                 Section {
-                    Link(destination: URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!) {
+                    Link(destination: .appGithubURL) {
                         HStack {
                             Image("GitHub")
                                 .resizable()
                                 .frame(width: 26, height: 26, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
-                            
-                            Spacer()
-                            
+
                             Text("aboutView_github"~)
                                 .foregroundColor(.primary)
                                 .padding(.leading, 8)
-                            
-                            Spacer()
-                                .padding()
+
                         }
                     }
                     if MFMailComposeViewController.canSendMail() {
@@ -75,36 +71,40 @@ struct AboutView: View {
                             HStack {
                                 Image(systemName: "envelope")
                                     .resizable()
-                                    .frame(width: 25, height: 20, alignment: .center)
+                                    .frame(width: 18, height: 18, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
-                                    .foregroundColor(.blue)
-                                
-                                Spacer()
-                                
+                                    .padding(.horizontal, 4)
+
                                 Text("aboutView_sendMail"~)
                                     .foregroundColor(.primary)
                                     .padding(.leading, 8)
-                                
-                                Spacer().padding()
                             }
                         }
                     }
-                    Link(destination: URL(string: "https://twitter.com/a_bd")!) {
+                    Link(destination: .appTwitterURL) {
                         HStack {
                             Image("Twitter")
                                 .resizable()
                                 .frame(width: 26, height: 21, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
-                            
-                            Spacer()
-                            
+
                             Text("aboutView_twitter"~)
                                 .foregroundColor(.primary)
                                 .padding(.leading, 8)
+                        }
+                    }
+                    Link(destination: .appReviewURL) {
+                        HStack {
+                            Image(systemName: "suit.heart.fill")
+                                .resizable()
+                                .frame(width: 22, height: 20, alignment: .center)
+                                .aspectRatio(contentMode: .fit)
+                                .padding(.horizontal, 2)
+                                .foregroundColor(.red)
                             
-                            
-                            Spacer()
-                                .padding()
+                            Text("aboutView_review"~)
+                                .foregroundColor(.primary)
+                                .padding(.leading, 8)
                         }
                     }
                 } header: {

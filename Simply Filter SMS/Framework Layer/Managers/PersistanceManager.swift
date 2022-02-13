@@ -251,7 +251,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         self.commitContext()
     }
     
-    func saveCache(with filterList: AutomaticFilterList) {
+    func saveCache(with filterList: AutomaticFilterListsResponse) {
         self.deleteExistingCaches()
         
         let newCache = AutomaticFiltersCache(context: self.context)
@@ -263,7 +263,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         self.commitContext()
     }
     
-    func isCacheStale(comparedTo newFilterList: AutomaticFilterList) -> Bool {
+    func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
         guard let automaticFiltersCache = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.firstObject as? AutomaticFiltersCache else { return true }
         

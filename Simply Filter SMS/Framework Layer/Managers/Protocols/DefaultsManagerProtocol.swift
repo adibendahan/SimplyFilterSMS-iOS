@@ -12,6 +12,9 @@ protocol DefaultsManagerProtocol {
     // Stored:
     var isAppFirstRun: Bool { get set }
     var isExpandedAddFilter: Bool { get set }
+    var sessionCounter: Int { get set }
+    var didPromptForReview: Bool { get set }
+    var appAge: Date { get }
     
     // Session:
     var lastOfflineNotificationDismiss: Date? { get set }

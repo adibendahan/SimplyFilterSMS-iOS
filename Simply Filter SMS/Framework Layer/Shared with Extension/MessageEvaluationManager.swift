@@ -123,27 +123,51 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     
     private func runAutomaticFilters(body: String, sender: String) -> ILMessageFilterAction {
         var action = ILMessageFilterAction.none
-        let messageText = "\(sender) \(body)"
+        let lowercasedBody = body.lowercased()
         let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
         let cacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
         
         guard let automaticFiltersLanguageRecords = try? self.context.fetch(languageRequest),
               let cacheRow = try? self.context.fetch(cacheRequest).first,
               let filtersData = cacheRow.filtersData,
-              let automaticFilterList = AutomaticFilterList(base64String: filtersData) else {
+              let automaticFilterList = AutomaticFilterListsResponse(base64String: filtersData) else {
                   
                   self.logger?.error("ERROR! While loading cache on MessageEvaluationManager.runAutomaticFilters")
                   return action
               }
         
         for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords {
+            guard action == .none else { break }
+            
             if automaticFiltersLanguageRecord.isActive,
                let langRawValue = automaticFiltersLanguageRecord.lang,
-               let filterList = automaticFilterList.filterList[langRawValue] {
+               let languageResponse = automaticFilterList.filterLists[langRawValue] {
                 
-                for filter in filterList {
-                    if messageText.contains(filter.lowercased()) {
+                for allowedSender in languageResponse.allowSenders {
+                    if sender == allowedSender {
+                        action = .allow
+                        break
+                    }
+                }
+                
+                for allowedBody in languageResponse.allowBody {
+                    if lowercasedBody.contains(allowedBody.lowercased()) {
+                        action = .allow
+                        break
+                    }
+                }
+                
+                for deniedSender in languageResponse.denySender {
+                    if sender == deniedSender {
                         action = .junk
+                        break
+                    }
+                }
+                
+                for deniedBody in languageResponse.denyBody {
+                    if lowercasedBody.contains(deniedBody.lowercased()) {
+                        action = .junk
+                        break
                     }
                 }
             }

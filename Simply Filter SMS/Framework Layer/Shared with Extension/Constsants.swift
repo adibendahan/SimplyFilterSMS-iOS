@@ -22,9 +22,19 @@ let kDatabaseFilename = "CoreData.sqlite"
 let kAppGroupContainer = "group.com.grizz.apps.dev.simply-filter-sms"
 let kSupportEmail = "grizz.apps.dev@gmail.com"
 let kUpdateAutomaticFiltersMinDays = 3
+let kMinimumFilterLength = 3
 let kHideiClouldStatusMemory = 60
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
+
+
+// URLs
+extension URL {
+    static let appBaseURL = URL(string: "https://grizz-apps-dev.s3.us-east-2.amazonaws.com")!
+    static let appReviewURL = URL(string: "https://apps.apple.com/app/id1603222959?action=write-review")!
+    static let appTwitterURL = URL(string: "https://twitter.com/a_bd")!
+    static let appGithubURL = URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!
+}
 
 //MARK: Enums
 enum FilterType: Int64, CaseIterable, Identifiable {

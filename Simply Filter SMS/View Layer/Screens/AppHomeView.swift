@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import StoreKit
 
 
 //MARK: - View -
@@ -16,9 +17,6 @@ struct AppHomeView: View {
     
     @Environment(\.isPreview)
     var isPreview
-    
-    @Environment(\.colorScheme)
-    var colorScheme: ColorScheme
     
     @ObservedObject var model: ViewModel
     
@@ -252,8 +250,15 @@ extension AppHomeView {
         @Published private(set) var shortSenderChoice: Int
         @Published private(set) var subtitle: String
         @Published var rules: [StatefulItem<RuleType>]
-        @Published var navigationScreen: Screen? = nil
         @Published var notification: NotificationView.ViewModel
+        @Published var navigationScreen: Screen? = nil {
+            didSet {
+                if oldValue != nil,
+                   self.navigationScreen == nil {
+                    self.tryRequestReview()
+                }
+            }
+        }
         @Published var modalFullScreen: Screen? = nil {
             didSet {
                 if self.modalFullScreen == nil,
@@ -380,12 +385,25 @@ extension AppHomeView {
                 }
                 
                 NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { _ in
+                    self.refresh()
                     guard self.isAutomaticFilteringOn else { return }
                     self.showNotification(.automaticFiltersUpdated)
                 }
             }
         }
-
+        
+        func tryRequestReview() {
+            var defaultsManager = self.appManager.defaultsManager
+            if !defaultsManager.didPromptForReview,
+               defaultsManager.appAge.daysBetween(date: Date()) > 7,
+               defaultsManager.sessionCounter > 5,
+               let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+                
+                SKStoreReviewController.requestReview(in: scene)
+                defaultsManager.didPromptForReview = true
+            }
+        }
+        
         func loadDebugData() {
             self.appManager.persistanceManager.loadDebugData()
             self.refresh()

@@ -118,7 +118,7 @@ class PersistanceManagerTests: XCTestCase {
     func test_fetchAutomaticFiltersCacheRecords() {
         // Prepare
         let cacheAge = Date()
-        let filtersList = AutomaticFilterList(filterList: ["he" : ["word"]])
+        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
         
         let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
         existingCache.uuid = UUID()
@@ -272,8 +272,8 @@ class PersistanceManagerTests: XCTestCase {
 
     func test_saveCache() {
         // Prepare
-        let filtersList = AutomaticFilterList(filterList: ["he" : ["word"]])
-        let newerfiltersList = AutomaticFilterList(filterList: ["he" : ["word", "word2"]])
+        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
+        let newerfiltersList = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
         let oldDate = Date()
         
         let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
@@ -299,9 +299,9 @@ class PersistanceManagerTests: XCTestCase {
     
     func test_isCacheStale() {
         // Prepare
-        let filtersList = AutomaticFilterList(filterList: ["he" : ["word"]])
-        let filtersList_same = AutomaticFilterList(filterList: ["he" : ["word"]])
-        let filtersList_diff = AutomaticFilterList(filterList: ["he" : ["word", "word2"]])
+        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
+        let filtersList_same = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
+        let filtersList_diff = AutomaticFilterListsResponse(filterLists: ["he" : LenguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
         let oldDate = Date()
         let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
         existingCache.uuid = UUID()

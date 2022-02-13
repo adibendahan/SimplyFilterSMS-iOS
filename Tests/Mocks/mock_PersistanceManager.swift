@@ -48,8 +48,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var updateFilterTargetClosure: ((Filter, FilterTarget) -> ())?
     var updateFilterMatchingClosure: ((Filter, FilterMatching) -> ())?
     var fetchFilterRecordsClosure: (() -> ([Filter]))?
-    var saveCacheClosure: ((AutomaticFilterList) -> ())?
-    var isCacheStaleClosure: ((AutomaticFilterList) -> (Bool))?
+    var saveCacheClosure: ((AutomaticFilterListsResponse) -> ())?
+    var isCacheStaleClosure: ((AutomaticFilterListsResponse) -> (Bool))?
     var commitContextClosure: (() -> ())?
     var fetchFilterRecordsForTypeClosure: ((FilterType) -> ([Filter]))?
     var fetchAutomaticFiltersLanguageRecordsClosure: (() -> ([AutomaticFiltersLanguage]))?
@@ -138,12 +138,12 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.fetchFilterRecordsForTypeClosure?(filterType) ?? []
     }
     
-    func saveCache(with filterList: AutomaticFilterList) {
+    func saveCache(with filterList: AutomaticFilterListsResponse) {
         self.saveCacheCounter += 1
         self.saveCacheClosure?(filterList)
     }
 
-    func isCacheStale(comparedTo newFilterList: AutomaticFilterList) -> Bool {
+    func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
         self.isCacheStaleCounter += 1
         return self.isCacheStaleClosure?(newFilterList) ?? false
     }

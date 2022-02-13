@@ -88,7 +88,7 @@
 "aboutView_github" = "GitHub";
 "aboutView_sendMail" = "Email";
 "aboutView_appIconCredit" = "\n\n🙏🏼 Special thanks to the icon designer: [Vitali Levit](https://instagram.com/eighteeneleven_by_rkl).";
-
+"aboutView_review" = "Rate us please!";
 
 //MARK: Help View
 "faq_subtitle" = "Here's a list of frequently asked questions, if you can't find your answer here you can reach out by";

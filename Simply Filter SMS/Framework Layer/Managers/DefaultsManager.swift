@@ -18,6 +18,14 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("isExpandedAddFilter", defaultValue: false)
     var isExpandedAddFilter: Bool
     
+    @StoredDefault("sessionCounter", defaultValue: 0)
+    var sessionCounter: Int
+    
+    @StoredDefault("didPromptForReview", defaultValue: false)
+    var didPromptForReview: Bool
+    
+    @StoredDefault("appAge", defaultValue: Date())
+    private(set) var appAge: Date
     
     //MARK: - Session Defaults -
     var lastOfflineNotificationDismiss: Date?

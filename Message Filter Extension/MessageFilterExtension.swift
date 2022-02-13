@@ -36,8 +36,8 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
     }
     
     private func offlineAction(for queryRequest: ILMessageFilterQueryRequest) -> ILMessageFilterAction {
-        let body = queryRequest.messageBody?.lowercased() ?? ""
-        let sender = queryRequest.sender?.lowercased() ?? ""
+        let body = queryRequest.messageBody ?? ""
+        let sender = queryRequest.sender ?? ""
         
         return self.extensionManager.evaluateMessage(body: body, sender: sender)
     }
