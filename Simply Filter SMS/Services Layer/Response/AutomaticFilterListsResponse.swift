@@ -11,7 +11,7 @@ import CryptoKit
 struct AutomaticFilterListsResponse: Codable {
     
     enum CodingKeys: String, CodingKey {
-        case filterLists = "filterLists"
+        case filterLists = "filter_lists"
     }
     
     let filterLists: [String : LenguageFilterListResponse]
