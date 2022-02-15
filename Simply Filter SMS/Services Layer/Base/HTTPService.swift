@@ -7,8 +7,13 @@
 
 import Foundation
 
+protocol HTTPServiceProtocol {
+    func execute<T>(type: T.Type,
+                    baseURL: URL,
+                    request: URLRequestProtocol) async throws -> T where T: Decodable
+}
 
-class AppServiceBase {
+class HTTPService: HTTPServiceProtocol {
     func execute<T>(type: T.Type,
                     baseURL: URL,
                     request: URLRequestProtocol) async throws -> T where T: Decodable {
@@ -22,5 +27,17 @@ class AppServiceBase {
         } catch {
             throw RequestError.noData
         }
+    }
+}
+
+class HTTPServiceBase {
+    var httpService: HTTPServiceProtocol
+    
+    init(httpService: HTTPServiceProtocol) {
+        self.httpService = httpService
+    }
+    
+    init() {
+        self.httpService = HTTPService()
     }
 }

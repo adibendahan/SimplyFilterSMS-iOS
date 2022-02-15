@@ -11,11 +11,10 @@ protocol AmazonS3ServiceProtocol: AnyObject {
     func fetchAutomaticFilters() async -> AutomaticFilterListsResponse?
 }
 
-class AmazonS3Service: AppServiceBase, AmazonS3ServiceProtocol {
-
+class AmazonS3Service: HTTPServiceBase, AmazonS3ServiceProtocol {
     func fetchAutomaticFilters() async -> AutomaticFilterListsResponse? {
         do {
-            let response = try await self.execute(type: AutomaticFilterListsResponse.self, baseURL: .appBaseURL, request: AutomaticFilterListsRequest())
+            let response = try await self.httpService.execute(type: AutomaticFilterListsResponse.self, baseURL: .appBaseURL, request: AutomaticFilterListsRequest())
             return response
         } catch (let error) {
             let nsError = error as NSError

@@ -20,6 +20,7 @@ class AutomaticFilterManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
+        self.amazonS3Service = mock_AmazonS3Service()
         self.testSubject = AutomaticFilterManager(persistanceManager: self.persistanceManager,
                                                   amazonS3Service: self.amazonS3Service)
         self.persistanceManager.resetCounters()
