@@ -82,54 +82,54 @@ struct AppHomeView: View {
                 //MARK: Smart Filters
                 Section {
                     ForEach($model.rules.indices, id: \.self) { index in
-                        Button { } label: {
-                            let rule = model.rules[index].item
-                            
-                            Toggle(isOn: $model.rules[index].state) {
-                                HStack {
-                                    Image(systemName: rule.icon)
-                                        .accentColor(rule.iconColor)
-                                        .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-                                        .font(rule.isDestructive ? Font.body.bold() : .body)
+                        let rule = model.rules[index].item
+                        let isDisabled = self.model.isAllUnknownFilteringOn && rule != .allUnknown
+                        
+                        Toggle(isOn: $model.rules[index].state) {
+                            HStack {
+                                Image(systemName: rule.icon)
+                                    .foregroundColor(rule.iconColor.opacity(isDisabled ? 0.5 : 1))
+                                    .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
+                                    .font(rule.isDestructive ? Font.body.bold() : .body)
+                                
+                                VStack (alignment: .leading, spacing: 0) {
+                                    let color = rule.isDestructive && model.rules[index].state ? Color.red : .primary
+                                    Text(rule.title)
+                                        .foregroundColor(color.opacity(isDisabled ? 0.5 : 1))
                                     
-                                    VStack (alignment: .leading, spacing: 0) {
-                                        Text(rule.title)
-                                            .accentColor(rule.isDestructive && model.rules[index].state ? Color.red : .primary)
+                                    if let subtitle = rule.subtitle,
+                                       let action = rule.action,
+                                       let actionTitle = rule.actionTitle {
                                         
-                                        if let subtitle = rule.subtitle,
-                                           let action = rule.action,
-                                           let actionTitle = rule.actionTitle {
+                                        HStack (alignment: .center, spacing: 4) {
+                                            Text(String(format: subtitle, self.model.shortSenderChoice))
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
                                             
-                                            HStack (alignment: .center, spacing: 4) {
-                                                Text(String(format: subtitle, self.model.shortSenderChoice))
-                                                    .font(.caption2)
-                                                    .accentColor(.secondary)
+                                            Menu {
+                                                Text(actionTitle)
                                                 
-                                                Menu {
-                                                    Text(actionTitle)
-                                                    
-                                                    Divider()
-                                                    
-                                                    ForEach(3...6, id: \.self) { index in
-                                                        Button {
-                                                            self.model.setSelectedChoice(for: rule, choice: index)
-                                                        } label: {
-                                                            Text("\(index)")
-                                                        }
+                                                Divider()
+                                                
+                                                ForEach(3...6, id: \.self) { index in
+                                                    Button {
+                                                        self.model.setSelectedChoice(for: rule, choice: index)
+                                                    } label: {
+                                                        Text("\(index)")
                                                     }
-                                                } label: {
-                                                    Text(action)
-                                                        .font(.caption2)
                                                 }
+                                            } label: {
+                                                Text(action)
+                                                    .font(.caption2)
                                             }
                                         }
                                     }
-                                    .padding(.leading, 8)
                                 }
-                            } // Toggle
-                            .tint(rule == .allUnknown && model.rules[index].state ? .red : .accentColor)
-                            .disabled(self.model.isAllUnknownFilteringOn && rule != .allUnknown)
-                        } // Button
+                                .padding(.leading, 8)
+                            }
+                        } // Toggle
+                        .tint(rule == .allUnknown && model.rules[index].state ? .red : .accentColor)
+                        .disabled(isDisabled)
                     } // ForEach
                     
                 } header: {
@@ -181,7 +181,7 @@ struct AppHomeView: View {
                 }
             }
         } // NavigationView
-        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationViewStyle(.stack)
         .modifier(EmbeddedFooterView {
             guard self.model.navigationScreen == nil else { return }
             self.model.sheetScreen = .about
@@ -357,7 +357,7 @@ extension AppHomeView {
                 }
             }
         }
-
+        
         func startMonitoring() {
             if self.appManager.networkSyncManager.networkStatus != .online,
                !self.userIgnoresNetworkStatus {
@@ -408,7 +408,7 @@ extension AppHomeView {
             self.appManager.persistanceManager.loadDebugData()
             self.refresh()
         }
-
+        
         private var didAddObservers = false
         private var pendingNotification: NotificationView.Notification?
         private var userIgnoresNetworkStatus: Bool {

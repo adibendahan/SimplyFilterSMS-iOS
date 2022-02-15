@@ -43,22 +43,22 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         action = self.runUserFilters(type: .allow, body: body, sender: sender)
         guard action != .allow else { return action }
         
-        // Priority #2 - Rules
-        action = self.runFilterRules(body: body, sender: sender)
-        guard !action.isFiltered else { return action }
-        
-        // Priority #3 - Deny
+        // Priority #2 - Deny
         action = self.runUserFilters(type: .deny, body: body, sender: sender)
         guard !action.isFiltered else { return action }
         
-        // Priority #4 - Deny Language
+        // Priority #3 - Deny Language
         action = self.runUserFilters(type: .denyLanguage, body: body, sender: sender)
         guard !action.isFiltered else { return action }
         
-        // Priority #5 - Automatic Filtering
+        // Priority #4 - Automatic Filtering
         action = self.runAutomaticFilters(body: body, sender: sender)
+        guard !action.isFiltered else { return action }
         
-        if action == .none {
+        // Priority #5 - Rules
+        action = self.runFilterRules(body: body, sender: sender)
+        
+        if !action.isFiltered {
             action = .allow
         }
         

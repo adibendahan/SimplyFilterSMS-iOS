@@ -19,9 +19,9 @@
 		69189C1527A97F7400C8FFA5 /* MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */; };
 		69189C1727A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C1627A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift */; };
 		69189C1827A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C1627A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift */; };
-		69189C1927A98A7000C8FFA5 /* MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */; };
 		691C370E27B400A500B3D061 /* NetworkSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691C370D27B400A500B3D061 /* NetworkSyncManager.swift */; };
 		691D57CA27BB2E0500DDA267 /* mock_HTTPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691D57C927BB2E0500DDA267 /* mock_HTTPService.swift */; };
+		691D57CB27BBE63300DDA267 /* MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */; };
 		69300B8627A9C4A700DF7982 /* TestFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69300B8527A9C4A700DF7982 /* TestFiltersView.swift */; };
 		6931BAEA27BB270E00636439 /* AmazonS3ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */; };
 		69398EBC27B0A613003C5123 /* FilterListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69398EBB27B0A613003C5123 /* FilterListRowView.swift */; };
@@ -305,6 +305,7 @@
 				69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */,
 				69AA2C58279D793600CEABE5 /* DefaultsManager.swift */,
 				6982FE8A27A6FBA000BF6AA4 /* AutomaticFilterManager.swift */,
+				69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */,
 				691C370D27B400A500B3D061 /* NetworkSyncManager.swift */,
 			);
 			path = Managers;
@@ -389,7 +390,6 @@
 				69DB7013277A1F0200245DBA /* Constsants.swift */,
 				695D5BC2278E01C00037C926 /* SharedExtensions.swift */,
 				69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */,
-				69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */,
 			);
 			path = "Shared with Extension";
 			sourceTree = "<group>";
@@ -664,7 +664,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				695D5BC4278E01C00037C926 /* SharedExtensions.swift in Sources */,
-				69189C1927A98A7000C8FFA5 /* MessageEvaluationManager.swift in Sources */,
+				691D57CB27BBE63300DDA267 /* MessageEvaluationManager.swift in Sources */,
 				69F4097027B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */,
 				69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */,
 				69DB7018277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */,
