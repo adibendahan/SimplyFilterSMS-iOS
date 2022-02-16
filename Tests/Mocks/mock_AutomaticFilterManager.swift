@@ -28,7 +28,7 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
     var setAutomaticRuleStateCounter = 0
     var selectedChoiceCounter = 0
     var setSelectedChoiceCounter = 0
-    var fetchAutomaticFilterListCounter = 0
+    var updateAutomaticFiltersIfNeededCounter = 0
     var forceUpdateAutomaticFiltersCounter = 0
     
     var isAutomaticFilteringOnClosure: (() -> (Bool))?
@@ -42,7 +42,7 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
     var setAutomaticRuleStateClosure: ((RuleType, Bool) -> ())?
     var selectedChoiceClosure: ((RuleType) -> (Int))?
     var setSelectedChoiceClosure: ((RuleType, Int) -> ())?
-    var fetchAutomaticFilterListClosure: (() -> (AutomaticFilterListsResponse?))?
+    var updateAutomaticFiltersIfNeededClosure: (() -> ())?
     var forceUpdateAutomaticFiltersClosure: (() -> ())?
     
     var isAutomaticFilteringOn: Bool {
@@ -120,9 +120,9 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         self.setSelectedChoiceClosure?(rule, choice)
     }
     
-    func fetchAutomaticFilterList() async -> AutomaticFilterListsResponse? {
-        self.fetchAutomaticFilterListCounter += 1
-        return self.fetchAutomaticFilterListClosure?()
+    func updateAutomaticFiltersIfNeeded() {
+        self.updateAutomaticFiltersIfNeededCounter += 1
+        self.updateAutomaticFiltersIfNeededClosure?()
     }
     
     func forceUpdateAutomaticFilters() async {
@@ -146,7 +146,7 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         self.setAutomaticRuleStateCounter = 0
         self.selectedChoiceCounter = 0
         self.setSelectedChoiceCounter = 0
-        self.fetchAutomaticFilterListCounter = 0
+        self.updateAutomaticFiltersIfNeededCounter = 0
         self.forceUpdateAutomaticFiltersCounter = 0
     }
 }

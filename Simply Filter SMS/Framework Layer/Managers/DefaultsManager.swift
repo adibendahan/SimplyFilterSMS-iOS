@@ -28,6 +28,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     private(set) var appAge: Date
     
     //MARK: - Session Defaults -
+    var sessionAge: Date?
     var lastOfflineNotificationDismiss: Date?
     
     //MARK: - Stored Defaults Removal -

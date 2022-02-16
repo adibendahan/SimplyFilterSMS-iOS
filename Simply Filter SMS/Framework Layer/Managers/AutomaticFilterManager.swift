@@ -13,10 +13,9 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     //MARK: - Initialization -
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
          amazonS3Service: AmazonS3ServiceProtocol = AppManager.shared.amazonS3Service) {
+        
         self.persistanceManager = persistanceManager
         self.amazonS3Service = amazonS3Service
-        
-        self.fetchFiltersIfNeeded()
     }
     
     
@@ -165,6 +164,16 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         persistanceManager.commitContext()
     }
     
+    func updateAutomaticFiltersIfNeeded() {
+        guard self.shouldFetchFilters else { return }
+        
+        Task(priority: .background) {
+            if let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() {
+                self.updateCacheIfNeeded(newFilterList: automaticFilterList)
+            }
+        }
+    }
+    
     func forceUpdateAutomaticFilters() async {
         guard let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() else { return }
         self.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
@@ -190,17 +199,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         guard let persistanceManager = self.persistanceManager,
               force || persistanceManager.isCacheStale(comparedTo: newFilterList) else { return }
         
-        NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
         persistanceManager.saveCache(with: newFilterList)
-    }
-    
-    private func fetchFiltersIfNeeded() {
-        guard self.shouldFetchFilters else { return }
-        
-        Task(priority: .background) {
-            if let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() {
-                self.updateCacheIfNeeded(newFilterList: automaticFilterList)
-            }
-        }
+        NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
     }
 }

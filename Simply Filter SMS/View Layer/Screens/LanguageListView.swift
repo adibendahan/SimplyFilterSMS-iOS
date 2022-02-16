@@ -8,6 +8,7 @@
 import SwiftUI
 import NaturalLanguage
 import CoreData
+import CryptoKit
 
 
 //MARK: - View -
@@ -62,12 +63,25 @@ struct LanguageListView: View {
                 if self.model.mode == .automaticBlocking &&
                     self.model.languages.count == 0 {
                     
-                    HStack {
-                        Image(systemName: "wifi.exclamationmark")
-                            .font(.system(size: 30))
-                            .foregroundColor(.red)
+                    if !self.model.isLoading {
+                        HStack (spacing: 12) {
+                            Image(systemName: "wifi.exclamationmark")
+                                .font(.system(size: 30))
+                                .foregroundColor(.red)
 
-                        Text(.init("autoFilter_empty"~))
+                            if self.model.isOnline {
+                                Text(.init("autoFilter_error"~))
+                                    .padding(.vertical, 16)
+                            }
+                            else {
+                                Text(.init("autoFilter_empty"~))
+                                    .padding(.vertical, 16)
+                            }
+                        }
+                    }
+                    else {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, alignment: .center)
                             .padding()
                     }
                 }
@@ -86,9 +100,7 @@ struct LanguageListView: View {
                            lastUpdate.daysBetween(date: Date()) > 0 {
                             
                             Button {
-                                Task {
-                                    await self.model.forceUpdateFilters()
-                                }
+                                self.model.forceUpdateFilters()
                             } label: {
                                 Text("autoFilter_forceUpdate"~)
                             }
@@ -145,6 +157,9 @@ extension LanguageListView {
         @Published private(set) var footer: String
         @Published private(set) var lastUpdate: Date?
         @Published private(set) var footerSecondLine: String?
+        @Published private(set) var autoFilterErrorText: String
+        @Published private(set) var isLoading: Bool
+        @Published private(set) var isOnline: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
         @Published var sheetScreen: Screen? = nil
         
@@ -152,11 +167,13 @@ extension LanguageListView {
              appManager: AppManagerProtocol = AppManager.shared) {
             
             let cacheAge = appManager.automaticFilterManager.automaticFiltersCacheAge ?? nil
+            let isOnline = appManager.networkSyncManager.networkStatus == .online
             
             self.mode = mode
             self.lastUpdate = cacheAge
             self.footer = ViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
-            
+            self.isLoading = false
+            self.isOnline = isOnline
             
             switch mode {
             case .automaticBlocking:
@@ -172,7 +189,41 @@ extension LanguageListView {
                                                 getter: appManager.automaticFilterManager.languageAutomaticState,
                                                 setter: appManager.automaticFilterManager.setLanguageAutmaticState) })
             
+
+            if isOnline {
+                self.autoFilterErrorText = "autoFilter_error"~
+            }
+            else {
+                self.autoFilterErrorText = "autoFilter_empty"~
+            }
+            
             super.init(appManager: appManager)
+            
+            if mode == .automaticBlocking {
+                
+                if !isOnline && self.languages.isEmpty {
+                    NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { [weak self] notification in
+                        guard let networkStatus = notification.object as? NetworkStatus else { return }
+                        
+                        if networkStatus == .online {
+                            appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                            self?.isLoading = true
+                        }
+                        else {
+                            self?.autoFilterErrorText = "autoFilter_empty"~
+                            self?.isLoading = false
+                        }
+                    }
+                }
+                
+                NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { [weak self] _ in
+                    withAnimation {
+                        guard let self = self else { return }
+                        self.refresh()
+                        self.isLoading = false
+                    }
+                }
+            }
         }
         
         private static func updatedFooter(for mode: LanguageListView.Mode, cacheAge: Date?) -> String {
@@ -216,9 +267,14 @@ extension LanguageListView {
                                                          filterCase: .caseInsensitive)
         }
         
-        func forceUpdateFilters() async {
-            await self.appManager.automaticFilterManager.forceUpdateAutomaticFilters()
-            self.refresh()
+        func forceUpdateFilters() {
+            Task (priority: .userInitiated) {
+                await self.appManager.automaticFilterManager.forceUpdateAutomaticFilters()
+                
+                DispatchQueue.main.async {
+                    self.refresh()
+                }
+            }
         }
     }
 }

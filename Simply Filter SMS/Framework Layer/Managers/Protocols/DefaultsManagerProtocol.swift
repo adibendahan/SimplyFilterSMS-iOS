@@ -18,6 +18,7 @@ protocol DefaultsManagerProtocol {
     
     // Session:
     var lastOfflineNotificationDismiss: Date? { get set }
+    var sessionAge: Date? { get set }
 }
 
 protocol PropertyListValue {}

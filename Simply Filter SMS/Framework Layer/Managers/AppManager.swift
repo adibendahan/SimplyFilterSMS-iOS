@@ -24,7 +24,8 @@ class AppManager: AppManagerProtocol {
         let persistanceManager = PersistanceManager(inMemory: inMemory)
         let defaultsManager = DefaultsManager()
         let messageEvaluationManager = MessageEvaluationManager()
-        let amazonS3Service = AmazonS3Service()
+        let networkSyncManager = NetworkSyncManager(persistanceManager: persistanceManager)
+        let amazonS3Service = AmazonS3Service(networkSyncManager: networkSyncManager)
         
         messageEvaluationManager.setLogger(AppManager.logger)
         
@@ -33,8 +34,14 @@ class AppManager: AppManagerProtocol {
         self.automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager,
                                                              amazonS3Service: amazonS3Service)
         self.messageEvaluationManager = messageEvaluationManager
-        self.networkSyncManager = NetworkSyncManager(persistanceManager: persistanceManager)
+        self.networkSyncManager = networkSyncManager
         self.amazonS3Service = amazonS3Service
+        
+        let isOnline = networkSyncManager.networkStatus == .online
+        
+        if !inMemory && isOnline {
+            automaticFilterManager.updateAutomaticFiltersIfNeeded()
+        }
     }
     
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel] {

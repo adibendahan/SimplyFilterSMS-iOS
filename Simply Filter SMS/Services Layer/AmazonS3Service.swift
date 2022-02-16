@@ -12,11 +12,18 @@ protocol AmazonS3ServiceProtocol: AnyObject {
 }
 
 class AmazonS3Service: HTTPServiceBase, AmazonS3ServiceProtocol {
+    var isFetching = false
+    
     func fetchAutomaticFilters() async -> AutomaticFilterListsResponse? {
+        guard self.networkSyncManager?.networkStatus == .online, !self.isFetching else { return nil }
+        
         do {
+            self.isFetching = true
             let response = try await self.httpService.execute(type: AutomaticFilterListsResponse.self, baseURL: .appBaseURL, request: AutomaticFilterListsRequest())
+            self.isFetching = false
             return response
         } catch (let error) {
+            self.isFetching = false
             let nsError = error as NSError
             AppManager.logger.error("ERROR! While fetching Automatic Filter List: \(nsError), \(nsError.userInfo)")
         }

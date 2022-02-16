@@ -32,12 +32,17 @@ class HTTPService: HTTPServiceProtocol {
 
 class HTTPServiceBase {
     var httpService: HTTPServiceProtocol
+    weak var networkSyncManager: NetworkSyncManagerProtocol?
     
-    init(httpService: HTTPServiceProtocol) {
+    init(httpService: HTTPServiceProtocol,
+         networkSyncManager: NetworkSyncManagerProtocol = AppManager.shared.networkSyncManager) {
+        
+        self.networkSyncManager = networkSyncManager
         self.httpService = httpService
     }
     
-    init() {
+    init(networkSyncManager: NetworkSyncManagerProtocol = AppManager.shared.networkSyncManager) {
+        self.networkSyncManager = networkSyncManager
         self.httpService = HTTPService()
     }
 }

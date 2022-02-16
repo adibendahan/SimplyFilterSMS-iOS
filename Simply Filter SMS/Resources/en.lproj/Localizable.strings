@@ -131,7 +131,8 @@
 "autoFilter_yourFilters" = "Your filters";
 "autoFilter_email_shortTitle" = "Email";
 "autoFilter_email" = "Block Email Senders";
-"autoFilter_empty" = "***Go online while the app is open at least once to download the Automatic Filtering lists.***";
+"autoFilter_empty" = "Go online while the app is open at least once to download the Automatic Filtering lists.";
+"autoFilter_error" = "It seems there is a problem downloading the Automatic Filtering lists. Please try again later.";
 
 // MARK: Test Filters
 "testFilters_title" = "Test Your Filters";

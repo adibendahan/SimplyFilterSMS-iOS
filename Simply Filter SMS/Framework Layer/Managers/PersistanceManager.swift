@@ -21,13 +21,17 @@ class PersistanceManager: PersistanceManagerProtocol {
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
+        else if let storeURL = self.container.persistentStoreDescriptions.first?.url?.deletingLastPathComponent(),
+                !FileManager.default.directoryExistsAtPath(storeURL.path) {
+            try? FileManager.default.createDirectory(at: storeURL, withIntermediateDirectories: true, attributes: nil)
+        }
         
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
             }
             
-            container.viewContext.mergePolicy = NSMergePolicy(merge: .mergeByPropertyStoreTrumpMergePolicyType)
+            container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
             container.viewContext.automaticallyMergesChangesFromParent = true
             storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
             storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
@@ -61,7 +65,14 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func reloadContainer() {
-        guard container.persistentStoreDescriptions.first!.url != URL(fileURLWithPath: "/dev/null") else { return }
+        guard let storeURL = self.container.persistentStoreDescriptions.first?.url, storeURL != URL(fileURLWithPath: "/dev/null") else { return }
+        
+        if let loadedStore = self.container.persistentStoreCoordinator.persistentStore(for: storeURL) {
+            self.commitContext()
+            self.container.viewContext.reset()
+            try? self.container.persistentStoreCoordinator.remove(loadedStore)
+        }
+        
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
         self.container = container
 
@@ -70,7 +81,7 @@ class PersistanceManager: PersistanceManagerProtocol {
                 AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
             }
             
-            container.viewContext.mergePolicy = NSMergePolicy(merge: .mergeByPropertyStoreTrumpMergePolicyType)
+            container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
             container.viewContext.automaticallyMergesChangesFromParent = true
             storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
             storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)

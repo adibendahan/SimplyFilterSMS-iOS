@@ -17,6 +17,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var isExpandedAddFilterSetCounter = 0
     var lastOfflineNotificationDismissGetCounter = 0
     var lastOfflineNotificationDismissSetCounter = 0
+    var sessionAgeGetCounter = 0
+    var sessionAgeSetCounter = 0
     var sessionCounterGetCounter = 0
     var sessionCounterSetCounter = 0
     var didPromptForReviewGetCounter = 0
@@ -27,6 +29,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var isAppFirstRunClosure: (() -> (Bool))?
     var isExpandedAddFilterClosure: (() -> (Bool))?
     var lastOfflineNotificationDismissClosure: (() -> (Date?))?
+    var sessionAgeClosure: (() -> (Date?))?
     var sessionCounterClosure: (() -> (Int))?
     var didPromptForReviewClosure: (() -> (Bool))?
     var appAgeClosure: (() -> (Date))?
@@ -58,6 +61,16 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
         set {
             self.lastOfflineNotificationDismissSetCounter += 1
+        }
+    }
+    
+    var sessionAge: Date? {
+        get {
+            self.sessionAgeGetCounter += 1
+            return self.sessionAgeClosure?() ?? Date()
+        }
+        set {
+            self.sessionAgeSetCounter += 1
         }
     }
     

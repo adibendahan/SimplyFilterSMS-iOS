@@ -21,5 +21,6 @@ protocol AutomaticFilterManagerProtocol {
     func setAutomaticRuleState(for rule: RuleType, value: Bool)
     func selectedChoice(for rule: RuleType) -> Int
     func setSelectedChoice(for rule: RuleType, choice: Int)
+    func updateAutomaticFiltersIfNeeded()
     func forceUpdateAutomaticFilters() async
 }

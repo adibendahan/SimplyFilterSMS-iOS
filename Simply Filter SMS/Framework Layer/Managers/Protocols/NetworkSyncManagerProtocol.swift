@@ -10,7 +10,7 @@ import CoreData
 import Network
 
 
-protocol NetworkSyncManagerProtocol {
+protocol NetworkSyncManagerProtocol: AnyObject {
     var syncStatus: SyncStatus { get }
     var networkStatus: NetworkStatus { get }
 }
