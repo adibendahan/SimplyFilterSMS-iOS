@@ -120,9 +120,9 @@ extension NLLanguage: Identifiable {
 extension ILMessageFilterAction {
     var isFiltered: Bool {
         switch self {
-        case .none, .allow:
+        case .none:
             return false
-        case .junk, .filter, .promotion, .transaction:
+        case .allow, .junk, .filter, .promotion, .transaction:
             return true
         @unknown default:
             return false
@@ -174,5 +174,24 @@ extension String {
     func index(at position: Int, from start: Index? = nil) -> Index? {
         let startingIndex = start ?? startIndex
         return index(startingIndex, offsetBy: position, limitedBy: endIndex)
+    }
+    
+    var containsLink: Bool {
+        guard let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }
+        let matches = detector.matches(in: self, options: [], range: NSRange(location: 0, length: self.utf16.count))
+        let filteredMatches = matches.filter({ $0.url?.isMailToScheme == false })
+        
+        return !filteredMatches.isEmpty
+    }
+    
+    var containsEmail: Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: self)
+    }
+}
+
+extension URL {
+    var isMailToScheme: Bool {
+        return self.scheme?.lowercased() == "mailto"
     }
 }

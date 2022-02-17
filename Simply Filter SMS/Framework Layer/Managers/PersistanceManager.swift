@@ -23,7 +23,10 @@ class PersistanceManager: PersistanceManagerProtocol {
         }
         else if let storeURL = self.container.persistentStoreDescriptions.first?.url?.deletingLastPathComponent(),
                 !FileManager.default.directoryExistsAtPath(storeURL.path) {
-            try? FileManager.default.createDirectory(at: storeURL, withIntermediateDirectories: true, attributes: nil)
+            
+            try? FileManager.default.createDirectory(at: storeURL,
+                                                     withIntermediateDirectories: true,
+                                                     attributes: nil)
         }
         
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in

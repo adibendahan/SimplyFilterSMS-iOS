@@ -41,7 +41,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         
         // Priority #1 - Allow
         action = self.runUserFilters(type: .allow, body: body, sender: sender)
-        guard action != .allow else { return action }
+        guard !action.isFiltered else { return action }
         
         // Priority #2 - Deny
         action = self.runUserFilters(type: .deny, body: body, sender: sender)
@@ -150,6 +150,8 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     }
                 }
                 
+                guard !action.isFiltered else { break }
+                
                 for allowedBody in languageResponse.allowBody {
                     if lowercasedBody.contains(allowedBody.lowercased()) {
                         action = .allow
@@ -157,12 +159,16 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     }
                 }
                 
+                guard !action.isFiltered else { break }
+                
                 for deniedSender in languageResponse.denySender {
                     if sender == deniedSender {
                         action = .junk
                         break
                     }
                 }
+                
+                guard !action.isFiltered else { break }
                 
                 for deniedBody in languageResponse.denyBody {
                     if lowercasedBody.contains(deniedBody.lowercased()) {
@@ -194,11 +200,11 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     break
                     
                 case .links:
-                    if let _ = body.range(of: "http", options: .caseInsensitive) {
+                    if body.containsLink {
                         action = .junk
                         break
                     }
-                    
+
                 case .numbersOnly:
                     if let _ = sender.rangeOfCharacter(from: NSCharacterSet.letters) {
                         action = .junk
@@ -212,7 +218,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     }
                     
                 case .email:
-                    if self.isEmail(sender) {
+                    if sender.containsEmail {
                         action = .junk
                         break
                     }
@@ -267,10 +273,5 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         }
         
         return isMataching
-    }
-    
-    private func isEmail(_ candidate: String) -> Bool {
-        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: candidate)
     }
 }
