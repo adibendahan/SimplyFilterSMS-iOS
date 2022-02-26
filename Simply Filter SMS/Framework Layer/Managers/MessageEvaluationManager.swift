@@ -124,6 +124,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     private func runAutomaticFilters(body: String, sender: String) -> ILMessageFilterAction {
         var action = ILMessageFilterAction.none
         let lowercasedBody = body.lowercased()
+        let lowercasedSender = sender.lowercased()
         let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
         let cacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
         
@@ -144,7 +145,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                let languageResponse = automaticFilterList.filterLists[langRawValue] {
                 
                 for allowedSender in languageResponse.allowSenders {
-                    if sender == allowedSender {
+                    if lowercasedSender == allowedSender.lowercased() {
                         action = .allow
                         break
                     }
@@ -162,7 +163,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 guard !action.isFiltered else { break }
                 
                 for deniedSender in languageResponse.denySender {
-                    if sender == deniedSender {
+                    if lowercasedSender == deniedSender.lowercased() {
                         action = .junk
                         break
                     }

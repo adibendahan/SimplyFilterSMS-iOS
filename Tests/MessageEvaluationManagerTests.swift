@@ -146,7 +146,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         self.flushPersistanceManager()
         
         let automaticFilterLists = AutomaticFilterListsResponse(filterLists: [
-            "he" : LanguageFilterListResponse(allowSenders: ["BituahLeumi", "Taasuka", "bit", "100"],
+            "he" : LanguageFilterListResponse(allowSenders: ["BituahLeumi", "Taasuka", "bit", "100", "ontopo"],
                                               allowBody: [],
                                               denySender: [],
                                               denyBody: ["הלוואה"])
@@ -185,7 +185,8 @@ class MessageEvaluationManagerTests: XCTestCase {
             MessageTestCase(sender: "054123465", body: "bla bla bit.ly/1224dsf4 bla", expectedAction: .junk),
             MessageTestCase(sender: "054123465", body: "bla bla adi@gmail.com bla", expectedAction: .allow),
             MessageTestCase(sender: "054123465", body: "bla bla 054-123456 bla", expectedAction: .allow),
-            MessageTestCase(sender: "Taasuka", body: "bla bla btl.gov.il/asdasdf", expectedAction: .allow)
+            MessageTestCase(sender: "Taasuka", body: "bla bla btl.gov.il/asdasdf", expectedAction: .allow),
+            MessageTestCase(sender: "Ontopo", body: "אנא אשרו הזמנתכם לשילה בקישור. tinyurl.com/ycq952f לחצו לצפייה", expectedAction: .allow)
         ]
         
         
