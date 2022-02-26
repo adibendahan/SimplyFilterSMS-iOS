@@ -12,13 +12,13 @@
 
 "lang_allBlocked" = "כל השפות הנתמכות כבר חסומות!";
 
-"lang_how" = "\nעיבוד וזיהוי השפה נעשה **לוקאלית** ע״י מנוע השפות של מערכת ההפעלה. הודעה תחסם רק אם **השפה הדומיננטית** של הטקסט נמצאת ברשימת השפות החסומות.";
+"lang_how" = "עיבוד וזיהוי השפה נעשה **לוקאלית** ע״י מנוע השפות של מערכת ההפעלה. הודעה תחסם רק אם **השפה הדומיננטית** של הטקסט נמצאת ברשימת השפות החסומות.";
 
 "filterList_filters" = "פילטרים";
 
-"filterList_allowed" = "טקסט מאופשר";
+"filterList_allowed" = "טקסטים מאופשרים";
 
-"filterList_denied" = "טקסט חסום";
+"filterList_denied" = "טקסטים חסומים";
 
 "filterList_menu_filterLanguage" = "חסימת שפה";
 
@@ -28,7 +28,7 @@
 
 "filterList_menu_debug" = "טעינת נתוני דיבאג";
 
-"filterList_deniedLanguage" = "שפה חסומה";
+"filterList_deniedLanguage" = "שפות חסומות";
 
 "filterList_deleteFiltersCount" = "מחיקה (%ld)";
 
@@ -36,11 +36,7 @@
 
 "addFilter_add" = "הוספה";
 
-"addFilter_addFilter" = "הוספת פילטר";
-
 "addFilter_text" = "הקלידו מילה";
-
-"addFilter_text_caption" = "סנן הודעות שמכילות (מינימום 3 תווים):";
 
 "addFilter_type" = "סוג פילטר";
 
@@ -78,7 +74,7 @@
 
 "enableExtension_ready" = "מוכנים?";
 
-"enableExtension_ready_desc" = "לחצו על כפתור ה# על מנת לעבור להגדרות מערכת ההפעלה או # אם כבר הגדרתם את 'Simply Filter SMS' כאפליקציה שמסננת הודעות.";
+"enableExtension_ready_desc" = "לחצו על כפתור ה***%@*** על מנת לעבור להגדרות מערכת ההפעלה או ***%@*** אם כבר הגדרתם את 'Simply Filter SMS' כאפליקציה שמסננת הודעות.";
 
 "enableExtension_ready_callToAction" = "הגדרות";
 
@@ -126,3 +122,128 @@
 
 "faq_answer_5" = "אין הבדל רב, ניתן לסנן כל מילה לכל תיקייה. התיקיות הינן קבועות ואינן ניתנות לשינוי. רק הודעות שמסוננות לתיקיית זבל יתקבלו ללא כל התראה.";
 
+"autoFilter_title" = "סינון אוטומטי";
+
+"autoFilter_lastUpdated" = "עודכן לארונה ב %@";
+
+"autoFilter_forceUpdate" = "עדכן עכשיו";
+
+"autoFilter_neverUpdated" = "לעולם לא";
+
+"autoFilter_ON" = "פועל";
+
+"autoFilter_OFF" = "כבוי";
+
+"autoFilter_allUnknown" = "אפשר הודעות מאנשי קשר בלבד";
+
+"autoFilter_links" = "חסום קישורים";
+
+"autoFilter_numbersOnly" = "אפשר מספרים בלבד";
+
+"autoFilter_shortSender" = "חסום שולחים קצרים";
+
+"autoFilter_shortSender_desc" = "לפחות %ld תווים";
+
+"autoFilter_shortSender_change" = "לחצו בכדי לשנות";
+
+"autoFilter_shortSender_action" = "בחרו הגבלה חדשה";
+
+"autoFilter_allUnknown_shortTitle" = "אנשי קשר בלבד (למעט טקסט מאופשר)";
+
+"autoFilter_links_shortTitle" = "קישורים";
+
+"autoFilter_numbersOnly_shortTitle" = "מספרים בלבד";
+
+"autoFilter_shortSender_shortTitle" = "שולחים קצרים";
+
+"general_active_count" = "%ld פעילים";
+
+"filterList_text" = "טקסט";
+
+"addFilter_addLanguage" = "הוספת שפה";
+
+"autoFilter_smartFilters" = "פילטרים חכמים";
+
+"autoFilter_yourFilters" = "הפילטרים שלך";
+
+"autoFilter_email" = "חסום הודעות דואר אלקטרוני";
+
+"autoFilter_email_shortTitle" = "דואר אלקטרוני";
+
+"testFilters_title" = "בחנו את הפילטרים שלכם";
+
+"testFilters_messageTitle" = "הודעה";
+
+"testFilters_senderTitle" = "שולח (אופציונאלי)";
+
+"testFilters_resultAllowed" = "זו הודעה תקינה! 🥳";
+
+"testFilters_resultJunk" = "זו הודעת זבל! 😈";
+
+"testFilters_resultPromotion" = "זו הודעה פרסומית! 📢";
+
+"testFilters_resultTransaction" = "זו הודעה על פעולה! 🧾";
+
+"testFilters_action" = "לחצו לבדיקה";
+
+"help_automaticFiltering_question" = "איך עובד הסינון האוטומטי של ההודעות?";
+
+"help_automaticFiltering" = "סינון אוטומטי משתמש ברשימה מוכנה של מילים על מנת לקבוע האם הודעה היא זבל או לא. הרשימה מתעדכנת עם מילים חדשות לעיתים. הפילטרים האחרים שלך עדיין פעילים גם כאשר סינון אוטומטי מופעל.";
+
+"help_deny" = "הוסיפו טקסטים שיגרמו להודעה להיחשב כזבל, אתם יכולים גם לבחור את התיקייה אליה ההודעה תסונן.";
+
+"help_allow" = "הוסיפו טקסטים שיגרמו להודעה להיחשב כהודעה רגילה. מומלץ להוסיף טקסטים יחודיים שמאפיינים אתכם כגון שם פרטי ושם משפחה. טקסטים שמופיעים ברשימה הזאת מקבלים את התיעדוף הכי גבוה כאשר הודעה מסוננת.";
+
+"addFilter_addFilter_allow" = "הוספת טקסט מאופשר";
+
+"addFilter_addFilter_deny" = "הוספת טקסט חסום";
+
+"addFilter_target_all" = "שולח + הודעה";
+
+"addFilter_target_sender" = "שולח";
+
+"addFilter_target_body" = "הודעה";
+
+"addFilter_more" = "הראה אפשרויות נוספות";
+
+"addFilter_less" = "הראה פחות";
+
+"addFilter_target_title" = "בחרו חלק בהודעה:";
+
+"addFilter_case_title" = "בחרו האם להתחשב באותיות רישיות:";
+
+"addFilter_case_sensitive" = "להתחשב";
+
+"addFilter_case_insensitive" = "לא להתחשב";
+
+"addFilter_match_title" = "בחרו סוג השוואה:";
+
+"addFilter_match_exact" = "מדויק";
+
+"addFilter_match_contains" = "מכיל";
+
+"filterList_options" = "אפשרויות";
+
+"addFilter_target_all_multiline" = "שולח +\nהודעה";
+
+"general_lang" = "שפה";
+
+"notification_offline_title" = "הסנכרון ל-iCloud מושהה";
+
+"notification_offline_subtitle" = "המכשיר אינו מחובר לרשת";
+
+"notification_sync_title" = "הסנכרון ל-iCloud פועל";
+
+"notification_sync_subtitle" = "המידע על המכשיר עודכן בהצלחה";
+
+"notification_hide" = "הסתר";
+
+"notification_automatic_title" = "סינון אוטומטי";
+
+"notification_automatic_subtitle" = "עודכנו פילטרים חדשים";
+
+"autoFilter_empty" = "הפעילו את האפליקציה כאשר אתם אונליין לפחות פעם אחת על מנת לעדכן את רשימת הפילטרים האוטומטים";
+
+"aboutView_review" = "דרגו אותנו בבקשה!";
+
+"autoFilter_error" = "נראה שיש בעיה בהורדת רשימת הפילטרים האוטומטים. אנא נסו שוב במועד מאוחר יותר.";

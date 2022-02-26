@@ -13,38 +13,55 @@
 "general_null" = "(null)";
 "general_copyright" = "© %ld Adi Ben-Dahan. All rights reserved.";
 "general_close" = "Close";
+"general_active_count" = "%ld active";
+"general_lang" = "Language";
 
 //MARK: Languages
 "lang_supported" = "Supported Languages";
 "lang_allBlocked" = "You've blocked all supported languages!";
-"lang_how" = "\nLanguage processing and identification is done **locally** by the NaturalLanguage engine of iOS. A message will be filtered only if the **dominant language** of the text is on the blocked languages list.";
+"lang_how" = "Language processing and identification is done **locally** by the Natural Language engine of iOS. A message will be filtered only if the **dominant language** of the text is on the blocked languages list.";
 
 
 //MARK: Filter List View
 "filterList_filters" = "Filters";
-"filterList_allowed" = "Allowed text";
-"filterList_denied" = "Blocked text";
-"filterList_menu_filterLanguage" = "Block a language";
+"filterList_allowed" = "Allowed Texts";
+"filterList_denied" = "Blocked Texts";
+"filterList_menu_filterLanguage" = "Block a Language";
 "filterList_menu_enableExtension" = "Help";
 "filterList_menu_about" = "About";
-"filterList_menu_debug" = "Load debug data";
-"filterList_deniedLanguage" = "Blocked Language";
+"filterList_menu_debug" = "Load Debug Data";
+"filterList_deniedLanguage" = "Blocked Languages";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
 "filterList_folder" = "Folder";
-
+"filterList_text" = "Text";
+"filterList_options" = "Options";
 
 //MARK: Add Filter View
 "addFilter_add" = "Add";
-"addFilter_addFilter" = "Add filter";
-"addFilter_text" = "Type a word";
-"addFilter_text_caption" = "Filter messages containing (at least 3 characters): ";
+"addFilter_addFilter_allow" = "Add Allowed Text";
+"addFilter_addFilter_deny" = "Add Blocked Text";
+"addFilter_addLanguage" = "Add Language";
+"addFilter_text" = "Type a word (at least 3 characters)";
 "addFilter_type" = "Type";
 "addFilter_type_caption" = "Select an action:";
 "addFilter_folder_caption" = "Select a destination folder:";
 "addFilter_folder_junk" = "Junk";
 "addFilter_folder_transactions" = "Transactions";
 "addFilter_folder_promotions" = "Promotions";
-"addFilter_duplicate" = "Duplicate filter";
+"addFilter_duplicate" = "Duplicate Filter";
+"addFilter_more" = "See more options";
+"addFilter_less" = "See less";
+"addFilter_target_all" = "Sender + Body";
+"addFilter_target_all_multiline" = "Sender +\nBody";
+"addFilter_target_sender" = "Sender";
+"addFilter_target_body" = "Body";
+"addFilter_target_title" = "Select a target:";
+"addFilter_case_title" = "Select case sensitivity:";
+"addFilter_case_sensitive" = "Case Sensitive";
+"addFilter_case_insensitive" = "Case Insensitive";
+"addFilter_match_title" = "Select matching type:";
+"addFilter_match_exact" = "Exact";
+"addFilter_match_contains" = "Contains";
 
 //MARK: Enable Extension View
 "enableExtension_step1" = "Step 1";
@@ -54,11 +71,11 @@
 "enableExtension_step3" = "Step 3";
 "enableExtension_step3_desc" = "Turn on 'Simply Filter SMS' under 'SMS Filtering'";
 "enableExtension_welcome" = "Welcome! 🥳";
-"enableExtension_welcome_desc" = "You need to enable Simply Filter SMS as your SMS filter app on iOS Settings.";
+"enableExtension_welcome_desc" = "You need to enable Simply Filter SMS as your SMS filter app in iOS Settings.";
 "enableExtension_welcome_callToAction" = "Show me how";
 "enableExtension_welcome_cancel" = "It's done";
 "enableExtension_ready" = "Ready?";
-"enableExtension_ready_desc" = "Tap on the # button to go to iOS Settings app or # if you already enabled 'Simply Filter SMS' as your SMS filter app.";
+"enableExtension_ready_desc" = "Tap on the ***%@*** button to go to iOS Settings app or ***%@*** if you already enabled 'Simply Filter SMS' as your SMS filter app.";
 "enableExtension_ready_callToAction" = "Settings";
 "enableExtension_ready_cancel" = "Cancel";
 "enableExtension_next" = "Next step";
@@ -71,11 +88,11 @@
 "aboutView_github" = "GitHub";
 "aboutView_sendMail" = "Email";
 "aboutView_appIconCredit" = "\n\n🙏🏼 Special thanks to the icon designer: [Vitali Levit](https://instagram.com/eighteeneleven_by_rkl).";
-
+"aboutView_review" = "Rate us please!";
 
 //MARK: Help View
 "faq_subtitle" = "Here's a list of frequently asked questions, if you can't find your answer here you can reach out by";
-"faq_question_0" = "How do I activate message filtering on iOS?";
+"faq_question_0" = "How do I activate message filtering in iOS?";
 "faq_answer_0" = "Tap to open the onboarding screen.";
 "faq_question_1" = "How does message filtering work?";
 "faq_answer_1" = "When you recive a text message from a number that is not in your contact list, Simply Filter SMS will filter it based on the following rules:\n\n• If a text message contains any words from the Allow list it will be delivered regularly.\n• If not, the message will be scanned for any denied words and in case any were found it will be delivered to the Junk folder.\n• If the text doesn't contain any denied words, it will be delivered regularly.\n";
@@ -86,5 +103,51 @@
 "faq_question_4" = "Where are the filtered messages?";
 "faq_answer_4" = "When a text message is tagged as junk it will still be available for reading on the Messages app under the Junk folder.";
 "faq_question_5" = "What's the difference between Junk/Transactions/Promotions folders?";
-"faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customable in any way. Only messages filtered to the Junk folder will be delivered silently.";
+"faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customizable in any way. Only messages filtered to the Junk folder will be delivered silently.";
+"help_automaticFiltering_question" = "How does Automatic Filtering work?";
+"help_automaticFiltering" = "Automatic Filtering is using a pre defined list of terms to determine if a message should be sent to the Junk folder or not. The lists are updated periodically with new terms. Your regular filters are still considered when Automatic Filtering is on.";
+"help_deny" = "Add texts that will cause a message to be marked as spam, you can also choose the specific folder you want the message to be stored in.";
+"help_allow" = "Add texts that will cause a message to be marked as valid. It is recommended to add uniqe identifying texts like your name here. Text appear on this list have the highest priority when filtering a message.";
 
+//MARK: Automatic Filtering
+"autoFilter_title" = "Automatic Filtering";
+"autoFilter_lastUpdated" = "Updated on %@";
+"autoFilter_forceUpdate" = "Force Update";
+"autoFilter_neverUpdated" = "Never";
+"autoFilter_ON" = "ON";
+"autoFilter_OFF" = "OFF";
+"autoFilter_allUnknown" = "Block All Unknown";
+"autoFilter_links" = "Block Links";
+"autoFilter_numbersOnly" = "Allow Numbers Only";
+"autoFilter_shortSender" = "Block Short Senders";
+"autoFilter_shortSender_desc" = "At least %ld characters";
+"autoFilter_shortSender_change" = "Tap to change";
+"autoFilter_shortSender_action" = "Select new limit";
+"autoFilter_allUnknown_shortTitle" = "All unknwon senders (except Allowed Text)";
+"autoFilter_links_shortTitle" = "Links";
+"autoFilter_numbersOnly_shortTitle" = "Numbers only";
+"autoFilter_shortSender_shortTitle" = "Short senders";
+"autoFilter_smartFilters" = "Smart filters";
+"autoFilter_yourFilters" = "Your filters";
+"autoFilter_email_shortTitle" = "Email";
+"autoFilter_email" = "Block Email Senders";
+"autoFilter_empty" = "Go online while the app is open at least once to download the Automatic Filtering lists.";
+"autoFilter_error" = "It seems there is a problem downloading the Automatic Filtering lists. Please try again later.";
+
+// MARK: Test Filters
+"testFilters_title" = "Test Your Filters";
+"testFilters_action" = "Test";
+"testFilters_messageTitle" = "Message";
+"testFilters_senderTitle" = "Sender (optional)";
+"testFilters_resultAllowed" = "It's Allowed! 🥳";
+"testFilters_resultJunk" = "It's Junk! 😈";
+"testFilters_resultPromotion" = "It's a Promotion! 📢";
+"testFilters_resultTransaction" = "It's a Transaction! 🧾";
+
+"notification_offline_title" = "iCloud sync is paused";
+"notification_offline_subtitle" = "Your device has no network";
+"notification_sync_title" = "iCloud sync is on";
+"notification_sync_subtitle" = "Local device data was updated";
+"notification_hide" = "Hide";
+"notification_automatic_title" = "Automatic Filtering";
+"notification_automatic_subtitle" = "Filters were updated";
