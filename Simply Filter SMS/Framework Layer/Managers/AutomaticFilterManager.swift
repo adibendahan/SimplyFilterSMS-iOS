@@ -196,10 +196,16 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     private func updateCacheIfNeeded(newFilterList: AutomaticFilterListsResponse, force: Bool = false) {
-        guard let persistanceManager = self.persistanceManager,
-              force || persistanceManager.isCacheStale(comparedTo: newFilterList) else { return }
+        guard let persistanceManager = self.persistanceManager else { return }
         
-        persistanceManager.saveCache(with: newFilterList)
-        NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
+        let isCacheStale = persistanceManager.isCacheStale(comparedTo: newFilterList)
+        
+        if force || isCacheStale {
+            persistanceManager.saveCache(with: newFilterList)
+        }
+
+        if isCacheStale {
+            NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
+        }
     }
 }

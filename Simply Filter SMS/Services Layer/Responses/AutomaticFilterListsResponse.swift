@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CryptoKit
 
 
 struct AutomaticFilterListsResponse: Codable {
@@ -35,10 +34,7 @@ struct LanguageFilterListResponse: Codable {
 
 extension AutomaticFilterListsResponse {
     var hashed: String {
-        guard let encodedData = try? JSONEncoder().encode(self) else { return "" }
-        let digest = SHA256.hash(data: encodedData)
-        let hexString = digest.compactMap { String(format: "%02X", $0) }.joined()
-        return hexString
+        return "" // Not in use
     }
     
     var encoded: String? {

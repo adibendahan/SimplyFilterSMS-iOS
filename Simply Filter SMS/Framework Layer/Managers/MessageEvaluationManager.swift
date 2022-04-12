@@ -16,6 +16,9 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     
     
     //MARK: - Initialization -
+    
+    /// Initializer for use in Extension/Tests context *creates a new container*
+    /// - Parameter container: NSPersistentCloudKitContainer
     init(inMemory: Bool = false) {
         let isReadOnly = inMemory ? false : true
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: isReadOnly)
@@ -34,6 +37,13 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         })
     }
     
+    
+    /// Initializer for use in application context
+    /// - Parameter container: NSPersistentCloudKitContainer
+    init(container: NSPersistentCloudKitContainer) {
+        self.persistentContainer = container
+        self.context = container.viewContext
+    }
     
     //MARK: Public API (MessageEvaluationManagerProtocol)
     func evaluateMessage(body: String, sender: String) -> ILMessageFilterAction {

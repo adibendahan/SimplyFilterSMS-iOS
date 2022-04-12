@@ -44,6 +44,8 @@ class PersistanceManager: PersistanceManagerProtocol {
     
     //MARK: - Public API (PersistanceManagerProtocol) -
     //MARK: Context
+    private(set) var container: NSPersistentCloudKitContainer
+    
     var context: NSManagedObjectContext {
         return self.container.viewContext
     }
@@ -281,7 +283,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
         guard let automaticFiltersCache = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.firstObject as? AutomaticFiltersCache else { return true }
         
-        let isStale = automaticFiltersCache.hashed != newFilterList.hashed
+        let isStale = automaticFiltersCache.filtersData != newFilterList.encoded
         
         if !isStale {
             automaticFiltersCache.age = Date()
@@ -306,8 +308,6 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     //MARK: - Private -
-    private var container: NSPersistentCloudKitContainer
-    
     private func fetch<T: NSManagedObject>(_ entity: T.Type,
                                            predicate: NSPredicate? = nil,
                                            sortDescriptor: [NSSortDescriptor]? = nil) -> NSMutableArray? {
