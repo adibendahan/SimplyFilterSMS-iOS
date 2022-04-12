@@ -92,20 +92,7 @@ struct LanguageListView: View {
                 }
             } footer: {
                 VStack {
-                    HStack {
-                        Text(.init(self.model.footer))
-                        
-                        if self.model.mode == .automaticBlocking,
-                           let lastUpdate = self.model.lastUpdate,
-                           lastUpdate.daysBetween(date: Date()) > 0 {
-                            
-                            Button {
-                                self.model.forceUpdateFilters()
-                            } label: {
-                                Text("autoFilter_forceUpdate"~)
-                            }
-                        }
-                    }
+                    Text(.init(self.model.footer))
                     .frame(maxWidth: .infinity, alignment: .center)
                     
                     if let helpText = self.model.footerSecondLine {
@@ -140,6 +127,9 @@ struct LanguageListView: View {
         .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
             sheetScreen.build()
         }
+        .if(self.model.shouldAllowRefresh) {
+            $0.refreshable(action: self.model.forceUpdateFilters)
+        }
     }
 }
 
@@ -160,6 +150,7 @@ extension LanguageListView {
         @Published private(set) var autoFilterErrorText: String
         @Published private(set) var isLoading: Bool
         @Published private(set) var isOnline: Bool
+        @Published private(set) var shouldAllowRefresh: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
         @Published var sheetScreen: Screen? = nil
         
@@ -195,6 +186,16 @@ extension LanguageListView {
             }
             else {
                 self.autoFilterErrorText = "autoFilter_empty"~
+            }
+            
+            if mode == .automaticBlocking,
+               let lastUpdate = cacheAge,
+               lastUpdate.daysBetween(date: Date()) > 0 {
+                
+                self.shouldAllowRefresh = true
+            }
+            else {
+                self.shouldAllowRefresh = false
             }
             
             super.init(appManager: appManager)
@@ -256,6 +257,16 @@ extension LanguageListView {
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: self.appManager.automaticFilterManager.languageAutomaticState,
                                                 setter: self.appManager.automaticFilterManager.setLanguageAutmaticState) })
+            
+            if self.mode == .automaticBlocking,
+               let lastUpdate = self.lastUpdate,
+               lastUpdate.daysBetween(date: Date()) > 0 {
+                
+                self.shouldAllowRefresh = true
+            }
+            else {
+                self.shouldAllowRefresh = false
+            }
         }
         
         func addFilter(language: NLLanguage) {
@@ -267,13 +278,12 @@ extension LanguageListView {
                                                          filterCase: .caseInsensitive)
         }
         
-        func forceUpdateFilters() {
-            Task (priority: .userInitiated) {
-                await self.appManager.automaticFilterManager.forceUpdateAutomaticFilters()
-                
-                DispatchQueue.main.async {
-                    self.refresh()
-                }
+        @Sendable func forceUpdateFilters() async {
+            try? await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
+            await self.appManager.automaticFilterManager.forceUpdateAutomaticFilters()
+            
+            DispatchQueue.main.async {
+                self.refresh()
             }
         }
     }

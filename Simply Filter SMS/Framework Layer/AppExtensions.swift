@@ -82,3 +82,13 @@ extension FileManager {
         return exists && isDirectory.boolValue
     }
 }
+
+extension View {
+    @ViewBuilder func `if`<Content: View>(_ conditional: Bool, @ViewBuilder _ content: (Self) -> Content) -> some View {
+        if conditional {
+            content(self)
+        } else {
+            self
+        }
+    }
+}

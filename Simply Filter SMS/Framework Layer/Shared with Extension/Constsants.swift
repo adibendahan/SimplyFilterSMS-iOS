@@ -34,6 +34,7 @@ extension URL {
     static let appReviewURL = URL(string: "https://apps.apple.com/app/id1603222959?action=write-review")!
     static let appTwitterURL = URL(string: "https://twitter.com/a_bd")!
     static let appGithubURL = URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!
+    static let iconDesignerURL = URL(string: "https://instagram.com/eighteeneleven_by_rkl")!
 }
 
 //MARK: Enums

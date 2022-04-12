@@ -23,7 +23,7 @@ class AppManager: AppManagerProtocol {
     init(inMemory: Bool = false) {
         let persistanceManager = PersistanceManager(inMemory: inMemory)
         let defaultsManager = DefaultsManager()
-        let messageEvaluationManager = MessageEvaluationManager()
+        let messageEvaluationManager = MessageEvaluationManager(container: persistanceManager.container)
         let networkSyncManager = NetworkSyncManager(persistanceManager: persistanceManager)
         let amazonS3Service = AmazonS3Service(networkSyncManager: networkSyncManager)
         
