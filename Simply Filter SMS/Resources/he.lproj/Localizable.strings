@@ -88,13 +88,13 @@
 
 "aboutView_aboutText" = "פותח על ידי עדי בן-דהן בתל אביב, ישראל 🇮🇱\n\nסינון ההודעות נעשה לוקאלית בלבד, לא נאסף שום מידע. אם נתקלת בבעיה בתפעול האפליקציה בבקשה דווח בדף הפרוייקט ב-GitHub.";
 
-"aboutView_twitter" = "Twitter";
+"aboutView_twitter" = "a_bd";
 
 "aboutView_github" = "GitHub";
 
 "aboutView_sendMail" = "אימייל";
 
-"aboutView_appIconCredit" = "\n\n🙏🏼 תודה מיוחדת למעצב האייקון: [ויטאלי לויט](https://instagram.com/eighteeneleven_by_rkl).";
+"aboutView_appIconCredit" = "ויטאלי לויט - מעצב האייקון";
 
 "faq_subtitle" = "הנה רשימה של שאלות שכיחות, אם אתם לא מוצאים את התשובה לשאלתכם צרו קשר בעזרת";
 

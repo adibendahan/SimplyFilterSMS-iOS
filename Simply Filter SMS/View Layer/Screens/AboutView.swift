@@ -44,8 +44,8 @@ struct AboutView: View {
             
             List {
                 Section {
-                    Text("\("aboutView_aboutText"~)\(Text(.init("aboutView_appIconCredit"~)))")
-                        .font(.footnote)
+                    Text("aboutView_aboutText"~)
+                        .font(.body)
                 } header: {
                     Text("aboutView_aboutSection"~)
                 }
@@ -71,9 +71,9 @@ struct AboutView: View {
                             HStack {
                                 Image(systemName: "envelope")
                                     .resizable()
-                                    .frame(width: 18, height: 18, alignment: .center)
+                                    .frame(width: 26, height: 18, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
-                                    .padding(.horizontal, 4)
+                                    .foregroundColor(.secondary)
 
                                 Text("aboutView_sendMail"~)
                                     .foregroundColor(.primary)
@@ -89,6 +89,19 @@ struct AboutView: View {
                                 .aspectRatio(contentMode: .fit)
 
                             Text("aboutView_twitter"~)
+                                .foregroundColor(.primary)
+                                .padding(.leading, 8)
+                        }
+                    }
+                    Link(destination: .iconDesignerURL) {
+                        HStack {
+                            Image("Instagram")
+                                .resizable()
+                                .frame(width: 22, height: 22, alignment: .center)
+                                .aspectRatio(contentMode: .fit)
+                                .padding(2)
+
+                            Text(.init("aboutView_appIconCredit"~))
                                 .foregroundColor(.primary)
                                 .padding(.leading, 8)
                         }
@@ -111,11 +124,10 @@ struct AboutView: View {
                     Text("aboutView_linksSection"~)
                 }
             }
-            .listStyle(.insetGrouped)
+            .listStyle(.grouped)
             .padding(.bottom, 40)
         } // VStack
         .background(Color.listBackgroundColor(for: colorScheme))
-        .modifier(EmbeddedFooterView())
         .modifier(EmbeddedCloseButton(onTap: { dismiss() }))
         .sheet(isPresented: $model.composeMailScreen) { } content: {
             MailView(isShowing: $model.composeMailScreen, result: $model.result)
