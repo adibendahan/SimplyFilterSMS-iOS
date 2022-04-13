@@ -143,6 +143,9 @@
 "testFilters_resultJunk" = "It's Junk! 😈";
 "testFilters_resultPromotion" = "It's a Promotion! 📢";
 "testFilters_resultTransaction" = "It's a Transaction! 🧾";
+"testFilters_resultReason_noMatch" = "No match";
+"testFilters_resultReason_unknownSender" = "Unknown sender";
+"testFilters_resultReason" = "Reason:";
 
 "notification_offline_title" = "iCloud sync is paused";
 "notification_offline_subtitle" = "Your device has no network";

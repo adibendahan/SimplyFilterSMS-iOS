@@ -42,18 +42,17 @@ struct TestFiltersView: View {
                             .foregroundColor(.secondary)
                         
                         TextEditor(text: $model.text)
-                            .frame(height: 100, alignment: .top)
+                            .frame(height: 80, alignment: .top)
                             .focused($focusedField, equals: .text)
                             .multilineTextAlignment(.leading)
                             .padding(.top, 15)
-                        
                     }
                     .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
                     
                     
                     FadingTextView(model: self.model.fadeTextModel)
-                        .font(.title3.bold())
-                        .frame(maxWidth: .infinity, maxHeight: 50, alignment: .center)
+                        .multilineTextAlignment(.leading)
+                        .frame(minHeight: 45, alignment: .top)
                     
                     Button {
                         self.model.evaluateMessage()
@@ -117,8 +116,14 @@ extension TestFiltersView {
         
         func evaluateMessage() {
             let sender = self.sender.isEmpty ? "1234567" : self.sender
-            let action = self.appManager.messageEvaluationManager.evaluateMessage(body: self.text, sender: sender)
-            self.fadeTextModel.text = action.testResult
+            let result = self.appManager.messageEvaluationManager.evaluateMessage(body: self.text, sender: sender)
+            
+            if let reason = result.reason {
+                self.fadeTextModel.text = "\(result.action.testResult)\n\("testFilters_resultReason"~) \(reason)"
+            }
+            else {
+                self.fadeTextModel.text = result.action.testResult
+            }
         }
     }
 }

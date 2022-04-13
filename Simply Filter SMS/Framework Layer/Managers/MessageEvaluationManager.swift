@@ -46,52 +46,53 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     }
     
     //MARK: Public API (MessageEvaluationManagerProtocol)
-    func evaluateMessage(body: String, sender: String) -> ILMessageFilterAction {
-        var action = ILMessageFilterAction.none
+    func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult {
+        
+        var result = MessageEvaluationResult(action: .none)
         
         // Priority #1 - Allow
-        action = self.runUserFilters(type: .allow, body: body, sender: sender)
-        guard !action.isFiltered else { return action }
+        result = self.runUserFilters(type: .allow, body: body, sender: sender)
+        guard !result.action.isFiltered else { return result }
         
         // Priority #2 - Deny
-        action = self.runUserFilters(type: .deny, body: body, sender: sender)
-        guard !action.isFiltered else { return action }
+        result = self.runUserFilters(type: .deny, body: body, sender: sender)
+        guard !result.action.isFiltered else { return result }
         
         // Priority #3 - Deny Language
-        action = self.runUserFilters(type: .denyLanguage, body: body, sender: sender)
-        guard !action.isFiltered else { return action }
+        result = self.runUserFilters(type: .denyLanguage, body: body, sender: sender)
+        guard !result.action.isFiltered else { return result }
         
         // Priority #4 - Automatic Filtering
-        action = self.runAutomaticFilters(body: body, sender: sender)
-        guard !action.isFiltered else { return action }
+        result = self.runAutomaticFilters(body: body, sender: sender)
+        guard !result.action.isFiltered else { return result }
         
         // Priority #5 - Rules
-        action = self.runFilterRules(body: body, sender: sender)
+        result = self.runFilterRules(body: body, sender: sender)
         
-        if !action.isFiltered {
-            action = .allow
+        if !result.action.isFiltered {
+            result = MessageEvaluationResult(action: .allow, reason: "testFilters_resultReason_noMatch"~)
         }
         
-        return action
+        return result
     }
     
     func setLogger(_ logger: Logger) {
         self.logger = logger
     }
-    
+
     //MARK: - Private  -
     private var logger: Logger?
     private var persistentContainer: NSPersistentContainer?
     private(set) var context: NSManagedObjectContext
         
-    private func runUserFilters(type: FilterType, body: String, sender: String) -> ILMessageFilterAction {
-        var action = ILMessageFilterAction.none
+    private func runUserFilters(type: FilterType, body: String, sender: String) -> MessageEvaluationResult {
+        var result = MessageEvaluationResult(action: .none)
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Filter")
         fetchRequest.predicate = NSPredicate(format: "type == %ld", type.rawValue)
         
         guard let filters = try? self.context.fetch(fetchRequest) else {
             self.logger?.error("ERROR! While loading filters on MessageEvaluationManager.runUserFilters")
-            return action
+            return result
         }
         
         switch type {
@@ -100,7 +101,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 guard let filter = filter as? Filter,
                       self.isMataching(filter: filter, body: body, sender: sender) else { continue }
                 
-                action = .allow
+                result = MessageEvaluationResult(action: .allow, reason: filter.text)
                 break
             }
             
@@ -109,7 +110,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 guard let filter = filter as? Filter,
                       self.isMataching(filter: filter, body: body, sender: sender) else { continue }
                 
-                action = filter.denyFolderType.action
+                result = MessageEvaluationResult(action: filter.denyFolderType.action, reason: filter.text)
                 break
             }
             
@@ -122,17 +123,17 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 if language != .undetermined,
                    NLLanguage.dominantLanguage(for: body) == language {
                     
-                    action = filter.denyFolderType.action
+                    result = MessageEvaluationResult(action: filter.denyFolderType.action, reason: language.localizedName)
                     break
                 }
             }
         }
         
-        return action
+        return result
     }
     
-    private func runAutomaticFilters(body: String, sender: String) -> ILMessageFilterAction {
-        var action = ILMessageFilterAction.none
+    private func runAutomaticFilters(body: String, sender: String) -> MessageEvaluationResult {
+        var result = MessageEvaluationResult(action: .none)
         let lowercasedBody = body.lowercased()
         let lowercasedSender = sender.lowercased()
         let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
@@ -144,100 +145,102 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
               let automaticFilterList = AutomaticFilterListsResponse(base64String: filtersData) else {
                   
                   self.logger?.error("ERROR! While loading cache on MessageEvaluationManager.runAutomaticFilters")
-                  return action
+                  return result
               }
         
         for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords {
-            guard action == .none else { break }
+            guard result.action == .none else { break }
             
             if automaticFiltersLanguageRecord.isActive,
                let langRawValue = automaticFiltersLanguageRecord.lang,
                let languageResponse = automaticFilterList.filterLists[langRawValue] {
                 
+                let lang = NLLanguage(rawValue: langRawValue)
+                
                 for allowedSender in languageResponse.allowSenders {
                     if lowercasedSender == allowedSender.lowercased() {
-                        action = .allow
+                        result = MessageEvaluationResult(action: .allow, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
                         break
                     }
                 }
                 
-                guard !action.isFiltered else { break }
+                guard !result.action.isFiltered else { break }
                 
                 for allowedBody in languageResponse.allowBody {
                     if lowercasedBody.contains(allowedBody.lowercased()) {
-                        action = .allow
+                        result = MessageEvaluationResult(action: .allow, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
                         break
                     }
                 }
                 
-                guard !action.isFiltered else { break }
+                guard !result.action.isFiltered else { break }
                 
                 for deniedSender in languageResponse.denySender {
                     if lowercasedSender == deniedSender.lowercased() {
-                        action = .junk
+                        result = MessageEvaluationResult(action: .junk, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
                         break
                     }
                 }
                 
-                guard !action.isFiltered else { break }
+                guard !result.action.isFiltered else { break }
                 
                 for deniedBody in languageResponse.denyBody {
                     if lowercasedBody.contains(deniedBody.lowercased()) {
-                        action = .junk
+                        result = MessageEvaluationResult(action: .junk, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
                         break
                     }
                 }
             }
         }
         
-        return action
+        return result
     }
     
-    private func runFilterRules(body: String, sender: String) -> ILMessageFilterAction {
-        var action = ILMessageFilterAction.none
+    private func runFilterRules(body: String, sender: String) -> MessageEvaluationResult {
+        var result = MessageEvaluationResult(action: .none)
         let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
         ruleRequest.predicate = NSPredicate(format: "isActive == %@", NSNumber(value: true))
         
         guard let activeAutomaticFiltersRuleRecords = try? self.context.fetch(ruleRequest) else {
             self.logger?.error("ERROR! While loading rules on MessageEvaluationManager.runFilterRules")
-            return action
+            return result
         }
-        
+
         for activeRule in activeAutomaticFiltersRuleRecords {
             if let ruleType = activeRule.ruleType {
                 switch ruleType {
                 case .allUnknown:
-                    action = .junk
+                    result = MessageEvaluationResult(action: .junk, reason: "testFilters_resultReason_unknownSender"~)
                     break
                     
                 case .links:
                     if body.containsLink {
-                        action = .junk
+                        result = MessageEvaluationResult(action: .junk, reason: "autoFilter_links_shortTitle"~)
                         break
                     }
 
                 case .numbersOnly:
                     if let _ = sender.rangeOfCharacter(from: NSCharacterSet.letters) {
-                        action = .junk
+                        result = MessageEvaluationResult(action: .junk, reason: "autoFilter_numbersOnly_shortTitle"~)
                         break
                     }
                     
                 case .shortSender:
                     if sender.count <= Int(activeRule.selectedChoice) {
-                        action = .junk
+                        result = MessageEvaluationResult(action: .junk, reason: "autoFilter_shortSender_shortTitle"~)
                         break
                     }
                     
                 case .email:
                     if sender.containsEmail {
-                        action = .junk
+                        result = MessageEvaluationResult(action: .junk, reason: "autoFilter_email_shortTitle"~)
                         break
                     }
                 }
             }
         }
         
-        return action
+        return result
     }
     
     private func isMataching(filter: Filter, body: String, sender: String) -> Bool {

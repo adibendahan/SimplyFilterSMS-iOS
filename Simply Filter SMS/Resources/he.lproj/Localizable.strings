@@ -247,3 +247,9 @@
 "aboutView_review" = "דרגו אותנו בבקשה!";
 
 "autoFilter_error" = "נראה שיש בעיה בהורדת רשימת הפילטרים האוטומטים. אנא נסו שוב במועד מאוחר יותר.";
+
+"testFilters_resultReason_noMatch" = "לא נמצאה התאמה";
+
+"testFilters_resultReason_unknownSender" = "שולח לא מוכר";
+
+"testFilters_resultReason" = "סיבה:";
