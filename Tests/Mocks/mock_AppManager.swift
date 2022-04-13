@@ -22,7 +22,22 @@ class mock_AppManager: AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol = mock_AmazonS3Service()
     
     var getFrequentlyAskedQuestionsCounter = 0
+    var onAppLaunchCounter = 0
+    var onNewUserSessionCounter = 0
+    
     var getFrequentlyAskedQuestionsClosuer: (() -> ([QuestionView.ViewModel]))?
+    var onAppLaunchClosuer: (() -> ())?
+    var onNewUserSessionClosuer: (() -> ())?
+    
+    func onAppLaunch() {
+        self.onAppLaunchCounter += 1
+        self.onAppLaunchClosuer?()
+    }
+    
+    func onNewUserSession() {
+        self.onNewUserSessionCounter += 1
+        self.onNewUserSessionClosuer?()
+    }
     
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel] {
         return self.getFrequentlyAskedQuestionsClosuer?() ?? []

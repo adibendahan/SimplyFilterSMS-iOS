@@ -36,11 +36,27 @@ class AppManager: AppManagerProtocol {
         self.messageEvaluationManager = messageEvaluationManager
         self.networkSyncManager = networkSyncManager
         self.amazonS3Service = amazonS3Service
+    }
+    
+    func onAppLaunch() {
+        let _ = self.defaultsManager.appAge // make sure it's initialized
         
-        let isOnline = networkSyncManager.networkStatus == .online
+        if let sessionAge = self.defaultsManager.sessionAge {
+            if sessionAge.daysBetween(date: Date()) != 0 {
+                self.onNewUserSession()
+            }
+        }
+        else {
+            self.onNewUserSession()
+        }
+    }
+    
+    func onNewUserSession() {
+        self.defaultsManager.sessionCounter += 1
+        self.defaultsManager.sessionAge = Date()
         
-        if !inMemory && isOnline {
-            automaticFilterManager.updateAutomaticFiltersIfNeeded()
+        if self.networkSyncManager.networkStatus == .online {
+            self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
         }
     }
     
