@@ -258,7 +258,7 @@ enum FilterCase: Int64, CaseIterable, Identifiable {
 }
 
 enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
-    case allUnknown=0, links, numbersOnly, shortSender, email
+    case allUnknown=0, links, numbersOnly, shortSender, email, emojis
     
     var id: Self { self }
     
@@ -274,6 +274,8 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return "autoFilter_shortSender"~
         case .email:
             return "autoFilter_email"~
+        case .emojis:
+            return "autoFilter_emojis"~
         }
     }
     
@@ -289,6 +291,8 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return 3
         case .numbersOnly:
             return 4
+        case .emojis:
+            return 5
         }
     }
     
@@ -304,7 +308,13 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return "textformat.123"
         case .email:
             return "envelope.fill"
+        case .emojis:
+            return "🙄"
         }
+    }
+    
+    var isTextIcon: Bool {
+        return self == .emojis
     }
     
     var iconColor: Color {
@@ -319,6 +329,8 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return .orange
         case .email:
             return .brown
+        case .emojis:
+            return .orange
         }
     }
     
@@ -361,6 +373,8 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return "autoFilter_shortSender_shortTitle"~
         case .email:
             return "autoFilter_email_shortTitle"~
+        case .emojis:
+            return "autoFilter_emojis_shortTitle"~
         }
     }
 

@@ -168,6 +168,11 @@ class MessageEvaluationManagerTests: XCTestCase {
         numbersOnly.ruleType = .numbersOnly
         numbersOnly.selectedChoice = 0
         
+        let noEmojis = AutomaticFiltersRule(context: self.testSubject.context)
+        noEmojis.isActive = true
+        noEmojis.ruleType = .emojis
+        noEmojis.selectedChoice = 0
+        
         let automaticFiltersLanguageHE = AutomaticFiltersLanguage(context: self.testSubject.context)
         automaticFiltersLanguageHE.lang = NLLanguage.hebrew.rawValue
         automaticFiltersLanguageHE.isActive = true
@@ -186,11 +191,31 @@ class MessageEvaluationManagerTests: XCTestCase {
             MessageTestCase(sender: "054123465", body: "bla bla adi@gmail.com bla", expectedAction: .allow),
             MessageTestCase(sender: "054123465", body: "bla bla 054-123456 bla", expectedAction: .allow),
             MessageTestCase(sender: "Taasuka", body: "bla bla btl.gov.il/asdasdf", expectedAction: .allow),
-            MessageTestCase(sender: "Ontopo", body: "אנא אשרו הזמנתכם לשילה בקישור. tinyurl.com/ycq952f לחצו לצפייה", expectedAction: .allow)
+            MessageTestCase(sender: "Ontopo", body: "אנא אשרו הזמנתכם לשילה בקישור. tinyurl.com/ycq952f לחצו לצפייה", expectedAction: .allow),
+            MessageTestCase(sender: "054123465", body: "bla bla 💀 bla", expectedAction: .junk)
         ]
         
         
         for testCase in testCases {
+            
+            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).action
+            
+            XCTAssert(testCase.expectedAction == actualAction,
+                      "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.debugName) != \(actualAction.debugName).")
+        }
+        
+        numbersOnly.isActive = false
+        noEmojis.isActive = false
+        
+        try? self.testSubject.context.save()
+        
+        let secondTestCases: [MessageTestCase] = [
+            MessageTestCase(sender: "not a number", body: "אנא אשרו הזמנתכם לשילה בקישור.לחצו לצפייה", expectedAction: .allow),
+            MessageTestCase(sender: "054123465", body: "bla bla 💀 bla", expectedAction: .allow)
+        ]
+        
+        
+        for testCase in secondTestCases {
             
             let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).action
             

@@ -253,3 +253,7 @@
 "testFilters_resultReason_unknownSender" = "שולח לא מוכר";
 
 "testFilters_resultReason" = "סיבה:";
+
+"autoFilter_emojis" = "חסום אימוג'ים";
+
+"autoFilter_emojis_shortTitle" = "אימוג'ים";

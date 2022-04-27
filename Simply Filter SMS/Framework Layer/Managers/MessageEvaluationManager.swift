@@ -236,6 +236,12 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                         result = MessageEvaluationResult(action: .junk, reason: "autoFilter_email_shortTitle"~)
                         break
                     }
+                    
+                case .emojis:
+                    if body.containsEmoji {
+                        result = MessageEvaluationResult(action: .junk, reason: "autoFilter_emojis_shortTitle"~)
+                        break
+                    }
                 }
             }
         }
