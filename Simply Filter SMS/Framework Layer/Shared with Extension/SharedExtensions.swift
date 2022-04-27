@@ -201,12 +201,12 @@ extension URL {
 extension Character {
 
     var isSimpleEmoji: Bool {
-        guard let firstScalar = unicodeScalars.first else { return false }
+        guard let firstScalar = self.unicodeScalars.first else { return false }
         return firstScalar.properties.isEmoji && firstScalar.value > 0x238C
     }
 
     var isCombinedIntoEmoji: Bool {
-        return unicodeScalars.count > 1 && unicodeScalars.first?.properties.isEmoji ?? false
+        return self.unicodeScalars.count > 1 && self.unicodeScalars.first?.properties.isEmoji ?? false
     }
 
     var isEmoji: Bool { self.isSimpleEmoji || self.isCombinedIntoEmoji }
