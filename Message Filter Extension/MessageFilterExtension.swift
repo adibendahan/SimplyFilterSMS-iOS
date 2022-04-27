@@ -39,6 +39,6 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
         let body = queryRequest.messageBody ?? ""
         let sender = queryRequest.sender ?? ""
         
-        return self.extensionManager.evaluateMessage(body: body, sender: sender)
+        return self.extensionManager.evaluateMessage(body: body, sender: sender).action
     }
 }

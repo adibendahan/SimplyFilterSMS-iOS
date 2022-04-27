@@ -188,10 +188,26 @@ extension String {
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: self)
     }
+    
+    var containsEmoji: Bool { self.contains { $0.isEmoji } }
 }
 
 extension URL {
     var isMailToScheme: Bool {
         return self.scheme?.lowercased() == "mailto"
     }
+}
+
+extension Character {
+
+    var isSimpleEmoji: Bool {
+        guard let firstScalar = self.unicodeScalars.first else { return false }
+        return firstScalar.properties.isEmoji && firstScalar.value > 0x238C
+    }
+
+    var isCombinedIntoEmoji: Bool {
+        return self.unicodeScalars.count > 1 && self.unicodeScalars.first?.properties.isEmoji ?? false
+    }
+
+    var isEmoji: Bool { self.isSimpleEmoji || self.isCombinedIntoEmoji }
 }

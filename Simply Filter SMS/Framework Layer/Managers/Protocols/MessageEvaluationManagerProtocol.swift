@@ -10,9 +10,15 @@ import CoreData
 import IdentityLookup
 import OSLog
 
+
+struct MessageEvaluationResult {
+    var action: ILMessageFilterAction
+    var reason: String?
+}
+
 protocol MessageEvaluationManagerProtocol {
     var context: NSManagedObjectContext { get }
     
-    func evaluateMessage(body: String, sender: String) -> ILMessageFilterAction
+    func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult
     func setLogger(_ logger: Logger)
 }

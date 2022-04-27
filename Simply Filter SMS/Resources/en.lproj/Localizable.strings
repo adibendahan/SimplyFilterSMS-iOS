@@ -133,6 +133,8 @@
 "autoFilter_email" = "Block Email Senders";
 "autoFilter_empty" = "Go online while the app is open at least once to download the Automatic Filtering lists.";
 "autoFilter_error" = "It seems there is a problem downloading the Automatic Filtering lists. Please try again later.";
+"autoFilter_emojis" = "Block Emojis";
+"autoFilter_emojis_shortTitle" = "Emojis";
 
 // MARK: Test Filters
 "testFilters_title" = "Test Your Filters";
@@ -143,6 +145,9 @@
 "testFilters_resultJunk" = "It's Junk! 😈";
 "testFilters_resultPromotion" = "It's a Promotion! 📢";
 "testFilters_resultTransaction" = "It's a Transaction! 🧾";
+"testFilters_resultReason_noMatch" = "No match";
+"testFilters_resultReason_unknownSender" = "Unknown sender";
+"testFilters_resultReason" = "Reason:";
 
 "notification_offline_title" = "iCloud sync is paused";
 "notification_offline_subtitle" = "Your device has no network";

@@ -87,10 +87,18 @@ struct AppHomeView: View {
                         
                         Toggle(isOn: $model.rules[index].state) {
                             HStack {
-                                Image(systemName: rule.icon)
-                                    .foregroundColor(rule.iconColor.opacity(isDisabled ? 0.5 : 1))
-                                    .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-                                    .font(rule.isDestructive ? Font.body.bold() : .body)
+                                if rule.isTextIcon {
+                                    Text(rule.icon)
+                                        .opacity(isDisabled ? 0.5 : 1)
+                                        .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
+                                        .font(.system(size: 16))
+                                }
+                                else {
+                                    Image(systemName: rule.icon)
+                                        .foregroundColor(rule.iconColor.opacity(isDisabled ? 0.5 : 1))
+                                        .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
+                                        .font(rule.isDestructive ? Font.body.bold() : .body)
+                                }
                                 
                                 VStack (alignment: .leading, spacing: 0) {
                                     let color = rule.isDestructive && model.rules[index].state ? Color.red : .primary
