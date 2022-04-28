@@ -51,7 +51,7 @@ struct HelpView: View {
                             }
                         }
                         
-                        Link(destination: URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!) {
+                        Link(destination: .appGithubURL) {
                             HStack {
                                 Spacer()
                                 
@@ -66,6 +66,7 @@ struct HelpView: View {
                                 Spacer()
                             }
                         }
+                        
                     }
                     
                     Spacer(minLength: 24)
