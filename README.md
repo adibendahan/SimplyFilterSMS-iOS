@@ -31,9 +31,12 @@ Requires iOS 15 or later.
 ## Screenshots
 
 <p float="left">
-<img width="250" src="Simply%20Filter%20SMS/Resources/Screenshots/English/iPhone%2013%20Pro%20Max/Filters.png">
-<img width="250" src="Simply%20Filter%20SMS/Resources/Screenshots/English/iPhone%2013%20Pro%20Max/Add%20filter.png">
-<img width="250" src="Simply%20Filter%20SMS/Resources/Screenshots/English/iPhone%2013%20Pro%20Max/Block%20a%20language.png">
+<img width="250" src="_screenshots/01.png">
+<img width="250" src="_screenshots/02.png">
+<img width="250" src="_screenshots/03.png">
+<img width="250" src="_screenshots/04.png">
+<img width="250" src="_screenshots/05.png">
+<img width="250" src="_screenshots/06.png">
 </p>
 
 ## Features
@@ -43,7 +46,6 @@ Simply Filter SMS does not collect any data whatsoever. Nothing leaves your devi
 
 ### Free
 Everything is free of charge. Forever. No in-app purchases, no nonsense. 
-However, any help towards covering the yearly Apple Developer fee is greatly appreciated.
 
 ### Fast
 The app is primarily a host of rules that integrates with iOS in a native, lightweight way, making the filtering efficient and fast.
@@ -62,15 +64,15 @@ Simply Filter SMS is written in Apple's latest programming paradigm Swift UI.
 #### ***How does message filtering work?***
 
 When you recive a text message from a number that is not in your contact list, Simply Filter SMS will filter it based on the following rules:
-* If a text message contains any words from the Allow list it will be delivered regularly.
-* If not, the message will be scanned for any denied words and in case any were found it will be delivered to the Junk folder.
-* If the text doesn't contain any denied words, it will be delivered regularly.
+* If a text message contains text matching to a filter from the 'Allowed Texts' it will be delivered regularly.
+* If not, the message will be scanned for matching filters from the 'Blocked Texts' and in case any were found it will be delivered to the Junk folder.
+*  If the text doesn't contain any text that matches the filters, it will be delivered regularly.
 
 #### ***Are my messages exposed to the app developer?***
 
 No. Simply Filter SMS does not collect any information whatsoever, all message processing is done locally on your device without any logging.
 
-#### ***What about iMessages and messages from my contats?***
+#### ***What about iMessages and messages from my contacts?***
 
 Apple does not expose those messages to any developer, they remain completely private.
 
@@ -81,6 +83,10 @@ When a text message is tagged as junk it will still be available for reading on 
 #### ***What's the difference between Junk/Transactions/Promotions folders?***
 
 Not much, you can filter any word to any folder. Those folders are not customable in any way. Only messages filtered to the Junk folder will be delivered silently.
+
+#### ***How does Automatic Filtering work?***
+
+Automatic Filtering is using a pre defined list of terms to determine if a message should be sent to the Junk folder or not. The lists are updated periodically with new terms. Your regular filters are still considered when Automatic Filtering is on.
 
 ## Building from source
 
