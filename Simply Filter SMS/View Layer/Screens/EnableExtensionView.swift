@@ -58,11 +58,13 @@ struct EnableExtensionView: View {
 
     private func nextTab() {
         withAnimation {
-            if self.model.tabSelection < self.model.welcomeTagOffset + self.model.screenshotPages.count {
+            let lastPage = self.model.welcomeTagOffset + self.model.screenshotPages.count
+            
+            if self.model.tabSelection < lastPage {
                 self.model.tabSelection = self.model.tabSelection + 1
             }
             else {
-                self.model.tabSelection = self.model.welcomeTagOffset + self.model.screenshotPages.count
+                self.model.tabSelection = lastPage
             }
         }
     }
