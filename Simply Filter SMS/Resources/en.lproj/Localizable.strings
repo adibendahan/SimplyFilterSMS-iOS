@@ -19,7 +19,7 @@
 //MARK: Languages
 "lang_supported" = "Supported Languages";
 "lang_allBlocked" = "You've blocked all supported languages!";
-"lang_how" = "Language processing and identification is done **locally** by the Natural Language engine of iOS. A message will be filtered only if the **dominant language** of the text is on the blocked languages list.";
+"lang_how" = "Language processing and identification is done **locally** by the Natural Language engine of iOS. A message will be filtered only if the **dominant language** of the text is on the 'Blocked Languages' list.";
 
 
 //MARK: Filter List View
@@ -95,10 +95,10 @@
 "faq_question_0" = "How do I activate message filtering in iOS?";
 "faq_answer_0" = "Tap to open the onboarding screen.";
 "faq_question_1" = "How does message filtering work?";
-"faq_answer_1" = "When you recive a text message from a number that is not in your contact list, Simply Filter SMS will filter it based on the following rules:\n\n• If a text message contains any words from the Allow list it will be delivered regularly.\n• If not, the message will be scanned for any denied words and in case any were found it will be delivered to the Junk folder.\n• If the text doesn't contain any denied words, it will be delivered regularly.\n";
+"faq_answer_1" = "When you recive a text message from a number that is not in your contact list, Simply Filter SMS will filter it based on the following rules:\n\n• If a text message contains text matching to a filter from the 'Allowed Texts' it will be delivered regularly.\n• If not, the message will be scanned for matching filters from the 'Blocked Texts' and in case any were found it will be delivered to the Junk folder.\n• If the text doesn't contain any text that matches the filters, it will be delivered regularly.\n";
 "faq_question_2" = "Are my messages exposed to the app developer?";
 "faq_answer_2" = "No. Simply Filter SMS does not collect any information whatsoever, all message processing is done locally on your device without any logging.";
-"faq_question_3" = "What about iMessages and messages from my contats?";
+"faq_question_3" = "What about iMessages and messages from my contacts?";
 "faq_answer_3" = "Apple does not expose those messages to any developer, they remain completely private.";
 "faq_question_4" = "Where are the filtered messages?";
 "faq_answer_4" = "When a text message is tagged as junk it will still be available for reading on the Messages app under the Junk folder.";

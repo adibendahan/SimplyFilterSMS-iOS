@@ -31,7 +31,6 @@ struct LanguageListView: View {
             .modifier(EmbeddedFooterView(onTap: { self.model.sheetScreen = .about }))
         case .automaticBlocking:
             self.makeBody()
-                .modifier(EmbeddedFooterView(onTap: { self.model.sheetScreen = .about }))
         }
     }
     
