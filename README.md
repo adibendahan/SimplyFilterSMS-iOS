@@ -19,6 +19,14 @@
 
 Simply Filter SMS is a private, free and fast way to filter out spam text messages on iPhones.
 
+## Download
+
+### iOS
+
+[![](https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg)](https://apps.apple.com/us/app/simply-filter-sms/id1603222959)
+
+Requires iOS 15 or later.
+
 
 ## Features
 
@@ -51,14 +59,6 @@ The source code is published under the permissive MIT license.
 ### Modern
 Simply Filter SMS is written in Apple's latest programming paradigm SwiftUI.
 
-## Download
-
-### iOS
-
-[![](https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg)](https://apps.apple.com/us/app/simply-filter-sms/id1603222959)
-
-Requires iOS 15 or later.
-
 
 ## Screenshots
 
@@ -70,6 +70,7 @@ Requires iOS 15 or later.
 <img width="250" src="_screenshots/05.png">
 <img width="250" src="_screenshots/06.png">
 </p>
+
 
 ## FAQ
 
@@ -100,13 +101,16 @@ Not much, you can filter any word to any folder. Those folders are not customabl
 
 Automatic Filtering is using a pre defined list of terms to determine if a message should be sent to the Junk folder or not. The lists are updated periodically with new terms. Your regular filters are still considered when Automatic Filtering is on.
 
+
 ## Building from source
 
 Just open the project on Xcode and build (Tested on Xcode 13.2.1). 
 
+
 ## Contributing
 
 Simply Filter SMS is open for pull-request business.
+
 
 ## License
 
