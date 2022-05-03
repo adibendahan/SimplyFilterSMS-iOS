@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://github.com/adibendahan/SimplyFilterSMS-iOS"><img src="_screenshots/logo.png" width="180" height="180"></a>
+  <a href="https://github.com/adibendahan/SimplyFilterSMS-iOS"><img src="_screenshots/logo.png" width="256" height="256"></a>
   <h1>Simply Filter SMS</h1>
   <p>
     <b>Simply filter text messages from unknown senders using keywords</b>
