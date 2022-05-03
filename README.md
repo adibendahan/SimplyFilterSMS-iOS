@@ -17,7 +17,39 @@
 [![MIT License][license-shield]][license-url]
 
 
-Simply Filter SMS is a private, free and fast way to filter out spam text messages.
+Simply Filter SMS is a private, free and fast way to filter out spam text messages on iPhones.
+
+
+## Features
+
+### User Defined Filters
+You can add your filters to allow/deny any specific text.
+
+### Automatic Filtering
+Enabling it will Filter messages using our pre defined list of terms (English/Hebrew only).
+
+### Smart Filters
+Easily filter messages from short/email/all unknown senders, containing links/emojis or allow sender with phone numbers only. 
+
+### Block Languages
+Easily block all text messages in any specific language(s). 
+
+## Why choose Simply Filter SMS?
+
+### Private
+Simply Filter SMS does not collect any data whatsoever. Nothing leaves your device.
+
+### Free
+Everything is free of charge. Forever. No in-app purchases, no nonsense. 
+
+### Fast
+The app is primarily a host of rules that integrates with iOS in a native, lightweight way, making the filtering efficient and fast.
+
+### Open Source
+The source code is published under the permissive MIT license.
+
+### Modern
+Simply Filter SMS is written in Apple's latest programming paradigm SwiftUI.
 
 ## Download
 
@@ -38,26 +70,6 @@ Requires iOS 15 or later.
 <img width="250" src="_screenshots/05.png">
 <img width="250" src="_screenshots/06.png">
 </p>
-
-## Features
-
-### Private
-Simply Filter SMS does not collect any data whatsoever. Nothing leaves your device.
-
-### Free
-Everything is free of charge. Forever. No in-app purchases, no nonsense. 
-
-### Fast
-The app is primarily a host of rules that integrates with iOS in a native, lightweight way, making the filtering efficient and fast.
-
-### Simple
-It's as easy as downloading the app, enabling it in iOS Messages settings ⭢ Message filtering and adding filters.
-
-### Open Source
-The source code is published under the permissive MIT license.
-
-### Modern
-Simply Filter SMS is written in Apple's latest programming paradigm Swift UI.
 
 ## FAQ
 
