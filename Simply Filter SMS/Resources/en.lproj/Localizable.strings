@@ -13,7 +13,7 @@
 "general_null" = "(null)";
 "general_copyright" = "© %ld Adi Ben-Dahan. All rights reserved.";
 "general_close" = "Close";
-"general_active_count" = "%ld active";
+"general_active_count" = "%ld filters";
 "general_lang" = "Language";
 
 //MARK: Languages
