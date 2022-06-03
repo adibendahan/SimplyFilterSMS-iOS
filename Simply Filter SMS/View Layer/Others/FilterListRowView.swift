@@ -26,7 +26,12 @@ struct FilterListRowView: View {
                 Text(localizedName)
             }
             else {
-                Text(self.model.filter.text ?? "general_null"~)
+                EditableText(
+                    $model.text,
+                    minimumCharacters: 3,
+                    onCommit: {
+                        self.model.updateFilter(filterText: self.model.text)
+                    })
             }
             
             Spacer()
@@ -137,36 +142,42 @@ extension FilterListRowView {
     
     class ViewModel: BaseViewModel, ObservableObject {
         @Published private(set) var filter: Filter
-        @Published private(set) var onUpdate: (() -> ())?
+        @Published private(set) var onUpdate: ((Bool) -> ())?
+        @Published var text: String
         
         init(filter: Filter,
-             onUpdate: (() -> ())? = nil,
+             onUpdate: ((Bool) -> ())? = nil,
              appManager: AppManagerProtocol = AppManager.shared) {
             
             self.filter = filter
             self.onUpdate = onUpdate
-            
+            self.text = filter.text ?? "general_null"~
             super.init(appManager: appManager)
         }
         
         func updateFilter(denyFolder: DenyFolderType) {
             self.appManager.persistanceManager.updateFilter(self.filter, denyFolder: denyFolder)
-            self.onUpdate?()
+            self.onUpdate?(true)
         }
         
         func updateFilter(filterMatching: FilterMatching) {
             self.appManager.persistanceManager.updateFilter(self.filter, filterMatching: filterMatching)
-            self.onUpdate?()
+            self.onUpdate?(true)
         }
         
         func updateFilter(filterCase: FilterCase) {
             self.appManager.persistanceManager.updateFilter(self.filter, filterCase: filterCase)
-            self.onUpdate?()
+            self.onUpdate?(true)
         }
         
         func updateFilter(filterTarget: FilterTarget) {
             self.appManager.persistanceManager.updateFilter(self.filter, filterTarget: filterTarget)
-            self.onUpdate?()
+            self.onUpdate?(true)
+        }
+        
+        func updateFilter(filterText: String) {
+            self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
+            self.onUpdate?(false)
         }
     }
 }

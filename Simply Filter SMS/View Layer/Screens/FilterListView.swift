@@ -28,9 +28,17 @@ struct FilterListView: View {
         List (selection: $model.selectedFilters) {
             Section {
                 ForEach(self.model.filters, id: \.self) { filter in
-                    FilterListRowView(model: FilterListRowView.ViewModel(filter: filter,
-                                                                         onUpdate: { withAnimation { self.model.refresh() } },
-                                                                         appManager: self.model.appManager))
+                    FilterListRowView(model: FilterListRowView.ViewModel(
+                        filter: filter,
+                        onUpdate: { animated in
+                            if animated {
+                                withAnimation { self.model.refresh() }
+                            }
+                            else {
+                                self.model.refresh()
+                            }
+                        },
+                        appManager: self.model.appManager))
                     .environment(\.editMode, $model.editMode)
                 }
                 .onDelete {

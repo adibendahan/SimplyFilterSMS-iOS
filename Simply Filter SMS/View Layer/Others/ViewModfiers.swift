@@ -15,6 +15,7 @@ struct EmbeddedFooterView: ViewModifier {
         ZStack (alignment: .bottom) {
             content
             FooterView(onTap: onTap)
+                .ignoresSafeArea(.keyboard, edges: .all)
         }
     }
 }
