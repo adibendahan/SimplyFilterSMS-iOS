@@ -39,7 +39,16 @@ struct EditableText: View {
             TextField(
                 "",
                 text: $newValue,
-                onEditingChanged: { _ in },
+                onEditingChanged: { isEditing in
+                    if !isEditing {
+                        if self.minimumCharacters > 0 && newValue.count >= self.minimumCharacters {
+                            self.text = newValue
+                            self.isFocused = false
+                        }
+                        self.editProcessGoing = false
+                        onCommit?()
+                    }
+                },
                 onCommit: {
                     if self.minimumCharacters > 0 && newValue.count >= self.minimumCharacters {
                         self.text = newValue

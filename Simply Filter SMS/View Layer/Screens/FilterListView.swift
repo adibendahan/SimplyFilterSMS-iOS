@@ -80,6 +80,9 @@ struct FilterListView: View {
             }
         })
         .environment(\.editMode, $model.editMode)
+        .onTapGesture {
+            hideKeyboard()
+        }
     }
     
     @ViewBuilder
