@@ -49,6 +49,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     func updateFilter(_ filter: Filter, filterMatching: FilterMatching)
     func updateFilter(_ filter: Filter, filterCase: FilterCase)
     func updateFilter(_ filter: Filter, filterTarget: FilterTarget)
+    func updateFilter(_ filter: Filter, filterText: String)
     func saveCache(with filterList: AutomaticFilterListsResponse)
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool
 

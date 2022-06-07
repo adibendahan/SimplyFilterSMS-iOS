@@ -94,7 +94,7 @@
 
 "aboutView_sendMail" = "אימייל";
 
-"aboutView_appIconCredit" = "ויטאלי לויט - מעצב האייקון";
+"aboutView_appIconCredit" = "ויטאלי לויט";
 
 "faq_subtitle" = "הנה רשימה של שאלות שכיחות, אם אתם לא מוצאים את התשובה לשאלתכם צרו קשר בעזרת";
 
@@ -156,7 +156,7 @@
 
 "autoFilter_shortSender_shortTitle" = "שולחים קצרים";
 
-"general_active_count" = "%ld פעילים";
+"general_active_count" = "%ld פילטרים";
 
 "filterList_text" = "טקסט";
 
@@ -257,3 +257,7 @@
 "autoFilter_emojis" = "חסום אימוג'ים";
 
 "autoFilter_emojis_shortTitle" = "אימוג'ים";
+
+"aboutView_appIconCreditTitle" = "מעצב האייקון";
+
+"notification_clipboard_subtitle" = "הועתק ללוח";

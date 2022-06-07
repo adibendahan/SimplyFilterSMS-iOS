@@ -7,7 +7,7 @@
 
 import SwiftUI
 import MessageUI
-
+import UniformTypeIdentifiers
 
 //MARK: - View -
 struct AboutView: View {
@@ -58,29 +58,47 @@ struct AboutView: View {
                                 .frame(width: 26, height: 26, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
 
-                            Text("aboutView_github"~)
-                                .foregroundColor(.primary)
-                                .padding(.leading, 8)
-
-                        }
-                    }
-                    if MFMailComposeViewController.canSendMail() {
-                        Button {
-                            self.model.composeMailScreen = true
-                        } label: {
-                            HStack {
-                                Image(systemName: "envelope")
-                                    .resizable()
-                                    .frame(width: 26, height: 18, alignment: .center)
-                                    .aspectRatio(contentMode: .fit)
-                                    .foregroundColor(.secondary)
-
-                                Text("aboutView_sendMail"~)
+                            VStack(alignment: .leading) {
+                                Text("aboutView_github"~)
                                     .foregroundColor(.primary)
                                     .padding(.leading, 8)
+                                
+                                Text(URL.appGithubURL.lastPathComponent)
+                                    .foregroundColor(.secondary)
+                                    .padding(.leading, 8)
+                                    .font(.caption)
                             }
                         }
                     }
+
+                    Button {
+                        if MFMailComposeViewController.canSendMail() {
+                            self.model.composeMailScreen = true
+                        }
+                        else {
+                            self.model.setClipboard(content: kSupportEmail, displayName: "aboutView_sendMail"~)
+                        }
+                    } label: {
+                        HStack {
+                            Image(systemName: "envelope")
+                                .resizable()
+                                .frame(width: 26, height: 18, alignment: .center)
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundColor(.secondary)
+                            
+                            VStack(alignment: .leading) {
+                                Text("aboutView_sendMail"~)
+                                    .foregroundColor(.primary)
+                                    .padding(.leading, 8)
+                                
+                                Text(kSupportEmail)
+                                    .foregroundColor(.secondary)
+                                    .padding(.leading, 8)
+                                    .font(.caption)
+                            }
+                        }
+                    }
+                    
                     Link(destination: .appTwitterURL) {
                         HStack {
                             Image("Twitter")
@@ -88,11 +106,19 @@ struct AboutView: View {
                                 .frame(width: 26, height: 21, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
 
-                            Text("aboutView_twitter"~)
-                                .foregroundColor(.primary)
-                                .padding(.leading, 8)
+                            VStack(alignment: .leading) {
+                                Text("Twitter")
+                                    .foregroundColor(.primary)
+                                    .padding(.leading, 8)
+                                
+                                Text("aboutView_twitter"~)
+                                    .foregroundColor(.secondary)
+                                    .padding(.leading, 8)
+                                    .font(.caption)
+                            }
                         }
                     }
+                    
                     Link(destination: .iconDesignerURL) {
                         HStack {
                             Image("Instagram")
@@ -101,11 +127,19 @@ struct AboutView: View {
                                 .aspectRatio(contentMode: .fit)
                                 .padding(2)
 
-                            Text(.init("aboutView_appIconCredit"~))
-                                .foregroundColor(.primary)
-                                .padding(.leading, 8)
+                            VStack(alignment: .leading) {
+                                Text("aboutView_appIconCredit"~)
+                                    .foregroundColor(.primary)
+                                    .padding(.leading, 8)
+                                
+                                Text("aboutView_appIconCreditTitle"~)
+                                    .foregroundColor(.secondary)
+                                    .padding(.leading, 8)
+                                    .font(.caption)
+                            }
                         }
                     }
+                    
                     Link(destination: .appReviewURL) {
                         HStack {
                             Image(systemName: "suit.heart.fill")
@@ -126,9 +160,11 @@ struct AboutView: View {
             }
             .listStyle(.grouped)
             .padding(.bottom, 40)
+
         } // VStack
         .background(Color.listBackgroundColor(for: colorScheme))
         .modifier(EmbeddedCloseButton(onTap: { dismiss() }))
+        .modifier(EmbeddedNotificationView(model: self.model.notification))
         .sheet(isPresented: $model.composeMailScreen) { } content: {
             MailView(isShowing: $model.composeMailScreen, result: $model.result)
                             .edgesIgnoringSafeArea(.bottom)
@@ -143,6 +179,49 @@ extension AboutView {
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var composeMailScreen: Bool = false
         @Published var result: Result<MFMailComposeResult, Error>?
+        @Published var notification: NotificationView.ViewModel
+        
+        override init(appManager: AppManagerProtocol = AppManager.shared) {
+            self.notification = NotificationView.ViewModel(notification: .onClipboardSet(""))
+            
+            super.init(appManager: appManager)
+            
+            NotificationCenter.default.addObserver(forName: .onClipboardSet, object: nil, queue: .main) { not in
+                guard let notficationObject = not.object as? NotificationView.Notification else { return }
+                self.showNotification(notficationObject)
+                
+            }
+        }
+        
+        func setClipboard(content: String, displayName: String) {
+            UIPasteboard.general.setValue(content,
+                        forPasteboardType: UTType.plainText.identifier)
+            NotificationCenter.default.post(name: .onClipboardSet, object: NotificationView.Notification.onClipboardSet(displayName))
+        }
+        
+        func showNotification(_ notification: NotificationView.Notification) {
+            
+            if !self.notification.show {
+                self.notification.setNotification(notification)
+                
+                withAnimation {
+                    self.notification.show = true
+                }
+            }
+            else {
+                withAnimation {
+                    self.notification.setNotification(notification)
+                }
+            }
+            
+            if let timeout = notification.timeout {
+                DispatchQueue.main.asyncAfter(deadline: .now() + timeout) {
+                    withAnimation {
+                        self.notification.show = false
+                    }
+                }
+            }
+        }
     }
 }
 

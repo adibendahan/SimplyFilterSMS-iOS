@@ -253,17 +253,42 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func updateFilter(_ filter: Filter, filterMatching: FilterMatching) {
+        guard !self.isDuplicateFilter(text: filter.text ?? "",
+                                      filterTarget: filter.filterTarget,
+                                      filterMatching: filterMatching,
+                                      filterCase: filter.filterCase) else { return }
+        
         filter.filterMatching = filterMatching
         self.commitContext()
     }
     
     func updateFilter(_ filter: Filter, filterCase: FilterCase) {
+        guard !self.isDuplicateFilter(text: filter.text ?? "",
+                                      filterTarget: filter.filterTarget,
+                                      filterMatching: filter.filterMatching,
+                                      filterCase: filterCase) else { return }
+        
         filter.filterCase = filterCase
         self.commitContext()
     }
     
     func updateFilter(_ filter: Filter, filterTarget: FilterTarget) {
+        guard !self.isDuplicateFilter(text: filter.text ?? "",
+                                      filterTarget: filterTarget,
+                                      filterMatching: filter.filterMatching,
+                                      filterCase: filter.filterCase) else { return }
+        
         filter.filterTarget = filterTarget
+        self.commitContext()
+    }
+    
+    func updateFilter(_ filter: Filter, filterText: String) {
+        guard !self.isDuplicateFilter(text: filterText,
+                                      filterTarget: filter.filterTarget,
+                                      filterMatching: filter.filterMatching,
+                                      filterCase: filter.filterCase) else { return }
+        
+        filter.text = filterText
         self.commitContext()
     }
     

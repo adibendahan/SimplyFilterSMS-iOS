@@ -132,7 +132,7 @@ struct NotificationView: View {
     }
     
     enum Notification {
-        case offline, cloudSyncOperationComplete, automaticFiltersUpdated
+        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String)
         
         var icon: String {
             switch self {
@@ -142,6 +142,8 @@ struct NotificationView: View {
                 return "icloud.and.arrow.down.fill"
             case .automaticFiltersUpdated:
                 return "bolt.shield.fill"
+            case .onClipboardSet:
+                return "doc.on.clipboard.fill"
             }
         }
         
@@ -153,6 +155,8 @@ struct NotificationView: View {
                 return .green.opacity(0.6)
             case .automaticFiltersUpdated:
                 return .indigo.opacity(0.6)
+            case .onClipboardSet:
+                return .accentColor.opacity(0.6)
             }
         }
         
@@ -165,6 +169,8 @@ struct NotificationView: View {
                 return "notification_sync_title"~
             case .automaticFiltersUpdated:
                 return "notification_automatic_title"~
+            case .onClipboardSet(let contentDescription):
+                return contentDescription
             }
         }
         
@@ -176,6 +182,8 @@ struct NotificationView: View {
                 return "notification_sync_subtitle"~
             case .automaticFiltersUpdated:
                 return "notification_automatic_subtitle"~
+            case .onClipboardSet:
+                return "notification_clipboard_subtitle"~
             }
         }
         
@@ -189,6 +197,8 @@ struct NotificationView: View {
                 return nil
             case .cloudSyncOperationComplete, .automaticFiltersUpdated:
                 return 6
+            case .onClipboardSet:
+                return 3
             }
         }
     }

@@ -22,6 +22,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var updateFilterCaseCounter = 0
     var updateFilterTargetCounter = 0
     var updateFilterMatchingCounter = 0
+    var updateFilterTextCounter = 0
     var fetchFilterRecordsCounter = 0
     var saveCacheCounter = 0
     var isCacheStaleCounter = 0
@@ -47,6 +48,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var updateFilterCaseClosure: ((Filter, FilterCase) -> ())?
     var updateFilterTargetClosure: ((Filter, FilterTarget) -> ())?
     var updateFilterMatchingClosure: ((Filter, FilterMatching) -> ())?
+    var updateFilterTextClosure: ((Filter, String) -> ())?
     var fetchFilterRecordsClosure: (() -> ([Filter]))?
     var saveCacheClosure: ((AutomaticFilterListsResponse) -> ())?
     var isCacheStaleClosure: ((AutomaticFilterListsResponse) -> (Bool))?
@@ -128,6 +130,11 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.updateFilterTargetClosure?(filter, filterTarget)
     }
 
+    func updateFilter(_ filter: Filter, filterText: String) {
+        self.updateFilterTextCounter += 1
+        self.updateFilterTextClosure?(filter, filterText)
+    }
+    
     func fetchFilterRecords() -> [Filter] {
         self.fetchFilterRecordsCounter += 1
         return self.fetchFilterRecordsClosure?() ?? []

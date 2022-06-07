@@ -13,7 +13,7 @@
 "general_null" = "(null)";
 "general_copyright" = "© %ld Adi Ben-Dahan. All rights reserved.";
 "general_close" = "Close";
-"general_active_count" = "%ld active";
+"general_active_count" = "%ld filters";
 "general_lang" = "Language";
 
 //MARK: Languages
@@ -87,7 +87,8 @@
 "aboutView_twitter" = "a_bd";
 "aboutView_github" = "GitHub";
 "aboutView_sendMail" = "Email";
-"aboutView_appIconCredit" = "Vitali Levit - Icon Designer";
+"aboutView_appIconCredit" = "Vitali Levit";
+"aboutView_appIconCreditTitle" = "Icon Designer";
 "aboutView_review" = "Rate us please!";
 
 //MARK: Help View
@@ -156,3 +157,4 @@
 "notification_hide" = "Hide";
 "notification_automatic_title" = "Automatic Filtering";
 "notification_automatic_subtitle" = "Filters were updated";
+"notification_clipboard_subtitle" = "Copied to clipboard";
