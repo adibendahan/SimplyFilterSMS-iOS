@@ -126,8 +126,8 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     func languageAutomaticState(for language: NLLanguage) -> Bool {
-        guard let persistanceManager = self.persistanceManager,
-              let automaticFiltersLanguage = persistanceManager.fetchAutomaticFiltersLanguageRecord(for: language) else { return false }
+        guard let persistanceManager = self.persistanceManager else { return false }
+        let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         return automaticFiltersLanguage.isActive
     }
     

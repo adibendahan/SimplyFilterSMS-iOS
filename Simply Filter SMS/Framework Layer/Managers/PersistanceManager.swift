@@ -100,8 +100,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         var filters: [Filter] = []
         
         self.fetch(Filter.self, sortDescriptor: sortDescriptor)?.forEach {
-            guard let filter = $0 as? Filter else { return }
-            filters.append(filter)
+            filters.append($0)
         }
         
         return filters
@@ -113,8 +112,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         var filters: [Filter] = []
         
         self.fetch(Filter.self, predicate: predicate, sortDescriptor: sortDescriptor)?.forEach {
-            guard let filter = $0 as? Filter else { return }
-            filters.append(filter)
+            filters.append($0)
         }
         
         return filters
@@ -125,8 +123,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         var automaticFiltersLanguageRecords: [AutomaticFiltersLanguage] = []
         
         self.fetch(AutomaticFiltersLanguage.self, sortDescriptor: sortDescriptor)?.forEach {
-            guard let automaticFiltersLanguageRecord = $0 as? AutomaticFiltersLanguage else { return }
-            automaticFiltersLanguageRecords.append(automaticFiltersLanguageRecord)
+            automaticFiltersLanguageRecords.append($0)
         }
         
         return automaticFiltersLanguageRecords
@@ -137,8 +134,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         var automaticFiltersRuleRecords: [AutomaticFiltersRule] = []
         
         self.fetch(AutomaticFiltersRule.self, sortDescriptor: sortDescriptor)?.forEach {
-            guard let automaticFiltersRuleRecord = $0 as? AutomaticFiltersRule else { return }
-            automaticFiltersRuleRecords.append(automaticFiltersRuleRecord)
+            automaticFiltersRuleRecords.append($0)
         }
         
         return automaticFiltersRuleRecords
@@ -149,8 +145,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         var automaticFiltersCacheRecords: [AutomaticFiltersCache] = []
         
         self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.forEach {
-            guard let automaticFiltersCacheRecord = $0 as? AutomaticFiltersCache else { return }
-            automaticFiltersCacheRecords.append(automaticFiltersCacheRecord)
+            automaticFiltersCacheRecords.append($0)
         }
         
         return automaticFiltersCacheRecords
@@ -159,14 +154,14 @@ class PersistanceManager: PersistanceManagerProtocol {
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage? {
         let predicate = NSPredicate(format: "lang == %@", language.rawValue)
         guard let automaticFiltersLanguageRecord =
-                self.fetch(AutomaticFiltersLanguage.self, predicate: predicate)?.firstObject as? AutomaticFiltersLanguage else { return nil }
+                self.fetch(AutomaticFiltersLanguage.self, predicate: predicate)?.first else { return nil }
         return automaticFiltersLanguageRecord
     }
     
     func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule? {
         let predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
         guard let automaticFiltersRuleRecord =
-                self.fetch(AutomaticFiltersRule.self, predicate: predicate)?.firstObject as? AutomaticFiltersRule else { return nil }
+                self.fetch(AutomaticFiltersRule.self, predicate: predicate)?.first else { return nil }
         return automaticFiltersRuleRecord
     }
     
@@ -184,15 +179,35 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func ensuredAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage {
-        if let existing = self.fetchAutomaticFiltersLanguageRecord(for: language) {
-            return existing
+        let predicate = NSPredicate(format: "lang == %@", language.rawValue)
+        var isActive = false
+        var ensuredAutomaticFiltersLanguage: AutomaticFiltersLanguage? = nil
+        
+        if let automaticFiltersLanguageRecords = self.fetch(AutomaticFiltersLanguage.self, predicate: predicate),
+            !automaticFiltersLanguageRecords.isEmpty {
+            
+            if automaticFiltersLanguageRecords.count == 1, let automaticFiltersLanguageRecord = automaticFiltersLanguageRecords.first {
+                ensuredAutomaticFiltersLanguage = automaticFiltersLanguageRecord
+            }
+            else {
+                let activeAutomaticFiltersLanguageRecords = self.fetch(AutomaticFiltersLanguage.self,
+                                                                       predicate: NSPredicate(format: "lang == %@ AND isActive == %@",
+                                                                                              language.rawValue,
+                                                                                              NSNumber(booleanLiteral: true)))
+                isActive = (activeAutomaticFiltersLanguageRecords ?? []).count > 0
+                automaticFiltersLanguageRecords.forEach(self.context.delete)
+            }
         }
-        else {
+        
+        guard let ensuredAutomaticFiltersLanguage = ensuredAutomaticFiltersLanguage else {
             let newLanguage = AutomaticFiltersLanguage(context: self.context)
             newLanguage.lang = language.rawValue
-            newLanguage.isActive = false
+            newLanguage.isActive = isActive
+            self.commitContext()
             return newLanguage
         }
+        
+        return ensuredAutomaticFiltersLanguage
     }
     
 
@@ -204,13 +219,13 @@ class PersistanceManager: PersistanceManagerProtocol {
         
         let predicate = NSPredicate(format: "text == %@ AND targetValue == %ld AND matchingValue == %ld AND caseValue == %ld",
                                     text, filterTarget.rawValue, filterMatching.rawValue, filterCase.rawValue)
-        guard let _ = self.fetch(Filter.self, predicate: predicate)?.firstObject as? Filter else { return false }
+        guard let _ = self.fetch(Filter.self, predicate: predicate)?.first else { return false }
         return true
     }
     
     func isDuplicateFilter(language: NLLanguage) -> Bool {
         let predicate = NSPredicate(format: "text == %@", language.filterText)
-        guard let _ = self.fetch(Filter.self, predicate: predicate)?.firstObject as? Filter else { return false }
+        guard let _ = self.fetch(Filter.self, predicate: predicate)?.first else { return false }
         return true
     }
     
@@ -306,7 +321,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
-        guard let automaticFiltersCache = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.firstObject as? AutomaticFiltersCache else { return true }
+        guard let automaticFiltersCache = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.first else { return true }
         
         let isStale = automaticFiltersCache.filtersData != newFilterList.encoded
         
@@ -335,7 +350,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     //MARK: - Private -
     private func fetch<T: NSManagedObject>(_ entity: T.Type,
                                            predicate: NSPredicate? = nil,
-                                           sortDescriptor: [NSSortDescriptor]? = nil) -> NSMutableArray? {
+                                           sortDescriptor: [NSSortDescriptor]? = nil) -> [T]? {
 
         let fetchRequest = NSFetchRequest<T>(entityName: NSStringFromClass(T.self))
         if let predicate = predicate { fetchRequest.predicate = predicate }
@@ -346,7 +361,7 @@ class PersistanceManager: PersistanceManagerProtocol {
             let searchResult = try self.context.fetch(fetchRequest)
             
             if searchResult.count > 0 {
-                return NSMutableArray(array: searchResult)
+                return searchResult
             } else {
                 return nil
             }
