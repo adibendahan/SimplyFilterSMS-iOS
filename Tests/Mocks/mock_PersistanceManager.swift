@@ -238,4 +238,6 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     func loadDebugData() {
         self.persistance.loadDebugData()
     }
+    
+    func reset() { }
 }

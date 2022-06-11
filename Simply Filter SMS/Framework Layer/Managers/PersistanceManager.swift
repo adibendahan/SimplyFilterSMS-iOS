@@ -333,19 +333,134 @@ class PersistanceManager: PersistanceManagerProtocol {
         return isStale
     }
     
+    #if DEBUG
     func loadDebugData() {
-        self.addFilter(text: "נתניהו", type: .deny, denyFolder: .promotion, filterTarget: .body, filterMatching: .contains, filterCase: .caseInsensitive)
-        self.addFilter(text: "הלוואה", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
-        self.addFilter(text: "הימור", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
-        self.addFilter(text: "גנץ", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
-        self.addFilter(text: "Weed", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
-        self.addFilter(text: "Bet", type: .deny, denyFolder: .transaction, filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
-        self.addFilter(text: "Adi", type: .allow, denyFolder: .junk, filterTarget: .body, filterMatching: .exact, filterCase: .caseInsensitive)
-        self.addFilter(text: "עדי", type: .allow, denyFolder: .junk, filterTarget: .body, filterMatching: .exact, filterCase: .caseInsensitive)
-        self.addFilter(text: "דהן", type: .allow, denyFolder: .junk, filterTarget: .body, filterMatching: .exact, filterCase: .caseInsensitive)
-        self.addFilter(text: "דהאן", type: .allow, denyFolder: .junk, filterTarget: .body, filterMatching: .exact, filterCase: .caseInsensitive)
-        self.addFilter(text: NLLanguage.arabic.filterText, type: .denyLanguage, denyFolder: .junk, filterTarget: .body, filterMatching: .contains, filterCase: .caseInsensitive)
+        
+        let langCode = Bundle.main.preferredLocalizations[0]
+        
+        if langCode == "he" {
+            self.addFilter(text: "Adi",
+                           type: .allow,
+                           filterTarget: .body,
+                           filterMatching: .exact,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: "bit",
+                           type: .allow,
+                           filterTarget: .sender,
+                           filterMatching: .exact,
+                           filterCase: .caseSensitive)
+            
+            self.addFilter(text: "עדי",
+                           type: .allow,
+                           filterTarget: .body,
+                           filterMatching: .contains,
+                           filterCase: .caseInsensitive)
+            
+            
+            self.addFilter(text: "קנאביס",
+                           type: .deny,
+                           denyFolder: .junk,
+                           filterTarget: .all,
+                           filterMatching: .exact,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: "גנץ",
+                           type: .deny,
+                           denyFolder: .junk,
+                           filterTarget: .body,
+                           filterMatching: .contains,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: "נתניהו",
+                           type: .deny,
+                           denyFolder: .junk,
+                           filterTarget: .body,
+                           filterMatching: .contains,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: NLLanguage.arabic.filterText,
+                           type: .denyLanguage,
+                           denyFolder: .junk,
+                           filterTarget: .body,
+                           filterMatching: .contains,
+                           filterCase: .caseInsensitive)
+        }
+        else {
+            self.addFilter(text: "Adi",
+                           type: .allow,
+                           filterTarget: .body,
+                           filterMatching: .exact,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: "Apple",
+                           type: .allow,
+                           filterTarget: .sender,
+                           filterMatching: .exact,
+                           filterCase: .caseSensitive)
+            
+            
+            self.addFilter(text: "Bet",
+                           type: .deny,
+                           denyFolder: .junk,
+                           filterTarget: .body,
+                           filterMatching: .exact,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: "Bitcoin",
+                           type: .deny,
+                           denyFolder: .transaction,
+                           filterTarget: .body,
+                           filterMatching: .contains,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: "Cash",
+                           type: .deny,
+                           denyFolder: .junk,
+                           filterTarget: .all,
+                           filterMatching: .contains,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: "Loan",
+                           type: .deny,
+                           denyFolder: .junk,
+                           filterTarget: .body,
+                           filterMatching: .contains,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: "Mortgage",
+                           type: .deny,
+                           denyFolder: .junk,
+                           filterTarget: .all,
+                           filterMatching: .contains,
+                           filterCase: .caseInsensitive)
+            
+            self.addFilter(text: NLLanguage.arabic.filterText,
+                           type: .denyLanguage,
+                           denyFolder: .junk,
+                           filterTarget: .body,
+                           filterMatching: .contains,
+                           filterCase: .caseInsensitive)
+        }
     }
+
+    func reset() {
+        // Get a reference to a NSPersistentStoreCoordinator
+        let storeContainer = self.container.persistentStoreCoordinator
+        
+
+        // Delete each existing persistent store
+        for store in storeContainer.persistentStores {
+            try? storeContainer.destroyPersistentStore(
+                at: store.url!,
+                ofType: store.type,
+                options: nil
+            )
+        }
+
+        self.reloadContainer()
+    }
+    #endif
     
     //MARK: - Private -
     private func fetch<T: NSManagedObject>(_ entity: T.Type,

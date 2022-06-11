@@ -229,7 +229,7 @@ class AutomaticFilterManagerTests: XCTestCase {
     
     func test_languageAutomaticState() {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersLanguageRecordClosure = { language in
+        self.persistanceManager.ensuredAutomaticFiltersLanguageRecordClosure = { language in
             let automaticFiltersLanguageRecord = AutomaticFiltersLanguage(context: self.persistanceManager.context)
             automaticFiltersLanguageRecord.lang = language.rawValue
             automaticFiltersLanguageRecord.isActive = language == .hebrew
@@ -243,7 +243,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertTrue(resultExpectedTrue)
         XCTAssertFalse(resultExpectedFalse)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordCounter, 2)
+        XCTAssertEqual(self.persistanceManager.ensuredAutomaticFiltersLanguageRecordCounter, 2)
     }
     
     func test_setLanguageAtumaticState() {

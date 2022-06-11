@@ -19,6 +19,10 @@ protocol DefaultsManagerProtocol {
     // Session:
     var lastOfflineNotificationDismiss: Date? { get set }
     var sessionAge: Date? { get set }
+    
+#if DEBUG
+    func reset()
+#endif
 }
 
 protocol PropertyListValue {}

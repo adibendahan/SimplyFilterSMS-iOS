@@ -110,4 +110,6 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         self.isExpandedAddFilterGetCounter = 0
         self.isExpandedAddFilterSetCounter = 0
     }
+    
+    func reset() { }
 }

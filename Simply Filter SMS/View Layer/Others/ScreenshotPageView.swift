@@ -47,6 +47,7 @@ struct ScreenshotPageView: View {
             .buttonStyle(FilledButton())
             .padding(.horizontal, 16)
             .contentShape(Rectangle())
+            .accessibilityLabel(TestIdentifier.callToActionButton.rawValue)
             
             Spacer()
                 .frame(height: 50, alignment: .bottom)

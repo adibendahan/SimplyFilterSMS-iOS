@@ -148,6 +148,11 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         guard let persistanceManager = self.persistanceManager else { return }
         let automaticFiltersRule = persistanceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
         automaticFiltersRule.isActive = value
+        
+        if automaticFiltersRule.ruleType == .shortSender && automaticFiltersRule.selectedChoice < 3 {
+            automaticFiltersRule.selectedChoice = 6
+        }
+        
         persistanceManager.commitContext()
     }
 

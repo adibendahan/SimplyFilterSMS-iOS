@@ -8,6 +8,7 @@
 import Foundation
 import OSLog
 import Network
+import UIKit
 
 class AppManager: AppManagerProtocol {
     static let shared: AppManagerProtocol = AppManager()
@@ -36,6 +37,13 @@ class AppManager: AppManagerProtocol {
         self.messageEvaluationManager = messageEvaluationManager
         self.networkSyncManager = networkSyncManager
         self.amazonS3Service = amazonS3Service
+        
+        #if DEBUG
+        if UIApplication.shared.isInTestingMode {
+            defaultsManager.reset()
+            persistanceManager.reset()
+        }
+        #endif
     }
     
     func onAppLaunch() {
@@ -74,11 +82,12 @@ class AppManager: AppManagerProtocol {
     static private var inMemoryManager = AppManager(inMemory: true)
     static private var didLoadDebugData = false
     static var previews: AppManagerProtocol {
+        #if DEBUG
         if !didLoadDebugData {
             inMemoryManager.persistanceManager.loadDebugData()
             didLoadDebugData = true
         }
-        
+        #endif
         return inMemoryManager
     }
 }

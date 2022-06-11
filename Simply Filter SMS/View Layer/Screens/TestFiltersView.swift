@@ -31,6 +31,7 @@ struct TestFiltersView: View {
                         
                         TextField("", text: $model.sender)
                             .focused($focusedField, equals: .sender)
+                            .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
                         
                     }
                     .listRowInsets(EdgeInsets(top: 30, leading: 20, bottom: 15, trailing: 20))
@@ -46,6 +47,7 @@ struct TestFiltersView: View {
                             .focused($focusedField, equals: .text)
                             .multilineTextAlignment(.leading)
                             .padding(.top, 15)
+                            .accessibilityIdentifier(TestIdentifier.testBodyInput.rawValue)
                     }
                     .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
                     
@@ -65,6 +67,7 @@ struct TestFiltersView: View {
                     .listRowSeparator(.hidden)
                     .padding(.bottom, 8)
                     .disabled(self.model.text.isEmpty && self.model.sender.isEmpty)
+                    .accessibilityIdentifier(TestIdentifier.testYourFiltersButton.rawValue)
                 } header: {
                     Spacer()
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
