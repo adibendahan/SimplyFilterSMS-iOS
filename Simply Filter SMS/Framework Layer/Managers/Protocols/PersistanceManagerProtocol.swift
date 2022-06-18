@@ -53,6 +53,9 @@ protocol PersistanceManagerProtocol: AnyObject {
     func saveCache(with filterList: AutomaticFilterListsResponse)
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool
 
+    #if DEBUG
     func loadDebugData()
+    func reset()
+    #endif
 }
 

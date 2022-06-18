@@ -34,7 +34,7 @@ Requires iOS 15 or later.
 You can add your filters to allow/deny any specific text.
 
 ### Automatic Filtering
-Enabling it will Filter messages using our pre defined list of terms (English/Hebrew only).
+Enabling it will filter messages using a pre defined list of terms (English/Hebrew only).
 
 ### Smart Filters
 Easily filter messages from short/email/all unknown senders, containing links/emojis or allow sender with phone numbers only. 
@@ -104,7 +104,7 @@ Automatic Filtering is using a pre defined list of terms to determine if a messa
 
 ## Building from source
 
-Just open the project on Xcode and build (Tested on Xcode 13.2.1). 
+Just open the project on Xcode and build (Xcode >= 13.2.1). 
 
 
 ## Contributing

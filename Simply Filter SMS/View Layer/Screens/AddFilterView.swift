@@ -28,6 +28,7 @@ struct AddFilterView: View {
                         
                         TextField("addFilter_text"~, text: $model.filterText)
                             .focused($focusedField, equals: .text)
+                            .accessibilityIdentifier(TestIdentifier.filterText.rawValue)
                         
                         if self.model.isDuplicateFilter {
                             HStack {
@@ -115,6 +116,7 @@ struct AddFilterView: View {
                             }
                         }
                         .pickerStyle(.segmented)
+                        .accessibility(hidden: false)
                     }
 
                     Button {
@@ -139,6 +141,7 @@ struct AddFilterView: View {
                     }
                     .padding(.vertical, 6)
                     .contentShape(Rectangle())
+                    .accessibilityIdentifier(TestIdentifier.expandButton.rawValue)
                     
                     Button {
                         withAnimation {
@@ -150,6 +153,7 @@ struct AddFilterView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(FilledButton())
+                    .accessibilityIdentifier(TestIdentifier.addFilteraddFilterButton.rawValue)
                     .disabled(self.model.filterText.count < kMinimumFilterLength || self.model.isDuplicateFilter)
                     .contentShape(Rectangle())
                 } // VStack

@@ -126,8 +126,8 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     func languageAutomaticState(for language: NLLanguage) -> Bool {
-        guard let persistanceManager = self.persistanceManager,
-              let automaticFiltersLanguage = persistanceManager.fetchAutomaticFiltersLanguageRecord(for: language) else { return false }
+        guard let persistanceManager = self.persistanceManager else { return false }
+        let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         return automaticFiltersLanguage.isActive
     }
     
@@ -148,6 +148,11 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         guard let persistanceManager = self.persistanceManager else { return }
         let automaticFiltersRule = persistanceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
         automaticFiltersRule.isActive = value
+        
+        if automaticFiltersRule.ruleType == .shortSender && automaticFiltersRule.selectedChoice < 3 {
+            automaticFiltersRule.selectedChoice = 6
+        }
+        
         persistanceManager.commitContext()
     }
 

@@ -211,3 +211,8 @@ extension Character {
 
     var isEmoji: Bool { self.isSimpleEmoji || self.isCombinedIntoEmoji }
 }
+
+postfix operator ~
+postfix func ~ (string: String) -> String {
+    return NSLocalizedString(string, comment: "")
+}

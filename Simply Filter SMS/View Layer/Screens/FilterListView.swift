@@ -145,6 +145,7 @@ struct FilterListView: View {
             }
             .padding(.top, 1)
             .padding(.bottom, 40)
+            .accessibilityIdentifier(TestIdentifier.addFilterButton.rawValue)
         }
         else {
             EmptyView()

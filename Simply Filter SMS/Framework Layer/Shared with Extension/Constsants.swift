@@ -9,12 +9,6 @@ import Foundation
 import IdentityLookup
 import SwiftUI
 
-//MARK: Localization
-postfix operator ~
-postfix func ~ (string: String) -> String {
-    return NSLocalizedString(string, comment: "")
-}
-
 
 //MARK: Constants
 let kAppWorkingDirectory = "Simply-Filter-SMS"
@@ -106,6 +100,17 @@ enum FilterType: Int64, CaseIterable, Identifiable {
             return .green
         case .denyLanguage:
             return .cyan
+        }
+    }
+    
+    var testIdentifier: TestIdentifier {
+        switch self {
+        case .deny:
+            return .denyFiltersLink
+        case .allow:
+            return .allowFiltersLink
+        case .denyLanguage:
+            return .denyLanguageLink
         }
     }
 }

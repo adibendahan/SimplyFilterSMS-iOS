@@ -1,0 +1,20 @@
+
+devices([
+"iPhone 13 Pro Max",
+"iPhone 8 Plus"
+])
+
+languages([
+"en-US",
+"he-IL"
+])
+
+scheme("UI Tests")
+output_directory("../.screenshots")
+clear_previous_screenshots(true)
+override_status_bar(true)
+localize_simulator(true)
+number_of_retries(0)
+stop_after_first_error(true)
+concurrent_simulators(true)
+project("../Simply Filter SMS.xcodeproj")

@@ -121,6 +121,7 @@ struct LanguageListView: View {
                     }
                 }
                 .contentShape(Rectangle())
+                .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
             }
         }
         .sheet(item: $model.sheetScreen) { } content: { sheetScreen in

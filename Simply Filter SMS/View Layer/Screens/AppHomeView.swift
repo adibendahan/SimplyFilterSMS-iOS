@@ -72,6 +72,7 @@ struct AppHomeView: View {
                             .padding(.vertical, 12)
                         } // Navigation Link
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
+                        .accessibility(identifier: TestIdentifier.automaticFilterLink.rawValue)
                 } header: {
                     Spacer()
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -169,6 +170,7 @@ struct AppHomeView: View {
                             }
                         }
                         .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
+                        .accessibilityIdentifier(filterType.testIdentifier.rawValue)
                     }
                 } header: {
                     Text("autoFilter_yourFilters"~)
@@ -220,6 +222,7 @@ struct AppHomeView: View {
                 } label: {
                     Label("filterList_menu_debug"~, systemImage: "chevron.left.forwardslash.chevron.right")
                 }
+                .accessibilityIdentifier(TestIdentifier.loadDebugDataMenuButton.rawValue)
             }
             
             Button {
@@ -227,6 +230,7 @@ struct AppHomeView: View {
             } label: {
                 Label("testFilters_title"~, systemImage: "arrow.up.message")
             }
+            .accessibilityIdentifier(TestIdentifier.testYourFiltersMenuButton.rawValue)
             
             Button {
                 self.model.sheetScreen = .help
@@ -242,6 +246,7 @@ struct AppHomeView: View {
         } label: {
             Image(systemName: "ellipsis.circle")
         }
+        .accessibilityIdentifier(TestIdentifier.appMenuButton.rawValue)
     }
 }
 
@@ -413,7 +418,9 @@ extension AppHomeView {
         }
         
         func loadDebugData() {
+            #if DEBUG
             self.appManager.persistanceManager.loadDebugData()
+            #endif
             self.refresh()
         }
         

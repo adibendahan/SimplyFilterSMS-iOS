@@ -46,6 +46,7 @@ struct TwoButtonPageView: View {
             }
             .buttonStyle(FilledButton())
             .padding(.horizontal, 16)
+            .accessibilityLabel(TestIdentifier.callToActionButton.rawValue)
             
             Button {
                 withAnimation {
@@ -58,6 +59,7 @@ struct TwoButtonPageView: View {
             .buttonStyle(OutlineButton())
             .contentShape(Rectangle())
             .padding(.horizontal, 16)
+            .accessibilityLabel(TestIdentifier.cancelButton.rawValue)
             
             Spacer()
                 .frame(height: 50, alignment: .bottom)
