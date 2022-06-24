@@ -202,6 +202,7 @@
 		69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPersistentCloudKitContainer.swift; sourceTree = "<group>"; };
 		69DE6ABA284AC11900366D10 /* EditableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableText.swift; sourceTree = "<group>"; };
 		69E6F5642790E98400AD6BFA /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
+		69ECF145286639F6000380A2 /* Report Message Lambda */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = "Report Message Lambda"; sourceTree = "<group>"; };
 		69F3D32327B961E800D7DDA7 /* AutomaticFilterManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFilterManagerTests.swift; sourceTree = "<group>"; };
 		69F3D32727B97FA600D7DDA7 /* AmazonS3Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonS3Service.swift; sourceTree = "<group>"; };
 		69F3D32A27B9824B00D7DDA7 /* mock_AmazonS3Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_AmazonS3Service.swift; sourceTree = "<group>"; };
@@ -365,6 +366,7 @@
 			children = (
 				69CD70C82770D4D100F91A2F /* Simply Filter SMS */,
 				69CD70FD2770D65D00F91A2F /* Message Filter Extension */,
+				69ECF145286639F6000380A2 /* Report Message Lambda */,
 				694E53DD27A42EA8009A7E0E /* Tests */,
 				691AA72F285508EC00FCA4AF /* UI Tests */,
 				69CD70C72770D4D100F91A2F /* Products */,
