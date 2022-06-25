@@ -20,6 +20,7 @@ class AppManager: AppManagerProtocol {
     var messageEvaluationManager: MessageEvaluationManagerProtocol
     var networkSyncManager: NetworkSyncManagerProtocol
     var amazonS3Service: AmazonS3ServiceProtocol
+    var reportMessageService: ReportMessageServiceProtocol
     
     init(inMemory: Bool = false) {
         let persistanceManager = PersistanceManager(inMemory: inMemory)
@@ -27,6 +28,7 @@ class AppManager: AppManagerProtocol {
         let messageEvaluationManager = MessageEvaluationManager(container: persistanceManager.container)
         let networkSyncManager = NetworkSyncManager(persistanceManager: persistanceManager)
         let amazonS3Service = AmazonS3Service(networkSyncManager: networkSyncManager)
+        let reportMessageService = ReportMessageService(networkSyncManager: networkSyncManager)
         
         messageEvaluationManager.setLogger(AppManager.logger)
         
@@ -37,6 +39,7 @@ class AppManager: AppManagerProtocol {
         self.messageEvaluationManager = messageEvaluationManager
         self.networkSyncManager = networkSyncManager
         self.amazonS3Service = amazonS3Service
+        self.reportMessageService = reportMessageService
         
         #if DEBUG
         if UIApplication.shared.isInTestingMode {

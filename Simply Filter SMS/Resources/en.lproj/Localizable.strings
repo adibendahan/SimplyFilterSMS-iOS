@@ -158,3 +158,11 @@
 "notification_automatic_title" = "Automatic Filtering";
 "notification_automatic_subtitle" = "Filters were updated";
 "notification_clipboard_subtitle" = "Copied to clipboard";
+
+// MARK: Report Message
+"reportMessage_senderTitle" = "Sender";
+"reportMessage_title" = "Report Message";
+"reportMessage_junk" = "Junk";
+"reportMessage_notJunk" = "Not junk";
+"reportMessage_report" = "Report";
+"reportMessage_thankYou" = "Thank you for reporting!";
