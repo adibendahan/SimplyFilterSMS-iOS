@@ -233,6 +233,12 @@ struct AppHomeView: View {
             .accessibilityIdentifier(TestIdentifier.testYourFiltersMenuButton.rawValue)
             
             Button {
+                self.model.sheetScreen = .reportMessage
+            } label: {
+                Label("reportMessage_title"~, systemImage: "exclamationmark.bubble")
+            }
+            
+            Button {
                 self.model.sheetScreen = .help
             } label: {
                 Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")

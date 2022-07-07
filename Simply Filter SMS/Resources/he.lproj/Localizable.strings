@@ -261,3 +261,16 @@
 "aboutView_appIconCreditTitle" = "מעצב האייקון";
 
 "notification_clipboard_subtitle" = "הועתק ללוח";
+
+"reportMessage_senderTitle" = "שולח";
+
+"reportMessage_title" = "דיווח על הודעה";
+
+"reportMessage_junk" = "זבל";
+
+"reportMessage_notJunk" = "לא זבל";
+
+"reportMessage_report" = "לחצו לדיווח";
+
+"reportMessage_thankYou" = "תודה שדיווחתם!";
+
