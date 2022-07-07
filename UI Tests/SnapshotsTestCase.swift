@@ -45,7 +45,7 @@ class SnapshotsTestCase: ApplicationTestCase {
                           filterTarget: .body,
                           filterMatching: .exact,
                           filterCase: .caseInsensitive,
-                          screenshotName: "04.addFilter")
+                          screenshotName: "05.addFilter")
         }
 
 
@@ -69,7 +69,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         // MARK: allowFilters Screenshot
         app.buttons["filterList_filters"~].firstMatch.tap()
         app.tap(.allowFiltersLink)
-        snapshot("03.allowFilters")
+        snapshot("04.allowFilters")
         app.buttons["filterList_filters"~].firstMatch.tap()
 
         
@@ -77,7 +77,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         app.swipeUp()
         app.tap(.denyLanguageLink)
         app.tap(.addFilterButton)
-        snapshot("05.denyLanguages")
+        snapshot("06.denyLanguages")
         app.tap(.closeButton)
         app.buttons["filterList_filters"~].firstMatch.tap()
 
@@ -89,6 +89,6 @@ class SnapshotsTestCase: ApplicationTestCase {
         app.textField(.testSenderInput).tap()
         app.textField(.testSenderInput).typeText("Apple\n")
         app.tap(.testYourFiltersButton)
-        snapshot("06.testFilters")
+        snapshot("07.testFilters")
     }
 }

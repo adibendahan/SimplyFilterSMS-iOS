@@ -25,6 +25,7 @@ let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ER
 // URLs
 extension URL {
     static let appBaseURL = URL(string: "https://grizz-apps-dev.s3.us-east-2.amazonaws.com")!
+    static let reportMessageURL = URL(string: "https://qezcp0b7pc.execute-api.us-east-1.amazonaws.com/prod")!
     static let appReviewURL = URL(string: "https://apps.apple.com/app/id1603222959?action=write-review")!
     static let appTwitterURL = URL(string: "https://twitter.com/a_bd")!
     static let appGithubURL = URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!
@@ -259,6 +260,30 @@ enum FilterCase: Int64, CaseIterable, Identifiable {
     
     static var title: String {
         return "addFilter_case_title"~
+    }
+}
+
+enum ReportType: Int64, CaseIterable, Identifiable {
+    var id: Int64 { return self.rawValue }
+    
+    case junk=0, notJunk
+    
+    var name: String {
+        switch self {
+        case .junk:
+            return "reportMessage_junk"~
+        case .notJunk:
+            return "reportMessage_notJunk"~
+        }
+    }
+    
+    var type: String {
+        switch self {
+        case .junk:
+            return "deny"
+        case .notJunk:
+            return "allow"
+        }
     }
 }
 

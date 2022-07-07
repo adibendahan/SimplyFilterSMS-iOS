@@ -12,6 +12,8 @@ import OSLog
 
 class mock_AppManager: AppManagerProtocol {
 
+    
+
     static var logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "tests")
 
     var persistanceManager: PersistanceManagerProtocol = mock_PersistanceManager()
@@ -20,6 +22,7 @@ class mock_AppManager: AppManagerProtocol {
     var messageEvaluationManager: MessageEvaluationManagerProtocol = mock_MessageEvaluationManager()
     var networkSyncManager: NetworkSyncManagerProtocol = mock_NetworkSyncManager()
     var amazonS3Service: AmazonS3ServiceProtocol = mock_AmazonS3Service()
+    var reportMessageService: ReportMessageServiceProtocol = mock_ReportMessageService()
     
     var getFrequentlyAskedQuestionsCounter = 0
     var onAppLaunchCounter = 0

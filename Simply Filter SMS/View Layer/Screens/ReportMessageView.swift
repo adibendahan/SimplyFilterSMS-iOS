@@ -10,10 +10,7 @@ import IdentityLookup
 
 
 //MARK: - View -
-struct TestFiltersView: View {
-    
-    @Environment(\.colorScheme)
-    var colorScheme: ColorScheme
+struct ReportMessageView: View {
     
     @Environment(\.dismiss)
     var dismiss
@@ -27,7 +24,7 @@ struct TestFiltersView: View {
                 Form {
                     Section {
                         ZStack (alignment: .top) {
-                            Text("testFilters_senderTitle"~)
+                            Text("reportMessage_senderTitle"~)
                                 .font(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.top, -20)
@@ -55,18 +52,24 @@ struct TestFiltersView: View {
                         }
                         .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
                         
-                        
-                        FadingTextView(model: self.model.fadeTextModel)
-                            .multilineTextAlignment(.leading)
-                            .frame(minHeight: 45, alignment: .top)
+                        Picker(selection: $model.selectedReport, label: EmptyView()) {
+                            ForEach(ReportType.allCases, id: \.rawValue) { reportType in
+                                Text(reportType.name)
+                                    .font(.body)
+                                    .tag(reportType)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .accessibility(hidden: false)
+                        .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
                         
                         Button {
                             withAnimation {
-                                self.model.evaluateMessage()
+                                self.model.reportMessage()
                                 self.focusedField = nil
                             }
                         } label: {
-                            Text("testFilters_action"~)
+                            Text("reportMessage_report"~)
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(FilledButton())
@@ -80,37 +83,60 @@ struct TestFiltersView: View {
                     }
                 }
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                        focusedField = .text
-                    }
-                }
-                .onChange(of: focusedField) { newValue in
-                    if newValue != nil && !self.model.fadeTextModel.text.isEmpty {
-                        self.model.fadeTextModel.text = ""
+                    if self.model.state == .userInput {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                            focusedField = .sender
+                        }
                     }
                 }
                 
-                if self.model.state == .loading {
-                    Color.listBackgroundColor(for: colorScheme)
-                        .opacity(0.7)
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .tint(.accentColor)
-                        .scaleEffect(2)
-                        .padding(.top, 130)
+                if self.model.state != .userInput {
+                    Rectangle()
+                        .background(.thinMaterial)
+                        .ignoresSafeArea()
+                    
+                    switch self.model.state {
+                    case .result(let text):
+                        VStack {
+                            CheckView(size: 50)
+                                .foregroundColor(.green)
+                                .padding()
+                            Text(text)
+                                .font(.body)
+                                .foregroundColor(.primary)
+                        }
                         .frame(maxHeight: .infinity, alignment: .top)
+                        .padding(.top, 100)
+                    default:
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(.accentColor)
+                            .scaleEffect(2)
+                            .padding(.top, 130)
+                            .frame(maxHeight: .infinity, alignment: .top)
+                    }
                 }
             }
-            .navigationTitle("testFilters_title"~)
-            .toolbar {
-                ToolbarItem {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+            .if(self.model.state == .userInput) {
+                $0
+                    .navigationTitle("reportMessage_title"~)
+                    .toolbar {
+                        ToolbarItem {
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .foregroundColor(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                        }
                     }
-                    .contentShape(Rectangle())
+            }
+            .onChange(of: self.model.state) { newState in
+                if newState.isResult {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        dismiss()
+                    }
                 }
             }
         }
@@ -119,14 +145,23 @@ struct TestFiltersView: View {
 
 
 //MARK: - ViewModel -
-extension TestFiltersView {
+extension ReportMessageView {
     
     enum Field: Int, Hashable, Equatable {
         case text, sender
     }
     
-    enum ViewState {
+    enum ViewState: Equatable {
         case userInput, loading, result(String)
+        
+        var isResult: Bool {
+            switch self {
+            case .result(_):
+                return true
+            default:
+                return false
+            }
+        }
         
         static func ==(lhs: ViewState, rhs: ViewState) -> Bool {
             switch (lhs, rhs) {
@@ -141,25 +176,25 @@ extension TestFiltersView {
     }
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published private(set) var fadeTextModel: FadingTextView.ViewModel
         @Published var text: String = ""
         @Published var sender: String = ""
         @Published var state: ViewState = .userInput
+        @Published var selectedReport = ReportType.junk
         
-        override init(appManager: AppManagerProtocol = AppManager.shared) {
-            self.fadeTextModel = FadingTextView.ViewModel()
-            super.init(appManager: appManager)
-        }
-        
-        func evaluateMessage() {
-            let sender = self.sender.isEmpty ? "1234567" : self.sender
-            let result = self.appManager.messageEvaluationManager.evaluateMessage(body: self.text, sender: sender)
+        func reportMessage() {
+            self.state = .loading
             
-            if let reason = result.reason {
-                self.fadeTextModel.text = "\(result.action.testResult)\n\("testFilters_resultReason"~) \(reason)"
-            }
-            else {
-                self.fadeTextModel.text = result.action.testResult
+            Task(priority: .userInitiated) {
+                let requestBody = ReportMessageRequestBody(sender: self.sender,
+                                                           body: self.text,
+                                                           type: self.selectedReport.type)
+                
+                await self.appManager.reportMessageService.reportMessage(reportMessageRequestBody: requestBody)
+                DispatchQueue.main.async {
+                    withAnimation {
+                        self.state = .result("reportMessage_thankYou"~)
+                    }
+                }
             }
         }
     }
@@ -167,10 +202,10 @@ extension TestFiltersView {
 
 
 //MARK: - Preview -
-struct TestFiltersView_Previews: PreviewProvider {
+struct ReportMessageView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            TestFiltersView(model: TestFiltersView.ViewModel(appManager: AppManager.previews))
+            ReportMessageView(model: ReportMessageView.ViewModel(appManager: AppManager.previews))
         }
     }
 }
