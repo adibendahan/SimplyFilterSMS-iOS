@@ -14,6 +14,7 @@ protocol DefaultsManagerProtocol {
     var isExpandedAddFilter: Bool { get set }
     var sessionCounter: Int { get set }
     var didPromptForReview: Bool { get set }
+    var selectedSubFolders: [Int64] { get set }
     var appAge: Date { get }
     
     // Session:
@@ -31,10 +32,12 @@ extension String: PropertyListValue {}
 extension Date: PropertyListValue {}
 extension Bool: PropertyListValue {}
 extension Int: PropertyListValue {}
+extension Int64: PropertyListValue {}
 extension Double: PropertyListValue {}
 extension Float: PropertyListValue {}
 extension Array: PropertyListValue where Element: PropertyListValue {}
 extension Dictionary: PropertyListValue where Key == String, Value: PropertyListValue {}
+
 
 @propertyWrapper
 struct StoredDefault<T: PropertyListValue> {

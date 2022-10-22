@@ -166,3 +166,6 @@
 "reportMessage_notJunk" = "Not junk";
 "reportMessage_report" = "Report";
 "reportMessage_thankYou" = "Thank you for reporting!";
+
+
+"chooseSubActions_title" = "Customize Folders";

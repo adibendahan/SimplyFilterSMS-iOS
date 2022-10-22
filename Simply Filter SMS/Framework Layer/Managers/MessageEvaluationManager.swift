@@ -13,6 +13,8 @@ import OSLog
 
 
 class MessageEvaluationManager: MessageEvaluationManagerProtocol {
+    var defaultsManager: DefaultsManagerProtocol = DefaultsManager()
+    
     
     
     //MARK: - Initialization -
@@ -78,6 +80,18 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     
     func setLogger(_ logger: Logger) {
         self.logger = logger
+    }
+    
+    @available(iOS 16.0, *)
+    func selectedFolders() -> ILMessageFilterCapabilitiesQueryResponse {
+        let response = ILMessageFilterCapabilitiesQueryResponse()
+//        response.transactionalSubActions = [.transactionalRewards, .transactionalHealth, .transactionalOthers]
+//        response.promotionalSubActions = [.promotionalOffers, .promotionalOthers]
+        
+        response.transactionalSubActions = self.defaultsManager.selectedSubFolders.filter({  DenyFolderType(rawValue: $0)?.parent == .transaction }).map({ DenyFolderType(rawValue: $0)?.subAction ?? .none})
+        response.promotionalSubActions = self.defaultsManager.selectedSubFolders.filter({  DenyFolderType(rawValue: $0)?.parent == .promotion }).map({ DenyFolderType(rawValue: $0)?.subAction ?? .none})
+        
+        return response
     }
 
     //MARK: - Private  -

@@ -59,6 +59,8 @@
 		698844A427A8C200005BF9DA /* FadingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698844A327A8C200005BF9DA /* FadingTextView.swift */; };
 		698FBAFE27B44A0700435699 /* NetworkSyncManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698FBAFD27B44A0700435699 /* NetworkSyncManagerProtocol.swift */; };
 		698FBB0027B4629800435699 /* mock_NetworkSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698FBAFF27B4629800435699 /* mock_NetworkSyncManager.swift */; };
+		69931A4C2903382000FB0DF4 /* DefaultsManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C56279D78E700CEABE5 /* DefaultsManagerProtocol.swift */; };
+		69931A4D2903382D00FB0DF4 /* DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C58279D793600CEABE5 /* DefaultsManager.swift */; };
 		699F55802778BB3100AD7C64 /* AddFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699F557F2778BB3100AD7C64 /* AddFilterView.swift */; };
 		69AA2C52279D755200CEABE5 /* PersistanceManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C51279D755200CEABE5 /* PersistanceManagerProtocol.swift */; };
 		69AA2C55279D75B100CEABE5 /* AppManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C54279D75B100CEABE5 /* AppManagerProtocol.swift */; };
@@ -67,6 +69,7 @@
 		69B2A9A9279CD89E000DFAFC /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2A9A8279CD89E000DFAFC /* AppManager.swift */; };
 		69B2A9AB279CD964000DFAFC /* PersistanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */; };
 		69B2D03227A5B0E600F965AB /* StatefulItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2D03127A5B0E600F965AB /* StatefulItem.swift */; };
+		69B5C09B28E77A31003B1FAC /* CusomizeFoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B5C09A28E77A31003B1FAC /* CusomizeFoldersView.swift */; };
 		69CD70CA2770D4D100F91A2F /* Simply_Filter_SMSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70C92770D4D100F91A2F /* Simply_Filter_SMSApp.swift */; };
 		69CD70CC2770D4D100F91A2F /* FilterListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70CB2770D4D100F91A2F /* FilterListView.swift */; };
 		69CD70CE2770D4D100F91A2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69CD70CD2770D4D100F91A2F /* Assets.xcassets */; };
@@ -194,6 +197,7 @@
 		69B2A9A8279CD89E000DFAFC /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceManager.swift; sourceTree = "<group>"; };
 		69B2D03127A5B0E600F965AB /* StatefulItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatefulItem.swift; sourceTree = "<group>"; };
+		69B5C09A28E77A31003B1FAC /* CusomizeFoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CusomizeFoldersView.swift; sourceTree = "<group>"; };
 		69CD70C62770D4D100F91A2F /* Simply Filter SMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Simply Filter SMS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69CD70C92770D4D100F91A2F /* Simply_Filter_SMSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simply_Filter_SMSApp.swift; sourceTree = "<group>"; };
 		69CD70CB2770D4D100F91A2F /* FilterListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListView.swift; sourceTree = "<group>"; };
@@ -326,6 +330,7 @@
 			isa = PBXGroup;
 			children = (
 				694E1E8A27AEE16D00264524 /* Screen.swift */,
+				69B5C09A28E77A31003B1FAC /* CusomizeFoldersView.swift */,
 				696B011027A822BE0061FE15 /* AppHomeView.swift */,
 				69CD70CB2770D4D100F91A2F /* FilterListView.swift */,
 				699F557F2778BB3100AD7C64 /* AddFilterView.swift */,
@@ -770,6 +775,7 @@
 				69CD70D62770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld in Sources */,
 				69118BF9279DFAEB001F2613 /* ScreenshotPageView.swift in Sources */,
 				690D709C27B31DC0001880DA /* NotificationView.swift in Sources */,
+				69B5C09B28E77A31003B1FAC /* CusomizeFoldersView.swift in Sources */,
 				69ECF14C28677505000380A2 /* ReportMessageResponse.swift in Sources */,
 				69118BF7279DF3B3001F2613 /* TwoButtonPageView.swift in Sources */,
 				694E1E8B27AEE16D00264524 /* Screen.swift in Sources */,
@@ -799,7 +805,9 @@
 				69DB7018277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */,
 				694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */,
 				69189C1827A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */,
+				69931A4D2903382D00FB0DF4 /* DefaultsManager.swift in Sources */,
 				69DB7015277A1F0200245DBA /* Constsants.swift in Sources */,
+				69931A4C2903382000FB0DF4 /* DefaultsManagerProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

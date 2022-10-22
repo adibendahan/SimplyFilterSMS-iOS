@@ -24,6 +24,13 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("didPromptForReview", defaultValue: false)
     var didPromptForReview: Bool
     
+    @StoredDefault("selectedSubFolders", defaultValue: [DenyFolderType.transactionalFinance.rawValue,
+                                                        DenyFolderType.transactionalOrders.rawValue,
+                                                        DenyFolderType.transactionalHealth.rawValue,
+                                                        DenyFolderType.promotionalCoupons.rawValue,
+                                                        DenyFolderType.promotionalOffers.rawValue])
+    var selectedSubFolders: [Int64]
+    
     @StoredDefault("appAge", defaultValue: Date())
     private(set) var appAge: Date
     

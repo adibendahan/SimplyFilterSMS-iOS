@@ -18,7 +18,11 @@ struct MessageEvaluationResult {
 
 protocol MessageEvaluationManagerProtocol {
     var context: NSManagedObjectContext { get }
+    var defaultsManager: DefaultsManagerProtocol { get }
     
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult
     func setLogger(_ logger: Logger)
+    
+    @available(iOS 16.0, *)
+    func selectedFolders() -> ILMessageFilterCapabilitiesQueryResponse
 }

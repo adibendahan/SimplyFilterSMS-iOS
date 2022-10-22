@@ -57,13 +57,35 @@ struct AddFilterView: View {
                                 .bold()
                             
                             Picker(selection: $model.selectedDenyFolderType, label: Text(DenyFolderType.title)) {
-                                ForEach(DenyFolderType.allCases, id: \.rawValue) { folder in
-                                    Text(folder.name)
-                                        .font(.body)
+                                
+                                if #available(iOS 16.0, *) {
+                                    let allAvaliableCases = DenyFolderType.allCases.filter({ self.model.appManager.defaultsManager.selectedSubFolders.contains($0.rawValue) || $0.subAction == nil })
+                                    
+                                    ForEach(allAvaliableCases, id: \.rawValue) { folder in
+                                        HStack {
+                                            Image(systemName: folder.iconName)
+                                            Text(folder.name)
+                                        }
                                         .tag(folder)
+                                    }
+                                }
+                                else {
+                                    let allAvaliableCases = DenyFolderType.allCases.filter({ !$0.isSubFolder })
+                                    
+                                    ForEach(allAvaliableCases, id: \.rawValue) { folder in
+                                        
+                                        Label(folder.name, image: folder.iconName)
+                                            .font(.body)
+                                            .tag(folder)
+                                    }
                                 }
                             }
-                            .pickerStyle(.segmented)
+                            .pickerStyle(.menu)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .tint(.primary)
+                            .font(.body)
+                            .background(RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .foregroundColor(.secondary.opacity(0.16)))
                         }
                         
                         Spacer()

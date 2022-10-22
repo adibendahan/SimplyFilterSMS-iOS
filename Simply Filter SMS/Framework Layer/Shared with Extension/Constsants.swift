@@ -120,6 +120,19 @@ enum DenyFolderType: Int64, CaseIterable, Identifiable {
     var id: Int64 { return self.rawValue }
     
     case junk=0, transaction, promotion
+
+    case transactionalOthers
+    case transactionalFinance
+    case transactionalOrders
+    case transactionalReminders
+    case transactionalHealth
+    case transactionalWeather
+    case transactionalCarrier
+    case transactionalRewards
+    case transactionalPublicServices
+    case promotionalOthers
+    case promotionalOffers
+    case promotionalCoupons
     
     var iconName: String {
         switch self {
@@ -129,6 +142,30 @@ enum DenyFolderType: Int64, CaseIterable, Identifiable {
             return "arrow.left.arrow.right"
         case .promotion:
             return "megaphone"
+        case .transactionalOthers:
+            return "ellipsis.circle"
+        case .transactionalFinance:
+            return "creditcard"
+        case .transactionalOrders:
+            return "shippingbox"
+        case .transactionalReminders:
+            return "calendar.badge.clock"
+        case .transactionalHealth:
+            return "heart"
+        case .transactionalWeather:
+            return "cloud.sun"
+        case .transactionalCarrier:
+            return "antenna.radiowaves.left.and.right"
+        case .transactionalRewards:
+            return "star"
+        case .transactionalPublicServices:
+            return "building.2"
+        case .promotionalOthers:
+            return "ellipsis.circle"
+        case .promotionalOffers:
+            return "tag"
+        case .promotionalCoupons:
+            return "wallet.pass"
         }
     }
     
@@ -140,6 +177,30 @@ enum DenyFolderType: Int64, CaseIterable, Identifiable {
             return "addFilter_folder_transactions"~
         case .promotion:
             return "addFilter_folder_promotions"~
+        case .transactionalOthers:
+            return "Others"
+        case .transactionalFinance:
+            return "Finance"
+        case .transactionalOrders:
+            return "Orders"
+        case .transactionalReminders:
+            return "Reminders"
+        case .transactionalHealth:
+            return "Health"
+        case .transactionalWeather:
+            return "Weather"
+        case .transactionalCarrier:
+            return "Carrier"
+        case .transactionalRewards:
+            return "Rewards"
+        case .transactionalPublicServices:
+            return "Public Services"
+        case .promotionalOthers:
+            return "Others"
+        case .promotionalOffers:
+            return "Offers"
+        case .promotionalCoupons:
+            return "Coupons"
         }
     }
     
@@ -147,10 +208,67 @@ enum DenyFolderType: Int64, CaseIterable, Identifiable {
         switch self {
         case .junk:
             return .junk
-        case .transaction:
+        case .transaction, .transactionalOthers, .transactionalFinance, .transactionalOrders, .transactionalReminders,
+                .transactionalHealth, .transactionalWeather, .transactionalCarrier, .transactionalRewards, .transactionalPublicServices:
             return .transaction
-        case .promotion:
+        case .promotion, .promotionalOthers, .promotionalOffers, .promotionalCoupons:
             return .promotion
+        }
+    }
+    
+    var isSubFolder: Bool {
+        switch self {
+        case .junk, .transaction, .promotion:
+            return false
+        default:
+            return true
+        }
+    }
+    
+    var parent: DenyFolderType? {
+        switch self {
+        case .transactionalOthers, .transactionalFinance, .transactionalOrders,
+                .transactionalReminders, .transactionalHealth, .transactionalWeather,
+                .transactionalCarrier, .transactionalRewards, .transactionalPublicServices:
+            return .transaction
+            
+        case .promotionalOthers, .promotionalOffers, .promotionalCoupons:
+            return .promotion
+            
+        default:
+            return nil
+        }
+    }
+    
+    @available(iOS 16.0, *)
+    var subAction: ILMessageFilterSubAction? {
+        switch self {
+        case .transactionalOthers:
+            return .transactionalOthers
+        case .transactionalFinance:
+            return .transactionalFinance
+        case .transactionalOrders:
+            return .transactionalOrders
+        case .transactionalReminders:
+            return .transactionalReminders
+        case .transactionalHealth:
+            return .transactionalHealth
+        case .transactionalWeather:
+            return .transactionalWeather
+        case .transactionalCarrier:
+            return .transactionalCarrier
+        case .transactionalRewards:
+            return .transactionalRewards
+        case .transactionalPublicServices:
+            return .transactionalPublicServices
+        case .promotionalOthers:
+            return .promotionalOthers
+        case .promotionalOffers:
+            return .promotionalOffers
+        case .promotionalCoupons:
+            return .promotionalCoupons
+        default:
+            return nil
         }
     }
     

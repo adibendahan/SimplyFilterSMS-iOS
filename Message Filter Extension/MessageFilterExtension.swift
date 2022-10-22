@@ -20,9 +20,22 @@ final class MessageFilterExtension: ILMessageFilterExtension {
         messageEvaluationManager.setLogger(self.logger)
         return messageEvaluationManager
     }()
+    
+    
 }
 
-extension MessageFilterExtension: ILMessageFilterQueryHandling {
+extension MessageFilterExtension: ILMessageFilterQueryHandling, ILMessageFilterCapabilitiesQueryHandling
+{
+    @available(iOSApplicationExtension 16.0, *)
+    func handle(_ capabilitiesQueryRequest: ILMessageFilterCapabilitiesQueryRequest,
+                context: ILMessageFilterExtensionContext,
+                completion: @escaping (ILMessageFilterCapabilitiesQueryResponse) -> Void) {
+        
+        completion(self.extensionManager.selectedFolders())
+    }
+    
+    
+
     
     func handle(_ queryRequest: ILMessageFilterQueryRequest,
                 context: ILMessageFilterExtensionContext,

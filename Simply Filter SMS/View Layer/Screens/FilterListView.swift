@@ -215,7 +215,7 @@ extension FilterListView {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            FilterListView(model: FilterListView.ViewModel(filterType: .allow, appManager: AppManager.previews))
+            FilterListView(model: FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews))
         }
     }
 }

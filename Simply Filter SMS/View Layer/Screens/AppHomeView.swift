@@ -233,6 +233,12 @@ struct AppHomeView: View {
             .accessibilityIdentifier(TestIdentifier.testYourFiltersMenuButton.rawValue)
             
             Button {
+                self.model.sheetScreen = .chooseSubActions
+            } label: {
+                Label("chooseSubActions_title"~, systemImage: "folder.badge.gearshape")
+            }
+            
+            Button {
                 self.model.sheetScreen = .reportMessage
             } label: {
                 Label("reportMessage_title"~, systemImage: "exclamationmark.bubble")
