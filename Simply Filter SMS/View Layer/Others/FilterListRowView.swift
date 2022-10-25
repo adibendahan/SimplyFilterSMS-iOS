@@ -111,12 +111,15 @@ struct FilterListRowView: View {
             if self.model.filter.filterType.supportsFolders {
                 
                 Menu {
-                    ForEach(DenyFolderType.allCases) { folder in
+                    let chosenSubActions = self.model.appManager.persistanceManager.fetchChosenSubActions()
+                    let allAvaliableCases = DenyFolderType.allCases.filter({ chosenSubActions.contains($0) || !$0.isSubFolder }).sorted(by: {$0.fullName < $1.fullName })
+                    
+                    ForEach(allAvaliableCases) { folder in
                         Button {
                             self.model.updateFilter(denyFolder: folder)
                         } label: {
                             Label {
-                                Text(folder.name)
+                                Text(folder.fullName)
                             } icon: {
                                 Image(systemName: folder.iconName)
                             }

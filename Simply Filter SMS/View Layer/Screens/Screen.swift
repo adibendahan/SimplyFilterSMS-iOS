@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+struct SheetCoordinator {
+    var onDismiss: (()->())?
+}
+
 enum Screen: Int, Identifiable {
     var id: Self { self }
     
@@ -15,7 +19,7 @@ enum Screen: Int, Identifiable {
          denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
          chooseSubActions
     
-    @ViewBuilder func build() -> some View {
+    @ViewBuilder func build(sheetCoordinator: SheetCoordinator? = nil) -> some View {
         switch self {
         case .appHome:
             AppHomeView(model: AppHomeView.ViewModel())
@@ -60,7 +64,7 @@ enum Screen: Int, Identifiable {
             ReportMessageView(model: ReportMessageView.ViewModel())
             
         case .chooseSubActions:
-            CusomizeFoldersView()
+            ChooseSubActionsView(model: ChooseSubActionsView.ViewModel(sheetCoordinator: sheetCoordinator))
         }
     }
     

@@ -14,7 +14,6 @@ protocol DefaultsManagerProtocol {
     var isExpandedAddFilter: Bool { get set }
     var sessionCounter: Int { get set }
     var didPromptForReview: Bool { get set }
-    var selectedSubFolders: [Int64] { get set }
     var appAge: Date { get }
     
     // Session:

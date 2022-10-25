@@ -12,6 +12,15 @@ import NaturalLanguage
 @testable import Simply_Filter_SMS
 
 class mock_PersistanceManager: PersistanceManagerProtocol {
+    //adiBookmark: implement
+    func fetchChosenSubActions() -> [Simply_Filter_SMS.DenyFolderType] {
+        return []
+    }
+    
+    func updateChosenSubActions(_ chosenSubActions: [Simply_Filter_SMS.DenyFolderType]) {
+        
+    }
+    
     
     var addFilterCounter = 0
     var isDuplicateFilterCounter = 0

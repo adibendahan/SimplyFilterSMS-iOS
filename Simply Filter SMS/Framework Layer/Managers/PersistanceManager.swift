@@ -165,6 +165,23 @@ class PersistanceManager: PersistanceManagerProtocol {
         return automaticFiltersRuleRecord
     }
     
+    func fetchChosenSubActions() -> [DenyFolderType] {
+        let sortDescriptor = [NSSortDescriptor(keyPath: \ChosenSubActions.actionId, ascending: true)]
+        guard var chosenSubActionsIds =
+                self.fetch(ChosenSubActions.self, sortDescriptor: sortDescriptor) else { return kDefaultSubActions }
+        
+        while chosenSubActionsIds.count > kMaximumFoldersSelected {
+            if let folderToDelete = chosenSubActionsIds.popLast() {
+                self.context.delete(folderToDelete)
+            }
+        }
+        
+        self.commitContext()
+        var chosenSubActions = chosenSubActionsIds.map({ DenyFolderType(rawValue: $0.actionId) ?? .junk })
+        chosenSubActions.removeAll(where: { !$0.isSubFolder })
+        return chosenSubActions
+    }
+    
     func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule {
         if let existing = self.fetchAutomaticFiltersRuleRecord(for: rule) {
             return existing
@@ -304,6 +321,32 @@ class PersistanceManager: PersistanceManagerProtocol {
                                       filterCase: filter.filterCase) else { return }
         
         filter.text = filterText
+        self.commitContext()
+    }
+    
+    func updateChosenSubActions(_ chosenSubActions: [DenyFolderType]) {
+        let request: NSFetchRequest<ChosenSubActions> = ChosenSubActions.fetchRequest()
+        guard let oldSubActions = try? self.context.fetch(request) else { return }
+        
+        for oldSubAction in oldSubActions {
+            self.context.delete(oldSubAction)
+        }
+        self.commitContext()
+        
+        let _ = chosenSubActions.map({
+            let newSubAction = ChosenSubActions(context: self.context)
+            newSubAction.actionId = $0.rawValue
+        })
+        self.commitContext()
+        
+        var denyFilters = self.fetchFilterRecords(for: .deny)
+        denyFilters.append(contentsOf: self.fetchFilterRecords(for: .denyLanguage))
+        
+        for filter in denyFilters {
+            if !chosenSubActions.contains(filter.denyFolderType) {
+                filter.denyFolderType = filter.denyFolderType.parent ?? .junk
+            }
+        }
         self.commitContext()
     }
     

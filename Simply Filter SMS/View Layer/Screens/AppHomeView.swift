@@ -200,7 +200,16 @@ struct AppHomeView: View {
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
         } content: { sheetScreen in
-            sheetScreen.build()
+            switch sheetScreen {
+            case .chooseSubActions:
+                sheetScreen.build(sheetCoordinator: SheetCoordinator(onDismiss: {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.model.sheetScreen = .enableExtension
+                    }
+                }))
+            default:
+                sheetScreen.build()
+            }
         }
         .fullScreenCover(item: $model.modalFullScreen) {
             self.model.refresh()
@@ -232,10 +241,12 @@ struct AppHomeView: View {
             }
             .accessibilityIdentifier(TestIdentifier.testYourFiltersMenuButton.rawValue)
             
-            Button {
-                self.model.sheetScreen = .chooseSubActions
-            } label: {
-                Label("chooseSubActions_title"~, systemImage: "folder.badge.gearshape")
+            if #available(iOS 16.0, *) {
+                Button {
+                    self.model.sheetScreen = .chooseSubActions
+                } label: {
+                    Label("chooseSubActions_title"~, systemImage: "folder.badge.gearshape")
+                }
             }
             
             Button {

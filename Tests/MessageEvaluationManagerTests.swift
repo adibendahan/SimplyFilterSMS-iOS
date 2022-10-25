@@ -67,7 +67,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         
         for testCase in testCases {
             
-            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).action
+            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).response.action
             
             XCTAssert(testCase.expectedAction == actualAction,
                       "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.debugName) != \(actualAction.debugName).")
@@ -87,7 +87,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         
         for testCase in testCases {
             
-            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).action
+            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).response.action
             
             XCTAssert(testCase.expectedAction == actualAction,
                       "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.debugName) != \(actualAction.debugName).")
@@ -135,7 +135,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         
         for testCase in testCases {
             
-            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).action
+            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).response.action
             
             XCTAssert(testCase.expectedAction == actualAction,
                       "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.debugName) != \(actualAction.debugName).")
@@ -198,7 +198,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         
         for testCase in testCases {
             
-            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).action
+            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).response.action
             
             XCTAssert(testCase.expectedAction == actualAction,
                       "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.debugName) != \(actualAction.debugName).")
@@ -217,7 +217,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         
         for testCase in secondTestCases {
             
-            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).action
+            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).response.action
             
             XCTAssert(testCase.expectedAction == actualAction,
                       "sender \"\(testCase.sender)\", body \"\(testCase.body)\": \(testCase.expectedAction.debugName) != \(actualAction.debugName).")

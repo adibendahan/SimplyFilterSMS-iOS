@@ -44,7 +44,7 @@
 "addFilter_text" = "Type a word (at least 3 characters)";
 "addFilter_type" = "Type";
 "addFilter_type_caption" = "Select an action:";
-"addFilter_folder_caption" = "Select a destination folder:";
+"addFilter_folder_caption" = "Select destination folder (tap to change):";
 "addFilter_folder_junk" = "Junk";
 "addFilter_folder_transactions" = "Transactions";
 "addFilter_folder_promotions" = "Promotions";

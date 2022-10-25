@@ -59,12 +59,15 @@ struct AddFilterView: View {
                             Picker(selection: $model.selectedDenyFolderType, label: Text(DenyFolderType.title)) {
                                 
                                 if #available(iOS 16.0, *) {
-                                    let allAvaliableCases = DenyFolderType.allCases.filter({ self.model.appManager.defaultsManager.selectedSubFolders.contains($0.rawValue) || $0.subAction == nil })
+                                    let chosenSubActions = self.model.appManager.persistanceManager.fetchChosenSubActions()
+                                    let allAvaliableCases = DenyFolderType.allCases.filter({ chosenSubActions.contains($0) || !$0.isSubFolder }).sorted(by: {$0.fullName < $1.fullName })
                                     
                                     ForEach(allAvaliableCases, id: \.rawValue) { folder in
                                         HStack {
                                             Image(systemName: folder.iconName)
-                                            Text(folder.name)
+                                                .padding(.horizontal, 50)
+                                            Text(folder.fullName)
+                                                .padding(.horizontal, 50)
                                         }
                                         .tag(folder)
                                     }

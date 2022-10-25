@@ -26,6 +26,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     func fetchAutomaticFiltersCacheRecords() -> [AutomaticFiltersCache]
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage?
     func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule?
+    func fetchChosenSubActions() -> [DenyFolderType]
     func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule
     func ensuredAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage
     
@@ -50,6 +51,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     func updateFilter(_ filter: Filter, filterCase: FilterCase)
     func updateFilter(_ filter: Filter, filterTarget: FilterTarget)
     func updateFilter(_ filter: Filter, filterText: String)
+    func updateChosenSubActions(_ chosenSubActions: [DenyFolderType])
     func saveCache(with filterList: AutomaticFilterListsResponse)
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool
 

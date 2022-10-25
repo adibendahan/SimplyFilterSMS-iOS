@@ -12,17 +12,23 @@ import OSLog
 
 
 struct MessageEvaluationResult {
-    var action: ILMessageFilterAction
+    
+    init(action: ILMessageFilterAction, reason: String? = nil) {
+        self.response = ILMessageFilterQueryResponse()
+        self.reason = reason
+        self.response.action = action
+    }
+    
+    var response: ILMessageFilterQueryResponse
     var reason: String?
 }
 
 protocol MessageEvaluationManagerProtocol {
     var context: NSManagedObjectContext { get }
-    var defaultsManager: DefaultsManagerProtocol { get }
     
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult
     func setLogger(_ logger: Logger)
     
     @available(iOS 16.0, *)
-    func selectedFolders() -> ILMessageFilterCapabilitiesQueryResponse
+    func fetchChosenSubActions() -> ILMessageFilterCapabilitiesQueryResponse
 }

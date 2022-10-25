@@ -13,9 +13,6 @@ import OSLog
 
 
 class MessageEvaluationManager: MessageEvaluationManagerProtocol {
-    var defaultsManager: DefaultsManagerProtocol = DefaultsManager()
-    
-    
     
     //MARK: - Initialization -
     
@@ -54,24 +51,24 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         
         // Priority #1 - Allow
         result = self.runUserFilters(type: .allow, body: body, sender: sender)
-        guard !result.action.isFiltered else { return result }
+        guard !result.response.action.isFiltered else { return result }
         
         // Priority #2 - Deny
         result = self.runUserFilters(type: .deny, body: body, sender: sender)
-        guard !result.action.isFiltered else { return result }
+        guard !result.response.action.isFiltered else { return result }
         
         // Priority #3 - Deny Language
         result = self.runUserFilters(type: .denyLanguage, body: body, sender: sender)
-        guard !result.action.isFiltered else { return result }
+        guard !result.response.action.isFiltered else { return result }
         
         // Priority #4 - Automatic Filtering
         result = self.runAutomaticFilters(body: body, sender: sender)
-        guard !result.action.isFiltered else { return result }
+        guard !result.response.action.isFiltered else { return result }
         
         // Priority #5 - Rules
         result = self.runFilterRules(body: body, sender: sender)
         
-        if !result.action.isFiltered {
+        if !result.response.action.isFiltered {
             result = MessageEvaluationResult(action: .allow, reason: "testFilters_resultReason_noMatch"~)
         }
         
@@ -83,13 +80,21 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     }
     
     @available(iOS 16.0, *)
-    func selectedFolders() -> ILMessageFilterCapabilitiesQueryResponse {
+    func fetchChosenSubActions() -> ILMessageFilterCapabilitiesQueryResponse {
         let response = ILMessageFilterCapabilitiesQueryResponse()
-//        response.transactionalSubActions = [.transactionalRewards, .transactionalHealth, .transactionalOthers]
-//        response.promotionalSubActions = [.promotionalOffers, .promotionalOthers]
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "ChosenSubActions")
+        var chosenSubActions = kDefaultSubActions
         
-        response.transactionalSubActions = self.defaultsManager.selectedSubFolders.filter({  DenyFolderType(rawValue: $0)?.parent == .transaction }).map({ DenyFolderType(rawValue: $0)?.subAction ?? .none})
-        response.promotionalSubActions = self.defaultsManager.selectedSubFolders.filter({  DenyFolderType(rawValue: $0)?.parent == .promotion }).map({ DenyFolderType(rawValue: $0)?.subAction ?? .none})
+        if let chosenSubActionsIds = try? self.context.fetch(fetchRequest), chosenSubActionsIds.count > 0 {
+            chosenSubActions = chosenSubActionsIds.map {
+                guard let chosenSubActions = $0 as? ChosenSubActions else { return DenyFolderType.junk }
+                return DenyFolderType(rawValue: chosenSubActions.actionId) ?? .junk
+            }
+            chosenSubActions.removeAll(where: { !$0.isSubFolder})
+        }
+
+        response.transactionalSubActions = chosenSubActions.filter({ $0.parent == .transaction }).map({ $0.subAction ?? .none})
+        response.promotionalSubActions = chosenSubActions.filter({ $0.parent == .promotion }).map({ $0.subAction ?? .none})
         
         return response
     }
@@ -125,6 +130,8 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                       self.isMataching(filter: filter, body: body, sender: sender) else { continue }
                 
                 result = MessageEvaluationResult(action: filter.denyFolderType.action, reason: filter.text)
+                result.response.addSubActionIfNeeded(evaluationManager: self, denyFolderType: filter.denyFolderType)
+                
                 break
             }
             
@@ -138,6 +145,8 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                    NLLanguage.dominantLanguage(for: body) == language {
                     
                     result = MessageEvaluationResult(action: filter.denyFolderType.action, reason: language.localizedName)
+                    result.response.addSubActionIfNeeded(evaluationManager: self, denyFolderType: filter.denyFolderType)
+                    
                     break
                 }
             }
@@ -163,7 +172,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
               }
         
         for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords {
-            guard result.action == .none else { break }
+            guard result.response.action == .none else { break }
             
             if automaticFiltersLanguageRecord.isActive,
                let langRawValue = automaticFiltersLanguageRecord.lang,
@@ -178,7 +187,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     }
                 }
                 
-                guard !result.action.isFiltered else { break }
+                guard !result.response.action.isFiltered else { break }
                 
                 for allowedBody in languageResponse.allowBody {
                     if lowercasedBody.contains(allowedBody.lowercased()) {
@@ -187,7 +196,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     }
                 }
                 
-                guard !result.action.isFiltered else { break }
+                guard !result.response.action.isFiltered else { break }
                 
                 for deniedSender in languageResponse.denySender {
                     if lowercasedSender == deniedSender.lowercased() {
@@ -196,7 +205,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     }
                 }
                 
-                guard !result.action.isFiltered else { break }
+                guard !result.response.action.isFiltered else { break }
                 
                 for deniedBody in languageResponse.denyBody {
                     if lowercasedBody.contains(deniedBody.lowercased()) {
@@ -307,5 +316,29 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         }
         
         return isMataching
+    }
+}
+
+
+extension ILMessageFilterQueryResponse {
+    convenience init(action: ILMessageFilterAction) {
+        self.init()
+        self.action = action
+    }
+    
+    func addSubActionIfNeeded(evaluationManager: MessageEvaluationManagerProtocol,
+                              denyFolderType: DenyFolderType) {
+        
+        if #available(iOS 16.0, *) {
+            let chosenSubActions = evaluationManager.fetchChosenSubActions()
+
+            if denyFolderType.isSubFolder,
+               let subAction = denyFolderType.subAction,
+               (chosenSubActions.promotionalSubActions.contains(subAction) ||
+                chosenSubActions.transactionalSubActions.contains(subAction)) {
+                
+                self.subAction = subAction
+            }
+        }
     }
 }

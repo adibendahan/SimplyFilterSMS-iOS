@@ -156,10 +156,10 @@ extension TestFiltersView {
             let result = self.appManager.messageEvaluationManager.evaluateMessage(body: self.text, sender: sender)
             
             if let reason = result.reason {
-                self.fadeTextModel.text = "\(result.action.testResult)\n\("testFilters_resultReason"~) \(reason)"
+                self.fadeTextModel.text = "\(result.response.action.testResult)\n\("testFilters_resultReason"~) \(reason)"
             }
             else {
-                self.fadeTextModel.text = result.action.testResult
+                self.fadeTextModel.text = result.response.action.testResult
             }
         }
     }

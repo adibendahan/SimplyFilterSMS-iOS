@@ -21,7 +21,12 @@ let kHideiClouldStatusMemory = 60
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
 
-
+let kMaximumFoldersSelected = 5
+let kDefaultSubActions = [DenyFolderType.transactionalFinance,
+                       DenyFolderType.transactionalOrders,
+                       DenyFolderType.transactionalHealth,
+                       DenyFolderType.promotionalCoupons,
+                       DenyFolderType.promotionalOffers]
 // URLs
 extension URL {
     static let appBaseURL = URL(string: "https://grizz-apps-dev.s3.us-east-2.amazonaws.com")!
@@ -201,6 +206,16 @@ enum DenyFolderType: Int64, CaseIterable, Identifiable {
             return "Offers"
         case .promotionalCoupons:
             return "Coupons"
+        }
+    }
+    
+    var fullName: String {
+        switch self {
+        case .junk, .transaction, .promotion:
+            return self.name
+            
+        default:
+            return "\(self.parent?.name ?? ""): \(self.name)"
         }
     }
     

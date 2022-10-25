@@ -179,15 +179,15 @@ open class Snapshot: NSObject {
                 let range = NSRange(location: 0, length: simulator.count)
                 simulator = regex.stringByReplacingMatches(in: simulator, range: range, withTemplate: "")
 
-                let path = screenshotsDir.appendingPathComponent("\(simulator)-\(name).png")
+                let path = screenshotsDir.appendingPathComponent("\(simulator)-\(title).png")
                 #if swift(<5.0)
                     UIImagePNGRepresentation(image)?.write(to: path, options: .atomic)
                 #else
                     try image.pngData()?.write(to: path, options: .atomic)
                 #endif
-            } catch let error {
-                NSLog("Problem writing screenshot: \(name) to \(screenshotsDir)/\(simulator)-\(name).png")
-                NSLog(error.localizedDescription)
+            } catch let message {
+                NSLog("Problem writing screenshot: \(title) to \(screenshotsDir)/\(simulator)-\(title).png")
+                NSLog(message.localizedDescription)
             }
         #endif
     }

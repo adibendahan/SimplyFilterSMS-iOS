@@ -13,6 +13,12 @@ import OSLog
 @testable import Simply_Filter_SMS
 
 class mock_MessageEvaluationManager: MessageEvaluationManagerProtocol {
+    //adiBookmark: implement
+    @available(iOS 16.0, *)
+    func fetchChosenSubActions() -> ILMessageFilterCapabilitiesQueryResponse {
+        return ILMessageFilterCapabilitiesQueryResponse()
+    }
+    
 
     var evaluateMessageCounter = 0
     var setLoggerCounter = 0
