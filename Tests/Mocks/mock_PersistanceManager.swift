@@ -12,16 +12,7 @@ import NaturalLanguage
 @testable import Simply_Filter_SMS
 
 class mock_PersistanceManager: PersistanceManagerProtocol {
-    //adiBookmark: implement
-    func fetchChosenSubActions() -> [Simply_Filter_SMS.DenyFolderType] {
-        return []
-    }
-    
-    func updateChosenSubActions(_ chosenSubActions: [Simply_Filter_SMS.DenyFolderType]) {
-        
-    }
-    
-    
+
     var addFilterCounter = 0
     var isDuplicateFilterCounter = 0
     var isDuplicateFilterLanguageCounter = 0
@@ -47,6 +38,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var reloadContainerCounter = 0
     var fingerprintGetCounter = 0
     var fingerprintSetCounter = 0
+    var fetchChosenSubActionsCounter = 0
+    var updateChosenSubActionsCounter = 0
     
     var addFilterClosure: ((String, FilterType, DenyFolderType, FilterTarget, FilterMatching, FilterCase) -> ())?
     var isDuplicateFilterClosure: ((String, FilterTarget, FilterMatching, FilterCase) -> (Bool))?
@@ -72,7 +65,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var ensuredAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule))?
     var reloadContainerClosure: (() -> ())?
     var fingerprintClosure: (() -> (String))?
-    
+    var fetchChosenSubActionsClosure: (() -> ([DenyFolderType]))?
+    var updateChosenSubActionsClosure: (([DenyFolderType]) -> ())?
 
     var fingerprint: String {
         get {
@@ -207,6 +201,16 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     func reloadContainer() {
         self.reloadContainerCounter += 1
         self.reloadContainerClosure?()
+    }
+    
+    func fetchChosenSubActions() -> [DenyFolderType] {
+        self.fetchChosenSubActionsCounter += 1
+        return self.fetchChosenSubActionsClosure?() ?? []
+    }
+    
+    func updateChosenSubActions(_ chosenSubActions: [DenyFolderType]) {
+        self.updateChosenSubActionsCounter += 1
+        self.updateChosenSubActionsClosure?(chosenSubActions)
     }
 
     //MARK: Helpers

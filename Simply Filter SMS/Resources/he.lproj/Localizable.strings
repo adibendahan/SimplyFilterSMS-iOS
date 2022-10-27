@@ -42,13 +42,13 @@
 
 "addFilter_type_caption" = "בחרו פעולה";
 
-"addFilter_folder_caption" = "בחרו תיקיית יעד:";
+"addFilter_folder_caption" = "בחרו תיקיית יעד (לחצו כדי לשנות):";
 
 "addFilter_folder_junk" = "זבל";
 
-"addFilter_folder_transactions" = "פעולות";
+"addFilter_folder_transactions" = "עסקאות";
 
-"addFilter_folder_promotions" = "פרסומי";
+"addFilter_folder_promotions" = "קידומי מכירות";
 
 "addFilter_duplicate" = "פילטר קיים";
 
@@ -274,5 +274,41 @@
 
 "reportMessage_thankYou" = "תודה שדיווחתם!";
 
-"chooseSubActions_title" = "";
+"chooseSubActions_title" = "בחירת תיקיות";
+
+"subAction_transactionalOthers" = "אחרים";
+
+"subAction_transactionalFinance" = "פיננסים";
+
+"subAction_transactionalOrders" = "הזמנות";
+
+"subAction_transactionalReminders" = "תזכורות";
+
+"subAction_transactionalHealth" = "בריאות";
+
+"subAction_transactionalWeather" = "מזג אוויר";
+
+"subAction_transactionalCarrier" = "מפעיל";
+
+"subAction_transactionalRewards" = "תגמולים";
+
+"subAction_transactionalPublicServices" = "שירותים ציבוריים";
+
+"subAction_promotionalOthers" = "אחרים";
+
+"subAction_promotionalOffers" = "מבצעים";
+
+"subAction_promotionalCoupons" = "שוברי הנחה";
+
+"chooseSubActions_save" = "שמירה";
+
+"chooseSubActions_max_folders" = "מקסימום 5 תיקיות";
+
+"chooseSubActions_settings" = "עברו להגדרות";
+
+"chooseSubActions_how" = "הראה לי איך";
+
+"chooseSubActions_alert_body" = "על מנת להחיל את השינויים באפליקציית ההודעות *חייבים* לכבות ואז להפעיל מחדש את Simply Filter SMS כאפליקציית סינון ההודעות במכשיר.\n\nאם לא תעשו זאת, סינון ההודעות עלול להתנהג בצורה בלתי צפויה או להיכשל לחלוטין.";
+
+"chooseSubActions_alert_title" = "הודעה חשובה!";
 

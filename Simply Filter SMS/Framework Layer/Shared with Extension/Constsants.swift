@@ -22,11 +22,8 @@ let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? S
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
 
 let kMaximumFoldersSelected = 5
-let kDefaultSubActions = [DenyFolderType.transactionalFinance,
-                       DenyFolderType.transactionalOrders,
-                       DenyFolderType.transactionalHealth,
-                       DenyFolderType.promotionalCoupons,
-                       DenyFolderType.promotionalOffers]
+let kDefaultSubActions = [DenyFolderType.transactionalFinance, .transactionalOrders, .transactionalHealth,
+                          .promotionalCoupons, .promotionalOffers]
 // URLs
 extension URL {
     static let appBaseURL = URL(string: "https://grizz-apps-dev.s3.us-east-2.amazonaws.com")!
@@ -183,29 +180,29 @@ enum DenyFolderType: Int64, CaseIterable, Identifiable {
         case .promotion:
             return "addFilter_folder_promotions"~
         case .transactionalOthers:
-            return "Others"
+            return "subAction_transactionalOthers"~
         case .transactionalFinance:
-            return "Finance"
+            return "subAction_transactionalFinance"~
         case .transactionalOrders:
-            return "Orders"
+            return "subAction_transactionalOrders"~
         case .transactionalReminders:
-            return "Reminders"
+            return "subAction_transactionalReminders"~
         case .transactionalHealth:
-            return "Health"
+            return "subAction_transactionalHealth"~
         case .transactionalWeather:
-            return "Weather"
+            return "subAction_transactionalWeather"~
         case .transactionalCarrier:
-            return "Carrier"
+            return "subAction_transactionalCarrier"~
         case .transactionalRewards:
-            return "Rewards"
+            return "subAction_transactionalRewards"~
         case .transactionalPublicServices:
-            return "Public Services"
+            return "subAction_transactionalPublicServices"~
         case .promotionalOthers:
-            return "Others"
+            return "subAction_promotionalOthers"~
         case .promotionalOffers:
-            return "Offers"
+            return "subAction_promotionalOffers"~
         case .promotionalCoupons:
-            return "Coupons"
+            return "subAction_promotionalCoupons"~
         }
     }
     

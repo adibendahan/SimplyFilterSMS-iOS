@@ -20,8 +20,6 @@ final class MessageFilterExtension: ILMessageFilterExtension {
         messageEvaluationManager.setLogger(self.logger)
         return messageEvaluationManager
     }()
-    
-    
 }
 
 extension MessageFilterExtension: ILMessageFilterQueryHandling, ILMessageFilterCapabilitiesQueryHandling {

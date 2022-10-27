@@ -168,4 +168,24 @@
 "reportMessage_thankYou" = "Thank you for reporting!";
 
 
-"chooseSubActions_title" = "Customize Folders";
+"chooseSubActions_title" = "Choose Folders";
+
+"subAction_transactionalOthers" = "Others";
+"subAction_transactionalFinance" = "Finance";
+"subAction_transactionalOrders" = "Orders";
+"subAction_transactionalReminders" = "Reminders";
+"subAction_transactionalHealth" = "Health";
+"subAction_transactionalWeather" = "Weather";
+"subAction_transactionalCarrier" = "Carrier";
+"subAction_transactionalRewards" = "Rewards";
+"subAction_transactionalPublicServices" = "Public Services";
+"subAction_promotionalOthers" = "Others";
+"subAction_promotionalOffers" = "Offers";
+"subAction_promotionalCoupons" = "Coupons";
+
+"chooseSubActions_save" = "Save";
+"chooseSubActions_max_folders" = "Maximum 5 folders allowed";
+"chooseSubActions_settings" = "Go to Settings";
+"chooseSubActions_how" = "Show me how";
+"chooseSubActions_alert_body" = "To apply folder changes on Messages app you *MUST* disable and then re-enable Simply Filter SMS as your message filtering application.\n\nIf you fail to do so, message filtering might behave unexpectedly or fail completely.";
+"chooseSubActions_alert_title" = "Important Notice!";

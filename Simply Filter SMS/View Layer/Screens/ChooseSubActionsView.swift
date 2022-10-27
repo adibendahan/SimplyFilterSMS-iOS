@@ -8,6 +8,7 @@
 import SwiftUI
 import IdentityLookup
 
+//MARK: - View -
 struct ChooseSubActionsView: View {
     
     @Environment(\.dismiss)
@@ -53,7 +54,7 @@ struct ChooseSubActionsView: View {
                     Button {
                         self.model.onSave()
                     } label: {
-                        Text("Save")
+                        Text("chooseSubActions_save"~)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(FilledButton())
@@ -64,14 +65,13 @@ struct ChooseSubActionsView: View {
                 }
                 .background(.ultraThinMaterial)
                 
-                
-                Text("Maximum 5 folders allowed")
+                Text("chooseSubActions_max_folders"~)
                     .foregroundColor(.red)
                     .font(.caption)
                     .opacity(model.animate ? 1.0 : 0.0)
                     .padding(.top, -84)
             }
-            .navigationTitle("Choose Folders")
+            .navigationTitle("chooseSubActions_title"~)
             .toolbar {
                 ToolbarItem {
                     Button {
@@ -90,30 +90,34 @@ struct ChooseSubActionsView: View {
         .alert(self.model.details.title,
                isPresented: $model.showingAlert,
                presenting: model.details) { details in
-
-            Button("Go to Settings") {
+            
+            Button("chooseSubActions_settings"~) {
                 self.model.saveChangesAndRedirectToSettings()
                 dismiss()
             }
             
-            Button("Show me how") {
+            Button("chooseSubActions_how"~) {
                 dismiss()
                 self.model.sheetCoordinator?.onDismiss?()
             }
             
-            Button("Cancel", role: .cancel) { }
+            Button("enableExtension_ready_cancel"~, role: .cancel) { }
         } message: { details in
             Text(details.message)
         }
     }
-    
-    struct SaveAlertDetails: Identifiable {
-        let title: String
-        let message: String
-        let id = UUID()
-    }
-    
+}
+
+//MARK: - ViewModel -
+extension ChooseSubActionsView {
     class ViewModel: BaseViewModel, ObservableObject {
+        
+        struct SaveAlertDetails: Identifiable {
+            let title: String
+            let message: String
+            let id = UUID()
+        }
+        
         let maxSelectionCount = 5
         let initialSelection: Set<DenyFolderType>
         
@@ -126,13 +130,14 @@ struct ChooseSubActionsView: View {
         @Published var selected = Set<DenyFolderType>()
         @Published var animate = false
         @Published var showingAlert = false
-        @Published var details: SaveAlertDetails = SaveAlertDetails(title: "Important Notice!", message: "To apply folder changes on Messages app you *MUST* disable and then re-enable Simply Filter SMS as your message filtering application.\n\nIf you fail to do so, message filtering might behave unexpectedly or fail completely.")
+        @Published var details: SaveAlertDetails = SaveAlertDetails(title: "chooseSubActions_alert_title"~,
+                                                                    message: "chooseSubActions_alert_body"~)
         @Published var sheetCoordinator: SheetCoordinator?
-
+        
         func fetchChosenSubActions() {
             self.selected = Set(self.appManager.persistanceManager.fetchChosenSubActions())
         }
-
+        
         func onSave() {
             self.showingAlert = true
         }
@@ -148,7 +153,7 @@ struct ChooseSubActionsView: View {
     }
 }
 
-
+//MARK: - Preview -
 struct ChooseSubActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ChooseSubActionsView(model: ChooseSubActionsView.ViewModel(appManager: AppManager.previews))

@@ -65,9 +65,7 @@ struct AddFilterView: View {
                                     ForEach(allAvaliableCases, id: \.rawValue) { folder in
                                         HStack {
                                             Image(systemName: folder.iconName)
-                                                .padding(.horizontal, 50)
                                             Text(folder.fullName)
-                                                .padding(.horizontal, 50)
                                         }
                                         .tag(folder)
                                     }
@@ -76,7 +74,6 @@ struct AddFilterView: View {
                                     let allAvaliableCases = DenyFolderType.allCases.filter({ !$0.isSubFolder })
                                     
                                     ForEach(allAvaliableCases, id: \.rawValue) { folder in
-                                        
                                         Label(folder.name, image: folder.iconName)
                                             .font(.body)
                                             .tag(folder)

@@ -13,18 +13,14 @@ import OSLog
 @testable import Simply_Filter_SMS
 
 class mock_MessageEvaluationManager: MessageEvaluationManagerProtocol {
-    //adiBookmark: implement
-    @available(iOS 16.0, *)
-    func fetchChosenSubActions() -> ILMessageFilterCapabilitiesQueryResponse {
-        return ILMessageFilterCapabilitiesQueryResponse()
-    }
-    
 
     var evaluateMessageCounter = 0
     var setLoggerCounter = 0
+    var fetchChosenSubActionsCounter = 0
     
     var evaluateMessageClosure: ((String, String) -> (MessageEvaluationResult))?
     var setLoggerClosure: ((Logger) -> ())?
+    var fetchChosenSubActionsClosure: (() -> ())?
     
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult {
         self.evaluateMessageCounter += 1
@@ -39,6 +35,13 @@ class mock_MessageEvaluationManager: MessageEvaluationManagerProtocol {
     func resetCounters() {
         self.evaluateMessageCounter = 0
         self.setLoggerCounter = 0
+    }
+    
+    @available(iOS 16.0, *)
+    func fetchChosenSubActions() -> ILMessageFilterCapabilitiesQueryResponse {
+        self.fetchChosenSubActionsCounter += 1
+        self.fetchChosenSubActionsClosure?()
+        return ILMessageFilterCapabilitiesQueryResponse()
     }
     
     //MARK: Helpers
