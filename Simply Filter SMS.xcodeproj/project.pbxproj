@@ -74,7 +74,7 @@
 		69CD70D12770D4D100F91A2F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69CD70D02770D4D100F91A2F /* Preview Assets.xcassets */; };
 		69CD70D62770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */; };
 		69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70FE2770D65D00F91A2F /* MessageFilterExtension.swift */; };
-		69CD71032770D65D00F91A2F /* Message Filter Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 69CD70FC2770D65D00F91A2F /* Message Filter Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		69CD71032770D65D00F91A2F /* Message Filter Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 69CD70FC2770D65D00F91A2F /* Message Filter Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		69D87E442877445E00266D86 /* ReportMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D87E432877445E00266D86 /* ReportMessageView.swift */; };
 		69DB7014277A1F0200245DBA /* Constsants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constsants.swift */; };
 		69DB7015277A1F0200245DBA /* Constsants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constsants.swift */; };
@@ -123,15 +123,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		69CD71072770D65D00F91A2F /* Embed App Extensions */ = {
+		69CD71072770D65D00F91A2F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				69CD71032770D65D00F91A2F /* Message Filter Extension.appex in Embed App Extensions */,
+				69CD71032770D65D00F91A2F /* Message Filter Extension.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -562,7 +562,7 @@
 				69CD70C22770D4D100F91A2F /* Sources */,
 				69CD70C32770D4D100F91A2F /* Frameworks */,
 				69CD70C42770D4D100F91A2F /* Resources */,
-				69CD71072770D65D00F91A2F /* Embed App Extensions */,
+				69CD71072770D65D00F91A2F /* Embed Foundation Extensions */,
 				69C7A42D279AF4790051B0DE /* Run BartyCrouch */,
 			);
 			buildRules = (
@@ -600,7 +600,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1340;
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					691AA72D285508EC00FCA4AF = {
 						CreatedOnToolsVersion = 13.4.1;
@@ -679,6 +679,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		69C7A42D279AF4790051B0DE /* Run BartyCrouch */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
