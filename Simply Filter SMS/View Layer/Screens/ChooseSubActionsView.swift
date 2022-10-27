@@ -38,6 +38,7 @@ struct ChooseSubActionsView: View {
                             }
                         }
                     }
+                    Section { }.opacity(0)
                 }
                 .environment(\.editMode, Binding.constant(.active))
                 .onChange(of: model.selected) { selected in
