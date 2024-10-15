@@ -18,6 +18,7 @@ let kSupportEmail = "grizz.apps.dev@gmail.com"
 let kUpdateAutomaticFiltersMinDays = 3
 let kMinimumFilterLength = 3
 let kHideiClouldStatusMemory = 60
+let kCurrentWhatsNewVersion = 141
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
 

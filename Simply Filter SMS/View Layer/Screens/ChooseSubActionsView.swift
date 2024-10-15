@@ -73,18 +73,8 @@ struct ChooseSubActionsView: View {
                     .padding(.top, -84)
             }
             .navigationTitle("chooseSubActions_title"~)
-            .toolbar {
-                ToolbarItem {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
-                    }
-                    .contentShape(Rectangle())
-                }
-            }
         }
+        .modifier(EmbeddedCloseButton(onTap: { dismiss() }))
         .onAppear(perform: {
             self.model.fetchChosenSubActions()
         })

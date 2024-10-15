@@ -17,7 +17,7 @@ enum Screen: Int, Identifiable {
     case appHome, onboarding, help, about, enableExtension, testFilters,
          addLanguageFilter, addAllowFilter, addDenyFilter, automaticBlocking,
          denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
-         chooseSubActions
+         chooseSubActions, whatsNew
     
     @ViewBuilder func build(sheetCoordinator: SheetCoordinator? = nil) -> some View {
         switch self {
@@ -65,6 +65,9 @@ enum Screen: Int, Identifiable {
             
         case .chooseSubActions:
             ChooseSubActionsView(model: ChooseSubActionsView.ViewModel(sheetCoordinator: sheetCoordinator))
+            
+        case .whatsNew:
+            WhatsNewView(model: WhatsNewView.ViewModel())
         }
     }
     
@@ -100,6 +103,8 @@ enum Screen: Int, Identifiable {
             return "reportMessage"
         case .chooseSubActions:
             return "chooseSubActions"
+        case .whatsNew:
+            return "whatsNew"
         }
     }
 }

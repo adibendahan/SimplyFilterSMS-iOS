@@ -73,6 +73,7 @@ struct AppHomeView: View {
                         } // Navigation Link
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
                         .accessibility(identifier: TestIdentifier.automaticFilterLink.rawValue)
+                        .accentColor(Color.primary.opacity(0.35))
                 } header: {
                     Spacer()
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -171,6 +172,7 @@ struct AppHomeView: View {
                         }
                         .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
                         .accessibilityIdentifier(filterType.testIdentifier.rawValue)
+                        .accentColor(Color.primary.opacity(0.35))
                     }
                 } header: {
                     Text("autoFilter_yourFilters"~)
@@ -187,11 +189,14 @@ struct AppHomeView: View {
                         if !isPreview && self.model.isAppFirstRun {
                             self.model.modalFullScreen = .enableExtension
                         }
+                        else {
+                            self.model.showWhatsNewIfNeeded()
+                        }
                     }
                 }
             }
         } // NavigationView
-        .navigationViewStyle(.stack)
+        .phoneOnlyStackNavigationView()
         .modifier(EmbeddedFooterView {
             guard self.model.navigationScreen == nil else { return }
             self.model.sheetScreen = .about
@@ -217,6 +222,12 @@ struct AppHomeView: View {
             modalFullScreen.build()
         }
         .onAppear {
+            let device = UIDevice.current
+            
+            if device.userInterfaceIdiom == .pad && device.orientation.isLandscape {
+                self.model.navigationScreen = .automaticBlocking
+            }
+            
             self.model.startMonitoring()
         }
     }
@@ -273,6 +284,15 @@ struct AppHomeView: View {
     }
 }
 
+extension View {
+    @ViewBuilder func phoneOnlyStackNavigationView() -> some View {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            self.navigationViewStyle(.stack)
+        } else {
+            self
+        }
+    }
+}
 
 //MARK: - ViewModel -
 extension AppHomeView {
@@ -445,6 +465,12 @@ extension AppHomeView {
             self.appManager.persistanceManager.loadDebugData()
             #endif
             self.refresh()
+        }
+        
+        func showWhatsNewIfNeeded() {
+            if self.appManager.defaultsManager.whatsNewVersion < kCurrentWhatsNewVersion {
+                self.sheetScreen = .whatsNew
+            }
         }
         
         private var didAddObservers = false

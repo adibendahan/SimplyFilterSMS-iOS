@@ -189,3 +189,14 @@
 "chooseSubActions_how" = "Show me how";
 "chooseSubActions_alert_body" = "To apply folder changes on Messages app you *MUST* disable and then re-enable Simply Filter SMS as your message filtering application.\n\nIf you fail to do so, message filtering might behave unexpectedly or fail completely.";
 "chooseSubActions_alert_title" = "Important Notice!";
+
+
+"whatsNew_mainVersionTitle" = "1.4.0 Release:";
+"whatsNew_mainVersionUpdates_1" = "Native iPad version of the app now available.";
+"whatsNew_mainVersionUpdates_2" = "Added support for new folders introduced on iOS 16. You can choose folders from the menu on the home screen.\n\nSupported folders: Transactional Others, Finance, Orders, Reminders, Health, Carrier, Rewards, Public Services, Promotional Others, Offers and Coupons.";
+"whatsNew_secondaryVersionTitle" = "Previous Releases:";
+"whatsNew_secondaryVersionUpdates_1" = "Report a message from the menu on the home screen.";
+"whatsNew_secondaryVersionUpdates_2" = "Easily edit a filter text by tapping on it.";
+"whatsNew_secondaryVersionUpdates_3" = "New smart filters - Block Emojis, Block Emails.";
+"whatsNew_rateUs" = "Tap to rate us on the AppStore";
+"whatsNew_title" = "📺 App News";

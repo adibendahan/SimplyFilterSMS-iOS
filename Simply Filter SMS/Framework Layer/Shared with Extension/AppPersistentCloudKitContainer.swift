@@ -7,7 +7,7 @@
 
 import CoreData
 
-class AppPersistentCloudKitContainer: NSPersistentCloudKitContainer {
+class AppPersistentCloudKitContainer: NSPersistentCloudKitContainer, @unchecked Sendable {
     override class func defaultDirectoryURL() -> URL {
         guard let storeURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: kAppGroupContainer) else {
             return URL(fileURLWithPath: NSTemporaryDirectory())

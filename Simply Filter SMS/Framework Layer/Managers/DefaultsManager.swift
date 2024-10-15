@@ -24,6 +24,9 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("didPromptForReview", defaultValue: false)
     var didPromptForReview: Bool
     
+    @StoredDefault("whatsNewVersion", defaultValue: 0)
+    var whatsNewVersion: Int
+    
     @StoredDefault("appAge", defaultValue: Date())
     private(set) var appAge: Date
     

@@ -15,6 +15,7 @@ protocol DefaultsManagerProtocol {
     var sessionCounter: Int { get set }
     var didPromptForReview: Bool { get set }
     var appAge: Date { get }
+    var whatsNewVersion: Int { get set }
     
     // Session:
     var lastOfflineNotificationDismiss: Date? { get set }

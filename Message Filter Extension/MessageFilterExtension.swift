@@ -24,23 +24,19 @@ final class MessageFilterExtension: ILMessageFilterExtension {
 
 extension MessageFilterExtension: ILMessageFilterQueryHandling, ILMessageFilterCapabilitiesQueryHandling {
     
-    @available(iOSApplicationExtension 16.0, *)
-    func handle(_ capabilitiesQueryRequest: ILMessageFilterCapabilitiesQueryRequest,
-                context: ILMessageFilterExtensionContext,
-                completion: @escaping (ILMessageFilterCapabilitiesQueryResponse) -> Void) {
-        
-        let response = self.extensionManager.fetchChosenSubActions()
-        completion(response)
-    }
-    
     func handle(_ queryRequest: ILMessageFilterQueryRequest,
-                context: ILMessageFilterExtensionContext,
-                completion: @escaping (ILMessageFilterQueryResponse) -> Void) {
+                context: ILMessageFilterExtensionContext) async -> ILMessageFilterQueryResponse {
         
         let body = queryRequest.messageBody ?? ""
         let sender = queryRequest.sender ?? ""
         let evaluationResult = self.extensionManager.evaluateMessage(body: body, sender: sender)
+        return evaluationResult.response
+    }
+    
+    @available(iOSApplicationExtension 16.0, *)
+    func handle(_ capabilitiesQueryRequest: ILMessageFilterCapabilitiesQueryRequest,
+                context: ILMessageFilterExtensionContext) async -> ILMessageFilterCapabilitiesQueryResponse {
         
-        completion(evaluationResult.response)
+        return self.extensionManager.fetchChosenSubActions()
     }
 }
