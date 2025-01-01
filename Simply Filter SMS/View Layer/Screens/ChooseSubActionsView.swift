@@ -83,11 +83,12 @@ struct ChooseSubActionsView: View {
                presenting: model.details) { details in
             
             Button("chooseSubActions_settings"~) {
-                self.model.saveChangesAndRedirectToSettings()
+                self.model.saveChanges(redirectToSettings: true)
                 dismiss()
             }
             
             Button("chooseSubActions_how"~) {
+                self.model.saveChanges(redirectToSettings: false)
                 dismiss()
                 self.model.sheetCoordinator?.onDismiss?()
             }
@@ -133,11 +134,11 @@ extension ChooseSubActionsView {
             self.showingAlert = true
         }
         
-        func saveChangesAndRedirectToSettings() {
+        func saveChanges(redirectToSettings: Bool = true) {
             let chosenSubActions = self.selected.map({ $0 })
             self.appManager.persistanceManager.updateChosenSubActions(chosenSubActions)
             
-            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+            if redirectToSettings, let settingsURL = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(settingsURL)
             }
         }

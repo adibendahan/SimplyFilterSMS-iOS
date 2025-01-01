@@ -312,21 +312,14 @@
 
 "chooseSubActions_alert_title" = "הודעה חשובה!";
 
-"whatsNew_mainVersionTitle" = "";
+"whatsNew_mainVersionTitle" = "1.4.0 גירסה:";
+"whatsNew_mainVersionUpdates_1" = "האפליקציה זמינה כעת גם לאייפד.";
+"whatsNew_mainVersionUpdates_2" = "הוספת תמיכה לתיקיות החדשות שנוספו בגירסה 16 של מערכת ההפעלה. כעת ניתן לבחור תיקיות מהתפריט בעמות הבית של האפליקציה.\n\nתיקיות נתמכות: עסקאות אחרות, פיננסים, הזמנות, תזכורות, בריאות, מפעיל, תגמולים, שירותים ציבוריים, קידומי מכירות אחרים, מבצעים ושוברי הנחה.";
+"whatsNew_secondaryVersionTitle" = "גירסאות קודמות:";
+"whatsNew_secondaryVersionUpdates_1" = "דיווח על הודעות זבל מהתפריט בעמוד הבית של האפליקציה.";
+"whatsNew_secondaryVersionUpdates_2" = "הוספת אפשרות עריכמה מהירה לפילטל על ידי לחיצה על הטקסט של פילטר קיים.";
+"whatsNew_secondaryVersionUpdates_3" = "פילטרים חכמים חדשים - חסימת אימוג'ים וחסימת הודעות מדואר אלקטרוני";
+"whatsNew_rateUs" = "לחצו כאן כדי לדרג אותנו באפסטור";
+"whatsNew_title" = "📺 חדשות האפליקציה";
 
-"whatsNew_mainVersionUpdates_1" = "";
-
-"whatsNew_mainVersionUpdates_2" = "";
-
-"whatsNew_secondaryVersionTitle" = "";
-
-"whatsNew_secondaryVersionUpdates_1" = "";
-
-"whatsNew_secondaryVersionUpdates_2" = "";
-
-"whatsNew_secondaryVersionUpdates_3" = "";
-
-"whatsNew_rateUs" = "";
-
-"whatsNew_title" = "";
 
