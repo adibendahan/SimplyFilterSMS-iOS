@@ -97,3 +97,14 @@ extension View {
         UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
     }
 }
+
+extension View {
+    @ViewBuilder func phoneOnlyStackNavigationView() -> some View {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            self.navigationViewStyle(.stack)
+
+        } else {
+            self
+        }
+    }
+}

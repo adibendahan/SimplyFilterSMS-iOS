@@ -17,24 +17,27 @@ struct TwoButtonPageView: View {
     var body: some View {
         VStack (alignment: .center, spacing: 8) {
             
-            Spacer()
-                .frame(height: 12, alignment: .top)
-            
-            Text(.init(self.model.text))
-                .font(.title2)
-                .padding(.horizontal, 16)
-            
-            if let image = self.model.image {
+            ScrollView {
                 Spacer()
+                    .frame(height: 12, alignment: .top)
                 
-                Image(image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 45, style: .continuous))
+                Text(.init(self.model.text))
+                    .font(.title2)
                     .padding(.horizontal, 16)
+                
+                if let image = self.model.image {
+                    Spacer()
+                    
+                    Image(image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 45, style: .continuous))
+                        .padding(.horizontal, 16)
+                }
+                
+                Spacer()
             }
-            
-            Spacer()
+            .padding(.horizontal, 16)
             
             Button {
                 withAnimation {

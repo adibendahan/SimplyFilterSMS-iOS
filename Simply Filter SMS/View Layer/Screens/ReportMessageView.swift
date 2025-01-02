@@ -175,7 +175,7 @@ extension ReportMessageView {
         }
     }
     
-    class ViewModel: BaseViewModel, ObservableObject {
+    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject {
         @Published var text: String = ""
         @Published var sender: String = ""
         @Published var state: ViewState = .userInput

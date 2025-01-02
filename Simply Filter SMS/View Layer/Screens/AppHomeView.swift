@@ -18,6 +18,9 @@ struct AppHomeView: View {
     @Environment(\.isPreview)
     var isPreview
     
+    @Environment(\.colorScheme)
+    var colorScheme: ColorScheme
+    
     @ObservedObject var model: ViewModel
     
     var body: some View {
@@ -73,6 +76,7 @@ struct AppHomeView: View {
                         } // Navigation Link
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
                         .accessibility(identifier: TestIdentifier.automaticFilterLink.rawValue)
+                        .accentColor(Color.primary.opacity(0.35))
                 } header: {
                     Spacer()
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -171,6 +175,7 @@ struct AppHomeView: View {
                         }
                         .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
                         .accessibilityIdentifier(filterType.testIdentifier.rawValue)
+                        .accentColor(Color.primary.opacity(0.35))
                     }
                 } header: {
                     Text("autoFilter_yourFilters"~)
@@ -185,13 +190,17 @@ struct AppHomeView: View {
                         self.model.refresh()
                         
                         if !isPreview && self.model.isAppFirstRun {
-                            self.model.modalFullScreen = .enableExtension
+                            self.model.sheetScreen = .enableExtension
                         }
                     }
                 }
             }
+            
+            CustomPlaceholderView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.listBackgroundColor(for: colorScheme))
         } // NavigationView
-        .navigationViewStyle(.stack)
+        .phoneOnlyStackNavigationView()
         .modifier(EmbeddedFooterView {
             guard self.model.navigationScreen == nil else { return }
             self.model.sheetScreen = .about

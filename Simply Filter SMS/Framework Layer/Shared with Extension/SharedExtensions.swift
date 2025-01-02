@@ -77,15 +77,15 @@ extension AutomaticFiltersRule {
 }
 
 
-extension NLLanguage: Identifiable {
+extension NLLanguage: @retroactive Identifiable {
     public var id: String {
         self.rawValue
     }
     
     
-    init(filterText: String) {
+    init(filterText: String?) {
         var language = NLLanguage.undetermined
-        let langName = filterText.split(separator: ":")[safe: 1] ?? "unknown"
+        let langName = filterText?.split(separator: ":")[safe: 1] ?? "unknown"
         for supportedLanguage in NLLanguage.allSupportedCases {
             let realLangName = Locale(identifier: "en_US").localizedString(forIdentifier: supportedLanguage.rawValue)?.lowercased() ?? "unknown"
             
