@@ -44,7 +44,7 @@
 "addFilter_text" = "Type a word (at least 3 characters)";
 "addFilter_type" = "Type";
 "addFilter_type_caption" = "Select an action:";
-"addFilter_folder_caption" = "Select a destination folder:";
+"addFilter_folder_caption" = "Select destination folder (tap to change):";
 "addFilter_folder_junk" = "Junk";
 "addFilter_folder_transactions" = "Transactions";
 "addFilter_folder_promotions" = "Promotions";
@@ -166,3 +166,10 @@
 "reportMessage_notJunk" = "Not junk";
 "reportMessage_report" = "Report";
 "reportMessage_thankYou" = "Thank you for reporting!";
+
+
+//MARK: iPad Detail Placeholder
+"placeholder_choose_title" = "Select a category";
+"placeholder_choose_detail" = "Choose an category from the sidebar to view its details.";
+"placeholder_choose_sub_detail1" = "If it's hidden press the";
+"placeholder_choose_sub_detail2" = "button at the top.";

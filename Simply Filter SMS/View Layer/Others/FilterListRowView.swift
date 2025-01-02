@@ -18,12 +18,12 @@ struct FilterListRowView: View {
         HStack (alignment: .center) {
             
             if self.model.filter.filterType == .denyLanguage,
-               let filterText = self.model.filter.text,
-               let blockedLanguage = NLLanguage(filterText: filterText),
-               blockedLanguage != .undetermined,
-               let localizedName = blockedLanguage.localizedName {
-                
-                Text(localizedName)
+               let filterText = self.model.filter.text {
+                let blockedLanguage = NLLanguage(filterText: filterText)
+                if blockedLanguage != .undetermined,
+                   let localizedName = blockedLanguage.localizedName {
+                    Text(localizedName)
+                }
             }
             else {
                 EditableText(

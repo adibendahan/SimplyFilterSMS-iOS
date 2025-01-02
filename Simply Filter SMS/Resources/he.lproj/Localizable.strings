@@ -42,13 +42,13 @@
 
 "addFilter_type_caption" = "בחרו פעולה";
 
-"addFilter_folder_caption" = "בחרו תיקיית יעד:";
+"addFilter_folder_caption" = "בחרו תיקיית יעד (לחצו כדי לשנות):";
 
 "addFilter_folder_junk" = "זבל";
 
-"addFilter_folder_transactions" = "פעולות";
+"addFilter_folder_transactions" = "עסקאות";
 
-"addFilter_folder_promotions" = "פרסומי";
+"addFilter_folder_promotions" = "קידומי מכירות";
 
 "addFilter_duplicate" = "פילטר קיים";
 
@@ -274,3 +274,10 @@
 
 "reportMessage_thankYou" = "תודה שדיווחתם!";
 
+"placeholder_choose_title" = "בחרו קטגוריה";
+
+"placeholder_choose_detail" = "בחרו קטגוריה מתפריט הצד על מנת לראות את פרטיה.";
+
+"placeholder_choose_sub_detail1" = "אם הקטגוריות נסתרות, לחצו על";
+
+"placeholder_choose_sub_detail2" = "שמופיע למעלה.";

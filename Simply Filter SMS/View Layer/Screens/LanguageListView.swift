@@ -141,7 +141,7 @@ extension LanguageListView {
         case blockLanguage, automaticBlocking
     }
     
-    class ViewModel: BaseViewModel, ObservableObject {
+    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject {
         @Published private(set) var mode: LanguageListView.Mode
         @Published private(set) var title: String
         @Published private(set) var footer: String
@@ -282,9 +282,12 @@ extension LanguageListView {
             try? await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
             await self.appManager.automaticFilterManager.forceUpdateAutomaticFilters()
             
-            DispatchQueue.main.async {
-                self.refresh()
+            Task {
+                DispatchQueue.main.async {
+                    self.refresh()
+                }
             }
+
         }
     }
 }

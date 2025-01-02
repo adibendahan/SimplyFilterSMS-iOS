@@ -25,10 +25,10 @@ struct EnableExtensionView: View {
                 }
                 
                 ForEach(self.model.screenshotPages.indices, id: \.self) { index in
-                    if let screenshotModel = self.model.screenshotPages[index] {
+                    let screenshotModel = self.model.screenshotPages[index]
                         ScreenshotPageView(model: screenshotModel, coordinator: self.model.coordinator)
                             .tag(self.model.welcomeTagOffset + index)
-                    }
+                    
                 }
                 
                 TwoButtonPageView(model: self.model.readyPage, coordinator: self.model.coordinator)
@@ -43,12 +43,14 @@ struct EnableExtensionView: View {
                         self.dismissView()
                     } label: {
                         Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(self.model.isAppFirstRun ? .clear : .primary)
                     }
                     .contentShape(Rectangle())
+                    .disabled(self.model.isAppFirstRun)
                 }
             }
         } // NavigationView
+        .interactiveDismissDisabled()
         .onAppear {
             if self.model.coordinator == nil {
                 self.model.coordinator = PageCoordinator(presenter: self)

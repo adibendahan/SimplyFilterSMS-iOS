@@ -63,7 +63,12 @@ struct AddFilterView: View {
                                         .tag(folder)
                                 }
                             }
-                            .pickerStyle(.segmented)
+                            .pickerStyle(.menu)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .tint(.primary)
+                            .font(.body)
+                            .background(RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .foregroundColor(.secondary.opacity(0.16)))
                         }
                         
                         Spacer()
