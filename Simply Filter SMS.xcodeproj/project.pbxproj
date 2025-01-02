@@ -1023,7 +1023,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 202501021722;
+				CURRENT_PROJECT_VERSION = 202501022000;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = AL28LDR9PU;
@@ -1064,7 +1064,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202501021722;
+				CURRENT_PROJECT_VERSION = 202501022000;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				ENABLE_PREVIEWS = YES;
@@ -1099,7 +1099,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202501021722;
+				CURRENT_PROJECT_VERSION = 202501022000;
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
@@ -1125,7 +1125,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202501021722;
+				CURRENT_PROJECT_VERSION = 202501022000;
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
