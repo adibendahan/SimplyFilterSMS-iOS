@@ -110,7 +110,7 @@ struct FilterListView: View {
             self.model.canBlockAnotherLanguage) ||
             self.model.filterType != .denyLanguage {
             
-            Button {
+            Button(action: {
                 switch self.model.filterType {
                 case .deny:
                     self.model.sheetScreen = .addDenyFilter
@@ -119,32 +119,46 @@ struct FilterListView: View {
                 case .denyLanguage:
                     self.model.sheetScreen = .addLanguageFilter
                 }
-                
-            } label: {
-                Spacer()
-                
-                switch self.model.filterType {
-                case .deny, .allow:
-                    Image(systemName: "plus.message")
-                        .imageScale(.large)
-                        .font(.system(size: 20, weight: .bold))
+            }) {
+                HStack {
+                    Spacer()
                     
-                    Text(self.model.filterType == .deny ? "addFilter_addFilter_deny"~ : "addFilter_addFilter_allow"~)
-                        .font(.body)
+                    switch self.model.filterType {
+                    case .deny, .allow:
+                        Image(systemName: "plus.message")
+                            .imageScale(.large)
+                            .font(.system(size: 20, weight: .bold))
+                        
+                        Text(self.model.filterType == .deny ? "addFilter_addFilter_deny"~ : "addFilter_addFilter_allow"~)
+                            .font(.body)
+                        
+                    case .denyLanguage:
+                        Image(systemName: "globe")
+                            .imageScale(.large)
+                            .font(.system(size: 20, weight: .bold))
+                        
+                        Text("addFilter_addLanguage"~)
+                            .font(.body)
+                    }
                     
-                case .denyLanguage:
-                    Image(systemName: "globe")
-                        .imageScale(.large)
-                        .font(.system(size: 20, weight: .bold))
-                    
-                    Text("addFilter_addLanguage"~)
-                        .font(.body)
+                    Spacer()
                 }
-                
-                Spacer()
+                .contentShape(Rectangle())
+                .frame(minWidth: 1, maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.top, 1)
+                .padding(.bottom, 40)
             }
-            .padding(.top, 1)
-            .padding(.bottom, 40)
+            .highPriorityGesture(TapGesture()
+                .onEnded({ _ in
+                switch self.model.filterType {
+                case .deny:
+                    self.model.sheetScreen = .addDenyFilter
+                case .allow:
+                    self.model.sheetScreen = .addAllowFilter
+                case .denyLanguage:
+                    self.model.sheetScreen = .addLanguageFilter
+                }
+            }))
             .accessibilityIdentifier(TestIdentifier.addFilterButton.rawValue)
         }
         else {
