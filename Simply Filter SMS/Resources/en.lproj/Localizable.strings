@@ -41,7 +41,7 @@
 "addFilter_addFilter_allow" = "Add Allowed Text";
 "addFilter_addFilter_deny" = "Add Blocked Text";
 "addFilter_addLanguage" = "Add Language";
-"addFilter_text" = "Type a word (at least 3 characters)";
+"addFilter_text" = "Type a word/letter";
 "addFilter_type" = "Type";
 "addFilter_type_caption" = "Select an action:";
 "addFilter_folder_caption" = "Select destination folder (tap to change):";
