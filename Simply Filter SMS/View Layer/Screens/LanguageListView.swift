@@ -28,7 +28,6 @@ struct LanguageListView: View {
             NavigationView {
                 self.makeBody()
             }
-            .modifier(EmbeddedFooterView(onTap: { self.model.sheetScreen = .about }))
         case .automaticBlocking:
             self.makeBody()
         }
@@ -106,22 +105,18 @@ struct LanguageListView: View {
         .listStyle(.insetGrouped)
         .navigationTitle(self.model.title)
         .navigationBarTitleDisplayMode(self.model.mode == .blockLanguage ? .large : .inline)
-        .toolbar {
-            ToolbarItem {
-                Button {
-                    dismiss()
-                } label: {
-                    switch self.model.mode {
-                    case .blockLanguage:
+        .if(self.model.mode == .blockLanguage) {
+            $0.toolbar {
+                ToolbarItem {
+                    Button {
+                        dismiss()
+                    } label: {
                         Image(systemName: "xmark")
                             .foregroundColor(.secondary)
-                        
-                    case .automaticBlocking:
-                        EmptyView()
                     }
+                    .contentShape(Rectangle())
+                    .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
                 }
-                .contentShape(Rectangle())
-                .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
             }
         }
         .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
@@ -303,3 +298,4 @@ struct LanguageListView_Previews: PreviewProvider {
         }
     }
 }
+

@@ -37,16 +37,18 @@ struct EnableExtensionView: View {
             } // TabView
             .tabViewStyle(.page)
             .indexViewStyle(.page(backgroundDisplayMode: .always))
-            .toolbar {
-                ToolbarItem {
-                    Button {
-                        self.dismissView()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(self.model.isAppFirstRun ? .clear : .primary)
+            .if(!self.model.isAppFirstRun) {
+                $0.toolbar {
+                    ToolbarItem {
+                        Button {
+                            self.dismissView()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .foregroundColor(.primary)
+                        }
+                        .contentShape(Rectangle())
+                        .accessibilityIdentifier("EnableExtensionView.closeButton")
                     }
-                    .contentShape(Rectangle())
-                    .disabled(self.model.isAppFirstRun)
                 }
             }
         } // NavigationView
@@ -189,3 +191,4 @@ struct EnableExtensionView_Previews: PreviewProvider {
         EnableExtensionView(model: EnableExtensionView.ViewModel(showWelcome: false, appManager: AppManager.previews))
     }
 }
+
