@@ -69,6 +69,7 @@ Simply Filter SMS is written in Apple's latest programming paradigm SwiftUI.
 <img width="250" src="_screenshots/04.png">
 <img width="250" src="_screenshots/05.png">
 <img width="250" src="_screenshots/06.png">
+<img width="250" src="_screenshots/07.png">
 </p>
 
 
@@ -114,7 +115,7 @@ Simply Filter SMS is open for pull-request business.
 
 ## License
 
-[MIT](https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/main/LICENSE) 2022 © Adi Ben-Dahan. All rights reserved.
+[MIT](https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/main/LICENSE) 2025 © Adi Ben-Dahan. All rights reserved.
 
 
 [contributors-shield]: https://img.shields.io/github/contributors/adibendahan/SimplyFilterSMS-iOS?style=for-the-badge
