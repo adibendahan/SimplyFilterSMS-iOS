@@ -21,6 +21,9 @@ struct AppHomeView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+    
     @ObservedObject var model: ViewModel
     
     var body: some View {
@@ -180,6 +183,10 @@ struct AppHomeView: View {
                 } header: {
                     Text("autoFilter_yourFilters"~)
                 }
+                
+                Section {} header: {
+                    Text("")
+                }
             } // List
             .navigationTitle(self.model.title)
             .listStyle(.insetGrouped)
@@ -202,7 +209,7 @@ struct AppHomeView: View {
         } // NavigationView
         .phoneOnlyStackNavigationView()
         .modifier(EmbeddedFooterView {
-            guard self.model.navigationScreen == nil else { return }
+            guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
             self.model.sheetScreen = .about
         })
         .modifier(EmbeddedNotificationView(model: self.model.notification))
