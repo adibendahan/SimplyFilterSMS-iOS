@@ -15,6 +15,7 @@
 "general_close" = "Close";
 "general_active_count" = "%ld filters";
 "general_lang" = "Language";
+"general_edit" = "Edit";
 
 //MARK: Languages
 "lang_supported" = "Supported Languages";
