@@ -144,7 +144,7 @@ struct AppHomeView: View {
                                 .padding(.leading, 8)
                             }
                         } // Toggle
-                        .tint(rule == .allUnknown && model.rules[index].state ? .red : .accentColor)
+                        .tint(rule.toggleBackgroundColor)
                         .disabled(isDisabled)
                     } // ForEach
                     

@@ -411,4 +411,13 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
     var isDestructive: Bool {
         return self == .allUnknown
     }
+
+    var toggleBackgroundColor: Color {
+        switch self {
+        case .allUnknown:
+            return .red
+        default:
+            return .accentColor
+        }
+    }
 }
