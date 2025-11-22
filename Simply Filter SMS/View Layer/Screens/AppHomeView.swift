@@ -26,6 +26,8 @@ struct AppHomeView: View {
     
     @ObservedObject var model: ViewModel
     
+    @State private var dynamicEmojis: [String: String] = [:]
+    
     var body: some View {
         NavigationView {
             List {
@@ -96,10 +98,19 @@ struct AppHomeView: View {
                         Toggle(isOn: $model.rules[index].state) {
                             HStack {
                                 if rule.isTextIcon {
-                                    Text(rule.icon)
-                                        .opacity(isDisabled ? 0.5 : 1)
-                                        .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-                                        .font(.system(size: 16))
+                                    let ruleKey: String = rule.title
+                                    let baseEmoji = rule.icon
+                                    let currentEmoji = dynamicEmojis[ruleKey] ?? baseEmoji
+                                    Button {
+                                        dynamicEmojis[ruleKey] = EmojiGenerator.randomEmoji()
+                                    } label: {
+                                        Text(currentEmoji)
+                                            .opacity(isDisabled ? 0.5 : 1)
+                                            .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
+                                            .font(.system(size: 16))
+                                    }
+                                    .buttonStyle(.plain)
+                                    .disabled(isDisabled)
                                 }
                                 else {
                                     Image(systemName: rule.icon)
@@ -467,3 +478,4 @@ struct AppHomeView_Previews: PreviewProvider {
         AppHomeView(model: AppHomeView.ViewModel(appManager: AppManager.previews))
     }
 }
+
