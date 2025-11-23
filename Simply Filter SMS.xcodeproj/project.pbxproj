@@ -339,7 +339,6 @@
 				69E6F5642790E98400AD6BFA /* HelpView.swift */,
 				6941FE19277E19CC00B99539 /* AboutView.swift */,
 				69218EC42EC8A261000D547B /* EnableExtensionVideoView.swift */,
-				69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -351,6 +350,7 @@
 				69DB7012277A1EDF00245DBA /* Shared with Extension */,
 				690F055227822DFA0036553B /* AppExtensions.swift */,
 				696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */,
+				69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */,
 			);
 			path = "Framework Layer";
 			sourceTree = "<group>";
