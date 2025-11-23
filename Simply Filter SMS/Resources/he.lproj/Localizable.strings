@@ -8,6 +8,8 @@
 
 "general_close" = "סגירה";
 
+"general_edit" = "עריכה";
+
 "lang_supported" = "שפות נתמכות";
 
 "lang_allBlocked" = "כל השפות הנתמכות כבר חסומות!";
@@ -52,35 +54,13 @@
 
 "addFilter_duplicate" = "פילטר קיים";
 
-"enableExtension_step1" = "שלב 1";
+"enableExtension_welcome" = "ברוכים הבאים!";
 
-"enableExtension_step1_desc" = "פתחו את 'הגדרות' ולחצו על 'הודעות'";
-
-"enableExtension_step2" = "שלב 2";
-
-"enableExtension_step2_desc" = "לחצו על 'לא ידוע וספאם' תחת 'סינון הודעות'";
-
-"enableExtension_step3" = "שלב 3";
-
-"enableExtension_step3_desc" = "הפעילו את 'Simply Filter SMS' תחת 'סינון הודעות טקסט'";
-
-"enableExtension_welcome" = "ברוכים הבאים! 🥳";
-
-"enableExtension_welcome_desc" = "יש לאפשר את Simply Filter SMS כאפליקציה שמסננת הודעות בהגדרות של מערכת ההפעלה.";
-
-"enableExtension_welcome_callToAction" = "הראה לי איך";
-
-"enableExtension_welcome_cancel" = "כבר עשיתי זאת";
-
-"enableExtension_ready" = "מוכנים?";
-
-"enableExtension_ready_desc" = "לחצו על כפתור ה***%@*** על מנת לעבור להגדרות מערכת ההפעלה או ***%@*** אם כבר הגדרתם את 'Simply Filter SMS' כאפליקציה שמסננת הודעות.";
+"enableExtension_welcome_desc" = "יש לאפשר את Simply Filter SMS כאפליקציה שמסננת הודעות בהגדרות של מערכת ההפעלה. צפו בסרטון הדרכה וכאשר תהיו מוכנים, לחצו על כפתור ההגדרות כדי לעבור למסך ההגדרות של מערכת ההפעלה.";
 
 "enableExtension_ready_callToAction" = "הגדרות";
 
 "enableExtension_ready_cancel" = "ביטול";
-
-"enableExtension_next" = "שלב הבא";
 
 "aboutView_aboutSection" = "אודות";
 

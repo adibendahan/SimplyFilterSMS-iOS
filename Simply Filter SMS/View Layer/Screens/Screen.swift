@@ -20,7 +20,7 @@ enum Screen: Int, Identifiable {
             AppHomeView(model: AppHomeView.ViewModel())
             
         case .onboarding:
-            EnableExtensionView(model: EnableExtensionView.ViewModel(showWelcome: true))
+            EnableExtensionVideoView(model: EnableExtensionVideoView.ViewModel())
             
         case .help:
             HelpView(model: HelpView.ViewModel())
@@ -29,7 +29,7 @@ enum Screen: Int, Identifiable {
             AboutView(model: AboutView.ViewModel())
             
         case .enableExtension:
-            EnableExtensionView(model: EnableExtensionView.ViewModel(showWelcome: false))
+            EnableExtensionVideoView(model: EnableExtensionVideoView.ViewModel())
             
         case .testFilters:
             TestFiltersView(model: TestFiltersView.ViewModel())
@@ -106,3 +106,4 @@ extension FilterType {
         }
     }
 }
+

@@ -67,8 +67,7 @@ struct FilterListView: View {
             }
         } // List
         .listStyle(InsetGroupedListStyle())
-        .navigationBarItems(trailing: EditButton())
-        .navigationBarItems(trailing: NavigationBarTrailingItem())
+        .navigationBarItems(trailing: NavigationBarMenu())
         .navigationTitle(self.model.filterType.name)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
@@ -98,8 +97,51 @@ struct FilterListView: View {
                 },
                 label: {
                     Text(String(format: "filterList_deleteFiltersCount"~, self.model.selectedFilters.count))
-                        .foregroundColor(.red)
                 })
+        }
+    }
+    
+    @ViewBuilder
+    private func NavigationBarMenu() -> some View {
+        HStack(spacing: 8) {
+            NavigationBarTrailingItem()
+
+            if self.model.editMode.isEditing {
+                EditButton()
+            } else {
+                Menu {
+                    Button(action: {
+                        withAnimation {
+                            self.model.editMode = .active
+                        }
+                    }) {
+                        Label("general_edit"~, systemImage: "pencil")
+                    }
+
+                    Button(action: {
+                        switch self.model.filterType {
+                        case .deny:
+                            self.model.sheetScreen = .addDenyFilter
+                        case .allow:
+                            self.model.sheetScreen = .addAllowFilter
+                        case .denyLanguage:
+                            self.model.sheetScreen = .addLanguageFilter
+                        }
+                    }) {
+                        Label({
+                            switch self.model.filterType {
+                            case .deny, .allow:
+                                return self.model.filterType == .deny ? ("addFilter_addFilter_deny"~) : ("addFilter_addFilter_allow"~)
+                            case .denyLanguage:
+                                return ("addFilter_addLanguage"~)
+                            }
+                        }(), systemImage: self.model.filterType == .denyLanguage ? "globe" : "plus.message")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+
+                }
+            }
         }
     }
     
@@ -233,3 +275,4 @@ struct ContentView_Previews: PreviewProvider {
         }
     }
 }
+

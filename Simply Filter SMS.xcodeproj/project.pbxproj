@@ -13,8 +13,6 @@
 		690F09C527AC22CD00BA481F /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690F09C427AC22CD00BA481F /* BaseViewModel.swift */; };
 		690F09C727AC308600BA481F /* mock_AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690F09C627AC308600BA481F /* mock_AppManager.swift */; };
 		690F09C927AC310600BA481F /* mock_AutomaticFilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690F09C827AC310600BA481F /* mock_AutomaticFilterManager.swift */; };
-		69118BF7279DF3B3001F2613 /* TwoButtonPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69118BF6279DF3B3001F2613 /* TwoButtonPageView.swift */; };
-		69118BF9279DFAEB001F2613 /* ScreenshotPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69118BF8279DFAEB001F2613 /* ScreenshotPageView.swift */; };
 		69189C1327A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C1227A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift */; };
 		69189C1527A97F7400C8FFA5 /* MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */; };
 		69189C1727A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C1627A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift */; };
@@ -25,11 +23,11 @@
 		691C370E27B400A500B3D061 /* NetworkSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691C370D27B400A500B3D061 /* NetworkSyncManager.swift */; };
 		691D57CA27BB2E0500DDA267 /* mock_HTTPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691D57C927BB2E0500DDA267 /* mock_HTTPService.swift */; };
 		691D57CB27BBE63300DDA267 /* MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */; };
+		69218EC52EC8A261000D547B /* EnableExtensionVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69218EC42EC8A261000D547B /* EnableExtensionVideoView.swift */; };
 		69300B8627A9C4A700DF7982 /* TestFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69300B8527A9C4A700DF7982 /* TestFiltersView.swift */; };
 		6931BAEA27BB270E00636439 /* AmazonS3ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */; };
 		69398EBC27B0A613003C5123 /* FilterListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69398EBB27B0A613003C5123 /* FilterListRowView.swift */; };
 		6941FE13277DE78B00B99539 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6941FE15277DE78B00B99539 /* Localizable.strings */; };
-		6941FE18277DF88200B99539 /* EnableExtensionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE17277DF88200B99539 /* EnableExtensionView.swift */; };
 		6941FE1A277E19CC00B99539 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE19277E19CC00B99539 /* AboutView.swift */; };
 		6941FE1C277FDBE700B99539 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE1B277FDBE700B99539 /* MailView.swift */; };
 		694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */; };
@@ -74,6 +72,9 @@
 		69CD70D62770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */; };
 		69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70FE2770D65D00F91A2F /* MessageFilterExtension.swift */; };
 		69CD71032770D65D00F91A2F /* Message Filter Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 69CD70FC2770D65D00F91A2F /* Message Filter Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		69D4D17C2ED1F4BE00275627 /* enableExtension.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 69D4D17B2ED1F4BE00275627 /* enableExtension.mp4 */; };
+		69D4D17E2ED22F5D00275627 /* enableExtension.he.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 69D4D17D2ED22F5D00275627 /* enableExtension.he.mp4 */; };
+		69D4D1802ED23D7700275627 /* EmojiGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */; };
 		69D87E442877445E00266D86 /* ReportMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D87E432877445E00266D86 /* ReportMessageView.swift */; };
 		69DB7014277A1F0200245DBA /* Constsants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constsants.swift */; };
 		69DB7015277A1F0200245DBA /* Constsants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constsants.swift */; };
@@ -143,8 +144,6 @@
 		690F09C427AC22CD00BA481F /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
 		690F09C627AC308600BA481F /* mock_AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_AppManager.swift; sourceTree = "<group>"; };
 		690F09C827AC310600BA481F /* mock_AutomaticFilterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_AutomaticFilterManager.swift; sourceTree = "<group>"; };
-		69118BF6279DF3B3001F2613 /* TwoButtonPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButtonPageView.swift; sourceTree = "<group>"; };
-		69118BF8279DFAEB001F2613 /* ScreenshotPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPageView.swift; sourceTree = "<group>"; };
 		6916BE7427A176650096CC8D /* Simply_Filter_SMS 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Simply_Filter_SMS 3.xcdatamodel"; sourceTree = "<group>"; };
 		69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEvaluationManager.swift; sourceTree = "<group>"; };
 		69189C1227A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEvaluationManagerTests.swift; sourceTree = "<group>"; };
@@ -155,12 +154,12 @@
 		691AA73F2855176A00FCA4AF /* Snapfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Snapfile; sourceTree = "<group>"; };
 		691C370D27B400A500B3D061 /* NetworkSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSyncManager.swift; sourceTree = "<group>"; };
 		691D57C927BB2E0500DDA267 /* mock_HTTPService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_HTTPService.swift; sourceTree = "<group>"; };
+		69218EC42EC8A261000D547B /* EnableExtensionVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionVideoView.swift; sourceTree = "<group>"; };
 		69300B8527A9C4A700DF7982 /* TestFiltersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFiltersView.swift; sourceTree = "<group>"; };
 		6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonS3ServiceTests.swift; sourceTree = "<group>"; };
 		69398EBB27B0A613003C5123 /* FilterListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListRowView.swift; sourceTree = "<group>"; };
 		6941FE14277DE78B00B99539 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6941FE16277DE78E00B99539 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/Localizable.strings; sourceTree = "<group>"; };
-		6941FE17277DF88200B99539 /* EnableExtensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionView.swift; sourceTree = "<group>"; };
 		6941FE19277E19CC00B99539 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		6941FE1B277FDBE700B99539 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 		694E1E8A27AEE16D00264524 /* Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
@@ -206,6 +205,9 @@
 		69CD71002770D65D00F91A2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		69CD71082770D74300F91A2F /* Simply Filter SMS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Simply Filter SMS.entitlements"; sourceTree = "<group>"; };
 		69CD71092770D7AD00F91A2F /* Simply Filter SMS Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Simply Filter SMS Extension.entitlements"; sourceTree = "<group>"; };
+		69D4D17B2ED1F4BE00275627 /* enableExtension.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = enableExtension.mp4; sourceTree = "<group>"; };
+		69D4D17D2ED22F5D00275627 /* enableExtension.he.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = enableExtension.he.mp4; sourceTree = "<group>"; };
+		69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiGenerator.swift; sourceTree = "<group>"; };
 		69D87E432877445E00266D86 /* ReportMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMessageView.swift; sourceTree = "<group>"; };
 		69DB7013277A1F0200245DBA /* Constsants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constsants.swift; sourceTree = "<group>"; };
 		69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPersistentCloudKitContainer.swift; sourceTree = "<group>"; };
@@ -335,8 +337,9 @@
 				69300B8527A9C4A700DF7982 /* TestFiltersView.swift */,
 				69D87E432877445E00266D86 /* ReportMessageView.swift */,
 				69E6F5642790E98400AD6BFA /* HelpView.swift */,
-				6941FE17277DF88200B99539 /* EnableExtensionView.swift */,
 				6941FE19277E19CC00B99539 /* AboutView.swift */,
+				69218EC42EC8A261000D547B /* EnableExtensionVideoView.swift */,
+				69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -439,6 +442,8 @@
 			children = (
 				69CD70CF2770D4D100F91A2F /* Preview Content */,
 				69CD70CD2770D4D100F91A2F /* Assets.xcassets */,
+				69D4D17B2ED1F4BE00275627 /* enableExtension.mp4 */,
+				69D4D17D2ED22F5D00275627 /* enableExtension.he.mp4 */,
 				69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */,
 				69CD71082770D74300F91A2F /* Simply Filter SMS.entitlements */,
 				69ECF14628676122000380A2 /* Config.xcconfig */,
@@ -500,8 +505,6 @@
 				690F054D278200B60036553B /* ButtonStyles.swift */,
 				6987D80127AAD9E400B3DB84 /* ViewModfiers.swift */,
 				69FF9C8527921DCC007FA2DB /* QuestionView.swift */,
-				69118BF6279DF3B3001F2613 /* TwoButtonPageView.swift */,
-				69118BF8279DFAEB001F2613 /* ScreenshotPageView.swift */,
 				6941FE1B277FDBE700B99539 /* MailView.swift */,
 				69FF9C8727933CE9007FA2DB /* FooterView.swift */,
 				698844A327A8C200005BF9DA /* FadingTextView.swift */,
@@ -661,6 +664,8 @@
 			files = (
 				69CD70D12770D4D100F91A2F /* Preview Assets.xcassets in Resources */,
 				6941FE13277DE78B00B99539 /* Localizable.strings in Resources */,
+				69D4D17C2ED1F4BE00275627 /* enableExtension.mp4 in Resources */,
+				69D4D17E2ED22F5D00275627 /* enableExtension.he.mp4 in Resources */,
 				69CD70CE2770D4D100F91A2F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -728,14 +733,15 @@
 				69F4097527B94A2D00749552 /* HTTPService.swift in Sources */,
 				69606230287797A0003254AD /* CheckView.swift in Sources */,
 				6982FE8B27A6FBA000BF6AA4 /* AutomaticFilterManager.swift in Sources */,
+				69D4D1802ED23D7700275627 /* EmojiGenerator.swift in Sources */,
 				69189C1527A97F7400C8FFA5 /* MessageEvaluationManager.swift in Sources */,
 				69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */,
 				69398EBC27B0A613003C5123 /* FilterListRowView.swift in Sources */,
 				690F054E278200B60036553B /* ButtonStyles.swift in Sources */,
 				69ECF148286763F4000380A2 /* ReportMessageService.swift in Sources */,
-				6941FE18277DF88200B99539 /* EnableExtensionView.swift in Sources */,
 				69AA2C59279D793600CEABE5 /* DefaultsManager.swift in Sources */,
 				69F4097327B9499500749552 /* AutomaticFilterListsRequest.swift in Sources */,
+				69218EC52EC8A261000D547B /* EnableExtensionVideoView.swift in Sources */,
 				6941FE1A277E19CC00B99539 /* AboutView.swift in Sources */,
 				69E6F5652790E98400AD6BFA /* HelpView.swift in Sources */,
 				695D5BC1278DE4B50037C926 /* LanguageListView.swift in Sources */,
@@ -750,10 +756,8 @@
 				6987D80227AAD9E400B3DB84 /* ViewModfiers.swift in Sources */,
 				698FBAFE27B44A0700435699 /* NetworkSyncManagerProtocol.swift in Sources */,
 				69CD70D62770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld in Sources */,
-				69118BF9279DFAEB001F2613 /* ScreenshotPageView.swift in Sources */,
 				690D709C27B31DC0001880DA /* NotificationView.swift in Sources */,
 				69ECF14C28677505000380A2 /* ReportMessageResponse.swift in Sources */,
-				69118BF7279DF3B3001F2613 /* TwoButtonPageView.swift in Sources */,
 				694E1E8B27AEE16D00264524 /* Screen.swift in Sources */,
 				690F055327822DFA0036553B /* AppExtensions.swift in Sources */,
 				6982FE8927A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift in Sources */,
@@ -1023,7 +1027,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 202509231229;
+				CURRENT_PROJECT_VERSION = 202511222035;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = AL28LDR9PU;
 				ENABLE_PREVIEWS = YES;
@@ -1041,7 +1045,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.3;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "May 22: Simply Filter SMS - Dev";
@@ -1063,7 +1067,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202509231229;
+				CURRENT_PROJECT_VERSION = 202511222035;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1080,7 +1084,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.3;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1097,7 +1101,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202509231229;
+				CURRENT_PROJECT_VERSION = 202511222035;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1107,7 +1111,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.3;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1122,7 +1126,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202509231229;
+				CURRENT_PROJECT_VERSION = 202511222035;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1132,7 +1136,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.3;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
