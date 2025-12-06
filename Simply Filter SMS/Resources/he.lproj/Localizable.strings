@@ -66,7 +66,7 @@
 
 "aboutView_linksSection" = "קישורים";
 
-"aboutView_aboutText" = "פותח על ידי עדי בן-דהן בתל אביב, ישראל 🇮🇱\n\nסינון ההודעות נעשה לוקאלית בלבד, לא נאסף שום מידע. אם נתקלת בבעיה בתפעול האפליקציה בבקשה דווח בדף הפרוייקט ב-GitHub.";
+"aboutView_aboutText" = "**פותח על ידי עדי בן-דהן ב-❤️ בתל אביב 🇮🇱**\n\nהפרויקט הזה התחיל מחיפוש אישי אחר כלי סינון הודעות שמכבד באמת את פרטיות.\n\nבלי ענן.\nבלי אנליטיקות.\nבלי מציצנים שקטים.\n\nרק מסנן מהיר ואמין שרץ כולו על המכשיר מבלי ששום דבר יוצא מהידיים שלך. ומכיוון שהרבה כלים בתחום הזה דורשים מנוי חודשי או תשלום, חשבתי שיהיה נחמד שתהיה גרסה חינמית שפשוט עובדת - בלי התחייבויות. האפליקציה הזו **חינמית** לשימוש, והיא **תישאר חינמית**.\n\n**אשמח מאד אם תדרגו בחמישה כוכבים את האפליקציה ב-AppStore ⭐️❤️.**\n\nאם משהו מרגיש מוזר או לא מתנהג כמו שציפיתם, הערה קצרה בעמוד ה-Issues ב-GitHub או מייל יתקבלו בברכה.";
 
 "aboutView_twitter" = "a_bd";
 

@@ -339,7 +339,6 @@
 				69E6F5642790E98400AD6BFA /* HelpView.swift */,
 				6941FE19277E19CC00B99539 /* AboutView.swift */,
 				69218EC42EC8A261000D547B /* EnableExtensionVideoView.swift */,
-				69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -351,6 +350,7 @@
 				69DB7012277A1EDF00245DBA /* Shared with Extension */,
 				690F055227822DFA0036553B /* AppExtensions.swift */,
 				696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */,
+				69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */,
 			);
 			path = "Framework Layer";
 			sourceTree = "<group>";
@@ -1027,7 +1027,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 202511222035;
+				CURRENT_PROJECT_VERSION = 202512061824;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = AL28LDR9PU;
 				ENABLE_PREVIEWS = YES;
@@ -1045,11 +1045,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "May 22: Simply Filter SMS - Dev";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "January 2025";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Nov 2025";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1067,7 +1067,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202511222035;
+				CURRENT_PROJECT_VERSION = 202512061824;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1084,7 +1084,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1101,7 +1101,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202511222035;
+				CURRENT_PROJECT_VERSION = 202512061824;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1111,7 +1111,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1126,7 +1126,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202511222035;
+				CURRENT_PROJECT_VERSION = 202512061824;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1136,7 +1136,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

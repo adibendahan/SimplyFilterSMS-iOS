@@ -72,9 +72,9 @@
 
 
 //MARK: About View
-"aboutView_aboutSection" = "About";
+"aboutView_aboutSection" = "Developer Notes";
 "aboutView_linksSection" = "Links";
-"aboutView_aboutText" = "Developed by Adi Ben-Dahan in Tel Aviv, Israel 🇮🇱\n\nAll message filtering is done locally with no data collection whatsoever. If you encounter a problem with the app functionality please open an issue on the GitHub project page.";
+"aboutView_aboutText" = "**Made with ❤️ by Adi Ben-Dahan in Tel Aviv 🇮🇱**\n\nThis project started as a personal quest for a messaging tool that truly respected privacy.\n\nNo clouds.\nNo analytics.\nNo silent observers.\n\nJust a fast, reliable filter running entirely on your device with nothing that leaves your hands.\nAnd since many tools in this space sit behind a subscription or paywall, I thought it’d be nice to have a version that just works with no strings attached. This app is **free** to use, and it will **stay free**.\n\n**I'll be very happy to recieve five star rating on the AppStore ⭐️❤️.**\n\nIf something feels off or isn’t behaving as expected, a quick note on the GitHub issues page or an email is always appreciated.";
 "aboutView_twitter" = "a_bd";
 "aboutView_github" = "GitHub";
 "aboutView_sendMail" = "Email";

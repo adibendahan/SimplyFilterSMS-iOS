@@ -45,8 +45,14 @@ struct AboutView: View {
                 
                 List {
                     Section {
-                        Text("aboutView_aboutText"~)
-                            .font(.body)
+                        if let attributed = try? AttributedString(markdown: "aboutView_aboutText"~, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) {
+                            Text(attributed)
+                                .font(.body)
+                        } else {
+                            Text("aboutView_aboutText"~)
+                                .font(.body)
+                        }
+
                     } header: {
                         Text("aboutView_aboutSection"~)
                     }

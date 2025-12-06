@@ -98,6 +98,8 @@ struct FilterListView: View {
                 label: {
                     Text(String(format: "filterList_deleteFiltersCount"~, self.model.selectedFilters.count))
                 })
+            .buttonStyle(.borderedProminent)
+            .tint(.red)
         }
     }
     
