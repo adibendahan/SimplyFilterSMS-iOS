@@ -10,5 +10,16 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.grizz.apps.dev.simply-filter-sms</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>simplyfiltersms</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

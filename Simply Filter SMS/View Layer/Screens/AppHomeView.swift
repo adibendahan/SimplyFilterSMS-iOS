@@ -237,6 +237,9 @@ struct AppHomeView: View {
         .onAppear {
             self.model.startMonitoring()
         }
+        .onOpenURL { url in
+            self.model.handleDeepLink(url: url)
+        }
     }
     
     @ViewBuilder
@@ -457,6 +460,23 @@ extension AppHomeView {
             self.refresh()
         }
         
+        func handleDeepLink(url: URL) {
+            guard url.scheme == "simplyfiltersms",
+                  let host = url.host,
+                  let screen = Screen.fromDeepLink(host: host) else { return }
+
+            if self.sheetScreen != nil || self.modalFullScreen != nil {
+                self.sheetScreen = nil
+                self.modalFullScreen = nil
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.sheetScreen = screen
+                }
+            } else {
+                self.sheetScreen = screen
+            }
+        }
+
         private var didAddObservers = false
         private var pendingNotification: NotificationView.Notification?
         private var userIgnoresNetworkStatus: Bool {

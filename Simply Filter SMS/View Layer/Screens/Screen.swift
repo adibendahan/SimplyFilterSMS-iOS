@@ -94,6 +94,17 @@ enum Screen: Int, Identifiable {
     }
 }
 
+extension Screen {
+    static func fromDeepLink(host: String) -> Screen? {
+        switch host {
+        case "enable-extension":
+            return .enableExtension
+        default:
+            return nil
+        }
+    }
+}
+
 extension FilterType {
     var screen: Screen {
         switch self {
