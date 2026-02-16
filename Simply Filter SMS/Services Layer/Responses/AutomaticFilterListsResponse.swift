@@ -38,7 +38,9 @@ extension AutomaticFilterListsResponse {
     }
     
     var encoded: String? {
-        guard let encodedData = try? JSONEncoder().encode(self) else { return nil }
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        guard let encodedData = try? encoder.encode(self) else { return nil }
         return encodedData.base64EncodedString()
     }
     
