@@ -159,6 +159,19 @@
 "reportMessage_thankYou" = "Thank you for reporting!";
 
 
+//MARK: What's New
+"whatsNew_title" = "What's New";
+"whatsNew_continue" = "Continue";
+"whatsNew_menuItem" = "What's New";
+"whatsNew_freshLook_title" = "Fresh New Look";
+"whatsNew_freshLook_desc" = "The app has been redesigned with the latest iOS visual style for a **cleaner**, more modern experience.";
+"whatsNew_iPad_title" = "Native iPad Support";
+"whatsNew_iPad_desc" = "Full native iPad experience with **sidebar navigation** and optimized layouts for larger screens.";
+"whatsNew_quickAddFilter_title" = "Quick Add Filters";
+"whatsNew_quickAddFilter_desc" = "A new add button at the **top of each filter list** makes adding new filters faster and more accessible.";
+"whatsNew_singleChar_title" = "Single Character Filters";
+"whatsNew_singleChar_desc" = "You can now create filters with just a **single character**, giving you more precise control over message filtering.";
+
 //MARK: iPad Detail Placeholder
 "placeholder_choose_title" = "Select a category";
 "placeholder_choose_detail" = "Choose an category from the sidebar to view its details.";

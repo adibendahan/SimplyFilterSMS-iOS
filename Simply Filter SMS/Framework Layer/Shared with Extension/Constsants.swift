@@ -20,6 +20,7 @@ let kMinimumFilterLength = 1
 let kHideiClouldStatusMemory = 60
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
+let currentWhatsNewVersion = 1
 
 
 // URLs
@@ -418,6 +419,75 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return .red
         default:
             return .accentColor
+        }
+    }
+}
+
+enum WhatsNewEntry: String, CaseIterable {
+    case freshLook, ipad, quickAddFilter, singleChar
+    
+    var title: String {
+        switch self {
+        case .freshLook:
+            return "whatsNew_freshLook_title"~
+        case .ipad:
+            return "whatsNew_iPad_title"~
+        case .quickAddFilter:
+            return "whatsNew_quickAddFilter_title"~
+        case .singleChar:
+            return "whatsNew_singleChar_title"~
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .freshLook:
+            return "whatsNew_freshLook_desc"~
+        case .ipad:
+            return "whatsNew_iPad_desc"~
+        case .quickAddFilter:
+            return "whatsNew_quickAddFilter_desc"~
+        case .singleChar:
+            return "whatsNew_singleChar_desc"~
+        }
+    }
+    
+    var imageName: String {
+        switch self {
+        case .freshLook:
+            return "sparkles"
+        case .ipad:
+            return "ipad.and.iphone"
+        case .quickAddFilter:
+            return "plus.circle.fill"
+        case .singleChar:
+            return "character.cursor.ibeam"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .freshLook:
+            return .blue
+        case .ipad:
+            return .red
+        case .quickAddFilter:
+            return .yellow
+        case .singleChar:
+            return .green
+        }
+    }
+    
+    var order: Int {
+        switch self {
+        case .freshLook:
+            return 0
+        case .ipad:
+            return 1
+        case .quickAddFilter:
+            return 2
+        case .singleChar:
+            return 3
         }
     }
 }

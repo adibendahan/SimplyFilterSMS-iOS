@@ -206,9 +206,12 @@ struct AppHomeView: View {
                 if navigationScreen == nil {
                     withAnimation {
                         self.model.refresh()
-                        
+
                         if !isPreview && self.model.isAppFirstRun {
                             self.model.sheetScreen = .enableExtension
+                        }
+                        else if !isPreview && self.model.shouldShowWhatsNew {
+                            self.model.sheetScreen = .whatsNew
                         }
                     }
                 }
@@ -278,6 +281,14 @@ struct AppHomeView: View {
                 self.model.sheetScreen = .about
             } label: {
                 Label("filterList_menu_about"~, systemImage: "info.circle")
+            }
+
+            if !WhatsNewEntry.allCases.isEmpty {
+                Button {
+                    self.model.sheetScreen = .whatsNew
+                } label: {
+                    Label("whatsNew_menuItem"~, systemImage: "sparkles")
+                }
             }
         } label: {
             Image(systemName: "ellipsis.circle")
@@ -475,6 +486,12 @@ extension AppHomeView {
             } else {
                 self.sheetScreen = screen
             }
+        }
+
+        var shouldShowWhatsNew: Bool {
+            !self.isAppFirstRun
+            && !WhatsNewEntry.allCases.isEmpty
+            && currentWhatsNewVersion > self.appManager.defaultsManager.lastSeenWhatsNewVersion
         }
 
         private var didAddObservers = false

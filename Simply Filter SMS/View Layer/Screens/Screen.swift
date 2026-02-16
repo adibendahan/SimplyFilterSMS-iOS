@@ -12,7 +12,8 @@ enum Screen: Int, Identifiable {
     
     case appHome, onboarding, help, about, enableExtension, testFilters,
          addLanguageFilter, addAllowFilter, addDenyFilter, automaticBlocking,
-         denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage
+         denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
+         whatsNew
     
     @ViewBuilder func build() -> some View {
         switch self {
@@ -57,6 +58,9 @@ enum Screen: Int, Identifiable {
             
         case .reportMessage:
             ReportMessageView(model: ReportMessageView.ViewModel())
+
+        case .whatsNew:
+            WhatsNewView(model: WhatsNewView.ViewModel())
         }
     }
     
@@ -90,6 +94,8 @@ enum Screen: Int, Identifiable {
             return "denyLanguageFilterList"
         case .reportMessage:
             return "reportMessage"
+        case .whatsNew:
+            return "whatsNew"
         }
     }
 }

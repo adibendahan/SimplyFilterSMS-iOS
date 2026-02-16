@@ -25,7 +25,9 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var didPromptForReviewSetCounter = 0
     var appAgeGetCounter = 0
     var appAgeSetCounter = 0
-    
+    var lastSeenWhatsNewVersionGetCounter = 0
+    var lastSeenWhatsNewVersionSetCounter = 0
+
     var isAppFirstRunClosure: (() -> (Bool))?
     var isExpandedAddFilterClosure: (() -> (Bool))?
     var lastOfflineNotificationDismissClosure: (() -> (Date?))?
@@ -33,7 +35,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var sessionCounterClosure: (() -> (Int))?
     var didPromptForReviewClosure: (() -> (Bool))?
     var appAgeClosure: (() -> (Date))?
-    
+    var lastSeenWhatsNewVersionClosure: (() -> (Int))?
+
     var isAppFirstRun: Bool {
         get {
             self.isAppFirstRunGetCounter += 1
@@ -103,7 +106,17 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
             self.appAgeSetCounter += 1
         }
     }
-    
+
+    var lastSeenWhatsNewVersion: Int {
+        get {
+            self.lastSeenWhatsNewVersionGetCounter += 1
+            return self.lastSeenWhatsNewVersionClosure?() ?? 0
+        }
+        set {
+            self.lastSeenWhatsNewVersionSetCounter += 1
+        }
+    }
+
     func resetCounters() {
         self.isAppFirstRunGetCounter = 0
         self.isAppFirstRunSetCounter = 0
