@@ -206,9 +206,12 @@ struct AppHomeView: View {
                 if navigationScreen == nil {
                     withAnimation {
                         self.model.refresh()
-                        
+
                         if !isPreview && self.model.isAppFirstRun {
                             self.model.sheetScreen = .enableExtension
+                        }
+                        else if !isPreview && self.model.shouldShowWhatsNew {
+                            self.model.sheetScreen = .whatsNew
                         }
                     }
                 }
@@ -236,6 +239,9 @@ struct AppHomeView: View {
         }
         .onAppear {
             self.model.startMonitoring()
+        }
+        .onOpenURL { url in
+            self.model.handleDeepLink(url: url)
         }
     }
     
@@ -275,6 +281,14 @@ struct AppHomeView: View {
                 self.model.sheetScreen = .about
             } label: {
                 Label("filterList_menu_about"~, systemImage: "info.circle")
+            }
+
+            if !WhatsNewEntry.allCases.isEmpty {
+                Button {
+                    self.model.sheetScreen = .whatsNew
+                } label: {
+                    Label("whatsNew_menuItem"~, systemImage: "sparkles")
+                }
             }
         } label: {
             Image(systemName: "ellipsis.circle")
@@ -457,6 +471,29 @@ extension AppHomeView {
             self.refresh()
         }
         
+        func handleDeepLink(url: URL) {
+            guard url.scheme == "simplyfiltersms",
+                  let host = url.host,
+                  let screen = Screen.fromDeepLink(host: host) else { return }
+
+            if self.sheetScreen != nil || self.modalFullScreen != nil {
+                self.sheetScreen = nil
+                self.modalFullScreen = nil
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.sheetScreen = screen
+                }
+            } else {
+                self.sheetScreen = screen
+            }
+        }
+
+        var shouldShowWhatsNew: Bool {
+            !self.isAppFirstRun
+            && !WhatsNewEntry.allCases.isEmpty
+            && currentWhatsNewVersion > self.appManager.defaultsManager.lastSeenWhatsNewVersion
+        }
+
         private var didAddObservers = false
         private var pendingNotification: NotificationView.Notification?
         private var userIgnoresNetworkStatus: Bool {

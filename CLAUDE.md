@@ -76,6 +76,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full documentation index, depende
 ## Key Conventions
 
 - **Localization operator:** Postfix `~` operator converts string keys to localized strings: `"key"~` equals `NSLocalizedString("key", comment: "")`.
+- **Enums over structs for constant data:** When defining a fixed set of entries with computed properties (display names, icons, colors, etc.), prefer `CaseIterable` enums with computed properties over structs with separate arrays. See `FilterType`, `RuleType`, `WhatsNewEntry` in `Constsants.swift` for examples.
 - **Naming:** `*Protocol` for interfaces, `mock_*` prefix for test mocks, `*Manager` for services, `*View` for SwiftUI views.
 - **Logging:** `AppManager.logger` (OSLog `Logger`) used throughout. Extension has its own logger instance.
 - **CoreData model:** Versioned at `Resources/Simply-Filter-SMS.xcdatamodeld` (v3). Entities use Int64 raw values mapped to Swift enums via computed properties in `SharedExtensions.swift`.

@@ -254,6 +254,28 @@
 
 "reportMessage_thankYou" = "תודה שדיווחתם!";
 
+"whatsNew_title" = "מה חדש";
+
+"whatsNew_continue" = "המשך";
+
+"whatsNew_menuItem" = "מה חדש";
+
+"whatsNew_freshLook_title" = "מראה חדש ורענן";
+
+"whatsNew_freshLook_desc" = "האפליקציה עוצבה מחדש בסגנון העיצובי העדכני של iOS לחוויה **נקייה** ומודרנית יותר.";
+
+"whatsNew_iPad_title" = "תמיכה מלאה ב-iPad";
+
+"whatsNew_iPad_desc" = "חוויית iPad מלאה עם **ניווט בסרגל צד** ועיצוב מותאם למסכים גדולים.";
+
+"whatsNew_quickAddFilter_title" = "הוספת פילטרים מהירה";
+
+"whatsNew_quickAddFilter_desc" = "כפתור הוספה חדש **בראש כל רשימת פילטרים** מאפשר הוספת פילטרים מהירה ונגישה יותר.";
+
+"whatsNew_singleChar_title" = "פילטרים של תו בודד";
+
+"whatsNew_singleChar_desc" = "עכשיו ניתן ליצור פילטרים עם **תו בודד**, לשליטה מדויקת יותר בסינון ההודעות.";
+
 "placeholder_choose_title" = "בחרו קטגוריה";
 
 "placeholder_choose_detail" = "בחרו קטגוריה מתפריט הצד על מנת לראות את פרטיה.";
