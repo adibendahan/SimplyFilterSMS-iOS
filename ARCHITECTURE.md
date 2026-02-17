@@ -32,6 +32,8 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | `allowFilterList` | FilterListView (filterType: .allow) | Push |
 | `denyLanguageFilterList` | FilterListView (filterType: .denyLanguage) | Push |
 | `reportMessage` | ReportMessageView | Sheet |
+| `whatsNew` | WhatsNewView | Sheet |
+| `tipJar` | TipJarView | Sheet |
 
 ## Manager Dependency Graph
 
@@ -45,6 +47,7 @@ AppManager (Singleton)
 │   └── depends on: PersistanceManager (container)
 ├── AutomaticFilterManager ─── Community filter lists
 │   └── depends on: PersistanceManager, AmazonS3Service
+├── TipJarManager ─────────── StoreKit 2 IAP
 ├── AmazonS3Service ────────── HTTP → S3
 │   └── depends on: NetworkSyncManager
 └── ReportMessageService ───── HTTP → Lambda

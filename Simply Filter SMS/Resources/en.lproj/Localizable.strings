@@ -171,6 +171,26 @@
 "whatsNew_quickAddFilter_desc" = "A new add button at the **top of each filter list** makes adding new filters faster and more accessible.";
 "whatsNew_singleChar_title" = "Single Character Filters";
 "whatsNew_singleChar_desc" = "You can now create filters with just a **single character**, giving you more precise control over message filtering.";
+"whatsNew_tipJar_title" = "Support the Developer";
+"whatsNew_tipJar_desc" = "A new **Tip Jar** lets you support the app's development. Simply Filter SMS is free forever - tips are just a way to say thanks! Tap here to tip!";
+
+//MARK: Tip Jar
+"tipJar_title" = "Tip Jar";
+"tipJar_menuItem" = "Tip Jar";
+"tipJar_aboutRow" = "Tip Jar";
+"tipJar_header" = "Enjoying the app?";
+"tipJar_subheader" = "Simply Filter SMS is free and will always stay free. If you find it useful, a small tip means a lot!";
+"tipJar_footer" = "Tips do not unlock any features. Thank you for your support!";
+"tipJar_unavailable" = "Tips are not available right now. Please try again later.";
+"tipJar_tier_small" = "Coffee";
+"tipJar_tier_medium" = "Pizza";
+"tipJar_tier_large" = "Cocktail";
+"tipJar_toast_title" = "Thank you so much!";
+"tipJar_toast_subtitle" = "Your support means the world!";
+"tipJar_tier_small_desc" = "Thanks a latte";
+"tipJar_tier_medium_desc" = "A slice of love";
+"tipJar_tier_large_desc" = "Shaken, not stirred";
+"tipJar_chooseATip" = "Choose a tip";
 
 //MARK: iPad Detail Placeholder
 "placeholder_choose_title" = "Select a category";

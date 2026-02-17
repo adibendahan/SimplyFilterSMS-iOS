@@ -28,6 +28,8 @@ Trailing `Menu` (ellipsis icon) with items:
 - Report Message -> `.reportMessage` sheet
 - Help -> `.help` sheet
 - About -> `.about` sheet
+- Tip Jar -> `.tipJar` sheet
+- What's New -> `.whatsNew` sheet (only if `WhatsNewEntry.allCases` is non-empty)
 - Load Debug Data (DEBUG builds only)
 
 ### Overlays
@@ -331,3 +333,75 @@ Navigation title and toolbar X button are conditionally hidden during loading/re
 - The `ViewState` enum is nearly identical to TestFiltersView's — both defined independently inside their respective extensions.
 - Unlike TestFiltersView, this screen fully uses all three states (userInput -> loading -> result -> auto-dismiss).
 - `CheckView` (`Others/CheckView.swift`) — Animated checkmark using `Path` with `trim` animation. Purely cosmetic, no ViewModel.
+
+---
+
+## WhatsNewView
+
+**File:** `View Layer/Screens/WhatsNewView.swift`
+**Role:** Shows new features added in the latest version. Presented as a sheet from AppHomeView on second+ launch when `currentWhatsNewVersion` exceeds the user's `lastSeenWhatsNewVersion`.
+
+### Layout
+
+A `NavigationView` wrapping a `ScrollView`:
+- **Header** — "What's New" title and subtitle.
+- **Entry cards** — `ForEach` over `WhatsNewEntry.allCases`. Each card shows an emoji icon, title, and description. Actionable entries (e.g., `.tipJar`) are tappable and trigger `onActionnableEntryTapped`.
+- **Dismiss button** — `FilledButton` at bottom. Sets `lastSeenWhatsNewVersion` to `currentWhatsNewVersion` and dismisses.
+- Toolbar X button to dismiss.
+
+### ViewModel
+
+- `entries: [WhatsNewEntry]` — All entries sorted by `order`.
+- `onActionnableEntryTapped: ((WhatsNewEntry) -> Void)?` — Optional closure called when an actionable entry is tapped. Passed in from the presenting screen.
+- `markAsSeen()` — Sets `lastSeenWhatsNewVersion` to `currentWhatsNewVersion` so the sheet won't re-appear.
+
+### Actionable Entries
+
+`WhatsNewEntry` has an `isActionnable` computed property. When `true`, the entry row becomes a tappable `Button` that calls `markAsSeen()`, invokes `onActionnableEntryTapped`, and dismisses the sheet. The presenting screen handles navigation — e.g., `AppHomeView` sets `pendingScreenAfterDismiss = .tipJar` so the Tip Jar sheet opens after WhatsNew dismisses.
+
+This pattern is general-purpose: any future `WhatsNewEntry` case can become actionable by returning `true` from `isActionnable`, and the presenting screen decides what to do in the `onActionnableEntryTapped` closure.
+
+### Notable
+
+- `WhatsNewEntry` is a `CaseIterable` enum in `Constsants.swift` with computed properties for title, description, emoji, order, and `isActionnable`.
+- `currentWhatsNewVersion` must be bumped in `Constsants.swift` when adding new entries.
+- The What's New sheet only shows when: it's not the user's first session (`wasFirstRunOnInit == false`), `isAppFirstRun` is `false`, and `currentWhatsNewVersion > lastSeenWhatsNewVersion`.
+
+---
+
+## TipJarView
+
+**File:** `View Layer/Screens/TipJarView.swift`
+**Role:** Tip jar screen for voluntary in-app purchases. Presented as a sheet from AppHomeView's menu, AboutView, or via an actionable What's New entry.
+
+### Layout
+
+A `NavigationView` wrapping a `ZStack` (for confetti overlay) containing a `ScrollView`:
+- **Header** — Heart emoji, title ("tipJar_header"), and subtitle ("tipJar_subheader").
+- **Tip cards** — `HStack` of three `TipCard` components (small/medium/large). Each shows the tier's emoji, display name, description, and price badge. Loading state shows a `ProgressView`. Empty state shows "tipJar_unavailable" text.
+- **Footer** — Explanatory text ("tipJar_footer").
+- **Confetti overlay** — `ConfettiView` (CAEmitterLayer-based) shown after successful purchase. Intensity scales with tier (birthRate, lifetime, velocity).
+- Toolbar X button to dismiss.
+
+### Landscape Support
+
+Uses `@Environment(\.verticalSizeClass)` with an `isCompact` flag to reduce font sizes, spacing, and padding in landscape orientation.
+
+### ViewModel
+
+**Published state:**
+- `products: [Product]` — StoreKit products fetched from `TipJarManager`.
+- `isLoading: Bool` — True while products are being fetched.
+- `purchaseState: PurchaseState` — Enum: `.idle`, `.purchasing`, `.success(TipTier)`, `.error`.
+- `notification: NotificationView.ViewModel` — Toast notification for thank-you message.
+- `shouldDismiss: Bool` — Triggers dismiss after thank-you toast hides.
+
+**Key methods:**
+- `init` — Reads products from `TipJarManager`. If still loading, polls `isLoadingProducts` every 100ms on `@MainActor` until ready.
+- `purchase(_:)` — Sets state to `.purchasing`, calls `TipJarManager.purchase()`. On success: shows confetti + thank-you toast, auto-resets after confetti duration. On error: auto-resets after 3s.
+
+### Supporting Components
+
+- **TipCard** — Private struct. Button with `TipCardButtonStyle` (scale effect on press). Displays tier emoji, name, description, and price badge with accent color background.
+- **ConfettiView** (`Others/ConfettiView.swift`) — `UIViewRepresentable` wrapping `CAEmitterLayer`. Configurable birthRate, lifetime, and velocity. Emits from top of screen with various cell shapes and colors. Auto-stops emission after 0.3s (particles continue falling).
+- **NotificationView** `.tipSuccessful` case — Toast notification with `onHide` callback that triggers sheet dismissal.

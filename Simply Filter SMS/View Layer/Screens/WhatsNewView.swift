@@ -29,7 +29,7 @@ struct WhatsNewView: View {
                             .padding(.bottom, 8)
 
                         ForEach(model.entries, id: \.self) { entry in
-                            HStack(alignment: .top, spacing: 16) {
+                            let row = HStack(alignment: .top, spacing: 16) {
                                 Image(systemName: entry.imageName)
                                     .font(.title2)
                                     .foregroundColor(entry.color)
@@ -40,6 +40,7 @@ struct WhatsNewView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(entry.title)
                                         .font(.body.bold())
+                                        .foregroundColor(.primary)
 
                                     if let attributed = try? AttributedString(markdown: entry.description, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) {
                                         Text(attributed)
@@ -53,6 +54,20 @@ struct WhatsNewView: View {
                                 }
                             }
                             .padding(.horizontal, 16)
+
+                            if entry.isActionnable, model.onActionnableEntryTapped != nil {
+                                Button {
+                                    model.markAsSeen()
+                                    model.onActionnableEntryTapped?(entry)
+                                    dismiss()
+                                } label: {
+                                    row
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            } else {
+                                row
+                            }
                         }
 
                     }
@@ -95,9 +110,11 @@ extension WhatsNewView {
 
     class ViewModel: BaseViewModel, ObservableObject {
         let entries: [WhatsNewEntry]
+        var onActionnableEntryTapped: ((WhatsNewEntry) -> Void)?
 
-        override init(appManager: AppManagerProtocol = AppManager.shared) {
+        init(appManager: AppManagerProtocol = AppManager.shared, onActionnableEntryTapped: ((WhatsNewEntry) -> Void)? = nil) {
             self.entries = WhatsNewEntry.allCases.sorted { $0.order < $1.order }
+            self.onActionnableEntryTapped = onActionnableEntryTapped
             super.init(appManager: appManager)
         }
 

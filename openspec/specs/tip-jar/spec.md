@@ -1,25 +1,29 @@
 ## ADDED Requirements
 
 ### Requirement: Tip tier definition
-The system SHALL define exactly three consumable in-app purchase tiers as a `CaseIterable` enum with computed properties for product ID, emoji, display name, and confetti intensity. The tiers are:
+The system SHALL define exactly three consumable in-app purchase tiers as a `CaseIterable` enum with computed properties for product ID, emoji, display name, tier description, icon color, fallback price, and confetti intensity parameters. The tiers are:
 - Small: product ID `com.grizz.apps.simplyfiltersms.tip.small`, emoji ☕️, price tier ~$1.99
 - Medium: product ID `com.grizz.apps.simplyfiltersms.tip.medium`, emoji 🍕, price tier ~$4.99
-- Large: product ID `com.grizz.apps.simplyfiltersms.tip.large`, emoji 🎉, price tier ~$9.99
+- Large: product ID `com.grizz.apps.simplyfiltersms.tip.large`, emoji 🍸, price tier ~$9.99
 
 #### Scenario: Tip tiers are enumerable
 - **WHEN** the app accesses the tip tier enum
 - **THEN** all three tiers SHALL be available via `CaseIterable` iteration in small/medium/large order
 
 ### Requirement: Product loading
-The system SHALL load tip products from StoreKit using `Product.products(for:)` with the three tip product IDs when the tip jar screen appears.
+The system SHALL load tip products from StoreKit using `Product.products(for:)` with the three tip product IDs eagerly at app launch via `TipJarManager`. The `products` and `isLoadingProducts` properties SHALL be `@MainActor`-isolated for thread-safe access from SwiftUI ViewModels.
 
 #### Scenario: Products load successfully
-- **WHEN** the tip jar screen appears and StoreKit returns products
-- **THEN** the system SHALL display all returned products with their localized display name and price
+- **WHEN** `TipJarManager` initializes and StoreKit returns products
+- **THEN** the system SHALL store products sorted by price ascending, accessible to any screen that presents the tip jar
 
 #### Scenario: Products fail to load
-- **WHEN** the tip jar screen appears and StoreKit fails to return products (network error, invalid IDs)
+- **WHEN** StoreKit fails to return products (network error, invalid IDs, or empty result)
 - **THEN** the system SHALL display an appropriate empty/error state and tip buttons SHALL NOT be interactive
+
+#### Scenario: TipJarView polls for products
+- **WHEN** the tip jar screen appears and `TipJarManager.isLoadingProducts` is still `true`
+- **THEN** the ViewModel SHALL poll every 100ms on `@MainActor` until loading completes, then update the displayed products
 
 ### Requirement: Purchase flow
 The system SHALL initiate a purchase via `Product.purchase()` when the user taps a tip button, and SHALL call `transaction.finish()` on verified transactions.
@@ -62,8 +66,19 @@ The system SHALL display a toast notification upon successful tip purchase using
 - **WHEN** a tip purchase succeeds
 - **THEN** the system SHALL show a toast with a heart icon, a thank-you title, and auto-dismiss after a timeout
 
+#### Scenario: Sheet dismisses after toast hides
+- **WHEN** the thank-you toast auto-dismisses or is manually dismissed
+- **THEN** the system SHALL dismiss the tip jar sheet via `NotificationView.ViewModel.onHide` callback
+
+### Requirement: TipJarManager
+The system SHALL provide a `TipJarManager` class conforming to `TipJarManagerProtocol`, owned by `AppManager`. The manager SHALL:
+- Eagerly fetch products on init (not lazily when the screen appears)
+- Listen to `Transaction.updates` for server-side completions
+- Finish any `Transaction.unfinished` on init
+- Isolate `products` and `isLoadingProducts` with `@MainActor` for thread-safe UI access
+
 ### Requirement: Tip jar screen navigation
-The system SHALL register a `.tipJar` case in the `Screen` enum and provide entry points from AppHomeView and AboutView.
+The system SHALL register a `.tipJar` case in the `Screen` enum and provide entry points from AppHomeView, AboutView, and WhatsNewView (via actionable entry).
 
 #### Scenario: Navigate from AppHomeView menu
 - **WHEN** the user taps the tip jar option in the AppHomeView toolbar menu
@@ -73,12 +88,28 @@ The system SHALL register a `.tipJar` case in the `Screen` enum and provide entr
 - **WHEN** the user taps the tip jar row in the AboutView links section
 - **THEN** the system SHALL present the TipJarView as a sheet
 
+#### Scenario: Navigate from WhatsNewView
+- **WHEN** the user taps the actionable tip jar entry in the WhatsNewView
+- **THEN** the system SHALL dismiss WhatsNewView and present TipJarView as a sheet via `pendingScreenAfterDismiss`
+
 ### Requirement: Tip jar screen UI
-The TipJarView SHALL display a header area with a message encouraging voluntary support, followed by three tip buttons showing the emoji, display name, and localized price for each tier. The view SHALL include a dismiss button in the navigation bar.
+The TipJarView SHALL display a scrollable, top-aligned layout with: a header area (heart emoji, title, subtitle), a "CHOOSE A TIP" section label, three side-by-side tip cards in an HStack, and a centered footer. The view SHALL include a dismiss button in the navigation bar. The layout SHALL adapt to landscape orientation using `verticalSizeClass` with reduced spacing and font sizes.
 
 #### Scenario: Tip jar screen displays all tiers
 - **WHEN** the tip jar screen is presented and products have loaded
-- **THEN** the system SHALL display three tip buttons in small/medium/large order, each showing the tier emoji, name, and price from StoreKit
+- **THEN** the system SHALL display three tip cards in small/medium/large order in a horizontal row, each showing the tier emoji, name, description, and price from StoreKit
+
+#### Scenario: Tip card layout
+- **WHEN** the tip cards are displayed
+- **THEN** each card SHALL have a `.gray.opacity(0.1)` rounded rectangle background (works in both light and dark mode), the tier emoji, a semibold display name, a secondary-color description, and an accent-color price badge with `accentColor.opacity(0.1)` background
+
+#### Scenario: Tip card press interaction
+- **WHEN** the user presses a tip card
+- **THEN** the card SHALL scale to 0.95 with a 0.15s ease-in-out animation (custom `TipCardButtonStyle`), with no opacity flicker
+
+#### Scenario: Tip jar footer
+- **WHEN** the tip jar screen is displayed
+- **THEN** the footer SHALL display a static disclaimer text ("Tips do not unlock any features. Thank you for your support!") centered in secondary color. No Restore Purchases button is needed as all products are consumable.
 
 #### Scenario: Tip jar screen is dismissible
 - **WHEN** the user taps the close button in the navigation bar

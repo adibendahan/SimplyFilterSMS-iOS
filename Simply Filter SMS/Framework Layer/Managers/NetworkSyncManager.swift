@@ -28,6 +28,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
         networkMonitor.start(queue: queue)
         
         NotificationCenter.default.publisher(for: NSPersistentCloudKitContainer.eventChangedNotification)
+            .receive(on: DispatchQueue.main)
             .sink(receiveValue: { notification in
                 guard let cloudEvent = notification.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey]
                         as? NSPersistentCloudKitContainer.Event else { return }
@@ -66,16 +67,17 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
     private var disposables = Set<AnyCancellable>()
     
     private func onNetworkChange(_ newPath: NWPath) {
-        if self.networkStatus != newPath.status.networkStatus {
-            
-            let newStatus = newPath.status.networkStatus
-            
+        let newStatus = newPath.status.networkStatus
+
+        DispatchQueue.main.async {
+            guard self.networkStatus != newStatus else { return }
+
             if newStatus == .online && self.syncStatus == .failed {
                 self.persistanceManager?.reloadContainer()
             }
-            
+
             self.networkStatus = newStatus
-            NotificationCenter.default.post(name: .networkStatusChange, object: newPath.status.networkStatus)
+            NotificationCenter.default.post(name: .networkStatusChange, object: newStatus)
         }
     }
 }

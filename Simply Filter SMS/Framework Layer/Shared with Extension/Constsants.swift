@@ -20,7 +20,7 @@ let kMinimumFilterLength = 1
 let kHideiClouldStatusMemory = 60
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
-let currentWhatsNewVersion = 1
+let currentWhatsNewVersion = 2
 
 
 // URLs
@@ -423,11 +423,83 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
     }
 }
 
+enum TipTier: String, CaseIterable {
+    case small = "com.grizz.apps.simplyfiltersms.tip.small"
+    case medium = "com.grizz.apps.simplyfiltersms.tip.medium"
+    case large = "com.grizz.apps.simplyfiltersms.tip.large"
+
+    var emoji: String {
+        switch self {
+        case .small: return "☕️"
+        case .medium: return "🍕"
+        case .large: return "🍸"
+        }
+    }
+
+    var displayName: String {
+        switch self {
+        case .small: return "tipJar_tier_small"~
+        case .medium: return "tipJar_tier_medium"~
+        case .large: return "tipJar_tier_large"~
+        }
+    }
+
+    var tierDescription: String {
+        switch self {
+        case .small: return "tipJar_tier_small_desc"~
+        case .medium: return "tipJar_tier_medium_desc"~
+        case .large: return "tipJar_tier_large_desc"~
+        }
+    }
+
+    var iconColor: Color {
+        switch self {
+        case .small: return .orange
+        case .medium: return .red
+        case .large: return .purple
+        }
+    }
+
+    var confettiBirthRate: Float {
+        switch self {
+        case .small: return 15
+        case .medium: return 40
+        case .large: return 100
+        }
+    }
+
+    var confettiLifetime: Float {
+        switch self {
+        case .small: return 1.5
+        case .medium: return 2.5
+        case .large: return 4.0
+        }
+    }
+
+    var confettiVelocity: CGFloat {
+        switch self {
+        case .small: return 200
+        case .medium: return 350
+        case .large: return 500
+        }
+    }
+
+    var fallbackPrice: String {
+        switch self {
+        case .small: return "$1.99"
+        case .medium: return "$4.99"
+        case .large: return "$9.99"
+        }
+    }
+}
+
 enum WhatsNewEntry: String, CaseIterable {
-    case freshLook, ipad, quickAddFilter, singleChar
+    case tipJar, freshLook, ipad, quickAddFilter, singleChar
     
     var title: String {
         switch self {
+        case .tipJar:
+            return "whatsNew_tipJar_title"~
         case .freshLook:
             return "whatsNew_freshLook_title"~
         case .ipad:
@@ -438,9 +510,11 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_singleChar_title"~
         }
     }
-    
+
     var description: String {
         switch self {
+        case .tipJar:
+            return "whatsNew_tipJar_desc"~
         case .freshLook:
             return "whatsNew_freshLook_desc"~
         case .ipad:
@@ -451,9 +525,11 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_singleChar_desc"~
         }
     }
-    
+
     var imageName: String {
         switch self {
+        case .tipJar:
+            return "heart.fill"
         case .freshLook:
             return "sparkles"
         case .ipad:
@@ -464,9 +540,11 @@ enum WhatsNewEntry: String, CaseIterable {
             return "character.cursor.ibeam"
         }
     }
-    
+
     var color: Color {
         switch self {
+        case .tipJar:
+            return .pink
         case .freshLook:
             return .blue
         case .ipad:
@@ -477,17 +555,28 @@ enum WhatsNewEntry: String, CaseIterable {
             return .green
         }
     }
-    
+
     var order: Int {
         switch self {
-        case .freshLook:
+        case .tipJar:
             return 0
-        case .ipad:
+        case .freshLook:
             return 1
-        case .quickAddFilter:
+        case .ipad:
             return 2
-        case .singleChar:
+        case .quickAddFilter:
             return 3
+        case .singleChar:
+            return 4
+        }
+    }
+    
+    var isActionnable: Bool {
+        switch self {
+        case .tipJar:
+            return true
+        default:
+            return false
         }
     }
 }

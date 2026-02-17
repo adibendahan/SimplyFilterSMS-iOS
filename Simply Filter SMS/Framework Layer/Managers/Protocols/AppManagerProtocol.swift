@@ -18,7 +18,8 @@ protocol AppManagerProtocol {
     var networkSyncManager: NetworkSyncManagerProtocol { get }
     var amazonS3Service: AmazonS3ServiceProtocol { get }
     var reportMessageService: ReportMessageServiceProtocol { get }
-    
+    var tipJarManager: TipJarManagerProtocol { get }
+
     func onAppLaunch()
     func onNewUserSession()
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel]

@@ -229,8 +229,22 @@ struct AppHomeView: View {
         .modifier(EmbeddedNotificationView(model: self.model.notification))
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
+            if self.model.pendingScreenAfterDismiss != nil {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.model.sheetScreen = self.model.pendingScreenAfterDismiss
+                    self.model.pendingScreenAfterDismiss = nil
+                }
+            }
         } content: { sheetScreen in
-            sheetScreen.build()
+            if sheetScreen == .whatsNew {
+                WhatsNewView(model: WhatsNewView.ViewModel(onActionnableEntryTapped: { entry in
+                    if entry == .tipJar {
+                        self.model.pendingScreenAfterDismiss = .tipJar
+                    }
+                }))
+            } else {
+                sheetScreen.build()
+            }
         }
         .fullScreenCover(item: $model.modalFullScreen) {
             self.model.refresh()
@@ -281,6 +295,12 @@ struct AppHomeView: View {
                 self.model.sheetScreen = .about
             } label: {
                 Label("filterList_menu_about"~, systemImage: "info.circle")
+            }
+
+            Button {
+                self.model.sheetScreen = .tipJar
+            } label: {
+                Label("tipJar_menuItem"~, systemImage: "heart.fill")
             }
 
             if !WhatsNewEntry.allCases.isEmpty {
@@ -337,6 +357,7 @@ extension AppHomeView {
                 }
             }
         }
+        var pendingScreenAfterDismiss: Screen?
         
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             
@@ -345,6 +366,7 @@ extension AppHomeView {
             self.title = "filterList_filters"~
             self.subtitle = isAutomaticFilteringOn ? appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
             self.isAppFirstRun = appManager.defaultsManager.isAppFirstRun
+            self.wasFirstRunOnInit = appManager.defaultsManager.isAppFirstRun
             self.isAutomaticFilteringOn = isAutomaticFilteringOn
             self.isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.shortSenderChoice = appManager.automaticFilterManager.selectedChoice(for: .shortSender)
@@ -409,17 +431,10 @@ extension AppHomeView {
                 }
             }
             
-            if let timeout = notification.timeout {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1 + timeout) {
-                    withAnimation {
-                        self.notification.show = false
-                    }
-                }
-            }
         }
         
         func startMonitoring() {
-            if self.appManager.networkSyncManager.networkStatus != .online,
+            if self.appManager.networkSyncManager.networkStatus == .offline,
                !self.userIgnoresNetworkStatus {
                 self.showNotification(.offline)
             }
@@ -489,11 +504,13 @@ extension AppHomeView {
         }
 
         var shouldShowWhatsNew: Bool {
-            !self.isAppFirstRun
+            !self.wasFirstRunOnInit
+            && !self.isAppFirstRun
             && !WhatsNewEntry.allCases.isEmpty
             && currentWhatsNewVersion > self.appManager.defaultsManager.lastSeenWhatsNewVersion
         }
 
+        private let wasFirstRunOnInit: Bool
         private var didAddObservers = false
         private var pendingNotification: NotificationView.Notification?
         private var userIgnoresNetworkStatus: Bool {
@@ -515,4 +532,5 @@ struct AppHomeView_Previews: PreviewProvider {
         AppHomeView(model: AppHomeView.ViewModel(appManager: AppManager.previews))
     }
 }
+
 
