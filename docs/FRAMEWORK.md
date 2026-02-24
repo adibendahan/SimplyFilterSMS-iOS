@@ -22,6 +22,7 @@ protocol AppManagerProtocol {
     var networkSyncManager: NetworkSyncManagerProtocol { get }
     var amazonS3Service: AmazonS3ServiceProtocol { get }
     var reportMessageService: ReportMessageServiceProtocol { get }
+    var tipJarManager: TipJarManagerProtocol { get }
     func onAppLaunch()
     func onNewUserSession()
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel]
@@ -37,7 +38,8 @@ protocol AppManagerProtocol {
 5. `AmazonS3Service` (receives network sync manager)
 6. `ReportMessageService` (receives network sync manager)
 7. `AutomaticFilterManager` (receives persistance manager + S3 service)
-8. Logger wired to MessageEvaluationManager
+8. `TipJarManager`
+9. Logger wired to MessageEvaluationManager
 
 In `#if DEBUG` + testing mode (`-Testing` launch argument): resets DefaultsManager and PersistanceManager.
 
@@ -252,6 +254,7 @@ protocol DefaultsManagerProtocol {
 - `appAge` — First launch date. Initialized once, never changes.
 - `didPromptForReview` — Ensures App Store review prompt is shown only once.
 - `lastOfflineNotificationDismiss` — Suppresses offline notification for `kHideiClouldStatusMemory` (60) minutes after dismiss.
+- `lastSeenWhatsNewVersion` — Tracks the last What's New version the user has seen. Compared against `currentWhatsNewVersion` to decide whether to show the What's New sheet.
 
 ---
 
@@ -292,6 +295,47 @@ Subscribes to `NSPersistentCloudKitContainer.eventChangedNotification`. Tracks t
 ### Recovery Logic
 
 When network comes online after a failed sync, calls `PersistanceManager.reloadContainer()` to retry CloudKit sync.
+
+---
+
+## TipJarManager
+
+**Files:** `Framework Layer/Managers/TipJarManager.swift`, `Protocols/TipJarManagerProtocol.swift`
+
+Manages in-app purchase tip jar using StoreKit 2. Three consumable tip tiers (small, medium, large).
+
+### Protocol
+
+```swift
+protocol TipJarManagerProtocol {
+    @MainActor var products: [Product] { get }
+    @MainActor var isLoadingProducts: Bool { get }
+    func purchase(_ product: Product) async -> TipPurchaseResult
+}
+```
+
+### TipPurchaseResult
+
+```swift
+enum TipPurchaseResult {
+    case success(TipTier)
+    case userCancelled
+    case pending
+    case failure(Error)
+}
+```
+
+### Key Behaviors
+
+- **Product loading** — On init, launches a `Task` that calls `Product.products(for:)` with `TipTier.allCases` product IDs. Products are sorted by price ascending. Both `products` and `isLoadingProducts` are `@MainActor`-isolated.
+- **Transaction listener** — Background `Task` listens to `Transaction.updates` for server-side transaction completions. Finishes verified transactions automatically.
+- **Unfinished transactions** — On init, iterates `Transaction.unfinished` and finishes any verified pending transactions.
+- **Purchase flow** — `purchase(_:)` handles all StoreKit result cases (success, userCancelled, pending, unknown) and verification. Returns a typed `TipPurchaseResult`.
+- **StoreKit configuration** — Local `TipJar.storekit` file (synced from App Store Connect) in `Resources/` for simulator testing. Referenced in the scheme's `LaunchAction`.
+
+### TipTier
+
+Defined in `Constsants.swift`. `CaseIterable` enum with `String` raw values (product IDs). Computed properties: `emoji`, `displayName`, `tierDescription`, `iconColor`, `confettiBirthRate`, `confettiLifetime`, `confettiVelocity`.
 
 ---
 

@@ -9,31 +9,31 @@ import SwiftUI
 import Foundation
 
 struct NotificationView: View {
-    
+
     @ObservedObject var model: ViewModel
     @State private var offset: CGFloat = -200
-    
+
     private let kHideOffset: CGFloat = -200
     private let kShowOffset: CGFloat = 25
-    
+
     var body: some View {
         HStack (alignment: .center, spacing: 8) {
             Image(systemName: self.model.icon)
                 .font(.body)
                 .padding(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 0))
                 .foregroundColor(self.model.iconColor)
-            
+
             VStack (alignment: .leading, spacing: 0) {
                 Text(self.model.title)
                     .font(.caption.bold())
                     .foregroundColor(.primary)
-                
+
                 Text(self.model.subtitle)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
             .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 4))
-           
+
             Button {
                 self.model.onButtonTap?()
             } label: {
@@ -53,7 +53,7 @@ struct NotificationView: View {
                 .onChanged({ value in
                     let horizontalAmount = value.translation.width as CGFloat
                     let verticalAmount = value.translation.height as CGFloat
-                    
+
                     if abs(horizontalAmount) < abs(verticalAmount) && verticalAmount < -20  {
                         self.model.onButtonTap?()
                     }
@@ -61,7 +61,7 @@ struct NotificationView: View {
                 .onEnded { value in
                     let horizontalAmount = value.translation.width as CGFloat
                     let verticalAmount = value.translation.height as CGFloat
-                    
+
                     if abs(horizontalAmount) < abs(verticalAmount) && verticalAmount < 0  {
                         self.model.onButtonTap?()
                     }
@@ -79,13 +79,16 @@ struct NotificationView: View {
             }
         }
     }
-    
+
     private func setShow(_ show: Bool) {
         if show && self.offset == kHideOffset {
             self.offset = kShowOffset
         }
         else if !show && self.offset == kShowOffset {
             self.offset = kHideOffset
+            let callback = self.model.onHide
+            self.model.onHide = nil
+            callback?()
         }
     }
     
@@ -96,15 +99,28 @@ struct NotificationView: View {
         @Published var subtitle: String
         @Published var buttonTitle: String
         @Published var onButtonTap: (() -> ())?
-        @Published var show: Bool
-        
+        @Published var show: Bool {
+            didSet {
+                if show {
+                    scheduleAutoHide()
+                } else {
+                    autoHideWork?.cancel()
+                    autoHideWork = nil
+                }
+            }
+        }
+        var onHide: (() -> Void)?
+
+        private var currentTimeout: TimeInterval?
+        private var autoHideWork: DispatchWorkItem?
+
         init(notification: Notification) {
-            
             self.icon = notification.icon
             self.iconColor = notification.iconColor
             self.title = notification.title
             self.subtitle = notification.subtitle
             self.buttonTitle = notification.buttonTitle
+            self.currentTimeout = notification.timeout
             self.show = false
             self.onButtonTap = {
                 withAnimation {
@@ -112,15 +128,16 @@ struct NotificationView: View {
                 }
             }
         }
-        
+
         func setNotification(_ notification: Notification) {
             self.icon = notification.icon
             self.iconColor = notification.iconColor
             self.title = notification.title
             self.subtitle = notification.subtitle
             self.buttonTitle = notification.buttonTitle
+            self.currentTimeout = notification.timeout
         }
-        
+
         func setOnButtonTap(_ newOnButtonTap: (() -> ())?) {
             self.onButtonTap = {
                 newOnButtonTap?()
@@ -129,10 +146,22 @@ struct NotificationView: View {
                 }
             }
         }
+
+        private func scheduleAutoHide() {
+            autoHideWork?.cancel()
+            guard let timeout = currentTimeout else { return }
+            let work = DispatchWorkItem { [weak self] in
+                withAnimation {
+                    self?.show = false
+                }
+            }
+            autoHideWork = work
+            DispatchQueue.main.asyncAfter(deadline: .now() + timeout, execute: work)
+        }
     }
     
     enum Notification {
-        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String)
+        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful
         
         var icon: String {
             switch self {
@@ -144,9 +173,11 @@ struct NotificationView: View {
                 return "bolt.shield.fill"
             case .onClipboardSet:
                 return "doc.on.clipboard.fill"
+            case .tipSuccessful:
+                return "heart.fill"
             }
         }
-        
+
         var iconColor: Color {
             switch self {
             case .offline:
@@ -157,10 +188,12 @@ struct NotificationView: View {
                 return .indigo.opacity(0.6)
             case .onClipboardSet:
                 return .accentColor.opacity(0.6)
+            case .tipSuccessful:
+                return .pink.opacity(0.8)
             }
         }
-        
-        
+
+
         var title: String {
             switch self {
             case .offline:
@@ -171,9 +204,11 @@ struct NotificationView: View {
                 return "notification_automatic_title"~
             case .onClipboardSet(let contentDescription):
                 return contentDescription
+            case .tipSuccessful:
+                return "tipJar_toast_title"~
             }
         }
-        
+
         var subtitle: String {
             switch self {
             case .offline:
@@ -184,13 +219,15 @@ struct NotificationView: View {
                 return "notification_automatic_subtitle"~
             case .onClipboardSet:
                 return "notification_clipboard_subtitle"~
+            case .tipSuccessful:
+                return "tipJar_toast_subtitle"~
             }
         }
-        
+
         var buttonTitle: String {
             return "notification_hide"~
         }
-        
+
         var timeout: TimeInterval? {
             switch self {
             case .offline:
@@ -198,6 +235,8 @@ struct NotificationView: View {
             case .cloudSyncOperationComplete, .automaticFiltersUpdated:
                 return 6
             case .onClipboardSet:
+                return 3
+            case .tipSuccessful:
                 return 3
             }
         }

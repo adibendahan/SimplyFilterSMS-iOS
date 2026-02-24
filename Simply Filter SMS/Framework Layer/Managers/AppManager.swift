@@ -21,7 +21,8 @@ class AppManager: AppManagerProtocol {
     var networkSyncManager: NetworkSyncManagerProtocol
     var amazonS3Service: AmazonS3ServiceProtocol
     var reportMessageService: ReportMessageServiceProtocol
-    
+    var tipJarManager: TipJarManagerProtocol
+
     init(inMemory: Bool = false) {
         let persistanceManager = PersistanceManager(inMemory: inMemory)
         let defaultsManager = DefaultsManager()
@@ -40,7 +41,8 @@ class AppManager: AppManagerProtocol {
         self.networkSyncManager = networkSyncManager
         self.amazonS3Service = amazonS3Service
         self.reportMessageService = reportMessageService
-        
+        self.tipJarManager = TipJarManager()
+
         #if DEBUG
         if UIApplication.shared.isInTestingMode {
             defaultsManager.reset()

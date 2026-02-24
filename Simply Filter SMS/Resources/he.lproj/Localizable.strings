@@ -264,7 +264,7 @@
 
 "whatsNew_freshLook_desc" = "האפליקציה עוצבה מחדש בסגנון העיצובי העדכני של iOS לחוויה **נקייה** ומודרנית יותר.";
 
-"whatsNew_iPad_title" = "תמיכה מלאה ב-iPad";
+"whatsNew_iPad_title" = "תמיכה מלאה ב-iPad" ;
 
 "whatsNew_iPad_desc" = "חוויית iPad מלאה עם **ניווט בסרגל צד** ועיצוב מותאם למסכים גדולים.";
 
@@ -275,6 +275,39 @@
 "whatsNew_singleChar_title" = "פילטרים של תו בודד";
 
 "whatsNew_singleChar_desc" = "עכשיו ניתן ליצור פילטרים עם **תו בודד**, לשליטה מדויקת יותר בסינון ההודעות.";
+
+"whatsNew_tipJar_title" = "תמכו במפתח";
+
+"whatsNew_tipJar_desc" = "**צנצנת טיפים** חדשה מאפשרת לתמוך בפיתוח האפליקציה. Simply Filter SMS חינמית לתמיד - טיפים הם דרך להגיד תודה! לחצו כאן כדי לתת טיפ!";
+
+"tipJar_title" = "צנצנת טיפים";
+
+"tipJar_menuItem" = "צנצנת טיפים";
+
+"tipJar_aboutRow" = "צנצנת טיפים";
+
+"tipJar_header" = "נהנים מהאפליקציה?";
+
+"tipJar_subheader" = "היא חינמית ותמיד תישאר חינמית. אם האפליקציה שימושית עבורכם, טיפ קטן עושה הבדל גדול!";
+
+"tipJar_footer" = "טיפים לא משפיעים בשום אופן על תפקוד האפליקציה. תודה רבה על התמיכה!";
+
+"tipJar_unavailable" = "טיפים אינם זמינים כרגע. אנא נסו שוב מאוחר יותר.";
+
+"tipJar_tier_small" = "קפה";
+
+"tipJar_tier_medium" = "פיצה";
+
+"tipJar_tier_large" = "קוקטייל";
+
+"tipJar_toast_title" = "תודה רבה!";
+
+"tipJar_toast_subtitle" = "התמיכה שלכם עושה את כל ההבדל!";
+
+"tipJar_tier_small_desc" = "שעושים באהבה";
+"tipJar_tier_medium_desc" = "בלי תוספות";
+"tipJar_tier_large_desc" = "מנוער, לא מעורבב";
+"tipJar_chooseATip" = "בחרו טיפ";
 
 "placeholder_choose_title" = "בחרו קטגוריה";
 

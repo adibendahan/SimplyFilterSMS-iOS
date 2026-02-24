@@ -36,12 +36,13 @@ class PersistanceManager: PersistanceManagerProtocol {
             
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
             container.viewContext.automaticallyMergesChangesFromParent = true
+            container.viewContext.stalenessInterval = 0
             storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
             storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
         })
     }
-    
-    
+
+
     //MARK: - Public API (PersistanceManagerProtocol) -
     //MARK: Context
     private(set) var container: NSPersistentCloudKitContainer
@@ -88,6 +89,7 @@ class PersistanceManager: PersistanceManagerProtocol {
             
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
             container.viewContext.automaticallyMergesChangesFromParent = true
+            container.viewContext.stalenessInterval = 0
             storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
             storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
         })

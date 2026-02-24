@@ -23,6 +23,7 @@ class mock_AppManager: AppManagerProtocol {
     var networkSyncManager: NetworkSyncManagerProtocol = mock_NetworkSyncManager()
     var amazonS3Service: AmazonS3ServiceProtocol = mock_AmazonS3Service()
     var reportMessageService: ReportMessageServiceProtocol = mock_ReportMessageService()
+    var tipJarManager: TipJarManagerProtocol = mock_TipJarManager()
     
     var getFrequentlyAskedQuestionsCounter = 0
     var onAppLaunchCounter = 0

@@ -147,15 +147,32 @@ struct AboutView: View {
                             }
                         }
                         
-                        Link(destination: .appReviewURL) {
+                        Button {
+                            self.model.showTipJar = true
+                        } label: {
                             HStack {
-                                Image(systemName: "suit.heart.fill")
+                                Image(systemName: "heart.fill")
                                     .resizable()
                                     .frame(width: 22, height: 20, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
                                     .padding(.horizontal, 2)
-                                    .foregroundColor(.red)
-                                
+                                    .foregroundColor(.pink)
+
+                                Text("tipJar_aboutRow"~)
+                                    .foregroundColor(.primary)
+                                    .padding(.leading, 8)
+                            }
+                        }
+
+                        Link(destination: .appReviewURL) {
+                            HStack {
+                                Image(systemName: "star.fill")
+                                    .resizable()
+                                    .frame(width: 22, height: 20, alignment: .center)
+                                    .aspectRatio(contentMode: .fit)
+                                    .padding(.horizontal, 2)
+                                    .foregroundColor(.yellow)
+
                                 Text("aboutView_review"~)
                                     .foregroundColor(.primary)
                                     .padding(.leading, 8)
@@ -188,6 +205,9 @@ struct AboutView: View {
                 MailView(isShowing: $model.composeMailScreen, result: $model.result)
                                 .edgesIgnoringSafeArea(.bottom)
             }
+            .sheet(isPresented: $model.showTipJar) {
+                TipJarView(model: TipJarView.ViewModel())
+            }
         }
         .ignoresSafeArea(.container, edges: .bottom)
     }
@@ -199,6 +219,7 @@ extension AboutView {
     
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var composeMailScreen: Bool = false
+        @Published var showTipJar: Bool = false
         @Published var result: Result<MFMailComposeResult, Error>?
         @Published var notification: NotificationView.ViewModel
         
@@ -235,13 +256,6 @@ extension AboutView {
                 }
             }
             
-            if let timeout = notification.timeout {
-                DispatchQueue.main.asyncAfter(deadline: .now() + timeout) {
-                    withAnimation {
-                        self.notification.show = false
-                    }
-                }
-            }
         }
     }
 }

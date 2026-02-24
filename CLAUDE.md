@@ -37,6 +37,7 @@ Three-layer clean architecture with protocol-based dependency injection:
 - **AutomaticFilterManager** — Fetches community filter lists from S3, applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown).
 - **DefaultsManager** — UserDefaults wrapper for app settings.
 - **NetworkSyncManager** — NWPathMonitor + CloudKit sync status tracking.
+- **TipJarManager** — StoreKit 2 in-app purchase manager for consumable tip jar products.
 
 Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testability.
 
@@ -46,7 +47,7 @@ Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testa
 - **HTTPService** — Base class for HTTP requests with `URLRequestProtocol`.
 
 ### View Layer (`Simply Filter SMS/View Layer/`)
-- **Screens/** — SwiftUI views: `AppHomeView`, `FilterListView`, `AddFilterView`, `TestFiltersView`, `LanguageListView`, `AboutView`, `HelpView`, `ReportMessageView`, `EnableExtensionVideoView`.
+- **Screens/** — SwiftUI views: `AppHomeView`, `FilterListView`, `AddFilterView`, `TestFiltersView`, `LanguageListView`, `AboutView`, `HelpView`, `ReportMessageView`, `EnableExtensionVideoView`, `WhatsNewView`, `TipJarView`.
 - **Others/** — `BaseViewModel` (base class for all ViewModels), reusable components, button styles, view modifiers.
 
 ### Shared with Extension (`Framework Layer/Shared with Extension/`)
@@ -68,7 +69,8 @@ Every screen follows the same structure:
 - **Screen enum router:** `Screen.swift` defines all screens as enum cases with a `build()` factory method that instantiates the View+ViewModel pair. Used for both navigation and sheet presentation.
 - **Navigation via published optionals:** ViewModels expose `@Published var navigationScreen: Screen?` (push), `sheetScreen: Screen?` (sheet), and `modalFullScreen: Screen?` (full-screen cover) to drive navigation declaratively.
 - **StatefulItem<T>:** Generic wrapper (`View Layer/Others/StatefulItem.swift`) that bridges getter/setter closures to a `Bool state` property with `didSet`. Used for Toggle bindings backed by manager calls.
-- **Overlay modifiers:** `EmbeddedFooterView` (app version footer) and `EmbeddedNotificationView` (toast banner) are applied via `.modifier()` in ZStack overlays. Defined in `ViewModfiers.swift`.
+- **Overlay modifiers:** `EmbeddedFooterView` (app version footer) and `EmbeddedNotificationView` (toast banner) are applied via `.modifier()` in ZStack overlays. Defined in `ViewModfiers.swift`. **Important:** `EmbeddedNotificationView` must be applied **outside** `NavigationView`, not inside — otherwise the toast appears too low (below the nav bar).
+- **NotificationView auto-hide:** Each `NotificationView.Notification` case defines a `timeout`. The `ViewModel` auto-hides when `show` is set to `true` — no manual `DispatchQueue` timer needed at call sites.
 - **Previews:** Always use `AppManager.previews` (in-memory store with debug data).
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full documentation index, dependency graph, and links to detailed docs on [screens](docs/SCREENS.md), [framework/services](docs/FRAMEWORK.md), [extension](docs/EXTENSION.md), [tests](docs/TESTS.md), and [design system](docs/DESIGN.md).
@@ -82,3 +84,6 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full documentation index, depende
 - **CoreData model:** Versioned at `Resources/Simply-Filter-SMS.xcdatamodeld` (v3). Entities use Int64 raw values mapped to Swift enums via computed properties in `SharedExtensions.swift`.
 - **Test mocks:** Located in `Tests/Mocks/` — one mock per protocol.
 - **App Group:** Shared container `group.com.grizz.apps.dev.simply-filter-sms` allows CoreData access from both app and extension.
+- **Dark mode colors:** Avoid `Color(.systemGray6)` for card/surface backgrounds — it blends into the system background in dark mode. Use `.gray.opacity(...)` for visible contrast in both appearances.
+- **Avoid `.task` for one-time loads:** SwiftUI `.task` re-fires when the view tree identity changes (e.g., conditional overlays). For one-time async work, use `Task { }` in the ViewModel's `init` instead.
+- **What's New entries:** When adding a new `WhatsNewEntry` case, always bump `currentWhatsNewVersion` in `Constsants.swift`. The sheet only shows when this version exceeds the user's last-seen version in defaults. Entries can be **actionable** by returning `true` from `isActionnable` — the presenting screen handles navigation via the `onActionnableEntryTapped` closure (e.g., opening Tip Jar via `pendingScreenAfterDismiss`).

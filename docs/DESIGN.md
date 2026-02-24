@@ -98,8 +98,9 @@ static func listBackgroundColor(for colorScheme: ColorScheme) -> Color {
 | Value | Usage |
 |-------|-------|
 | 4pt | Small badges, filter option buttons |
-| 8pt | Primary buttons (FilledButton, OutlineButton), logo clipping |
+| 8pt | Primary buttons (FilledButton, OutlineButton), logo clipping, tip price badge |
 | 12pt | Video thumbnails |
+| 16pt | Tip cards |
 | 24pt | Notification toast (pill shape) |
 
 ### Padding
@@ -169,8 +170,8 @@ Applied via `EmbeddedFooterView` modifier (`ViewModfiers.swift`):
 - Offset: -200 (hidden) to 25 (shown)
 - Dismiss: tap, swipe up, or button
 - Contains: icon + title/subtitle VStack + action button
-- Types: offline (red icon), cloudSync (green), automaticFiltersUpdated (indigo), clipboard (blue)
-- Timeout: nil (offline stays), 6s (sync/filters), 3s (clipboard)
+- Types: offline (red icon), cloudSync (green), automaticFiltersUpdated (indigo), clipboard (blue), tipSuccessful (green)
+- Timeout: nil (offline stays), 6s (sync/filters), 3s (clipboard/tip)
 
 ### Toggle Rows (Smart Filters)
 
@@ -221,6 +222,27 @@ Used in HelpView (QuestionView):
 - Answer text appears below on tap
 - Answers may contain tappable links
 
+### Tip Cards (TipJarView)
+
+Card-based IAP buttons arranged in an `HStack`:
+- Background: `RoundedRectangle(cornerRadius: 16, style: .continuous)`, `.gray.opacity(0.1)`
+- Emoji icon: tier-specific (☕️/🍕/🍸), large size
+- Title: `.system(size: 15, weight: .semibold)`, `.primary`
+- Description: `.system(size: 11)`, `.secondary`, centered, fixed height for alignment
+- Price badge: `.subheadline.bold()`, `.accentColor`, with `.accentColor.opacity(0.1)` background pill (`RoundedRectangle(cornerRadius: 8)`)
+- Press effect: `TipCardButtonStyle` scales to 0.95 with 0.15s ease-in-out
+- Disabled during purchase (all cards dim)
+- Landscape-aware: reduces font sizes and padding when `verticalSizeClass == .compact`
+
+### Confetti (TipJarView)
+
+`ConfettiView` — `UIViewRepresentable` wrapping `CAEmitterLayer`:
+- Emits from top edge, full width
+- Cell shapes: circle, triangle, star (custom `CGPath`)
+- Colors: red, blue, green, yellow, purple, orange, cyan
+- Intensity scales with tip tier: small (low birthRate/velocity), medium, large (high birthRate/velocity)
+- Auto-stops emission after 0.3s; particles fall and fade naturally
+
 ### Collapsible Options
 
 Used in AddFilterView:
@@ -237,7 +259,7 @@ Used in AddFilterView:
 Used for: creation, input, info, and onboarding screens.
 - Close button: X (top-right) via `EmbeddedCloseButton` or toolbar
 - Large bold title: left-aligned
-- Screens: AddFilterView, TestFiltersView, ReportMessageView, HelpView, AboutView, EnableExtensionVideoView
+- Screens: AddFilterView, TestFiltersView, ReportMessageView, HelpView, AboutView, EnableExtensionVideoView, WhatsNewView, TipJarView
 
 ### Push Navigation
 
