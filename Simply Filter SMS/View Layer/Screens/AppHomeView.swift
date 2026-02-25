@@ -459,6 +459,12 @@ extension AppHomeView {
                     }
                 }
                 
+                NotificationCenter.default.addObserver(forName: .filtersStateChanged, object: nil, queue: .main) { _ in
+                    withAnimation {
+                        self.refresh()
+                    }
+                }
+
                 NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { _ in
                     self.refresh()
                     guard self.isAutomaticFilteringOn else { return }
