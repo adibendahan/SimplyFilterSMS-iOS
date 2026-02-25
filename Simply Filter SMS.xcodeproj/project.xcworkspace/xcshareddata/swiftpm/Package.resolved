@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/awslabs/aws-crt-swift.git",
       "state" : {
-        "revision" : "d654b82a55aec736ad8b4354027acab17394a060",
-        "version" : "0.2.2"
+        "revision" : "459da1e556d2486b354dad4ef5fd4c266bd3285c",
+        "version" : "0.29.0"
       }
     },
     {
@@ -14,17 +14,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/awslabs/aws-sdk-swift",
       "state" : {
-        "revision" : "497c2034a00a507806611eec42727fb8ec9b5d69",
-        "version" : "0.2.5"
+        "revision" : "454ad2b1de7b5f27fe74b88d4030c55a230c8e62",
+        "version" : "0.40.0"
       }
     },
     {
       "identity" : "smithy-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/awslabs/smithy-swift.git",
+      "location" : "https://github.com/smithy-lang/smithy-swift",
       "state" : {
-        "revision" : "46e2e69abc12ad820fcb31834045a1c9e1d053c1",
-        "version" : "0.2.4"
+        "revision" : "e42afe5f27ff916fb0803b1b37563d8c6d14abcf",
+        "version" : "0.45.0"
       }
     },
     {
@@ -46,15 +46,6 @@
       }
     },
     {
-      "identity" : "swift-collections",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-collections",
-      "state" : {
-        "revision" : "48254824bb4248676bf7ce56014ff57b142b77eb",
-        "version" : "1.0.2"
-      }
-    },
-    {
       "identity" : "swift-log",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
@@ -70,15 +61,6 @@
       "state" : {
         "revision" : "124119f0bb12384cef35aa041d7c3a686108722d",
         "version" : "2.40.0"
-      }
-    },
-    {
-      "identity" : "xmlcoder",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/MaxDesiatov/XMLCoder.git",
-      "state" : {
-        "revision" : "f30119af03996939cc4f54e0bf0dda9f88a84da5",
-        "version" : "0.13.1"
       }
     }
   ],

@@ -76,6 +76,7 @@ struct WhatsNewView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(FilledButton())
+                .accessibilityIdentifier(TestIdentifier.callToActionButton.rawValue)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
                 .padding(.top, 8)
@@ -91,6 +92,7 @@ struct WhatsNewView: View {
                         Image(systemName: "xmark")
                     }
                     .contentShape(Rectangle())
+                    .accessibilityIdentifier(TestIdentifier.cancelButton.rawValue)
                 }
             }
             .onDisappear {

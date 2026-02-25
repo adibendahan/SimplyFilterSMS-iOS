@@ -7,6 +7,7 @@
 
 import XCTest
 
+@MainActor
 class TestApplication: XCUIApplication {
     private var testCase: ApplicationTestCase
     
@@ -98,7 +99,7 @@ class TestApplication: XCUIApplication {
     }
     
     func switchContaining(_ label: String) -> XCUIElement {
-        return self.switches.element(matching: NSPredicate(format: "label CONTAINS %@", argumentArray: [label])).firstMatch
+        return self.switches.element(matching: NSPredicate(format: "label CONTAINS %@", argumentArray: [label]))
     }
     
     func tap(_ testIdentifier: TestIdentifier) {
