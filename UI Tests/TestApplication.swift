@@ -72,7 +72,9 @@ class TestApplication: XCUIApplication {
         
         self.tap(.addFilteraddFilterButton)
         
-        self.buttonContaining("filterList_filters"~).forceTap()
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            self.buttonContaining("filterList_filters"~).forceTap()
+        }
     }
     
     func buttonExists(_ testIdentifier: TestIdentifier) -> Bool {
