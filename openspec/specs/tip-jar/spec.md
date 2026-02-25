@@ -105,7 +105,7 @@ The TipJarView SHALL display a scrollable, top-aligned layout with: a header are
 
 #### Scenario: Tip card press interaction
 - **WHEN** the user presses a tip card
-- **THEN** the card SHALL scale to 0.95 with a 0.15s ease-in-out animation (custom `TipCardButtonStyle`), with no opacity flicker
+- **THEN** the card SHALL scale to 0.95 and dim to 0.7 opacity with a 0.15s ease-in-out animation (custom `TipCardButtonStyle`), and the tapped card's price badge SHALL be replaced with a `ProgressView` spinner while the purchase is processing
 
 #### Scenario: Tip jar footer
 - **WHEN** the tip jar screen is displayed

@@ -98,7 +98,7 @@ struct TipJarView: View {
                 HStack(spacing: 10) {
                     ForEach(model.products, id: \.id) { product in
                         if let tier = TipTier(rawValue: product.id) {
-                            TipCard(tier: tier, displayPrice: product.displayPrice, isDisabled: model.isPurchasing, isCompact: isCompact) {
+                            TipCardView(tier: tier, displayPrice: product.displayPrice, isDisabled: model.isPurchasing, isPurchasing: model.isPurchasing(tier: tier), isCompact: isCompact) {
                                 Task { await model.purchase(product) }
                             }
                         }
@@ -135,62 +135,6 @@ struct TipJarView: View {
 }
 
 
-//MARK: - Tip Card -
-private struct TipCard: View {
-    let tier: TipTier
-    let displayPrice: String
-    let isDisabled: Bool
-    let isCompact: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: isCompact ? 4 : 8) {
-                Text(tier.emoji)
-                    .font(.system(size: isCompact ? 20 : 28))
-
-                Text(tier.displayName)
-                    .font(.system(size: isCompact ? 13 : 15, weight: .semibold))
-                    .foregroundColor(.primary)
-
-                Text(tier.tierDescription)
-                    .font(.system(size: isCompact ? 10 : 11))
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .frame(height: isCompact ? 14 : 30, alignment: .center)
-
-                Text(displayPrice)
-                    .font(isCompact ? .caption.bold() : .subheadline.bold())
-                    .foregroundColor(.accentColor)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, isCompact ? 2 : 4)
-                    .background(Color.accentColor.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-            }
-            .padding(.vertical, isCompact ? 8 : 16)
-            .padding(.horizontal, 8)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color(.gray).opacity(0.1))
-            )
-        }
-        .buttonStyle(TipCardButtonStyle())
-        .disabled(isDisabled)
-    }
-}
-
-
-//MARK: - Button Style -
-private struct TipCardButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
-    }
-}
-
-
 //MARK: - ViewModel -
 extension TipJarView {
 
@@ -203,13 +147,18 @@ extension TipJarView {
 
         enum PurchaseState: Equatable {
             case idle
-            case purchasing
+            case purchasing(TipTier)
             case success(TipTier)
             case error
         }
 
         var isPurchasing: Bool {
             if case .purchasing = purchaseState { return true }
+            return false
+        }
+
+        func isPurchasing(tier: TipTier) -> Bool {
+            if case .purchasing(let t) = purchaseState { return t == tier }
             return false
         }
 
@@ -235,7 +184,11 @@ extension TipJarView {
 
         @MainActor
         func purchase(_ product: Product) async {
-            purchaseState = .purchasing
+            guard let tier = TipTier(rawValue: product.id) else {
+                purchaseState = .error
+                return
+            }
+            purchaseState = .purchasing(tier)
 
             let result = await appManager.tipJarManager.purchase(product)
 
