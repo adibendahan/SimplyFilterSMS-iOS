@@ -33,85 +33,72 @@ class SnapshotsTestCase: ApplicationTestCase {
             app.switches[lang~].switches["0"].firstMatch.tap()
         }
         snapshot("02.automaticFilters")
-//
-//        if !isPad {
-//            app.buttons["filterList_filters"~].firstMatch.tap()
-//            self.sleep(seconds: 1)
-//        }
-//
-//        app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_ON"~)
-//
-//        // MARK: addFilter Screenshot
-//        if langCode == "he" {
-//            app.addFilter(type: .deny,
-//                          text: "הלוואה",
-//                          denyFolderType: .junk,
-//                          filterTarget: .body,
-//                          filterMatching: .exact,
-//                          filterCase: .caseInsensitive,
-//                          screenshotName: "04.addFilter")
-//        }
-//        else {
-//            app.addFilter(type: .deny,
-//                          text: "Weed",
-//                          denyFolderType: .junk,
-//                          filterTarget: .body,
-//                          filterMatching: .exact,
-//                          filterCase: .caseInsensitive,
-//                          screenshotName: "05.addFilter")
-//        }
-//
-//
-//        // MARK: applicationHome Screenshot
-//        for rule in RuleType.allCases.filter({ $0 != .allUnknown }) {
-//            let ruleSwitch = app.switchContaining(rule.title)
-//            XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
-//            ruleSwitch.switches["0"].firstMatch.tap()
-//            XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
-//        }
-//        app.tap(.appMenuButton)
-//        app.tap(.loadDebugDataMenuButton)
-//        snapshot("01.applicationHome")
-//
-//
-//        // MARK: denyFilters Screenshot
-//        app.tap(.denyFiltersLink)
-//        snapshot("03.denyFilters")
-//
-//
-//        // MARK: allowFilters Screenshot
-//        if !isPad {
-//            app.buttons["filterList_filters"~].firstMatch.tap()
-//        }
-//        app.tap(.allowFiltersLink)
-//        snapshot("04.allowFilters")
-//
-//        if !isPad {
-//            app.buttons["filterList_filters"~].firstMatch.tap()
-//        }
-//
-//
-//        // MARK: denyLanguages Screenshot
-//        if !isPad {
-//            app.swipeUp()
-//        }
-//        app.tap(.denyLanguageLink)
-//        app.tap(.addFilterButton)
-//        snapshot("06.denyLanguages")
-//        app.tap(.closeButton)
-//
-//        if !isPad {
-//            app.buttons["filterList_filters"~].firstMatch.tap()
-//        }
-//
-//
-//        // MARK: testFilters Screenshot
-//        app.tap(.appMenuButton)
-//        app.tap(.testYourFiltersMenuButton)
-//        app.textViews[TestIdentifier.testBodyInput.rawValue].firstMatch.typeText("Your Apple ID Code is: 444291. Don't share it with anyone.")
-//        app.textFields[TestIdentifier.testSenderInput.rawValue].firstMatch.tap()
-//        app.textFields[TestIdentifier.testSenderInput.rawValue].firstMatch.typeText("Apple\n")
-//        app.tap(.testYourFiltersButton)
-//        snapshot("07.testFilters")
+
+        app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
+        self.sleep(seconds: 1)
+        app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_ON"~)
+
+        // MARK: addFilter Screenshot
+        if langCode == "he" {
+            app.addFilter(type: .deny,
+                          text: "הלוואה",
+                          denyFolderType: .junk,
+                          filterTarget: .body,
+                          filterMatching: .exact,
+                          filterCase: .caseInsensitive,
+                          screenshotName: "04.addFilter")
+        }
+        else {
+            app.addFilter(type: .deny,
+                          text: "Weed",
+                          denyFolderType: .junk,
+                          filterTarget: .body,
+                          filterMatching: .exact,
+                          filterCase: .caseInsensitive,
+                          screenshotName: "05.addFilter")
+        }
+
+
+        // MARK: applicationHome Screenshot
+        for rule in RuleType.allCases.filter({ $0 != .allUnknown }) {
+            let ruleSwitch = app.switchContaining(rule.title)
+            XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
+            ruleSwitch.switches["0"].firstMatch.tap()
+            XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
+        }
+        app.tap(.appMenuButton)
+        app.tap(.loadDebugDataMenuButton)
+        snapshot("01.applicationHome")
+
+
+        // MARK: denyFilters Screenshot
+        app.tap(.denyFiltersLink)
+        snapshot("03.denyFilters")
+
+
+        // MARK: allowFilters Screenshot
+        app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
+        app.tap(.allowFiltersLink)
+        snapshot("04.allowFilters")
+        app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
+
+
+        // MARK: denyLanguages Screenshot
+        app.conditionalSwipeUp(!isPad)
+        app.tap(.denyLanguageLink)
+        app.tap(.addFilterButton)
+        snapshot("06.denyLanguages")
+        app.tap(.closeButton)
+        app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
+
+
+        // MARK: testFilters Screenshot
+        app.tap(.appMenuButton)
+        app.tap(.testYourFiltersMenuButton)
+        app.textViews[TestIdentifier.testBodyInput.rawValue].firstMatch.typeText("Your Apple ID Code is: 444291. Don't share it with anyone.")
+        app.textFields[TestIdentifier.testSenderInput.rawValue].firstMatch.tap()
+        app.textFields[TestIdentifier.testSenderInput.rawValue].firstMatch.typeText("Apple\n")
+        app.tap(.testYourFiltersButton)
+        snapshot("07.testFilters")
     }
 }

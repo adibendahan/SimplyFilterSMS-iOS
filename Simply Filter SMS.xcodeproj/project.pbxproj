@@ -21,7 +21,6 @@
 		69189C1827A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C1627A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift */; };
 		691AA733285508EC00FCA4AF /* SnapshotsTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691AA732285508EC00FCA4AF /* SnapshotsTestCase.swift */; };
 		691AA73E2855174500FCA4AF /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691AA73D2855174500FCA4AF /* SnapshotHelper.swift */; };
-		691AA7402855176A00FCA4AF /* Snapfile in Resources */ = {isa = PBXBuildFile; fileRef = 691AA73F2855176A00FCA4AF /* Snapfile */; };
 		691C370E27B400A500B3D061 /* NetworkSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691C370D27B400A500B3D061 /* NetworkSyncManager.swift */; };
 		691D57CA27BB2E0500DDA267 /* mock_HTTPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691D57C927BB2E0500DDA267 /* mock_HTTPService.swift */; };
 		691D57CB27BBE63300DDA267 /* MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */; };
@@ -54,6 +53,7 @@
 		6973D01D278B537300A173CD /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6973D01C278B537300A173CD /* CloudKit.framework */; };
 		6982FE8927A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6982FE8827A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift */; };
 		6982FE8B27A6FBA000BF6AA4 /* AutomaticFilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6982FE8A27A6FBA000BF6AA4 /* AutomaticFilterManager.swift */; };
+		698322832F50AD35008FFD1D /* XCUIElementExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698322822F50AD2C008FFD1D /* XCUIElementExtensions.swift */; };
 		6987D7FF27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6987D7FE27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift */; };
 		6987D80227AAD9E400B3DB84 /* ViewModfiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6987D80127AAD9E400B3DB84 /* ViewModfiers.swift */; };
 		698844A427A8C200005BF9DA /* FadingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698844A327A8C200005BF9DA /* FadingTextView.swift */; };
@@ -162,7 +162,6 @@
 		691AA72E285508EC00FCA4AF /* UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		691AA732285508EC00FCA4AF /* SnapshotsTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotsTestCase.swift; sourceTree = "<group>"; };
 		691AA73D2855174500FCA4AF /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
-		691AA73F2855176A00FCA4AF /* Snapfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Snapfile; sourceTree = "<group>"; };
 		691C370D27B400A500B3D061 /* NetworkSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSyncManager.swift; sourceTree = "<group>"; };
 		691D57C927BB2E0500DDA267 /* mock_HTTPService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_HTTPService.swift; sourceTree = "<group>"; };
 		69218EC42EC8A261000D547B /* EnableExtensionVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionVideoView.swift; sourceTree = "<group>"; };
@@ -192,6 +191,7 @@
 		6973D025278CE89800A173CD /* Simply_Filter_SMS 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Simply_Filter_SMS 2.xcdatamodel"; sourceTree = "<group>"; };
 		6982FE8827A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFilterManagerProtocol.swift; sourceTree = "<group>"; };
 		6982FE8A27A6FBA000BF6AA4 /* AutomaticFilterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFilterManager.swift; sourceTree = "<group>"; };
+		698322822F50AD2C008FFD1D /* XCUIElementExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUIElementExtensions.swift; sourceTree = "<group>"; };
 		6987D7FE27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_MessageEvaluationManager.swift; sourceTree = "<group>"; };
 		6987D80127AAD9E400B3DB84 /* ViewModfiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModfiers.swift; sourceTree = "<group>"; };
 		698844A327A8C200005BF9DA /* FadingTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FadingTextView.swift; sourceTree = "<group>"; };
@@ -314,10 +314,10 @@
 			children = (
 				691AA732285508EC00FCA4AF /* SnapshotsTestCase.swift */,
 				696398E1285D311700FCE865 /* ApplicationTestCase.swift */,
+				698322822F50AD2C008FFD1D /* XCUIElementExtensions.swift */,
 				696398DD285D308300FCE865 /* TestApplication.swift */,
 				696398DF285D30C300FCE865 /* UITestsHelpers.swift */,
 				691AA73D2855174500FCA4AF /* SnapshotHelper.swift */,
-				691AA73F2855176A00FCA4AF /* Snapfile */,
 			);
 			path = "UI Tests";
 			sourceTree = "<group>";
@@ -670,7 +670,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				691AA7402855176A00FCA4AF /* Snapfile in Resources */,
 				696398DA285BBF1C00FCE865 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -710,6 +709,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				696398DB285BC76B00FCE865 /* Constsants.swift in Sources */,
+				698322832F50AD35008FFD1D /* XCUIElementExtensions.swift in Sources */,
 				696398E0285D30C300FCE865 /* UITestsHelpers.swift in Sources */,
 				696398DE285D308300FCE865 /* TestApplication.swift in Sources */,
 				696398E2285D311700FCE865 /* ApplicationTestCase.swift in Sources */,

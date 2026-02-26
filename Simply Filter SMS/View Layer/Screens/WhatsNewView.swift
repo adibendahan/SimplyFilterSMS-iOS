@@ -81,6 +81,7 @@ struct WhatsNewView: View {
                 .padding(.bottom, 16)
                 .padding(.top, 8)
             }
+            .background(Color(.systemBackground))
             .navigationTitle("whatsNew_title"~)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
