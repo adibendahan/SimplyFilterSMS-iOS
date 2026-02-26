@@ -7,6 +7,7 @@
 
 import XCTest
 
+@MainActor
 class TestApplication: XCUIApplication {
     private var testCase: ApplicationTestCase
     
@@ -71,7 +72,9 @@ class TestApplication: XCUIApplication {
         
         self.tap(.addFilteraddFilterButton)
         
-        self.buttonContaining("filterList_filters"~).forceTap()
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            self.buttonContaining("filterList_filters"~).forceTap()
+        }
     }
     
     func buttonExists(_ testIdentifier: TestIdentifier) -> Bool {
@@ -98,7 +101,7 @@ class TestApplication: XCUIApplication {
     }
     
     func switchContaining(_ label: String) -> XCUIElement {
-        return self.switches.element(matching: NSPredicate(format: "label CONTAINS %@", argumentArray: [label])).firstMatch
+        return self.switches.element(matching: NSPredicate(format: "label CONTAINS %@", argumentArray: [label]))
     }
     
     func tap(_ testIdentifier: TestIdentifier) {

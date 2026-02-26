@@ -136,8 +136,9 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         automaticFiltersLanguage.isActive = value
         persistanceManager.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
     func automaticRuleState(for rule: RuleType) -> Bool {
         guard let persistanceManager = self.persistanceManager,
               let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return false }
@@ -154,6 +155,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         }
         
         persistanceManager.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
     func selectedChoice(for rule: RuleType) -> Int {
@@ -167,6 +169,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
               let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
         automaticFiltersRule.selectedChoice = Int64(choice)
         persistanceManager.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
     
     func updateAutomaticFiltersIfNeeded() {

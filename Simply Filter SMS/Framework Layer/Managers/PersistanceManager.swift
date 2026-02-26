@@ -250,53 +250,60 @@ class PersistanceManager: PersistanceManagerProtocol {
         newFilter.filterTarget = filterTarget
         newFilter.filterCase = filterCase
         newFilter.text = text
-        
+
         self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
         offsets.map({ filters[$0] }).forEach({ self.context.delete($0) })
         self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
     func deleteFilters(_ filters: Set<Filter>) {
         filters.forEach({ self.context.delete($0) })
         self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
         filter.denyFolderType = denyFolder
         self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
     func updateFilter(_ filter: Filter, filterMatching: FilterMatching) {
         guard !self.isDuplicateFilter(text: filter.text ?? "",
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filterMatching,
                                       filterCase: filter.filterCase) else { return }
-        
+
         filter.filterMatching = filterMatching
         self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
     func updateFilter(_ filter: Filter, filterCase: FilterCase) {
         guard !self.isDuplicateFilter(text: filter.text ?? "",
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filter.filterMatching,
                                       filterCase: filterCase) else { return }
-        
+
         filter.filterCase = filterCase
         self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
     func updateFilter(_ filter: Filter, filterTarget: FilterTarget) {
         guard !self.isDuplicateFilter(text: filter.text ?? "",
                                       filterTarget: filterTarget,
                                       filterMatching: filter.filterMatching,
                                       filterCase: filter.filterCase) else { return }
-        
+
         filter.filterTarget = filterTarget
         self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
     
     func updateFilter(_ filter: Filter, filterText: String) {

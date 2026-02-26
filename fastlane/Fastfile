@@ -1,0 +1,43 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Take iPhone screenshots"
+  lane :iphone_screenshots do
+    capture_screenshots(
+      devices: ["iPhone 17 Pro Max"],
+      languages: ["en-US", "he-IL"],
+      scheme: "UI Tests",
+      project: "Simply Filter SMS.xcodeproj",
+      output_directory: ".screenshots",
+      clear_previous_screenshots: false,
+      override_status_bar: true,
+      localize_simulator: true,
+      number_of_retries: 0,
+      stop_after_first_error: true,
+      concurrent_simulators: true
+    )
+  end
+
+  desc "Take iPad screenshots"
+  lane :ipad_screenshots do
+    capture_screenshots(
+      devices: ["iPad Pro 13-inch (M5)"],
+      languages: ["en-US", "he-IL"],
+      scheme: "UI Tests",
+      project: "Simply Filter SMS.xcodeproj",
+      output_directory: ".screenshots",
+      clear_previous_screenshots: false,
+      override_status_bar: true,
+      localize_simulator: true,
+      number_of_retries: 0,
+      stop_after_first_error: true,
+      concurrent_simulators: true
+    )
+  end
+
+  desc "Take all screenshots (iPhone + iPad)"
+  lane :screenshots do
+    iphone_screenshots
+    ipad_screenshots
+  end
+end

@@ -19,59 +19,54 @@ struct WhatsNewView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
-                        Text("whatsNew_title"~)
-                            .font(.largeTitle.bold())
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 20)
-                            .padding(.bottom, 8)
+                List {
+                    ForEach(model.entries, id: \.self) { entry in
+                        let row = HStack(alignment: .top, spacing: 16) {
+                            Image(systemName: entry.imageName)
+                                .font(.title2)
+                                .foregroundColor(entry.color)
+                                .frame(width: 44, height: 44)
+                                .background(entry.color.opacity(0.1))
+                                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
-                        ForEach(model.entries, id: \.self) { entry in
-                            let row = HStack(alignment: .top, spacing: 16) {
-                                Image(systemName: entry.imageName)
-                                    .font(.title2)
-                                    .foregroundColor(entry.color)
-                                    .frame(width: 44, height: 44)
-                                    .background(entry.color.opacity(0.1))
-                                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(entry.title)
+                                    .font(.body.bold())
+                                    .foregroundColor(.primary)
 
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(entry.title)
-                                        .font(.body.bold())
-                                        .foregroundColor(.primary)
-
-                                    if let attributed = try? AttributedString(markdown: entry.description, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) {
-                                        Text(attributed)
-                                            .font(.body)
-                                            .foregroundColor(.secondary)
-                                    } else {
-                                        Text(entry.description)
-                                            .font(.body)
-                                            .foregroundColor(.secondary)
-                                    }
+                                if let attributed = try? AttributedString(markdown: entry.description, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) {
+                                    Text(attributed)
+                                        .font(.body)
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    Text(entry.description)
+                                        .font(.body)
+                                        .foregroundColor(.secondary)
                                 }
-                            }
-                            .padding(.horizontal, 16)
-
-                            if entry.isActionnable, model.onActionnableEntryTapped != nil {
-                                Button {
-                                    model.markAsSeen()
-                                    model.onActionnableEntryTapped?(entry)
-                                    dismiss()
-                                } label: {
-                                    row
-                                        .multilineTextAlignment(.leading)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                            } else {
-                                row
                             }
                         }
+                        .listRowSeparator(.hidden)
 
+                        if entry.isActionnable, model.onActionnableEntryTapped != nil {
+                            Button {
+                                model.markAsSeen()
+                                model.onActionnableEntryTapped?(entry)
+                                dismiss()
+                            } label: {
+                                row
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                            }
+                            .listRowInsets(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
+                        } else {
+                            row
+                                .listRowInsets(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
+                        }
                     }
+                    .listSectionSeparator(.hidden, edges: .top)
                 }
+                .listStyle(.plain)
 
                 Button {
                     model.markAsSeen()
@@ -81,11 +76,14 @@ struct WhatsNewView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(FilledButton())
+                .accessibilityIdentifier(TestIdentifier.callToActionButton.rawValue)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
                 .padding(.top, 8)
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .background(Color(.systemBackground))
+            .navigationTitle("whatsNew_title"~)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -95,6 +93,7 @@ struct WhatsNewView: View {
                         Image(systemName: "xmark")
                     }
                     .contentShape(Rectangle())
+                    .accessibilityIdentifier(TestIdentifier.cancelButton.rawValue)
                 }
             }
             .onDisappear {

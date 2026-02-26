@@ -27,9 +27,12 @@ Tests/
 UI Tests/
 ├── ApplicationTestCase.swift             # Base XCTestCase
 ├── TestApplication.swift                 # XCUIApplication wrapper
-├── SnapshotsTestCase.swift              # Full UI flow + screenshots
+├── SnapshotsTestCase.swift              # Full UI flow + screenshots (iPhone & iPad)
 ├── UITestsHelpers.swift                 # Localization + XCUIElement helpers
 └── SnapshotHelper.swift                 # Fastlane snapshot integration
+
+fastlane/
+└── Fastfile                              # Screenshot lanes (iphone/ipad/both)
 ```
 
 ---
@@ -222,6 +225,8 @@ Single test method `testCreateSnapshots()` that runs a full UI flow:
 5. Test filters with a sample message ("Your Apple ID Code is: 444291...")
 6. Capture Fastlane screenshots at each step
 
+**iPad support:** Uses an `isPad` computed property to skip back-button taps and swipe gestures that aren't needed in split view. Sets `XCUIDevice.shared.orientation = .landscapeRight` before app launch for landscape screenshots.
+
 ### Localization in UI Tests
 
 The `~` postfix operator is redefined in `UITestsHelpers.swift` to load strings from the test bundle (not the app bundle):
@@ -254,6 +259,8 @@ postfix func ~ (lang: NLLanguage) -> String {
 xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Simply Filter SMS" \
   -destination 'platform=iOS Simulator,name=iPhone 16' test
 
-# UI tests / snapshots (via Fastlane)
-# Configured in fastlane/Snapfile
+# App Store screenshots (via Fastlane — configured in fastlane/Fastfile)
+fastlane iphone_screenshots        # iPhone only
+fastlane ipad_screenshots          # iPad only (landscape)
+fastlane screenshots               # Both iPhone + iPad
 ```

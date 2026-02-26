@@ -56,6 +56,7 @@ struct EnableExtensionVideoView: View {
                             .background(Color.accentColor)
                             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }
+                    .accessibilityIdentifier(TestIdentifier.callToActionButton.rawValue)
                 }
                 .padding(.horizontal)
                 .padding(.bottom)
@@ -72,7 +73,7 @@ struct EnableExtensionVideoView: View {
                             .foregroundColor(.primary)
                     }
                     .contentShape(Rectangle())
-                    .accessibilityIdentifier("EnableExtensionView.closeButton")
+                    .accessibilityIdentifier(TestIdentifier.cancelButton.rawValue)
                 }
             }
         }

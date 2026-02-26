@@ -378,7 +378,7 @@ This pattern is general-purpose: any future `WhatsNewEntry` case can become acti
 
 A `NavigationView` wrapping a `ZStack` (for confetti overlay) containing a `ScrollView`:
 - **Header** — Heart emoji, title ("tipJar_header"), and subtitle ("tipJar_subheader").
-- **Tip cards** — `HStack` of three `TipCard` components (small/medium/large). Each shows the tier's emoji, display name, description, and price badge. Loading state shows a `ProgressView`. Empty state shows "tipJar_unavailable" text.
+- **Tip cards** — `HStack` of three `TipCardView` components (small/medium/large, in separate file). Each shows the tier's emoji, display name, description, and price badge. When a specific card is being purchased, its price badge is replaced with a `ProgressView` spinner. Loading state shows a `ProgressView`. Empty state shows "tipJar_unavailable" text.
 - **Footer** — Explanatory text ("tipJar_footer").
 - **Confetti overlay** — `ConfettiView` (CAEmitterLayer-based) shown after successful purchase. Intensity scales with tier (birthRate, lifetime, velocity).
 - Toolbar X button to dismiss.
@@ -392,16 +392,17 @@ Uses `@Environment(\.verticalSizeClass)` with an `isCompact` flag to reduce font
 **Published state:**
 - `products: [Product]` — StoreKit products fetched from `TipJarManager`.
 - `isLoading: Bool` — True while products are being fetched.
-- `purchaseState: PurchaseState` — Enum: `.idle`, `.purchasing`, `.success(TipTier)`, `.error`.
+- `purchaseState: PurchaseState` — Enum: `.idle`, `.purchasing(TipTier)`, `.success(TipTier)`, `.error`.
 - `notification: NotificationView.ViewModel` — Toast notification for thank-you message.
 - `shouldDismiss: Bool` — Triggers dismiss after thank-you toast hides.
 
 **Key methods:**
 - `init` — Reads products from `TipJarManager`. If still loading, polls `isLoadingProducts` every 100ms on `@MainActor` until ready.
-- `purchase(_:)` — Sets state to `.purchasing`, calls `TipJarManager.purchase()`. On success: shows confetti + thank-you toast, auto-resets after confetti duration. On error: auto-resets after 3s.
+- `purchase(_:)` — Sets state to `.purchasing(tier)`, calls `TipJarManager.purchase()`. On success: shows confetti + thank-you toast, auto-resets after confetti duration. On error: auto-resets after 3s.
+- `isPurchasing(tier:)` — Returns true if the given tier is the one currently being purchased.
 
 ### Supporting Components
 
-- **TipCard** — Private struct. Button with `TipCardButtonStyle` (scale effect on press). Displays tier emoji, name, description, and price badge with accent color background.
+- **TipCardView** (`TipCardView.swift`) — Button with `TipCardButtonStyle` (scale + opacity effect on press). Displays tier emoji, name, description, and price badge with accent color background. Shows a `ProgressView` spinner in place of the price when the card's tier is being purchased.
 - **ConfettiView** (`Others/ConfettiView.swift`) — `UIViewRepresentable` wrapping `CAEmitterLayer`. Configurable birthRate, lifetime, and velocity. Emits from top of screen with various cell shapes and colors. Auto-stops emission after 0.3s (particles continue falling).
 - **NotificationView** `.tipSuccessful` case — Toast notification with `onHide` callback that triggers sheet dismissal.

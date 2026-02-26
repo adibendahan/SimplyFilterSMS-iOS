@@ -230,8 +230,9 @@ Card-based IAP buttons arranged in an `HStack`:
 - Title: `.system(size: 15, weight: .semibold)`, `.primary`
 - Description: `.system(size: 11)`, `.secondary`, centered, fixed height for alignment
 - Price badge: `.subheadline.bold()`, `.accentColor`, with `.accentColor.opacity(0.1)` background pill (`RoundedRectangle(cornerRadius: 8)`)
-- Press effect: `TipCardButtonStyle` scales to 0.95 with 0.15s ease-in-out
-- Disabled during purchase (all cards dim)
+- Press effect: `TipCardButtonStyle` scales to 0.95 and dims to 0.7 opacity with 0.15s ease-in-out
+- Purchasing state: price badge replaced with `ProgressView` spinner on the tapped card
+- Disabled during purchase (all cards)
 - Landscape-aware: reduces font sizes and padding when `verticalSizeClass == .compact`
 
 ### Confetti (TipJarView)
