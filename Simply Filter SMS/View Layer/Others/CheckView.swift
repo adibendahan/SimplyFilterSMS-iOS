@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CheckView: View {
     
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var checkViewAppear = false
     @State var size: CGFloat = 100
     
@@ -22,7 +23,7 @@ struct CheckView: View {
         }
         .trim(from: 0, to: checkViewAppear ? 1 : 0)
         .stroke(style: StrokeStyle(lineWidth: size/10 + 2, lineCap: .round))
-        .animation(.easeInOut, value: checkViewAppear)
+        .animation(reduceMotion ? nil : .easeInOut, value: checkViewAppear)
         .frame(width: size, height: size, alignment: .center)
         .onAppear() {
             withAnimation {

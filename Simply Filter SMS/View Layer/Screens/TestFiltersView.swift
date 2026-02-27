@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 import IdentityLookup
 
 
@@ -19,6 +20,7 @@ struct TestFiltersView: View {
     var dismiss
     
     @FocusState private var focusedField: Field?
+    @AccessibilityFocusState private var isResultFocused: Bool
     @ObservedObject var model: ViewModel
     
     var body: some View {
@@ -47,7 +49,7 @@ struct TestFiltersView: View {
                                 .foregroundColor(.secondary)
                             
                             TextEditor(text: $model.text)
-                                .frame(height: 80, alignment: .top)
+                                .frame(minHeight: 80, idealHeight: 80, alignment: .top)
                                 .focused($focusedField, equals: .text)
                                 .multilineTextAlignment(.leading)
                                 .padding(.top, 15)
@@ -59,11 +61,16 @@ struct TestFiltersView: View {
                         FadingTextView(model: self.model.fadeTextModel)
                             .multilineTextAlignment(.leading)
                             .frame(minHeight: 45, alignment: .top)
+                            .accessibilityFocused($isResultFocused)
                         
                         Button {
+                            self.isResultFocused = false
                             withAnimation {
                                 self.model.evaluateMessage()
                                 self.focusedField = nil
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                self.isResultFocused = true
                             }
                         } label: {
                             Text("testFilters_action"~)
@@ -74,6 +81,7 @@ struct TestFiltersView: View {
                         .padding(.bottom, 8)
                         .disabled(self.model.text.isEmpty && self.model.sender.isEmpty)
                         .accessibilityIdentifier(TestIdentifier.testYourFiltersButton.rawValue)
+                        .accessibilityHint("a11y_testFilters_testHint"~)
                     } header: {
                         Spacer()
                             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -110,6 +118,7 @@ struct TestFiltersView: View {
                         Image(systemName: "xmark")
                             .foregroundColor(.secondary)
                     }
+                    .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                 }
             }
@@ -161,6 +170,8 @@ extension TestFiltersView {
             else {
                 self.fadeTextModel.text = result.action.testResult
             }
+
+            // VoiceOver focus is moved to the result by @AccessibilityFocusState in the View
         }
     }
 }

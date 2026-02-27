@@ -11,8 +11,8 @@ import SwiftUI
 //MARK: - View -
 struct AddFilterView: View {
     
-    @Environment(\.dismiss)
-    var dismiss
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     
     @ObservedObject var model: ViewModel
     @FocusState private var focusedField: Field?
@@ -116,7 +116,6 @@ struct AddFilterView: View {
                             }
                         }
                         .pickerStyle(.segmented)
-                        .accessibility(hidden: false)
                     }
 
                     Button {
@@ -126,7 +125,7 @@ struct AddFilterView: View {
                     } label: {
                         HStack (alignment: .center, spacing: 8) {
                             Spacer()
-                            
+
                             Text(self.model.isExpanded ? "addFilter_less"~ : "addFilter_more"~)
                                 .font(.footnote)
                                 .bold()
@@ -134,7 +133,8 @@ struct AddFilterView: View {
 
                             Image(systemName: "arrowtriangle.down.circle")
                                 .font(.caption)
-                                .rotationEffect(.degrees(self.model.isExpanded ? 180 : 0))
+                                .rotationEffect(.degrees(reduceMotion ? 0 : (self.model.isExpanded ? 180 : 0)))
+                                .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: self.model.isExpanded)
                             
                             Spacer()
                         }
@@ -142,6 +142,8 @@ struct AddFilterView: View {
                     .padding(.vertical, 6)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(TestIdentifier.expandButton.rawValue)
+                    .accessibilityLabel(self.model.isExpanded ? "addFilter_less"~ : "addFilter_more"~)
+                    .accessibilityHint("a11y_addFilter_expandHint"~)
                     
                     Button {
                         withAnimation {
@@ -167,6 +169,7 @@ struct AddFilterView: View {
                             Image(systemName: "xmark")
                                 .foregroundColor(.secondary)
                         }
+                        .accessibilityLabel("general_close"~)
                         .contentShape(Rectangle())
                     }
                 }

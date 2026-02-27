@@ -13,6 +13,7 @@ The app has zero genuine accessibility support. VoiceOver users cannot meaningfu
 - Replace fixed-height `TextEditor` frames (80pt) with `minHeight` + `idealHeight` for flexible sizing at larger text sizes
 - Announce `NotificationView` toast banners to VoiceOver via `UIAccessibility.post(notification:)`
 - Add `.accessibilityAddTraits(.isHeader)` to section headers throughout the app
+- Respect `@Environment(\.accessibilityReduceMotion)` to disable or simplify motion-heavy animations (spring slide-in, rotation effects, path-draw animations, button press scale)
 
 ## Capabilities
 
@@ -20,6 +21,7 @@ The app has zero genuine accessibility support. VoiceOver users cannot meaningfu
 - `voiceover-support`: Accessibility labels, hints, values, traits, and element grouping for all screens and components
 - `dynamic-type-support`: Scaled fonts, `@ScaledMetric` icon sizing, and flexible frame dimensions for all text sizes
 - `accessibility-announcements`: VoiceOver announcements for dynamic content changes (toast notifications, filter results, state changes)
+- `reduced-motion-support`: Motion-heavy animations disabled or simplified when the user has enabled Reduce Motion
 
 ### Modified Capabilities
 _(none — no existing specs have requirement-level changes)_

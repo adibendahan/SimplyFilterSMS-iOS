@@ -18,6 +18,13 @@ struct AboutView: View {
     @Environment(\.dismiss)
     var dismiss
     
+    @ScaledMetric(relativeTo: .title) private var logoWidth: CGFloat = 90
+    @ScaledMetric(relativeTo: .body) private var socialIconSize: CGFloat = 26
+    @ScaledMetric(relativeTo: .body) private var socialIconSmall: CGFloat = 22
+    @ScaledMetric(relativeTo: .body) private var envelopeHeight: CGFloat = 18
+    @ScaledMetric(relativeTo: .body) private var heartHeight: CGFloat = 20
+    @ScaledMetric(relativeTo: .body) private var starHeight: CGFloat = 20
+
     @ObservedObject var model: ViewModel
     
     var body: some View {
@@ -27,17 +34,24 @@ struct AboutView: View {
                     Image("logo")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 90, alignment: .center)
+                        .frame(width: logoWidth, alignment: .center)
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .accessibilityHidden(true)
                     
                     ZStack(alignment: .bottomTrailing) {
                         Text("Simply Filter\nSMS")
                             .font(.largeTitle.bold())
                             .padding(.horizontal, 16)
-                        
-                        Text("v\(Text(appVersion)) (\(Text(appBuild)))")
-                            .font(.caption2.italic())
-                            .padding(.top, -20)
+
+                        Button {
+                            self.model.setClipboard(content: "v\(appVersion) (\(appBuild))", displayName: "a11y_about_versionCopied"~)
+                        } label: {
+                            Text("v\(Text(appVersion)) (\(Text(appBuild)))")
+                                .font(.caption2.italic())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("a11y_about_versionHint"~)
+                        .padding(.top, -20)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -62,8 +76,9 @@ struct AboutView: View {
                             HStack {
                                 Image("GitHub")
                                     .resizable()
-                                    .frame(width: 26, height: 26, alignment: .center)
+                                    .frame(width: socialIconSize, height: socialIconSize, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
+                                    .accessibilityLabel("GitHub")
 
                                 VStack(alignment: .leading) {
                                     Text("aboutView_github"~)
@@ -89,7 +104,7 @@ struct AboutView: View {
                             HStack {
                                 Image(systemName: "envelope")
                                     .resizable()
-                                    .frame(width: 26, height: 18, alignment: .center)
+                                    .frame(width: socialIconSize, height: envelopeHeight, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
                                     .foregroundColor(.secondary)
                                 
@@ -110,8 +125,9 @@ struct AboutView: View {
                             HStack {
                                 Image("Twitter")
                                     .resizable()
-                                    .frame(width: 26, height: 21, alignment: .center)
+                                    .frame(width: socialIconSize, height: socialIconSize * 21/26, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
+                                    .accessibilityLabel("Twitter")
 
                                 VStack(alignment: .leading) {
                                     Text("Twitter")
@@ -130,9 +146,10 @@ struct AboutView: View {
                             HStack {
                                 Image("Instagram")
                                     .resizable()
-                                    .frame(width: 22, height: 22, alignment: .center)
+                                    .frame(width: socialIconSmall, height: socialIconSmall, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
                                     .padding(2)
+                                    .accessibilityLabel("Instagram")
 
                                 VStack(alignment: .leading) {
                                     Text("aboutView_appIconCredit"~)
@@ -153,7 +170,7 @@ struct AboutView: View {
                             HStack {
                                 Image(systemName: "heart.fill")
                                     .resizable()
-                                    .frame(width: 22, height: 20, alignment: .center)
+                                    .frame(width: socialIconSmall, height: heartHeight, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
                                     .padding(.horizontal, 2)
                                     .foregroundColor(.pink)
@@ -168,7 +185,7 @@ struct AboutView: View {
                             HStack {
                                 Image(systemName: "star.fill")
                                     .resizable()
-                                    .frame(width: 22, height: 20, alignment: .center)
+                                    .frame(width: socialIconSmall, height: starHeight, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
                                     .padding(.horizontal, 2)
                                     .foregroundColor(.yellow)
@@ -197,6 +214,7 @@ struct AboutView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
+                    .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier("AboutView.closeButton")
                 }

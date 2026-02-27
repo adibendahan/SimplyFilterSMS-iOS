@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import UIKit
 import Foundation
 
 struct NotificationView: View {
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var model: ViewModel
     @State private var offset: CGFloat = -200
 
@@ -46,6 +48,7 @@ struct NotificationView: View {
             }
             .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
         }
+        .accessibilityElement(children: .combine)
         .background(.ultraThinMaterial)
         .containerShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .gesture(
@@ -67,7 +70,8 @@ struct NotificationView: View {
                     }
                 })
         .offset(y: self.offset)
-        .animation(.interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
+        .accessibilityHidden(offset != kShowOffset)
+        .animation(reduceMotion ? nil : .interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
         .onTapGesture {
             withAnimation {
                 self.model.show = false
@@ -83,6 +87,12 @@ struct NotificationView: View {
     private func setShow(_ show: Bool) {
         if show && self.offset == kHideOffset {
             self.offset = kShowOffset
+            if UIAccessibility.isVoiceOverRunning {
+                UIAccessibility.post(
+                    notification: .announcement,
+                    argument: "\(self.model.title). \(self.model.subtitle)"
+                )
+            }
         }
         else if !show && self.offset == kShowOffset {
             self.offset = kHideOffset

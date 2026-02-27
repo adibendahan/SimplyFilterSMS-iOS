@@ -18,6 +18,10 @@ struct HelpView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
+    @ScaledMetric(relativeTo: .body) private var envelopeWidth: CGFloat = 25
+    @ScaledMetric(relativeTo: .body) private var envelopeHeight: CGFloat = 20
+    @ScaledMetric(relativeTo: .body) private var githubIconSize: CGFloat = 26
+
     @ObservedObject var model: ViewModel
     
     var body: some View {
@@ -39,7 +43,7 @@ struct HelpView: View {
                                     
                                     Image(systemName: "envelope")
                                         .resizable()
-                                        .frame(width: 25, height: 20, alignment: .leading)
+                                        .frame(width: envelopeWidth, height: envelopeHeight, alignment: .leading)
                                         .aspectRatio(contentMode: .fit)
                                         .foregroundColor(.blue)
                                     
@@ -57,8 +61,9 @@ struct HelpView: View {
                                 
                                 Image("GitHub")
                                     .resizable()
-                                    .frame(width: 26, height: 26, alignment: .center)
+                                    .frame(width: githubIconSize, height: githubIconSize, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
+                                    .accessibilityLabel("GitHub")
                                 
                                 Text("aboutView_github"~)
                                     .foregroundColor(.primary)
@@ -105,6 +110,7 @@ struct HelpView: View {
                         Image(systemName: "xmark")
                             .foregroundColor(.secondary)
                     }
+                    .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                 }
             }

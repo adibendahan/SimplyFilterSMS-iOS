@@ -44,7 +44,7 @@ struct ReportMessageView: View {
                                 .foregroundColor(.secondary)
                             
                             TextEditor(text: $model.text)
-                                .frame(height: 80, alignment: .top)
+                                .frame(minHeight: 80, idealHeight: 80, alignment: .top)
                                 .focused($focusedField, equals: .text)
                                 .multilineTextAlignment(.leading)
                                 .padding(.top, 15)
@@ -60,7 +60,6 @@ struct ReportMessageView: View {
                             }
                         }
                         .pickerStyle(.segmented)
-                        .accessibility(hidden: false)
                         .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
                         
                         Button {
@@ -77,6 +76,7 @@ struct ReportMessageView: View {
                         .padding(.bottom, 8)
                         .disabled(self.model.text.isEmpty && self.model.sender.isEmpty)
                         .accessibilityIdentifier(TestIdentifier.testYourFiltersButton.rawValue)
+                        .accessibilityHint("a11y_reportMessage_submitHint"~)
                     } header: {
                         Spacer()
                             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -128,6 +128,7 @@ struct ReportMessageView: View {
                                 Image(systemName: "xmark")
                                     .foregroundColor(.secondary)
                             }
+                            .accessibilityLabel("general_close"~)
                             .contentShape(Rectangle())
                         }
                     }

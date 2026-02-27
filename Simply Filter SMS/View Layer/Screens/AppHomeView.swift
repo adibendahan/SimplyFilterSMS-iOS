@@ -25,7 +25,12 @@ struct AppHomeView: View {
     private var horizontalSizeClass
     
     @ObservedObject var model: ViewModel
-    
+
+    @ScaledMetric(relativeTo: .title) private var shieldIconSize: CGFloat = 30
+    @ScaledMetric(relativeTo: .title3) private var autoFilterTitleSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .body) private var badgeFontSize: CGFloat = 16
+    @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
+
     @State private var dynamicEmojis: [String: String] = [:]
     
     var body: some View {
@@ -44,12 +49,13 @@ struct AppHomeView: View {
                             HStack {
                                 Image(systemName: "bolt.shield.fill")
                                     .foregroundColor(.indigo)
-                                    .font(.system(size: 30))
+                                    .font(.system(size: shieldIconSize))
                                     .padding(.trailing, 1)
+                                    .accessibilityHidden(true)
                                 
                                 VStack (alignment: .leading) {
                                     Text("autoFilter_title"~)
-                                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                                        .font(.system(size: autoFilterTitleSize, weight: .bold, design: .rounded))
                                     
                                     if !self.model.subtitle.isEmpty {
                                         Text(self.model.subtitle)
@@ -66,7 +72,7 @@ struct AppHomeView: View {
                                         .background(Color.green.opacity(0.1))
                                         .foregroundColor(.green)
                                         .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                                        .font(.system(size: 16, weight: .heavy, design: .default))
+                                        .font(.system(size: badgeFontSize, weight: .heavy, design: .default))
                                 }
                                 else {
                                     Text("autoFilter_OFF"~)
@@ -74,7 +80,7 @@ struct AppHomeView: View {
                                         .background(Color.red.opacity(0.1))
                                         .foregroundColor(.red)
                                         .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                                        .font(.system(size: 16, weight: .heavy, design: .default))
+                                        .font(.system(size: badgeFontSize, weight: .heavy, design: .default))
                                 }
                             }
                             .padding(.vertical, 12)
@@ -107,7 +113,7 @@ struct AppHomeView: View {
                                         Text(currentEmoji)
                                             .opacity(isDisabled ? 0.5 : 1)
                                             .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-                                            .font(.system(size: 16))
+                                            .font(.system(size: emojiIconSize))
                                     }
                                     .buttonStyle(.plain)
                                     .disabled(isDisabled)
@@ -135,9 +141,9 @@ struct AppHomeView: View {
                                             
                                             Menu {
                                                 Text(actionTitle)
-                                                
+
                                                 Divider()
-                                                
+
                                                 ForEach(3...6, id: \.self) { index in
                                                     Button {
                                                         self.model.setSelectedChoice(for: rule, choice: index)
@@ -157,10 +163,18 @@ struct AppHomeView: View {
                         } // Toggle
                         .tint(rule.toggleBackgroundColor)
                         .disabled(isDisabled)
+                        .if(rule.subtitle != nil) {
+                            $0.accessibilityHint(String(format: "a11y_home_shortSenderHint"~, self.model.shortSenderChoice))
+                                .accessibilityAction(named: "a11y_home_shortSenderAction"~) {
+                                    let next = self.model.shortSenderChoice >= 6 ? 3 : self.model.shortSenderChoice + 1
+                                    self.model.setSelectedChoice(for: rule, choice: next)
+                                }
+                        }
                     } // ForEach
                     
                 } header: {
                     Text("autoFilter_smartFilters"~)
+                        .accessibilityAddTraits(.isHeader)
                 } // Section
                 
                 
@@ -193,6 +207,7 @@ struct AppHomeView: View {
                     }
                 } header: {
                     Text("autoFilter_yourFilters"~)
+                        .accessibilityAddTraits(.isHeader)
                 }
                 
                 Section {} header: {
@@ -313,6 +328,7 @@ struct AppHomeView: View {
         } label: {
             Image(systemName: "ellipsis.circle")
         }
+        .accessibilityLabel("a11y_home_menuButton"~)
         .accessibilityIdentifier(TestIdentifier.appMenuButton.rawValue)
     }
 }

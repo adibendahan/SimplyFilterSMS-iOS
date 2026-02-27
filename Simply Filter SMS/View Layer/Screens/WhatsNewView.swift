@@ -14,6 +14,8 @@ struct WhatsNewView: View {
     @Environment(\.dismiss)
     var dismiss
 
+    @ScaledMetric(relativeTo: .title2) private var entryIconSize: CGFloat = 44
+
     @ObservedObject var model: ViewModel
 
     var body: some View {
@@ -25,9 +27,10 @@ struct WhatsNewView: View {
                             Image(systemName: entry.imageName)
                                 .font(.title2)
                                 .foregroundColor(entry.color)
-                                .frame(width: 44, height: 44)
+                                .frame(width: entryIconSize, height: entryIconSize)
                                 .background(entry.color.opacity(0.1))
                                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                .accessibilityHidden(true)
 
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(entry.title)
@@ -61,6 +64,7 @@ struct WhatsNewView: View {
                             .listRowInsets(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
                         } else {
                             row
+                                .accessibilityElement(children: .combine)
                                 .listRowInsets(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
                         }
                     }
@@ -92,6 +96,7 @@ struct WhatsNewView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
+                    .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(TestIdentifier.cancelButton.rawValue)
                 }

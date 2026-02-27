@@ -8,6 +8,7 @@ The app has no accessibility support beyond `.accessibilityIdentifier` calls use
 - Make every screen fully navigable and usable with VoiceOver
 - Support Dynamic Type at all size categories including accessibility sizes
 - Announce dynamic content changes (toasts, filter test results) to assistive technology
+- Respect the Reduce Motion preference by disabling or simplifying motion-heavy animations
 - Follow Apple HIG accessibility guidelines using only built-in SwiftUI APIs
 - Localize all accessibility strings in English and Hebrew
 - **Zero visual change at default text size** — the app must look pixel-identical at the standard content size category
@@ -15,7 +16,7 @@ The app has no accessibility support beyond `.accessibilityIdentifier` calls use
 **Non-Goals:**
 - Full WCAG 2.1 AA audit (color contrast ratios, touch target sizes beyond what Apple provides)
 - Accessibility-specific unit/UI tests (can be a future change)
-- Support for Switch Control or other assistive technologies beyond VoiceOver + Dynamic Type
+- Support for Switch Control or other assistive technologies beyond VoiceOver, Dynamic Type, and Reduce Motion
 - Refactoring view architecture — changes are additive modifiers only
 - Changing any default font sizes, icon sizes, frame dimensions, or image sizes
 
@@ -68,6 +69,16 @@ The app has no accessibility support beyond `.accessibilityIdentifier` calls use
 **Decision:** Replace `.frame(height: 80)` with `.frame(minHeight: 80, idealHeight: 80)` on TextEditor in `TestFiltersView` and `ReportMessageView`. The `idealHeight: 80` ensures the default layout is identical; `minHeight` prevents shrinking while allowing growth at larger text sizes.
 
 **Rationale:** Fixed height clips content at larger text sizes. Using `minHeight` + `idealHeight` preserves the exact visual design at standard sizes while allowing the editor to grow when needed.
+
+### 7. `@Environment(\.accessibilityReduceMotion)` for motion-sensitive animations
+
+**Decision:** Read `@Environment(\.accessibilityReduceMotion)` in each view that contains motion-heavy animations. When `reduceMotion` is `true`: pass `nil` to `.animation(_:value:)` (instant snap) or `withAnimation(_:)` (no animation). Rotation effects are zeroed out. Button press scale effects are skipped (opacity feedback retained). Opacity-only animations (e.g., `FadingTextView`) are left unchanged — Apple HIG allows opacity transitions under Reduce Motion.
+
+**Affected files:** `NotificationView.swift` (spring slide), `CheckView.swift` (path-draw), `QuestionView.swift` (chevron rotation), `AddFilterView.swift` (arrow rotation), `TipCardView.swift` (button press scale via `TipCardButtonStyle`).
+
+**Rationale:** Apple's Reduce Motion setting exists specifically for users with vestibular disorders who experience motion sickness from on-screen animations. Rotation and spring-based slide animations are the most likely to cause discomfort. Opacity-only fades are explicitly excluded from the HIG's recommendation to reduce motion.
+
+**Alternative considered:** Using `.transaction { $0.animation = nil }` globally — rejected because it would kill all animations including subtle list transitions that don't cause motion sickness and improve comprehension of UI state changes.
 
 ## Risks / Trade-offs
 
