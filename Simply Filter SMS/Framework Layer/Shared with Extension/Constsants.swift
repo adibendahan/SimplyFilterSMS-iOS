@@ -20,7 +20,7 @@ let kMinimumFilterLength = 1
 let kHideiClouldStatusMemory = 60
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
-let currentWhatsNewVersion = 2
+let currentWhatsNewVersion = 3
 
 
 // URLs
@@ -494,18 +494,18 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case tipJar, freshLook, ipad, quickAddFilter, singleChar
-    
+    case accessibility, tipJar, freshLook, ipad, singleChar
+
     var title: String {
         switch self {
+        case .accessibility:
+            return "whatsNew_accessibility_title"~
         case .tipJar:
             return "whatsNew_tipJar_title"~
         case .freshLook:
             return "whatsNew_freshLook_title"~
         case .ipad:
             return "whatsNew_iPad_title"~
-        case .quickAddFilter:
-            return "whatsNew_quickAddFilter_title"~
         case .singleChar:
             return "whatsNew_singleChar_title"~
         }
@@ -513,14 +513,14 @@ enum WhatsNewEntry: String, CaseIterable {
 
     var description: String {
         switch self {
+        case .accessibility:
+            return "whatsNew_accessibility_desc"~
         case .tipJar:
             return "whatsNew_tipJar_desc"~
         case .freshLook:
             return "whatsNew_freshLook_desc"~
         case .ipad:
             return "whatsNew_iPad_desc"~
-        case .quickAddFilter:
-            return "whatsNew_quickAddFilter_desc"~
         case .singleChar:
             return "whatsNew_singleChar_desc"~
         }
@@ -528,14 +528,14 @@ enum WhatsNewEntry: String, CaseIterable {
 
     var imageName: String {
         switch self {
+        case .accessibility:
+            return "accessibility"
         case .tipJar:
             return "heart.fill"
         case .freshLook:
             return "sparkles"
         case .ipad:
             return "ipad.and.iphone"
-        case .quickAddFilter:
-            return "plus.circle.fill"
         case .singleChar:
             return "character.cursor.ibeam"
         }
@@ -543,14 +543,14 @@ enum WhatsNewEntry: String, CaseIterable {
 
     var color: Color {
         switch self {
-        case .tipJar:
-            return .pink
-        case .freshLook:
+        case .accessibility:
             return .blue
-        case .ipad:
+        case .tipJar:
             return .red
-        case .quickAddFilter:
+        case .freshLook:
             return .yellow
+        case .ipad:
+            return .purple
         case .singleChar:
             return .green
         }
@@ -558,13 +558,13 @@ enum WhatsNewEntry: String, CaseIterable {
 
     var order: Int {
         switch self {
-        case .tipJar:
+        case .accessibility:
             return 0
-        case .freshLook:
+        case .tipJar:
             return 1
-        case .ipad:
+        case .freshLook:
             return 2
-        case .quickAddFilter:
+        case .ipad:
             return 3
         case .singleChar:
             return 4

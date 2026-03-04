@@ -24,6 +24,9 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("didPromptForReview", defaultValue: false)
     var didPromptForReview: Bool
 
+    @StoredDefault("didTip", defaultValue: false)
+    var didTip: Bool
+
     @StoredDefault("lastSeenWhatsNewVersion", defaultValue: 0)
     var lastSeenWhatsNewVersion: Int
 
@@ -49,7 +52,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
 #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "sessionCounter", "didPromptForReview", "lastSeenWhatsNewVersion", "appAge"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)

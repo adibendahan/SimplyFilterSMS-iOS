@@ -20,6 +20,8 @@ struct LanguageListView: View {
     @Environment(\.dismiss)
     var dismiss
     
+    @ScaledMetric(relativeTo: .title) private var errorIconSize: CGFloat = 30
+
     @ObservedObject var model: ViewModel
     
     var body: some View {
@@ -64,8 +66,9 @@ struct LanguageListView: View {
                     if !self.model.isLoading {
                         HStack (spacing: 12) {
                             Image(systemName: "wifi.exclamationmark")
-                                .font(.system(size: 30))
+                                .font(.system(size: errorIconSize))
                                 .foregroundColor(.red)
+                                .accessibilityHidden(true)
 
                             if self.model.isOnline {
                                 Text(.init("autoFilter_error"~))
@@ -114,6 +117,7 @@ struct LanguageListView: View {
                         Image(systemName: "xmark")
                             .foregroundColor(.secondary)
                     }
+                    .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
                 }

@@ -11,9 +11,11 @@ class TipJarManager: TipJarManagerProtocol {
     @MainActor private(set) var products: [Product] = []
     @MainActor private(set) var isLoadingProducts: Bool = true
 
+    private var defaultsManager: DefaultsManagerProtocol
     private var updatesTask: Task<Void, Never>?
 
-    init() {
+    init(defaultsManager: DefaultsManagerProtocol = AppManager.shared.defaultsManager) {
+        self.defaultsManager = defaultsManager
         updatesTask = Task(priority: .background) {
             for await verificationResult in Transaction.updates {
                 guard case .verified(let transaction) = verificationResult else {
@@ -45,6 +47,7 @@ class TipJarManager: TipJarManagerProtocol {
                     return .failure(StoreKitError.notAvailableInStorefront)
                 }
                 await transaction.finish()
+                self.defaultsManager.didTip = true
                 let tier = TipTier(rawValue: product.id) ?? .small
                 AppManager.logger.info("TipJarManager: purchase successful — \(product.id)")
                 return .success(tier)

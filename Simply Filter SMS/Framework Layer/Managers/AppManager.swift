@@ -41,7 +41,7 @@ class AppManager: AppManagerProtocol {
         self.networkSyncManager = networkSyncManager
         self.amazonS3Service = amazonS3Service
         self.reportMessageService = reportMessageService
-        self.tipJarManager = TipJarManager()
+        self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
 
         #if DEBUG
         if UIApplication.shared.isInTestingMode {

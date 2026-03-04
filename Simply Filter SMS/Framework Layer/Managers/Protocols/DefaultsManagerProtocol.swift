@@ -14,6 +14,7 @@ protocol DefaultsManagerProtocol {
     var isExpandedAddFilter: Bool { get set }
     var sessionCounter: Int { get set }
     var didPromptForReview: Bool { get set }
+    var didTip: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
     var appAge: Date { get }
     

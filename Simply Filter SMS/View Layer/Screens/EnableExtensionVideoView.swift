@@ -57,6 +57,7 @@ struct EnableExtensionVideoView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }
                     .accessibilityIdentifier(TestIdentifier.callToActionButton.rawValue)
+                    .accessibilityHint("a11y_enableExtension_ctaHint"~)
                 }
                 .padding(.horizontal)
                 .padding(.bottom)
@@ -72,6 +73,7 @@ struct EnableExtensionVideoView: View {
                         Image(systemName: "xmark")
                             .foregroundColor(.primary)
                     }
+                    .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(TestIdentifier.cancelButton.rawValue)
                 }

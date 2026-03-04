@@ -16,6 +16,9 @@ struct TipJarView: View {
     @Environment(\.verticalSizeClass)
     var verticalSizeClass
 
+    @ScaledMetric(relativeTo: .largeTitle) private var heartSizeRegular: CGFloat = 56
+    @ScaledMetric(relativeTo: .title2) private var heartSizeCompact: CGFloat = 32
+
     @ObservedObject var model: ViewModel
 
     private var isCompact: Bool { verticalSizeClass == .compact }
@@ -42,6 +45,7 @@ struct TipJarView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
+                    .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                 }
             }
@@ -56,7 +60,8 @@ struct TipJarView: View {
     private var headerSection: some View {
         VStack(spacing: isCompact ? 4 : 12) {
             Text("❤️")
-                .font(.system(size: isCompact ? 32 : 56))
+                .font(.system(size: isCompact ? heartSizeCompact : heartSizeRegular))
+                .accessibilityHidden(true)
 
             Text("tipJar_header"~)
                 .font(isCompact ? .headline : .title2.bold())

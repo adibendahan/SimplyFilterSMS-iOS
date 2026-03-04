@@ -35,7 +35,8 @@ struct EditableText: View {
             Text(self.text)
                 .opacity(self.editProcessGoing ? 0 : 1)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            
+                .accessibilityHidden(true)
+
             TextField(
                 "",
                 text: $newValue,
@@ -60,10 +61,16 @@ struct EditableText: View {
             .opacity(self.editProcessGoing ? 1 : 0)
             .frame(maxWidth: .infinity, alignment: .leading)
             .focused($isFocused)
+            .accessibilityLabel(self.text)
         }
         .onTapGesture(count: 1, perform: {
             self.isFocused = true
             self.editProcessGoing = true
         })
+        .onChange(of: isFocused) { focused in
+            if focused && !editProcessGoing {
+                editProcessGoing = true
+            }
+        }
     }
 }

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CustomPlaceholderView: View {
 
+    @ScaledMetric(relativeTo: .largeTitle) private var placeholderIconSize: CGFloat = 60
+
     var body: some View {
         var symbol: String {
             let languageCode = Locale.preferredLanguages.first?.components(separatedBy: "-").first ?? "en"
@@ -22,8 +24,9 @@ struct CustomPlaceholderView: View {
             Spacer()
             
             Image(systemName: "square.text.square")
-                .font(.system(size: 60))
+                .font(.system(size: placeholderIconSize))
                 .foregroundColor(.primary)
+                .accessibilityHidden(true)
             
             Text("placeholder_choose_title"~)
                 .font(.title2)

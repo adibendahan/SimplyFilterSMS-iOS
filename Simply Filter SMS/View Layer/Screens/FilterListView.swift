@@ -22,6 +22,8 @@ struct FilterListView: View {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
+    @ScaledMetric(relativeTo: .title3) private var addFilterIconSize: CGFloat = 20
+
     @ObservedObject var model: ViewModel
     
     var body: some View {
@@ -141,8 +143,8 @@ struct FilterListView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
-
                 }
+                .accessibilityLabel("a11y_home_menuButton"~)
             }
         }
     }
@@ -171,7 +173,7 @@ struct FilterListView: View {
                     case .deny, .allow:
                         Image(systemName: "plus.message")
                             .imageScale(.large)
-                            .font(.system(size: 20, weight: .bold))
+                            .font(.system(size: addFilterIconSize, weight: .bold))
                         
                         Text(self.model.filterType == .deny ? "addFilter_addFilter_deny"~ : "addFilter_addFilter_allow"~)
                             .font(.body)
@@ -179,7 +181,7 @@ struct FilterListView: View {
                     case .denyLanguage:
                         Image(systemName: "globe")
                             .imageScale(.large)
-                            .font(.system(size: 20, weight: .bold))
+                            .font(.system(size: addFilterIconSize, weight: .bold))
                         
                         Text("addFilter_addLanguage"~)
                             .font(.body)

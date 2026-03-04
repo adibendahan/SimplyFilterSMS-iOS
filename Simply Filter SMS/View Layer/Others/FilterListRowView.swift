@@ -11,9 +11,16 @@ import NaturalLanguage
 
 //MARK: - View -
 struct FilterListRowView: View {
-    
+
     @ObservedObject var model: ViewModel
-    
+
+    @ScaledMetric(relativeTo: .caption2) private var badgeFontSize: CGFloat = 8
+    @ScaledMetric(relativeTo: .caption2) private var badgeWidth: CGFloat = 44
+    @ScaledMetric(relativeTo: .caption2) private var badgeHeight: CGFloat = 20
+    @ScaledMetric(relativeTo: .body) private var matchingIconSize: CGFloat = 18
+    @ScaledMetric(relativeTo: .body) private var caseIconSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .caption) private var folderIconSize: CGFloat = 16
+
     var body: some View {
         HStack (alignment: .center) {
             
@@ -47,8 +54,8 @@ struct FilterListRowView: View {
                     }
                 } label: {
                     Text(self.model.filter.filterTarget.multilineName.uppercased())
-                        .frame(width: 44, height: 20, alignment: .center)
-                        .font(.system(size: 8, weight: .semibold, design: .default))
+                        .frame(width: badgeWidth, height: badgeHeight, alignment: .center)
+                        .font(.system(size: badgeFontSize, weight: .semibold, design: .default))
                         .multilineTextAlignment(.center)
                         .padding(EdgeInsets(top: 6, leading: 4, bottom: 6, trailing: 4))
                         .background(Color.secondary.opacity(0.1))
@@ -56,6 +63,7 @@ struct FilterListRowView: View {
                         .foregroundColor(.secondary)
                         .truncationMode(.middle)
                 } // Menu
+                .accessibilityLabel(String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
 
                 Menu {
                     ForEach(FilterMatching.allCases) { filterMatching in
@@ -74,14 +82,15 @@ struct FilterListRowView: View {
                         Image(systemName: self.model.filter.filterMatching.icon)
                             .resizable()
                             .foregroundColor(color)
-                            .frame(width: 18, height: 18, alignment: .center)
+                            .frame(width: matchingIconSize, height: matchingIconSize, alignment: .center)
                             .padding(EdgeInsets(top: 7, leading: 7, bottom: 7, trailing: 7))
                             .background(color.opacity(0.1))
                             .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                     }
                     .buttonStyle(BorderlessButtonStyle())
                 } // Menu
-                
+                .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filter.filterMatching.name))
+
                 Menu {
                     ForEach(FilterCase.allCases) { filterCase in
                         Button {
@@ -99,15 +108,16 @@ struct FilterListRowView: View {
                         Image("caseSensitive")
                             .resizable()
                             .foregroundColor(color)
-                            .frame(width: 20, height: 20, alignment: .center)
+                            .frame(width: caseIconSize, height: caseIconSize, alignment: .center)
                             .padding(EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6))
                             .background(color.opacity(0.1))
                             .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                     }
                     .buttonStyle(BorderlessButtonStyle())
                 } // Menu
+                .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
             }
-            
+
             if self.model.filter.filterType.supportsFolders {
                 
                 Menu {
@@ -127,13 +137,15 @@ struct FilterListRowView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(.secondary)
-                        .frame(width: 16, height: 16, alignment: .center)
+                        .frame(width: folderIconSize, height: folderIconSize, alignment: .center)
                         .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
                         .background(Color.secondary.opacity(0.1))
                         .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                 } // Menu
+                .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.denyFolderType.name))
             }
         }  // HStack
+        .accessibilityElement(children: .contain)
     }
 }
 

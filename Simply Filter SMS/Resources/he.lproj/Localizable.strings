@@ -242,6 +242,10 @@
 
 "notification_clipboard_subtitle" = "הועתק ללוח";
 
+"notification_tipPromotion_title" = "נהנים מהאפליקציה?";
+
+"notification_tipPromotion_subtitle" = "לחצו להשארת טיפ";
+
 "reportMessage_senderTitle" = "שולח";
 
 "reportMessage_title" = "דיווח על הודעה";
@@ -260,17 +264,17 @@
 
 "whatsNew_menuItem" = "מה חדש";
 
+"whatsNew_accessibility_title" = "תמיכה בנגישות";
+
+"whatsNew_accessibility_desc" = "שימוש מלא עם **VoiceOver** ו-**בקרה קולית**. הטקסט גדל עם **גודל טקסט**. האנימציות מכבדות את הגדרת **הפחת תנועה**.";
+
 "whatsNew_freshLook_title" = "מראה חדש ורענן";
 
 "whatsNew_freshLook_desc" = "האפליקציה עוצבה מחדש בסגנון העיצובי העדכני של iOS לחוויה **נקייה** ומודרנית יותר.";
 
-"whatsNew_iPad_title" = "תמיכה מלאה ב-iPad" ;
+"whatsNew_iPad_title" = "תמיכה מלאה ב-iPad";
 
 "whatsNew_iPad_desc" = "חוויית iPad מלאה עם **ניווט בסרגל צד** ועיצוב מותאם למסכים גדולים.";
-
-"whatsNew_quickAddFilter_title" = "הוספת פילטרים מהירה";
-
-"whatsNew_quickAddFilter_desc" = "כפתור הוספה חדש **בראש כל רשימת פילטרים** מאפשר הוספת פילטרים מהירה ונגישה יותר.";
 
 "whatsNew_singleChar_title" = "פילטרים של תו בודד";
 
@@ -278,7 +282,7 @@
 
 "whatsNew_tipJar_title" = "תמכו במפתח";
 
-"whatsNew_tipJar_desc" = "**צנצנת טיפים** חדשה מאפשרת לתמוך בפיתוח האפליקציה. Simply Filter SMS חינמית לתמיד - טיפים הם דרך להגיד תודה! לחצו כאן כדי לתת טיפ!";
+"whatsNew_tipJar_desc" = "**צנצנת טיפים** חדשה מאפשרת לתמוך בפיתוח האפליקציה. Simply Filter SMS חינמית לתמיד - טיפים הם דרך להגיד תודה! **לחצו כאן כדי לתת טיפ!**";
 
 "tipJar_title" = "צנצנת טיפים";
 
@@ -316,3 +320,33 @@
 "placeholder_choose_sub_detail1" = "אם הקטגוריות נסתרות, לחצו על";
 
 "placeholder_choose_sub_detail2" = "שמופיע למעלה.";
+
+"a11y_home_menuButton" = "אפשרויות נוספות";
+
+"a11y_addFilter_expandHint" = "הקשה כפולה להצגת אפשרויות מתקדמות";
+
+"a11y_testFilters_testHint" = "הקשה כפולה לבדיקת ההודעה מול הפילטרים שלך";
+
+"a11y_reportMessage_submitHint" = "הקשה כפולה לדיווח על הודעה זו";
+
+"a11y_enableExtension_ctaHint" = "הקשה כפולה לפתיחת הגדרות מערכת ההפעלה";
+
+"a11y_filterRow_targetLabel" = "יעד סינון: %@";
+
+"a11y_filterRow_matchLabel" = "סוג התאמה: %@";
+
+"a11y_filterRow_caseLabel" = "רגישות לאותיות: %@";
+
+"a11y_filterRow_folderLabel" = "תיקייה: %@";
+
+"a11y_home_shortSenderHint" = "כרגע %ld תווים. השתמשו בפעולות לשינוי מגבלת התווים";
+
+"a11y_home_shortSenderAction" = "שינוי מגבלת תווים";
+
+"a11y_footer_hint" = "הקשה כפולה לצפייה במידע על האפליקציה";
+
+"a11y_filterRow_editHint" = "הקשה כפולה לעריכה";
+
+"a11y_about_versionHint" = "הקשה כפולה להעתקת גרסה";
+
+"a11y_about_versionCopied" = "גרסה";

@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import UIKit
 import Foundation
 
 struct NotificationView: View {
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var model: ViewModel
     @State private var offset: CGFloat = -200
 
@@ -46,6 +48,7 @@ struct NotificationView: View {
             }
             .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
         }
+        .accessibilityElement(children: .combine)
         .background(.ultraThinMaterial)
         .containerShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .gesture(
@@ -67,10 +70,13 @@ struct NotificationView: View {
                     }
                 })
         .offset(y: self.offset)
-        .animation(.interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
+        .accessibilityHidden(offset != kShowOffset)
+        .animation(reduceMotion ? nil : .interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
         .onTapGesture {
-            withAnimation {
-                self.model.show = false
+            if let onTap = self.model.onTap {
+                onTap()
+            } else {
+                self.model.onButtonTap?()
             }
         }
         .onReceive(model.$show) { show in
@@ -83,6 +89,12 @@ struct NotificationView: View {
     private func setShow(_ show: Bool) {
         if show && self.offset == kHideOffset {
             self.offset = kShowOffset
+            if UIAccessibility.isVoiceOverRunning {
+                UIAccessibility.post(
+                    notification: .announcement,
+                    argument: "\(self.model.title). \(self.model.subtitle)"
+                )
+            }
         }
         else if !show && self.offset == kShowOffset {
             self.offset = kHideOffset
@@ -99,6 +111,7 @@ struct NotificationView: View {
         @Published var subtitle: String
         @Published var buttonTitle: String
         @Published var onButtonTap: (() -> ())?
+        var onTap: (() -> Void)?
         @Published var show: Bool {
             didSet {
                 if show {
@@ -161,7 +174,7 @@ struct NotificationView: View {
     }
     
     enum Notification {
-        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful
+        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion
         
         var icon: String {
             switch self {
@@ -174,6 +187,8 @@ struct NotificationView: View {
             case .onClipboardSet:
                 return "doc.on.clipboard.fill"
             case .tipSuccessful:
+                return "heart.fill"
+            case .tipPromotion:
                 return "heart.fill"
             }
         }
@@ -189,6 +204,8 @@ struct NotificationView: View {
             case .onClipboardSet:
                 return .accentColor.opacity(0.6)
             case .tipSuccessful:
+                return .pink.opacity(0.8)
+            case .tipPromotion:
                 return .pink.opacity(0.8)
             }
         }
@@ -206,6 +223,8 @@ struct NotificationView: View {
                 return contentDescription
             case .tipSuccessful:
                 return "tipJar_toast_title"~
+            case .tipPromotion:
+                return "notification_tipPromotion_title"~
             }
         }
 
@@ -221,6 +240,8 @@ struct NotificationView: View {
                 return "notification_clipboard_subtitle"~
             case .tipSuccessful:
                 return "tipJar_toast_subtitle"~
+            case .tipPromotion:
+                return "notification_tipPromotion_subtitle"~
             }
         }
 
@@ -238,6 +259,8 @@ struct NotificationView: View {
                 return 3
             case .tipSuccessful:
                 return 3
+            case .tipPromotion:
+                return 10
             }
         }
     }

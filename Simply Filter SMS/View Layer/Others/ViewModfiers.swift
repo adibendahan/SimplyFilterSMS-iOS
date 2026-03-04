@@ -14,6 +14,7 @@ struct EmbeddedFooterView: ViewModifier {
     func body(content: Content) -> some View {
         ZStack (alignment: .bottom) {
             content
+                .accessibilitySortPriority(1)
             FooterView(onTap: onTap)
                 .ignoresSafeArea(.keyboard, edges: .all)
         }
@@ -23,7 +24,9 @@ struct EmbeddedFooterView: ViewModifier {
 
 struct EmbeddedCloseButton: ViewModifier {
     var onTap: (() ->())? = nil
-    
+
+    @ScaledMetric(relativeTo: .body) private var closeIconSize: CGFloat = 20
+
     func body(content: Content) -> some View {
         ZStack (alignment: .topTrailing) {
             content
@@ -31,9 +34,10 @@ struct EmbeddedCloseButton: ViewModifier {
                 onTap?()
             } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 20))
+                    .font(.system(size: closeIconSize))
                     .foregroundColor(.secondary)
             }
+            .accessibilityLabel("general_close"~)
             .padding()
             .contentShape(Rectangle())
         }
