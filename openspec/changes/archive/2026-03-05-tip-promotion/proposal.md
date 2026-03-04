@@ -5,7 +5,8 @@ The tip jar exists but most users never discover it — it's buried in the toolb
 ## What Changes
 
 - Add `didTip: Bool` stored default to `DefaultsManager` and `DefaultsManagerProtocol` — persisted flag set to `true` after any successful tip purchase
-- Set `didTip = true` in `TipJarManager` upon successful purchase (alongside existing confetti + toast logic)
+- Add `defaultsManager: DefaultsManagerProtocol` to `TipJarManager.init` (following the standard manager DI pattern) and pass it from `AppManager`
+- Set `self.defaultsManager.didTip = true` in `TipJarManager` upon successful purchase
 - Add `.tipPromotion` case to `NotificationView.Notification` — icon, title, subtitle, button label, and no auto-timeout (user must dismiss)
 - Add `tryShowTipPromotion()` to `AppHomeView.ViewModel` — called on `onAppear`, shows the `.tipPromotion` notification when `sessionCounter % 5 == 0 && sessionCounter > 0 && !defaultsManager.didTip`
 - The notification's button tap dismisses the notification and opens `TipJarView` as a sheet via `sheetScreen = .tipJar`
@@ -24,8 +25,8 @@ The tip jar exists but most users never discover it — it's buried in the toolb
 - **Modified files:**
   - `DefaultsManager.swift` — new `didTip` stored default
   - `DefaultsManagerProtocol.swift` — new `didTip` property
-  - `TipJarManager.swift` — set `didTip = true` on successful purchase
-  - `TipJarManagerProtocol.swift` — expose `didTip` if needed for testability
+  - `TipJarManager.swift` — add `defaultsManager` init parameter, set `didTip = true` on successful purchase
+  - `AppManager.swift` — pass `defaultsManager` to `TipJarManager` init
   - `NotificationView.swift` — new `.tipPromotion` notification case
   - `AppHomeView.swift` — `tryShowTipPromotion()` in ViewModel
   - `Localizable.strings` (en + he) — new notification string keys

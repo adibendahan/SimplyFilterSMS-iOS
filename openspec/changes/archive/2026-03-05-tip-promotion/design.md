@@ -20,20 +20,23 @@
 
 ### 1. `didTip` flag lives in `DefaultsManager`, set by `TipJarManager`
 
-**Decision:** Add `didTip: Bool` as a `@StoredDefault` in `DefaultsManager` (key `"didTip"`, default `false`). Set it to `true` inside `TipJarManager.purchase(_:)` immediately after a verified transaction finishes. Expose it on `DefaultsManagerProtocol` and `TipJarManagerProtocol` is not required — the ViewModel reads it directly from `appManager.defaultsManager.didTip`.
+**Decision:** Add `didTip: Bool` as a `@StoredDefault` in `DefaultsManager` (key `"didTip"`, default `false`). Set it to `true` inside `TipJarManager.purchase(_:)` immediately after a verified transaction finishes. `TipJarManager` receives `DefaultsManagerProtocol` via its `init` (following the same DI pattern as all other managers — `init(defaultsManager: DefaultsManagerProtocol = AppManager.shared.defaultsManager)`), and `AppManager` passes `defaultsManager` explicitly at construction time. The ViewModel reads `didTip` directly from `appManager.defaultsManager.didTip`; no protocol change is needed on `TipJarManagerProtocol`.
 
-**Rationale:** `DefaultsManager` already owns all persistence flags (`didPromptForReview`, `lastSeenWhatsNewVersion`, etc.). `TipJarManager` is the authoritative source for purchase outcomes and is the correct place to set the flag. The ViewModel only needs to read it, so no protocol change is needed on `TipJarManagerProtocol`.
+**Rationale:** `DefaultsManager` already owns all persistence flags (`didPromptForReview`, `lastSeenWhatsNewVersion`, etc.). `TipJarManager` is the authoritative source for purchase outcomes and is the correct place to set the flag. Injecting `defaultsManager` via init follows the established manager pattern and avoids referencing `AppManager.shared` inside a manager, which would break testability.
 
 **Alternative considered:** Storing `didTip` on `TipJarManager` in memory — rejected because it wouldn't survive app restarts, defeating the purpose.
 
 ### 2. Bypass `showNotification(_:)` with a dedicated `showTipPromotion()` method
 
-**Decision:** Add a new `showTipPromotion()` method to `AppHomeView.ViewModel` that sets up the notification and button handler directly on `self.notification`, without going through `showNotification(_:)`. This method:
+**Decision:** Add a new `tryShowTipPromotion()` method to `AppHomeView.ViewModel` that sets up the notification directly on `self.notification`, without going through `showNotification(_:)`. This method:
 1. Checks `sessionCounter % 5 == 0 && sessionCounter > 0 && !appManager.defaultsManager.didTip`
 2. Guards that `!notification.show && sheetScreen == nil && modalFullScreen == nil`
 3. Calls `notification.setNotification(.tipPromotion)`
-4. Calls `notification.setOnButtonTap { self.sheetScreen = .tipJar }`
-5. Schedules `notification.show = true` after a 1-second delay (matching `showNotification` behavior)
+4. Sets `notification.onTap = { withAnimation { show = false }; sheetScreen = .tipJar }` — tapping the notification body opens TipJarView
+5. Leaves the button as the default "Hide" behavior (no `setOnButtonTap` override)
+6. Schedules `notification.show = true` after a 1-second delay (matching `showNotification` behavior)
+
+`NotificationView.ViewModel` gains a `var onTap: (() -> Void)?` property (not `@Published` — closures don't drive view updates). The `onTapGesture` on the notification calls `onTap?()` if set, otherwise falls back to `onButtonTap?()`. This cleanly separates body-tap navigation from button-tap dismissal.
 
 **Rationale:** `showNotification(_:)` hardcodes an offline-specific button tap handler (`lastOfflineNotificationDismiss`). Modifying it to handle multiple cases would add complexity and branching. A dedicated method is self-contained, easier to test, and makes the intent explicit. The `pendingNotification` queue in `showNotification` is not needed here — if a sheet is open, the tip promotion is simply skipped for this session (it will appear again in 5 more sessions).
 

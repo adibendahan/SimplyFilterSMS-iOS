@@ -149,6 +149,8 @@
 "notification_automatic_title" = "Automatic Filtering";
 "notification_automatic_subtitle" = "Filters were updated";
 "notification_clipboard_subtitle" = "Copied to clipboard";
+"notification_tipPromotion_title" = "Enjoying the app?";
+"notification_tipPromotion_subtitle" = "Tap to leave a tip";
 
 // MARK: Report Message
 "reportMessage_senderTitle" = "Sender";

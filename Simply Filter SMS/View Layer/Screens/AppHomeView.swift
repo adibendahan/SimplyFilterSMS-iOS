@@ -487,8 +487,31 @@ extension AppHomeView {
                     self.showNotification(.automaticFiltersUpdated)
                 }
             }
+
+            self.tryShowTipPromotion()
         }
         
+        func tryShowTipPromotion() {
+            let defaultsManager = self.appManager.defaultsManager
+            guard defaultsManager.sessionCounter % 5 == 0,
+                  defaultsManager.sessionCounter > 0,
+                  !defaultsManager.didTip,
+                  !self.notification.show,
+                  self.sheetScreen == nil,
+                  self.modalFullScreen == nil else { return }
+
+            self.notification.setNotification(.tipPromotion)
+            self.notification.onTap = {
+                withAnimation { self.notification.show = false }
+                self.sheetScreen = .tipJar
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                withAnimation {
+                    self.notification.show = true
+                }
+            }
+        }
+
         func tryRequestReview() {
             var defaultsManager = self.appManager.defaultsManager
             if !defaultsManager.didPromptForReview,

@@ -242,6 +242,10 @@
 
 "notification_clipboard_subtitle" = "הועתק ללוח";
 
+"notification_tipPromotion_title" = "נהנים מהאפליקציה?";
+
+"notification_tipPromotion_subtitle" = "לחצו להשארת טיפ";
+
 "reportMessage_senderTitle" = "שולח";
 
 "reportMessage_title" = "דיווח על הודעה";
