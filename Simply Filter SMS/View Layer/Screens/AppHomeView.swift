@@ -195,7 +195,7 @@ struct AppHomeView: View {
                                 
                                 Spacer()
                                 
-                                Text(String(format: "general_active_count"~, self.model.activeCount(for: filterType)))
+                                Text(String.localizedStringWithFormat("general_active_count"~, self.model.activeCount(for: filterType)))
                                     .textCase(.uppercase)
                                     .foregroundColor(.secondary)
                                     .font(Font.caption2)

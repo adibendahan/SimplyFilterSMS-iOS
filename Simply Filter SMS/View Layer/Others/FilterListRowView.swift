@@ -15,7 +15,7 @@ struct FilterListRowView: View {
     @ObservedObject var model: ViewModel
 
     @ScaledMetric(relativeTo: .caption2) private var badgeFontSize: CGFloat = 8
-    @ScaledMetric(relativeTo: .caption2) private var badgeWidth: CGFloat = 44
+    @ScaledMetric(relativeTo: .caption2) private var badgeWidth: CGFloat = 60
     @ScaledMetric(relativeTo: .caption2) private var badgeHeight: CGFloat = 20
     @ScaledMetric(relativeTo: .body) private var matchingIconSize: CGFloat = 18
     @ScaledMetric(relativeTo: .body) private var caseIconSize: CGFloat = 20

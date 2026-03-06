@@ -56,11 +56,35 @@
 
 "enableExtension_welcome" = "ברוכים הבאים!";
 
-"enableExtension_welcome_desc" = "יש לאפשר את Simply Filter SMS כאפליקציה שמסננת הודעות בהגדרות של מערכת ההפעלה. צפו בסרטון הדרכה וכאשר תהיו מוכנים, לחצו על כפתור ההגדרות כדי לעבור למסך ההגדרות של מערכת ההפעלה.";
+"enableExtension_welcome_desc" = "יש לאפשר את Simply Filter SMS כאפליקציה שמסננת הודעות בהגדרות של מערכת ההפעלה. עקבו אחר השלבים למטה וכאשר תהיו מוכנים, לחצו על כפתור ההגדרות.";
 
 "enableExtension_ready_callToAction" = "הגדרות";
 
 "enableExtension_ready_cancel" = "ביטול";
+
+"enableExtension_step1_title" = "פתיחת הגדרות iOS";
+
+"enableExtension_step1_desc" = "פתחו את הגדרות iOS, גללו למטה ולחצו על 'אפליקציות'.";
+
+"enableExtension_step2_title" = "לחצו על הודעות";
+
+"enableExtension_step2_desc" = "גללו למטה, מצאו את 'הודעות' ולחצו עליו.";
+
+"enableExtension_step3_title" = "שולחים לא ידועים";
+
+"enableExtension_step3_desc" = "גללו למטה לקטע 'שולחים לא ידועים'";
+
+"enableExtension_step4_title" = "סינון שולחים לא ידועים";
+
+"enableExtension_step4_desc" = "לחצו להפעלת 'סינון שולחים לא ידועים'";
+
+"enableExtension_step5_title" = "סינון ספאם";
+
+"enableExtension_step5_desc" = "לחצו להפעלת 'סינון ספאם'";
+
+"enableExtension_step6_title" = "בחרו 'Simply Filter SMS'";
+
+"enableExtension_step6_desc" = "לחצו על 'מסנן הודעות טקסט' ובחרו 'SimplyFilterSMS'";
 
 "aboutView_aboutSection" = "אודות";
 
@@ -350,3 +374,4 @@
 "a11y_about_versionHint" = "הקשה כפולה להעתקת גרסה";
 
 "a11y_about_versionCopied" = "גרסה";
+"a11y_enableExtension_stepLabel" = "שלב %ld: %@. %@";

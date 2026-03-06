@@ -64,11 +64,23 @@
 "addFilter_match_exact" = "Exact";
 "addFilter_match_contains" = "Contains";
 
-//MARK: Enable Extension Video View
+//MARK: Enable Extension View
 "enableExtension_ready_callToAction" = "Settings";
 "enableExtension_ready_cancel" = "Cancel";
 "enableExtension_welcome" = "Welcome";
-"enableExtension_welcome_desc" = "You need to enable 'Simply Filter SMS' as your SMS filter app in iOS Settings. Watch the How To video below and when you are ready, tap on the Settings button to go to iOS Settings.";
+"enableExtension_welcome_desc" = "Enable 'Simply Filter SMS' as your SMS filter app in iOS Settings. Follow the steps below, then tap the Settings button when you're ready.";
+"enableExtension_step1_title" = "Open iOS Settings";
+"enableExtension_step1_desc" = "Open iOS Settings, scroll down and tap 'Apps'.";
+"enableExtension_step2_title" = "Tap on Messages";
+"enableExtension_step2_desc" = "Scroll down to find 'Messages' and tap on it.";
+"enableExtension_step3_title" = "Unknown Senders";
+"enableExtension_step3_desc" = "Scroll down to the 'Unknown Senders' section";
+"enableExtension_step4_title" = "Screen Unknown Senders";
+"enableExtension_step4_desc" = "Tap to enable 'Screen Unknown Senders'";
+"enableExtension_step5_title" = "Filter Spam";
+"enableExtension_step5_desc" = "Tap to enable 'Filter Spam'";
+"enableExtension_step6_title" = "Choose 'Simply Filter SMS'";
+"enableExtension_step6_desc" = "Tap 'Text Message Filter' and select 'SimplyFilterSMS'";
 
 
 //MARK: About View
@@ -216,3 +228,4 @@
 "a11y_filterRow_editHint" = "Double tap to edit";
 "a11y_about_versionHint" = "Double tap to copy version";
 "a11y_about_versionCopied" = "Version";
+"a11y_enableExtension_stepLabel" = "Step %ld: %@. %@";

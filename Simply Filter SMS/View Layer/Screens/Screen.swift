@@ -21,7 +21,7 @@ enum Screen: Int, Identifiable {
             AppHomeView(model: AppHomeView.ViewModel())
             
         case .onboarding:
-            EnableExtensionVideoView(model: EnableExtensionVideoView.ViewModel())
+            EnableExtensionView(model: EnableExtensionView.ViewModel())
             
         case .help:
             HelpView(model: HelpView.ViewModel())
@@ -30,7 +30,7 @@ enum Screen: Int, Identifiable {
             AboutView(model: AboutView.ViewModel())
             
         case .enableExtension:
-            EnableExtensionVideoView(model: EnableExtensionVideoView.ViewModel())
+            EnableExtensionView(model: EnableExtensionView.ViewModel())
             
         case .testFilters:
             TestFiltersView(model: TestFiltersView.ViewModel())

@@ -19,10 +19,10 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | Screen enum case | View | Presentation |
 |---|---|---|
 | `appHome` | AppHomeView | Root |
-| `onboarding` | EnableExtensionVideoView | Sheet (first run) |
+| `onboarding` | EnableExtensionView | Sheet (first run) |
 | `help` | HelpView | Sheet |
 | `about` | AboutView | Sheet |
-| `enableExtension` | EnableExtensionVideoView (= onboarding) | Sheet |
+| `enableExtension` | EnableExtensionView (= onboarding) | Sheet |
 | `testFilters` | TestFiltersView | Sheet |
 | `addLanguageFilter` | LanguageListView (mode: .blockLanguage) | Sheet |
 | `addAllowFilter` | AddFilterView (filterType: .allow) | Sheet |

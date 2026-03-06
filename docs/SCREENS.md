@@ -60,10 +60,10 @@ Trailing `Menu` (ellipsis icon) with items:
 
 ---
 
-## EnableExtensionVideoView
+## EnableExtensionView
 
-**File:** `View Layer/Screens/EnableExtensionVideoView.swift`
-**Role:** Onboarding screen shown on first launch. Guides user to enable the Message Filter Extension in iOS Settings.
+**File:** `View Layer/Screens/EnableExtensionView.swift`
+**Role:** Onboarding screen shown on first launch. Guides the user through enabling the Message Filter Extension in iOS Settings via an animated step-by-step walkthrough.
 
 Both `Screen.onboarding` and `Screen.enableExtension` map to this same view.
 
@@ -71,18 +71,22 @@ Both `Screen.onboarding` and `Screen.enableExtension` map to this same view.
 
 Presented as a **sheet** (`.interactiveDismissDisabled()`). Contains:
 - Description text
-- A looping `VideoPlayer` (AVKit) — plays `enableExtension.mp4` (English) or `enableExtension.he.mp4` (Hebrew) based on locale. Loops via `.AVPlayerItemDidPlayToEndTime` observer.
-- CTA button that deep-links to app's iOS Settings via `UIApplication.openSettingsURLString`
+- A `ForEach` over `EnableExtensionStep.allCases` rendering `EnableExtensionStepView` rows — one per step, animated sequentially in a looping cycle
+- CTA button (`FilledButton`) pinned via `safeAreaInset(edge: .bottom)` — deep-links to iOS Settings via `UIApplication.openSettingsURLString`
 - Toolbar X button to dismiss
+
+### Animation
+
+A looping `Task` (attached via `.task {}`) cycles through all steps sequentially, setting `@State private var activeStep: Int`. Each `EnableExtensionStepView` receives `isActive: Bool` based on whether its step number is `<= activeStep`. When VoiceOver is active, all steps are shown at full opacity immediately and the loop does not run.
 
 ### ViewModel
 
-- `isAppFirstRun: Bool` — `@Published` with `didSet` writing back to `DefaultsManager`. Both dismiss paths set this to `false`.
-- `videoURLForCurrentLocale()` — Returns bundled `.mp4` URL with Hebrew locale suffix detection.
+- `isAppFirstRun: Bool` — `@Published` with `didSet` writing back to `DefaultsManager`. Both dismiss paths (X button and Settings button) set this to `false`.
 
-### Notable
+### Supporting Components
 
-- Uses `@StateObject` (not `@ObservedObject`) since it owns its ViewModel lifecycle as a sheet.
+- **EnableExtensionStep** (`Others/EnableExtensionStep.swift`) — `CaseIterable, Hashable` enum with 6 cases (`settings`, `messages`, `unknownSenders`, `screenUnknownSenders`, `filterSpam`, `textMessageFilter`). Provides `stepNumber`, `title`, `description`, `symbolName`, `symbolColor`, `showsAppIcon`, `isToggle`, and `isLast` computed properties.
+- **EnableExtensionStepView** (`Others/EnableExtensionStepView.swift`) — Renders a single step row: numbered circle with connector line, icon (SF Symbol, app icon, or none), title, description, and an optional decorative toggle for steps that require enabling a setting. Animations respect `accessibilityReduceMotion`. Toggle activation uses `.task(id: isActive)` to avoid race conditions.
 
 ---
 
