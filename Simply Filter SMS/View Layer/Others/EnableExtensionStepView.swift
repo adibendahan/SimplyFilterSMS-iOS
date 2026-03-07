@@ -62,6 +62,7 @@ struct EnableExtensionStepView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
+                        .minimumScaleFactor(0.7)
                         .frame(height: 40, alignment: .topLeading)
                 }
                 .opacity(isActive ? 1.0 : 0.35)
