@@ -1,0 +1,406 @@
+/*
+  Localizable.strings
+  Simply Filter SMS
+
+  French (fr) translation
+*/
+
+
+//MARK: General
+"general_allow" = "Autoriser";
+
+"general_deny" = "Bloquer";
+
+"general_null" = "(null)";
+
+"general_copyright" = "© %ld Adi Ben-Dahan. Tous droits réservés.";
+
+"general_close" = "Fermer";
+
+"general_active_count" = "%ld filtres";
+
+"general_lang" = "Langue";
+
+"general_edit" = "Éditer";
+
+//MARK: Languages
+"lang_supported" = "Langues prises en charge";
+
+"lang_allBlocked" = "Tu as bloqué toutes les langues prises en charge !";
+
+"lang_how" = "Le traitement et la détection de la langue sont effectués **localement** par le moteur de langue naturelle d'iOS. Un message sera filtré uniquement si la **langue dominante** du texte figure dans la liste des langues bloquées.";
+
+
+//MARK: Filter List View
+"filterList_filters" = "Filtres";
+
+"filterList_allowed" = "Textes autorisés";
+
+"filterList_denied" = "Textes bloqués";
+
+"filterList_menu_filterLanguage" = "Bloquer une langue";
+
+"filterList_menu_enableExtension" = "Aide";
+
+"filterList_menu_about" = "À propos";
+
+"filterList_menu_debug" = "Charger données de test";
+
+"filterList_deniedLanguage" = "Langues bloquées";
+
+"filterList_deleteFiltersCount" = "Supprimer (%ld)";
+
+"filterList_folder" = "Dossier";
+
+"filterList_text" = "Texte";
+
+"filterList_options" = "Options";
+
+//MARK: Add Filter View
+"addFilter_add" = "Ajouter";
+
+"addFilter_addFilter_allow" = "Ajouter un texte autorisé";
+
+"addFilter_addFilter_deny" = "Ajouter un texte bloqué";
+
+"addFilter_addLanguage" = "Ajouter une langue";
+
+"addFilter_text" = "Saisir un mot/une lettre";
+
+"addFilter_type" = "Type";
+
+"addFilter_type_caption" = "Sélectionner une action :";
+
+"addFilter_folder_caption" = "Sélectionner le dossier de destination (toucher pour modifier) :";
+
+"addFilter_folder_junk" = "Indésirables";
+
+"addFilter_folder_transactions" = "Transactions";
+
+"addFilter_folder_promotions" = "Promotions";
+
+"addFilter_duplicate" = "Filtre en double";
+
+"addFilter_more" = "Plus d'options";
+
+"addFilter_less" = "Moins d'options";
+
+"addFilter_target_all" = "Expéditeur + Contenu";
+
+"addFilter_target_all_multiline" = "Expéditeur +\nContenu";
+
+"addFilter_target_sender" = "Expéditeur";
+
+"addFilter_target_body" = "Contenu";
+
+"addFilter_target_title" = "Sélectionner une cible :";
+
+"addFilter_case_title" = "Sélectionner la casse :";
+
+"addFilter_case_sensitive" = "Sensible à la casse";
+
+"addFilter_case_insensitive" = "Insensible à la casse";
+
+"addFilter_match_title" = "Sélectionner le type de correspondance :";
+
+"addFilter_match_exact" = "Exact";
+
+"addFilter_match_contains" = "Contient";
+
+//MARK: Enable Extension View
+"enableExtension_ready_callToAction" = "Réglages";
+
+"enableExtension_ready_cancel" = "Annuler";
+
+"enableExtension_welcome" = "Bienvenue";
+
+"enableExtension_welcome_desc" = "Active 'Simply Filter SMS' comme application de filtrage SMS dans les Réglages iOS. Suis les étapes ci-dessous, puis touche le bouton Réglages quand tu es prêt.";
+
+"enableExtension_step1_title" = "Ouvre les Réglages iOS";
+
+"enableExtension_step1_desc" = "Ouvre les Réglages iOS, fais défiler vers le bas et touche 'Apps'.";
+
+"enableExtension_step2_title" = "Touche Messages";
+
+"enableExtension_step2_desc" = "Fais défiler vers le bas, trouve 'Messages' et touche-le.";
+
+"enableExtension_step3_title" = "Expéditeurs inconnus";
+
+"enableExtension_step3_desc" = "Fais défiler jusqu'à la section 'Expéditeurs inconnus'";
+
+"enableExtension_step4_title" = "Filtrer expéditeurs inconnus";
+
+"enableExtension_step4_desc" = "Touche pour activer 'Filtrer expéditeurs inconnus'";
+
+"enableExtension_step5_title" = "Filtrer le spam";
+
+"enableExtension_step5_desc" = "Touche pour activer 'Filtrer le spam'";
+
+"enableExtension_step6_title" = "Choisir 'Simply Filter SMS'";
+
+"enableExtension_step6_desc" = "Touche 'Filtre de messages texte' et sélectionne 'SimplyFilterSMS'";
+
+
+//MARK: About View
+"aboutView_aboutSection" = "Notes du développeur";
+
+"aboutView_linksSection" = "Liens";
+
+"aboutView_aboutText" = "**Fait avec ❤️ par Adi Ben-Dahan à Tel Aviv 🇮🇱**\n\nCe projet est né d'une quête personnelle d'un outil de messagerie qui respecte vraiment la vie privée.\n\nSans cloud.\nSans analyses.\nSans observateurs silencieux.\n\nJuste un filtre rapide et fiable fonctionnant entièrement sur ton appareil, sans que rien ne quitte tes mains.\nEt comme beaucoup d'outils dans ce domaine se cachent derrière un abonnement ou un paywall, j'ai pensé qu'il serait bien d'avoir une version qui fonctionne simplement sans engagement. Cette app est **gratuite** et le **restera**.\n\n**Je serais vraiment heureux de recevoir cinq étoiles sur l'AppStore ⭐️❤️.**\n\nSi quelque chose semble anormal ou ne fonctionne pas comme prévu, une note rapide sur la page GitHub Issues ou un e-mail est toujours la bienvenue.";
+
+"aboutView_twitter" = "a_bd";
+
+"aboutView_github" = "GitHub";
+
+"aboutView_sendMail" = "E-mail";
+
+"aboutView_appIconCredit" = "Vitali Levit";
+
+"aboutView_appIconCreditTitle" = "Designer de l'icône";
+
+"aboutView_review" = "Note-nous s'il te plaît !";
+
+//MARK: Help View
+"faq_subtitle" = "Voici une liste de questions fréquentes. Si tu ne trouves pas ta réponse, contacte-nous par";
+
+"faq_question_0" = "Comment activer le filtrage dans iOS ?";
+
+"faq_answer_0" = "Touche pour ouvrir l'écran de configuration.";
+
+"faq_question_1" = "Comment fonctionne le filtrage des messages ?";
+
+"faq_answer_1" = "Quand tu reçois un SMS d'un numéro absent de tes contacts, Simply Filter SMS le filtre selon les règles suivantes :\n\n• Si le message contient un texte correspondant à un filtre des 'Textes autorisés', il sera livré normalement.\n• Sinon, il sera analysé pour trouver des filtres des 'Textes bloqués' et, si l'un est trouvé, il sera envoyé dans le dossier Indésirables.\n• Si le message ne contient aucun texte bloqué, il sera livré normalement.\n";
+
+"faq_question_2" = "Mes messages sont-ils exposés au développeur ?";
+
+"faq_answer_2" = "Non. Simply Filter SMS ne collecte aucune information. Tout le traitement se fait localement sur ton appareil, sans aucune journalisation.";
+
+"faq_question_3" = "Et les iMessages et messages de mes contacts ?";
+
+"faq_answer_3" = "Apple n'expose pas ces messages aux développeurs. Ils restent entièrement privés.";
+
+"faq_question_4" = "Où sont les messages filtrés ?";
+
+"faq_answer_4" = "Quand un SMS est marqué comme indésirable, il reste accessible dans l'app Messages, dans le dossier Indésirables.";
+
+"faq_question_5" = "Quelle est la différence entre Indésirables/Transactions/Promotions ?";
+
+"faq_answer_5" = "Pas grand-chose. Tu peux filtrer n'importe quel mot vers n'importe quel dossier. Ces dossiers ne sont pas personnalisables. Seuls les messages filtrés dans Indésirables arrivent en silence.";
+
+"help_automaticFiltering_question" = "Comment fonctionne le Filtrage automatique ?";
+
+"help_automaticFiltering" = "Le Filtrage automatique utilise une liste prédéfinie de termes pour déterminer si un message doit aller dans le dossier indésirables. Les listes sont mises à jour régulièrement avec de nouveaux termes. Tes filtres habituels sont toujours pris en compte quand le Filtrage automatique est activé.";
+
+"help_deny" = "Ajoute des textes qui feront marquer un message comme spam. Tu peux aussi choisir le dossier spécifique où le message sera stocké.";
+
+"help_allow" = "Ajoute des textes qui feront marquer un message comme valide. Il est recommandé d'ajouter des textes uniques comme ton nom. Les textes de cette liste ont la priorité la plus élevée lors du filtrage.";
+
+//MARK: Automatic Filtering
+"autoFilter_title" = "Filtrage automatique";
+
+"autoFilter_lastUpdated" = "Mis à jour le %@";
+
+"autoFilter_forceUpdate" = "Forcer la mise à jour";
+
+"autoFilter_neverUpdated" = "Jamais";
+
+"autoFilter_ON" = "ON";
+
+"autoFilter_OFF" = "OFF";
+
+"autoFilter_allUnknown" = "Bloquer tous les inconnus";
+
+"autoFilter_links" = "Bloquer les liens";
+
+"autoFilter_numbersOnly" = "Autoriser chiffres seuls";
+
+"autoFilter_shortSender" = "Bloquer expéditeurs courts";
+
+"autoFilter_shortSender_desc" = "Au moins %ld caractères";
+
+"autoFilter_shortSender_change" = "Toucher pour modifier";
+
+"autoFilter_shortSender_action" = "Sélectionner nouvelle limite";
+
+"autoFilter_allUnknown_shortTitle" = "Tous inconnus (sauf autorisés)";
+
+"autoFilter_links_shortTitle" = "Liens";
+
+"autoFilter_numbersOnly_shortTitle" = "Chiffres seuls";
+
+"autoFilter_shortSender_shortTitle" = "Expéditeurs courts";
+
+"autoFilter_smartFilters" = "Filtres intelligents";
+
+"autoFilter_yourFilters" = "Tes filtres";
+
+"autoFilter_email_shortTitle" = "E-mail";
+
+"autoFilter_email" = "Bloquer expéditeurs e-mail";
+
+"autoFilter_empty" = "Ouvre l'app au moins une fois avec internet pour télécharger les listes de Filtrage automatique.";
+
+"autoFilter_error" = "Il semble y avoir un problème lors du téléchargement des listes de Filtrage automatique. Réessaie plus tard.";
+
+"autoFilter_emojis" = "Bloquer les emojis";
+
+"autoFilter_emojis_shortTitle" = "Emojis";
+
+// MARK: Test Filters
+"testFilters_title" = "Tester tes filtres";
+
+"testFilters_action" = "Tester";
+
+"testFilters_messageTitle" = "Message";
+
+"testFilters_senderTitle" = "Expéditeur (optionnel)";
+
+"testFilters_resultAllowed" = "Autorisé ! 🥳";
+
+"testFilters_resultJunk" = "Indésirable ! 😈";
+
+"testFilters_resultPromotion" = "C'est une promo ! 📢";
+
+"testFilters_resultTransaction" = "C'est une transaction ! 🧾";
+
+"testFilters_resultReason_noMatch" = "Aucun résultat";
+
+"testFilters_resultReason_unknownSender" = "Expéditeur inconnu";
+
+"testFilters_resultReason" = "Raison :";
+
+"notification_offline_title" = "Synchronisation iCloud suspendue";
+
+"notification_offline_subtitle" = "Ton appareil n'a pas de réseau";
+
+"notification_sync_title" = "Synchronisation iCloud active";
+
+"notification_sync_subtitle" = "Données locales mises à jour";
+
+"notification_hide" = "Masquer";
+
+"notification_automatic_title" = "Filtrage automatique";
+
+"notification_automatic_subtitle" = "Filtres mis à jour";
+
+"notification_clipboard_subtitle" = "Copié";
+
+"notification_tipPromotion_title" = "Tu apprécies l'app ?";
+
+"notification_tipPromotion_subtitle" = "Touche pour laisser un pourboire";
+
+// MARK: Report Message
+"reportMessage_senderTitle" = "Expéditeur";
+
+"reportMessage_title" = "Signaler un message";
+
+"reportMessage_junk" = "Indésirables";
+
+"reportMessage_notJunk" = "Pas indésirable";
+
+"reportMessage_report" = "Signaler";
+
+"reportMessage_thankYou" = "Merci pour le signalement !";
+
+
+//MARK: What's New
+"whatsNew_title" = "Nouveautés";
+
+"whatsNew_continue" = "Continuer";
+
+"whatsNew_menuItem" = "Nouveautés";
+
+"whatsNew_accessibility_title" = "Support accessibilité";
+
+"whatsNew_accessibility_desc" = "Entièrement utilisable avec **VoiceOver** et **Contrôle vocal**. Le texte s'adapte avec **Dynamic Type**. Les animations respectent ton réglage **Réduire les animations**.";
+
+"whatsNew_freshLook_title" = "Nouveau look";
+
+"whatsNew_freshLook_desc" = "L'app a été repensée avec le dernier style visuel iOS pour une expérience **plus épurée** et moderne.";
+
+"whatsNew_iPad_title" = "Support natif iPad";
+
+"whatsNew_iPad_desc" = "Expérience iPad complète avec **navigation en barre latérale** et mises en page optimisées pour les grands écrans.";
+
+"whatsNew_singleChar_title" = "Filtres à un caractère";
+
+"whatsNew_singleChar_desc" = "Tu peux maintenant créer des filtres avec un seul **caractère**, pour un contrôle plus précis du filtrage.";
+
+"whatsNew_tipJar_title" = "Soutenir le développeur";
+
+"whatsNew_tipJar_desc" = "Une nouvelle **boîte à pourboires** te permet de soutenir le développement de l'app. Simply Filter SMS est gratuit pour toujours — les pourboires sont juste une façon de dire merci ! **Touche ici pour donner un pourboire !**";
+
+//MARK: Tip Jar
+"tipJar_title" = "Boîte à pourboires";
+
+"tipJar_menuItem" = "Boîte à pourboires";
+
+"tipJar_aboutRow" = "Boîte à pourboires";
+
+"tipJar_header" = "Tu apprécies l'app ?";
+
+"tipJar_subheader" = "Simply Filter SMS est gratuit et le restera toujours. Si tu le trouves utile, un petit pourboire compte beaucoup !";
+
+"tipJar_footer" = "Les pourboires ne débloquent aucune fonctionnalité. Merci pour ton soutien !";
+
+"tipJar_unavailable" = "Pourboires non disponibles pour l'instant. Réessaie plus tard.";
+
+"tipJar_tier_small" = "Café";
+
+"tipJar_tier_medium" = "Pizza";
+
+"tipJar_tier_large" = "Cocktail";
+
+"tipJar_toast_title" = "Merci beaucoup !";
+
+"tipJar_toast_subtitle" = "Ton soutien compte énormément !";
+
+"tipJar_tier_small_desc" = "Fait avec amour";
+
+"tipJar_tier_medium_desc" = "Une part de bonheur";
+
+"tipJar_tier_large_desc" = "Secoué, pas mélangé";
+
+"tipJar_chooseATip" = "Choisir un pourboire";
+
+//MARK: iPad Detail Placeholder
+"placeholder_choose_title" = "Sélectionner une catégorie";
+
+"placeholder_choose_detail" = "Choisis une catégorie dans la barre latérale pour voir ses détails.";
+
+"placeholder_choose_sub_detail1" = "Si elle est masquée, touche le";
+
+"placeholder_choose_sub_detail2" = "bouton en haut.";
+
+//MARK: Accessibility
+"a11y_home_menuButton" = "Plus d'options";
+
+"a11y_addFilter_expandHint" = "Appuyer deux fois pour basculer les options avancées";
+
+"a11y_testFilters_testHint" = "Appuyer deux fois pour tester ce message avec tes filtres";
+
+"a11y_reportMessage_submitHint" = "Appuyer deux fois pour signaler ce message";
+
+"a11y_enableExtension_ctaHint" = "Appuyer deux fois pour ouvrir les Réglages iOS";
+
+"a11y_filterRow_targetLabel" = "Cible du filtre : %@";
+
+"a11y_filterRow_matchLabel" = "Correspondance : %@";
+
+"a11y_filterRow_caseLabel" = "Casse : %@";
+
+"a11y_filterRow_folderLabel" = "Dossier : %@";
+
+"a11y_home_shortSenderHint" = "Actuellement %ld caractères. Utilise les actions pour modifier la limite";
+
+"a11y_home_shortSenderAction" = "Modifier la limite de caractères";
+
+"a11y_footer_hint" = "Appuyer deux fois pour voir les infos de l'app";
+
+"a11y_filterRow_editHint" = "Appuyer deux fois pour modifier";
+
+"a11y_about_versionHint" = "Appuyer deux fois pour copier la version";
+
+"a11y_about_versionCopied" = "Version";
+
+"a11y_enableExtension_stepLabel" = "Étape %ld : %@. %@";
