@@ -187,16 +187,16 @@
 
 "faq_answer_5" = "Não há muita diferença. Você pode filtrar qualquer palavra para qualquer pasta. As pastas não são personalizáveis. Apenas mensagens filtradas para Lixo Eletrônico chegam sem notificação.";
 
-"help_automaticFiltering_question" = "Como funciona o Filtro Automático?";
+"help_automaticFiltering_question" = "Como funciona o Filtro AI?";
 
-"help_automaticFiltering" = "O Filtro Automático usa uma lista predefinida de termos para determinar se uma mensagem deve ir para a pasta de lixo eletrônico. As listas são atualizadas periodicamente com novos termos. Seus filtros normais ainda são considerados quando o Filtro Automático está ativado.";
+"help_automaticFiltering" = "O Filtro AI usa listas de palavras-chave geradas por IA para detectar spam e encaminhar mensagens para a pasta de lixo. As listas são atualizadas periodicamente. Seus filtros regulares ainda são aplicados quando o Filtro AI está ativado.";
 
 "help_deny" = "Adicione textos que farão com que uma mensagem seja marcada como spam. Você também pode escolher a pasta específica onde a mensagem será armazenada.";
 
 "help_allow" = "Adicione textos que farão com que uma mensagem seja marcada como válida. Recomendamos adicionar textos únicos como seu nome. Textos nesta lista têm a maior prioridade ao filtrar mensagens.";
 
 //MARK: Automatic Filtering
-"autoFilter_title" = "Filtro Automático";
+"autoFilter_title" = "Filtro AI";
 
 "autoFilter_lastUpdated" = "Atualizado em %@";
 
@@ -238,9 +238,9 @@
 
 "autoFilter_email" = "Bloquear Remetentes de E-mail";
 
-"autoFilter_empty" = "Abra o app pelo menos uma vez com internet para baixar as listas de Filtro Automático.";
+"autoFilter_empty" = "Abra o app pelo menos uma vez com internet para baixar as listas de Filtro AI.";
 
-"autoFilter_error" = "Parece haver um problema ao baixar as listas de Filtro Automático. Tente novamente mais tarde.";
+"autoFilter_error" = "Parece haver um problema ao baixar as listas de Filtro AI. Tente novamente mais tarde.";
 
 "autoFilter_emojis" = "Bloquear Emojis";
 
@@ -279,7 +279,7 @@
 
 "notification_hide" = "Ocultar";
 
-"notification_automatic_title" = "Filtro Automático";
+"notification_automatic_title" = "Filtro AI";
 
 "notification_automatic_subtitle" = "Filtros atualizados";
 

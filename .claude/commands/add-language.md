@@ -268,7 +268,27 @@ If all keys are present: confirm and move to the next step.
 
 ---
 
-## Step 9 — Layout stress test instructions
+## Step 9 — Update snapshot tests
+
+### 9a. SnapshotsTestCase.swift
+
+Edit `UI Tests/SnapshotsTestCase.swift`. The `addFilter` section uses a `switch langCode` to pick locale-appropriate spam sample text. Add a `case` for the new language:
+
+```swift
+case "<langCode>":
+    addFilterText = "<sample spam word in that language>"
+    addFilterScreenshot = "05.addFilter"
+```
+
+Use a realistic short word that would appear in SMS spam in that locale (e.g. a word for "loan", "promo", "credit", or "win"). `langCode` comes from `Locale.current.languageCode` — use the language portion only (e.g. `"pt"` for `pt-BR`, `"fr"` for `fr`, `"ar"` for `ar`).
+
+### 9b. Fastfile
+
+Edit `fastlane/Fastfile`. Both the `iphone_screenshots` and `ipad_screenshots` lanes have a `languages:` array. Add the BCP-47 code exactly as passed to this skill (e.g. `"fr"`, `"ar"`, `"pt-BR"`) to both lanes.
+
+---
+
+## Step 10 — Layout stress test instructions
 
 Provide the user with a ready-to-use Xcode scheme launch argument for testing:
 
@@ -284,7 +304,7 @@ For RTL languages (Arabic, Persian, Hebrew — though Hebrew already exists): co
 
 ---
 
-## Step 10 — App Store metadata reminder
+## Step 11 — App Store metadata reminder
 
 Remind the user that the in-app translation is now complete, but the **App Store listing** is managed separately in **App Store Connect** and is not touched by this change. To fully support the new language on the App Store, the following need to be localized there:
 

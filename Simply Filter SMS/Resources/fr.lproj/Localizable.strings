@@ -187,16 +187,16 @@
 
 "faq_answer_5" = "Pas grand-chose. Tu peux filtrer n'importe quel mot vers n'importe quel dossier. Ces dossiers ne sont pas personnalisables. Seuls les messages filtrés dans Indésirables arrivent en silence.";
 
-"help_automaticFiltering_question" = "Comment fonctionne le Filtrage automatique ?";
+"help_automaticFiltering_question" = "Comment fonctionne le Filtrage AI ?";
 
-"help_automaticFiltering" = "Le Filtrage automatique utilise une liste prédéfinie de termes pour déterminer si un message doit aller dans le dossier indésirables. Les listes sont mises à jour régulièrement avec de nouveaux termes. Tes filtres habituels sont toujours pris en compte quand le Filtrage automatique est activé.";
+"help_automaticFiltering" = "Le Filtrage AI utilise des listes de mots-clés générées par IA pour détecter les spams et acheminer les messages vers le dossier indésirables. Les listes sont mises à jour régulièrement. Tes filtres habituels s'appliquent toujours lorsque le Filtrage AI est activé.";
 
 "help_deny" = "Ajoute des textes qui feront marquer un message comme spam. Tu peux aussi choisir le dossier spécifique où le message sera stocké.";
 
 "help_allow" = "Ajoute des textes qui feront marquer un message comme valide. Il est recommandé d'ajouter des textes uniques comme ton nom. Les textes de cette liste ont la priorité la plus élevée lors du filtrage.";
 
 //MARK: Automatic Filtering
-"autoFilter_title" = "Filtrage automatique";
+"autoFilter_title" = "Filtrage AI";
 
 "autoFilter_lastUpdated" = "Mis à jour le %@";
 
@@ -238,9 +238,9 @@
 
 "autoFilter_email" = "Bloquer expéditeurs e-mail";
 
-"autoFilter_empty" = "Ouvre l'app au moins une fois avec internet pour télécharger les listes de Filtrage automatique.";
+"autoFilter_empty" = "Ouvre l'app au moins une fois avec internet pour télécharger les listes de Filtrage AI.";
 
-"autoFilter_error" = "Il semble y avoir un problème lors du téléchargement des listes de Filtrage automatique. Réessaie plus tard.";
+"autoFilter_error" = "Il semble y avoir un problème lors du téléchargement des listes de Filtrage AI. Réessaie plus tard.";
 
 "autoFilter_emojis" = "Bloquer les emojis";
 
@@ -279,7 +279,7 @@
 
 "notification_hide" = "Masquer";
 
-"notification_automatic_title" = "Filtrage automatique";
+"notification_automatic_title" = "Filtrage AI";
 
 "notification_automatic_subtitle" = "Filtres mis à jour";
 

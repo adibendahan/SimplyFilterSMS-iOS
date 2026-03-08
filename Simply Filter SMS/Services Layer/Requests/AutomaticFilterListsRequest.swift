@@ -8,7 +8,7 @@
 import Foundation
 
 class AutomaticFilterListsRequest: URLRequestProtocol {
-    var path: String = "/simply-filter-sms/1.0.0/automatic_filters.json"
+    var path: String = "/simply-filter-sms/3.0.0/automatic_filters.json"
     var method: HTTPMethod = .get
     var task: HTTPTask = .requestPlain
     var errorDomain: String = "com.grizz.apps.dev.Simply-Filter-SMS.AutomaticFiltersRequest"

@@ -97,8 +97,10 @@ extension NLLanguage: @retroactive Identifiable {
         self = language
     }
     
-    static var allSupportedCases: [NLLanguage] = [.hebrew, .arabic, .english, .spanish, .simplifiedChinese, .traditionalChinese, .russian,
-                                                         .french, .german, .italian, .japanese, .persian, .turkish]
+    static var allSupportedCases: [NLLanguage] = [.english, .hebrew,
+                                                         .arabic, .simplifiedChinese, .traditionalChinese, .french,
+                                                         .german, .italian, .japanese, .persian, .portuguese, .russian,
+                                                         .spanish, .turkish]
     static func dominantLanguage(for string: String) -> NLLanguage? {
         let recognizer = NLLanguageRecognizer()
         recognizer.processString(string)

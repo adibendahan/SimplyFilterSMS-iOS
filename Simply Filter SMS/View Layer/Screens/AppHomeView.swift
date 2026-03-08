@@ -23,15 +23,19 @@ struct AppHomeView: View {
     
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
     
     @ObservedObject var model: ViewModel
 
-    @ScaledMetric(relativeTo: .title) private var shieldIconSize: CGFloat = 30
+    @ScaledMetric(relativeTo: .title) private var shieldIconSize: CGFloat = 34
     @ScaledMetric(relativeTo: .title3) private var autoFilterTitleSize: CGFloat = 20
     @ScaledMetric(relativeTo: .body) private var badgeFontSize: CGFloat = 16
     @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
 
     @State private var dynamicEmojis: [String: String] = [:]
+    @State private var shieldGlintTrigger = false
     
     var body: some View {
         NavigationView {
@@ -47,11 +51,43 @@ struct AppHomeView: View {
                         selection: $model.navigationScreen) {
                             
                             HStack {
-                                Image(systemName: "bolt.shield.fill")
-                                    .foregroundColor(.indigo)
-                                    .font(.system(size: shieldIconSize))
-                                    .padding(.trailing, 1)
-                                    .accessibilityHidden(true)
+                                Group {
+                                    if #available(iOS 17, *) {
+                                        if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
+                                            Image(systemName: "bolt.shield.fill")
+                                                .phaseAnimator([0, 1, 2, 1, 0], trigger: shieldGlintTrigger) { view, phase in
+                                                    view
+                                                        .symbolRenderingMode(.palette)
+                                                        .foregroundStyle(
+                                                            { switch phase {
+                                                                case 1:  Color.yellow
+                                                                case 2:  Color.white.opacity(0.3)
+                                                                default: Color.white.opacity(0.9)
+                                                            }}(),
+                                                            Color.indigo
+                                                        )
+                                                } animation: { phase in
+                                                    phase == 0 ? .linear(duration: 0.3) : .easeInOut(duration: 0.08)
+                                                }
+                                                .task {
+                                                    while !Task.isCancelled {
+                                                        try? await Task.sleep(nanoseconds: 1_500_000_000)
+                                                        shieldGlintTrigger.toggle()
+                                                    }
+                                                }
+                                        } else {
+                                            Image(systemName: "bolt.shield.fill")
+                                                .symbolRenderingMode(.palette)
+                                                .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
+                                        }
+                                    } else {
+                                        Image(systemName: "bolt.shield.fill")
+                                            .foregroundColor(.indigo)
+                                    }
+                                }
+                                .font(.system(size: shieldIconSize))
+                                .padding(.trailing, 1)
+                                .accessibilityHidden(true)
                                 
                                 VStack (alignment: .leading) {
                                     Text("autoFilter_title"~)

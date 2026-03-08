@@ -170,15 +170,15 @@
 
 "faq_answer_5" = "Poca diferencia; puedes filtrar cualquier texto a cualquier carpeta. Las carpetas no son personalizables. Solo los mensajes filtrados a No deseado se entregan en silencio.";
 
-"help_automaticFiltering_question" = "¿Cómo funciona el filtrado automático?";
+"help_automaticFiltering_question" = "¿Cómo funciona el Filtrado AI?";
 
-"help_automaticFiltering" = "El filtrado automático usa una lista predefinida de términos para determinar si un mensaje debe ir a No deseado. Las listas se actualizan periódicamente con nuevos términos. Tus filtros habituales siguen activos cuando el filtrado automático está encendido.";
+"help_automaticFiltering" = "El Filtrado AI usa listas de palabras clave generadas por IA para detectar spam y enviar mensajes a la carpeta de no deseados. Las listas se actualizan periódicamente. Tus filtros habituales siguen aplicándose cuando el Filtrado AI está activo.";
 
 "help_deny" = "Añade textos que harán que un mensaje se marque como no deseado. También puedes elegir la carpeta específica.";
 
 "help_allow" = "Añade textos que harán que un mensaje se marque como válido. Se recomienda añadir textos únicos como tu nombre. Los textos de esta lista tienen la mayor prioridad al filtrar.";
 
-"autoFilter_title" = "Filtrado automático";
+"autoFilter_title" = "Filtrado AI";
 
 "autoFilter_lastUpdated" = "Actualizado el %@";
 
@@ -220,9 +220,9 @@
 
 "autoFilter_email_shortTitle" = "Email";
 
-"autoFilter_empty" = "Conéctate a Internet con la app abierta al menos una vez para descargar las listas de filtrado automático.";
+"autoFilter_empty" = "Conéctate a Internet con la app abierta al menos una vez para descargar las listas de Filtrado AI.";
 
-"autoFilter_error" = "Parece que hay un problema al descargar las listas de filtrado automático. Inténtalo de nuevo más tarde.";
+"autoFilter_error" = "Parece que hay un problema al descargar las listas de Filtrado AI. Inténtalo de nuevo más tarde.";
 
 "autoFilter_emojis" = "Bloquear emojis";
 
@@ -260,7 +260,7 @@
 
 "notification_hide" = "Ocultar";
 
-"notification_automatic_title" = "Filtrado automático";
+"notification_automatic_title" = "Filtrado AI";
 
 "notification_automatic_subtitle" = "Filtros actualizados";
 

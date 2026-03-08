@@ -29,9 +29,9 @@ class SnapshotsTestCase: ApplicationTestCase {
         // MARK: automaticFilters Screenshot
         app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_OFF"~)
         app.tap(.automaticFilterLink)
-        for lang in [NLLanguage.english, NLLanguage.hebrew] {
-            app.switches[lang~].switches["0"].firstMatch.tap()
-        }
+        let currentLanguage = NLLanguage(rawValue: langCode)
+        let activeLang = currentLanguage != .undetermined ? currentLanguage : .english
+        app.switches[activeLang~].switches["0"].firstMatch.tap()
         snapshot("02.automaticFilters")
 
         app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
@@ -39,24 +39,35 @@ class SnapshotsTestCase: ApplicationTestCase {
         app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_ON"~)
 
         // MARK: addFilter Screenshot
-        if langCode == "he" {
-            app.addFilter(type: .deny,
-                          text: "הלוואה",
-                          denyFolderType: .junk,
-                          filterTarget: .body,
-                          filterMatching: .exact,
-                          filterCase: .caseInsensitive,
-                          screenshotName: "04.addFilter")
+        let addFilterText: String
+        let addFilterScreenshot: String
+        switch langCode {
+        case "he":
+            addFilterText = "הלוואה"
+            addFilterScreenshot = "05.addFilter"
+        case "ar":
+            addFilterText = "قرض"
+            addFilterScreenshot = "05.addFilter"
+        case "pt":
+            addFilterText = "Empréstimo"
+            addFilterScreenshot = "05.addFilter"
+        case "fr":
+            addFilterText = "Promo"
+            addFilterScreenshot = "05.addFilter"
+        case "es":
+            addFilterText = "Préstamo"
+            addFilterScreenshot = "05.addFilter"
+        default:
+            addFilterText = "Weed"
+            addFilterScreenshot = "05.addFilter"
         }
-        else {
-            app.addFilter(type: .deny,
-                          text: "Weed",
-                          denyFolderType: .junk,
-                          filterTarget: .body,
-                          filterMatching: .exact,
-                          filterCase: .caseInsensitive,
-                          screenshotName: "05.addFilter")
-        }
+        app.addFilter(type: .deny,
+                      text: addFilterText,
+                      denyFolderType: .junk,
+                      filterTarget: .body,
+                      filterMatching: .exact,
+                      filterCase: .caseInsensitive,
+                      screenshotName: addFilterScreenshot)
 
 
         // MARK: applicationHome Screenshot

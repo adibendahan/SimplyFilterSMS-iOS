@@ -101,7 +101,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         case .blockLanguage:
             let remainingSupportedLanguages = NLLanguage.allSupportedCases
                 .filter({ !persistanceManager.isDuplicateFilter(language: $0) })
-                .sorted(by: { $0.rawValue < $1.rawValue })
+                .sorted(by: Self.languageSortOrder)
             supportedLanguages.append(contentsOf: remainingSupportedLanguages)
             
         case .automaticBlocking:
@@ -116,12 +116,12 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
                         supportedLanguages.append(language)
                     }
                 }
-            
+                
             }
-
-            supportedLanguages.sort(by: { $0.rawValue < $1.rawValue })
+            
+            supportedLanguages.sort(by: Self.languageSortOrder)
         }
-
+        
         return supportedLanguages
     }
     
@@ -138,7 +138,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         persistanceManager.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-
+    
     func automaticRuleState(for rule: RuleType) -> Bool {
         guard let persistanceManager = self.persistanceManager,
               let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return false }
@@ -157,7 +157,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         persistanceManager.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-
+    
     func selectedChoice(for rule: RuleType) -> Int {
         guard let persistanceManager = self.persistanceManager,
               let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return 0 }
@@ -189,6 +189,31 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     
     //MARK: - Private  -
     
+    private static func languageSortOrder(_ a: NLLanguage, _ b: NLLanguage) -> Bool {
+        let currentLocale: NLLanguage? = Locale.current.languageCode.map { NLLanguage(rawValue: $0) }
+        var priority: [NLLanguage] = [.english, .hebrew]
+        if let current = currentLocale, !priority.contains(current) {
+            priority.insert(current, at: 0)
+        } else if currentLocale == .hebrew {
+            priority = [.hebrew, .english]
+        }
+        let ai = priority.firstIndex(of: a)
+        let bi = priority.firstIndex(of: b)
+        switch (ai, bi) {
+        case let (ai?, bi?):
+            return ai < bi
+        case (nil, _?):
+            return false
+        case (_?, nil):
+            return true
+        case (nil, nil):
+            let locale = Locale(identifier: "en_US")
+            let an = locale.localizedString(forIdentifier: a.rawValue) ?? a.rawValue
+            let bn = locale.localizedString(forIdentifier: b.rawValue) ?? b.rawValue
+            return an < bn
+        }
+    }
+    
     private weak var amazonS3Service: AmazonS3ServiceProtocol?
     private weak var persistanceManager: PersistanceManagerProtocol?
     private var shouldFetchFilters: Bool {
@@ -211,7 +236,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         if force || isCacheStale {
             persistanceManager.saveCache(with: newFilterList)
         }
-
+        
         if isCacheStale {
             NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
         }
