@@ -59,9 +59,9 @@
 //MARK: Add Filter View
 "addFilter_add" = "Incluir";
 
-"addFilter_addFilter_allow" = "Adicionar Texto Permitido";
+"addFilter_addFilter_allow" = "Adicionar Permitido";
 
-"addFilter_addFilter_deny" = "Adicionar Texto Bloqueado";
+"addFilter_addFilter_deny" = "Adicionar Bloqueado";
 
 "addFilter_addLanguage" = "Adicionar Idioma";
 

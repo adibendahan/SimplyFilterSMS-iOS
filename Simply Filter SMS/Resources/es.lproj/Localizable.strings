@@ -46,9 +46,9 @@
 
 "addFilter_add" = "Añadir";
 
-"addFilter_addFilter_allow" = "Añadir texto permitido";
+"addFilter_addFilter_allow" = "Añadir permitido";
 
-"addFilter_addFilter_deny" = "Añadir texto bloqueado";
+"addFilter_addFilter_deny" = "Añadir bloqueado";
 
 "addFilter_addLanguage" = "Añadir idioma";
 

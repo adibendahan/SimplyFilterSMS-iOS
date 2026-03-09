@@ -118,7 +118,7 @@ Short UI strings (buttons, headers, labels) are space-constrained. If a natural 
 
 **Exception:** strings that reference iOS system terms (see §4c) are exempt from the length constraint — correctness takes priority over brevity there.
 
-These keys are the tightest — flag any translation over 12 characters:
+These keys are the tightest — flag any translation that exceeds the limit. Keys marked with a navigation title role render as large bold text and truncate with `…` at shorter lengths than body strings:
 
 | Key | English | Limit |
 |---|---|---|
@@ -129,6 +129,8 @@ These keys are the tightest — flag any translation over 12 characters:
 | `autoFilter_ON` | "ON" (2) | ≤10 |
 | `autoFilter_OFF` | "OFF" (3) | ≤12 |
 | `addFilter_add` | "Add" (3) | ≤8 |
+| `addFilter_addFilter_allow` | "Add Allowed Text" (16) | ≤20 |
+| `addFilter_addFilter_deny` | "Add Blocked Text" (16) | ≤20 |
 | `addFilter_match_exact` | "Exact" (5) | ≤10 |
 | `addFilter_match_contains` | "Contains" (8) | ≤12 |
 | `addFilter_target_sender` | "Sender" (6) | ≤10 |

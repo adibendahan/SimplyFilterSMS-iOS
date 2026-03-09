@@ -54,6 +54,9 @@ class SnapshotsTestCase: ApplicationTestCase {
         case "fr":
             addFilterText = "Promo"
             addFilterScreenshot = "05.addFilter"
+        case "de":
+            addFilterText = "Kredit"
+            addFilterScreenshot = "05.addFilter"
         case "es":
             addFilterText = "Préstamo"
             addFilterScreenshot = "05.addFilter"
