@@ -18,7 +18,7 @@
 
 "lang_allBlocked" = "¡Has bloqueado todos los idiomas compatibles!";
 
-"lang_how" = "El procesamiento e identificación del idioma se realiza **localmente** mediante el motor de lenguaje natural de iOS. Un mensaje solo se filtrará si el **idioma dominante** del texto está en la lista de 'Idiomas bloqueados'.";
+"lang_how" = "El procesamiento e identificación del idioma se realiza **localmente** mediante el motor de lenguaje natural de iOS. Un mensaje solo se filtrará si el **idioma dominante** del texto está en la lista de 'Idiomas bloqueados'. El número junto a cada idioma muestra cuántos mensajes han sido filtrados por él, y solo aparece una vez que se ha producido el primer filtrado.";
 
 "filterList_filters" = "Filtros";
 
@@ -38,6 +38,7 @@
 
 "filterList_deleteFiltersCount" = "Eliminar (%ld)";
 
+"filterList_hits" = "Filtrados";
 "filterList_folder" = "Carpeta";
 
 "filterList_text" = "Texto";
@@ -174,9 +175,9 @@
 
 "help_automaticFiltering" = "El Filtrado AI usa listas de palabras clave generadas por IA para detectar spam y enviar mensajes a la carpeta de no deseados. Las listas se actualizan periódicamente. Tus filtros habituales siguen aplicándose cuando el Filtrado AI está activo.";
 
-"help_deny" = "Añade textos que harán que un mensaje se marque como no deseado. También puedes elegir la carpeta específica.";
+"help_deny" = "Añade textos que harán que un mensaje se marque como no deseado. También puedes elegir la carpeta específica. El número junto a cada filtro muestra cuántas veces ha filtrado un mensaje entrante, y solo aparece una vez que se ha producido el primer filtrado.";
 
-"help_allow" = "Añade textos que harán que un mensaje se marque como válido. Se recomienda añadir textos únicos como tu nombre. Los textos de esta lista tienen la mayor prioridad al filtrar.";
+"help_allow" = "Añade textos que harán que un mensaje se marque como válido. Se recomienda añadir textos únicos como tu nombre. Los textos de esta lista tienen la mayor prioridad al filtrar. El número junto a cada filtro muestra cuántas veces ha filtrado un mensaje entrante, y solo aparece una vez que se ha producido el primer filtrado.";
 
 "autoFilter_title" = "Filtrado AI";
 
@@ -364,6 +365,7 @@
 
 "a11y_filterRow_caseLabel" = "Mayúsculas: %@";
 
+"a11y_filterRow_hitCountLabel" = "%d coincidencias";
 "a11y_filterRow_folderLabel" = "Carpeta: %@";
 
 "a11y_home_shortSenderHint" = "Actualmente %ld caracteres. Usa las acciones para cambiar el límite";

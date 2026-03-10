@@ -28,7 +28,7 @@
 
 "lang_allBlocked" = "Tu as bloqué toutes les langues prises en charge !";
 
-"lang_how" = "Le traitement et la détection de la langue sont effectués **localement** par le moteur de langue naturelle d'iOS. Un message sera filtré uniquement si la **langue dominante** du texte figure dans la liste des langues bloquées.";
+"lang_how" = "Le traitement et la détection de la langue sont effectués **localement** par le moteur de langue naturelle d'iOS. Un message sera filtré uniquement si la **langue dominante** du texte figure dans la liste des langues bloquées. Le nombre affiché à côté de chaque langue indique combien de messages ont été filtrés par elle, et n'apparaît qu'après le premier filtrage.";
 
 
 //MARK: Filter List View
@@ -50,6 +50,7 @@
 
 "filterList_deleteFiltersCount" = "Supprimer (%ld)";
 
+"filterList_hits" = "Filtrages";
 "filterList_folder" = "Dossier";
 
 "filterList_text" = "Texte";
@@ -191,9 +192,9 @@
 
 "help_automaticFiltering" = "Le Filtrage AI utilise des listes de mots-clés générées par IA pour détecter les spams et acheminer les messages vers le dossier indésirables. Les listes sont mises à jour régulièrement. Tes filtres habituels s'appliquent toujours lorsque le Filtrage AI est activé.";
 
-"help_deny" = "Ajoute des textes qui feront marquer un message comme spam. Tu peux aussi choisir le dossier spécifique où le message sera stocké.";
+"help_deny" = "Ajoute des textes qui feront marquer un message comme spam. Tu peux aussi choisir le dossier spécifique où le message sera stocké. Le nombre affiché à côté de chaque filtre indique combien de fois il a filtré un message entrant, et n'apparaît qu'après le premier filtrage.";
 
-"help_allow" = "Ajoute des textes qui feront marquer un message comme valide. Il est recommandé d'ajouter des textes uniques comme ton nom. Les textes de cette liste ont la priorité la plus élevée lors du filtrage.";
+"help_allow" = "Ajoute des textes qui feront marquer un message comme valide. Il est recommandé d'ajouter des textes uniques comme ton nom. Les textes de cette liste ont la priorité la plus élevée lors du filtrage. Le nombre affiché à côté de chaque filtre indique combien de fois il a filtré un message entrant, et n'apparaît qu'après le premier filtrage.";
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "Filtrage AI";
@@ -389,6 +390,7 @@
 
 "a11y_filterRow_caseLabel" = "Casse : %@";
 
+"a11y_filterRow_hitCountLabel" = "%d correspondances";
 "a11y_filterRow_folderLabel" = "Dossier : %@";
 
 "a11y_home_shortSenderHint" = "Actuellement %ld caractères. Utilise les actions pour modifier la limite";

@@ -28,7 +28,7 @@
 
 "lang_allBlocked" = "Você bloqueou todos os idiomas suportados!";
 
-"lang_how" = "O processamento e identificação do idioma é feito **localmente** pelo motor de linguagem natural do iOS. Uma mensagem será filtrada somente se o **idioma predominante** do texto estiver na lista de idiomas bloqueados.";
+"lang_how" = "O processamento e identificação do idioma é feito **localmente** pelo motor de linguagem natural do iOS. Uma mensagem será filtrada somente se o **idioma predominante** do texto estiver na lista de idiomas bloqueados. O número ao lado de cada idioma mostra quantas mensagens foram filtradas por ele, e só aparece após a primeira filtragem.";
 
 
 //MARK: Filter List View
@@ -50,6 +50,7 @@
 
 "filterList_deleteFiltersCount" = "Excluir (%ld)";
 
+"filterList_hits" = "Filtragens";
 "filterList_folder" = "Pasta";
 
 "filterList_text" = "Texto";
@@ -191,9 +192,9 @@
 
 "help_automaticFiltering" = "O Filtro AI usa listas de palavras-chave geradas por IA para detectar spam e encaminhar mensagens para a pasta de lixo. As listas são atualizadas periodicamente. Seus filtros regulares ainda são aplicados quando o Filtro AI está ativado.";
 
-"help_deny" = "Adicione textos que farão com que uma mensagem seja marcada como spam. Você também pode escolher a pasta específica onde a mensagem será armazenada.";
+"help_deny" = "Adicione textos que farão com que uma mensagem seja marcada como spam. Você também pode escolher a pasta específica onde a mensagem será armazenada. O número ao lado de cada filtro mostra quantas vezes ele filtrou uma mensagem recebida, e só aparece após a primeira filtragem.";
 
-"help_allow" = "Adicione textos que farão com que uma mensagem seja marcada como válida. Recomendamos adicionar textos únicos como seu nome. Textos nesta lista têm a maior prioridade ao filtrar mensagens.";
+"help_allow" = "Adicione textos que farão com que uma mensagem seja marcada como válida. Recomendamos adicionar textos únicos como seu nome. Textos nesta lista têm a maior prioridade ao filtrar mensagens. O número ao lado de cada filtro mostra quantas vezes ele filtrou uma mensagem recebida, e só aparece após a primeira filtragem.";
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "Filtro AI";
@@ -389,6 +390,7 @@
 
 "a11y_filterRow_caseLabel" = "Maiúsculas: %@";
 
+"a11y_filterRow_hitCountLabel" = "%d ocorrências";
 "a11y_filterRow_folderLabel" = "Pasta: %@";
 
 "a11y_home_shortSenderHint" = "Atualmente %ld caracteres. Use as ações para alterar o limite";

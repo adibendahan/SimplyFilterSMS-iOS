@@ -45,6 +45,10 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         self.context = container.viewContext
     }
     
+    func setHitCounterService(_ service: FilterHitCounterServiceProtocol) {
+        self.hitCounterService = service
+    }
+
     //MARK: Public API (MessageEvaluationManagerProtocol)
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult {
         
@@ -82,6 +86,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
 
     //MARK: - Private  -
     private var logger: Logger?
+    private var hitCounterService: FilterHitCounterServiceProtocol = FilterHitCounterService()
     private var persistentContainer: NSPersistentContainer?
     private(set) var context: NSManagedObjectContext
         
@@ -100,8 +105,9 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             for filter in filters {
                 guard let filter = filter as? Filter,
                       self.isMataching(filter: filter, body: body, sender: sender) else { continue }
-                
+
                 result = MessageEvaluationResult(action: .allow, reason: filter.text)
+                self.hitCounterService.incrementCount(for: filter.objectID.uriRepresentation().absoluteString)
                 break
             }
             
@@ -109,21 +115,23 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             for filter in filters {
                 guard let filter = filter as? Filter,
                       self.isMataching(filter: filter, body: body, sender: sender) else { continue }
-                
+
                 result = MessageEvaluationResult(action: filter.denyFolderType.action, reason: filter.text)
+                self.hitCounterService.incrementCount(for: filter.objectID.uriRepresentation().absoluteString)
                 break
             }
-            
+
         case .denyLanguage:
             for filter in filters {
                 guard let filter = filter as? Filter else { continue }
-                
+
                 let language = NLLanguage(filterText: filter.text ?? "")
-                
+
                 if language != .undetermined,
                    NLLanguage.dominantLanguage(for: body) == language {
-                    
+
                     result = MessageEvaluationResult(action: filter.denyFolderType.action, reason: language.localizedName)
+                    self.hitCounterService.incrementCount(for: filter.objectID.uriRepresentation().absoluteString)
                     break
                 }
             }

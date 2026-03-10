@@ -23,6 +23,7 @@ protocol AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol { get }
     var reportMessageService: ReportMessageServiceProtocol { get }
     var tipJarManager: TipJarManagerProtocol { get }
+    var hitCounterService: FilterHitCounterServiceProtocol { get }
     func onAppLaunch()
     func onNewUserSession()
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel]
@@ -39,7 +40,8 @@ protocol AppManagerProtocol {
 6. `ReportMessageService` (receives network sync manager)
 7. `AutomaticFilterManager` (receives persistance manager + S3 service)
 8. `TipJarManager`
-9. Logger wired to MessageEvaluationManager
+9. `FilterHitCounterService` (reads/writes App Group UserDefaults)
+10. Logger wired to MessageEvaluationManager
 
 In `#if DEBUG` + testing mode (`-Testing` launch argument): resets DefaultsManager and PersistanceManager.
 
@@ -69,6 +71,7 @@ Core filtering engine. Shared between the main app and the Message Filter Extens
 protocol MessageEvaluationManagerProtocol {
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult
     func setLogger(_ logger: Logger)
+    func setHitCounterService(_ service: FilterHitCounterServiceProtocol)
 }
 ```
 
@@ -107,6 +110,12 @@ For each filter, matching depends on three settings:
 - **FilterTarget:** `.all` (sender+body combined), `.sender`, or `.body`
 - **FilterMatching:** `.contains` (substring) or `.exact` (full string match using word boundaries)
 - **FilterCase:** `.caseInsensitive` or `.caseSensitive`
+
+### Hit Counter Integration
+
+After a user-defined `Filter` matches (allow, deny, or denyLanguage), `MessageEvaluationManager` calls `hitCounterService.incrementCount(for:)` with the filter's `objectID.uriRepresentation().absoluteString`. This is a fire-and-forget call that does not affect the evaluation result. Automatic rule matches and no-match cases do not increment any counter.
+
+The service is injected via `setHitCounterService(_:)` — the extension calls this directly; `AppManager` wires it at init time for the main app.
 
 ### Database Access
 
@@ -336,6 +345,34 @@ enum TipPurchaseResult {
 ### TipTier
 
 Defined in `Constsants.swift`. `CaseIterable` enum with `String` raw values (product IDs). Computed properties: `emoji`, `displayName`, `tierDescription`, `iconColor`, `confettiBirthRate`, `confettiLifetime`, `confettiVelocity`.
+
+---
+
+## FilterHitCounterService
+
+**File:** `Framework Layer/Shared with Extension/FilterHitCounterService.swift`
+
+Tracks how many times each user-defined filter has matched an incoming message. Shared between the main app and the Message Filter Extension.
+
+### Protocol
+
+```swift
+protocol FilterHitCounterServiceProtocol {
+    func incrementCount(for filterID: String)
+    func counts() -> [String: Int]
+}
+```
+
+### Storage
+
+Persists a `[String: Int]` dictionary under the key `filterHitCounts` in the App Group `UserDefaults` suite (`group.com.grizz.apps.dev.simply-filter-sms`). Each key is a filter's `objectID.uriRepresentation().absoluteString`. Counts are **not** stored in CoreData and are **not** synced via CloudKit — they are per-device and intentionally ephemeral across device migrations.
+
+### Key Behaviors
+
+- **`incrementCount(for:)`** — Reads the current dictionary, increments the entry for the given ID (defaulting to 0), and writes it back. Thread-safe for the extension's serial evaluation path.
+- **`counts()`** — Returns the full dictionary. Returns `[:]` if no counts have been stored yet.
+- **`FilterListView.ViewModel`** — Reads counts via `appManager.hitCounterService.counts()` in `init` and every `refresh()` call, including when the app returns to foreground via `willEnterForegroundNotification`.
+- **Debug seeding** — `AppHomeView.ViewModel.loadDebugData()` seeds sample hit counts for deny and allow filters so the UI is visible during development.
 
 ---
 

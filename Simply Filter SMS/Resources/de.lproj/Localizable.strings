@@ -29,7 +29,7 @@
 
 "lang_allBlocked" = "Du hast alle unterstützten Sprachen blockiert!";
 
-"lang_how" = "Spracherkennung und -verarbeitung erfolgt **lokal** durch das Sprachverarbeitungssystem von iOS. Eine Nachricht wird nur gefiltert, wenn die **dominante Sprache** des Textes auf der Liste der blockierten Sprachen steht.";
+"lang_how" = "Spracherkennung und -verarbeitung erfolgt **lokal** durch das Sprachverarbeitungssystem von iOS. Eine Nachricht wird nur gefiltert, wenn die **dominante Sprache** des Textes auf der Liste der blockierten Sprachen steht. Die Zahl neben jeder Sprache zeigt, wie viele Nachrichten dadurch gefiltert wurden, und erscheint erst nach dem ersten Treffer.";
 
 
 //MARK: Filter List View
@@ -51,6 +51,7 @@
 
 "filterList_deleteFiltersCount" = "Löschen (%ld)";
 
+"filterList_hits" = "Treffer";
 "filterList_folder" = "Ordner";
 
 "filterList_text" = "Text";
@@ -192,9 +193,9 @@
 
 "help_automaticFiltering" = "KI-Filterung nutzt KI-generierte Schlüsselwortlisten, um Spam zu erkennen und Nachrichten in den Junk-Ordner zu leiten. Die Listen werden regelmäßig aktualisiert. Deine eigenen Filter bleiben aktiv, wenn KI-Filterung eingeschaltet ist.";
 
-"help_deny" = "Füge Texte hinzu, die eine Nachricht als Spam kennzeichnen. Du kannst auch den Zielordner auswählen.";
+"help_deny" = "Füge Texte hinzu, die eine Nachricht als Spam kennzeichnen. Du kannst auch den Zielordner auswählen. Die Zahl neben jedem Filter zeigt, wie oft er eine eingehende Nachricht gefiltert hat, und erscheint erst nach dem ersten Treffer.";
 
-"help_allow" = "Füge Texte hinzu, die eine Nachricht als gültig kennzeichnen. Empfohlen: einzigartige Texte wie deinen Namen. Texte auf dieser Liste haben die höchste Priorität.";
+"help_allow" = "Füge Texte hinzu, die eine Nachricht als gültig kennzeichnen. Empfohlen: einzigartige Texte wie deinen Namen. Texte auf dieser Liste haben die höchste Priorität. Die Zahl neben jedem Filter zeigt, wie oft er eine eingehende Nachricht gefiltert hat, und erscheint erst nach dem ersten Treffer.";
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "KI-Filterung";
@@ -390,6 +391,7 @@
 
 "a11y_filterRow_caseLabel" = "Schreibweise: %@";
 
+"a11y_filterRow_hitCountLabel" = "%d Treffer";
 "a11y_filterRow_folderLabel" = "Ordner: %@";
 
 "a11y_home_shortSenderHint" = "Aktuell %ld Zeichen. Aktionen verwenden, um das Zeichenlimit zu ändern";

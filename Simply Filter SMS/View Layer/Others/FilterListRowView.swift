@@ -42,7 +42,15 @@ struct FilterListRowView: View {
             }
             
             Spacer()
-            
+
+            if self.model.hitCount > 0 {
+                Text("(\(self.model.hitCount))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.trailing, 4)
+                    .accessibilityLabel(String(format: "a11y_filterRow_hitCountLabel"~, self.model.hitCount))
+            }
+
             if self.model.filter.filterType.supportsAdvancedOptions {
                 Menu {
                     ForEach(FilterTarget.allCases) { filterTarget in
@@ -157,11 +165,15 @@ extension FilterListRowView {
         @Published private(set) var onUpdate: ((Bool) -> ())?
         @Published var text: String
         
+        @Published private(set) var hitCount: Int
+
         init(filter: Filter,
+             hitCount: Int = 0,
              onUpdate: ((Bool) -> ())? = nil,
              appManager: AppManagerProtocol = AppManager.shared) {
-            
+
             self.filter = filter
+            self.hitCount = hitCount
             self.onUpdate = onUpdate
             self.text = filter.text ?? "general_null"~
             super.init(appManager: appManager)
@@ -201,7 +213,7 @@ struct FilterListRowView_Previews: PreviewProvider {
         let appManager = AppManager.previews
         let filter = appManager.persistanceManager.fetchFilterRecords(for: .deny).first!
         
-        FilterListRowView(model: FilterListRowView.ViewModel(filter: filter, appManager: appManager))
+        FilterListRowView(model: FilterListRowView.ViewModel(filter: filter, hitCount: 42, appManager: appManager))
             .padding()
     }
 }

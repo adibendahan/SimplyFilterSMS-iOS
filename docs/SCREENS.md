@@ -30,7 +30,7 @@ Trailing `Menu` (ellipsis icon) with items:
 - About -> `.about` sheet
 - Tip Jar -> `.tipJar` sheet
 - What's New -> `.whatsNew` sheet (only if `WhatsNewEntry.allCases` is non-empty)
-- Load Debug Data (DEBUG builds only)
+- Load Debug Data (DEBUG builds only) — reloads sample filters and seeds hit counts via `FilterHitCounterService` for UI development
 
 ### Overlays
 
@@ -270,9 +270,9 @@ A `NavigationView` wrapping a `ScrollView` with a `VStack`:
 ### Layout
 
 Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). A `List` with multi-selection support (`selection: $model.selectedFilters`) containing a single section:
-- **Header** — Column labels: "Text" (or "Language") + "Options" (or "Folder").
+- **Header** — Column labels: "Text (Hits)" (or "Language (Hits)") + "Options" (or "Folder"). The "(Hits)" suffix is appended in the view, not in the localization string.
 - **Rows** — `ForEach` over `model.filters` rendering `FilterListRowView` components. Supports `.onDelete` for swipe-to-delete.
-- **Footer** — Help text explaining the filter type + an `AddFilterButton` at the bottom (opens the appropriate add-filter sheet). The button is hidden for `.denyLanguage` when no more languages are available to block.
+- **Footer** — Help text explaining the filter type (including a note about hit counts) + an `AddFilterButton` at the bottom (opens the appropriate add-filter sheet). The button is hidden for `.denyLanguage` when no more languages are available to block.
 
 ### Navigation Bar
 
@@ -284,12 +284,13 @@ Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). A `List`
 
 - `filterType: FilterType` — Set at init, determines which filters to fetch and which add-filter screen to present.
 - `filters: [Filter]` — Fetched from `PersistanceManager.fetchFilterRecords(for:)`, filtered by type.
+- `hitCounts: [String: Int]` — Per-filter match counts read from `FilterHitCounterService`. Keys are `objectID.uriRepresentation().absoluteString`. Populated in `init` and refreshed in every `refresh()` call. Also refreshed when the app returns to foreground via a `willEnterForegroundNotification` Combine subscription.
 - `selectedFilters: Set<Filter>` — Multi-selection state for edit mode.
 - `editMode: EditMode` — Controls List edit mode (`.inactive` / `.active`).
 - `canBlockAnotherLanguage: Bool` — Whether the add-language button should be shown (checks if unblocked languages remain).
 - `footer: String` — Help text, varies by filter type.
 - `sheetScreen: Screen?` — For presenting add-filter sheets. Triggers `refresh()` on dismiss.
-- `refresh()` — Re-fetches filters from persistence.
+- `refresh()` — Re-fetches filters and hit counts from persistence/service.
 - `deleteFilters(withOffsets:in:)` — Swipe-to-delete. Delegates to `PersistanceManager.deleteFilters()`.
 - `deleteFilters(_:)` — Bulk delete from edit mode selection.
 
@@ -299,6 +300,7 @@ Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). A `List`
   - **Deny/Allow:** `EditableText` for inline text editing (tap to edit, minimum 3 chars) + three `Menu` buttons for filter target, matching mode, and case sensitivity — each with tap-to-toggle and long-press for full menu. Color-coded: green when non-default option is active.
   - **Deny Language:** Read-only localized language name (resolved from `$lang:` format via `NLLanguage(filterText:)`).
   - **Deny types with folder support:** Additional `Menu` for deny folder (junk/transaction/promotion).
+  - **Hit count:** Displays `(N)` in secondary color when `hitCount > 0`. Count is passed in from the parent `FilterListView.ViewModel` via `hitCounts` dictionary. Hidden when count is zero. Includes an accessibility label.
   - All updates call through to `PersistanceManager.updateFilter()` and trigger `onUpdate` callback to parent.
 
 - **EditableText** (`Others/EditableText.swift`) — Tap-to-edit text component. Uses a ZStack with overlapping `Text` (display) and `TextField` (edit) toggled by `editProcessGoing` state. Enforces minimum character count. Calls `onCommit` when editing ends.
