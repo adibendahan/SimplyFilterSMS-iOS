@@ -22,7 +22,6 @@ class AppManager: AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol
     var reportMessageService: ReportMessageServiceProtocol
     var tipJarManager: TipJarManagerProtocol
-    var hitCounterService: FilterHitCounterServiceProtocol
 
     init(inMemory: Bool = false) {
         let persistanceManager = PersistanceManager(inMemory: inMemory)
@@ -43,7 +42,6 @@ class AppManager: AppManagerProtocol {
         self.amazonS3Service = amazonS3Service
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
-        self.hitCounterService = FilterHitCounterService()
 
         #if DEBUG
         if UIApplication.shared.isInTestingMode {

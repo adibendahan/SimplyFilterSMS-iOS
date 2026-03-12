@@ -8,11 +8,10 @@ Testing patterns, unit tests, UI tests, mocks, and test infrastructure.
 
 ```
 Tests/
-├── MessageEvaluationManagerTests.swift   # Core filtering logic + hit counter integration
+├── MessageEvaluationManagerTests.swift   # Core filtering logic
 ├── AutomaticFilterManagerTests.swift     # Cloud filter management
 ├── PersistanceManagerTests.swift         # CoreData operations
 ├── FilterListViewModelTests.swift        # ViewModel integration
-├── FilterHitCounterServiceTests.swift    # Hit counter persistence
 ├── AmazonS3ServiceTests.swift            # HTTP service
 └── Mocks/
     ├── mock_AppManager.swift
@@ -23,8 +22,7 @@ Tests/
     ├── mock_NetworkSyncManager.swift
     ├── mock_AmazonS3Service.swift
     ├── mock_HTTPService.swift
-    ├── mock_ReportMessageService.swift
-    └── mock_FilterHitCounterService.swift
+    └── mock_ReportMessageService.swift
 
 UI Tests/
 ├── ApplicationTestCase.swift             # Base XCTestCase
@@ -56,7 +54,6 @@ fastlane/
 - Smart rules (links, numbers-only senders, short senders, emails, emojis, all-unknown)
 - Priority ordering (allow takes precedence over deny)
 - Edge cases (empty body/sender, combined targets)
-- Hit counter incremented on allow match, deny match, and not incremented on no match
 
 **Multi-language test data:** Tests include Hebrew, English, and Arabic text to verify NLLanguageRecognizer integration.
 
@@ -111,21 +108,9 @@ func expectingSaveContext() {
 **Setup:** Injects `mock_AppManager` with mock sub-managers.
 
 **Coverage:**
-- `refresh()` — verifies it fetches records, checks allUnknown state, checks language availability, and reads hit counts
+- `refresh()` — verifies it fetches records, checks allUnknown state, checks language availability
 - `deleteFilters(withOffsets:)` — verifies PersistanceManager called + refresh
 - `deleteFilters(_:)` — verifies PersistanceManager called + refresh
-
-### FilterHitCounterServiceTests
-
-**Tests:** `FilterHitCounterService` — App Group UserDefaults persistence for filter match counts.
-
-**Setup:** Creates an in-memory `UserDefaults` suite with a unique `suiteName` per test. Tears down by calling `removePersistentDomain(forName:)`.
-
-**Coverage:**
-- `counts()` returns empty dictionary when no data stored
-- First `incrementCount` writes a count of 1
-- Subsequent increments accumulate correctly
-- Incrementing one filter ID does not affect other filter IDs
 
 ### AmazonS3ServiceTests
 

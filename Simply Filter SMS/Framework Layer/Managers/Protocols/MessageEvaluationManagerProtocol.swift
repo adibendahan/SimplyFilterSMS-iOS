@@ -21,5 +21,4 @@ protocol MessageEvaluationManagerProtocol {
     
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult
     func setLogger(_ logger: Logger)
-    func setHitCounterService(_ service: FilterHitCounterServiceProtocol)
 }

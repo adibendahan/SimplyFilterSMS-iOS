@@ -47,7 +47,6 @@ AppManager (Singleton)
 │   └── depends on: PersistanceManager (container)
 ├── AutomaticFilterManager ─── Community filter lists
 │   └── depends on: PersistanceManager, AmazonS3Service
-├── FilterHitCounterService ── Per-filter match counters (App Group UserDefaults)
 ├── TipJarManager ─────────── StoreKit 2 IAP
 ├── AmazonS3Service ────────── HTTP → S3
 │   └── depends on: NetworkSyncManager
@@ -59,9 +58,9 @@ AppManager (Singleton)
 
 When an SMS arrives, `MessageEvaluationManager.evaluateMessage(body:sender:)` runs these checks in order (first match wins):
 
-1. **Allow filters** → `.allow` (user-created allowlist, highest priority) — increments hit counter
-2. **Deny filters** → `.junk` / `.transaction` / `.promotion` (user-created blocklist) — increments hit counter
-3. **Language deny** → `.junk` (blocked languages via NLLanguageRecognizer) — increments hit counter
+1. **Allow filters** → `.allow` (user-created allowlist, highest priority)
+2. **Deny filters** → `.junk` / `.transaction` / `.promotion` (user-created blocklist)
+3. **Language deny** → `.junk` (blocked languages via NLLanguageRecognizer)
 4. **Automatic filters** → `.allow` or `.junk` (community filter lists from S3, per-language)
 5. **Smart rules** → `.junk` (allUnknown, links, numbersOnly, shortSender, email, emojis)
 6. **No match** → `.allow` (default)

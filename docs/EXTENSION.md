@@ -58,7 +58,6 @@ The extension and main app share code via the `Shared with Extension` folder:
 | `AppPersistentCloudKitContainer.swift` | CoreData container using App Group for shared database access |
 | `SharedExtensions.swift` | Extensions on `Filter`, `NLLanguage`, `ILMessageFilterAction`, `String` + the `~` localization operator |
 | `Constsants.swift` | All enums (`FilterType`, `DenyFolderType`, etc.) and global constants |
-| `FilterHitCounterService.swift` | Reads/writes per-filter match counts to App Group `UserDefaults` (key: `filterHitCounts`) |
 
 ## Database Access
 
@@ -74,4 +73,3 @@ The extension reads the same CoreData database as the main app via:
 - **Limited memory** — Extensions have stricter memory limits than apps
 - **Shared database** — Must handle concurrent access with the main app gracefully
 - **No AppManager** — The extension instantiates `MessageEvaluationManager` directly, bypassing the app's DI container
-- **UserDefaults writes only** — The extension increments filter hit counters via `FilterHitCounterService` (App Group `UserDefaults`) but never writes to CoreData

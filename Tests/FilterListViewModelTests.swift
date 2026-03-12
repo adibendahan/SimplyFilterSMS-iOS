@@ -15,7 +15,6 @@ class FilterListViewModelTests: XCTestCase {
     private var persistanceManager = mock_PersistanceManager()
     private var defaultsManager = mock_DefaultsManager()
     private var automaticFilterManager = mock_AutomaticFilterManager()
-    private var hitCounterService = mock_FilterHitCounterService()
     private var appManager = mock_AppManager()
     
     //MARK: Test Lifecycle
@@ -30,13 +29,10 @@ class FilterListViewModelTests: XCTestCase {
         appManager.defaultsManager = self.defaultsManager
         appManager.automaticFilterManager = self.automaticFilterManager
         
-        self.hitCounterService = mock_FilterHitCounterService()
-        appManager.hitCounterService = self.hitCounterService
         self.testSubject = FilterListView.ViewModel(filterType: .deny, appManager: appManager)
         self.persistanceManager.resetCounters()
         self.defaultsManager.resetCounters()
         self.automaticFilterManager.resetCounters()
-        self.hitCounterService.resetCounters()
         self.appManager.resetCounters()
     }
     
@@ -81,19 +77,6 @@ class FilterListViewModelTests: XCTestCase {
         XCTAssertTrue(self.testSubject.filters.isEmpty) // Verify refresh
     }
     
-    func test_refresh_updatesHitCounts() {
-        // Prepare
-        let expectedCounts = ["filter-id-1": 3, "filter-id-2": 7]
-        self.hitCounterService.countsClosure = { expectedCounts }
-
-        // Act
-        self.testSubject.refresh()
-
-        // Verify
-        XCTAssertEqual(self.hitCounterService.countsCounter, 1)
-        XCTAssertEqual(self.testSubject.hitCounts, expectedCounts)
-    }
-
     func test_deleteFilters() {
         // Prepare
         let filter = self.makeFilter()

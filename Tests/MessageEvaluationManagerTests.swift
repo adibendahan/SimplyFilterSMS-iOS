@@ -224,42 +224,6 @@ class MessageEvaluationManagerTests: XCTestCase {
         }
     }
     
-    func test_hitCounter_incrementedOnDenyMatch() {
-        // Prepare – use a fresh in-memory defaults so counts are isolated
-        let mockDefaults = UserDefaults(suiteName: "test.hitCounter.\(UUID().uuidString)")!
-        let counterService = FilterHitCounterService(defaults: mockDefaults)
-        (self.testSubject as? MessageEvaluationManager)?.setHitCounterService(counterService)
-
-        // Act – "הלוואה" is a deny filter from loadTestingData
-        _ = self.testSubject.evaluateMessage(body: "הלוואה חינם", sender: "1234567")
-
-        // Verify
-        let counts = counterService.counts()
-        XCTAssertEqual(counts.values.reduce(0, +), 1, "Exactly one deny filter should have been counted")
-    }
-
-    func test_hitCounter_incrementedOnAllowMatch() {
-        let mockDefaults = UserDefaults(suiteName: "test.hitCounter.\(UUID().uuidString)")!
-        let counterService = FilterHitCounterService(defaults: mockDefaults)
-        (self.testSubject as? MessageEvaluationManager)?.setHitCounterService(counterService)
-
-        // "עדי" is an allow filter
-        _ = self.testSubject.evaluateMessage(body: "מה המצב עדי?", sender: "1234567")
-
-        XCTAssertEqual(counterService.counts().values.reduce(0, +), 1, "Allow match should increment the matched allow filter's counter")
-    }
-
-    func test_hitCounter_notIncrementedOnNoMatch() {
-        let mockDefaults = UserDefaults(suiteName: "test.hitCounter.\(UUID().uuidString)")!
-        let counterService = FilterHitCounterService(defaults: mockDefaults)
-        (self.testSubject as? MessageEvaluationManager)?.setHitCounterService(counterService)
-
-        // No filter matches this message
-        _ = self.testSubject.evaluateMessage(body: "Hello there", sender: "AppleStore")
-
-        XCTAssertTrue(counterService.counts().isEmpty, "No match should not increment any counter")
-    }
-
     // MARK: Private Variables and Helpers
     private var testSubject: MessageEvaluationManagerProtocol = MessageEvaluationManager(inMemory: true)
     

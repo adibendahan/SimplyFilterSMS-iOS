@@ -563,21 +563,6 @@ extension AppHomeView {
         func loadDebugData() {
             #if DEBUG
             self.appManager.persistanceManager.loadDebugData()
-            UserDefaults(suiteName: kAppGroupContainer)?.removeObject(forKey: "filterHitCounts")
-            zip(self.appManager.persistanceManager.fetchFilterRecords(for: .deny), [42, 7, 1, 128, 3])
-                .forEach { filter, count in
-                    (0..<count).forEach { _ in
-                        self.appManager.hitCounterService.incrementCount(
-                            for: filter.objectID.uriRepresentation().absoluteString)
-                    }
-                }
-            zip(self.appManager.persistanceManager.fetchFilterRecords(for: .allow), [5, 18])
-                .forEach { filter, count in
-                    (0..<count).forEach { _ in
-                        self.appManager.hitCounterService.incrementCount(
-                            for: filter.objectID.uriRepresentation().absoluteString)
-                    }
-                }
             #endif
             self.refresh()
         }

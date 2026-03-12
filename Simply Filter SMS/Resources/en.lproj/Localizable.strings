@@ -20,7 +20,7 @@
 //MARK: Languages
 "lang_supported" = "Supported Languages";
 "lang_allBlocked" = "You've blocked all supported languages!";
-"lang_how" = "Language processing and identification is done **locally** by the Natural Language engine of iOS. A message will be filtered only if the **dominant language** of the text is on the 'Blocked Languages' list. The number next to each language shows how many messages have been filtered by it, and only appears once a match has been made.";
+"lang_how" = "Language processing and identification is done **locally** by the Natural Language engine of iOS. A message will be filtered only if the **dominant language** of the text is on the 'Blocked Languages' list.";
 
 
 //MARK: Filter List View
@@ -33,7 +33,6 @@
 "filterList_menu_debug" = "Load Debug Data";
 "filterList_deniedLanguage" = "Blocked Languages";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
-"filterList_hits" = "Hits";
 "filterList_folder" = "Folder";
 "filterList_text" = "Text";
 "filterList_options" = "Options";
@@ -111,8 +110,8 @@
 "faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customizable in any way. Only messages filtered to the Junk folder will be delivered silently.";
 "help_automaticFiltering_question" = "How does AI Filtering work?";
 "help_automaticFiltering" = "AI Filtering uses AI-generated keyword lists to detect spam and route messages to the junk folder. The lists are updated periodically. Your regular filters are still applied when AI Filtering is on.";
-"help_deny" = "Add texts that will cause a message to be marked as spam, you can also choose the specific folder you want the message to be stored in. The number next to each filter shows how many times it has matched an incoming message, and only appears once a match has been made.";
-"help_allow" = "Add texts that will cause a message to be marked as valid. It is recommended to add uniqe identifying texts like your name here. Text appear on this list have the highest priority when filtering a message. The number next to each filter shows how many times it has matched an incoming message, and only appears once a match has been made.";
+"help_deny" = "Add texts that will cause a message to be marked as spam, you can also choose the specific folder you want the message to be stored in.";
+"help_allow" = "Add texts that will cause a message to be marked as valid. It is recommended to add uniqe identifying texts like your name here. Text appear on this list have the highest priority when filtering a message.";
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "AI Filtering";
@@ -222,7 +221,6 @@
 "a11y_filterRow_targetLabel" = "Filter target: %@";
 "a11y_filterRow_matchLabel" = "Match type: %@";
 "a11y_filterRow_caseLabel" = "Case: %@";
-"a11y_filterRow_hitCountLabel" = "%d hits";
 "a11y_filterRow_folderLabel" = "Folder: %@";
 "a11y_home_shortSenderHint" = "Currently %ld characters. Use actions to change the character limit";
 "a11y_home_shortSenderAction" = "Change character limit";

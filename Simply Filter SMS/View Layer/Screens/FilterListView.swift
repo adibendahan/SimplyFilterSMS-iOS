@@ -8,7 +8,6 @@
 import SwiftUI
 import CoreData
 import NaturalLanguage
-import Combine
 
 
 //MARK: - View -
@@ -33,7 +32,6 @@ struct FilterListView: View {
                 ForEach(self.model.filters, id: \.self) { filter in
                     FilterListRowView(model: FilterListRowView.ViewModel(
                         filter: filter,
-                        hitCount: self.model.hitCounts[filter.objectID.uriRepresentation().absoluteString] ?? 0,
                         onUpdate: { animated in
                             if animated {
                                 withAnimation { self.model.refresh() }
@@ -51,10 +49,10 @@ struct FilterListView: View {
             } header: {
                 if self.model.filters.count > 0 {
                     HStack {
-                        Text("\(self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~) (\("filterList_hits"~))")
-
+                        Text(self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~)
+                        
                         Spacer()
-
+                        
                         Text(self.model.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~)
                             .padding(.trailing, 8)
                     }
@@ -62,8 +60,9 @@ struct FilterListView: View {
             } footer: {
                 VStack {
                     Text(.init(self.model.footer))
-                        .fixedSize(horizontal: false, vertical: true)
-
+                    
+                    Spacer()
+                    
                     AddFilterButton()
                         .padding(.top, self.model.filters.count > 0 ? 0 : 120)
                 }
@@ -81,9 +80,6 @@ struct FilterListView: View {
                 self.model.refresh()
             }
         })
-        .onAppear {
-            self.model.refresh()
-        }
         .environment(\.editMode, $model.editMode)
         .onTapGesture {
             hideKeyboard()
@@ -227,12 +223,9 @@ extension FilterListView {
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var canBlockAnotherLanguage: Bool
         @Published private(set) var footer: String
-        @Published private(set) var hitCounts: [String: Int] = [:]
         @Published var selectedFilters: Set<Filter> = Set()
         @Published var editMode: EditMode = .inactive
         @Published var sheetScreen: Screen? = nil
-
-        private var cancellables = Set<AnyCancellable>()
         
         init(filterType: FilterType,
              appManager: AppManagerProtocol = AppManager.shared) {
@@ -253,23 +246,16 @@ extension FilterListView {
             
             let fetchedFilters = appManager.persistanceManager.fetchFilterRecords(for: filterType)
             self.filters = fetchedFilters.filter({ $0.filterType == filterType })
-            self.hitCounts = appManager.hitCounterService.counts()
-
+            
             super.init(appManager: appManager)
-
-            NotificationCenter.default
-                .publisher(for: UIApplication.willEnterForegroundNotification)
-                .sink { [weak self] _ in self?.refresh() }
-                .store(in: &self.cancellables)
         }
         
         func refresh() {
             let fetchedFilters = self.appManager.persistanceManager.fetchFilterRecords(for: self.filterType)
-
+            
             self.filters = fetchedFilters.filter({ $0.filterType == self.filterType })
             self.isAllUnknownFilteringOn = self.appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.canBlockAnotherLanguage = !self.appManager.automaticFilterManager.languages(for: .blockLanguage).isEmpty
-            self.hitCounts = self.appManager.hitCounterService.counts()
         }
         
         func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
@@ -289,7 +275,7 @@ extension FilterListView {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            FilterListView(model: FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews))
+            FilterListView(model: FilterListView.ViewModel(filterType: .allow, appManager: AppManager.previews))
         }
     }
 }
