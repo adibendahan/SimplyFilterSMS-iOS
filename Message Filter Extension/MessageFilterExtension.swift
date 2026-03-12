@@ -22,6 +22,17 @@ final class MessageFilterExtension: ILMessageFilterExtension {
     }()
 }
 
+@available(iOS 16.0, *)
+extension MessageFilterExtension: ILMessageFilterCapabilitiesQueryHandling {
+
+    func handle(_ capabilitiesQueryRequest: ILMessageFilterCapabilitiesQueryRequest,
+                context: ILMessageFilterExtensionContext,
+                completion: @escaping (ILMessageFilterCapabilitiesQueryResponse) -> Void) {
+
+        completion(ILMessageFilterCapabilitiesQueryResponse())
+    }
+}
+
 extension MessageFilterExtension: ILMessageFilterQueryHandling {
     
     func handle(_ queryRequest: ILMessageFilterQueryRequest,
