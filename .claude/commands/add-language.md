@@ -189,20 +189,33 @@ Before translating, **ask the user** using AskUserQuestion:
 
 ---
 
-## Step 6 — Translate all strings
+## Step 6 — Create the strings file and populate keys via BartyCrouch
 
-Create `Simply Filter SMS/Resources/<code>.lproj/Localizable.strings`.
+**Do NOT manually copy or translate keys from English at this step.**
+
+1. Create an empty `Simply Filter SMS/Resources/<code>.lproj/Localizable.strings` containing only a header comment:
+   ```
+   /* Localizable.strings — <Language Name> */
+   ```
+
+2. Run BartyCrouch to populate all current keys as empty strings:
+   ```bash
+   bartycrouch update
+   ```
+   BartyCrouch will find the new file and add every key from the English source with `= ""` values.
+
+3. Read the newly populated `<code>.lproj/Localizable.strings` file (do not read English — BartyCrouch has already seeded all the keys).
+
+4. Translate every empty `""` value in place using the translation guide. Do not skip any key.
 
 **Format rules:**
-- Use the same blank-line-separated format as `he.lproj`: one `"key" = "value";` per block, blank line between each
 - Preserve all format specifiers exactly: `%ld`, `%@`, `%1$@` etc.
 - Preserve `**bold**` markdown in long-form strings (used for bold rendering in SwiftUI)
 - Preserve `\n` newlines in multi-line strings
 - Apply the translation guide strictly — canonical terms, length constraints, grammar strategy
+- **Never use an em dash (—). Always use a hyphen-minus (-) instead.**
 
-Translate every key from `en.lproj`. Do not skip any key.
-
-After writing the file, verify key count matches English by counting `=` occurrences in both files.
+After translating, verify key count matches English by counting `=` occurrences in both files.
 
 ---
 
@@ -244,7 +257,7 @@ Options:
 
 **If "Keep originals":** no changes, proceed.
 
-After any edits, re-verify key count matches English.
+After any edits, re-verify key count matches English. Also scan for any em dash (—) characters and replace them with a hyphen-minus (-).
 
 ---
 

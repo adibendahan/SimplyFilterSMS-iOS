@@ -12,8 +12,6 @@ import OSLog
 
 class mock_AppManager: AppManagerProtocol {
 
-    
-
     static var logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "tests")
 
     var persistanceManager: PersistanceManagerProtocol = mock_PersistanceManager()

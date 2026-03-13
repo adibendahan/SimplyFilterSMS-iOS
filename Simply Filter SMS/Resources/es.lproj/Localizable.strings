@@ -377,4 +377,35 @@
 "a11y_about_versionHint" = "Toca dos veces para copiar la versión";
 
 "a11y_about_versionCopied" = "Versión";
+
 "a11y_enableExtension_stepLabel" = "Paso %ld: %@. %@";
+
+"autoFilter_countryAllowlist" = "Permitir por país";
+
+"autoFilter_countryAllowlist_shortTitle" = "Lista de países";
+
+"autoFilter_countryAllowlist_empty" = "Sin países seleccionados";
+
+"general_search" = "Buscar";
+
+"general_more" = "más";
+
+"callingCode_+1" = "América del Norte";
+
+"callingCode_+7" = "Rusia y Kazajistán";
+
+"callingCode_+47" = "Noruega";
+
+"callingCode_+262" = "Reunión y Mayotte";
+
+"callingCode_+590" = "Guadalupe";
+
+"callingCode_+599" = "Antillas Neerlandesas";
+
+"autoFilter_countryAllowlist_explanation" = "Agrega los países desde los que deseas permitir mensajes. Los mensajes enviados desde números de teléfono registrados en países que no están en esta lista serán filtrados. Solo se verifican los remitentes que tienen un código de llamada internacional completo (p. ej. +1, +972) - los remitentes sin código no se ven afectados.";
+
+"general_selected" = "Seleccionados";
+
+"general_all" = "Todos los países";
+
+"general_noResults" = "Sin resultados";

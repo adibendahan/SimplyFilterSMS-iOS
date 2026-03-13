@@ -13,7 +13,7 @@ enum Screen: Int, Identifiable {
     case appHome, onboarding, help, about, enableExtension, testFilters,
          addLanguageFilter, addAllowFilter, addDenyFilter, automaticBlocking,
          denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
-         whatsNew, tipJar
+         whatsNew, tipJar, countryList
     
     @ViewBuilder func build() -> some View {
         switch self {
@@ -64,6 +64,9 @@ enum Screen: Int, Identifiable {
 
         case .tipJar:
             TipJarView(model: TipJarView.ViewModel())
+
+        case .countryList:
+            CountryListView(model: CountryListView.ViewModel())
         }
     }
     
@@ -101,6 +104,8 @@ enum Screen: Int, Identifiable {
             return "whatsNew"
         case .tipJar:
             return "tipJar"
+        case .countryList:
+            return "countryList"
         }
     }
 }

@@ -139,6 +139,15 @@
 "autoFilter_error" = "It seems there is a problem downloading the AI Filtering lists. Please try again later.";
 "autoFilter_emojis" = "Block Emojis";
 "autoFilter_emojis_shortTitle" = "Emojis";
+"autoFilter_countryAllowlist" = "Allow by Country";
+"autoFilter_countryAllowlist_shortTitle" = "Country allowlist";
+"autoFilter_countryAllowlist_empty" = "No countries selected";
+"autoFilter_countryAllowlist_explanation" = "Add the countries you want to allow messages from. Messages sent from phone numbers registered in countries not on this list will be filtered. Only senders with a full international calling code (e.g. +1, +972) are checked - senders without one are not affected.";
+"general_search" = "Search";
+"general_more" = "more";
+"general_selected" = "Selected";
+"general_all" = "All Countries";
+"general_noResults" = "No results";
 
 // MARK: Test Filters
 "testFilters_title" = "Test Your Filters";
@@ -229,3 +238,11 @@
 "a11y_about_versionHint" = "Double tap to copy version";
 "a11y_about_versionCopied" = "Version";
 "a11y_enableExtension_stepLabel" = "Step %ld: %@. %@";
+
+// Country calling code groups
+"callingCode_+1" = "North America";
+"callingCode_+7" = "Russia & Kazakhstan";
+"callingCode_+47" = "Norway";
+"callingCode_+262" = "Réunion & Mayotte";
+"callingCode_+590" = "Guadeloupe";
+"callingCode_+599" = "Netherlands Antilles";

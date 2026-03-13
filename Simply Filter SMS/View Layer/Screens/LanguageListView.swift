@@ -129,6 +129,9 @@ struct LanguageListView: View {
         .if(self.model.shouldAllowRefresh) {
             $0.refreshable(action: self.model.forceUpdateFilters)
         }
+        .onAppear {
+            self.model.startMonitoring()
+        }
     }
 }
 
@@ -152,6 +155,7 @@ extension LanguageListView {
         @Published private(set) var shouldAllowRefresh: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
         @Published var sheetScreen: Screen? = nil
+        private var didAddObservers = false
         
         init(mode: LanguageListView.Mode,
              appManager: AppManagerProtocol = AppManager.shared) {
@@ -198,30 +202,32 @@ extension LanguageListView {
             }
             
             super.init(appManager: appManager)
-            
-            if mode == .automaticBlocking {
-                
-                if !isOnline && self.languages.isEmpty {
-                    NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { [weak self] notification in
-                        guard let networkStatus = notification.object as? NetworkStatus else { return }
-                        
-                        if networkStatus == .online {
-                            appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
-                            self?.isLoading = true
-                        }
-                        else {
-                            self?.autoFilterErrorText = "autoFilter_empty"~
-                            self?.isLoading = false
-                        }
+        }
+
+        func startMonitoring() {
+            guard !didAddObservers, mode == .automaticBlocking else { return }
+            didAddObservers = true
+
+            if !isOnline && self.languages.isEmpty {
+                NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { [weak self] notification in
+                    guard let networkStatus = notification.object as? NetworkStatus else { return }
+
+                    if networkStatus == .online {
+                        self?.appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                        self?.isLoading = true
+                    }
+                    else {
+                        self?.autoFilterErrorText = "autoFilter_empty"~
+                        self?.isLoading = false
                     }
                 }
-                
-                NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { [weak self] _ in
-                    withAnimation {
-                        guard let self = self else { return }
-                        self.refresh()
-                        self.isLoading = false
-                    }
+            }
+
+            NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { [weak self] _ in
+                withAnimation {
+                    guard let self = self else { return }
+                    self.refresh()
+                    self.isLoading = false
                 }
             }
         }

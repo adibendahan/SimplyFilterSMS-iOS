@@ -28,6 +28,8 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
     var setAutomaticRuleStateCounter = 0
     var selectedChoiceCounter = 0
     var setSelectedChoiceCounter = 0
+    var selectedCountriesCounter = 0
+    var setSelectedCountriesCounter = 0
     var updateAutomaticFiltersIfNeededCounter = 0
     var forceUpdateAutomaticFiltersCounter = 0
     
@@ -42,6 +44,8 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
     var setAutomaticRuleStateClosure: ((RuleType, Bool) -> ())?
     var selectedChoiceClosure: ((RuleType) -> (Int))?
     var setSelectedChoiceClosure: ((RuleType, Int) -> ())?
+    var selectedCountriesClosure: ((RuleType) -> ([String]))?
+    var setSelectedCountriesClosure: (([String], RuleType) -> ())?
     var updateAutomaticFiltersIfNeededClosure: (() -> ())?
     var forceUpdateAutomaticFiltersClosure: (() -> ())?
     
@@ -119,7 +123,17 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         self.setSelectedChoiceCounter += 1
         self.setSelectedChoiceClosure?(rule, choice)
     }
-    
+
+    func selectedCountries(for rule: RuleType) -> [String] {
+        self.selectedCountriesCounter += 1
+        return self.selectedCountriesClosure?(rule) ?? []
+    }
+
+    func setSelectedCountries(_ countries: [String], for rule: RuleType) {
+        self.setSelectedCountriesCounter += 1
+        self.setSelectedCountriesClosure?(countries, rule)
+    }
+
     func updateAutomaticFiltersIfNeeded() {
         self.updateAutomaticFiltersIfNeededCounter += 1
         self.updateAutomaticFiltersIfNeededClosure?()
@@ -146,6 +160,8 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         self.setAutomaticRuleStateCounter = 0
         self.selectedChoiceCounter = 0
         self.setSelectedChoiceCounter = 0
+        self.selectedCountriesCounter = 0
+        self.setSelectedCountriesCounter = 0
         self.updateAutomaticFiltersIfNeededCounter = 0
         self.forceUpdateAutomaticFiltersCounter = 0
     }

@@ -16,7 +16,11 @@ struct ReportMessageView: View {
     var dismiss
     
     @FocusState private var focusedField: Field?
-    @ObservedObject var model: ViewModel
+    @StateObject private var model: ViewModel
+
+    init(model: ViewModel = ViewModel()) {
+        _model = StateObject(wrappedValue: model)
+    }
     
     var body: some View {
         NavigationView {

@@ -21,7 +21,11 @@ struct TestFiltersView: View {
     
     @FocusState private var focusedField: Field?
     @AccessibilityFocusState private var isResultFocused: Bool
-    @ObservedObject var model: ViewModel
+    @StateObject private var model: ViewModel
+
+    init(model: ViewModel = ViewModel()) {
+        _model = StateObject(wrappedValue: model)
+    }
     
     var body: some View {
         NavigationView {

@@ -1,13 +1,3 @@
-/*
-  Localizable.strings
-  Simply Filter SMS
-
-  Created by Adi Ben-Dahan on 30/12/2021.
-
-*/
-
-
-//MARK: General
 "general_allow" = "Erlauben";
 
 "general_deny" = "Sperren";
@@ -24,15 +14,12 @@
 
 "general_edit" = "Ändern";
 
-//MARK: Languages
 "lang_supported" = "Unterstützte Sprachen";
 
 "lang_allBlocked" = "Du hast alle unterstützten Sprachen blockiert!";
 
 "lang_how" = "Spracherkennung und -verarbeitung erfolgt **lokal** durch das Sprachverarbeitungssystem von iOS. Eine Nachricht wird nur gefiltert, wenn die **dominante Sprache** des Textes auf der Liste der blockierten Sprachen steht.";
 
-
-//MARK: Filter List View
 "filterList_filters" = "Filter";
 
 "filterList_allowed" = "Erlaubte Texte";
@@ -57,7 +44,6 @@
 
 "filterList_options" = "Optionen";
 
-//MARK: Add Filter View
 "addFilter_add" = "Hinzufügen";
 
 "addFilter_addFilter_allow" = "Erlaubt hinzufügen";
@@ -108,7 +94,6 @@
 
 "addFilter_match_contains" = "Enthält";
 
-//MARK: Enable Extension View
 "enableExtension_ready_callToAction" = "Einstellungen";
 
 "enableExtension_ready_cancel" = "Abbrechen";
@@ -141,8 +126,6 @@
 
 "enableExtension_step6_desc" = "Tippe auf 'Textnachrichtenfilter' und wähle 'SimplyFilterSMS'";
 
-
-//MARK: About View
 "aboutView_aboutSection" = "Entwicklernotizen";
 
 "aboutView_linksSection" = "Links";
@@ -161,7 +144,6 @@
 
 "aboutView_review" = "Bewerte uns bitte!";
 
-//MARK: Help View
 "faq_subtitle" = "Hier sind häufig gestellte Fragen. Falls du keine Antwort findest, kontaktiere uns per";
 
 "faq_question_0" = "Wie aktiviere ich die Nachrichtenfilterung in iOS?";
@@ -196,7 +178,6 @@
 
 "help_allow" = "Füge Texte hinzu, die eine Nachricht als gültig kennzeichnen. Empfohlen: einzigartige Texte wie deinen Namen. Texte auf dieser Liste haben die höchste Priorität.";
 
-//MARK: Automatic Filtering
 "autoFilter_title" = "KI-Filterung";
 
 "autoFilter_lastUpdated" = "Aktualisiert am %@";
@@ -247,7 +228,6 @@
 
 "autoFilter_emojis_shortTitle" = "Emojis";
 
-// MARK: Test Filters
 "testFilters_title" = "Filter testen";
 
 "testFilters_action" = "Testen";
@@ -290,7 +270,6 @@
 
 "notification_tipPromotion_subtitle" = "Tippe, um ein Trinkgeld zu geben";
 
-// MARK: Report Message
 "reportMessage_senderTitle" = "Absender";
 
 "reportMessage_title" = "Nachricht melden";
@@ -303,8 +282,6 @@
 
 "reportMessage_thankYou" = "Danke für deine Meldung!";
 
-
-//MARK: What's New
 "whatsNew_title" = "Was ist neu";
 
 "whatsNew_continue" = "Weiter";
@@ -331,7 +308,6 @@
 
 "whatsNew_tipJar_desc" = "Ein neues **Trinkgeld-Glas** ermöglicht es, die App-Entwicklung zu unterstützen. Simply Filter SMS ist für immer kostenlos – Trinkgelder sind nur eine Möglichkeit, Danke zu sagen! **Hier tippen zum Spenden!**";
 
-//MARK: Tip Jar
 "tipJar_title" = "Trinkgeld-Glas";
 
 "tipJar_menuItem" = "Trinkgeld-Glas";
@@ -364,7 +340,6 @@
 
 "tipJar_chooseATip" = "Trinkgeld wählen";
 
-//MARK: iPad Detail Placeholder
 "placeholder_choose_title" = "Kategorie auswählen";
 
 "placeholder_choose_detail" = "Wähle eine Kategorie aus der Seitenleiste, um Details anzuzeigen.";
@@ -373,7 +348,6 @@
 
 "placeholder_choose_sub_detail2" = "oben.";
 
-//MARK: Accessibility
 "a11y_home_menuButton" = "Weitere Optionen";
 
 "a11y_addFilter_expandHint" = "Doppeltippen, um erweiterte Optionen ein-/auszublenden";
@@ -405,3 +379,33 @@
 "a11y_about_versionCopied" = "Version";
 
 "a11y_enableExtension_stepLabel" = "Schritt %ld: %@. %@";
+
+"autoFilter_countryAllowlist" = "Nach Land erlauben";
+
+"autoFilter_countryAllowlist_shortTitle" = "Länderliste";
+
+"autoFilter_countryAllowlist_empty" = "Keine Länder gewählt";
+
+"general_search" = "Suchen";
+
+"general_more" = "mehr";
+
+"callingCode_+1" = "Nordamerika";
+
+"callingCode_+7" = "Russland und Kasachstan";
+
+"callingCode_+47" = "Norwegen";
+
+"callingCode_+262" = "Réunion und Mayotte";
+
+"callingCode_+590" = "Guadeloupe";
+
+"callingCode_+599" = "Niederländische Antillen";
+
+"autoFilter_countryAllowlist_explanation" = "Füge die Länder hinzu, aus denen du Nachrichten zulassen möchtest. Nachrichten von Telefonnummern, die in Ländern registriert sind, die nicht auf dieser Liste stehen, werden gefiltert. Es werden nur Absender mit vollständiger internationaler Vorwahl geprüft (z. B. +1, +972) – Absender ohne Vorwahl sind nicht betroffen.";
+
+"general_selected" = "Ausgewählt";
+
+"general_all" = "Alle Länder";
+
+"general_noResults" = "Keine Ergebnisse";

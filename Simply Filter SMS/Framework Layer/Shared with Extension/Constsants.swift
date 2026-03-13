@@ -82,6 +82,8 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     var allowedWhenAllSendersBlocked: Bool {
         return self == .allow
     }
+
+    var logDescription: String { String(describing: self) }
     
     var iconName: String {
         switch self {
@@ -158,6 +160,8 @@ enum DenyFolderType: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_folder_caption"~
     }
+
+    var logDescription: String { String(describing: self) }
 }
 
 enum FilterTarget: Int64, CaseIterable, Identifiable {
@@ -188,6 +192,8 @@ enum FilterTarget: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_target_title"~
     }
+
+    var logDescription: String { String(describing: self) }
 }
 
 enum FilterMatching: Int64, CaseIterable, Identifiable {
@@ -225,6 +231,8 @@ enum FilterMatching: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_match_title"~
     }
+
+    var logDescription: String { String(describing: self) }
 }
 
 enum FilterCase: Int64, CaseIterable, Identifiable {
@@ -262,6 +270,8 @@ enum FilterCase: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_case_title"~
     }
+
+    var logDescription: String { String(describing: self) }
 }
 
 enum ReportType: Int64, CaseIterable, Identifiable {
@@ -289,7 +299,7 @@ enum ReportType: Int64, CaseIterable, Identifiable {
 }
 
 enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
-    case allUnknown=0, links, numbersOnly, shortSender, email, emojis
+    case allUnknown=0, links, numbersOnly, shortSender, email, emojis, countryAllowlist=6
     
     var id: Self { self }
     
@@ -307,9 +317,11 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return "autoFilter_email"~
         case .emojis:
             return "autoFilter_emojis"~
+        case .countryAllowlist:
+            return "autoFilter_countryAllowlist"~
         }
     }
-    
+
     var sortIndex: Int {
         switch self {
         case .allUnknown:
@@ -323,10 +335,12 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
         case .numbersOnly:
             return 4
         case .emojis:
+            return 6
+        case .countryAllowlist:
             return 5
         }
     }
-    
+
     var icon: String {
         switch self {
         case .allUnknown:
@@ -341,13 +355,15 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return "envelope.fill"
         case .emojis:
             return "🙄"
+        case .countryAllowlist:
+            return "globe.americas.fill"
         }
     }
     
     var isTextIcon: Bool {
         return self == .emojis
     }
-    
+
     var iconColor: Color {
         switch self {
         case .allUnknown:
@@ -362,6 +378,8 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return .brown
         case .emojis:
             return .orange
+        case .countryAllowlist:
+            return .teal
         }
     }
     
@@ -373,7 +391,7 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return nil
         }
     }
-    
+
     var action: String? {
         switch self {
         case .shortSender:
@@ -382,7 +400,7 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return nil
         }
     }
-    
+
     var actionTitle: String? {
         switch self {
         case .shortSender:
@@ -391,7 +409,7 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return nil
         }
     }
-    
+
     var shortTitle: String? {
         switch self {
         case .allUnknown:
@@ -406,12 +424,16 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
             return "autoFilter_email_shortTitle"~
         case .emojis:
             return "autoFilter_emojis_shortTitle"~
+        case .countryAllowlist:
+            return "autoFilter_countryAllowlist_shortTitle"~
         }
     }
 
     var isDestructive: Bool {
         return self == .allUnknown
     }
+
+    var logDescription: String { String(describing: self) }
 
     var toggleBackgroundColor: Color {
         switch self {

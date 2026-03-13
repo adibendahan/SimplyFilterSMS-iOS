@@ -224,6 +224,145 @@ class MessageEvaluationManagerTests: XCTestCase {
         }
     }
     
+    func test_evaluateMessage_countryAllowlist() {
+        self.flushPersistanceManager()
+
+        // Allow only Israel (+972)
+        let allowedJSON = try! String(data: JSONEncoder().encode(["+972"]), encoding: .utf8)!
+        let rule = AutomaticFiltersRule(context: self.testSubject.context)
+        rule.ruleId = RuleType.countryAllowlist.rawValue
+        rule.isActive = true
+        rule.selectedChoice = 0
+        rule.selectedCountries = allowedJSON
+        try? self.testSubject.context.save()
+
+        let testCases: [MessageTestCase] = [
+            // Israeli number → in allowlist → allow
+            MessageTestCase(sender: "+972-50-123-4567", body: "hello", expectedAction: .allow),
+            // US number → not in allowlist → junk
+            MessageTestCase(sender: "+1-800-555-1234", body: "hello", expectedAction: .junk),
+            // No + prefix → rule skipped → allow
+            MessageTestCase(sender: "0501234567", body: "hello", expectedAction: .allow),
+        ]
+
+        for testCase in testCases {
+            let actualAction = self.testSubject.evaluateMessage(body: testCase.body, sender: testCase.sender).action
+            XCTAssert(testCase.expectedAction == actualAction,
+                      "countryAllowlist sender \"\(testCase.sender)\": expected \(testCase.expectedAction.debugName), got \(actualAction.debugName).")
+        }
+    }
+
+    // P1 allUnknown overrides P2 allow filters — even an explicit allow match must not escape allUnknown
+    func test_priorityOrder_allUnknownBeatsAllowFilters() {
+        self.flushPersistanceManager()
+
+        let allowFilter = Filter(context: self.testSubject.context)
+        allowFilter.filterType = .allow
+        allowFilter.filterTarget = .body
+        allowFilter.filterMatching = .contains
+        allowFilter.filterCase = .caseInsensitive
+        allowFilter.text = "hello"
+
+        let allUnknown = AutomaticFiltersRule(context: self.testSubject.context)
+        allUnknown.ruleId = RuleType.allUnknown.rawValue
+        allUnknown.isActive = true
+        allUnknown.selectedChoice = 0
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "hello world", sender: "1234567").action
+        XCTAssertEqual(result, .junk, "allUnknown must override allow filters")
+    }
+
+    // P3 automatic allowSenders overrides P4 rules — trusted sender with a link must not be blocked by links rule
+    func test_priorityOrder_automaticAllowSendersBeatsRules() {
+        self.flushPersistanceManager()
+
+        let filterLists = AutomaticFilterListsResponse(filterLists: [
+            NLLanguage.hebrew.rawValue: LanguageFilterListResponse(allowSenders: ["BituahLeumi"],
+                                                                   allowBody: [],
+                                                                   denySender: [],
+                                                                   denyBody: [])
+        ])
+        let cache = AutomaticFiltersCache(context: self.testSubject.context)
+        cache.uuid = UUID()
+        cache.filtersData = filterLists.encoded
+        cache.hashed = filterLists.hashed
+        cache.age = Date()
+
+        let langRecord = AutomaticFiltersLanguage(context: self.testSubject.context)
+        langRecord.lang = NLLanguage.hebrew.rawValue
+        langRecord.isActive = true
+
+        let linksRule = AutomaticFiltersRule(context: self.testSubject.context)
+        linksRule.ruleId = RuleType.links.rawValue
+        linksRule.isActive = true
+        linksRule.selectedChoice = 0
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "check https://link.com", sender: "BituahLeumi").action
+        XCTAssertEqual(result, .allow, "automatic allowSenders must override links rule")
+    }
+
+    // P3 automatic allowBody overrides P4 rules — trusted body phrase with a link must not be blocked by links rule
+    func test_priorityOrder_automaticAllowBodyBeatsRules() {
+        self.flushPersistanceManager()
+
+        let filterLists = AutomaticFilterListsResponse(filterLists: [
+            NLLanguage.hebrew.rawValue: LanguageFilterListResponse(allowSenders: [],
+                                                                   allowBody: ["trusted phrase"],
+                                                                   denySender: [],
+                                                                   denyBody: [])
+        ])
+        let cache = AutomaticFiltersCache(context: self.testSubject.context)
+        cache.uuid = UUID()
+        cache.filtersData = filterLists.encoded
+        cache.hashed = filterLists.hashed
+        cache.age = Date()
+
+        let langRecord = AutomaticFiltersLanguage(context: self.testSubject.context)
+        langRecord.lang = NLLanguage.hebrew.rawValue
+        langRecord.isActive = true
+
+        let linksRule = AutomaticFiltersRule(context: self.testSubject.context)
+        linksRule.ruleId = RuleType.links.rawValue
+        linksRule.isActive = true
+        linksRule.selectedChoice = 0
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "trusted phrase https://link.com", sender: "1234567").action
+        XCTAssertEqual(result, .allow, "automatic allowBody must override links rule")
+    }
+
+    // P1 allUnknown overrides P3 automatic allowSenders — even a trusted sender must not escape allUnknown
+    func test_priorityOrder_allUnknownBeatsAutomaticAllow() {
+        self.flushPersistanceManager()
+
+        let filterLists = AutomaticFilterListsResponse(filterLists: [
+            NLLanguage.hebrew.rawValue: LanguageFilterListResponse(allowSenders: ["BituahLeumi"],
+                                                                   allowBody: [],
+                                                                   denySender: [],
+                                                                   denyBody: [])
+        ])
+        let cache = AutomaticFiltersCache(context: self.testSubject.context)
+        cache.uuid = UUID()
+        cache.filtersData = filterLists.encoded
+        cache.hashed = filterLists.hashed
+        cache.age = Date()
+
+        let langRecord = AutomaticFiltersLanguage(context: self.testSubject.context)
+        langRecord.lang = NLLanguage.hebrew.rawValue
+        langRecord.isActive = true
+
+        let allUnknown = AutomaticFiltersRule(context: self.testSubject.context)
+        allUnknown.ruleId = RuleType.allUnknown.rawValue
+        allUnknown.isActive = true
+        allUnknown.selectedChoice = 0
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "hello", sender: "BituahLeumi").action
+        XCTAssertEqual(result, .junk, "allUnknown must override automatic allowSenders")
+    }
+
     // MARK: Private Variables and Helpers
     private var testSubject: MessageEvaluationManagerProtocol = MessageEvaluationManager(inMemory: true)
     

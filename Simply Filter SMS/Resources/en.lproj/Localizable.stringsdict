@@ -2,6 +2,38 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>autoFilter_countryAllowlist_section_allowed</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@countries@</string>
+        <key>countries</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>Allowed Country</string>
+            <key>other</key>
+            <string>Allowed Countries</string>
+        </dict>
+    </dict>
+    <key>autoFilter_countryAllowlist_section_blocked</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@countries@</string>
+        <key>countries</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>Blocked Country</string>
+            <key>other</key>
+            <string>Blocked Countries</string>
+        </dict>
+    </dict>
     <key>general_active_count</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>

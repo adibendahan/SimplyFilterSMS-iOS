@@ -135,18 +135,37 @@ extension ILMessageFilterAction {
         switch self {
         case .none, .allow:
             return "testFilters_resultAllowed"~
-            
+
         case .junk, .filter:
             return "testFilters_resultJunk"~
-            
+
         case .promotion:
             return "testFilters_resultPromotion"~
-            
+
         case .transaction:
             return "testFilters_resultTransaction"~
-            
+
         @unknown default:
             return "🧐"
+        }
+    }
+
+    var logName: String {
+        switch self {
+        case .none:
+            return "none"
+        case .allow:
+            return "allow"
+        case .junk:
+            return "junk"
+        case .filter:
+            return "filter"
+        case .promotion:
+            return "promotion"
+        case .transaction:
+            return "transaction"
+        @unknown default:
+            return "unknown"
         }
     }
     

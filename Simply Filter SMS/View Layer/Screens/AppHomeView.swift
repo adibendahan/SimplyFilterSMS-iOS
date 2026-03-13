@@ -169,12 +169,12 @@ struct AppHomeView: View {
                                     if let subtitle = rule.subtitle,
                                        let action = rule.action,
                                        let actionTitle = rule.actionTitle {
-                                        
+
                                         HStack (alignment: .center, spacing: 4) {
                                             Text(String(format: subtitle, self.model.shortSenderChoice))
                                                 .font(.caption2)
                                                 .foregroundColor(.secondary)
-                                            
+
                                             Menu {
                                                 Text(actionTitle)
 
@@ -192,6 +192,22 @@ struct AppHomeView: View {
                                                     .font(.caption2)
                                             }
                                         }
+                                    } else if rule == .countryAllowlist && model.rules[index].state {
+                                        HStack (alignment: .center, spacing: 4) {
+                                            Text(self.model.selectedCountriesSummary)
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                                .lineLimit(1)
+
+                                            Button {
+                                                self.model.sheetScreen = .countryList
+                                            } label: {
+                                                Text("autoFilter_shortSender_change"~)
+                                                    .font(.caption2)
+                                                    .foregroundColor(.accentColor)
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
                                     }
                                 }
                                 .padding(.leading, 8)
@@ -207,7 +223,7 @@ struct AppHomeView: View {
                                 }
                         }
                     } // ForEach
-                    
+
                 } header: {
                     Text("autoFilter_smartFilters"~)
                         .accessibilityAddTraits(.isHeader)
@@ -381,6 +397,7 @@ extension AppHomeView {
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var shortSenderChoice: Int
         @Published private(set) var subtitle: String
+        @Published private(set) var selectedCountriesSummary: String
         @Published var rules: [StatefulItem<RuleType>]
         @Published var notification: NotificationView.ViewModel
         @Published var navigationScreen: Screen? = nil {
@@ -412,9 +429,9 @@ extension AppHomeView {
         var pendingScreenAfterDismiss: Screen?
         
         override init(appManager: AppManagerProtocol = AppManager.shared) {
-            
+
             let isAutomaticFilteringOn = appManager.automaticFilterManager.isAutomaticFilteringOn
-            
+
             self.title = "filterList_filters"~
             self.subtitle = isAutomaticFilteringOn ? appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
             self.isAppFirstRun = appManager.defaultsManager.isAppFirstRun
@@ -425,6 +442,7 @@ extension AppHomeView {
             self.filters = appManager.persistanceManager.fetchFilterRecords()
             self.rules = []
             self.notification = NotificationView.ViewModel(notification: .offline)
+            self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
             
             self.rules = appManager.automaticFilterManager.rules
@@ -437,7 +455,7 @@ extension AppHomeView {
         
         func refresh() {
             let isAutomaticFilteringOn = self.appManager.automaticFilterManager.isAutomaticFilteringOn
-            
+
             self.title = "filterList_filters"~
             self.subtitle = isAutomaticFilteringOn ? self.appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
             self.isAppFirstRun = self.appManager.defaultsManager.isAppFirstRun
@@ -445,6 +463,7 @@ extension AppHomeView {
             self.isAllUnknownFilteringOn = self.appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.shortSenderChoice = self.appManager.automaticFilterManager.selectedChoice(for: .shortSender)
             self.filters = self.appManager.persistanceManager.fetchFilterRecords()
+            self.selectedCountriesSummary = Self.makeCountrySummary(appManager: self.appManager)
             self.rules = self.appManager.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
                                                                                                    getter: self.appManager.automaticFilterManager.automaticRuleState,
                                                                                                    setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
@@ -602,6 +621,29 @@ extension AppHomeView {
         private func setAutomaticRuleState(for rule: RuleType, value: Bool) {
             self.appManager.automaticFilterManager.setAutomaticRuleState(for: rule, value: value)
             self.refresh()
+        }
+
+        private static func makeCountrySummary(appManager: AppManagerProtocol) -> String {
+            let codes = appManager.automaticFilterManager.selectedCountries(for: .countryAllowlist)
+            guard !codes.isEmpty else { return "autoFilter_countryAllowlist_empty"~ }
+            let names = codes
+                .compactMap { CallingCodeEntry.byCallingCode[$0] }
+                .sorted { countrySortIndex($0) < countrySortIndex($1) }
+                .map { $0.summaryName }
+            guard let first = names.first else { return "autoFilter_countryAllowlist_empty"~ }
+            if names.count == 1 {
+                return first
+            } else {
+                return "\(first) + \(names.count - 1) \("general_more"~)"
+            }
+        }
+
+        private static func countrySortIndex(_ entry: CallingCodeEntry) -> Int {
+            switch entry.callingCode {
+            case "+1":   return -2
+            case "+972": return -1
+            default:     return Int(entry.callingCode.dropFirst()) ?? Int.max
+            }
         }
     }
 }

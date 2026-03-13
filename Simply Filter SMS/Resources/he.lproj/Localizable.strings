@@ -262,6 +262,22 @@
 
 "autoFilter_emojis_shortTitle" = "אימוג'ים";
 
+"autoFilter_countryAllowlist" = "אפשר לפי מדינה";
+
+"autoFilter_countryAllowlist_shortTitle" = "רשימת מדינות מותרות";
+
+"autoFilter_countryAllowlist_empty" = "לא נבחרו מדינות";
+
+"general_search" = "חיפוש";
+
+"general_more" = "נוספות";
+
+"general_selected" = "נבחרו";
+
+"general_all" = "כל המדינות";
+
+"general_noResults" = "אין תוצאות";
+
 "aboutView_appIconCreditTitle" = "מעצב האייקון";
 
 "notification_clipboard_subtitle" = "הועתק ללוח";
@@ -333,8 +349,11 @@
 "tipJar_toast_subtitle" = "התמיכה שלכם עושה את כל ההבדל!";
 
 "tipJar_tier_small_desc" = "שעושים באהבה";
+
 "tipJar_tier_medium_desc" = "בלי תוספות";
+
 "tipJar_tier_large_desc" = "מנוער, לא מעורבב";
+
 "tipJar_chooseATip" = "בחרו טיפ";
 
 "placeholder_choose_title" = "בחרו קטגוריה";
@@ -374,4 +393,19 @@
 "a11y_about_versionHint" = "הקשה כפולה להעתקת גרסה";
 
 "a11y_about_versionCopied" = "גרסה";
+
 "a11y_enableExtension_stepLabel" = "שלב %ld: %@. %@";
+
+"callingCode_+1" = "צפון אמריקה";
+
+"callingCode_+7" = "רוסיה וקזחסטן";
+
+"callingCode_+47" = "נורווגיה";
+
+"callingCode_+262" = "ראוניון ומאיוט";
+
+"callingCode_+590" = "גוואדלופ";
+
+"callingCode_+599" = "אנטיל ההולנדיות";
+
+"autoFilter_countryAllowlist_explanation" = "הוסף את המדינות שמהן אתה רוצה לאפשר הודעות. הודעות שנשלחות ממספרי טלפון הרשומים במדינות שאינן ברשימה זו יסוננו. רק שולחים עם קידומת חיוג בינלאומית מלאה (למשל +1, +972) נבדקים - שולחים ללא קידומת כזו אינם מושפעים.";

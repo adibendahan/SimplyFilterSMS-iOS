@@ -133,6 +133,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     
     func setLanguageAutmaticState(for language: NLLanguage, value: Bool) {
         guard let persistanceManager = self.persistanceManager else { return }
+        AppManager.logger.debug("setLanguageAutmaticState — '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(value, privacy: .public)")
         let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         automaticFiltersLanguage.isActive = value
         persistanceManager.commitContext()
@@ -147,42 +148,55 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     
     func setAutomaticRuleState(for rule: RuleType, value: Bool) {
         guard let persistanceManager = self.persistanceManager else { return }
+        AppManager.logger.debug("setAutomaticRuleState — '\(rule.title, privacy: .public)' → \(value, privacy: .public)")
         let automaticFiltersRule = persistanceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
         automaticFiltersRule.isActive = value
-        
         if automaticFiltersRule.ruleType == .shortSender && automaticFiltersRule.selectedChoice < 3 {
             automaticFiltersRule.selectedChoice = 6
         }
-        
         persistanceManager.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
     func selectedChoice(for rule: RuleType) -> Int {
         guard let persistanceManager = self.persistanceManager,
               let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return 0 }
         return Int(automaticFiltersRule.selectedChoice)
     }
-    
+
     func setSelectedChoice(for rule: RuleType, choice: Int) {
         guard let persistanceManager = self.persistanceManager,
               let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
+        AppManager.logger.debug("setSelectedChoice — '\(rule.title, privacy: .public)' → \(choice, privacy: .public)")
         automaticFiltersRule.selectedChoice = Int64(choice)
         persistanceManager.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
+    func selectedCountries(for rule: RuleType) -> [String] {
+        return self.persistanceManager?.selectedCountries(for: rule) ?? []
+    }
+
+    func setSelectedCountries(_ countries: [String], for rule: RuleType) {
+        AppManager.logger.debug("setSelectedCountries — \(countries, privacy: .public)")
+        self.persistanceManager?.setSelectedCountries(countries, for: rule)
+    }
+
     func updateAutomaticFiltersIfNeeded() {
-        guard self.shouldFetchFilters else { return }
-        
+        guard self.shouldFetchFilters else {
+            AppManager.logger.debug("updateAutomaticFiltersIfNeeded — cache is fresh, skipping fetch")
+            return
+        }
+        AppManager.logger.debug("updateAutomaticFiltersIfNeeded — cache is stale, fetching from S3")
         Task(priority: .background) {
             if let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() {
                 self.updateCacheIfNeeded(newFilterList: automaticFilterList)
             }
         }
     }
-    
+
     func forceUpdateAutomaticFilters() async {
+        AppManager.logger.debug("forceUpdateAutomaticFilters — forcing S3 fetch")
         guard let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() else { return }
         self.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
     }
@@ -230,14 +244,14 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     
     private func updateCacheIfNeeded(newFilterList: AutomaticFilterListsResponse, force: Bool = false) {
         guard let persistanceManager = self.persistanceManager else { return }
-        
         let isCacheStale = persistanceManager.isCacheStale(comparedTo: newFilterList)
-        
+        AppManager.logger.debug("updateCacheIfNeeded — isCacheStale: \(isCacheStale, privacy: .public), force: \(force, privacy: .public)")
         if force || isCacheStale {
+            AppManager.logger.debug("updateCacheIfNeeded — saving new filter cache")
             persistanceManager.saveCache(with: newFilterList)
         }
-        
         if isCacheStale {
+            AppManager.logger.debug("updateCacheIfNeeded — posting automaticFiltersUpdated notification")
             NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
         }
     }
