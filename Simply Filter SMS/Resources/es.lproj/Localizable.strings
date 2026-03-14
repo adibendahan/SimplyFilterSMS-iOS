@@ -290,7 +290,7 @@
 
 "whatsNew_accessibility_title" = "Soporte de accesibilidad";
 
-"whatsNew_accessibility_desc" = "Totalmente usable con **VoiceOver** y **Control por voz**. El texto escala con **Dynamic Type**. Las animaciones respetan tu configuración de **Reducir movimiento**.";
+"whatsNew_accessibility_desc" = "Totalmente usable con **VoiceOver** y **Control por voz**. El texto escala con **Tipo de texto dinámico**. Las animaciones respetan tu configuración de **Reducir movimiento**.";
 
 "whatsNew_freshLook_title" = "Diseño renovado";
 

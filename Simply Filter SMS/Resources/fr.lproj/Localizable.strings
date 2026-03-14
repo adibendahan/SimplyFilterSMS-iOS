@@ -68,7 +68,7 @@
 
 "addFilter_duplicate" = "Filtre en double";
 
-"addFilter_more" = "Plus d'options";
+"addFilter_more" = "Voir plus d'options";
 
 "addFilter_less" = "Moins d'options";
 
@@ -290,7 +290,7 @@
 
 "whatsNew_accessibility_title" = "Support accessibilité";
 
-"whatsNew_accessibility_desc" = "Entièrement utilisable avec **VoiceOver** et **Contrôle vocal**. Le texte s'adapte avec **Dynamic Type**. Les animations respectent ton réglage **Réduire les animations**.";
+"whatsNew_accessibility_desc" = "Entièrement utilisable avec **VoiceOver** et **Contrôle vocal**. Le texte s'adapte avec **Taille du texte dynamique**. Les animations respectent ton réglage **Réduire les animations**.";
 
 "whatsNew_freshLook_title" = "Nouveau look";
 
@@ -402,7 +402,7 @@
 
 "callingCode_+599" = "Antilles néerlandaises";
 
-"autoFilter_countryAllowlist_explanation" = "Ajoutez les pays depuis lesquels vous souhaitez autoriser les messages. Les messages envoyés depuis des numéros de téléphone enregistrés dans des pays absents de cette liste seront filtrés. Seuls les expéditeurs disposant d'un indicatif international complet (ex. +1, +972) sont vérifiés - les expéditeurs sans indicatif ne sont pas affectés.";
+"autoFilter_countryAllowlist_explanation" = "Ajoute les pays depuis lesquels tu souhaites autoriser les messages. Les messages envoyés depuis des numéros enregistrés dans des pays absents de cette liste seront filtrés. Seuls les expéditeurs avec un indicatif international complet (ex. +1, +972) sont vérifiés - les expéditeurs sans indicatif ne sont pas affectés.";
 
 "general_selected" = "Sélectionnés";
 

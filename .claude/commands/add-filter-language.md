@@ -46,7 +46,7 @@ Parse the JSON and verify the target language code is **not already present** in
 
 Before writing anything, reason carefully about the target language and region. The goal is a list that is **comprehensive but precise** — catching real spam without blocking legitimate messages.
 
-### Key principles (learned from existing en, he, ar, es, fr, pt lists)
+### Key principles (learned from the `en` and `he` lists — always use these two as your reference examples when researching format and scope)
 
 **Phrase clusters, not bare words.** A single word like "free" or "gratis" will match legitimate messages. Instead generate clusters of 4–8 variations per concept:
 - "Free" → "Free gift", "Free trial", "Free offer", "Free access", "100% free", "Completely free", "For free", "At no cost"

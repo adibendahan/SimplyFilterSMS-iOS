@@ -60,6 +60,12 @@ class SnapshotsTestCase: ApplicationTestCase {
         case "es":
             addFilterText = "Préstamo"
             addFilterScreenshot = "05.addFilter"
+        case "ja":
+            addFilterText = "ローン"
+            addFilterScreenshot = "05.addFilter"
+        case "ko":
+            addFilterText = "대출"
+            addFilterScreenshot = "05.addFilter"
         default:
             addFilterText = "Weed"
             addFilterScreenshot = "05.addFilter"

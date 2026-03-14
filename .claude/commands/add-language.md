@@ -107,8 +107,11 @@ Always keep these unchanged regardless of language:
 - `aboutView_appIconCredit` — proper name (Vitali Levit)
 - Developer name "Adi Ben-Dahan" embedded in `aboutView_aboutText`
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
-- Brand names: "Simply Filter SMS", "iCloud", "iOS", "AppStore", "VoiceOver", "Dynamic Type"
+- Brand names: "Simply Filter SMS", "iCloud", "iOS", "AppStore", "VoiceOver"
+- **Translate** "Dynamic Type" and "Voice Control" using the **official iOS localized term** in the target language (they are localized by Apple — e.g. Hebrew: גודל טקסט, Korean: 동적 서체). Same applies to "Reduce Motion" — use the term from iOS Settings > Accessibility.
 - All emoji — keep exactly as in English source
+
+**Partially translate:** `general_copyright` — keep "Adi Ben-Dahan" as-is (proper name) but translate "All rights reserved" into the target language. See Hebrew: `"© %ld עדי בן-דהן, כל הזכויות שמורות."`
 
 ### 4e. Length Constraint
 
@@ -146,46 +149,26 @@ Define the tone to match the app's character:
 
 ---
 
-## Step 5 — Decide on plural handling for `general_active_count`
+## Step 5 — Create the `.stringsdict` plural file
 
-The string `general_active_count` = `"%ld filters"` currently produces **"1 filters"** in English — a known limitation accepted across all existing locales. iOS solves this properly with `.stringsdict` plural rules, but none exist in this project yet.
+Every locale in this project has a `Localizable.stringsdict` file. Always create one automatically — do not ask.
 
-Before translating, **ask the user** using AskUserQuestion:
-> "The string 'X filters' in the app doesn't handle singular ('1 filter') in any language yet. Do you want to add proper plural support for this language using a `.stringsdict` file, or keep the same approach as English/Hebrew (always use the plural form)?"
+The stringsdict contains **three plural entries**:
+1. `general_active_count` — filter count label (e.g. "1 filter" vs "%ld filters")
+2. `autoFilter_countryAllowlist_section_allowed` — country allowlist section header (e.g. "Allowed Country" vs "Allowed Countries")
+3. `autoFilter_countryAllowlist_section_blocked` — country blocklist section header (e.g. "Blocked Country" vs "Blocked Countries")
 
-**If yes (add `.stringsdict`):**
-- Create `Simply Filter SMS/Resources/<code>.lproj/Localizable.stringsdict`
-- Use the CLDR plural categories for the target language (e.g. Spanish has `one` and `other`; Arabic has six categories: `zero`, `one`, `two`, `few`, `many`, `other`)
-- Format:
-  ```xml
-  <?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-  <plist version="1.0">
-  <dict>
-      <key>general_active_count</key>
-      <dict>
-          <key>NSStringLocalizedFormatKey</key>
-          <string>%#@filters@</string>
-          <key>filters</key>
-          <dict>
-              <key>NSStringFormatSpecTypeKey</key>
-              <string>NSStringPluralRuleType</string>
-              <key>NSStringFormatValueTypeKey</key>
-              <string>ld</string>
-              <key>one</key>
-              <string>1 filtro</string>
-              <key>other</key>
-              <string>%ld filtros</string>
-          </dict>
-      </dict>
-  </dict>
-  </plist>
-  ```
-- Also register `<code>.lproj/Localizable.stringsdict` in `project.pbxproj` (same process as the `.strings` file)
-- In the `.strings` file, the `general_active_count` key can be omitted or kept as a fallback
-- **IMPORTANT — call site:** `.stringsdict` plural rules are only applied by `String.localizedStringWithFormat()`, NOT by `String(format:)`. Verify that `AppHomeView.swift` uses `String.localizedStringWithFormat("general_active_count"~, count)`. If it uses `String(format:)`, the stringsdict is silently ignored and the `.strings` fallback (always plural) is used instead.
+Use the **CLDR plural categories** for the target language. Common patterns:
+- **2 categories** (`one`, `other`): most European languages (Spanish, French, Korean, Japanese, …)
+- **3 categories** (`one`, `few`, `other`): Russian, Polish, …
+- **6 categories** (`zero`, `one`, `two`, `few`, `many`, `other`): Arabic
+- **1 category** (`other` only): Korean, Japanese, Chinese — but still define `zero` explicitly for "no filters" / "no countries" UX
 
-**If no:** translate `general_active_count` using the plural form (e.g. `"%ld filtros"`) and note the limitation.
+Always include a `zero` case in `general_active_count` if it improves the UX (e.g. "No filters" instead of "0 filters"), even if CLDR doesn't require it for that language.
+
+Create `Simply Filter SMS/Resources/<code>.lproj/Localizable.stringsdict` with all three entries translated. Use the English `en.lproj/Localizable.stringsdict` as the structural template — match its exact XML format and key order, substituting the correct plural categories and translations for the target language.
+
+**IMPORTANT — call site note (no action needed):** `.stringsdict` plural rules are only applied by `String.localizedStringWithFormat()`, not `String(format:)`. The project already uses the correct call site — this note is for awareness only.
 
 ---
 
@@ -261,14 +244,36 @@ After any edits, re-verify key count matches English. Also scan for any em dash 
 
 ---
 
+## Step 6c — Quality pass (do before moving on)
+
+After the length review, do one final read-through checking for these three issues:
+
+**1. Pronoun/register consistency.** If the language distinguishes formal vs informal address (tu/vous, tú/usted, du/Sie, etc.), verify that every string — including long body strings like `autoFilter_countryAllowlist_explanation`, all `faq_answer_*`, and `enableExtension_welcome_desc` — uses the same register as the short UI strings. Long strings are easy to draft in a different register by accident.
+
+**2. Verb preservation in action labels.** English button and menu labels that start with a verb ("See more options", "Tap to change", "Select a target") should stay verb-led in translation. A noun-phrase reduction (e.g. "Plus d'options" instead of "Voir plus d'options") is a mistranslation — flag and fix it.
+
+**3. Localize example values in `autoFilter_countryAllowlist_explanation`.** This string contains example calling codes `+1, +972`. Replace `+972` with the primary calling code of the target country/region (e.g. `+82` for Korean, `+81` for Japanese, `+49` for German). `+1` is universally recognized and can stay.
+
+---
+
 ## Step 7 — Register the locale in Xcode
+
+**Do NOT use `xcodeproj add-file` for `.lproj/` files.** The CLI has no concept of PBXVariantGroup or localized variants — it produces an incorrect plain `PBXFileReference` with the wrong name/path, adds a spurious build file entry, and does not update `knownRegions`. Always edit `project.pbxproj` directly for this step.
 
 Edit `Simply Filter SMS.xcodeproj/project.pbxproj` to add the new locale:
 
 1. Find the `knownRegions` array and add `"<code>"` to it (keep alphabetical order)
-2. Find the `PBXVariantGroup` for `Localizable.strings` and add a new child `PBXFileReference` entry for `<code>.lproj/Localizable.strings`, following the exact format of the existing `he` entry
+2. Add two new `PBXFileReference` entries — one for `.strings`, one for `.stringsdict` — copying the exact format of the `he` entries:
+   ```
+   NEWID_STRINGS /* <code> */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = <code>; path = <code>.lproj/Localizable.strings; sourceTree = "<group>"; };
+   NEWID_DICT /* <code> */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = <code>; path = <code>.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+   ```
+3. Find the `PBXVariantGroup` for `Localizable.strings` and add `NEWID_STRINGS /* <code> */` as a child
+4. Find the `PBXVariantGroup` for `Localizable.stringsdict` and add `NEWID_DICT /* <code> */` as a child
 
-**Important**: The `.pbxproj` format is whitespace-sensitive. Copy the exact formatting of the Hebrew entry as a template.
+**No changes to `PBXBuildFile` or build phases are needed** — both variant groups are already registered there.
+
+**Important**: The `.pbxproj` format is whitespace-sensitive. Copy the exact formatting of the Hebrew entries as a template.
 
 ---
 
@@ -340,7 +345,7 @@ At the end, report:
 - Language added and locale code
 - Translation guide location: `openspec/changes/<code>-localization/translation-guide.md`
 - Strings file: `Simply Filter SMS/Resources/<code>.lproj/Localizable.strings`
-- Plural `.stringsdict`: created or skipped (with reason)
+- Plural `.stringsdict`: created (3 entries: `general_active_count`, `autoFilter_countryAllowlist_section_allowed`, `autoFilter_countryAllowlist_section_blocked`)
 - Key count (must match English)
 - Xcode project updated: yes/no
 - Strings that exceeded the length constraint (flagged for layout review)

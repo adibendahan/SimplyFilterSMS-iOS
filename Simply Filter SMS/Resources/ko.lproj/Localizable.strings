@@ -1,0 +1,411 @@
+"general_allow" = "허용";
+
+"general_deny" = "차단";
+
+"general_null" = "(없음)";
+
+"general_copyright" = "© %ld Adi Ben-Dahan. 모든 권리 보유.";
+
+"general_close" = "닫기";
+
+"general_active_count" = "필터 %ld개";
+
+"general_lang" = "언어";
+
+"general_edit" = "편집";
+
+"lang_supported" = "지원 언어";
+
+"lang_allBlocked" = "지원되는 모든 언어가 차단되었습니다!";
+
+"lang_how" = "언어 처리 및 식별은 iOS 자연어 엔진에 의해 **기기에서** 이루어집니다. 텍스트의 **주요 언어**가 차단된 언어 목록에 있는 경우에만 메시지가 필터링됩니다.";
+
+"filterList_filters" = "필터";
+
+"filterList_allowed" = "허용 텍스트";
+
+"filterList_denied" = "차단 텍스트";
+
+"filterList_menu_filterLanguage" = "언어 차단";
+
+"filterList_menu_enableExtension" = "도움말";
+
+"filterList_menu_about" = "정보";
+
+"filterList_menu_debug" = "디버그 데이터 로드";
+
+"filterList_deniedLanguage" = "차단된 언어";
+
+"filterList_deleteFiltersCount" = "삭제 (%ld)";
+
+"filterList_folder" = "폴더";
+
+"filterList_text" = "텍스트";
+
+"filterList_options" = "옵션";
+
+"addFilter_add" = "추가";
+
+"addFilter_addFilter_allow" = "허용 텍스트 추가";
+
+"addFilter_addFilter_deny" = "차단 텍스트 추가";
+
+"addFilter_addLanguage" = "언어 추가";
+
+"addFilter_text" = "단어/글자 입력";
+
+"addFilter_type" = "유형";
+
+"addFilter_type_caption" = "작업 선택:";
+
+"addFilter_folder_caption" = "대상 폴더 선택 (탭하여 변경):";
+
+"addFilter_folder_junk" = "스팸";
+
+"addFilter_folder_transactions" = "거래";
+
+"addFilter_folder_promotions" = "프로모션";
+
+"addFilter_duplicate" = "중복 필터";
+
+"addFilter_more" = "추가 옵션 보기";
+
+"addFilter_less" = "간단히 보기";
+
+"addFilter_target_all" = "발신자 + 본문";
+
+"addFilter_target_all_multiline" = "발신자 +\n본문";
+
+"addFilter_target_sender" = "발신자";
+
+"addFilter_target_body" = "본문";
+
+"addFilter_target_title" = "대상 선택:";
+
+"addFilter_case_title" = "대소문자 구분 선택:";
+
+"addFilter_case_sensitive" = "대소문자 구분";
+
+"addFilter_case_insensitive" = "대소문자 무시";
+
+"addFilter_match_title" = "일치 유형 선택:";
+
+"addFilter_match_exact" = "정확히";
+
+"addFilter_match_contains" = "포함";
+
+"enableExtension_ready_callToAction" = "설정";
+
+"enableExtension_ready_cancel" = "취소";
+
+"enableExtension_welcome" = "환영합니다";
+
+"enableExtension_welcome_desc" = "iOS 설정에서 'Simply Filter SMS'를 SMS 필터 앱으로 활성화하세요. 아래 단계를 따른 후 준비가 되면 설정 버튼을 탭하세요.";
+
+"enableExtension_step1_title" = "iOS 설정 열기";
+
+"enableExtension_step1_desc" = "iOS 설정을 열고 아래로 스크롤하여 '앱'을 탭하세요.";
+
+"enableExtension_step2_title" = "메시지 탭하기";
+
+"enableExtension_step2_desc" = "아래로 스크롤하여 '메시지'를 찾아 탭하세요.";
+
+"enableExtension_step3_title" = "알 수 없는 발신자";
+
+"enableExtension_step3_desc" = "'알 수 없는 발신자' 섹션으로 스크롤하세요";
+
+"enableExtension_step4_title" = "알 수 없는 발신자 필터링";
+
+"enableExtension_step4_desc" = "'알 수 없는 발신자 필터링'을 활성화하려면 탭하세요";
+
+"enableExtension_step5_title" = "스팸 필터링";
+
+"enableExtension_step5_desc" = "'스팸 필터링'을 활성화하려면 탭하세요";
+
+"enableExtension_step6_title" = "'Simply Filter SMS' 선택";
+
+"enableExtension_step6_desc" = "'문자 메시지 필터'를 탭하고 'SimplyFilterSMS'를 선택하세요";
+
+"aboutView_aboutSection" = "개발자 노트";
+
+"aboutView_linksSection" = "링크";
+
+"aboutView_aboutText" = "**Adi Ben-Dahan이 Tel Aviv 🇮🇱에서 ❤️을 담아 만들었습니다**\n\n이 프로젝트는 진정으로 개인정보를 존중하는 메시지 필터링 도구를 찾는 개인적인 여정에서 시작되었습니다.\n\n클라우드 없음.\n분석 없음.\n숨겨진 감시 없음.\n\n기기에서 완전히 실행되는 빠르고 신뢰할 수 있는 필터입니다. 이 분야의 많은 도구들이 구독이나 결제 뒤에 숨어 있기에, 아무 조건 없이 그냥 작동하는 버전이 있으면 좋겠다고 생각했습니다. 이 앱은 **무료**로 사용할 수 있으며, **계속 무료**로 유지될 것입니다.\n\n**AppStore에서 별 다섯 개를 주시면 정말 기쁩니다 ⭐️❤️.**\n\n무언가 이상하거나 예상대로 작동하지 않는 경우, GitHub 이슈 페이지에 짧은 메모나 이메일을 남겨주세요.";
+
+"aboutView_twitter" = "a_bd";
+
+"aboutView_github" = "GitHub";
+
+"aboutView_sendMail" = "이메일";
+
+"aboutView_appIconCredit" = "Vitali Levit";
+
+"aboutView_appIconCreditTitle" = "아이콘 디자이너";
+
+"aboutView_review" = "리뷰를 남겨주세요!";
+
+"faq_subtitle" = "자주 묻는 질문 목록입니다. 답변을 찾지 못하셨다면 다음을 통해 문의하세요";
+
+"faq_question_0" = "iOS에서 메시지 필터링을 어떻게 활성화하나요?";
+
+"faq_answer_0" = "탭하여 온보딩 화면을 여세요.";
+
+"faq_question_1" = "메시지 필터링은 어떻게 작동하나요?";
+
+"faq_answer_1" = "연락처에 없는 번호에서 문자 메시지를 받으면 Simply Filter SMS가 다음 규칙에 따라 필터링합니다:\n\n• 메시지에 '허용 텍스트'의 필터와 일치하는 텍스트가 포함되어 있으면 정상적으로 전달됩니다.\n• 그렇지 않으면 '차단 텍스트'의 필터와 일치하는지 검사하며, 일치하는 항목이 있으면 스팸 폴더로 전달됩니다.\n• 텍스트가 필터와 일치하지 않으면 정상적으로 전달됩니다.\n";
+
+"faq_question_2" = "내 메시지가 앱 개발자에게 노출되나요?";
+
+"faq_answer_2" = "아니요. Simply Filter SMS는 어떠한 정보도 수집하지 않으며, 모든 메시지 처리는 로깅 없이 기기에서 로컬로 이루어집니다.";
+
+"faq_question_3" = "iMessage와 연락처의 메시지는 어떻게 되나요?";
+
+"faq_answer_3" = "Apple은 해당 메시지를 개발자에게 노출하지 않으며 완전히 비공개로 유지됩니다.";
+
+"faq_question_4" = "필터링된 메시지는 어디에 있나요?";
+
+"faq_answer_4" = "문자 메시지가 스팸으로 분류되면 메시지 앱의 스팸 폴더에서 읽을 수 있습니다.";
+
+"faq_question_5" = "스팸/거래/프로모션 폴더의 차이점은 무엇인가요?";
+
+"faq_answer_5" = "큰 차이는 없습니다. 어떤 단어든 어떤 폴더로도 필터링할 수 있습니다. 폴더는 어떠한 방식으로도 커스터마이즈할 수 없습니다. 스팸 폴더로 필터링된 메시지만 무음으로 전달됩니다.";
+
+"help_automaticFiltering_question" = "AI 필터링은 어떻게 작동하나요?";
+
+"help_automaticFiltering" = "AI 필터링은 AI가 생성한 키워드 목록을 사용하여 스팸을 감지하고 메시지를 스팸 폴더로 전달합니다. 목록은 주기적으로 업데이트됩니다. AI 필터링이 켜져 있어도 기존 필터는 계속 적용됩니다.";
+
+"help_deny" = "메시지를 스팸으로 표시할 텍스트를 추가하고, 저장할 폴더도 선택할 수 있습니다.";
+
+"help_allow" = "메시지를 정상으로 표시할 텍스트를 추가하세요. 이름과 같은 고유한 식별 텍스트를 추가하는 것이 좋습니다. 이 목록의 텍스트는 메시지 필터링 시 가장 높은 우선순위를 갖습니다.";
+
+"autoFilter_title" = "AI 필터링";
+
+"autoFilter_lastUpdated" = "%@ 업데이트됨";
+
+"autoFilter_forceUpdate" = "강제 업데이트";
+
+"autoFilter_neverUpdated" = "없음";
+
+"autoFilter_ON" = "ON";
+
+"autoFilter_OFF" = "OFF";
+
+"autoFilter_allUnknown" = "알 수 없는 발신자 모두 차단";
+
+"autoFilter_links" = "링크 차단";
+
+"autoFilter_numbersOnly" = "숫자만 허용";
+
+"autoFilter_shortSender" = "짧은 발신자 차단";
+
+"autoFilter_shortSender_desc" = "최소 %ld자";
+
+"autoFilter_shortSender_change" = "탭하여 변경";
+
+"autoFilter_shortSender_action" = "새 제한 선택";
+
+"autoFilter_allUnknown_shortTitle" = "알 수 없는 발신자 모두 (허용 텍스트 제외)";
+
+"autoFilter_links_shortTitle" = "링크";
+
+"autoFilter_numbersOnly_shortTitle" = "숫자만";
+
+"autoFilter_shortSender_shortTitle" = "짧은 발신자";
+
+"autoFilter_smartFilters" = "스마트 필터";
+
+"autoFilter_yourFilters" = "내 필터";
+
+"autoFilter_email_shortTitle" = "이메일";
+
+"autoFilter_email" = "이메일 발신자 차단";
+
+"autoFilter_empty" = "AI 필터링 목록을 다운로드하려면 앱이 열려 있는 상태에서 한 번 이상 온라인 상태가 되세요.";
+
+"autoFilter_error" = "AI 필터링 목록을 다운로드하는 데 문제가 있는 것 같습니다. 나중에 다시 시도하세요.";
+
+"autoFilter_emojis" = "이모지 차단";
+
+"autoFilter_emojis_shortTitle" = "이모지";
+
+"autoFilter_countryAllowlist" = "국가별 허용";
+
+"autoFilter_countryAllowlist_shortTitle" = "국가 허용 목록";
+
+"autoFilter_countryAllowlist_empty" = "선택된 국가 없음";
+
+"autoFilter_countryAllowlist_explanation" = "메시지를 허용할 국가를 추가하세요. 목록에 없는 국가의 전화번호로 발신된 메시지는 필터링됩니다. 완전한 국제 전화 코드(예: +1, +82)가 있는 발신자만 확인됩니다 - 코드가 없는 발신자는 영향을 받지 않습니다.";
+
+"general_search" = "검색";
+
+"general_more" = "더 보기";
+
+"general_selected" = "선택됨";
+
+"general_all" = "모든 국가";
+
+"general_noResults" = "결과 없음";
+
+"testFilters_title" = "필터 테스트";
+
+"testFilters_action" = "테스트";
+
+"testFilters_messageTitle" = "메시지";
+
+"testFilters_senderTitle" = "발신자 (선택 사항)";
+
+"testFilters_resultAllowed" = "허용됩니다! 🥳";
+
+"testFilters_resultJunk" = "스팸입니다! 😈";
+
+"testFilters_resultPromotion" = "프로모션입니다! 📢";
+
+"testFilters_resultTransaction" = "거래입니다! 🧾";
+
+"testFilters_resultReason_noMatch" = "일치 없음";
+
+"testFilters_resultReason_unknownSender" = "알 수 없는 발신자";
+
+"testFilters_resultReason" = "이유:";
+
+"notification_offline_title" = "iCloud 동기화 일시 중지됨";
+
+"notification_offline_subtitle" = "기기가 네트워크에 연결되어 있지 않습니다";
+
+"notification_sync_title" = "iCloud 동기화 중";
+
+"notification_sync_subtitle" = "기기 데이터가 업데이트되었습니다";
+
+"notification_hide" = "숨기기";
+
+"notification_automatic_title" = "AI 필터링";
+
+"notification_automatic_subtitle" = "필터가 업데이트되었습니다";
+
+"notification_clipboard_subtitle" = "클립보드에 복사됨";
+
+"notification_tipPromotion_title" = "앱이 마음에 드시나요?";
+
+"notification_tipPromotion_subtitle" = "탭하여 팁 남기기";
+
+"reportMessage_senderTitle" = "발신자";
+
+"reportMessage_title" = "메시지 신고";
+
+"reportMessage_junk" = "스팸";
+
+"reportMessage_notJunk" = "스팸 아님";
+
+"reportMessage_report" = "신고";
+
+"reportMessage_thankYou" = "신고해 주셔서 감사합니다!";
+
+"whatsNew_title" = "새로운 기능";
+
+"whatsNew_continue" = "계속";
+
+"whatsNew_menuItem" = "새로운 기능";
+
+"whatsNew_accessibility_title" = "접근성 지원";
+
+"whatsNew_accessibility_desc" = "**VoiceOver** 및 **음성 제어**로 완전히 사용 가능합니다. 텍스트는 **동적 서체**에 맞게 조정됩니다. 애니메이션은 **모션 줄이기** 설정을 따릅니다.";
+
+"whatsNew_freshLook_title" = "새로운 디자인";
+
+"whatsNew_freshLook_desc" = "최신 iOS 시각 스타일로 앱이 새롭게 디자인되어 더 **깔끔하고** 현대적인 경험을 제공합니다.";
+
+"whatsNew_iPad_title" = "네이티브 iPad 지원";
+
+"whatsNew_iPad_desc" = "**사이드바 내비게이션**과 더 큰 화면에 최적화된 레이아웃으로 완전한 iPad 경험을 제공합니다.";
+
+"whatsNew_singleChar_title" = "단일 문자 필터";
+
+"whatsNew_singleChar_desc" = "이제 **단일 문자**로 필터를 만들 수 있어 메시지 필터링을 더 정밀하게 제어할 수 있습니다.";
+
+"whatsNew_tipJar_title" = "개발자 지원";
+
+"whatsNew_tipJar_desc" = "새로운 **팁 저금통**으로 앱 개발을 지원할 수 있습니다. Simply Filter SMS는 영원히 무료입니다 - 팁은 감사 표시일 뿐입니다! **여기를 탭하여 팁을 남겨주세요!**";
+
+"tipJar_title" = "팁 저금통";
+
+"tipJar_menuItem" = "팁 저금통";
+
+"tipJar_aboutRow" = "팁 저금통";
+
+"tipJar_header" = "앱이 마음에 드시나요?";
+
+"tipJar_subheader" = "Simply Filter SMS는 무료이며 항상 무료로 유지됩니다. 유용하다고 생각하신다면, 작은 팁이 큰 의미가 됩니다!";
+
+"tipJar_footer" = "팁은 어떠한 기능도 잠금 해제하지 않습니다. 지원해 주셔서 감사합니다!";
+
+"tipJar_unavailable" = "팁을 지금 이용할 수 없습니다. 나중에 다시 시도하세요.";
+
+"tipJar_tier_small" = "커피";
+
+"tipJar_tier_medium" = "피자";
+
+"tipJar_tier_large" = "칵테일";
+
+"tipJar_toast_title" = "정말 감사합니다!";
+
+"tipJar_toast_subtitle" = "여러분의 지원이 큰 힘이 됩니다!";
+
+"tipJar_tier_small_desc" = "라떼 한 잔의 감사";
+
+"tipJar_tier_medium_desc" = "사랑을 담은 한 조각";
+
+"tipJar_tier_large_desc" = "흔들어, 섞지 말고";
+
+"tipJar_chooseATip" = "팁 선택";
+
+"placeholder_choose_title" = "카테고리 선택";
+
+"placeholder_choose_detail" = "사이드바에서 카테고리를 선택하여 세부 정보를 확인하세요.";
+
+"placeholder_choose_sub_detail1" = "숨겨져 있으면";
+
+"placeholder_choose_sub_detail2" = "버튼을 탭하세요.";
+
+"a11y_home_menuButton" = "추가 옵션";
+
+"a11y_addFilter_expandHint" = "이중 탭하여 고급 옵션 전환";
+
+"a11y_testFilters_testHint" = "이중 탭하여 필터로 메시지 테스트";
+
+"a11y_reportMessage_submitHint" = "이중 탭하여 메시지 신고";
+
+"a11y_enableExtension_ctaHint" = "이중 탭하여 iOS 설정 열기";
+
+"a11y_filterRow_targetLabel" = "필터 대상: %@";
+
+"a11y_filterRow_matchLabel" = "일치 유형: %@";
+
+"a11y_filterRow_caseLabel" = "대소문자: %@";
+
+"a11y_filterRow_folderLabel" = "폴더: %@";
+
+"a11y_home_shortSenderHint" = "현재 %ld자입니다. 동작을 사용하여 글자 수 제한을 변경하세요";
+
+"a11y_home_shortSenderAction" = "글자 수 제한 변경";
+
+"a11y_footer_hint" = "이중 탭하여 앱 정보 보기";
+
+"a11y_filterRow_editHint" = "이중 탭하여 편집";
+
+"a11y_about_versionHint" = "이중 탭하여 버전 복사";
+
+"a11y_about_versionCopied" = "버전";
+
+"a11y_enableExtension_stepLabel" = "%ld단계: %@. %@";
+
+"callingCode_+1" = "북미";
+
+"callingCode_+7" = "러시아 및 카자흐스탄";
+
+"callingCode_+47" = "노르웨이";
+
+"callingCode_+262" = "레위니옹 및 마요트";
+
+"callingCode_+590" = "과들루프";
+
+"callingCode_+599" = "네덜란드령 앤틸리스";
