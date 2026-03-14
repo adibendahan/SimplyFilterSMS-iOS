@@ -310,18 +310,6 @@
 
 "whatsNew_accessibility_desc" = "Completamente utilizzabile con **VoiceOver** e **Controllo vocale**. Il testo si scala con **Testo dinamico**. Le animazioni rispettano l'impostazione **Riduci movimento**.";
 
-"whatsNew_freshLook_title" = "Nuovo aspetto";
-
-"whatsNew_freshLook_desc" = "L'app è stata ridisegnata con il più recente stile visivo di iOS per un'esperienza più **pulita** e moderna.";
-
-"whatsNew_iPad_title" = "Supporto nativo iPad";
-
-"whatsNew_iPad_desc" = "Esperienza iPad nativa completa con **navigazione nella barra laterale** e layout ottimizzati per schermi più grandi.";
-
-"whatsNew_singleChar_title" = "Filtri per singolo carattere";
-
-"whatsNew_singleChar_desc" = "Ora puoi creare filtri con un **singolo carattere**, per un controllo più preciso sul filtraggio dei messaggi.";
-
 "whatsNew_tipJar_title" = "Supporta lo sviluppatore";
 
 "whatsNew_tipJar_desc" = "Un nuovo **Barattolo delle mance** ti permette di supportare lo sviluppo dell'app. Simply Filter SMS è gratuita per sempre - le mance sono solo un modo per dire grazie! **Tocca qui per dare una mancia!**";
@@ -409,3 +397,15 @@
 "callingCode_+590" = "Guadalupa";
 
 "callingCode_+599" = "Antille Olandesi";
+
+"whatsNew_aiFiltering_title" = "Filtro AI";
+
+"whatsNew_aiFiltering_desc" = "Il filtro automatico è ora **basato sull'AI** - più intelligente, veloce e preciso, con supporto per **10 lingue** tra cui spagnolo, francese, tedesco, arabo e altro.";
+
+"whatsNew_newLanguages_title" = "8 Nuove Lingue";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** L'app è ora disponibile in **8 nuove lingue**, tutte localizzate con l'aiuto dell'**AI**.";
+
+"whatsNew_trustedCountries_title" = "Paesi Fidati";
+
+"whatsNew_trustedCountries_desc" = "Consenti automaticamente i messaggi da **paesi specifici** in base al prefisso telefonico. Aggiungi i tuoi paesi fidati e filtra il resto.";

@@ -304,21 +304,21 @@
 
 "whatsNew_menuItem" = "מה חדש";
 
+"whatsNew_aiFiltering_title" = "סינון AI";
+
+"whatsNew_aiFiltering_desc" = "הסינון האוטומטי מופעל כעת על ידי **בינה מלאכותית** - חכם, מהיר ומדויק יותר, עם תמיכה ב-**10 שפות** כולל ספרדית, צרפתית, גרמנית, ערבית ועוד.";
+
+"whatsNew_newLanguages_title" = "8 שפות חדשות";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** האפליקציה זמינה כעת ב-**8 שפות חדשות**, כולן תורגמו בעזרת **בינה מלאכותית**.";
+
+"whatsNew_trustedCountries_title" = "מדינות מהימנות";
+
+"whatsNew_trustedCountries_desc" = "אפשרו אוטומטית הודעות ממדינות **ספציפיות** לפי קידומת טלפון. הוסיפו את המדינות המהימנות עליכם וסננו את השאר.";
+
 "whatsNew_accessibility_title" = "תמיכה בנגישות";
 
 "whatsNew_accessibility_desc" = "שימוש מלא עם **VoiceOver** ו-**בקרה קולית**. הטקסט גדל עם **גודל טקסט**. האנימציות מכבדות את הגדרת **הפחת תנועה**.";
-
-"whatsNew_freshLook_title" = "מראה חדש ורענן";
-
-"whatsNew_freshLook_desc" = "האפליקציה עוצבה מחדש בסגנון העיצובי העדכני של iOS לחוויה **נקייה** ומודרנית יותר.";
-
-"whatsNew_iPad_title" = "תמיכה מלאה ב-iPad";
-
-"whatsNew_iPad_desc" = "חוויית iPad מלאה עם **ניווט בסרגל צד** ועיצוב מותאם למסכים גדולים.";
-
-"whatsNew_singleChar_title" = "פילטרים של תו בודד";
-
-"whatsNew_singleChar_desc" = "עכשיו ניתן ליצור פילטרים עם **תו בודד**, לשליטה מדויקת יותר בסינון ההודעות.";
 
 "whatsNew_tipJar_title" = "תמכו במפתח";
 

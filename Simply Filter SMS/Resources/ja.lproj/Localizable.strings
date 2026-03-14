@@ -310,18 +310,6 @@
 
 "whatsNew_accessibility_desc" = "**VoiceOver**と**音声コントロール**で完全に使用できます。テキストは**ダイナミックタイプ**に対応します。アニメーションは**視差効果を減らす**設定に従います。";
 
-"whatsNew_freshLook_title" = "新しいデザイン";
-
-"whatsNew_freshLook_desc" = "最新のiOSビジュアルスタイルで再設計され、**すっきり**としたモダンな体験を提供します。";
-
-"whatsNew_iPad_title" = "iPad完全対応";
-
-"whatsNew_iPad_desc" = "**サイドバーナビゲーション**と大画面向けに最適化されたレイアウトでiPadに完全対応しました。";
-
-"whatsNew_singleChar_title" = "1文字フィルター";
-
-"whatsNew_singleChar_desc" = "**1文字**だけのフィルターを作成できるようになり、メッセージフィルタリングをより細かく制御できます。";
-
 "whatsNew_tipJar_title" = "開発者を支援";
 
 "whatsNew_tipJar_desc" = "新しい**チップ機能**でアプリの開発を支援できます。Simply Filter SMSは永久無料 - チップはありがとうの気持ちを伝える方法です! **ここをタップしてチップを送る!**";
@@ -409,3 +397,15 @@
 "callingCode_+590" = "グアドループ";
 
 "callingCode_+599" = "オランダ領アンティル";
+
+"whatsNew_aiFiltering_title" = "AIフィルタリング";
+
+"whatsNew_aiFiltering_desc" = "自動フィルタリングが**AI**で動作するようになりました - スペイン語、フランス語、ドイツ語、アラビア語など**10言語**に対応し、より賢く、速く、正確に。";
+
+"whatsNew_newLanguages_title" = "8つの新言語";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** アプリが**8つの新しい言語**で利用可能になりました。すべて**AI**の助けでローカライズされています。";
+
+"whatsNew_trustedCountries_title" = "信頼できる国";
+
+"whatsNew_trustedCountries_desc" = "電話番号の国番号で**特定の国**からのメッセージを自動的に許可。信頼できる国を追加して、それ以外をフィルタリングしましょう。";

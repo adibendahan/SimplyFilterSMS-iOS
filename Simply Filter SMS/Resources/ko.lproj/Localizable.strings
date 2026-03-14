@@ -310,18 +310,6 @@
 
 "whatsNew_accessibility_desc" = "**VoiceOver** 및 **음성 제어**로 완전히 사용 가능합니다. 텍스트는 **동적 서체**에 맞게 조정됩니다. 애니메이션은 **모션 줄이기** 설정을 따릅니다.";
 
-"whatsNew_freshLook_title" = "새로운 디자인";
-
-"whatsNew_freshLook_desc" = "최신 iOS 시각 스타일로 앱이 새롭게 디자인되어 더 **깔끔하고** 현대적인 경험을 제공합니다.";
-
-"whatsNew_iPad_title" = "네이티브 iPad 지원";
-
-"whatsNew_iPad_desc" = "**사이드바 내비게이션**과 더 큰 화면에 최적화된 레이아웃으로 완전한 iPad 경험을 제공합니다.";
-
-"whatsNew_singleChar_title" = "단일 문자 필터";
-
-"whatsNew_singleChar_desc" = "이제 **단일 문자**로 필터를 만들 수 있어 메시지 필터링을 더 정밀하게 제어할 수 있습니다.";
-
 "whatsNew_tipJar_title" = "개발자 지원";
 
 "whatsNew_tipJar_desc" = "새로운 **팁 저금통**으로 앱 개발을 지원할 수 있습니다. Simply Filter SMS는 영원히 무료입니다 - 팁은 감사 표시일 뿐입니다! **여기를 탭하여 팁을 남겨주세요!**";
@@ -409,3 +397,15 @@
 "callingCode_+590" = "과들루프";
 
 "callingCode_+599" = "네덜란드령 앤틸리스";
+
+"whatsNew_aiFiltering_title" = "AI 필터링";
+
+"whatsNew_aiFiltering_desc" = "자동 필터링이 이제 **AI**로 구동됩니다 - 스페인어, 프랑스어, 독일어, 아랍어 등 **10개 언어**를 지원하며 더욱 스마트하고 빠르고 정확합니다.";
+
+"whatsNew_newLanguages_title" = "8개의 새로운 언어";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** 앱이 이제 **8개의 새로운 언어**로 제공됩니다. 모두 **AI**의 도움으로 현지화되었습니다.";
+
+"whatsNew_trustedCountries_title" = "신뢰할 수 있는 국가";
+
+"whatsNew_trustedCountries_desc" = "전화 번호 접두사로 **특정 국가**의 메시지를 자동으로 허용합니다. 신뢰할 수 있는 국가를 추가하고 나머지는 필터링하세요.";

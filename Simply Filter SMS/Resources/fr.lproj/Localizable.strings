@@ -292,18 +292,6 @@
 
 "whatsNew_accessibility_desc" = "Entièrement utilisable avec **VoiceOver** et **Contrôle vocal**. Le texte s'adapte avec **Taille du texte dynamique**. Les animations respectent ton réglage **Réduire les animations**.";
 
-"whatsNew_freshLook_title" = "Nouveau look";
-
-"whatsNew_freshLook_desc" = "L'app a été repensée avec le dernier style visuel iOS pour une expérience **plus épurée** et moderne.";
-
-"whatsNew_iPad_title" = "Support natif iPad";
-
-"whatsNew_iPad_desc" = "Expérience iPad complète avec **navigation en barre latérale** et mises en page optimisées pour les grands écrans.";
-
-"whatsNew_singleChar_title" = "Filtres à un caractère";
-
-"whatsNew_singleChar_desc" = "Tu peux maintenant créer des filtres avec un seul **caractère**, pour un contrôle plus précis du filtrage.";
-
 "whatsNew_tipJar_title" = "Soutenir le développeur";
 
 "whatsNew_tipJar_desc" = "Une nouvelle **boîte à pourboires** te permet de soutenir le développement de l'app. Simply Filter SMS est gratuit pour toujours - les pourboires sont juste une façon de dire merci ! **Touche ici pour donner un pourboire !**";
@@ -409,3 +397,15 @@
 "general_all" = "Tous les pays";
 
 "general_noResults" = "Aucun résultat";
+
+"whatsNew_aiFiltering_title" = "Filtrage par IA";
+
+"whatsNew_aiFiltering_desc" = "Le filtrage automatique est désormais **propulsé par l'IA** - plus intelligent, rapide et précis, avec support pour **10 langues** dont l'espagnol, le français, l'allemand, l'arabe et plus.";
+
+"whatsNew_newLanguages_title" = "8 Nouvelles Langues";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** L'app est maintenant disponible en **8 nouvelles langues**, toutes localisées à l'aide de l'**IA**.";
+
+"whatsNew_trustedCountries_title" = "Pays de Confiance";
+
+"whatsNew_trustedCountries_desc" = "Autorisez automatiquement les messages de **pays spécifiques** par préfixe téléphonique. Ajoutez vos pays de confiance et filtrez le reste.";

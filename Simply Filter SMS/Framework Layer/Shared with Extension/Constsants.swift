@@ -20,7 +20,7 @@ let kMinimumFilterLength = 1
 let kHideiClouldStatusMemory = 60
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
-let currentWhatsNewVersion = 3
+let currentWhatsNewVersion = 4
 
 
 // URLs
@@ -516,83 +516,83 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case accessibility, tipJar, freshLook, ipad, singleChar
+    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar
 
     var title: String {
         switch self {
+        case .aiFiltering:
+            return "whatsNew_aiFiltering_title"~
+        case .newLanguages:
+            return "whatsNew_newLanguages_title"~
+        case .trustedCountries:
+            return "whatsNew_trustedCountries_title"~
         case .accessibility:
             return "whatsNew_accessibility_title"~
         case .tipJar:
             return "whatsNew_tipJar_title"~
-        case .freshLook:
-            return "whatsNew_freshLook_title"~
-        case .ipad:
-            return "whatsNew_iPad_title"~
-        case .singleChar:
-            return "whatsNew_singleChar_title"~
         }
     }
 
     var description: String {
         switch self {
+        case .aiFiltering:
+            return "whatsNew_aiFiltering_desc"~
+        case .newLanguages:
+            return "whatsNew_newLanguages_desc"~
+        case .trustedCountries:
+            return "whatsNew_trustedCountries_desc"~
         case .accessibility:
             return "whatsNew_accessibility_desc"~
         case .tipJar:
             return "whatsNew_tipJar_desc"~
-        case .freshLook:
-            return "whatsNew_freshLook_desc"~
-        case .ipad:
-            return "whatsNew_iPad_desc"~
-        case .singleChar:
-            return "whatsNew_singleChar_desc"~
         }
     }
 
     var imageName: String {
         switch self {
+        case .aiFiltering:
+            return "bolt.shield.fill"
+        case .newLanguages:
+            return "globe"
+        case .trustedCountries:
+            return "globe.americas"
         case .accessibility:
             return "accessibility"
         case .tipJar:
             return "heart.fill"
-        case .freshLook:
-            return "sparkles"
-        case .ipad:
-            return "ipad.and.iphone"
-        case .singleChar:
-            return "character.cursor.ibeam"
         }
     }
 
     var color: Color {
         switch self {
+        case .aiFiltering:
+            return .indigo
+        case .newLanguages:
+            return .teal
+        case .trustedCountries:
+            return .green
         case .accessibility:
             return .blue
         case .tipJar:
             return .red
-        case .freshLook:
-            return .yellow
-        case .ipad:
-            return .purple
-        case .singleChar:
-            return .green
         }
     }
 
     var order: Int {
         switch self {
-        case .accessibility:
+        case .aiFiltering:
             return 0
-        case .tipJar:
+        case .newLanguages:
             return 1
-        case .freshLook:
+        case .trustedCountries:
             return 2
-        case .ipad:
+        case .accessibility:
             return 3
-        case .singleChar:
+        case .tipJar:
             return 4
         }
     }
-    
+
     var isActionnable: Bool {
         switch self {
         case .tipJar:

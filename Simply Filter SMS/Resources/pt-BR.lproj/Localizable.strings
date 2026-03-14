@@ -292,18 +292,6 @@
 
 "whatsNew_accessibility_desc" = "Totalmente utilizável com **VoiceOver** e **Controle por Voz**. O texto escala com **Tipo Dinâmico**. Animações respeitam seu ajuste de **Reduzir Movimento**.";
 
-"whatsNew_freshLook_title" = "Visual Renovado";
-
-"whatsNew_freshLook_desc" = "O app foi redesenhado com o visual mais recente do iOS para uma experiência **mais limpa** e moderna.";
-
-"whatsNew_iPad_title" = "Suporte Nativo ao iPad";
-
-"whatsNew_iPad_desc" = "Experiência iPad completa com **navegação em barra lateral** e layouts otimizados para telas maiores.";
-
-"whatsNew_singleChar_title" = "Filtros de Um Caractere";
-
-"whatsNew_singleChar_desc" = "Agora você pode criar filtros com apenas **um caractere**, dando mais controle preciso sobre o filtro de mensagens.";
-
 "whatsNew_tipJar_title" = "Apoie o Desenvolvedor";
 
 "whatsNew_tipJar_desc" = "Um novo **Pote de Gorjetas** permite apoiar o desenvolvimento do app. Simply Filter SMS é gratuito para sempre - gorjetas são só uma forma de dizer obrigado! **Toque aqui para dar uma gorjeta!**";
@@ -409,3 +397,15 @@
 "general_all" = "Todos os países";
 
 "general_noResults" = "Sem resultados";
+
+"whatsNew_aiFiltering_title" = "Filtragem com IA";
+
+"whatsNew_aiFiltering_desc" = "A filtragem automática agora é **impulsionada por IA** - mais inteligente, rápida e precisa, com suporte para **10 idiomas** incluindo espanhol, francês, alemão, árabe e mais.";
+
+"whatsNew_newLanguages_title" = "8 Novos Idiomas";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** O app agora está disponível em **8 novos idiomas**, todos localizados com a ajuda da **IA**.";
+
+"whatsNew_trustedCountries_title" = "Países Confiáveis";
+
+"whatsNew_trustedCountries_desc" = "Permita automaticamente mensagens de **países específicos** por prefixo telefônico. Adicione seus países confiáveis e filtre o restante.";
