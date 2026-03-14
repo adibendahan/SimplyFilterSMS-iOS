@@ -92,3 +92,4 @@ iOSInjectionProject/
 *.xcbkptlist
 *.xcconfig
 .DS_Store
+automatic_filters.json
