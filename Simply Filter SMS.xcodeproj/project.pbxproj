@@ -194,6 +194,8 @@
 		6941FE26277DE79C00B99546 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fr; path = fr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		6941FE27277DE79D00B99547 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6941FE28277DE79E00B99548 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		AA001122334455667788990A /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AA001122334455667788990B /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = it; path = it.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		694E1E8A27AEE16D00264524 /* Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
 		694E53DC27A42EA8009A7E0E /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		694E53E527A42EEB009A7E0E /* mock_DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_DefaultsManager.swift; sourceTree = "<group>"; };
@@ -684,6 +686,7 @@
 				es,
 				ar,
 				fr,
+				it,
 				ja,
 				ko,
 				"pt-BR",
@@ -893,6 +896,7 @@
 				6941FE23277DE79900B99543 /* pt-BR */,
 				6941FE25277DE79B00B99545 /* fr */,
 				6941FE27277DE79D00B99547 /* de */,
+				AA001122334455667788990A /* it */,
 				F0956A6375EFA3BB6C2877B5 /* ja */,
 				4BE7E38E92044E3CBA6DEB11 /* ko */,
 			);
@@ -909,6 +913,7 @@
 				6941FE24277DE79A00B99544 /* pt-BR */,
 				6941FE26277DE79C00B99546 /* fr */,
 				6941FE28277DE79E00B99548 /* de */,
+				AA001122334455667788990B /* it */,
 				DEE20EFA594C4A0FBF07D691 /* ko */,
 			);
 			name = Localizable.stringsdict;

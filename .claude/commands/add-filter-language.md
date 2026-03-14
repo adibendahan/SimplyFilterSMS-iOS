@@ -46,6 +46,8 @@ Parse the JSON and verify the target language code is **not already present** in
 
 Before writing anything, reason carefully about the target language and region. The goal is a list that is **comprehensive but precise** — catching real spam without blocking legitimate messages.
 
+> **Search budget:** Use your built-in knowledge first. You may perform **at most 2-3 web/agent searches** for genuinely unknown facts (e.g. an obscure local sender ID, a current politician's name, a rare iOS system term). If you believe more than 2-3 searches are needed, **ask the user for permission before searching**. Never launch a broad research agent just to be thorough — it wastes the session token budget.
+
 ### Key principles (learned from the `en` and `he` lists — always use these two as your reference examples when researching format and scope)
 
 **Phrase clusters, not bare words.** A single word like "free" or "gratis" will match legitimate messages. Instead generate clusters of 4–8 variations per concept:
