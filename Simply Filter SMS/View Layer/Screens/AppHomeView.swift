@@ -310,6 +310,10 @@ struct AppHomeView: View {
                         self.model.pendingScreenAfterDismiss = .tipJar
                     }
                 }))
+            } else if sheetScreen == .help {
+                HelpView(model: HelpView.ViewModel(onRequestScreen: { screen in
+                    self.model.pendingScreenAfterDismiss = screen
+                }))
             } else {
                 sheetScreen.build()
             }

@@ -123,9 +123,6 @@ struct LanguageListView: View {
                 }
             }
         }
-        .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
-            sheetScreen.build()
-        }
         .if(self.model.shouldAllowRefresh) {
             $0.refreshable(action: self.model.forceUpdateFilters)
         }
@@ -154,7 +151,6 @@ extension LanguageListView {
         @Published private(set) var isOnline: Bool
         @Published private(set) var shouldAllowRefresh: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
-        @Published var sheetScreen: Screen? = nil
         private var didAddObservers = false
         
         init(mode: LanguageListView.Mode,

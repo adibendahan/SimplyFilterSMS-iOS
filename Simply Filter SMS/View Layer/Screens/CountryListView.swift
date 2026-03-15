@@ -175,18 +175,6 @@ extension CountryListView {
             }
         }
 
-        /// Summary string for the disclosure row shown in the parent list.
-        func selectionSummary() -> String {
-            guard !selectedCodes.isEmpty else { return "autoFilter_countryAllowlist_empty"~ }
-            // allEntries is already sorted with US/Israel first, so just filter in place.
-            let names = allEntries
-                .filter { selectedCodes.contains($0.callingCode) }
-                .map { $0.summaryName }
-            guard let first = names.first else { return "autoFilter_countryAllowlist_empty"~ }
-            if names.count == 1 { return first }
-            return "\(first) + \(names.count - 1) \("general_more"~)"
-        }
-
         // MARK: - Private
 
         /// Returns ISO region codes where `languageCode` is the primary language,
@@ -242,8 +230,6 @@ extension CountryListView {
 //MARK: - Preview -
 struct CountryListView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            CountryListView(model: CountryListView.ViewModel(appManager: AppManager.previews))
-        }
+        CountryListView(model: CountryListView.ViewModel(appManager: AppManager.previews))
     }
 }

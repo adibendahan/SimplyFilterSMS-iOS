@@ -85,7 +85,8 @@ struct HelpView: View {
                                                               onAction: {
                                                                   switch question.action {
                                                                   case .activateFilters:
-                                                                      self.model.sheetScreen = .enableExtension
+                                                                      self.model.onRequestScreen?(.enableExtension)
+                                                                      dismiss()
                                                                   default:
                                                                       break
                                                                   }
@@ -102,6 +103,7 @@ struct HelpView: View {
             .padding(.horizontal, 16)
             .background(Color.listBackgroundColor(for: colorScheme))
             .navigationTitle(self.model.title)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem {
                     Button {
@@ -116,7 +118,10 @@ struct HelpView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .modifier(EmbeddedFooterView(onTap: { self.model.sheetScreen = .about }))
+        .modifier(EmbeddedFooterView(onTap: {
+            self.model.onRequestScreen?(.about)
+            dismiss()
+        }))
         .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
             sheetScreen.build()
         }
@@ -137,11 +142,14 @@ extension HelpView {
         @Published var sheetScreen: Screen? = nil
         @Published var composeMailScreen: Bool = false
         @Published var result: Result<MFMailComposeResult, Error>?
-        
-        override init(appManager: AppManagerProtocol = AppManager.shared) {
+        var onRequestScreen: ((Screen) -> Void)?
+
+        init(appManager: AppManagerProtocol = AppManager.shared,
+             onRequestScreen: ((Screen) -> Void)? = nil) {
             self.title = "filterList_menu_enableExtension"~
             self.questions = appManager.getFrequentlyAskedQuestions()
-            
+            self.onRequestScreen = onRequestScreen
+
             super.init(appManager: appManager)
         }
     }

@@ -42,7 +42,7 @@ struct EnableExtensionView: View {
                             activeStep = EnableExtensionStep.allCases.count
                             return
                         }
-                        while true {
+                        while !Task.isCancelled {
                             try? await Task.sleep(nanoseconds: kEnableExtensionCycleStartDelay)
                             for step in EnableExtensionStep.allCases {
                                 withAnimation(reduceMotion ? nil : .default) {

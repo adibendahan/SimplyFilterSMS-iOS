@@ -34,6 +34,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | `reportMessage` | ReportMessageView | Sheet |
 | `whatsNew` | WhatsNewView | Sheet |
 | `tipJar` | TipJarView | Sheet |
+| `countryList` | CountryListView | Sheet |
 
 ## Manager Dependency Graph
 
@@ -58,9 +59,11 @@ AppManager (Singleton)
 
 When an SMS arrives, `MessageEvaluationManager.evaluateMessage(body:sender:)` runs these checks in order (first match wins):
 
-1. **Allow filters** → `.allow` (user-created allowlist, highest priority)
-2. **Deny filters** → `.junk` / `.transaction` / `.promotion` (user-created blocklist)
-3. **Language deny** → `.junk` (blocked languages via NLLanguageRecognizer)
-4. **Automatic filters** → `.allow` or `.junk` (community filter lists from S3, per-language)
-5. **Smart rules** → `.junk` (allUnknown, links, numbersOnly, shortSender, email, emojis)
-6. **No match** → `.allow` (default)
+1. **All Unknown** → `.junk` (absolute gate — if enabled, blocks everything regardless of other filters)
+2. **Allow filters** → `.allow` (user-created allowlist)
+3. **Automatic filters (allow)** → `.allow` (trusted senders/body phrases from S3 community lists)
+4. **Filter rules** → `.junk` (links, numbersOnly, shortSender, email, emojis, countryAllowlist)
+5. **Deny filters** → `.junk` / `.transaction` / `.promotion` (user-created blocklist)
+6. **Deny language filters** → `.junk` (blocked languages via NLLanguageRecognizer)
+7. **Automatic filters (deny)** → `.junk` (spam keywords/senders from S3 community lists)
+8. **No match** → `.allow` (default)
