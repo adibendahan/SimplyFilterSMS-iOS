@@ -34,4 +34,6 @@ enum TestIdentifier: String {
     case testYourFiltersButton = "testYourFiltersButton"
     case testSenderInput = "testSenderInput"
     case testBodyInput = "testBodyInput"
+    case countryAllowlistButton = "countryAllowlistButton"
+    case countryRow = "countryRow"
 }

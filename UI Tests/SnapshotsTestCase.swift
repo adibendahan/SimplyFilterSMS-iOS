@@ -89,6 +89,20 @@ class SnapshotsTestCase: ApplicationTestCase {
             ruleSwitch.switches["0"].firstMatch.tap()
             XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
         }
+
+
+        // MARK: countryList Screenshot
+        app.tap(.countryAllowlistButton)
+        self.sleep(seconds: 1)
+        for i in 0..<2 {
+            app.buttons.matching(identifier: TestIdentifier.countryRow.rawValue).element(boundBy: i).tap()
+            self.sleep(seconds: 0.5)
+        }
+        snapshot("08.countryList")
+        app.tap(.closeButton)
+        self.sleep(seconds: 0.5)
+
+
         app.tap(.appMenuButton)
         app.tap(.loadDebugDataMenuButton)
         snapshot("01.applicationHome")

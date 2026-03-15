@@ -72,6 +72,7 @@ struct CountryListView: View {
                         .foregroundColor(.secondary)
                 }
                 .accessibilityLabel("general_close"~)
+                .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
                 .contentShape(Rectangle())
             }
         }
@@ -105,6 +106,7 @@ struct CountryListView: View {
                 }
             }
         }
+        .accessibilityIdentifier(TestIdentifier.countryRow.rawValue)
     }
 }
 
@@ -124,14 +126,24 @@ extension CountryListView {
         private var allEntries: [CallingCodeEntry] = []
         /// Pre-computed localized search terms per calling code (ISO name lookups are expensive).
         private var localizedNames: [String: [String]] = [:]
+        /// ISO region codes whose primary (or a major) language matches the current locale's language.
+        private var localeLanguageRegions: Set<String> = []
 
         init(rule: RuleType = .countryAllowlist,
              appManager: AppManagerProtocol = AppManager.shared) {
             self.rule = rule
             super.init(appManager: appManager)
 
+            let languageCode: String
+            if #available(iOS 16, *) {
+                languageCode = Locale.current.language.languageCode?.identifier ?? ""
+            } else {
+                languageCode = Locale.current.languageCode ?? ""
+            }
+            self.localeLanguageRegions = Self.primaryRegions(for: languageCode)
+
             self.allEntries = CallingCodeEntry.allCases
-                .sorted { Self.sortIndex($0) < Self.sortIndex($1) }
+                .sorted { self.sortKey($0) < self.sortKey($1) }
 
             // Pre-compute localized country names for each entry.
             for entry in self.allEntries {
@@ -177,15 +189,33 @@ extension CountryListView {
 
         // MARK: - Private
 
-        /// Sort: +1 (US/NANP) first, +972 (Israel) second, rest by numeric code.
-        private static func sortIndex(_ entry: CallingCodeEntry) -> Int {
+        /// Returns ISO region codes where `languageCode` is the primary language,
+        /// using CLDR likely-subtags via `Locale.Language.maximalIdentifier` (iOS 16+).
+        private static func primaryRegions(for languageCode: String) -> Set<String> {
+            guard !languageCode.isEmpty else { return [] }
+            guard #available(iOS 16, *) else { return [] }
+            return Set(Locale.Region.isoRegions.compactMap { region -> String? in
+                let regionCode = region.identifier
+                let maximal = Locale.Language(identifier: "und-\(regionCode)").maximalIdentifier
+                guard let primary = maximal.split(separator: "-").first,
+                      String(primary) == languageCode else { return nil }
+                return regionCode
+            })
+        }
+
+        /// Sort key: (bucket, numericCode).
+        /// Buckets: 0 = Israel, 1 = locale-language countries, 2 = rest.
+        /// Within each bucket, entries are ordered by numeric calling code.
+        private func sortKey(_ entry: CallingCodeEntry) -> (Int, Int) {
+            let numeric = Int(entry.callingCode.dropFirst()) ?? Int.max
             switch entry.callingCode {
-            case "+1":
-                return -2
             case "+972":
-                return -1
+                return (0, numeric)
             default:
-                return Int(entry.callingCode.dropFirst()) ?? Int.max
+                if entry.isoCountryCodes.contains(where: { localeLanguageRegions.contains($0) }) {
+                    return (1, numeric)
+                }
+                return (2, numeric)
             }
         }
 

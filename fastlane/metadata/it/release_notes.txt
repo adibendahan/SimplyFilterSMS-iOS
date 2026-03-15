@@ -1,0 +1,4 @@
+Filtro AI - Ora basato sull'AI con supporto per 10 lingue tra cui spagnolo, francese, tedesco, arabo e altro.
+Paesi fidati - Consenti messaggi da paesi specifici in base al prefisso telefonico.
+8 nuove lingue - L'app è ora disponibile in spagnolo, arabo, francese, tedesco, portoghese, giapponese, coreano e italiano.
+Molteplici correzioni di bug e miglioramenti delle prestazioni.

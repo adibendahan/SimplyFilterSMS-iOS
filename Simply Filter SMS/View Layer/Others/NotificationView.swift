@@ -258,7 +258,7 @@ struct NotificationView: View {
             case .onClipboardSet:
                 return 3
             case .tipSuccessful:
-                return 3
+                return 6
             case .tipPromotion:
                 return 10
             }

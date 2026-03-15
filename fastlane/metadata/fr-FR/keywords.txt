@@ -1,0 +1,1 @@
+SMS,Filtre,Spam,Messages,Bloqueur,Bloquer,IA,Langue

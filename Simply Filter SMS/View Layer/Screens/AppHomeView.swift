@@ -207,6 +207,7 @@ struct AppHomeView: View {
                                                     .foregroundColor(.accentColor)
                                             }
                                             .buttonStyle(.plain)
+                                            .accessibilityIdentifier(TestIdentifier.countryAllowlistButton.rawValue)
                                         }
                                     }
                                 }
