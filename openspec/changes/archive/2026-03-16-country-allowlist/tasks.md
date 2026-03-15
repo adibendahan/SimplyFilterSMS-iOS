@@ -57,5 +57,5 @@
 ## 10. Tests
 
 - [x] 10.1 Add unit tests for `CallingCodes.callingCode(for:)` covering: E.164 match, formatted number normalization, alphanumeric sender (returns nil), local-format number (returns nil), unrecognized `+` prefix (returns nil), shared calling code (e.g. `+1868` → NANP group)
-- [ ] 10.2 Add unit tests for `MessageEvaluationManager.runFilterRules` with `.countryAllowlist` active: allowed country passes through, blocked country returns junk, no-`+` sender is skipped
-- [ ] 10.3 Add unit tests for `PersistanceManager` selectedCountries encode/decode round-trip
+- [x] 10.2 Add unit tests for `MessageEvaluationManager.runFilterRules` with `.countryAllowlist` active: allowed country passes through, blocked country returns junk, no-`+` sender is skipped
+- [x] 10.3 Add unit tests for `PersistanceManager` selectedCountries encode/decode round-trip
