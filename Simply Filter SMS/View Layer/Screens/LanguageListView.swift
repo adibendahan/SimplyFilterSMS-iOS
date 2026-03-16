@@ -140,7 +140,8 @@ extension LanguageListView {
         case blockLanguage, automaticBlocking
     }
     
-    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject {
+    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject, Identifiable {
+        let id = UUID()
         @Published private(set) var mode: LanguageListView.Mode
         @Published private(set) var title: String
         @Published private(set) var footer: String
@@ -152,9 +153,12 @@ extension LanguageListView {
         @Published private(set) var shouldAllowRefresh: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
         private var didAddObservers = false
-        
+        private var onAdded: ((Filter) -> Void)?
+
         init(mode: LanguageListView.Mode,
+             onAdded: ((Filter) -> Void)? = nil,
              appManager: AppManagerProtocol = AppManager.shared) {
+            self.onAdded = onAdded
             
             let cacheAge = appManager.automaticFilterManager.automaticFiltersCacheAge ?? nil
             let isOnline = appManager.networkSyncManager.networkStatus == .online
@@ -271,12 +275,15 @@ extension LanguageListView {
         }
         
         func addFilter(language: NLLanguage) {
-            self.appManager.persistanceManager.addFilter(text: language.filterText,
-                                                         type: .denyLanguage,
-                                                         denyFolder: .junk,
-                                                         filterTarget: .body,
-                                                         filterMatching: .contains,
-                                                         filterCase: .caseInsensitive)
+            let filter = self.appManager.persistanceManager.addFilter(text: language.filterText,
+                                                                      type: .denyLanguage,
+                                                                      denyFolder: .junk,
+                                                                      filterTarget: .body,
+                                                                      filterMatching: .contains,
+                                                                      filterCase: .caseInsensitive)
+            if let filter {
+                self.onAdded?(filter)
+            }
         }
         
         @Sendable func forceUpdateFilters() async {

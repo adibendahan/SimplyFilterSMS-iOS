@@ -37,11 +37,12 @@ protocol PersistanceManagerProtocol: AnyObject {
                            filterMatching: FilterMatching,
                            filterCase: FilterCase) -> Bool
     
+    @discardableResult
     func addFilter(text: String, type: FilterType,
                    denyFolder: DenyFolderType,
                    filterTarget: FilterTarget,
                    filterMatching: FilterMatching,
-                   filterCase: FilterCase)
+                   filterCase: FilterCase) -> Filter?
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter])
     func deleteFilters(_ filters: Set<Filter>)

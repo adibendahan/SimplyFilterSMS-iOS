@@ -79,15 +79,17 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         }
     }
     
+    @discardableResult
     func addFilter(text: String,
                    type: FilterType,
                    denyFolder: DenyFolderType,
                    filterTarget: FilterTarget,
                    filterMatching: FilterMatching,
-                   filterCase: FilterCase) {
-        
+                   filterCase: FilterCase) -> Filter? {
+
         self.addFilterCounter += 1
         self.addFilterClosure?(text, type, denyFolder, filterTarget, filterMatching, filterCase)
+        return nil
     }
 
     func isDuplicateFilter(text: String,

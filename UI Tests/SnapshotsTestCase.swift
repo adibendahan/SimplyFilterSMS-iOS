@@ -81,17 +81,12 @@ class SnapshotsTestCase: ApplicationTestCase {
                       filterCase: .caseInsensitive,
                       screenshotName: addFilterScreenshot)
 
-
-        // MARK: applicationHome Screenshot
-        for rule in RuleType.allCases.filter({ $0 != .allUnknown }) {
-            let ruleSwitch = app.switchContaining(rule.title)
-            XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
-            ruleSwitch.switches["0"].firstMatch.tap()
-            XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
-        }
-
-
         // MARK: countryList Screenshot
+        let ruleSwitch = app.switchContaining(RuleType.countryAllowlist.title)
+        XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
+        ruleSwitch.switches["0"].firstMatch.tap()
+        XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
+        
         app.tap(.countryAllowlistButton)
         self.sleep(seconds: 1)
         for i in 0..<2 {
@@ -102,7 +97,14 @@ class SnapshotsTestCase: ApplicationTestCase {
         app.tap(.closeButton)
         self.sleep(seconds: 0.5)
 
-
+        // MARK: applicationHome Screenshot
+        for rule in RuleType.allCases.filter({ $0 != .allUnknown }) {
+            let ruleSwitch = app.switchContaining(rule.title)
+            XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
+            ruleSwitch.switches["0"].firstMatch.tap()
+            XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
+        }
+        
         app.tap(.appMenuButton)
         app.tap(.loadDebugDataMenuButton)
         snapshot("01.applicationHome")

@@ -109,7 +109,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func fetchFilterRecords(for filterType: FilterType) -> [Filter] {
-        let sortDescriptor = [NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
+        let sortDescriptor = [NSSortDescriptor(key: "text", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))]
         let predicate = NSPredicate(format: "type == %ld", filterType.rawValue)
         var filters: [Filter] = []
         
@@ -231,20 +231,21 @@ class PersistanceManager: PersistanceManagerProtocol {
         return true
     }
     
+    @discardableResult
     func addFilter(text: String, type: FilterType,
                    denyFolder: DenyFolderType = .junk,
                    filterTarget: FilterTarget = .all,
                    filterMatching: FilterMatching = .contains,
-                   filterCase: FilterCase = .caseInsensitive) {
+                   filterCase: FilterCase = .caseInsensitive) -> Filter? {
 
         guard !self.isDuplicateFilter(text: text,
                                       filterTarget: filterTarget,
                                       filterMatching: filterMatching,
                                       filterCase: filterCase) else {
             AppManager.logger.debug("addFilter — skipped duplicate: '\(text, privacy: .public)'")
-            return
+            return nil
         }
-        
+
         let newFilter = Filter(context: self.context)
         newFilter.uuid = UUID()
         newFilter.filterType = type
@@ -256,6 +257,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         AppManager.logger.debug("addFilter — '\(text, privacy: .public)' | type: \(type.logDescription, privacy: .public) | folder: \(denyFolder.logDescription, privacy: .public) | target: \(filterTarget.logDescription, privacy: .public) | matching: \(filterMatching.logDescription, privacy: .public) | case: \(filterCase.logDescription, privacy: .public)")
         self.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        return newFilter
     }
 
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
@@ -333,6 +335,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)'")
         filter.text = filterText
         self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
     
     func selectedCountries(for rule: RuleType) -> [String] {
