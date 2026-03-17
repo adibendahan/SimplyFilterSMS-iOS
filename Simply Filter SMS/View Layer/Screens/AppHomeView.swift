@@ -35,7 +35,6 @@ struct AppHomeView: View {
     @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
 
     @State private var dynamicEmojis: [String: String] = [:]
-    @State private var shieldGlintTrigger = false
     
     var body: some View {
         NavigationView {
@@ -54,27 +53,7 @@ struct AppHomeView: View {
                                 Group {
                                     if #available(iOS 17, *) {
                                         if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
-                                            Image(systemName: "bolt.shield.fill")
-                                                .phaseAnimator([0, 1, 2, 1, 0], trigger: shieldGlintTrigger) { view, phase in
-                                                    view
-                                                        .symbolRenderingMode(.palette)
-                                                        .foregroundStyle(
-                                                            { switch phase {
-                                                                case 1:  Color.yellow
-                                                                case 2:  Color.white.opacity(0.3)
-                                                                default: Color.white.opacity(0.9)
-                                                            }}(),
-                                                            Color.indigo
-                                                        )
-                                                } animation: { phase in
-                                                    phase == 0 ? .linear(duration: 0.3) : .easeInOut(duration: 0.08)
-                                                }
-                                                .task {
-                                                    while !Task.isCancelled {
-                                                        try? await Task.sleep(nanoseconds: 1_500_000_000)
-                                                        shieldGlintTrigger.toggle()
-                                                    }
-                                                }
+                                            ShieldGlintIcon()
                                         } else {
                                             Image(systemName: "bolt.shield.fill")
                                                 .symbolRenderingMode(.palette)
@@ -514,7 +493,7 @@ extension AppHomeView {
                !self.userIgnoresNetworkStatus {
                 self.showNotification(.offline)
             }
-            
+
             if !didAddObservers {
                 self.didAddObservers = true
                 NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { _ in
@@ -652,6 +631,7 @@ extension AppHomeView {
         }
     }
 }
+
 
 
 //MARK: - Preview -
