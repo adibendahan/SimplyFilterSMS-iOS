@@ -276,21 +276,23 @@ enum FilterCase: Int64, CaseIterable, Identifiable {
 
 enum ReportType: Int64, CaseIterable, Identifiable {
     var id: Int64 { return self.rawValue }
-    
-    case junk=0, notJunk
-    
+
+    case junk=0, notJunk, junkAndBlockSender=2
+
     var name: String {
         switch self {
         case .junk:
             return "reportMessage_junk"~
         case .notJunk:
             return "reportMessage_notJunk"~
+        case .junkAndBlockSender:
+            return "reportMessage_junkAndBlockSender"~
         }
     }
-    
+
     var type: String {
         switch self {
-        case .junk:
+        case .junk, .junkAndBlockSender:
             return "deny"
         case .notJunk:
             return "allow"

@@ -409,3 +409,5 @@
 "whatsNew_trustedCountries_title" = "Pays de Confiance";
 
 "whatsNew_trustedCountries_desc" = "Autorisez automatiquement les messages de **pays spécifiques** par préfixe téléphonique. Ajoutez vos pays de confiance et filtrez le reste.";
+
+"reportMessage_junkAndBlockSender" = "Indésirables et bloquer l'expéditeur";

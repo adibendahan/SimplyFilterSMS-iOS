@@ -57,7 +57,7 @@ struct ReportMessageView: View {
                         .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
                         
                         Picker(selection: $model.selectedReport, label: EmptyView()) {
-                            ForEach(ReportType.allCases, id: \.rawValue) { reportType in
+                            ForEach(ReportType.allCases.filter { $0 != .junkAndBlockSender }, id: \.rawValue) { reportType in
                                 Text(reportType.name)
                                     .font(.body)
                                     .tag(reportType)

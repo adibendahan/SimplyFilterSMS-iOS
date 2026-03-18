@@ -409,3 +409,5 @@
 "whatsNew_trustedCountries_title" = "دول موثوقة";
 
 "whatsNew_trustedCountries_desc" = "السماح تلقائياً بالرسائل من **دول محددة** بناءً على رمز الهاتف. أضف الدول الموثوقة لديك وقم بتصفية الباقي.";
+
+"reportMessage_junkAndBlockSender" = "غير مرغوب وحظر المرسل";

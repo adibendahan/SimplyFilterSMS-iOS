@@ -409,3 +409,5 @@
 "whatsNew_trustedCountries_title" = "Vertrauenswürdige Länder";
 
 "whatsNew_trustedCountries_desc" = "Nachrichten aus **bestimmten Ländern** automatisch anhand der Telefonvorwahl zulassen. Füge deine vertrauenswürdigen Länder hinzu und filtere den Rest heraus.";
+
+"reportMessage_junkAndBlockSender" = "Junk & Absender sperren";

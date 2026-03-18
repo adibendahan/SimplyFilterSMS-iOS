@@ -17,8 +17,9 @@ extension Collection {
     }
 }
 
+#if !REPORTING_EXTENSION
 extension Filter {
-    
+
     var filterType: FilterType {
         get {
             return FilterType(rawValue: self.type) ?? .deny
@@ -27,7 +28,7 @@ extension Filter {
             self.type = newValue.rawValue
         }
     }
-    
+
     var denyFolderType: DenyFolderType {
         get {
             return DenyFolderType(rawValue: self.folderType) ?? .junk
@@ -36,7 +37,7 @@ extension Filter {
             self.folderType = newValue.rawValue
         }
     }
-    
+
     var filterMatching: FilterMatching {
         get {
             return FilterMatching(rawValue: self.matchingValue) ?? .contains
@@ -45,7 +46,7 @@ extension Filter {
             self.matchingValue = newValue.rawValue
         }
     }
-    
+
     var filterCase: FilterCase {
         get {
             return FilterCase(rawValue: self.caseValue) ?? .caseInsensitive
@@ -54,7 +55,7 @@ extension Filter {
             self.caseValue = newValue.rawValue
         }
     }
-    
+
     var filterTarget: FilterTarget {
         get {
             return FilterTarget(rawValue: self.targetValue) ?? .all
@@ -75,6 +76,7 @@ extension AutomaticFiltersRule {
         }
     }
 }
+#endif
 
 
 extension NLLanguage: @retroactive Identifiable {

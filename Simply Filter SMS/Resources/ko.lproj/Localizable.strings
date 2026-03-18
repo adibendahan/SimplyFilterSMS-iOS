@@ -409,3 +409,5 @@
 "whatsNew_trustedCountries_title" = "신뢰할 수 있는 국가";
 
 "whatsNew_trustedCountries_desc" = "전화 번호 접두사로 **특정 국가**의 메시지를 자동으로 허용합니다. 신뢰할 수 있는 국가를 추가하고 나머지는 필터링하세요.";
+
+"reportMessage_junkAndBlockSender" = "스팸 및 발신자 차단";
