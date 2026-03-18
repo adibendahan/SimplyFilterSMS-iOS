@@ -68,7 +68,7 @@ struct WhatsNewView: View {
                                 .listRowInsets(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
                         }
                     }
-                    .listSectionSeparator(.hidden, edges: .top)
+                    .listSectionSeparator(.hidden)
                 }
                 .listStyle(.plain)
 

@@ -127,17 +127,17 @@ struct AboutView: View {
                         
                         Link(destination: .appTwitterURL) {
                             HStack {
-                                Image("Twitter")
+                                Image("X")
                                     .resizable()
-                                    .frame(width: socialIconSize, height: socialIconSize * 21/26, alignment: .center)
+                                    .frame(width: socialIconSize, height: socialIconSize, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
-                                    .accessibilityLabel("Twitter")
+                                    .accessibilityLabel("X")
 
                                 VStack(alignment: .leading) {
-                                    Text("Twitter")
+                                    Text("X")
                                         .foregroundColor(.primary)
                                         .padding(.leading, 8)
-                                    
+
                                     Text("aboutView_twitter"~)
                                         .foregroundColor(.secondary)
                                         .padding(.leading, 8)
