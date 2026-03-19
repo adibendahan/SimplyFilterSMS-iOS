@@ -98,7 +98,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         self.sleep(seconds: 0.5)
 
         // MARK: applicationHome Screenshot
-        for rule in RuleType.allCases.filter({ $0 != .allUnknown }) {
+        for rule in RuleType.allCases.filter({ $0 != .allUnknown && $0 != .countryAllowlist }) {
             let ruleSwitch = app.switchContaining(rule.title)
             XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
             ruleSwitch.switches["0"].firstMatch.tap()

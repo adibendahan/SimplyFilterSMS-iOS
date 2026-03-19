@@ -26,7 +26,7 @@ let currentWhatsNewVersion = 4
 // URLs
 extension URL {
     static let appBaseURL = URL(string: "https://grizz-apps-dev.s3.us-east-2.amazonaws.com")!
-    static let reportMessageURL = URL(string: "https://qezcp0b7pc.execute-api.us-east-1.amazonaws.com/prod")!
+    static let reportMessageURL = URL(string: "https://api.ben-dahan.com")!
     static let appReviewURL = URL(string: "https://apps.apple.com/app/id1603222959?action=write-review")!
     static let appTwitterURL = URL(string: "https://twitter.com/a_bd")!
     static let appGithubURL = URL(string: "https://github.com/adibendahan/SimplyFilterSMS-iOS")!
@@ -296,6 +296,28 @@ enum ReportType: Int64, CaseIterable, Identifiable {
             return "deny"
         case .notJunk:
             return "allow"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .junk:
+            return "trash.fill"
+        case .notJunk:
+            return "checkmark.circle.fill"
+        case .junkAndBlockSender:
+            return "hand.raised.fill"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .junk:
+            return .red
+        case .notJunk:
+            return .green
+        case .junkAndBlockSender:
+            return .orange
         }
     }
 }

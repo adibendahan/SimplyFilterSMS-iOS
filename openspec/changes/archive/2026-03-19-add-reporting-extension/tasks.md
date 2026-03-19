@@ -22,20 +22,20 @@
 ## 3. Extension Principal Class
 
 - [x] 3.1 Create `Reporting Extension/ReportingExtensionViewController.swift` — subclass of `ILClassificationUIExtensionViewController`; embeds `ReportingConfirmationView` via `UIHostingController` as a child view controller
-- [x] 3.2 Implement `classificationResponse(for:)` — reads selected `ReportType` from view model, sets `response.userInfo = {sender, body, type}` so iOS POSTs it to `api.ben-dahan.com/report` via `ILClassificationExtensionNetworkReportDestination`, returns `ILClassificationResponse` with mapped `ILClassificationAction`
+- [x] 3.2 Implement `classificationResponse(for:)` — reads selected `ReportType` from view model, sets `response.userInfo = {sender, bodies, type}` (bodies is `[String]` array of all selected message bodies) so iOS POSTs it to `api.ben-dahan.com/report` via `ILClassificationExtensionNetworkReportDestination`, returns `ILClassificationResponse` with mapped `ILClassificationAction`
 - [x] 3.3 Wire `extensionContext.isReadyForClassificationResponse` via Combine sink on `confirmationViewModel.$selectedReportType`
 
 ## 4. Confirmation UI
 
 - [x] 4.1 Create `Reporting Extension/ReportingConfirmationView.swift` — SwiftUI view with nested `ViewModel: ObservableObject` exposing `selectedReportType: ReportType?`
 - [x] 4.2 Render three tappable rows for `.junk`, `.junkAndBlockSender`, `.notJunk` using `ReportType.name`; selected row shows a checkmark in accent color
-- [x] 4.3 No message content or sender shown in the UI
+- [x] 4.3 Shows sender (with person icon) and all selected message bodies separated by dividers; single message labeled "Message", multiple labeled "Message 1", "Message 2", etc.
 - [x] 4.4 Uses SwiftUI `.accentColor` and standard list typography — consistent with the app
 
 ## 5. Networking in Extension
 
-- [x] 5.1 Extract `sender` and `body` from `ILMessageClassificationRequest.messageCommunications.first`
-- [x] 5.2 Set `response.userInfo = ["sender": ..., "body": ..., "type": ...]` — iOS delivers the POST to `ILClassificationExtensionNetworkReportDestination` outside the extension sandbox (direct HTTPService call not possible; extension sandbox blocks all outbound networking)
+- [x] 5.1 Extract `sender` from `messageCommunications.first`; extract ALL bodies from all `messageCommunications` as `[String]` (compactMap `messageBody`, filter empty)
+- [x] 5.2 Set `response.userInfo = ["sender": ..., "bodies": [...], "type": ...]` — iOS delivers the POST to `ILClassificationExtensionNetworkReportDestination` outside the extension sandbox (direct HTTPService call not possible; extension sandbox blocks all outbound networking)
 - [x] 5.3 Fire-and-forget via system delivery; no user-visible error; delivery only occurs in TestFlight/App Store builds
 
 ## 6. Localization
@@ -48,6 +48,6 @@
 
 - [x] 7.1 Build the Reporting Extension target in Xcode and confirm zero errors/warnings
 - [x] 7.2 Run on a physical device or simulator: enable the extension in Settings > Phone > SMS/Call Reporting, long-press a conversation in Messages, tap "Report Messages", and confirm the UI appears
-- [ ] 7.3 Verify all three actions route the correct `type` string to Lambda (check network logs) — pending TestFlight build
-- [ ] 7.4 Verify "Report Junk & Block Sender" also adds the sender to the system block list — pending TestFlight build
+- [x] 7.3 Verified — all three actions route the correct `type` string to `ClassificationReport` Lambda (confirmed via DynamoDB records on 2026-03-19)
+- [ ] 7.4 Verify "Report Junk & Block Sender" also adds the sender to the system block list — pending manual TestFlight test
 - [x] 7.5 Confirm existing unit tests still pass (`xcodebuild test`)

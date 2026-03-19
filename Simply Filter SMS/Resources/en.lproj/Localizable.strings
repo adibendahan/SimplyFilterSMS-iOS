@@ -177,10 +177,14 @@
 "reportMessage_senderTitle" = "Sender";
 "reportMessage_title" = "Report Message";
 "reportMessage_junk" = "Junk";
-"reportMessage_notJunk" = "Not junk";
+"reportMessage_notJunk" = "Not Junk";
 "reportMessage_junkAndBlockSender" = "Junk & Block Sender";
 "reportMessage_report" = "Report";
 "reportMessage_thankYou" = "Thank you for reporting!";
+
+"reportingExtension_message" = "Message";
+"reportingExtension_messageIndex" = "Message %ld";
+"reportingExtension_footer" = "Your reports train the AI filters, helping keep inboxes clean for Simply Filter SMS users everywhere. Thank you for contributing.";
 
 
 //MARK: What's New

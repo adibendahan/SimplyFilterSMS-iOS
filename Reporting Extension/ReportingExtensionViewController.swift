@@ -13,7 +13,7 @@ class ReportingExtensionViewController: ILClassificationUIExtensionViewControlle
     private let confirmationViewModel = ReportingConfirmationView.ViewModel()
     private var cancellables = Set<AnyCancellable>()
     private var pendingSender: String = ""
-    private var pendingBody: String = ""
+    private var pendingBodies: [String] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,9 +41,11 @@ class ReportingExtensionViewController: ILClassificationUIExtensionViewControlle
 
     override func prepare(for classificationRequest: ILClassificationRequest) {
         if let messageRequest = classificationRequest as? ILMessageClassificationRequest,
-           let communication = messageRequest.messageCommunications.first {
-            pendingSender = communication.sender ?? ""
-            pendingBody = communication.messageBody ?? ""
+           let first = messageRequest.messageCommunications.first {
+            pendingSender = first.sender ?? ""
+            pendingBodies = messageRequest.messageCommunications.compactMap { $0.messageBody }.filter { !$0.isEmpty }
+            confirmationViewModel.sender = pendingSender
+            confirmationViewModel.bodies = pendingBodies
         }
     }
 
@@ -65,7 +67,7 @@ class ReportingExtensionViewController: ILClassificationUIExtensionViewControlle
         let response = ILClassificationResponse(action: action)
         response.userInfo = [
             "sender": pendingSender,
-            "body": pendingBody,
+            "bodies": pendingBodies,
             "type": reportType.type
         ]
         return response

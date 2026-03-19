@@ -8,17 +8,20 @@
 import Foundation
 
 class ReportMessageRequest: URLRequestProtocol {
-    var path: String = "/ReportMessage"
+    var path: String = "/report"
     var method: HTTPMethod = .post
     var task: HTTPTask
     var errorDomain: String = "com.grizz.apps.dev.Simply-Filter-SMS.ReportMessageRequest"
-    var auth : Bool = true
-    
+    var auth: Bool = false
+
     init(body: ReportMessageRequestBody) {
-        let jsonDict: [String : Any] = [ "sender" : body.sender,
-                                         "body" : body.body,
-                                         "type" : body.type ]
-        
+        let jsonDict: [String: Any] = [
+            "classification": [
+                "sender": body.sender,
+                "bodies": [body.body],
+                "type": body.type
+            ]
+        ]
         self.task = .requestParameters(bodyParameters: jsonDict, urlParameters: nil)
     }
 }

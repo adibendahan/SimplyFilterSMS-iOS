@@ -26,5 +26,38 @@
             <string>%ld مرشّح</string>
         </dict>
     </dict>
+
+    <key>reportingExtension_selectedMessage</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@count@</string>
+        <key>count</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>الرسالة المحددة</string>
+            <key>other</key>
+            <string>الرسائل المحددة</string>
+        </dict>
+    </dict>
+    <key>reportingExtension_classify</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@count@</string>
+        <key>count</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>كيف تريد تصنيفها؟</string>
+            <key>other</key>
+            <string>كيف تريد تصنيفها؟</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

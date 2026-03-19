@@ -411,3 +411,9 @@
 "whatsNew_trustedCountries_desc" = "전화 번호 접두사로 **특정 국가**의 메시지를 자동으로 허용합니다. 신뢰할 수 있는 국가를 추가하고 나머지는 필터링하세요.";
 
 "reportMessage_junkAndBlockSender" = "스팸 및 발신자 차단";
+
+"reportingExtension_message" = "메시지";
+
+"reportingExtension_messageIndex" = "메시지 %ld";
+
+"reportingExtension_footer" = "보고해 주신 내용은 AI 필터를 훈련시켜 전 세계 Simply Filter SMS 사용자의 받은 편지함을 깨끗하게 유지하는 데 도움이 됩니다. 기여해 주셔서 감사합니다.";

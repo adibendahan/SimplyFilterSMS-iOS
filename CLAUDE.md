@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Simply Filter SMS is an iOS app (Swift/SwiftUI, iOS 15.2+) that filters unknown SMS messages using Apple's IdentityLookup framework. It includes a Message Filter Extension that runs in the background to classify incoming messages as junk, transaction, or promotion. Data syncs across devices via CoreData + CloudKit (NSPersistentCloudKitContainer).
+Simply Filter SMS is an iOS app (Swift/SwiftUI, iOS 15.2+) that filters unknown SMS messages using Apple's IdentityLookup framework. It includes a Message Filter Extension that classifies incoming messages as junk, transaction, or promotion, and a Reporting Extension that lets users report messages directly from iOS Messages. Data syncs across devices via CoreData + CloudKit (NSPersistentCloudKitContainer).
 
 App Store: https://apps.apple.com/us/app/simply-filter-sms/id1603222959
 
@@ -15,6 +15,7 @@ Open `Simply Filter SMS.xcodeproj` in Xcode. No package managers (SPM/CocoaPods)
 **Targets:**
 - `Simply Filter SMS` — Main app
 - `Message Filter Extension` — ILMessageFilterExtension (`.appex`)
+- `Reporting Extension` — ILClassificationUIExtensionViewController (`.appex`) — user-initiated message reporting from iOS Messages
 - `Tests` — Unit tests
 - `UI Tests` — Snapshot tests via Fastlane
 
@@ -43,7 +44,7 @@ Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testa
 
 ### Services Layer (`Simply Filter SMS/Services Layer/`)
 - **AmazonS3Service** — Fetches automatic filter lists from AWS S3.
-- **ReportMessageService** — Reports spam/ham to AWS Lambda endpoint.
+- **ReportMessageService** — Reports spam/ham to `https://api.ben-dahan.com/report` (public endpoint, no auth). Used by the in-app reporting UI. The Reporting Extension uses the same endpoint via iOS system delivery (`ILClassificationExtensionNetworkReportDestination`).
 - **HTTPService** — Base class for HTTP requests with `URLRequestProtocol`.
 
 ### View Layer (`Simply Filter SMS/View Layer/`)

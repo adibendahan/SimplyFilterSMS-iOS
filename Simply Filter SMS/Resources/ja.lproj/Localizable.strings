@@ -411,3 +411,9 @@
 "whatsNew_trustedCountries_desc" = "電話番号の国番号で**特定の国**からのメッセージを自動的に許可。信頼できる国を追加して、それ以外をフィルタリングしましょう。";
 
 "reportMessage_junkAndBlockSender" = "迷惑メール & 送信者をブロック";
+
+"reportingExtension_message" = "メッセージ";
+
+"reportingExtension_messageIndex" = "メッセージ %ld";
+
+"reportingExtension_footer" = "あなたの報告はAIフィルターのトレーニングに役立ち、世界中のSimply Filter SMSユーザーの受信ボックスをクリーンに保ちます。ご協力ありがとうございます。";

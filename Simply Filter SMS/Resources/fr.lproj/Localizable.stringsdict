@@ -18,5 +18,38 @@
             <string>%ld filtres</string>
         </dict>
     </dict>
+
+    <key>reportingExtension_selectedMessage</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@count@</string>
+        <key>count</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>Message sélectionné</string>
+            <key>other</key>
+            <string>Messages sélectionnés</string>
+        </dict>
+    </dict>
+    <key>reportingExtension_classify</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@count@</string>
+        <key>count</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>Comment souhaitez-vous le classer?</string>
+            <key>other</key>
+            <string>Comment souhaitez-vous les classer?</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

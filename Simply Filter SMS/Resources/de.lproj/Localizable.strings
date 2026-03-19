@@ -411,3 +411,9 @@
 "whatsNew_trustedCountries_desc" = "Nachrichten aus **bestimmten Ländern** automatisch anhand der Telefonvorwahl zulassen. Füge deine vertrauenswürdigen Länder hinzu und filtere den Rest heraus.";
 
 "reportMessage_junkAndBlockSender" = "Junk & Absender sperren";
+
+"reportingExtension_message" = "Nachricht";
+
+"reportingExtension_messageIndex" = "Nachricht %ld";
+
+"reportingExtension_footer" = "Deine Meldungen trainieren die KI-Filter und helfen, die Posteingänge von Simply Filter SMS-Nutzern weltweit sauber zu halten. Danke für deinen Beitrag.";

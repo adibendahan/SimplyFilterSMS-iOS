@@ -13,16 +13,16 @@ The app SHALL include a Reporting Extension target that registers with iOS as an
 
 ---
 
-### Requirement: Extension presents confirmation UI on report invocation
-When invoked from the iOS Messages "Report Messages" flow, the extension SHALL present a confirmation UI that asks the user to choose a report action. The UI SHALL NOT display any preview of the message content or sender.
+### Requirement: Extension presents confirmation UI showing message preview
+When invoked from the iOS Messages "Report Messages" flow, the extension SHALL present a confirmation UI that shows the sender and all selected message bodies, and asks the user to choose a report action.
 
-#### Scenario: User invokes report from Messages
+#### Scenario: User invokes report from Messages (single message)
 - **WHEN** the user long-presses a conversation in iOS Messages and taps "Report Messages"
-- **THEN** the extension's confirmation UI SHALL be displayed
+- **THEN** the extension's confirmation UI SHALL be displayed showing the sender and the message body labeled "Message"
 
-#### Scenario: No message content shown
-- **WHEN** the confirmation UI is displayed
-- **THEN** the UI SHALL NOT show the sender's phone number, name, or any part of the message body
+#### Scenario: User invokes report from Messages (multiple messages)
+- **WHEN** the user selects multiple messages and taps "Report Messages"
+- **THEN** the extension's confirmation UI SHALL display the sender once and all selected bodies, labeled "Message 1", "Message 2", etc., separated by dividers
 
 ---
 
@@ -48,20 +48,25 @@ The confirmation UI SHALL present exactly three actions: Report Junk, Report Jun
 
 ---
 
-### Requirement: Extension forwards report to Lambda endpoint
-Upon user confirmation, the extension SHALL fire-and-forget a POST request to the existing `/ReportMessage` Lambda endpoint using `ReportMessageRequestBody` with the sender and body extracted from `ILMessageClassificationRequest`. The report SHALL be sent before the extension returns its classification response.
+### Requirement: Extension delivers report via iOS system networking
+Upon user confirmation, the extension SHALL set `userInfo` on the `ILClassificationResponse` with `sender`, `bodies` (array of all selected message bodies), and `type`. iOS (outside the extension sandbox) SHALL POST this data to `https://api.ben-dahan.com/report` via `ILClassificationExtensionNetworkReportDestination`. Each body SHALL be stored as a separate DynamoDB record.
 
-#### Scenario: Junk report forwarded
+#### Scenario: Junk report delivered
 - **WHEN** the user confirms "Report Junk" or "Report Junk & Block Sender"
-- **THEN** the extension SHALL POST a request with `type: "deny"` to the Lambda endpoint
+- **THEN** the extension SHALL set `type: "deny"` in userInfo
+- **THEN** iOS SHALL POST `{sender, bodies, type}` to the classification report endpoint
 
-#### Scenario: Not Junk report forwarded
+#### Scenario: Not Junk report delivered
 - **WHEN** the user confirms "Not Junk"
-- **THEN** the extension SHALL POST a request with `type: "allow"` to the Lambda endpoint
+- **THEN** the extension SHALL set `type: "allow"` in userInfo
 
-#### Scenario: Network request fails
-- **WHEN** the network request to Lambda fails or times out
-- **THEN** the extension SHALL log the error and still return the classification response to iOS (no retry, no user-visible error)
+#### Scenario: Multiple bodies stored separately
+- **WHEN** the user reports N messages at once
+- **THEN** the ClassificationReport Lambda SHALL write N separate records to DynamoDB (one per body)
+
+#### Scenario: Network delivery failure
+- **WHEN** the system POST to Lambda fails or times out
+- **THEN** iOS handles delivery silently; the extension has already returned its classification response (fire-and-forget from extension's perspective)
 
 ---
 
@@ -79,11 +84,11 @@ The confirmation UI SHALL follow the app's existing design system — accent col
 ---
 
 ### Requirement: ReportType extended with junkAndBlockSender case
-`ReportType` in `Constsants.swift` SHALL gain a `junkAndBlockSender` case (raw value 2) that maps to `ILClassificationAction.reportJunkAndBlockSender` and sends `type: "deny"` to Lambda (same as `junk`).
+`ReportType` in `Constsants.swift` SHALL have a `junkAndBlockSender` case (raw value 2) that maps to `ILClassificationAction.reportJunkAndBlockSender` and sends `type: "deny"` to Lambda (same as `junk`).
 
 #### Scenario: junkAndBlockSender maps to deny
-- **WHEN** the extension constructs a `ReportMessageRequestBody` for `junkAndBlockSender`
-- **THEN** `body.type` SHALL equal `"deny"`
+- **WHEN** the extension constructs a classification report for `junkAndBlockSender`
+- **THEN** `type` SHALL equal `"deny"`
 
 #### Scenario: Existing ReportType cases unaffected
 - **WHEN** the `junk` or `notJunk` cases are used

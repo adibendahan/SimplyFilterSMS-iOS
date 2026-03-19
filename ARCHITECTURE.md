@@ -10,7 +10,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 |----------|-------------|
 | [docs/SCREENS.md](docs/SCREENS.md) | Per-screen breakdown of all SwiftUI views, ViewModels, layouts, and supporting components |
 | [docs/FRAMEWORK.md](docs/FRAMEWORK.md) | Framework and Services layer — all managers, protocols, data flow, and the message evaluation pipeline |
-| [docs/EXTENSION.md](docs/EXTENSION.md) | Message Filter Extension — how iOS delivers SMS to the extension and how it evaluates them |
+| [docs/EXTENSION.md](docs/EXTENSION.md) | Message Filter Extension (automatic filtering) and Reporting Extension (user-initiated junk/not-junk reporting from iOS Messages) |
 | [docs/TESTS.md](docs/TESTS.md) | Testing patterns, unit tests, UI tests, mocks, and test infrastructure |
 | [docs/DESIGN.md](docs/DESIGN.md) | Visual design system — colors, typography, spacing, components, and guidelines for new features |
 

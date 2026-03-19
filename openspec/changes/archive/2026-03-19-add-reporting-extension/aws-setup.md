@@ -46,8 +46,10 @@
 
 | Method | Path | Integration |
 |--------|------|-------------|
-| `POST` | `/report` | Lambda: `ReportMessage` (same Velocity template as `/ReportMessage`) |
+| `POST` | `/report` | Lambda: `ClassificationReport` (Python 3.13) — handles `bodies: [String]` array |
 | `GET`  | `/.well-known/apple-app-site-association` | MOCK — returns AASA JSON |
+
+> **Note:** The main app `ReportMessageService` also now uses `api.ben-dahan.com/report` (no auth). The authenticated `qezcp0b7pc` API Gateway is no longer used by the app.
 
 #### AASA response
 ```json
@@ -70,20 +72,24 @@
 
 ## Lambda
 
-- **Function:** `ReportMessage`
-- **Runtime:** Swift (`provided.al2`)
+- **Function:** `ClassificationReport`
+- **Runtime:** Python 3.13
 - **Region:** `us-east-1`
 - **DynamoDB table:** `reported_messages`
-- **Permissions added:**
-  - `apigateway-public-report` — allows `j476b01zf3/prod/POST/report` to invoke the function
+- **Source:** `Classification Report Lambda/lambda_function.py` in repo root
+- **Deploy:** `Classification Report Lambda/deploy.sh` — zips and creates/updates via AWS CLI (no Docker needed)
+- **Permissions:** `apigateway-public-classification-report` — allows `j476b01zf3/prod/POST/report` to invoke the function
+- **Handles:** Both `bodies: [String]` (multi-message, from extension) and `body: String` (single message, from in-app)
 
-### Velocity template (both APIs use the same mapping)
+> **Replaced:** The original `ReportMessage` Swift Lambda (`provided.al2`) was removed from the repo and is no longer used by `j476b01zf3`. It remains deployed in AWS as it is used by `qezcp0b7pc` — DO NOT DELETE.
+
+### Velocity template (`j476b01zf3 POST /report`)
 ```velocity
-#set($inputRoot = $input.path('$'))
+#set($r = $input.path("$"))
 {
-    "sender": "$inputRoot.sender",
-    "body": "$inputRoot.body",
-    "type": "$inputRoot.type"
+    "sender": "$r.classification.sender",
+    "bodies": $input.json("$.classification.bodies"),
+    "type": "$r.classification.type"
 }
 ```
 
@@ -106,24 +112,21 @@
 ```
 
 ### classificationResponse(for:)
-Sets `response.userInfo = ["sender": ..., "body": ..., "type": ...]` so iOS POSTs
+Sets `response.userInfo = ["sender": ..., "bodies": [...], "type": ...]` so iOS POSTs
 that data to `https://api.ben-dahan.com/report` after the user taps Done.
+iOS wraps userInfo under `classification` key: `{"classification": {"sender":..., "bodies":[...], "type":...}, "app":{...}, "_version":1}`.
 
 ---
 
 ## How it works (production)
 
-1. User long-presses a message in iOS Messages → "Report Messages"
-2. Extension UI appears (Junk / Junk & Block Sender / Not Junk)
+1. User long-presses one or more messages in iOS Messages → "Report Messages"
+2. Extension UI appears — shows sender + all selected message bodies; offers Junk / Junk & Block Sender / Not Junk
 3. User selects an option → taps Done
-4. `classificationResponse(for:)` returns `ILClassificationResponse` with `action` + `userInfo`
-5. iOS system (outside sandbox) POSTs `userInfo` JSON to `https://api.ben-dahan.com/report`
-6. API Gateway passes `{sender, body, type}` to `ReportMessage` Lambda
-7. Lambda writes record to `reported_messages` DynamoDB table
+4. `classificationResponse(for:)` returns `ILClassificationResponse` with `action` + `userInfo = {sender, bodies, type}`
+5. iOS system (outside sandbox) POSTs `{"classification": {sender, bodies, type}, ...}` to `https://api.ben-dahan.com/report`
+6. API Gateway Velocity template extracts `sender`, `bodies`, `type` → passes to `ClassificationReport` Lambda
+7. Lambda writes one DynamoDB record per body to `reported_messages` table
 8. Records are reviewed via `/review-reports` skill and used to improve `automatic_filters.json`
 
----
-
-## Pending verification
-
-- **Network reporting requires TestFlight/App Store build.** Confirmed that domain verification works (AASA fetched successfully in dev builds), but the system POST to `/report` is only triggered in production distribution. Verify after next TestFlight release.
+**Verified end-to-end:** Network reporting pipeline confirmed working on TestFlight build (2026-03-19).

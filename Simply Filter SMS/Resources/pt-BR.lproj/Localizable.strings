@@ -411,3 +411,9 @@
 "whatsNew_trustedCountries_desc" = "Permita automaticamente mensagens de **países específicos** por prefixo telefônico. Adicione seus países confiáveis e filtre o restante.";
 
 "reportMessage_junkAndBlockSender" = "Lixo Eletrônico e bloquear remetente";
+
+"reportingExtension_message" = "Mensagem";
+
+"reportingExtension_messageIndex" = "Mensagem %ld";
+
+"reportingExtension_footer" = "Seus relatórios treinam os filtros de IA, ajudando a manter as caixas de entrada limpas para usuários de Simply Filter SMS em todo o mundo. Obrigado por contribuir.";

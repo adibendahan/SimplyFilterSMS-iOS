@@ -46,5 +46,34 @@
             <string>필터 %ld개</string>
         </dict>
     </dict>
+
+    <key>reportingExtension_selectedMessage</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@count@</string>
+        <key>count</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>other</key>
+            <string>선택한 메시지</string>
+        </dict>
+    </dict>
+    <key>reportingExtension_classify</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@count@</string>
+        <key>count</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>other</key>
+            <string>어떻게 분류하시겠습니까?</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

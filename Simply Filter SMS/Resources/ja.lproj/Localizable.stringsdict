@@ -2,23 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>general_active_count</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@filters@</string>
-        <key>filters</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>ld</string>
-            <key>one</key>
-            <string>1 filtro</string>
-            <key>other</key>
-            <string>%ld filtros</string>
-        </dict>
-    </dict>
-
     <key>reportingExtension_selectedMessage</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>
@@ -29,10 +12,8 @@
             <string>NSStringPluralRuleType</string>
             <key>NSStringFormatValueTypeKey</key>
             <string>ld</string>
-            <key>one</key>
-            <string>Mensagem selecionada</string>
             <key>other</key>
-            <string>Mensagens selecionadas</string>
+            <string>選択したメッセージ</string>
         </dict>
     </dict>
     <key>reportingExtension_classify</key>
@@ -45,10 +26,8 @@
             <string>NSStringPluralRuleType</string>
             <key>NSStringFormatValueTypeKey</key>
             <string>ld</string>
-            <key>one</key>
-            <string>Como você gostaria de classificá-la?</string>
             <key>other</key>
-            <string>Como você gostaria de classificá-las?</string>
+            <string>どのように分類しますか?</string>
         </dict>
     </dict>
 </dict>

@@ -54,9 +54,11 @@ private struct FooterBackground: ViewModifier {
     }
 }
 
+#if !REPORTING_EXTENSION
 struct FooterView_Previews: PreviewProvider {
     static var previews: some View {
         EmptyView()
             .modifier(EmbeddedFooterView())
     }
 }
+#endif

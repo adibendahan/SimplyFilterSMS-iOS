@@ -411,3 +411,9 @@
 "whatsNew_trustedCountries_desc" = "Permite automáticamente mensajes de **países específicos** por prefijo telefónico. Agrega tus países de confianza y filtra el resto.";
 
 "reportMessage_junkAndBlockSender" = "No deseado y bloquear remitente";
+
+"reportingExtension_message" = "Mensaje";
+
+"reportingExtension_messageIndex" = "Mensaje %ld";
+
+"reportingExtension_footer" = "Tus reportes entrenan los filtros de IA, ayudando a mantener los buzones limpios para los usuarios de Simply Filter SMS en todo el mundo. Gracias por contribuir.";
