@@ -27,9 +27,28 @@ Present the proposed keys and values to the user and wait for approval. Allow th
 
 ---
 
-## Step 2 — Add to English strings file
+## Step 2 — Check for plural strings (stringsdict)
 
-Once approved, add each key/value pair to `Simply Filter SMS/Resources/en.lproj/Localizable.strings`:
+Before writing anything, determine whether any of the new strings require plural forms — i.e., the string displays a count and needs different wording for singular vs. plural (e.g. "1 filter" vs. "%ld filters", "Allowed Country" vs. "Allowed Countries").
+
+**If any string is a plural string:**
+
+- Do NOT add it to `Localizable.strings`. Plural strings live exclusively in `Localizable.stringsdict`.
+- Add the entry to `Simply Filter SMS/Resources/en.lproj/Localizable.stringsdict`, following the existing XML format exactly (copy an existing entry as template).
+- Then manually add the same entry to **every** other language's `Localizable.stringsdict` — BartyCrouch does **not** process `.stringsdict` files. The full list of language folders to update: `he`, `ar`, `es`, `fr`, `pt-BR`, `de`, `ja`, `ko`, `it` (verify against actual `.lproj` folders in Resources/).
+- Use the correct CLDR plural categories for each language:
+  - `one`/`other`: de, es, fr, pt-BR, it, ko, ja (ko and ja use `other` only)
+  - `one`/`two`/`many`/`other`: he
+  - `zero`/`one`/`two`/`few`/`many`/`other`: ar
+- After adding stringsdict entries for all languages, skip Steps 3–5 for those keys (BartyCrouch must not be run on keys that only exist in stringsdict).
+
+**If no string is a plural string:** continue to Step 3 as normal.
+
+---
+
+## Step 2b — Add to English strings file
+
+Once approved, add each non-plural key/value pair to `Simply Filter SMS/Resources/en.lproj/Localizable.strings`:
 
 - Follow the existing blank-line-separated format: one `"key" = "value";` per block, blank line between each
 - Insert near related keys (same screen/domain prefix), not at the end
@@ -52,7 +71,7 @@ BartyCrouch will add each new key as `= ""` to all existing language files. Do n
 Read the Resources directory to find all existing `.lproj` folders (excluding `en.lproj` and `Base.lproj`). These are the languages to translate into.
 
 Current supported languages (verify against actual folders):
-`he`, `ar`, `es`, `fr`, `pt-BR`, `de`
+`he`, `ar`, `es`, `fr`, `pt-BR`, `de`, `ja`, `ko`, `it`
 
 ---
 

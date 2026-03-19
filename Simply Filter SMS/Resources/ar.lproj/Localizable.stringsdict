@@ -2,6 +2,54 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>autoFilter_countryAllowlist_section_allowed</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@countries@</string>
+        <key>countries</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>لا بلدان مسموح بها</string>
+            <key>one</key>
+            <string>بلد مسموح به</string>
+            <key>two</key>
+            <string>بلدان مسموح بهما</string>
+            <key>few</key>
+            <string>بلدان مسموح بها</string>
+            <key>many</key>
+            <string>بلدان مسموح بها</string>
+            <key>other</key>
+            <string>بلدان مسموح بها</string>
+        </dict>
+    </dict>
+    <key>autoFilter_countryAllowlist_section_blocked</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@countries@</string>
+        <key>countries</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>لا بلدان محجوبة</string>
+            <key>one</key>
+            <string>بلد محجوب</string>
+            <key>two</key>
+            <string>بلدان محجوبان</string>
+            <key>few</key>
+            <string>بلدان محجوبة</string>
+            <key>many</key>
+            <string>بلدان محجوبة</string>
+            <key>other</key>
+            <string>بلدان محجوبة</string>
+        </dict>
+    </dict>
     <key>general_active_count</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>

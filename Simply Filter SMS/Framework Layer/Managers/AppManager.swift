@@ -47,6 +47,13 @@ class AppManager: AppManagerProtocol {
         if UIApplication.shared.isInTestingMode {
             defaultsManager.reset()
             persistanceManager.reset()
+            let emptyList = LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])
+            let seedCache = AutomaticFilterListsResponse(filterLists: [
+                "en": emptyList, "he": emptyList, "ar": emptyList,
+                "es": emptyList, "fr": emptyList, "pt": emptyList,
+                "de": emptyList, "ja": emptyList, "ko": emptyList, "it": emptyList
+            ])
+            persistanceManager.saveCache(with: seedCache)
         }
         #endif
     }

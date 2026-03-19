@@ -44,7 +44,7 @@ class TestApplication: XCUIApplication {
             self.tap(type.testIdentifier)
         }
         else if !self.staticTexts[type.name].exists {
-            self.buttonContaining("filterList_filters"~).forceTap()
+            self.buttons["filterList_filters"~].firstMatch.forceTap()
             self.tap(type.testIdentifier)
         }
         
@@ -73,7 +73,7 @@ class TestApplication: XCUIApplication {
         self.tap(.addFilteraddFilterButton)
         
         if UIDevice.current.userInterfaceIdiom != .pad {
-            self.buttonContaining("filterList_filters"~).forceTap()
+            self.buttons["filterList_filters"~].firstMatch.forceTap()
         }
     }
     
