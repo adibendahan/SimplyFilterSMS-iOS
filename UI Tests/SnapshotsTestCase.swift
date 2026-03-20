@@ -63,6 +63,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         snapshot("08.countryList")
         app.tap(.closeButton)
         self.sleep(seconds: 0.5)
+        app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
         
         if !isPad {
             snapshot("01.applicationHome")

@@ -35,10 +35,11 @@ struct AppHomeView: View {
     @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
 
     @State private var dynamicEmojis: [String: String] = [:]
-    
+    @State private var selectedScreen: Screen? = nil
+
     var body: some View {
         NavigationSplitView {
-            List(selection: $model.navigationScreen) {
+            List(selection: $selectedScreen) {
                 
                 //MARK: Automatic Filtering
                 Section {
@@ -97,6 +98,7 @@ struct AppHomeView: View {
                             .padding(.vertical, 12)
                         } // Navigation Link
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
+                        .listRowBackground(model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground))
                         .accessibility(identifier: TestIdentifier.automaticFilterLink.rawValue)
                         .accentColor(Color.primary.opacity(0.35))
                 } header: {
@@ -191,6 +193,7 @@ struct AppHomeView: View {
                         } // Toggle
                         .tint(rule.toggleBackgroundColor)
                         .disabled(isDisabled)
+                        .listRowBackground(Color(UIColor.secondarySystemGroupedBackground))
                         .if(rule.subtitle != nil) {
                             $0.accessibilityHint(String(format: "a11y_home_shortSenderHint"~, self.model.shortSenderChoice))
                                 .accessibilityAction(named: "a11y_home_shortSenderAction"~) {
@@ -226,6 +229,7 @@ struct AppHomeView: View {
                                     .font(Font.caption2)
                             }
                         }
+                        .listRowBackground(model.navigationScreen == filterType.screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground))
                         .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
                         .accessibilityIdentifier(filterType.testIdentifier.rawValue)
                         .accentColor(Color.primary.opacity(0.35))
@@ -242,7 +246,17 @@ struct AppHomeView: View {
             .navigationTitle(self.model.title)
             .listStyle(.insetGrouped)
             .navigationBarItems(trailing: NavigationBarTrailingItem())
-            .navigationSplitViewColumnWidth(min: 320, ideal: 360)
+            .navigationSplitViewColumnWidth(min: 340, ideal: 380)
+            .onChange(of: selectedScreen) { newScreen in
+                if let screen = newScreen {
+                    model.navigationScreen = screen
+                    if horizontalSizeClass == .regular {
+                        DispatchQueue.main.async { selectedScreen = nil }
+                    }
+                } else if horizontalSizeClass == .compact {
+                    model.navigationScreen = nil
+                }
+            }
             .onReceive(self.model.$navigationScreen) { navigationScreen in
                 if navigationScreen == nil {
                     withAnimation {
