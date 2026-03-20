@@ -172,7 +172,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */ = {isa = PBXFileReference; name = ReportMessageViewTests.swift; path = Tests/ReportMessageViewTests.swift; sourceTree = "<group>"; };
+		01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReportMessageViewTests.swift; path = Tests/ReportMessageViewTests.swift; sourceTree = "<group>"; };
 		1355C48B10FE4519937D804C /* Reporting Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Reporting Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		157A0B821C517E1A1D0993A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37C18038215780F287F19CF9 /* ShieldGlintIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldGlintIcon.swift; sourceTree = "<group>"; };
@@ -1046,7 +1046,7 @@
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = "Reporting Extension/Reporting Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603200002;
+				CURRENT_PROJECT_VERSION = 202603210007;
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Reporting Extension/Info.plist";
@@ -1268,7 +1268,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 202603200002;
+				CURRENT_PROJECT_VERSION = 202603210007;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = AL28LDR9PU;
 				ENABLE_PREVIEWS = YES;
@@ -1308,7 +1308,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603200002;
+				CURRENT_PROJECT_VERSION = 202603210007;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1342,7 +1342,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603200002;
+				CURRENT_PROJECT_VERSION = 202603210007;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1368,7 +1368,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603200002;
+				CURRENT_PROJECT_VERSION = 202603210007;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1395,7 +1395,7 @@
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = "Reporting Extension/Reporting Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603200002;
+				CURRENT_PROJECT_VERSION = 202603210007;
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Reporting Extension/Info.plist";
