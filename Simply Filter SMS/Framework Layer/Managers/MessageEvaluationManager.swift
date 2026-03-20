@@ -92,7 +92,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         // Priority #7 - Automatic Filters (deny)
         result = self.runAutomaticFiltersDeny(body: body, sender: sender)
         if !result.action.isFiltered {
-            result = MessageEvaluationResult(action: .allow, reason: nil)
+            result = MessageEvaluationResult(action: .allow, reason: "testFilters_resultReason_noMatch"~)
             logger?.debug("Priority #7 (Automatic Filters Deny) → no match → fallthrough ALLOW")
         }
         else {

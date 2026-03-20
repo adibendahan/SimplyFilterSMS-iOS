@@ -35,6 +35,7 @@ struct ShieldGlintIcon: View {
         private var task: Task<Void, Never>?
 
         init() {
+            guard !ProcessInfo.processInfo.arguments.contains("-Testing") else { return }
             task = Task { @MainActor [weak self] in
                 while !Task.isCancelled {
                     try? await Task.sleep(nanoseconds: 1_500_000_000)

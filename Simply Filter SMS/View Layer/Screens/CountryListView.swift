@@ -134,12 +134,7 @@ extension CountryListView {
             self.rule = rule
             super.init(appManager: appManager)
 
-            let languageCode: String
-            if #available(iOS 16, *) {
-                languageCode = Locale.current.language.languageCode?.identifier ?? ""
-            } else {
-                languageCode = Locale.current.languageCode ?? ""
-            }
+            let languageCode = Locale.current.language.languageCode?.identifier ?? ""
             self.localeLanguageRegions = Self.primaryRegions(for: languageCode)
 
             self.allEntries = CallingCodeEntry.allCases

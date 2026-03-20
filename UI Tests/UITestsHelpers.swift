@@ -14,7 +14,7 @@ postfix operator ~
 postfix func ~ (string: String) -> String {
     let bundle = Bundle(for: SnapshotsTestCase.self)
     let localeId = Locale.current.identifier.replacingOccurrences(of: "_", with: "-")
-    let langCode = Locale.current.languageCode ?? "en"
+    let langCode = Locale.current.language.languageCode?.identifier ?? "en"
     let path = bundle.path(forResource: localeId, ofType: "lproj")
             ?? bundle.path(forResource: langCode, ofType: "lproj")
     guard let path = path,

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum Screen: Int, Identifiable {
+enum Screen: Int, Identifiable, Hashable {
     var id: Self { self }
 
     case appHome, onboarding, help, about, enableExtension, testFilters,

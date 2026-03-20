@@ -17,6 +17,7 @@ struct EmbeddedFooterView: ViewModifier {
                 .accessibilitySortPriority(1)
             FooterView(onTap: onTap)
                 .ignoresSafeArea(.keyboard, edges: .all)
+                .allowsHitTesting(!ProcessInfo.processInfo.isInTestingMode)
         }
     }
 }

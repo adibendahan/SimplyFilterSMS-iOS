@@ -204,7 +204,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     //MARK: - Private  -
     
     private static func languageSortOrder(_ a: NLLanguage, _ b: NLLanguage) -> Bool {
-        let currentLocale: NLLanguage? = Locale.current.languageCode.map { NLLanguage(rawValue: $0) }
+        let currentLocale: NLLanguage? = Locale.current.language.languageCode.map { NLLanguage(rawValue: $0.identifier) }
         var priority: [NLLanguage] = [.english, .hebrew]
         if let current = currentLocale, !priority.contains(current) {
             priority.insert(current, at: 0)

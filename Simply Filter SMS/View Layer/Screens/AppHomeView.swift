@@ -37,19 +37,15 @@ struct AppHomeView: View {
     @State private var dynamicEmojis: [String: String] = [:]
     
     var body: some View {
-        NavigationView {
-            List {
+        NavigationSplitView {
+            List(selection: $model.navigationScreen) {
                 
                 //MARK: Automatic Filtering
                 Section {
                     let screen: Screen = .automaticBlocking
                     
-                    NavigationLink(
-                        destination: screen.build(),
-                        tag: screen,
-                        selection: $model.navigationScreen) {
-                            
-                            HStack {
+                    NavigationLink(value: screen) {
+                        HStack {
                                 Group {
                                     if #available(iOS 17, *) {
                                         if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
@@ -213,10 +209,7 @@ struct AppHomeView: View {
                 //MARK: User Filters
                 Section {
                     ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
-                        NavigationLink (tag: filterType.screen,
-                                        selection: $model.navigationScreen) {
-                            filterType.screen.build()
-                        } label: {
+                        NavigationLink(value: filterType.screen) {
                             HStack {
                                 Image(systemName: filterType.iconName)
                                     .foregroundColor(filterType.iconColor)
@@ -249,6 +242,7 @@ struct AppHomeView: View {
             .navigationTitle(self.model.title)
             .listStyle(.insetGrouped)
             .navigationBarItems(trailing: NavigationBarTrailingItem())
+            .navigationSplitViewColumnWidth(min: 320, ideal: 360)
             .onReceive(self.model.$navigationScreen) { navigationScreen in
                 if navigationScreen == nil {
                     withAnimation {
@@ -263,12 +257,15 @@ struct AppHomeView: View {
                     }
                 }
             }
-            
-            CustomPlaceholderView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.listBackgroundColor(for: colorScheme))
-        } // NavigationView
-        .phoneOnlyStackNavigationView()
+        } detail: {
+            if let screen = model.navigationScreen {
+                screen.build()
+            } else {
+                CustomPlaceholderView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.listBackgroundColor(for: colorScheme))
+            }
+        } // NavigationSplitView
         .modifier(EmbeddedFooterView {
             guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
             self.model.sheetScreen = .about

@@ -51,10 +51,7 @@ class TestApplication: XCUIApplication {
         XCTAssert(self.staticTexts[type.name].exists)
         
         self.tap(.addFilterButton)
-        
-        if !self.buttonContaining(filterTarget.name).exists {
-            self.tap(.expandButton)
-        }
+        self.tap(.expandButton)
         
         if let denyFolderType = denyFolderType {
             self.buttonContaining(denyFolderType.name).forceTap()

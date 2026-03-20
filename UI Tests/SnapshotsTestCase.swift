@@ -22,18 +22,55 @@ class SnapshotsTestCase: ApplicationTestCase {
         }
 
         let app = TestApplication(testCase: self)
-        let langCode = Locale.current.languageCode ?? "unknown"
+        let langCode = Locale.current.language.languageCode?.identifier ?? "unknown"
         app.dismissCallToActionViewIfPresented()
 
+        app.tap(.appMenuButton)
+        app.tap(.loadDebugDataMenuButton)
+        
+        // MARK: countryList Screenshot
+        let ruleSwitch = app.switchContaining(RuleType.countryAllowlist.title)
+        XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
+        ruleSwitch.switches["0"].firstMatch.tap()
+        XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
+        
+        app.tap(.countryAllowlistButton)
+        self.sleep(seconds: 1)
+        for i in 0..<2 {
+            app.buttons.matching(identifier: TestIdentifier.countryRow.rawValue).element(boundBy: i).tap()
+            self.sleep(seconds: 0.5)
+        }
+        app.tap(.closeButton)
+        self.sleep(seconds: 0.5)
 
+        // MARK: applicationHome Screenshot
+        for rule in RuleType.allCases.filter({ $0 != .allUnknown && $0 != .countryAllowlist }) {
+            let ruleSwitch = app.switchContaining(rule.title)
+            XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
+            ruleSwitch.switches["0"].firstMatch.tap()
+            XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
+        }
+        
         // MARK: automaticFilters Screenshot
         app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_OFF"~)
         app.tap(.automaticFilterLink)
         let currentLanguage = NLLanguage(rawValue: langCode)
         let activeLang = currentLanguage != .undetermined ? currentLanguage : .english
         app.switches[activeLang~].switches["0"].firstMatch.tap()
-        snapshot("02.automaticFilters")
+        
+        
+        app.tap(.countryAllowlistButton)
+        snapshot("08.countryList")
+        app.tap(.closeButton)
+        self.sleep(seconds: 0.5)
+        
+        if !isPad {
+            snapshot("01.applicationHome")
+        }
 
+        app.tap(.automaticFilterLink)
+        snapshot("02.automaticFilters")
+        app.tap(.closeButton)
         app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
         self.sleep(seconds: 1)
         app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_ON"~)
@@ -81,35 +118,6 @@ class SnapshotsTestCase: ApplicationTestCase {
                       filterCase: .caseInsensitive,
                       screenshotName: addFilterScreenshot)
 
-        // MARK: countryList Screenshot
-        let ruleSwitch = app.switchContaining(RuleType.countryAllowlist.title)
-        XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
-        ruleSwitch.switches["0"].firstMatch.tap()
-        XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
-        
-        app.tap(.countryAllowlistButton)
-        self.sleep(seconds: 1)
-        for i in 0..<2 {
-            app.buttons.matching(identifier: TestIdentifier.countryRow.rawValue).element(boundBy: i).tap()
-            self.sleep(seconds: 0.5)
-        }
-        snapshot("08.countryList")
-        app.tap(.closeButton)
-        self.sleep(seconds: 0.5)
-
-        // MARK: applicationHome Screenshot
-        for rule in RuleType.allCases.filter({ $0 != .allUnknown && $0 != .countryAllowlist }) {
-            let ruleSwitch = app.switchContaining(rule.title)
-            XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
-            ruleSwitch.switches["0"].firstMatch.tap()
-            XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
-        }
-        
-        app.tap(.appMenuButton)
-        app.tap(.loadDebugDataMenuButton)
-        snapshot("01.applicationHome")
-
-
         // MARK: denyFilters Screenshot
         app.tap(.denyFiltersLink)
         snapshot("03.denyFilters")
@@ -125,6 +133,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         // MARK: denyLanguages Screenshot
         app.conditionalSwipeUp(!isPad)
         app.tap(.denyLanguageLink)
+        self.sleep(seconds: 1)
         app.tap(.addFilterButton)
         snapshot("06.denyLanguages")
         app.tap(.closeButton)

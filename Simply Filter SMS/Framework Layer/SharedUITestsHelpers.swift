@@ -7,10 +7,16 @@
 
 import UIKit
 
+extension ProcessInfo {
+    var isInTestingMode: Bool {
+        return arguments.contains("-Testing")
+    }
+}
+
 #if DEBUG
 extension UIApplication {
     var isInTestingMode: Bool {
-        return ProcessInfo.processInfo.arguments.contains("-Testing")
+        return ProcessInfo.processInfo.isInTestingMode
     }
 }
 #endif
