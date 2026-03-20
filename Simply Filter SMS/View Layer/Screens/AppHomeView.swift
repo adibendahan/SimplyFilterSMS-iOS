@@ -295,7 +295,7 @@ struct AppHomeView: View {
             }
         } content: { sheetScreen in
             if sheetScreen == .whatsNew {
-                WhatsNewView(model: WhatsNewView.ViewModel(onActionnableEntryTapped: { entry in
+                WhatsNewView(model: WhatsNewView.ViewModel(onActionableEntryTapped: { entry in
                     if entry == .tipJar {
                         self.model.pendingScreenAfterDismiss = .tipJar
                     }

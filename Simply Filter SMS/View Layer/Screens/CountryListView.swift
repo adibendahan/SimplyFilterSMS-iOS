@@ -35,7 +35,8 @@ struct CountryListView: View {
             let unselected = model.unselectedEntries
 
             if !selected.isEmpty {
-                Section(header: Text(String(format: "autoFilter_countryAllowlist_section_allowed"~, selected.count))) {
+                Section(header: Text(String(format: "autoFilter_countryAllowlist_section_allowed"~, selected.count))
+                    .accessibilityAddTraits(.isHeader)) {
                     ForEach(selected, id: \.callingCode) { entry in
                         rowView(entry)
                     }
@@ -43,7 +44,8 @@ struct CountryListView: View {
             }
 
             if !unselected.isEmpty {
-                Section(header: Text(String(format: "autoFilter_countryAllowlist_section_blocked"~, unselected.count))) {
+                Section(header: Text(String(format: "autoFilter_countryAllowlist_section_blocked"~, unselected.count))
+                    .accessibilityAddTraits(.isHeader)) {
                     ForEach(unselected, id: \.callingCode) { entry in
                         rowView(entry)
                     }
@@ -107,6 +109,7 @@ struct CountryListView: View {
             }
         }
         .accessibilityIdentifier(TestIdentifier.countryRow.rawValue)
+        .accessibilityAddTraits(model.isSelected(entry) ? .isSelected : [])
     }
 }
 

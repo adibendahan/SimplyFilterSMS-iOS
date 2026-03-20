@@ -109,7 +109,7 @@ class TestApplication: XCUIApplication {
     }
     
     func assertLabel(of testIdentifier: TestIdentifier, contains string: String) {
-        let button = self.button(.automaticFilterLink)
+        let button = self.button(testIdentifier)
         XCTAssert(button.exists, "Cannot find button for \(testIdentifier.rawValue)")
         XCTAssert(button.label.contains(string), "\(testIdentifier.rawValue) expected: \(string), found: \(button.label).")
     }

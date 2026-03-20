@@ -37,12 +37,6 @@ class MessageEvaluationManagerTests: XCTestCase {
     
     //MARK: Tests
     func test_evaluateMessage() {
-        struct MessageTestCase {
-            let sender: String
-            let body: String
-            let expectedAction: ILMessageFilterAction
-        }
-        
         let testCases: [MessageTestCase] = [
             MessageTestCase(sender: "1234567", body: "מה המצב עדי?", expectedAction: .allow),
             MessageTestCase(sender: "1234567", body: "מה המצב עדי? רוצה לקנות weed?", expectedAction: .allow),
@@ -250,6 +244,38 @@ class MessageEvaluationManagerTests: XCTestCase {
             XCTAssert(testCase.expectedAction == actualAction,
                       "countryAllowlist sender \"\(testCase.sender)\": expected \(testCase.expectedAction.debugName), got \(actualAction.debugName).")
         }
+    }
+
+    func test_evaluateMessage_countryAllowlist_emptyCountries_skipsRule() {
+        self.flushPersistanceManager()
+
+        // Rule active but no countries selected — should be skipped (allow)
+        let rule = AutomaticFiltersRule(context: self.testSubject.context)
+        rule.ruleId = RuleType.countryAllowlist.rawValue
+        rule.isActive = true
+        rule.selectedChoice = 0
+        rule.selectedCountries = try! String(data: JSONEncoder().encode([String]()), encoding: .utf8)!
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "hello", sender: "+1-800-555-1234").action
+        XCTAssertEqual(result, .allow, "countryAllowlist with empty countries list should skip the rule and allow")
+    }
+
+    func test_evaluateMessage_countryAllowlist_disabledRule_skipsRule() {
+        self.flushPersistanceManager()
+
+        // Rule exists but isActive = false — should be skipped (allow)
+        let allowedJSON = try! String(data: JSONEncoder().encode(["+972"]), encoding: .utf8)!
+        let rule = AutomaticFiltersRule(context: self.testSubject.context)
+        rule.ruleId = RuleType.countryAllowlist.rawValue
+        rule.isActive = false
+        rule.selectedChoice = 0
+        rule.selectedCountries = allowedJSON
+        try? self.testSubject.context.save()
+
+        // US number — would be blocked if rule were active, but rule is disabled
+        let result = self.testSubject.evaluateMessage(body: "hello", sender: "+1-800-555-1234").action
+        XCTAssertEqual(result, .allow, "countryAllowlist with isActive=false should skip the rule and allow")
     }
 
     // P1 allUnknown overrides P2 allow filters — even an explicit allow match must not escape allUnknown

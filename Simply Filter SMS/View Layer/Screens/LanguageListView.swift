@@ -181,7 +181,7 @@ extension LanguageListView {
             self.languages = appManager.automaticFilterManager.languages(for: mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: appManager.automaticFilterManager.languageAutomaticState,
-                                                setter: appManager.automaticFilterManager.setLanguageAutmaticState) })
+                                                setter: appManager.automaticFilterManager.setLanguageAutomaticState) })
             
 
             if isOnline {
@@ -261,7 +261,7 @@ extension LanguageListView {
             self.languages = self.appManager.automaticFilterManager.languages(for: self.mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: self.appManager.automaticFilterManager.languageAutomaticState,
-                                                setter: self.appManager.automaticFilterManager.setLanguageAutmaticState) })
+                                                setter: self.appManager.automaticFilterManager.setLanguageAutomaticState) })
             
             if self.mode == .automaticBlocking,
                let lastUpdate = self.lastUpdate,

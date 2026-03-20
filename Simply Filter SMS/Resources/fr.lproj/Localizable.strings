@@ -408,7 +408,7 @@
 
 "whatsNew_trustedCountries_title" = "Pays de Confiance";
 
-"whatsNew_trustedCountries_desc" = "Autorisez automatiquement les messages de **pays spécifiques** par préfixe téléphonique. Ajoutez vos pays de confiance et filtrez le reste.";
+"whatsNew_trustedCountries_desc" = "Autorise automatiquement les messages de **pays spécifiques** par préfixe téléphonique. Ajoute tes pays de confiance et filtre le reste.";
 
 "reportMessage_junkAndBlockSender" = "Indésirables et bloquer l'expéditeur";
 
@@ -416,4 +416,4 @@
 
 "reportingExtension_messageIndex" = "Message %ld";
 
-"reportingExtension_footer" = "Vos signalements entrainent les filtres IA, aidant à maintenir des boites de réception propres pour les utilisateurs de Simply Filter SMS partout. Merci de votre contribution.";
+"reportingExtension_footer" = "Tes signalements entrainent les filtres IA, aidant à maintenir des boites de réception propres pour les utilisateurs de Simply Filter SMS partout. Merci de ta contribution.";

@@ -131,9 +131,9 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         return automaticFiltersLanguage.isActive
     }
     
-    func setLanguageAutmaticState(for language: NLLanguage, value: Bool) {
+    func setLanguageAutomaticState(for language: NLLanguage, value: Bool) {
         guard let persistanceManager = self.persistanceManager else { return }
-        AppManager.logger.debug("setLanguageAutmaticState — '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(value, privacy: .public)")
+        AppManager.logger.debug("setLanguageAutomaticState — '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(value, privacy: .public)")
         let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         automaticFiltersLanguage.isActive = value
         persistanceManager.commitContext()

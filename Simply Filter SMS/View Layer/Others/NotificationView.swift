@@ -136,9 +136,9 @@ struct NotificationView: View {
             self.buttonTitle = notification.buttonTitle
             self.currentTimeout = notification.timeout
             self.show = false
-            self.onButtonTap = {
+            self.onButtonTap = { [weak self] in
                 withAnimation {
-                    self.show = false
+                    self?.show = false
                 }
             }
         }

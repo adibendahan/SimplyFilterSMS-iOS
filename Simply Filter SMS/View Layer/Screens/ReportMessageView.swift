@@ -1,5 +1,5 @@
 //
-//  TestFiltersView.swift
+//  ReportMessageView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 01/02/2022.
@@ -7,6 +7,7 @@
 
 import SwiftUI
 import IdentityLookup
+import UIKit
 
 
 //MARK: - View -
@@ -14,7 +15,10 @@ struct ReportMessageView: View {
     
     @Environment(\.dismiss)
     var dismiss
-    
+
+    @Environment(\.accessibilityVoiceOverEnabled)
+    private var voiceOverEnabled
+
     @FocusState private var focusedField: Field?
     @StateObject private var model: ViewModel
 
@@ -138,8 +142,10 @@ struct ReportMessageView: View {
                     }
             }
             .onChange(of: self.model.state) { newState in
-                if newState.isResult {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if case .result(let text) = newState {
+                    UIAccessibility.post(notification: .announcement, argument: text)
+                    let delay: TimeInterval = voiceOverEnabled ? 3 : 1
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                         dismiss()
                     }
                 }

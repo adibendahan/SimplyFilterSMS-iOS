@@ -50,10 +50,10 @@ struct WhatsNewView: View {
                         }
                         .listRowSeparator(.hidden)
 
-                        if entry.isActionnable, model.onActionnableEntryTapped != nil {
+                        if entry.isActionable, model.onActionableEntryTapped != nil {
                             Button {
                                 model.markAsSeen()
-                                model.onActionnableEntryTapped?(entry)
+                                model.onActionableEntryTapped?(entry)
                                 dismiss()
                             } label: {
                                 row
@@ -61,6 +61,7 @@ struct WhatsNewView: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
 
                             }
+                            .accessibilityElement(children: .combine)
                             .listRowInsets(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
                         } else {
                             row
@@ -114,11 +115,11 @@ extension WhatsNewView {
 
     class ViewModel: BaseViewModel, ObservableObject {
         let entries: [WhatsNewEntry]
-        var onActionnableEntryTapped: ((WhatsNewEntry) -> Void)?
+        var onActionableEntryTapped: ((WhatsNewEntry) -> Void)?
 
-        init(appManager: AppManagerProtocol = AppManager.shared, onActionnableEntryTapped: ((WhatsNewEntry) -> Void)? = nil) {
+        init(appManager: AppManagerProtocol = AppManager.shared, onActionableEntryTapped: ((WhatsNewEntry) -> Void)? = nil) {
             self.entries = WhatsNewEntry.allCases.sorted { $0.order < $1.order }
-            self.onActionnableEntryTapped = onActionnableEntryTapped
+            self.onActionableEntryTapped = onActionableEntryTapped
             super.init(appManager: appManager)
         }
 

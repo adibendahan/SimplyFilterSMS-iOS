@@ -44,7 +44,7 @@
 
 "filterList_options" = "Opções";
 
-"addFilter_add" = "Incluir";
+"addFilter_add" = "Adicionar";
 
 "addFilter_addFilter_allow" = "Adicionar Permitido";
 
@@ -324,7 +324,7 @@
 
 "tipJar_tier_medium_desc" = "Uma fatia de amor";
 
-"tipJar_tier_large_desc" = "Mexido, não agitado";
+"tipJar_tier_large_desc" = "Agitado, não mexido";
 
 "tipJar_chooseATip" = "Escolha uma gorjeta";
 

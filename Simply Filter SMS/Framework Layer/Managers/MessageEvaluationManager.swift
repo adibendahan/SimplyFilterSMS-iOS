@@ -136,7 +136,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         case .allow:
             for filter in filters {
                 guard let filter = filter as? Filter else { continue }
-                let matched = self.isMataching(filter: filter, body: body, sender: sender)
+                let matched = self.isMatching(filter: filter, body: body, sender: sender)
                 logger?.debug("  Checking allow filter '\(filter.text ?? "?", privacy: .public)' [target: \(filter.filterTarget.logDescription, privacy: .public), matching: \(filter.filterMatching.logDescription, privacy: .public), case: \(filter.filterCase.logDescription, privacy: .public)] → \(matched ? "MATCH" : "no match", privacy: .public)")
                 guard matched else { continue }
                 result = MessageEvaluationResult(action: .allow, reason: filter.text)
@@ -146,7 +146,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         case .deny:
             for filter in filters {
                 guard let filter = filter as? Filter else { continue }
-                let matched = self.isMataching(filter: filter, body: body, sender: sender)
+                let matched = self.isMatching(filter: filter, body: body, sender: sender)
                 logger?.debug("  Checking deny filter '\(filter.text ?? "?", privacy: .public)' [target: \(filter.filterTarget.logDescription, privacy: .public), matching: \(filter.filterMatching.logDescription, privacy: .public), case: \(filter.filterCase.logDescription, privacy: .public), folder: \(filter.denyFolderType.logDescription, privacy: .public)] → \(matched ? "MATCH" : "no match", privacy: .public)")
                 guard matched else { continue }
                 result = MessageEvaluationResult(action: filter.denyFolderType.action, reason: filter.text)
@@ -199,7 +199,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             let lang = NLLanguage(rawValue: langRawValue)
             for allowedSender in languageResponse.allowSenders {
                 if lowercasedSender == allowedSender.lowercased() {
-                    result = MessageEvaluationResult(action: .allow, reason: "Automatic Filters (\(lang.localizedName ?? langRawValue))")
+                    result = MessageEvaluationResult(action: .allow, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
                     logger?.debug("  → ALLOW: matched allow sender '\(allowedSender, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
@@ -207,7 +207,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             guard !result.action.isFiltered else { break }
             for allowedBody in languageResponse.allowBody {
                 if lowercasedBody.contains(allowedBody.lowercased()) {
-                    result = MessageEvaluationResult(action: .allow, reason: "Automatic Filters (\(lang.localizedName ?? langRawValue))")
+                    result = MessageEvaluationResult(action: .allow, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
                     logger?.debug("  → ALLOW: matched allow body phrase '\(allowedBody, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
@@ -234,7 +234,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             logger?.debug("  Checking language '\(lang.localizedName ?? langRawValue, privacy: .public)' — denySenders: \(languageResponse.denySender.count, privacy: .public), denyBody: \(languageResponse.denyBody.count, privacy: .public)")
             for deniedSender in languageResponse.denySender {
                 if lowercasedSender == deniedSender.lowercased() {
-                    result = MessageEvaluationResult(action: .junk, reason: "Automatic Filters (\(lang.localizedName ?? langRawValue))")
+                    result = MessageEvaluationResult(action: .junk, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
                     logger?.debug("  → JUNK: matched deny sender '\(deniedSender, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
@@ -242,7 +242,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             guard !result.action.isFiltered else { break }
             for deniedBody in languageResponse.denyBody {
                 if lowercasedBody.contains(deniedBody.lowercased()) {
-                    result = MessageEvaluationResult(action: .junk, reason: "Automatic Filters (\(lang.localizedName ?? langRawValue))")
+                    result = MessageEvaluationResult(action: .junk, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
                     logger?.debug("  → JUNK: matched deny body phrase '\(deniedBody, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
@@ -331,7 +331,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         return result
     }
 
-    private func isMataching(filter: Filter, body: String, sender: String) -> Bool {
+    private func isMatching(filter: Filter, body: String, sender: String) -> Bool {
         var messageForEvaluation = ""
         var textForEvaluation = filter.text ?? ""
         switch filter.filterTarget {
@@ -349,21 +349,21 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         guard filter.filterMatching == .exact else {
             return messageForEvaluation.contains(textForEvaluation)
         }
-        var isMataching = false
-        guard let range = messageForEvaluation.range(of: textForEvaluation, options: filter.filterCase.compareOption) else { return isMataching }
+        var isMatching = false
+        guard let range = messageForEvaluation.range(of: textForEvaluation, options: filter.filterCase.compareOption) else { return isMatching }
         let nsRange = NSRange(range, in: messageForEvaluation)
-        isMataching = true
+        isMatching = true
         if nsRange.location > 0,
            let indexBefore = messageForEvaluation.index(at: nsRange.location - 1),
            messageForEvaluation[indexBefore].isLetter {
-            isMataching = false
+            isMatching = false
         }
-        if isMataching,
+        if isMatching,
            nsRange.location + nsRange.length < messageForEvaluation.count,
            let indexAfter = messageForEvaluation.index(at: nsRange.location + nsRange.length),
            messageForEvaluation[indexAfter].isLetter {
-            isMataching = false
+            isMatching = false
         }
-        return isMataching
+        return isMatching
     }
 }

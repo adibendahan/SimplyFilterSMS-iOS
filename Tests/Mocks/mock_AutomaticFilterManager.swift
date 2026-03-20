@@ -65,17 +65,17 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
             return self.rulesClosure?() ?? []
         }
         set {
-            self.rulesGetCounter += 1
+            self.rulesSetCounter += 1
         }
     }
-    
+
     var activeAutomaticFiltersTitle: String? {
         get {
             self.activeAutomaticFiltersTitleGetCounter += 1
             return self.activeAutomaticFiltersTitleClosure?() ?? nil
         }
         set {
-            self.activeAutomaticFiltersTitleGetCounter += 1
+            self.activeAutomaticFiltersTitleSetCounter += 1
         }
     }
     
@@ -99,7 +99,7 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         return self.languageAutomaticStateClosure?(language) ?? false
     }
     
-    func setLanguageAutmaticState(for language: NLLanguage, value: Bool) {
+    func setLanguageAutomaticState(for language: NLLanguage, value: Bool) {
         self.setLanguageAtumaticStateCounter += 1
         self.setLanguageAtumaticStateClosure?(language, value)
     }

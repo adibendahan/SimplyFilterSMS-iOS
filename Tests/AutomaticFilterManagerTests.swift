@@ -200,7 +200,15 @@ class AutomaticFilterManagerTests: XCTestCase {
         
         // Verify
         XCTAssertEqual(fullResult.count, NLLanguage.allSupportedCases.count)
-        XCTAssertEqual(fullResult[0].rawValue, NLLanguage.arabic.rawValue)
+        // First result depends on current locale — verify English is always in the top 2 (either first or after the current locale language)
+        let currentLocale = Locale.current.language.languageCode.map { NLLanguage(rawValue: $0.identifier) }
+        let isCurrentLocaleSpecial = currentLocale == .english || currentLocale == .hebrew
+        if isCurrentLocaleSpecial {
+            XCTAssertEqual(fullResult[0], .english, "English locale should place English first")
+        } else if let current = currentLocale {
+            XCTAssertEqual(fullResult[0], current, "Non-English/Hebrew locale should appear first")
+            XCTAssertEqual(fullResult[1], .english, "English should appear second after current locale")
+        }
         XCTAssertEqual(self.persistanceManager.isDuplicateFilterLanguageCounter, NLLanguage.allSupportedCases.count * 2)
     }
     
@@ -248,7 +256,7 @@ class AutomaticFilterManagerTests: XCTestCase {
     
     func test_setLanguageAtumaticState() {
         // Act
-        self.testSubject.setLanguageAutmaticState(for: .english, value: true)
+        self.testSubject.setLanguageAutomaticState(for: .english, value: true)
         
         // Verify
         XCTAssertEqual(self.persistanceManager.ensuredAutomaticFiltersLanguageRecordCounter, 1)

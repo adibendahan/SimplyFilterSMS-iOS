@@ -44,6 +44,8 @@
             <string>NSStringPluralRuleType</string>
             <key>NSStringFormatValueTypeKey</key>
             <string>ld</string>
+            <key>zero</key>
+            <string>Keine Filter</string>
             <key>one</key>
             <string>1 Filter</string>
             <key>other</key>

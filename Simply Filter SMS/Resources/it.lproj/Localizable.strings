@@ -222,7 +222,7 @@
 
 "autoFilter_empty" = "Vai online mentre l'app è aperta almeno una volta per scaricare le liste del filtraggio AI.";
 
-"autoFilter_error" = "Sembra esserci un problema nel scaricare le liste del filtraggio AI. Riprova più tardi.";
+"autoFilter_error" = "Sembra esserci un problema nello scaricare le liste del filtraggio AI. Riprova più tardi.";
 
 "autoFilter_emojis" = "Blocca emoji";
 

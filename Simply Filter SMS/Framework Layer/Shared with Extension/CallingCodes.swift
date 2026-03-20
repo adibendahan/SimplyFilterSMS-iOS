@@ -104,6 +104,7 @@ enum CallingCodeEntry: CaseIterable {
     case algeria            // +213
     case tunisia            // +216
     case libya              // +218
+    case southSudan         // +211
     case gambia             // +220
     case senegal            // +221
     case mauritania         // +222
@@ -376,6 +377,8 @@ enum CallingCodeEntry: CaseIterable {
             return ("+216", "Tunisia", ["TN"])
         case .libya:
             return ("+218", "Libya", ["LY"])
+        case .southSudan:
+            return ("+211", "South Sudan", ["SS"])
         case .gambia:
             return ("+220", "Gambia", ["GM"])
         case .senegal:

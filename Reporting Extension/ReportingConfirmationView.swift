@@ -66,6 +66,7 @@ struct ReportingConfirmationView: View {
                         }
                         .contentShape(Rectangle())
                     }
+                    .accessibilityAddTraits(model.selectedReportType == reportType ? .isSelected : [])
                 }
             } header: {
                 Text(String.localizedStringWithFormat("reportingExtension_classify"~, model.bodies.count))

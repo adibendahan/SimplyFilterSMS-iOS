@@ -1,5 +1,5 @@
 //
-//  Constsants.swift
+//  Constants.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 27/12/2021.
@@ -617,7 +617,7 @@ enum WhatsNewEntry: String, CaseIterable {
         }
     }
 
-    var isActionnable: Bool {
+    var isActionable: Bool {
         switch self {
         case .tipJar:
             return true

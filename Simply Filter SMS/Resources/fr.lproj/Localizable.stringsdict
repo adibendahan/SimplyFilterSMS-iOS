@@ -44,6 +44,8 @@
             <string>NSStringPluralRuleType</string>
             <key>NSStringFormatValueTypeKey</key>
             <string>ld</string>
+            <key>zero</key>
+            <string>Aucun filtre</string>
             <key>one</key>
             <string>%ld filtre</string>
             <key>other</key>
@@ -78,9 +80,9 @@
             <key>NSStringFormatValueTypeKey</key>
             <string>ld</string>
             <key>one</key>
-            <string>Comment souhaitez-vous le classer?</string>
+            <string>Comment souhaites-tu le classer?</string>
             <key>other</key>
-            <string>Comment souhaitez-vous les classer?</string>
+            <string>Comment souhaites-tu les classer?</string>
         </dict>
     </dict>
 </dict>

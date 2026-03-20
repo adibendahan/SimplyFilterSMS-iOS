@@ -11,6 +11,7 @@
 		03418F10C75ED980A337BD31 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constants.swift */; };
 		12227A4C1D1A26B024EE6B90 /* SharedUITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */; };
 		26CEB1BC9A69CF65DC2CCE90 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constants.swift */; };
+		32E703F6EE6DCF1AE4C4C0F9 /* ReportMessageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */; };
 		34A2FE52B4B2F54879E8532B /* SharedExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC2278E01C00037C926 /* SharedExtensions.swift */; };
 		35B7864D116243E34AC005DC /* TipJarManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986FCD84F7D2AE7EDB341A2D /* TipJarManagerProtocol.swift */; };
 		35DB90809C90181516FBD284 /* ShieldGlintIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C18038215780F287F19CF9 /* ShieldGlintIcon.swift */; };
@@ -171,6 +172,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */ = {isa = PBXFileReference; name = ReportMessageViewTests.swift; path = Tests/ReportMessageViewTests.swift; sourceTree = "<group>"; };
 		1355C48B10FE4519937D804C /* Reporting Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Reporting Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		157A0B821C517E1A1D0993A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37C18038215780F287F19CF9 /* ShieldGlintIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldGlintIcon.swift; sourceTree = "<group>"; };
@@ -490,6 +492,7 @@
 				691AA72F285508EC00FCA4AF /* UI Tests */,
 				69CD70C72770D4D100F91A2F /* Products */,
 				6973D01B278B537300A173CD /* Frameworks */,
+				01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -883,6 +886,7 @@
 				690F09C927AC310600BA481F /* mock_AutomaticFilterManager.swift in Sources */,
 				3E71FB36F8B1A765DE7AD92F /* mock_TipJarManager.swift in Sources */,
 				69F3D32427B961E800D7DDA7 /* AutomaticFilterManagerTests.swift in Sources */,
+				32E703F6EE6DCF1AE4C4C0F9 /* ReportMessageViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
