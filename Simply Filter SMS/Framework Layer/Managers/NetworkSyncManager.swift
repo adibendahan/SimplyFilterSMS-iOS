@@ -24,7 +24,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
         self.persistanceManager = persistanceManager
         self.preSyncFingerprint = persistanceManager.fingerprint
         self.networkMonitor = monitor
-        
+
         monitor.pathUpdateHandler = self.onNetworkChange
         networkMonitor.start(queue: queue)
 
@@ -35,7 +35,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
             self.firstStatusHandlers = []
             handlers.forEach { $0() }
         }
-        
+
         NotificationCenter.default.publisher(for: NSPersistentCloudKitContainer.eventChangedNotification)
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { notification in
