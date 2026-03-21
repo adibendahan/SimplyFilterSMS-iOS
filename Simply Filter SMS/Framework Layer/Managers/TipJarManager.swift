@@ -19,11 +19,11 @@ class TipJarManager: TipJarManagerProtocol {
         updatesTask = Task(priority: .background) {
             for await verificationResult in Transaction.updates {
                 guard case .verified(let transaction) = verificationResult else {
-                    AppManager.logger.warning("TipJarManager: unverified transaction update received")
+                    AppManager.logger.debug("TipJarManager — unverified transaction update received")
                     continue
                 }
                 await transaction.finish()
-                AppManager.logger.info("TipJarManager: finished transaction from updates listener — \(transaction.productID)")
+                AppManager.logger.debug("TipJarManager — finished transaction from updates listener: \(transaction.productID, privacy: .public)")
             }
         }
 
@@ -38,32 +38,31 @@ class TipJarManager: TipJarManagerProtocol {
     }
 
     func purchase(_ product: Product) async -> TipPurchaseResult {
+        AppManager.logger.debug("TipJarManager — purchase started: \(product.id, privacy: .public)")
         do {
             let result = try await product.purchase()
             switch result {
             case .success(let verificationResult):
                 guard case .verified(let transaction) = verificationResult else {
-                    AppManager.logger.error("TipJarManager: purchase verification failed for \(product.id)")
+                    AppManager.logger.error("TipJarManager — purchase verification failed: \(product.id, privacy: .public)")
                     return .failure(StoreKitError.notAvailableInStorefront)
                 }
                 await transaction.finish()
                 self.defaultsManager.didTip = true
                 let tier = TipTier(rawValue: product.id) ?? .small
-                AppManager.logger.info("TipJarManager: purchase successful — \(product.id)")
+                AppManager.logger.debug("TipJarManager — purchase successful: \(product.id, privacy: .public)")
                 return .success(tier)
-
             case .userCancelled:
+                AppManager.logger.debug("TipJarManager — purchase cancelled: \(product.id, privacy: .public)")
                 return .userCancelled
-
             case .pending:
-                AppManager.logger.info("TipJarManager: purchase pending — \(product.id)")
+                AppManager.logger.debug("TipJarManager — purchase pending: \(product.id, privacy: .public)")
                 return .pending
-
             @unknown default:
                 return .userCancelled
             }
         } catch {
-            AppManager.logger.error("TipJarManager: purchase failed — \(error.localizedDescription)")
+            AppManager.logger.error("TipJarManager — purchase error: \(error.localizedDescription, privacy: .public)")
             return .failure(error)
         }
     }
@@ -74,7 +73,7 @@ class TipJarManager: TipJarManagerProtocol {
         for await verificationResult in Transaction.unfinished {
             guard case .verified(let transaction) = verificationResult else { continue }
             await transaction.finish()
-            AppManager.logger.info("TipJarManager: finished unfinished transaction — \(transaction.productID)")
+            AppManager.logger.debug("TipJarManager — finished unfinished transaction: \(transaction.productID, privacy: .public)")
         }
     }
 
@@ -85,9 +84,9 @@ class TipJarManager: TipJarManagerProtocol {
             await MainActor.run {
                 products = sorted
             }
-            AppManager.logger.info("TipJarManager: fetched \(fetched.count) products")
+            AppManager.logger.debug("TipJarManager — fetched \(fetched.count, privacy: .public) products")
         } catch {
-            AppManager.logger.error("TipJarManager: failed to fetch products — \(error.localizedDescription)")
+            AppManager.logger.error("TipJarManager — failed to fetch products: \(error.localizedDescription, privacy: .public)")
         }
         await MainActor.run {
             isLoadingProducts = false

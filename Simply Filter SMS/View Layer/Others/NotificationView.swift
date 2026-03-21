@@ -89,6 +89,7 @@ struct NotificationView: View {
     private func setShow(_ show: Bool) {
         if show && self.offset == kHideOffset {
             self.offset = kShowOffset
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
             if UIAccessibility.isVoiceOverRunning {
                 UIAccessibility.post(
                     notification: .announcement,
@@ -103,7 +104,7 @@ struct NotificationView: View {
             callback?()
         }
     }
-    
+
     class ViewModel: ObservableObject {
         @Published var icon: String
         @Published var iconColor: Color
@@ -135,9 +136,9 @@ struct NotificationView: View {
             self.buttonTitle = notification.buttonTitle
             self.currentTimeout = notification.timeout
             self.show = false
-            self.onButtonTap = {
+            self.onButtonTap = { [weak self] in
                 withAnimation {
-                    self.show = false
+                    self?.show = false
                 }
             }
         }
@@ -172,10 +173,10 @@ struct NotificationView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + timeout, execute: work)
         }
     }
-    
+
     enum Notification {
         case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion
-        
+
         var icon: String {
             switch self {
             case .offline:
@@ -258,7 +259,7 @@ struct NotificationView: View {
             case .onClipboardSet:
                 return 3
             case .tipSuccessful:
-                return 3
+                return 6
             case .tipPromotion:
                 return 10
             }

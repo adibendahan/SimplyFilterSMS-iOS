@@ -1,0 +1,419 @@
+"general_allow" = "سماح";
+
+"general_deny" = "حظر";
+
+"general_null" = "(فارغ)";
+
+"general_copyright" = "© %ld عدي بن-دهان. جميع الحقوق محفوظة.";
+
+"general_close" = "إغلاق";
+
+"general_active_count" = "%ld مرشّحات";
+
+"general_lang" = "اللغة";
+
+"general_edit" = "تعديل";
+
+"lang_supported" = "اللغات المدعومة";
+
+"lang_allBlocked" = "لقد حظرت جميع اللغات المدعومة!";
+
+"lang_how" = "تتم معالجة اللغة وتحديدها **محليًا** بواسطة محرّك اللغة الطبيعية في iOS. سيتم تصفية الرسالة فقط إذا كانت **اللغة السائدة** في النص موجودة في قائمة اللغات المحظورة.";
+
+"filterList_filters" = "المرشّحات";
+
+"filterList_allowed" = "النصوص المسموحة";
+
+"filterList_denied" = "النصوص المحظورة";
+
+"filterList_menu_filterLanguage" = "حظر لغة";
+
+"filterList_menu_enableExtension" = "مساعدة";
+
+"filterList_menu_about" = "حول";
+
+"filterList_menu_debug" = "تحميل بيانات اختبار";
+
+"filterList_deniedLanguage" = "اللغات المحظورة";
+
+"filterList_deleteFiltersCount" = "حذف (%ld)";
+
+"filterList_folder" = "المجلد";
+
+"filterList_text" = "النص";
+
+"filterList_options" = "خيارات";
+
+"addFilter_add" = "إضافة";
+
+"addFilter_addFilter_allow" = "إضافة نص مسموح";
+
+"addFilter_addFilter_deny" = "إضافة نص محظور";
+
+"addFilter_addLanguage" = "إضافة لغة";
+
+"addFilter_text" = "اكتب كلمة/حرفًا";
+
+"addFilter_type" = "النوع";
+
+"addFilter_type_caption" = "اختر إجراءً:";
+
+"addFilter_folder_caption" = "اختر المجلد المستهدف (اضغط للتغيير):";
+
+"addFilter_folder_junk" = "غير مرغوب فيه";
+
+"addFilter_folder_transactions" = "المعاملات";
+
+"addFilter_folder_promotions" = "العروض الترويجية";
+
+"addFilter_duplicate" = "مرشّح مكرر";
+
+"addFilter_more" = "عرض المزيد";
+
+"addFilter_less" = "عرض أقل";
+
+"addFilter_target_all" = "المُرسِل + المحتوى";
+
+"addFilter_target_all_multiline" = "المُرسِل +\nالمحتوى";
+
+"addFilter_target_sender" = "المُرسِل";
+
+"addFilter_target_body" = "المحتوى";
+
+"addFilter_target_title" = "اختر الهدف:";
+
+"addFilter_case_title" = "اختر حساسية الأحرف:";
+
+"addFilter_case_sensitive" = "حساس للأحرف";
+
+"addFilter_case_insensitive" = "غير حساس";
+
+"addFilter_match_title" = "اختر نوع المطابقة:";
+
+"addFilter_match_exact" = "مطابق";
+
+"addFilter_match_contains" = "يحتوي";
+
+"enableExtension_ready_callToAction" = "الإعدادات";
+
+"enableExtension_ready_cancel" = "إلغاء";
+
+"enableExtension_welcome" = "مرحبًا";
+
+"enableExtension_welcome_desc" = "فعّل 'Simply Filter SMS' كتطبيق تصفية SMS في إعدادات iOS. اتبع الخطوات أدناه، ثم اضغط زر الإعدادات عندما تكون مستعدًا.";
+
+"enableExtension_step1_title" = "افتح إعدادات iOS";
+
+"enableExtension_step1_desc" = "افتح إعدادات iOS، مرر للأسفل واضغط على 'التطبيقات'.";
+
+"enableExtension_step2_title" = "اضغط على الرسائل";
+
+"enableExtension_step2_desc" = "مرر للأسفل وابحث عن 'الرسائل' ثم اضغط عليه.";
+
+"enableExtension_step3_title" = "المُرسِلون المجهولون";
+
+"enableExtension_step3_desc" = "مرر للأسفل إلى قسم 'المُرسِلون المجهولون'";
+
+"enableExtension_step4_title" = "فرز المُرسِلين المجهولين";
+
+"enableExtension_step4_desc" = "اضغط لتفعيل 'فرز المُرسِلين المجهولين'";
+
+"enableExtension_step5_title" = "تصفية البريد العشوائي";
+
+"enableExtension_step5_desc" = "اضغط لتفعيل 'تصفية البريد العشوائي'";
+
+"enableExtension_step6_title" = "اختر 'Simply Filter SMS'";
+
+"enableExtension_step6_desc" = "اضغط على 'مرشح الرسائل النصية' واختر 'SimplyFilterSMS'";
+
+"aboutView_aboutSection" = "ملاحظات المطور";
+
+"aboutView_linksSection" = "روابط";
+
+"aboutView_aboutText" = "**صُنع بـ ❤️ بواسطة Adi Ben-Dahan في Tel Aviv 🇮🇱**\n\nبدأ هذا المشروع كبحث شخصي عن أداة مراسلة تحترم الخصوصية حقًا.\n\nبدون سحابة.\nبدون تحليلات.\nبدون مراقبة صامتة.\n\nمجرد مرشح سريع وموثوق يعمل بالكامل على جهازك دون أن يغادر أي شيء يديك.\nونظرًا لأن كثيرًا من الأدوات في هذا المجال تقف خلف اشتراكات أو جدران دفع، اعتقدت أنه سيكون رائعًا أن تكون هناك نسخة تعمل فقط بلا قيود. هذا التطبيق **مجاني** للاستخدام، وسيظل **مجانيًا**.\n\n**سيسعدني جدًا أن تمنحني تقييمًا من خمس نجوم في AppStore ⭐️❤️.**\n\nإذا شعرت بشيء غير صحيح أو لا يعمل كما هو متوقع، ملاحظة سريعة على صفحة GitHub Issues أو بريد إلكتروني ستكون موضع ترحيب دائمًا.";
+
+"aboutView_twitter" = "a_bd";
+
+"aboutView_github" = "GitHub";
+
+"aboutView_sendMail" = "إيميل";
+
+"aboutView_appIconCredit" = "Vitali Levit";
+
+"aboutView_appIconCreditTitle" = "مصمم الأيقونة";
+
+"aboutView_review" = "قيّمنا من فضلك!";
+
+"faq_subtitle" = "فيما يلي قائمة بالأسئلة الشائعة، إذا لم تجد إجابة لسؤالك يمكنك التواصل عبر";
+
+"faq_question_0" = "كيف أفعّل تصفية الرسائل في iOS؟";
+
+"faq_answer_0" = "اضغط لفتح شاشة الإعداد.";
+
+"faq_question_1" = "كيف تعمل تصفية الرسائل؟";
+
+"faq_answer_1" = "عندما تتلقى رسالة نصية من رقم غير موجود في جهات اتصالك، ستقوم Simply Filter SMS بتصفيتها وفق القواعد التالية:\n\n• إذا احتوت الرسالة على نص مطابق لمرشّح من 'النصوص المسموحة' فستُسلَّم بشكل طبيعي.\n• إذا لم تكن كذلك، ستُفحص الرسالة بحثًا عن مرشّحات 'النصوص المحظورة'، وإذا وُجدت فستُحوَّل إلى مجلد غير مرغوب فيه.\n• إذا لم تحتوِ الرسالة على نص محظور فستُسلَّم بشكل طبيعي.\n";
+
+"faq_question_2" = "هل رسائلي مكشوفة لمطور التطبيق؟";
+
+"faq_answer_2" = "لا. لا تجمع Simply Filter SMS أي معلومات، تتم معالجة الرسائل محليًا على جهازك دون أي تسجيل.";
+
+"faq_question_3" = "ماذا عن iMessages والرسائل من جهات الاتصال؟";
+
+"faq_answer_3" = "لا تكشف Apple عن هذه الرسائل لأي مطور، فهي تبقى خاصة تمامًا.";
+
+"faq_question_4" = "أين الرسائل المصفّاة؟";
+
+"faq_answer_4" = "عندما تُصنَّف رسالة نصية كغير مرغوب فيها، ستظل متاحة للقراءة في تطبيق الرسائل تحت مجلد غير مرغوب فيه.";
+
+"faq_question_5" = "ما الفرق بين مجلدات غير مرغوب فيه/المعاملات/العروض الترويجية؟";
+
+"faq_answer_5" = "لا فرق كبير، يمكنك تصفية أي كلمة إلى أي مجلد. هذه المجلدات غير قابلة للتخصيص. فقط الرسائل المصفّاة إلى مجلد غير مرغوب فيه تصل بصمت.";
+
+"help_automaticFiltering_question" = "كيف تعمل تصفية AI؟";
+
+"help_automaticFiltering" = "تستخدم تصفية AI قوائم كلمات مفتاحية مُولَّدة بالذكاء الاصطناعي للكشف عن البريد المزعج وتوجيه الرسائل إلى مجلد غير المرغوب فيه. يتم تحديث القوائم بشكل دوري. لا تزال مرشّحاتك المعتادة مُطبَّقة عند تفعيل تصفية AI.";
+
+"help_deny" = "أضف نصوصًا ستُصنِّف الرسالة كبريد عشوائي، ويمكنك أيضًا اختيار المجلد المحدد الذي تريد تخزين الرسالة فيه.";
+
+"help_allow" = "أضف نصوصًا ستُصنِّف الرسالة كرسالة صالحة. يُنصح بإضافة نصوص مميزة مثل اسمك. النصوص في هذه القائمة لها أعلى أولوية عند تصفية الرسالة.";
+
+"autoFilter_title" = "تصفية AI";
+
+"autoFilter_lastUpdated" = "آخر تحديث: %@";
+
+"autoFilter_forceUpdate" = "تحديث الآن";
+
+"autoFilter_neverUpdated" = "أبدًا";
+
+"autoFilter_ON" = "تشغيل";
+
+"autoFilter_OFF" = "إيقاف";
+
+"autoFilter_allUnknown" = "حظر جميع المجهولين";
+
+"autoFilter_links" = "حظر الروابط";
+
+"autoFilter_numbersOnly" = "السماح بالأرقام فقط";
+
+"autoFilter_shortSender" = "حظر المُرسِلين القصار";
+
+"autoFilter_shortSender_desc" = "على الأقل %ld أحرف";
+
+"autoFilter_shortSender_change" = "اضغط للتغيير";
+
+"autoFilter_shortSender_action" = "اختر حدًا جديدًا";
+
+"autoFilter_allUnknown_shortTitle" = "جميع المجهولين (ما عدا المسموح به)";
+
+"autoFilter_links_shortTitle" = "الروابط";
+
+"autoFilter_numbersOnly_shortTitle" = "أرقام فقط";
+
+"autoFilter_shortSender_shortTitle" = "مرسلون قصار";
+
+"autoFilter_smartFilters" = "مرشّحات ذكية";
+
+"autoFilter_yourFilters" = "مرشّحاتك";
+
+"autoFilter_email_shortTitle" = "إيميل";
+
+"autoFilter_email" = "حظر مرسلي البريد الإلكتروني";
+
+"autoFilter_empty" = "افتح التطبيق مرة واحدة على الأقل وأنت متصل بالإنترنت لتحميل قوائم تصفية AI.";
+
+"autoFilter_error" = "يبدو أن هناك مشكلة في تحميل قوائم تصفية AI. يُرجى المحاولة مرة أخرى لاحقًا.";
+
+"autoFilter_emojis" = "حظر الرموز التعبيرية";
+
+"autoFilter_emojis_shortTitle" = "الرموز التعبيرية";
+
+"testFilters_title" = "اختبر مرشّحاتك";
+
+"testFilters_action" = "اختبار";
+
+"testFilters_messageTitle" = "الرسالة";
+
+"testFilters_senderTitle" = "المُرسِل (اختياري)";
+
+"testFilters_resultAllowed" = "مسموح بها! 🥳";
+
+"testFilters_resultJunk" = "غير مرغوب فيها! 😈";
+
+"testFilters_resultPromotion" = "عرض ترويجي! 📢";
+
+"testFilters_resultTransaction" = "معاملة! 🧾";
+
+"testFilters_resultReason_noMatch" = "لا مطابقة";
+
+"testFilters_resultReason_unknownSender" = "مُرسِل مجهول";
+
+"testFilters_resultReason" = "السبب:";
+
+"notification_offline_title" = "مزامنة iCloud متوقفة";
+
+"notification_offline_subtitle" = "جهازك غير متصل بالشبكة";
+
+"notification_sync_title" = "مزامنة iCloud نشطة";
+
+"notification_sync_subtitle" = "تم تحديث البيانات المحلية";
+
+"notification_hide" = "إخفاء";
+
+"notification_automatic_title" = "تصفية AI";
+
+"notification_automatic_subtitle" = "تم تحديث المرشّحات";
+
+"notification_clipboard_subtitle" = "تم النسخ";
+
+"notification_tipPromotion_title" = "هل تستمتع بالتطبيق؟";
+
+"notification_tipPromotion_subtitle" = "اضغط لترك إكرامية";
+
+"reportMessage_senderTitle" = "المُرسِل";
+
+"reportMessage_title" = "الإبلاغ عن رسالة";
+
+"reportMessage_junk" = "غير مرغوب فيه";
+
+"reportMessage_notJunk" = "ليس بريدًا عشوائيًا";
+
+"reportMessage_report" = "إبلاغ";
+
+"reportMessage_thankYou" = "شكرًا على الإبلاغ!";
+
+"whatsNew_title" = "الجديد";
+
+"whatsNew_continue" = "متابعة";
+
+"whatsNew_menuItem" = "الجديد";
+
+"whatsNew_accessibility_title" = "دعم إمكانية الوصول";
+
+"whatsNew_accessibility_desc" = "قابل للاستخدام الكامل مع **VoiceOver** و**التحكم الصوتي**. يتوسع النص مع **الحجم الديناميكي**. الحركات تحترم إعداد **تقليل الحركة**.";
+
+"whatsNew_tipJar_title" = "ادعم المطور";
+
+"whatsNew_tipJar_desc" = "يتيح لك **صندوق الإكراميات** الجديد دعم تطوير التطبيق. Simply Filter SMS مجاني للأبد - الإكراميات مجرد طريقة لقول شكرًا! **اضغط هنا للإكرامية!**";
+
+"tipJar_title" = "صندوق الإكراميات";
+
+"tipJar_menuItem" = "صندوق الإكراميات";
+
+"tipJar_aboutRow" = "صندوق الإكراميات";
+
+"tipJar_header" = "هل تستمتع بالتطبيق؟";
+
+"tipJar_subheader" = "Simply Filter SMS مجاني وسيظل مجانيًا دائمًا. إذا وجدته مفيدًا، فإكرامية صغيرة تعني الكثير!";
+
+"tipJar_footer" = "الإكراميات لا تفتح أي ميزات. شكرًا على دعمك!";
+
+"tipJar_unavailable" = "الإكراميات غير متاحة الآن. يُرجى المحاولة لاحقًا.";
+
+"tipJar_tier_small" = "قهوة";
+
+"tipJar_tier_medium" = "بيتزا";
+
+"tipJar_tier_large" = "كوكتيل";
+
+"tipJar_toast_title" = "شكرًا جزيلًا!";
+
+"tipJar_toast_subtitle" = "دعمك يعني لنا كل شيء!";
+
+"tipJar_tier_small_desc" = "دفء بنكهة القهوة";
+
+"tipJar_tier_medium_desc" = "قطعة من القلب";
+
+"tipJar_tier_large_desc" = "مُهزَّز، لا مُقلَّب";
+
+"tipJar_chooseATip" = "اختر إكرامية";
+
+"placeholder_choose_title" = "اختر فئة";
+
+"placeholder_choose_detail" = "اختر فئة من الشريط الجانبي لعرض تفاصيلها.";
+
+"placeholder_choose_sub_detail1" = "إذا كانت مخفية اضغط على";
+
+"placeholder_choose_sub_detail2" = "الموجود في الأعلى.";
+
+"a11y_home_menuButton" = "المزيد من الخيارات";
+
+"a11y_addFilter_expandHint" = "اضغط مرتين لتبديل الخيارات المتقدمة";
+
+"a11y_testFilters_testHint" = "اضغط مرتين لاختبار هذه الرسالة مقابل مرشّحاتك";
+
+"a11y_reportMessage_submitHint" = "اضغط مرتين للإبلاغ عن هذه الرسالة";
+
+"a11y_enableExtension_ctaHint" = "اضغط مرتين لفتح إعدادات iOS";
+
+"a11y_filterRow_targetLabel" = "هدف المرشّح: %@";
+
+"a11y_filterRow_matchLabel" = "نوع المطابقة: %@";
+
+"a11y_filterRow_caseLabel" = "حالة الأحرف: %@";
+
+"a11y_filterRow_folderLabel" = "المجلد: %@";
+
+"a11y_home_shortSenderHint" = "حاليًا %ld أحرف. استخدم الإجراءات لتغيير حد الأحرف";
+
+"a11y_home_shortSenderAction" = "تغيير حد الأحرف";
+
+"a11y_footer_hint" = "اضغط مرتين لعرض معلومات التطبيق";
+
+"a11y_filterRow_editHint" = "اضغط مرتين للتعديل";
+
+"a11y_about_versionHint" = "اضغط مرتين لنسخ الإصدار";
+
+"a11y_about_versionCopied" = "الإصدار";
+
+"a11y_enableExtension_stepLabel" = "الخطوة %ld: %@. %@";
+
+"autoFilter_countryAllowlist" = "السماح حسب البلد";
+
+"autoFilter_countryAllowlist_shortTitle" = "قائمة البلدان المسموحة";
+
+"autoFilter_countryAllowlist_empty" = "لا توجد بلدان محددة";
+
+"general_search" = "بحث";
+
+"general_more" = "المزيد";
+
+"callingCode_+1" = "أمريكا الشمالية";
+
+"callingCode_+7" = "روسيا وكازاخستان";
+
+"callingCode_+47" = "النرويج";
+
+"callingCode_+262" = "ريونيون ومايوت";
+
+"callingCode_+590" = "غوادلوب";
+
+"callingCode_+599" = "جزر الأنتيل الهولندية";
+
+"autoFilter_countryAllowlist_explanation" = "أضف الدول التي تريد السماح بالرسائل منها. سيتم تصفية الرسائل المُرسَلة من أرقام هاتف مسجَّلة في دول غير موجودة في هذه القائمة. يتم فحص المرسِلين الذين يمتلكون رمز اتصال دولي كاملاً فقط (مثل +1، +972) - المرسِلون الذين لا يمتلكون رمزاً كهذا لا يتأثرون.";
+
+"general_selected" = "المحددة";
+
+"general_all" = "جميع البلدان";
+
+"general_noResults" = "لا نتائج";
+
+"whatsNew_aiFiltering_title" = "فلترة بالذكاء الاصطناعي";
+
+"whatsNew_aiFiltering_desc" = "أصبح الفلتر التلقائي مدعوماً الآن بـ**الذكاء الاصطناعي** - أذكى وأسرع وأكثر دقة، مع دعم **10 لغات** بما فيها الإسبانية والفرنسية والألمانية والعربية والمزيد.";
+
+"whatsNew_newLanguages_title" = "8 لغات جديدة";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** التطبيق متاح الآن بـ**8 لغات جديدة**، كلها مترجمة بمساعدة **الذكاء الاصطناعي**.";
+
+"whatsNew_trustedCountries_title" = "دول موثوقة";
+
+"whatsNew_trustedCountries_desc" = "السماح تلقائياً بالرسائل من **دول محددة** بناءً على رمز الهاتف. أضف الدول الموثوقة لديك وقم بتصفية الباقي.";
+
+"reportMessage_junkAndBlockSender" = "غير مرغوب وحظر المرسل";
+
+"reportingExtension_message" = "رسالة";
+
+"reportingExtension_messageIndex" = "رسالة %ld";
+
+"reportingExtension_footer" = "تساعد تقاريرك في تدريب فلاتر الذكاء الاصطناعي، مما يحافظ على نظافة صناديق البريد الوارد لمستخدمي Simply Filter SMS في كل مكان. شكرًا لمساهمتك.";

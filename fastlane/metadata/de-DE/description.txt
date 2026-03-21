@@ -1,0 +1,15 @@
+Hol die Kontrolle über deinen Posteingang zurück.
+
+Simply Filter SMS ist ein datenschutzorientierter Open-Source-Textnachrichtenfilter für iPhone und iPad. Erstelle Schlüsselwortregeln und intelligente Filter, um unerwünschte Nachrichten von unbekannten Absendern automatisch in Junk, Werbung oder Transaktionen zu verschieben - vollständig auf dem Gerät.
+
+Was ist neu in dieser Version:
+• KI-Filterung - Die automatische Filterung wird jetzt von KI unterstützt, intelligenter und genauer, mit Unterstützung für 10 Sprachen einschließlich Spanisch, Französisch, Deutsch, Arabisch und mehr.
+• Vertrauenswürdige Länder - Erlaube automatisch Nachrichten aus bestimmten Ländern per Telefonvorwahl.
+• 8 neue Sprachen - Die App ist jetzt auf Spanisch, Arabisch, Französisch, Deutsch, Portugiesisch, Japanisch, Koreanisch und Italienisch verfügbar.
+
+Falls du es verpasst hast, hier ist, was zuletzt aktualisiert wurde:
+• Barrierefreiheit - Vollständig nutzbar mit VoiceOver, Sprachsteuerung, Dynamischer Schriftgröße und Bewegung reduzieren.
+• Neues Design - Mit dem neuesten iOS-Stil für ein saubereres, moderneres Erlebnis neu gestaltet.
+• Nativer iPad-Support - Vollständige iPad-Erfahrung mit Seitenleistennavigation und optimierten Layouts.
+• Trinkgeldglas - Unterstütze die App-Entwicklung mit einem optionalen Trinkgeld. Simply Filter SMS ist für immer kostenlos.
+• Mehrere Fehlerbehebungen und Leistungsverbesserungen.

@@ -1,5 +1,5 @@
 //
-//  TestFiltersView.swift
+//  ReportMessageView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 01/02/2022.
@@ -7,6 +7,7 @@
 
 import SwiftUI
 import IdentityLookup
+import UIKit
 
 
 //MARK: - View -
@@ -14,9 +15,16 @@ struct ReportMessageView: View {
     
     @Environment(\.dismiss)
     var dismiss
-    
+
+    @Environment(\.accessibilityVoiceOverEnabled)
+    private var voiceOverEnabled
+
     @FocusState private var focusedField: Field?
-    @ObservedObject var model: ViewModel
+    @StateObject private var model: ViewModel
+
+    init(model: ViewModel = ViewModel()) {
+        _model = StateObject(wrappedValue: model)
+    }
     
     var body: some View {
         NavigationView {
@@ -53,7 +61,7 @@ struct ReportMessageView: View {
                         .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
                         
                         Picker(selection: $model.selectedReport, label: EmptyView()) {
-                            ForEach(ReportType.allCases, id: \.rawValue) { reportType in
+                            ForEach(ReportType.allCases.filter { $0 != .junkAndBlockSender }, id: \.rawValue) { reportType in
                                 Text(reportType.name)
                                     .font(.body)
                                     .tag(reportType)
@@ -134,8 +142,10 @@ struct ReportMessageView: View {
                     }
             }
             .onChange(of: self.model.state) { newState in
-                if newState.isResult {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if case .result(let text) = newState {
+                    UIAccessibility.post(notification: .announcement, argument: text)
+                    let delay: TimeInterval = voiceOverEnabled ? 3 : 1
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                         dismiss()
                     }
                 }

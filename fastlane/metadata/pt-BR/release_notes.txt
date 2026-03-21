@@ -1,0 +1,4 @@
+Filtragem com IA - Agora impulsionada por IA com suporte para 10 idiomas incluindo espanhol, francês, alemão, árabe e mais.
+Países confiáveis - Permita mensagens de países específicos por prefixo telefônico.
+8 novos idiomas - O app agora está disponível em espanhol, árabe, francês, alemão, português, japonês, coreano e italiano.
+Múltiplas correções de bugs e melhorias de desempenho.

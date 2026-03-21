@@ -23,6 +23,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var sessionCounterSetCounter = 0
     var didPromptForReviewGetCounter = 0
     var didPromptForReviewSetCounter = 0
+    var didTipGetCounter = 0
+    var didTipSetCounter = 0
     var appAgeGetCounter = 0
     var appAgeSetCounter = 0
     var lastSeenWhatsNewVersionGetCounter = 0
@@ -34,6 +36,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var sessionAgeClosure: (() -> (Date?))?
     var sessionCounterClosure: (() -> (Int))?
     var didPromptForReviewClosure: (() -> (Bool))?
+    var didTipClosure: (() -> (Bool))?
     var appAgeClosure: (() -> (Date))?
     var lastSeenWhatsNewVersionClosure: (() -> (Int))?
 
@@ -96,7 +99,17 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
             self.didPromptForReviewSetCounter += 1
         }
     }
-    
+
+    var didTip: Bool {
+        get {
+            self.didTipGetCounter += 1
+            return self.didTipClosure?() ?? false
+        }
+        set {
+            self.didTipSetCounter += 1
+        }
+    }
+
     var appAge: Date {
         get {
             self.appAgeGetCounter += 1

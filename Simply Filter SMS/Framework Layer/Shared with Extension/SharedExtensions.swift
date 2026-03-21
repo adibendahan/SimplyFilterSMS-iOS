@@ -17,8 +17,9 @@ extension Collection {
     }
 }
 
+#if !REPORTING_EXTENSION
 extension Filter {
-    
+
     var filterType: FilterType {
         get {
             return FilterType(rawValue: self.type) ?? .deny
@@ -27,7 +28,7 @@ extension Filter {
             self.type = newValue.rawValue
         }
     }
-    
+
     var denyFolderType: DenyFolderType {
         get {
             return DenyFolderType(rawValue: self.folderType) ?? .junk
@@ -36,7 +37,7 @@ extension Filter {
             self.folderType = newValue.rawValue
         }
     }
-    
+
     var filterMatching: FilterMatching {
         get {
             return FilterMatching(rawValue: self.matchingValue) ?? .contains
@@ -45,7 +46,7 @@ extension Filter {
             self.matchingValue = newValue.rawValue
         }
     }
-    
+
     var filterCase: FilterCase {
         get {
             return FilterCase(rawValue: self.caseValue) ?? .caseInsensitive
@@ -54,7 +55,7 @@ extension Filter {
             self.caseValue = newValue.rawValue
         }
     }
-    
+
     var filterTarget: FilterTarget {
         get {
             return FilterTarget(rawValue: self.targetValue) ?? .all
@@ -75,6 +76,7 @@ extension AutomaticFiltersRule {
         }
     }
 }
+#endif
 
 
 extension NLLanguage: @retroactive Identifiable {
@@ -97,8 +99,10 @@ extension NLLanguage: @retroactive Identifiable {
         self = language
     }
     
-    static var allSupportedCases: [NLLanguage] = [.hebrew, .arabic, .english, .spanish, .simplifiedChinese, .traditionalChinese, .russian,
-                                                         .french, .german, .italian, .japanese, .persian, .turkish]
+    static var allSupportedCases: [NLLanguage] = [.english, .hebrew,
+                                                         .arabic, .simplifiedChinese, .traditionalChinese, .french,
+                                                         .german, .italian, .japanese, .persian, .portuguese, .russian,
+                                                         .spanish, .turkish]
     static func dominantLanguage(for string: String) -> NLLanguage? {
         let recognizer = NLLanguageRecognizer()
         recognizer.processString(string)
@@ -133,18 +137,37 @@ extension ILMessageFilterAction {
         switch self {
         case .none, .allow:
             return "testFilters_resultAllowed"~
-            
+
         case .junk, .filter:
             return "testFilters_resultJunk"~
-            
+
         case .promotion:
             return "testFilters_resultPromotion"~
-            
+
         case .transaction:
             return "testFilters_resultTransaction"~
-            
+
         @unknown default:
             return "🧐"
+        }
+    }
+
+    var logName: String {
+        switch self {
+        case .none:
+            return "none"
+        case .allow:
+            return "allow"
+        case .junk:
+            return "junk"
+        case .filter:
+            return "filter"
+        case .promotion:
+            return "promotion"
+        case .transaction:
+            return "transaction"
+        @unknown default:
+            return "unknown"
         }
     }
     

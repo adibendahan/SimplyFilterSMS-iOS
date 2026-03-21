@@ -25,8 +25,12 @@ struct AboutView: View {
     @ScaledMetric(relativeTo: .body) private var heartHeight: CGFloat = 20
     @ScaledMetric(relativeTo: .body) private var starHeight: CGFloat = 20
 
-    @ObservedObject var model: ViewModel
-    
+    @StateObject var model: ViewModel
+
+    init(model: ViewModel) {
+        _model = StateObject(wrappedValue: model)
+    }
+
     var body: some View {
         NavigationView {
             VStack (alignment: .leading) {
@@ -123,17 +127,17 @@ struct AboutView: View {
                         
                         Link(destination: .appTwitterURL) {
                             HStack {
-                                Image("Twitter")
+                                Image("X")
                                     .resizable()
-                                    .frame(width: socialIconSize, height: socialIconSize * 21/26, alignment: .center)
+                                    .frame(width: socialIconSize, height: socialIconSize, alignment: .center)
                                     .aspectRatio(contentMode: .fit)
-                                    .accessibilityLabel("Twitter")
+                                    .accessibilityLabel("X")
 
                                 VStack(alignment: .leading) {
-                                    Text("Twitter")
+                                    Text("X")
                                         .foregroundColor(.primary)
                                         .padding(.leading, 8)
-                                    
+
                                     Text("aboutView_twitter"~)
                                         .foregroundColor(.secondary)
                                         .padding(.leading, 8)

@@ -7,55 +7,55 @@
 
 import SwiftUI
 
-enum Screen: Int, Identifiable {
+enum Screen: Int, Identifiable, Hashable {
     var id: Self { self }
-    
+
     case appHome, onboarding, help, about, enableExtension, testFilters,
          addLanguageFilter, addAllowFilter, addDenyFilter, automaticBlocking,
          denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
-         whatsNew, tipJar
-    
+         whatsNew, tipJar, countryList
+
     @ViewBuilder func build() -> some View {
         switch self {
         case .appHome:
             AppHomeView(model: AppHomeView.ViewModel())
-            
+
         case .onboarding:
-            EnableExtensionVideoView(model: EnableExtensionVideoView.ViewModel())
-            
+            EnableExtensionView(model: EnableExtensionView.ViewModel())
+
         case .help:
             HelpView(model: HelpView.ViewModel())
-            
+
         case .about:
             AboutView(model: AboutView.ViewModel())
-            
+
         case .enableExtension:
-            EnableExtensionVideoView(model: EnableExtensionVideoView.ViewModel())
-            
+            EnableExtensionView(model: EnableExtensionView.ViewModel())
+
         case .testFilters:
             TestFiltersView(model: TestFiltersView.ViewModel())
-            
+
         case .addLanguageFilter:
             LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage))
-            
+
         case .addAllowFilter:
             AddFilterView(model: AddFilterView.ViewModel(filterType: .allow))
-            
+
         case .addDenyFilter:
             AddFilterView(model: AddFilterView.ViewModel(filterType: .deny))
-            
+
         case .automaticBlocking:
             LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking))
-            
+
         case .denyFilterList:
             FilterListView(model: FilterListView.ViewModel(filterType: .deny))
-            
+
         case .allowFilterList:
             FilterListView(model: FilterListView.ViewModel(filterType: .allow))
-            
+
         case .denyLanguageFilterList:
             FilterListView(model: FilterListView.ViewModel(filterType: .denyLanguage))
-            
+
         case .reportMessage:
             ReportMessageView(model: ReportMessageView.ViewModel())
 
@@ -64,9 +64,12 @@ enum Screen: Int, Identifiable {
 
         case .tipJar:
             TipJarView(model: TipJarView.ViewModel())
+
+        case .countryList:
+            CountryListView(model: CountryListView.ViewModel())
         }
     }
-    
+
     var tag: String {
         switch self {
         case .appHome:
@@ -101,6 +104,8 @@ enum Screen: Int, Identifiable {
             return "whatsNew"
         case .tipJar:
             return "tipJar"
+        case .countryList:
+            return "countryList"
         }
     }
 }
@@ -128,4 +133,3 @@ extension FilterType {
         }
     }
 }
-

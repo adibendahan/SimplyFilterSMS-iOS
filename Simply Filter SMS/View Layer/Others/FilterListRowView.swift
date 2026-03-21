@@ -6,16 +6,22 @@
 //
 
 import SwiftUI
+import CoreData
 import NaturalLanguage
 
 
 //MARK: - View -
 struct FilterListRowView: View {
 
+    var filterObjectID: NSManagedObjectID
+    var dotFilterID: NSManagedObjectID?
     @ObservedObject var model: ViewModel
+    @State private var isEditingText = false
+    @State private var showDuplicateError = false
+    @State private var dotOpacity: Double = 0
 
     @ScaledMetric(relativeTo: .caption2) private var badgeFontSize: CGFloat = 8
-    @ScaledMetric(relativeTo: .caption2) private var badgeWidth: CGFloat = 44
+    @ScaledMetric(relativeTo: .caption2) private var badgeWidth: CGFloat = 60
     @ScaledMetric(relativeTo: .caption2) private var badgeHeight: CGFloat = 20
     @ScaledMetric(relativeTo: .body) private var matchingIconSize: CGFloat = 18
     @ScaledMetric(relativeTo: .body) private var caseIconSize: CGFloat = 20
@@ -23,7 +29,30 @@ struct FilterListRowView: View {
 
     var body: some View {
         HStack (alignment: .center) {
-            
+
+            Circle()
+                .fill(Color.accentColor)
+                .frame(width: 8, height: 8)
+                .opacity(dotOpacity)
+                .onAppear {
+                    guard dotFilterID == filterObjectID, dotOpacity == 0 else { return }
+                    dotOpacity = 1.0
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                        withAnimation(.easeOut(duration: 1.0)) {
+                            dotOpacity = 0.0
+                        }
+                    }
+                }
+                .onChange(of: dotFilterID) { newID in
+                    guard newID == filterObjectID, dotOpacity == 0 else { return }
+                    dotOpacity = 1.0
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                        withAnimation(.easeOut(duration: 1.0)) {
+                            dotOpacity = 0.0
+                        }
+                    }
+                }
+
             if self.model.filter.filterType == .denyLanguage,
                let filterText = self.model.filter.text {
                 let blockedLanguage = NLLanguage(filterText: filterText)
@@ -38,12 +67,36 @@ struct FilterListRowView: View {
                     minimumCharacters: 3,
                     onCommit: {
                         self.model.updateFilter(filterText: self.model.text)
+                        self.showDuplicateError = false
+                        self.isEditingText = false
+                    },
+                    onEditingChanged: { isEditing in
+                        withAnimation {
+                            self.isEditingText = isEditing
+                            if !isEditing { self.showDuplicateError = false }
+                        }
+                    },
+                    onTextChange: { text in
+                        self.showDuplicateError = self.model.isLiveDuplicate(text: text)
                     })
+
+                if self.isEditingText && self.showDuplicateError {
+                    HStack {
+                        Image(systemName: "xmark.octagon")
+                            .foregroundColor(.red.opacity(0.8))
+                        Text("addFilter_duplicate"~)
+                            .font(.footnote)
+                            .foregroundColor(.red)
+                    }
+                    .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+                    .background(Color.red.opacity(0.1))
+                    .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                }
             }
             
             Spacer()
             
-            if self.model.filter.filterType.supportsAdvancedOptions {
+            if !self.isEditingText && self.model.filter.filterType.supportsAdvancedOptions {
                 Menu {
                     ForEach(FilterTarget.allCases) { filterTarget in
                         Button {
@@ -118,7 +171,7 @@ struct FilterListRowView: View {
                 .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
             }
 
-            if self.model.filter.filterType.supportsFolders {
+            if !self.isEditingText && self.model.filter.filterType.supportsFolders {
                 
                 Menu {
                     ForEach(DenyFolderType.allCases) { folder in
@@ -156,11 +209,11 @@ extension FilterListRowView {
         @Published private(set) var filter: Filter
         @Published private(set) var onUpdate: ((Bool) -> ())?
         @Published var text: String
-        
+
         init(filter: Filter,
              onUpdate: ((Bool) -> ())? = nil,
              appManager: AppManagerProtocol = AppManager.shared) {
-            
+
             self.filter = filter
             self.onUpdate = onUpdate
             self.text = filter.text ?? "general_null"~
@@ -187,9 +240,31 @@ extension FilterListRowView {
             self.onUpdate?(true)
         }
         
-        func updateFilter(filterText: String) {
+        func isLiveDuplicate(text: String) -> Bool {
+            guard text != (self.filter.text ?? "") else { return false }
+            return self.appManager.persistanceManager.isDuplicateFilter(
+                text: text,
+                filterTarget: self.filter.filterTarget,
+                filterMatching: self.filter.filterMatching,
+                filterCase: self.filter.filterCase)
+        }
+
+        @discardableResult
+        func updateFilter(filterText: String) -> Bool {
+            guard filterText != self.filter.text else { return false }
+
+            guard !self.appManager.persistanceManager.isDuplicateFilter(
+                text: filterText,
+                filterTarget: self.filter.filterTarget,
+                filterMatching: self.filter.filterMatching,
+                filterCase: self.filter.filterCase) else {
+                self.text = self.filter.text ?? ""
+                return true
+            }
+
             self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
             self.onUpdate?(false)
+            return false
         }
     }
 }
@@ -201,7 +276,7 @@ struct FilterListRowView_Previews: PreviewProvider {
         let appManager = AppManager.previews
         let filter = appManager.persistanceManager.fetchFilterRecords(for: .deny).first!
         
-        FilterListRowView(model: FilterListRowView.ViewModel(filter: filter, appManager: appManager))
+        FilterListRowView(filterObjectID: filter.objectID, dotFilterID: nil, model: FilterListRowView.ViewModel(filter: filter, appManager: appManager))
             .padding()
     }
 }

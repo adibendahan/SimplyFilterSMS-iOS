@@ -10,7 +10,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 |----------|-------------|
 | [docs/SCREENS.md](docs/SCREENS.md) | Per-screen breakdown of all SwiftUI views, ViewModels, layouts, and supporting components |
 | [docs/FRAMEWORK.md](docs/FRAMEWORK.md) | Framework and Services layer — all managers, protocols, data flow, and the message evaluation pipeline |
-| [docs/EXTENSION.md](docs/EXTENSION.md) | Message Filter Extension — how iOS delivers SMS to the extension and how it evaluates them |
+| [docs/EXTENSION.md](docs/EXTENSION.md) | Message Filter Extension (automatic filtering) and Reporting Extension (user-initiated junk/not-junk reporting from iOS Messages) |
 | [docs/TESTS.md](docs/TESTS.md) | Testing patterns, unit tests, UI tests, mocks, and test infrastructure |
 | [docs/DESIGN.md](docs/DESIGN.md) | Visual design system — colors, typography, spacing, components, and guidelines for new features |
 
@@ -19,10 +19,10 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | Screen enum case | View | Presentation |
 |---|---|---|
 | `appHome` | AppHomeView | Root |
-| `onboarding` | EnableExtensionVideoView | Sheet (first run) |
+| `onboarding` | EnableExtensionView | Sheet (first run) |
 | `help` | HelpView | Sheet |
 | `about` | AboutView | Sheet |
-| `enableExtension` | EnableExtensionVideoView (= onboarding) | Sheet |
+| `enableExtension` | EnableExtensionView (= onboarding) | Sheet |
 | `testFilters` | TestFiltersView | Sheet |
 | `addLanguageFilter` | LanguageListView (mode: .blockLanguage) | Sheet |
 | `addAllowFilter` | AddFilterView (filterType: .allow) | Sheet |
@@ -34,6 +34,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | `reportMessage` | ReportMessageView | Sheet |
 | `whatsNew` | WhatsNewView | Sheet |
 | `tipJar` | TipJarView | Sheet |
+| `countryList` | CountryListView | Sheet |
 
 ## Manager Dependency Graph
 
@@ -58,9 +59,11 @@ AppManager (Singleton)
 
 When an SMS arrives, `MessageEvaluationManager.evaluateMessage(body:sender:)` runs these checks in order (first match wins):
 
-1. **Allow filters** → `.allow` (user-created allowlist, highest priority)
-2. **Deny filters** → `.junk` / `.transaction` / `.promotion` (user-created blocklist)
-3. **Language deny** → `.junk` (blocked languages via NLLanguageRecognizer)
-4. **Automatic filters** → `.allow` or `.junk` (community filter lists from S3, per-language)
-5. **Smart rules** → `.junk` (allUnknown, links, numbersOnly, shortSender, email, emojis)
-6. **No match** → `.allow` (default)
+1. **All Unknown** → `.junk` (absolute gate — if enabled, blocks everything regardless of other filters)
+2. **Allow filters** → `.allow` (user-created allowlist)
+3. **Automatic filters (allow)** → `.allow` (trusted senders/body phrases from S3 community lists)
+4. **Filter rules** → `.junk` (links, numbersOnly, shortSender, email, emojis, countryAllowlist)
+5. **Deny filters** → `.junk` / `.transaction` / `.promotion` (user-created blocklist)
+6. **Deny language filters** → `.junk` (blocked languages via NLLanguageRecognizer)
+7. **Automatic filters (deny)** → `.junk` (spam keywords/senders from S3 community lists)
+8. **No match** → `.allow` (default)

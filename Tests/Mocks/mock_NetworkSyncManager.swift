@@ -38,4 +38,8 @@ class mock_NetworkSyncManager: NetworkSyncManagerProtocol {
             self.networkStatusSetCounter += 1
         }
     }
+
+    func onFirstStatusKnown(_ handler: @escaping () -> Void) {
+        handler()
+    }
 }

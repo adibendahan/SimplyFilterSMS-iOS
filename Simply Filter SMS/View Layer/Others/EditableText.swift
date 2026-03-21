@@ -16,19 +16,25 @@ struct EditableText: View {
             self.newValue = self.text
         }
     }
-    
+
     private var onCommit: (() -> ())?
+    private var onEditingChanged: ((Bool) -> ())?
+    private var onTextChange: ((String) -> ())?
     private var minimumCharacters: Int
-    
+
     public init(_ text: Binding<String>,
                 minimumCharacters: Int = 0,
-                onCommit: (() -> ())? = nil) {
-        
+                onCommit: (() -> ())? = nil,
+                onEditingChanged: ((Bool) -> ())? = nil,
+                onTextChange: ((String) -> ())? = nil) {
+
         self._text = text
         self.onCommit = onCommit
+        self.onEditingChanged = onEditingChanged
+        self.onTextChange = onTextChange
         self.minimumCharacters = minimumCharacters
     }
-    
+
     @ViewBuilder
     public var body: some View {
         ZStack {
@@ -41,6 +47,7 @@ struct EditableText: View {
                 "",
                 text: $newValue,
                 onEditingChanged: { isEditing in
+                    self.onEditingChanged?(isEditing)
                     if !isEditing {
                         if self.minimumCharacters > 0 && newValue.count >= self.minimumCharacters {
                             self.text = newValue
@@ -62,6 +69,9 @@ struct EditableText: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .focused($isFocused)
             .accessibilityLabel(self.text)
+            .onChange(of: newValue) { value in
+                self.onTextChange?(value)
+            }
         }
         .onTapGesture(count: 1, perform: {
             self.isFocused = true

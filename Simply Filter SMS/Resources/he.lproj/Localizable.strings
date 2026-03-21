@@ -56,11 +56,35 @@
 
 "enableExtension_welcome" = "ברוכים הבאים!";
 
-"enableExtension_welcome_desc" = "יש לאפשר את Simply Filter SMS כאפליקציה שמסננת הודעות בהגדרות של מערכת ההפעלה. צפו בסרטון הדרכה וכאשר תהיו מוכנים, לחצו על כפתור ההגדרות כדי לעבור למסך ההגדרות של מערכת ההפעלה.";
+"enableExtension_welcome_desc" = "יש לאפשר את Simply Filter SMS כאפליקציה שמסננת הודעות בהגדרות של מערכת ההפעלה. עקבו אחר השלבים למטה וכאשר תהיו מוכנים, לחצו על כפתור ההגדרות.";
 
 "enableExtension_ready_callToAction" = "הגדרות";
 
 "enableExtension_ready_cancel" = "ביטול";
+
+"enableExtension_step1_title" = "פתיחת הגדרות iOS";
+
+"enableExtension_step1_desc" = "פתחו את הגדרות iOS, גללו למטה ולחצו על 'אפליקציות'.";
+
+"enableExtension_step2_title" = "לחצו על הודעות";
+
+"enableExtension_step2_desc" = "גללו למטה, מצאו את 'הודעות' ולחצו עליו.";
+
+"enableExtension_step3_title" = "שולחים לא ידועים";
+
+"enableExtension_step3_desc" = "גללו למטה לקטע 'שולחים לא ידועים'";
+
+"enableExtension_step4_title" = "סינון שולחים לא ידועים";
+
+"enableExtension_step4_desc" = "לחצו להפעלת 'סינון שולחים לא ידועים'";
+
+"enableExtension_step5_title" = "סינון ספאם";
+
+"enableExtension_step5_desc" = "לחצו להפעלת 'סינון ספאם'";
+
+"enableExtension_step6_title" = "בחרו 'Simply Filter SMS'";
+
+"enableExtension_step6_desc" = "לחצו על 'מסנן הודעות טקסט' ובחרו 'SimplyFilterSMS'";
 
 "aboutView_aboutSection" = "אודות";
 
@@ -102,7 +126,7 @@
 
 "faq_answer_5" = "אין הבדל רב, ניתן לסנן כל מילה לכל תיקייה. התיקיות הינן קבועות ואינן ניתנות לשינוי. רק הודעות שמסוננות לתיקיית זבל יתקבלו ללא כל התראה.";
 
-"autoFilter_title" = "סינון אוטומטי";
+"autoFilter_title" = "סינון AI";
 
 "autoFilter_lastUpdated" = "עודכן לארונה ב %@";
 
@@ -166,9 +190,9 @@
 
 "testFilters_action" = "לחצו לבדיקה";
 
-"help_automaticFiltering_question" = "איך עובד הסינון האוטומטי של ההודעות?";
+"help_automaticFiltering_question" = "איך עובד סינון AI?";
 
-"help_automaticFiltering" = "סינון אוטומטי משתמש ברשימה מוכנה של מילים על מנת לקבוע האם הודעה היא זבל או לא. הרשימה מתעדכנת עם מילים חדשות לעיתים. הפילטרים האחרים שלך עדיין פעילים גם כאשר סינון אוטומטי מופעל.";
+"help_automaticFiltering" = "סינון AI משתמש ברשימות מילות מפתח שנוצרו על ידי AI כדי לזהות ספאם ולהעביר הודעות לתיקיית הזבל. הרשימות מתעדכנות מעת לעת. הפילטרים האחרים שלך עדיין פעילים גם כאשר סינון AI מופעל.";
 
 "help_deny" = "הוסיפו טקסטים שיגרמו להודעה להיחשב כזבל, אתם יכולים גם לבחור את התיקייה אליה ההודעה תסונן.";
 
@@ -218,15 +242,15 @@
 
 "notification_hide" = "הסתר";
 
-"notification_automatic_title" = "סינון אוטומטי";
+"notification_automatic_title" = "סינון AI";
 
 "notification_automatic_subtitle" = "עודכנו פילטרים חדשים";
 
-"autoFilter_empty" = "הפעילו את האפליקציה כאשר אתם אונליין לפחות פעם אחת על מנת לעדכן את רשימת הפילטרים האוטומטים";
+"autoFilter_empty" = "הפעילו את האפליקציה כאשר אתם אונליין לפחות פעם אחת על מנת לעדכן את רשימות סינון AI";
 
 "aboutView_review" = "דרגו אותנו בבקשה!";
 
-"autoFilter_error" = "נראה שיש בעיה בהורדת רשימת הפילטרים האוטומטים. אנא נסו שוב במועד מאוחר יותר.";
+"autoFilter_error" = "נראה שיש בעיה בהורדת רשימות סינון AI. אנא נסו שוב במועד מאוחר יותר.";
 
 "testFilters_resultReason_noMatch" = "לא נמצאה התאמה";
 
@@ -237,6 +261,22 @@
 "autoFilter_emojis" = "חסום אימוג'ים";
 
 "autoFilter_emojis_shortTitle" = "אימוג'ים";
+
+"autoFilter_countryAllowlist" = "אפשר לפי מדינה";
+
+"autoFilter_countryAllowlist_shortTitle" = "רשימת מדינות מותרות";
+
+"autoFilter_countryAllowlist_empty" = "לא נבחרו מדינות";
+
+"general_search" = "חיפוש";
+
+"general_more" = "נוספות";
+
+"general_selected" = "נבחרו";
+
+"general_all" = "כל המדינות";
+
+"general_noResults" = "אין תוצאות";
 
 "aboutView_appIconCreditTitle" = "מעצב האייקון";
 
@@ -264,21 +304,21 @@
 
 "whatsNew_menuItem" = "מה חדש";
 
+"whatsNew_aiFiltering_title" = "סינון AI";
+
+"whatsNew_aiFiltering_desc" = "הסינון האוטומטי מופעל כעת על ידי **בינה מלאכותית** - חכם, מהיר ומדויק יותר, עם תמיכה ב-**10 שפות** כולל ספרדית, צרפתית, גרמנית, ערבית ועוד.";
+
+"whatsNew_newLanguages_title" = "8 שפות חדשות";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** האפליקציה זמינה כעת ב-**8 שפות חדשות**, כולן תורגמו בעזרת **בינה מלאכותית**.";
+
+"whatsNew_trustedCountries_title" = "מדינות מהימנות";
+
+"whatsNew_trustedCountries_desc" = "אפשרו אוטומטית הודעות ממדינות **ספציפיות** לפי קידומת טלפון. הוסיפו את המדינות המהימנות עליכם וסננו את השאר.";
+
 "whatsNew_accessibility_title" = "תמיכה בנגישות";
 
 "whatsNew_accessibility_desc" = "שימוש מלא עם **VoiceOver** ו-**בקרה קולית**. הטקסט גדל עם **גודל טקסט**. האנימציות מכבדות את הגדרת **הפחת תנועה**.";
-
-"whatsNew_freshLook_title" = "מראה חדש ורענן";
-
-"whatsNew_freshLook_desc" = "האפליקציה עוצבה מחדש בסגנון העיצובי העדכני של iOS לחוויה **נקייה** ומודרנית יותר.";
-
-"whatsNew_iPad_title" = "תמיכה מלאה ב-iPad";
-
-"whatsNew_iPad_desc" = "חוויית iPad מלאה עם **ניווט בסרגל צד** ועיצוב מותאם למסכים גדולים.";
-
-"whatsNew_singleChar_title" = "פילטרים של תו בודד";
-
-"whatsNew_singleChar_desc" = "עכשיו ניתן ליצור פילטרים עם **תו בודד**, לשליטה מדויקת יותר בסינון ההודעות.";
 
 "whatsNew_tipJar_title" = "תמכו במפתח";
 
@@ -309,8 +349,11 @@
 "tipJar_toast_subtitle" = "התמיכה שלכם עושה את כל ההבדל!";
 
 "tipJar_tier_small_desc" = "שעושים באהבה";
+
 "tipJar_tier_medium_desc" = "בלי תוספות";
+
 "tipJar_tier_large_desc" = "מנוער, לא מעורבב";
+
 "tipJar_chooseATip" = "בחרו טיפ";
 
 "placeholder_choose_title" = "בחרו קטגוריה";
@@ -350,3 +393,27 @@
 "a11y_about_versionHint" = "הקשה כפולה להעתקת גרסה";
 
 "a11y_about_versionCopied" = "גרסה";
+
+"a11y_enableExtension_stepLabel" = "שלב %ld: %@. %@";
+
+"callingCode_+1" = "צפון אמריקה";
+
+"callingCode_+7" = "רוסיה וקזחסטן";
+
+"callingCode_+47" = "נורווגיה";
+
+"callingCode_+262" = "ראוניון ומאיוט";
+
+"callingCode_+590" = "גוואדלופ";
+
+"callingCode_+599" = "אנטיל ההולנדיות";
+
+"autoFilter_countryAllowlist_explanation" = "הוסף את המדינות שמהן אתה רוצה לאפשר הודעות. הודעות שנשלחות ממספרי טלפון הרשומים במדינות שאינן ברשימה זו יסוננו. רק שולחים עם קידומת חיוג בינלאומית מלאה (למשל +1, +972) נבדקים - שולחים ללא קידומת כזו אינם מושפעים.";
+
+"reportMessage_junkAndBlockSender" = "זבל וחסום שולח";
+
+"reportingExtension_message" = "הודעה";
+
+"reportingExtension_messageIndex" = "הודעה %ld";
+
+"reportingExtension_footer" = "הדיווחים שלך מאמנים את פילטרי ה-AI ועוזרים לשמור על תיבות הדואר נקיות עבור משתמשי Simply Filter SMS בכל מקום. תודה על תרומתך.";

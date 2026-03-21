@@ -260,7 +260,7 @@ Used in AddFilterView:
 Used for: creation, input, info, and onboarding screens.
 - Close button: X (top-right) via `EmbeddedCloseButton` or toolbar
 - Large bold title: left-aligned
-- Screens: AddFilterView, TestFiltersView, ReportMessageView, HelpView, AboutView, EnableExtensionVideoView, WhatsNewView, TipJarView
+- Screens: AddFilterView, TestFiltersView, ReportMessageView, HelpView, AboutView, EnableExtensionView, WhatsNewView, TipJarView
 
 ### Push Navigation
 

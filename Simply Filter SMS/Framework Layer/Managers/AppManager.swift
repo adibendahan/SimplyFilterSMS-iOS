@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import OSLog
 import Network
+import OSLog
 import UIKit
 
 class AppManager: AppManagerProtocol {
@@ -47,29 +47,49 @@ class AppManager: AppManagerProtocol {
         if UIApplication.shared.isInTestingMode {
             defaultsManager.reset()
             persistanceManager.reset()
+            let emptyList = LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])
+            let seedCache = AutomaticFilterListsResponse(filterLists: [
+                "en": emptyList, "he": emptyList, "ar": emptyList,
+                "es": emptyList, "fr": emptyList, "pt": emptyList,
+                "de": emptyList, "ja": emptyList, "ko": emptyList, "it": emptyList
+            ])
+            persistanceManager.saveCache(with: seedCache)
         }
         #endif
     }
     
     func onAppLaunch() {
         let _ = self.defaultsManager.appAge // make sure it's initialized
-        
+        AppManager.logger.debug("onAppLaunch — session #\(self.defaultsManager.sessionCounter, privacy: .public), installDate: \(self.defaultsManager.appAge, privacy: .public)")
         if let sessionAge = self.defaultsManager.sessionAge {
             if sessionAge.daysBetween(date: Date()) != 0 {
+                AppManager.logger.debug("onAppLaunch — new day detected, starting new session")
                 self.onNewUserSession()
+            }
+            else {
+                AppManager.logger.debug("onAppLaunch — same day, skipping new session")
             }
         }
         else {
+            AppManager.logger.debug("onAppLaunch — sessionAge not set, starting new session")
             self.onNewUserSession()
         }
     }
-    
+
     func onNewUserSession() {
         self.defaultsManager.sessionCounter += 1
         self.defaultsManager.sessionAge = Date()
-        
-        if self.networkSyncManager.networkStatus == .online {
-            self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+        AppManager.logger.debug("onNewUserSession — session #\(self.defaultsManager.sessionCounter, privacy: .public), waiting for network status")
+        self.networkSyncManager.onFirstStatusKnown { [weak self] in
+            guard let self else { return }
+            AppManager.logger.debug("onNewUserSession — network: \(self.networkSyncManager.networkStatus.name, privacy: .public)")
+            if self.networkSyncManager.networkStatus == .online {
+                AppManager.logger.debug("onNewUserSession — online, triggering automatic filter update check")
+                self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+            }
+            else {
+                AppManager.logger.debug("onNewUserSession — offline, skipping automatic filter update")
+            }
         }
     }
     

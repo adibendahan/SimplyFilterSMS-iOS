@@ -73,3 +73,83 @@ The extension reads the same CoreData database as the main app via:
 - **Limited memory** — Extensions have stricter memory limits than apps
 - **Shared database** — Must handle concurrent access with the main app gracefully
 - **No AppManager** — The extension instantiates `MessageEvaluationManager` directly, bypassing the app's DI container
+
+---
+
+# Reporting Extension
+
+How users report messages from iOS Messages and how reports reach the backend.
+
+---
+
+## Overview
+
+The Reporting Extension is an iOS app extension (`.appex`) that implements `ILClassificationUIExtensionViewController`. When a user long-presses one or more messages in iOS Messages and taps "Report Messages", iOS invokes this extension to present a confirmation UI and collect the user's classification choice.
+
+**Files:**
+- `Reporting Extension/ReportingExtensionViewController.swift` — principal class
+- `Reporting Extension/ReportingConfirmationView.swift` — SwiftUI confirmation UI
+
+**Bundle ID:** `com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Report-Extension`
+
+**Enable:** Settings > Phone > SMS/Call Reporting > Simply Filter SMS
+
+## How It Works
+
+```
+User long-presses message(s) in iOS Messages → "Report Messages"
+    |
+    v
+ReportingExtensionViewController.prepare(for:)
+  - reads all messageCommunications (sender + all bodies)
+  - populates ReportingConfirmationView.ViewModel
+    |
+    v
+ReportingConfirmationView (SwiftUI)
+  - shows sender + all message bodies with dividers
+  - offers: Junk / Junk & Block Sender / Not Junk
+    |
+    v
+User selects action → taps Done
+    |
+    v
+ReportingExtensionViewController.classificationResponse(for:)
+  - maps ReportType → ILClassificationAction
+  - sets response.userInfo = {sender, bodies: [String], type}
+    |
+    v
+iOS system (outside sandbox) POSTs to https://api.ben-dahan.com/report
+  - wraps as: {"classification": {sender, bodies, type}, "app": {...}, "_version": 1}
+    |
+    v
+API Gateway j476b01zf3 → Velocity template → ClassificationReport Lambda
+  - writes one DynamoDB record per body to reported_messages table
+```
+
+## Shared Code
+
+The Reporting Extension compiles these files from the main app (not shared via framework):
+
+| File | Purpose |
+|------|---------|
+| `Constsants.swift` | `ReportType` enum (junk / notJunk / junkAndBlockSender), `reportMessageURL` |
+| `SharedExtensions.swift` | `~` localization operator; CoreData extensions guarded with `#if !REPORTING_EXTENSION` |
+| `HTTPService.swift` + `URLRequestProtocol.swift` | Base networking (not used directly — iOS delivers report via system) |
+| `ReportMessageRequest.swift` + `ReportMessageResponse.swift` | Request/response types (compiled in for completeness) |
+
+## Key Constraints
+
+- **No AppManager / CoreData** — Extension runs in a separate process with no access to the shared database
+- **No direct networking** — Extension sandbox blocks all outbound network calls; reports are delivered by iOS via `ILClassificationExtensionNetworkReportDestination`
+- **TestFlight/App Store only** — iOS only fires the system POST in production distribution builds, not local dev installs
+- **One extension per device** — iOS allows only one SMS/Call Reporting extension enabled at a time (carrier apps may occupy this slot)
+- **Multi-message** — `ILMessageClassificationRequest.messageCommunications` can contain multiple messages (same sender); all bodies are collected and sent as an array
+
+## AWS Backend
+
+- **Endpoint:** `https://api.ben-dahan.com/report` (public, no auth)
+- **API Gateway:** `j476b01zf3` (region: `us-east-1`)
+- **Lambda:** `ClassificationReport` (Python 3.13) — source at `Classification Report Lambda/lambda_function.py`
+- **Database:** DynamoDB `reported_messages` table — one record per body per report
+
+See `openspec/changes/archive/2026-03-19-add-reporting-extension/aws-setup.md` for full AWS details.

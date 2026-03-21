@@ -1,0 +1,4 @@
+AI Filtering - Now AI-powered with support for 10 languages including Spanish, French, German, Arabic, and more.
+Trusted Countries - Allow messages from specific countries by phone prefix.
+8 New Languages - The app is now available in Spanish, Arabic, French, German, Portuguese, Japanese, Korean, and Italian.
+Multiple bug fixes and performance improvements.

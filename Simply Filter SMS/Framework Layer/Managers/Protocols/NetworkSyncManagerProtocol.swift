@@ -13,6 +13,7 @@ import Network
 protocol NetworkSyncManagerProtocol: AnyObject {
     var syncStatus: SyncStatus { get }
     var networkStatus: NetworkStatus { get }
+    func onFirstStatusKnown(_ handler: @escaping () -> Void)
 }
 
 

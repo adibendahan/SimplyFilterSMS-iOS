@@ -1,11 +1,20 @@
 default_platform(:ios)
 
 platform :ios do
+
+  def api_key
+    app_store_connect_api_key(
+      key_id: "25D6M24FR5",
+      issuer_id: "1ce4be2f-095e-46f8-9565-6893ad621877",
+      key_filepath: "~/.appstoreconnect/private_keys/AuthKey_25D6M24FR5.p8"
+    )
+  end
+
   desc "Take iPhone screenshots"
   lane :iphone_screenshots do
     capture_screenshots(
-      devices: ["iPhone 17 Pro Max"],
-      languages: ["en-US", "he-IL"],
+      devices: ["iPhone 17 Pro Max (26.1)"],
+      languages: ["he-IL", "ar", "de", "es", "pt-BR", "fr", "it", "ja", "ko", "en-US"],
       scheme: "UI Tests",
       project: "Simply Filter SMS.xcodeproj",
       output_directory: ".screenshots",
@@ -21,8 +30,8 @@ platform :ios do
   desc "Take iPad screenshots"
   lane :ipad_screenshots do
     capture_screenshots(
-      devices: ["iPad Pro 13-inch (M5)"],
-      languages: ["en-US", "he-IL"],
+      devices: ["iPad Pro 13-inch (M5) (26.1)"],
+      languages: ["he-IL", "ar", "de", "es", "pt-BR", "fr", "it", "ja", "ko", "en-US"],
       scheme: "UI Tests",
       project: "Simply Filter SMS.xcodeproj",
       output_directory: ".screenshots",
@@ -40,4 +49,54 @@ platform :ios do
     iphone_screenshots
     ipad_screenshots
   end
+
+  desc "Upload screenshots to App Store Connect"
+  lane :upload_screenshots do
+    # Rename simulator locale folders to App Store Connect locale codes
+    {
+      "ar" => "ar-SA",
+      "de" => "de-DE",
+      "es" => "es-ES",
+      "fr" => "fr-FR",
+      "he-IL" => "he"
+    }.each do |from, to|
+      src = File.join(Dir.pwd, "..", ".screenshots", from)
+      dst = File.join(Dir.pwd, "..", ".screenshots", to)
+      File.rename(src, dst) if File.directory?(src)
+    end
+
+    upload_to_app_store(
+      api_key: api_key,
+      screenshots_path: ".screenshots",
+      skip_metadata: true,
+      skip_binary_upload: true,
+      overwrite_screenshots: true,
+      force: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
+
+  desc "Download existing metadata from App Store Connect"
+  lane :download_metadata do
+    upload_to_app_store(
+      api_key: api_key,
+      metadata_path: "fastlane/metadata",
+      skip_screenshots: true,
+      skip_binary_upload: true,
+      download_only: true
+    )
+  end
+
+  desc "Upload metadata to App Store Connect"
+  lane :upload_metadata do
+    upload_to_app_store(
+      api_key: api_key,
+      metadata_path: "fastlane/metadata",
+      skip_screenshots: true,
+      skip_binary_upload: true,
+      force: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
+
 end

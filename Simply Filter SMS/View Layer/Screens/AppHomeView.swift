@@ -23,35 +23,47 @@ struct AppHomeView: View {
     
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
     
     @ObservedObject var model: ViewModel
 
-    @ScaledMetric(relativeTo: .title) private var shieldIconSize: CGFloat = 30
+    @ScaledMetric(relativeTo: .title) private var shieldIconSize: CGFloat = 34
     @ScaledMetric(relativeTo: .title3) private var autoFilterTitleSize: CGFloat = 20
     @ScaledMetric(relativeTo: .body) private var badgeFontSize: CGFloat = 16
     @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
 
     @State private var dynamicEmojis: [String: String] = [:]
-    
+    @State private var selectedScreen: Screen? = nil
+
     var body: some View {
-        NavigationView {
-            List {
+        NavigationSplitView {
+            List(selection: $selectedScreen) {
                 
                 //MARK: Automatic Filtering
                 Section {
                     let screen: Screen = .automaticBlocking
                     
-                    NavigationLink(
-                        destination: screen.build(),
-                        tag: screen,
-                        selection: $model.navigationScreen) {
-                            
-                            HStack {
-                                Image(systemName: "bolt.shield.fill")
-                                    .foregroundColor(.indigo)
-                                    .font(.system(size: shieldIconSize))
-                                    .padding(.trailing, 1)
-                                    .accessibilityHidden(true)
+                    NavigationLink(value: screen) {
+                        HStack {
+                                Group {
+                                    if #available(iOS 17, *) {
+                                        if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
+                                            ShieldGlintIcon()
+                                        } else {
+                                            Image(systemName: "bolt.shield.fill")
+                                                .symbolRenderingMode(.palette)
+                                                .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
+                                        }
+                                    } else {
+                                        Image(systemName: "bolt.shield.fill")
+                                            .foregroundColor(.indigo)
+                                    }
+                                }
+                                .font(.system(size: shieldIconSize))
+                                .padding(.trailing, 1)
+                                .accessibilityHidden(true)
                                 
                                 VStack (alignment: .leading) {
                                     Text("autoFilter_title"~)
@@ -86,6 +98,7 @@ struct AppHomeView: View {
                             .padding(.vertical, 12)
                         } // Navigation Link
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
+                        .listRowBackground(model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground))
                         .accessibility(identifier: TestIdentifier.automaticFilterLink.rawValue)
                         .accentColor(Color.primary.opacity(0.35))
                 } header: {
@@ -133,12 +146,12 @@ struct AppHomeView: View {
                                     if let subtitle = rule.subtitle,
                                        let action = rule.action,
                                        let actionTitle = rule.actionTitle {
-                                        
+
                                         HStack (alignment: .center, spacing: 4) {
                                             Text(String(format: subtitle, self.model.shortSenderChoice))
                                                 .font(.caption2)
                                                 .foregroundColor(.secondary)
-                                            
+
                                             Menu {
                                                 Text(actionTitle)
 
@@ -156,6 +169,23 @@ struct AppHomeView: View {
                                                     .font(.caption2)
                                             }
                                         }
+                                    } else if rule == .countryAllowlist && model.rules[index].state {
+                                        HStack (alignment: .center, spacing: 4) {
+                                            Text(self.model.selectedCountriesSummary)
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                                .lineLimit(1)
+
+                                            Button {
+                                                self.model.sheetScreen = .countryList
+                                            } label: {
+                                                Text("autoFilter_shortSender_change"~)
+                                                    .font(.caption2)
+                                                    .foregroundColor(.accentColor)
+                                            }
+                                            .buttonStyle(.plain)
+                                            .accessibilityIdentifier(TestIdentifier.countryAllowlistButton.rawValue)
+                                        }
                                     }
                                 }
                                 .padding(.leading, 8)
@@ -163,6 +193,7 @@ struct AppHomeView: View {
                         } // Toggle
                         .tint(rule.toggleBackgroundColor)
                         .disabled(isDisabled)
+                        .listRowBackground(Color(UIColor.secondarySystemGroupedBackground))
                         .if(rule.subtitle != nil) {
                             $0.accessibilityHint(String(format: "a11y_home_shortSenderHint"~, self.model.shortSenderChoice))
                                 .accessibilityAction(named: "a11y_home_shortSenderAction"~) {
@@ -171,7 +202,7 @@ struct AppHomeView: View {
                                 }
                         }
                     } // ForEach
-                    
+
                 } header: {
                     Text("autoFilter_smartFilters"~)
                         .accessibilityAddTraits(.isHeader)
@@ -181,10 +212,7 @@ struct AppHomeView: View {
                 //MARK: User Filters
                 Section {
                     ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
-                        NavigationLink (tag: filterType.screen,
-                                        selection: $model.navigationScreen) {
-                            filterType.screen.build()
-                        } label: {
+                        NavigationLink(value: filterType.screen) {
                             HStack {
                                 Image(systemName: filterType.iconName)
                                     .foregroundColor(filterType.iconColor)
@@ -195,12 +223,13 @@ struct AppHomeView: View {
                                 
                                 Spacer()
                                 
-                                Text(String(format: "general_active_count"~, self.model.activeCount(for: filterType)))
+                                Text(String.localizedStringWithFormat("general_active_count"~, self.model.activeCount(for: filterType)))
                                     .textCase(.uppercase)
                                     .foregroundColor(.secondary)
                                     .font(Font.caption2)
                             }
                         }
+                        .listRowBackground(model.navigationScreen == filterType.screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground))
                         .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
                         .accessibilityIdentifier(filterType.testIdentifier.rawValue)
                         .accentColor(Color.primary.opacity(0.35))
@@ -217,6 +246,17 @@ struct AppHomeView: View {
             .navigationTitle(self.model.title)
             .listStyle(.insetGrouped)
             .navigationBarItems(trailing: NavigationBarTrailingItem())
+            .navigationSplitViewColumnWidth(min: 340, ideal: 380)
+            .onChange(of: selectedScreen) { newScreen in
+                if let screen = newScreen {
+                    model.navigationScreen = screen
+                    if horizontalSizeClass == .regular {
+                        DispatchQueue.main.async { selectedScreen = nil }
+                    }
+                } else if horizontalSizeClass == .compact {
+                    model.navigationScreen = nil
+                }
+            }
             .onReceive(self.model.$navigationScreen) { navigationScreen in
                 if navigationScreen == nil {
                     withAnimation {
@@ -231,12 +271,15 @@ struct AppHomeView: View {
                     }
                 }
             }
-            
-            CustomPlaceholderView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.listBackgroundColor(for: colorScheme))
-        } // NavigationView
-        .phoneOnlyStackNavigationView()
+        } detail: {
+            if let screen = model.navigationScreen {
+                screen.build()
+            } else {
+                CustomPlaceholderView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.listBackgroundColor(for: colorScheme))
+            }
+        } // NavigationSplitView
         .modifier(EmbeddedFooterView {
             guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
             self.model.sheetScreen = .about
@@ -252,10 +295,14 @@ struct AppHomeView: View {
             }
         } content: { sheetScreen in
             if sheetScreen == .whatsNew {
-                WhatsNewView(model: WhatsNewView.ViewModel(onActionnableEntryTapped: { entry in
+                WhatsNewView(model: WhatsNewView.ViewModel(onActionableEntryTapped: { entry in
                     if entry == .tipJar {
                         self.model.pendingScreenAfterDismiss = .tipJar
                     }
+                }))
+            } else if sheetScreen == .help {
+                HelpView(model: HelpView.ViewModel(onRequestScreen: { screen in
+                    self.model.pendingScreenAfterDismiss = screen
                 }))
             } else {
                 sheetScreen.build()
@@ -345,6 +392,7 @@ extension AppHomeView {
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var shortSenderChoice: Int
         @Published private(set) var subtitle: String
+        @Published private(set) var selectedCountriesSummary: String
         @Published var rules: [StatefulItem<RuleType>]
         @Published var notification: NotificationView.ViewModel
         @Published var navigationScreen: Screen? = nil {
@@ -376,9 +424,9 @@ extension AppHomeView {
         var pendingScreenAfterDismiss: Screen?
         
         override init(appManager: AppManagerProtocol = AppManager.shared) {
-            
+
             let isAutomaticFilteringOn = appManager.automaticFilterManager.isAutomaticFilteringOn
-            
+
             self.title = "filterList_filters"~
             self.subtitle = isAutomaticFilteringOn ? appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
             self.isAppFirstRun = appManager.defaultsManager.isAppFirstRun
@@ -389,6 +437,7 @@ extension AppHomeView {
             self.filters = appManager.persistanceManager.fetchFilterRecords()
             self.rules = []
             self.notification = NotificationView.ViewModel(notification: .offline)
+            self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
             
             self.rules = appManager.automaticFilterManager.rules
@@ -401,7 +450,7 @@ extension AppHomeView {
         
         func refresh() {
             let isAutomaticFilteringOn = self.appManager.automaticFilterManager.isAutomaticFilteringOn
-            
+
             self.title = "filterList_filters"~
             self.subtitle = isAutomaticFilteringOn ? self.appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
             self.isAppFirstRun = self.appManager.defaultsManager.isAppFirstRun
@@ -409,6 +458,7 @@ extension AppHomeView {
             self.isAllUnknownFilteringOn = self.appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.shortSenderChoice = self.appManager.automaticFilterManager.selectedChoice(for: .shortSender)
             self.filters = self.appManager.persistanceManager.fetchFilterRecords()
+            self.selectedCountriesSummary = Self.makeCountrySummary(appManager: self.appManager)
             self.rules = self.appManager.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
                                                                                                    getter: self.appManager.automaticFilterManager.automaticRuleState,
                                                                                                    setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
@@ -454,7 +504,7 @@ extension AppHomeView {
                !self.userIgnoresNetworkStatus {
                 self.showNotification(.offline)
             }
-            
+
             if !didAddObservers {
                 self.didAddObservers = true
                 NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { _ in
@@ -567,8 +617,32 @@ extension AppHomeView {
             self.appManager.automaticFilterManager.setAutomaticRuleState(for: rule, value: value)
             self.refresh()
         }
+
+        private static func makeCountrySummary(appManager: AppManagerProtocol) -> String {
+            let codes = appManager.automaticFilterManager.selectedCountries(for: .countryAllowlist)
+            guard !codes.isEmpty else { return "autoFilter_countryAllowlist_empty"~ }
+            let names = codes
+                .compactMap { CallingCodeEntry.byCallingCode[$0] }
+                .sorted { countrySortIndex($0) < countrySortIndex($1) }
+                .map { $0.summaryName }
+            guard let first = names.first else { return "autoFilter_countryAllowlist_empty"~ }
+            if names.count == 1 {
+                return first
+            } else {
+                return "\(first) + \(names.count - 1) \("general_more"~)"
+            }
+        }
+
+        private static func countrySortIndex(_ entry: CallingCodeEntry) -> Int {
+            switch entry.callingCode {
+            case "+1":   return -2
+            case "+972": return -1
+            default:     return Int(entry.callingCode.dropFirst()) ?? Int.max
+            }
+        }
     }
 }
+
 
 
 //MARK: - Preview -

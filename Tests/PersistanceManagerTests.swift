@@ -319,6 +319,40 @@ class PersistanceManagerTests: XCTestCase {
     }
     
     
+    func test_selectedCountries_roundTrip() {
+        // Prepare + Act
+        self.expectingSaveContext()
+        self.testSubject.setSelectedCountries(["+972", "+1"], for: .countryAllowlist)
+
+        // Verify save happened
+        self.waitForExpectations(timeout: 1, handler: nil)
+
+        // Verify round-trip (order-independent)
+        let result = self.testSubject.selectedCountries(for: .countryAllowlist)
+        XCTAssertEqual(Set(result), Set(["+972", "+1"]))
+    }
+
+    func test_selectedCountries_emptyWhenNoRule() {
+        // No rule record exists for countryAllowlist
+        let result = self.testSubject.selectedCountries(for: .countryAllowlist)
+        XCTAssertTrue(result.isEmpty)
+    }
+
+    func test_setSelectedCountries_overwritesPrevious() {
+        // Prepare
+        self.testSubject.setSelectedCountries(["+972", "+1"], for: .countryAllowlist)
+
+        self.expectingSaveContext()
+
+        // Act
+        self.testSubject.setSelectedCountries(["+44"], for: .countryAllowlist)
+
+        // Verify
+        self.waitForExpectations(timeout: 1, handler: nil)
+        let result = self.testSubject.selectedCountries(for: .countryAllowlist)
+        XCTAssertEqual(result, ["+44"])
+    }
+
     // MARK: Private Variables and Helpers
     private var testSubject: PersistanceManagerProtocol = PersistanceManager(inMemory: true)
     private var saveNotificationCompleteHandler: ((Notification)->())?

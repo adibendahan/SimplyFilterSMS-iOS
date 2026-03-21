@@ -25,23 +25,29 @@ struct FilterListView: View {
     @ScaledMetric(relativeTo: .title3) private var addFilterIconSize: CGFloat = 20
 
     @ObservedObject var model: ViewModel
+    @State private var dotFilterID: NSManagedObjectID? = nil
     
     var body: some View {
+        ScrollViewReader { proxy in
         List (selection: $model.selectedFilters) {
             Section {
                 ForEach(self.model.filters, id: \.self) { filter in
-                    FilterListRowView(model: FilterListRowView.ViewModel(
-                        filter: filter,
-                        onUpdate: { animated in
-                            if animated {
-                                withAnimation { self.model.refresh() }
-                            }
-                            else {
-                                self.model.refresh()
-                            }
-                        },
-                        appManager: self.model.appManager))
+                    FilterListRowView(
+                        filterObjectID: filter.objectID,
+                        dotFilterID: dotFilterID,
+                        model: FilterListRowView.ViewModel(
+                            filter: filter,
+                            onUpdate: { animated in
+                                if animated {
+                                    withAnimation { self.model.refresh() }
+                                }
+                                else {
+                                    self.model.refresh()
+                                }
+                            },
+                            appManager: self.model.appManager))
                     .environment(\.editMode, $model.editMode)
+                    .id(filter.objectID)
                 }
                 .onDelete {
                     self.model.deleteFilters(withOffsets: $0, in: self.model.filters)
@@ -75,8 +81,24 @@ struct FilterListView: View {
         .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
             sheetScreen.build()
         }
+        .sheet(item: $model.addFilterViewModel) { vm in
+            AddFilterView(model: vm)
+        }
+        .sheet(item: $model.addLanguageViewModel) { vm in
+            LanguageListView(model: vm)
+        }
         .onReceive(self.model.$sheetScreen, perform: { sheetScreen in
             if sheetScreen == nil {
+                self.model.refresh()
+            }
+        })
+        .onReceive(self.model.$addFilterViewModel, perform: { vm in
+            if vm == nil {
+                self.model.refresh()
+            }
+        })
+        .onReceive(self.model.$addLanguageViewModel, perform: { vm in
+            if vm == nil {
                 self.model.refresh()
             }
         })
@@ -84,6 +106,18 @@ struct FilterListView: View {
         .onTapGesture {
             hideKeyboard()
         }
+        .onChange(of: model.newlyAddedFilter) { newFilter in
+            guard let filter = newFilter else { return }
+            dotFilterID = filter.objectID
+            withAnimation {
+                proxy.scrollTo(filter.objectID, anchor: .center)
+            }
+            let targetID = filter.objectID
+            DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
+                if dotFilterID == targetID { dotFilterID = nil }
+            }
+        }
+        } // ScrollViewReader
     }
     
     @ViewBuilder
@@ -123,14 +157,7 @@ struct FilterListView: View {
                     }
 
                     Button(action: {
-                        switch self.model.filterType {
-                        case .deny:
-                            self.model.sheetScreen = .addDenyFilter
-                        case .allow:
-                            self.model.sheetScreen = .addAllowFilter
-                        case .denyLanguage:
-                            self.model.sheetScreen = .addLanguageFilter
-                        }
+                        self.model.showAddFilter()
                     }) {
                         Label({
                             switch self.model.filterType {
@@ -157,14 +184,7 @@ struct FilterListView: View {
             self.model.filterType != .denyLanguage {
             
             Button(action: {
-                switch self.model.filterType {
-                case .deny:
-                    self.model.sheetScreen = .addDenyFilter
-                case .allow:
-                    self.model.sheetScreen = .addAllowFilter
-                case .denyLanguage:
-                    self.model.sheetScreen = .addLanguageFilter
-                }
+                self.model.showAddFilter()
             }) {
                 HStack {
                     Spacer()
@@ -196,14 +216,7 @@ struct FilterListView: View {
             }
             .highPriorityGesture(TapGesture()
                 .onEnded({ _ in
-                switch self.model.filterType {
-                case .deny:
-                    self.model.sheetScreen = .addDenyFilter
-                case .allow:
-                    self.model.sheetScreen = .addAllowFilter
-                case .denyLanguage:
-                    self.model.sheetScreen = .addLanguageFilter
-                }
+                self.model.showAddFilter()
             }))
             .accessibilityIdentifier(TestIdentifier.addFilterButton.rawValue)
         }
@@ -226,6 +239,9 @@ extension FilterListView {
         @Published var selectedFilters: Set<Filter> = Set()
         @Published var editMode: EditMode = .inactive
         @Published var sheetScreen: Screen? = nil
+        @Published var addFilterViewModel: AddFilterView.ViewModel? = nil
+        @Published var addLanguageViewModel: LanguageListView.ViewModel? = nil
+        @Published private(set) var newlyAddedFilter: Filter? = nil
         
         init(filterType: FilterType,
              appManager: AppManagerProtocol = AppManager.shared) {
@@ -252,10 +268,34 @@ extension FilterListView {
         
         func refresh() {
             let fetchedFilters = self.appManager.persistanceManager.fetchFilterRecords(for: self.filterType)
-            
+
             self.filters = fetchedFilters.filter({ $0.filterType == self.filterType })
             self.isAllUnknownFilteringOn = self.appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.canBlockAnotherLanguage = !self.appManager.automaticFilterManager.languages(for: .blockLanguage).isEmpty
+        }
+
+        func showAddFilter() {
+            if self.filterType == .denyLanguage {
+                let vm = LanguageListView.ViewModel(mode: .blockLanguage, onAdded: { [weak self] filter in
+                    self?.filterWasAdded(filter)
+                })
+                self.addLanguageViewModel = vm
+                return
+            }
+            let vm = AddFilterView.ViewModel(filterType: self.filterType, onAdded: { [weak self] filter in
+                self?.filterWasAdded(filter)
+            })
+            self.addFilterViewModel = vm
+        }
+
+        private func filterWasAdded(_ filter: Filter) {
+            self.refresh()
+            self.newlyAddedFilter = filter
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+                if self?.newlyAddedFilter == filter {
+                    self?.newlyAddedFilter = nil
+                }
+            }
         }
         
         func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {

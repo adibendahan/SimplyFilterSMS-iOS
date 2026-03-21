@@ -194,7 +194,8 @@ extension AddFilterView {
         case text
     }
     
-    class ViewModel: BaseViewModel, ObservableObject {
+    class ViewModel: BaseViewModel, ObservableObject, Identifiable {
+        let id = UUID()
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var title: String
         @Published private(set) var filterType: FilterType
@@ -210,9 +211,12 @@ extension AddFilterView {
         }
         
         private var didAddFilter = false
-        
+        private var onAdded: ((Filter) -> Void)?
+
         init(filterType: FilterType,
-                      appManager: AppManagerProtocol = AppManager.shared) {
+             onAdded: ((Filter) -> Void)? = nil,
+             appManager: AppManagerProtocol = AppManager.shared) {
+            self.onAdded = onAdded
             
             self.filterType = filterType
             
@@ -241,12 +245,15 @@ extension AddFilterView {
         
         func addFilter() {
             self.didAddFilter = true
-            self.appManager.persistanceManager.addFilter(text: self.filterText,
-                                                         type: self.filterType,
-                                                         denyFolder: self.selectedDenyFolderType,
-                                                         filterTarget: self.selectedFilterTarget,
-                                                         filterMatching: self.selectedFilterMatching,
-                                                         filterCase: self.selectedFilterCase)
+            let filter = self.appManager.persistanceManager.addFilter(text: self.filterText,
+                                                                      type: self.filterType,
+                                                                      denyFolder: self.selectedDenyFolderType,
+                                                                      filterTarget: self.selectedFilterTarget,
+                                                                      filterMatching: self.selectedFilterMatching,
+                                                                      filterCase: self.selectedFilterCase)
+            if let filter {
+                self.onAdded?(filter)
+            }
         }
     }
 }

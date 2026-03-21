@@ -123,11 +123,11 @@ struct LanguageListView: View {
                 }
             }
         }
-        .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
-            sheetScreen.build()
-        }
         .if(self.model.shouldAllowRefresh) {
             $0.refreshable(action: self.model.forceUpdateFilters)
+        }
+        .onAppear {
+            self.model.startMonitoring()
         }
     }
 }
@@ -140,7 +140,8 @@ extension LanguageListView {
         case blockLanguage, automaticBlocking
     }
     
-    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject {
+    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject, Identifiable {
+        let id = UUID()
         @Published private(set) var mode: LanguageListView.Mode
         @Published private(set) var title: String
         @Published private(set) var footer: String
@@ -151,10 +152,13 @@ extension LanguageListView {
         @Published private(set) var isOnline: Bool
         @Published private(set) var shouldAllowRefresh: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
-        @Published var sheetScreen: Screen? = nil
-        
+        private var didAddObservers = false
+        private var onAdded: ((Filter) -> Void)?
+
         init(mode: LanguageListView.Mode,
+             onAdded: ((Filter) -> Void)? = nil,
              appManager: AppManagerProtocol = AppManager.shared) {
+            self.onAdded = onAdded
             
             let cacheAge = appManager.automaticFilterManager.automaticFiltersCacheAge ?? nil
             let isOnline = appManager.networkSyncManager.networkStatus == .online
@@ -177,7 +181,7 @@ extension LanguageListView {
             self.languages = appManager.automaticFilterManager.languages(for: mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: appManager.automaticFilterManager.languageAutomaticState,
-                                                setter: appManager.automaticFilterManager.setLanguageAutmaticState) })
+                                                setter: appManager.automaticFilterManager.setLanguageAutomaticState) })
             
 
             if isOnline {
@@ -198,30 +202,32 @@ extension LanguageListView {
             }
             
             super.init(appManager: appManager)
-            
-            if mode == .automaticBlocking {
-                
-                if !isOnline && self.languages.isEmpty {
-                    NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { [weak self] notification in
-                        guard let networkStatus = notification.object as? NetworkStatus else { return }
-                        
-                        if networkStatus == .online {
-                            appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
-                            self?.isLoading = true
-                        }
-                        else {
-                            self?.autoFilterErrorText = "autoFilter_empty"~
-                            self?.isLoading = false
-                        }
+        }
+
+        func startMonitoring() {
+            guard !didAddObservers, mode == .automaticBlocking else { return }
+            didAddObservers = true
+
+            if !isOnline && self.languages.isEmpty {
+                NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { [weak self] notification in
+                    guard let networkStatus = notification.object as? NetworkStatus else { return }
+
+                    if networkStatus == .online {
+                        self?.appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                        self?.isLoading = true
+                    }
+                    else {
+                        self?.autoFilterErrorText = "autoFilter_empty"~
+                        self?.isLoading = false
                     }
                 }
-                
-                NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { [weak self] _ in
-                    withAnimation {
-                        guard let self = self else { return }
-                        self.refresh()
-                        self.isLoading = false
-                    }
+            }
+
+            NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { [weak self] _ in
+                withAnimation {
+                    guard let self = self else { return }
+                    self.refresh()
+                    self.isLoading = false
                 }
             }
         }
@@ -255,7 +261,7 @@ extension LanguageListView {
             self.languages = self.appManager.automaticFilterManager.languages(for: self.mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: self.appManager.automaticFilterManager.languageAutomaticState,
-                                                setter: self.appManager.automaticFilterManager.setLanguageAutmaticState) })
+                                                setter: self.appManager.automaticFilterManager.setLanguageAutomaticState) })
             
             if self.mode == .automaticBlocking,
                let lastUpdate = self.lastUpdate,
@@ -269,12 +275,15 @@ extension LanguageListView {
         }
         
         func addFilter(language: NLLanguage) {
-            self.appManager.persistanceManager.addFilter(text: language.filterText,
-                                                         type: .denyLanguage,
-                                                         denyFolder: .junk,
-                                                         filterTarget: .body,
-                                                         filterMatching: .contains,
-                                                         filterCase: .caseInsensitive)
+            let filter = self.appManager.persistanceManager.addFilter(text: language.filterText,
+                                                                      type: .denyLanguage,
+                                                                      denyFolder: .junk,
+                                                                      filterTarget: .body,
+                                                                      filterMatching: .contains,
+                                                                      filterCase: .caseInsensitive)
+            if let filter {
+                self.onAdded?(filter)
+            }
         }
         
         @Sendable func forceUpdateFilters() async {

@@ -38,6 +38,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var reloadContainerCounter = 0
     var fingerprintGetCounter = 0
     var fingerprintSetCounter = 0
+    var selectedCountriesCounter = 0
+    var setSelectedCountriesCounter = 0
     
     var addFilterClosure: ((String, FilterType, DenyFolderType, FilterTarget, FilterMatching, FilterCase) -> ())?
     var isDuplicateFilterClosure: ((String, FilterTarget, FilterMatching, FilterCase) -> (Bool))?
@@ -63,6 +65,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var ensuredAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule))?
     var reloadContainerClosure: (() -> ())?
     var fingerprintClosure: (() -> (String))?
+    var selectedCountriesClosure: ((RuleType) -> ([String]))?
+    var setSelectedCountriesClosure: ((([String], RuleType) -> ()))?
     
 
     var fingerprint: String {
@@ -75,15 +79,17 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         }
     }
     
+    @discardableResult
     func addFilter(text: String,
                    type: FilterType,
                    denyFolder: DenyFolderType,
                    filterTarget: FilterTarget,
                    filterMatching: FilterMatching,
-                   filterCase: FilterCase) {
-        
+                   filterCase: FilterCase) -> Filter? {
+
         self.addFilterCounter += 1
         self.addFilterClosure?(text, type, denyFolder, filterTarget, filterMatching, filterCase)
+        return nil
     }
 
     func isDuplicateFilter(text: String,
@@ -200,6 +206,16 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.reloadContainerClosure?()
     }
 
+    func selectedCountries(for rule: RuleType) -> [String] {
+        self.selectedCountriesCounter += 1
+        return self.selectedCountriesClosure?(rule) ?? []
+    }
+
+    func setSelectedCountries(_ countries: [String], for rule: RuleType) {
+        self.setSelectedCountriesCounter += 1
+        self.setSelectedCountriesClosure?(countries, rule)
+    }
+
     //MARK: Helpers
     private var persistance = PersistanceManager(inMemory: true)
     var context: NSManagedObjectContext
@@ -233,6 +249,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.ensuredAutomaticFiltersLanguageRecordCounter = 0
         self.fingerprintSetCounter = 0
         self.fingerprintGetCounter = 0
+        self.selectedCountriesCounter = 0
+        self.setSelectedCountriesCounter = 0
     }
     
     func loadDebugData() {

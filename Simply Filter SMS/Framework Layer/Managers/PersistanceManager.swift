@@ -72,7 +72,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     
     func reloadContainer() {
         guard let storeURL = self.container.persistentStoreDescriptions.first?.url, storeURL != URL(fileURLWithPath: "/dev/null") else { return }
-        
+        AppManager.logger.debug("reloadContainer — reloading persistent store")
         if let loadedStore = self.container.persistentStoreCoordinator.persistentStore(for: storeURL) {
             self.commitContext()
             self.container.viewContext.reset()
@@ -109,7 +109,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func fetchFilterRecords(for filterType: FilterType) -> [Filter] {
-        let sortDescriptor = [NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
+        let sortDescriptor = [NSSortDescriptor(key: "text", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))]
         let predicate = NSPredicate(format: "type == %ld", filterType.rawValue)
         var filters: [Filter] = []
         
@@ -231,17 +231,21 @@ class PersistanceManager: PersistanceManagerProtocol {
         return true
     }
     
+    @discardableResult
     func addFilter(text: String, type: FilterType,
                    denyFolder: DenyFolderType = .junk,
                    filterTarget: FilterTarget = .all,
                    filterMatching: FilterMatching = .contains,
-                   filterCase: FilterCase = .caseInsensitive) {
-        
+                   filterCase: FilterCase = .caseInsensitive) -> Filter? {
+
         guard !self.isDuplicateFilter(text: text,
                                       filterTarget: filterTarget,
                                       filterMatching: filterMatching,
-                                      filterCase: filterCase) else { return }
-        
+                                      filterCase: filterCase) else {
+            AppManager.logger.debug("addFilter — skipped duplicate: '\(text, privacy: .public)'")
+            return nil
+        }
+
         let newFilter = Filter(context: self.context)
         newFilter.uuid = UUID()
         newFilter.filterType = type
@@ -250,24 +254,29 @@ class PersistanceManager: PersistanceManagerProtocol {
         newFilter.filterTarget = filterTarget
         newFilter.filterCase = filterCase
         newFilter.text = text
-
+        AppManager.logger.debug("addFilter — '\(text, privacy: .public)' | type: \(type.logDescription, privacy: .public) | folder: \(denyFolder.logDescription, privacy: .public) | target: \(filterTarget.logDescription, privacy: .public) | matching: \(filterMatching.logDescription, privacy: .public) | case: \(filterCase.logDescription, privacy: .public)")
         self.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        return newFilter
     }
 
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
-        offsets.map({ filters[$0] }).forEach({ self.context.delete($0) })
+        let toDelete = offsets.map({ filters[$0] })
+        AppManager.logger.debug("deleteFilters — \(toDelete.count, privacy: .public) filter(s): \(toDelete.compactMap({ $0.text }).joined(separator: ", "), privacy: .public)")
+        toDelete.forEach({ self.context.delete($0) })
         self.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
     func deleteFilters(_ filters: Set<Filter>) {
+        AppManager.logger.debug("deleteFilters — \(filters.count, privacy: .public) filter(s): \(filters.compactMap({ $0.text }).joined(separator: ", "), privacy: .public)")
         filters.forEach({ self.context.delete($0) })
         self.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
+        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' denyFolder → \(denyFolder.logDescription, privacy: .public)")
         filter.denyFolderType = denyFolder
         self.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
@@ -277,8 +286,11 @@ class PersistanceManager: PersistanceManagerProtocol {
         guard !self.isDuplicateFilter(text: filter.text ?? "",
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filterMatching,
-                                      filterCase: filter.filterCase) else { return }
-
+                                      filterCase: filter.filterCase) else {
+            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' filterMatching → \(filterMatching.logDescription, privacy: .public)")
+            return
+        }
+        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterMatching → \(filterMatching.logDescription, privacy: .public)")
         filter.filterMatching = filterMatching
         self.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
@@ -288,8 +300,11 @@ class PersistanceManager: PersistanceManagerProtocol {
         guard !self.isDuplicateFilter(text: filter.text ?? "",
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filter.filterMatching,
-                                      filterCase: filterCase) else { return }
-
+                                      filterCase: filterCase) else {
+            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' filterCase → \(filterCase.logDescription, privacy: .public)")
+            return
+        }
+        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterCase → \(filterCase.logDescription, privacy: .public)")
         filter.filterCase = filterCase
         self.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
@@ -299,46 +314,71 @@ class PersistanceManager: PersistanceManagerProtocol {
         guard !self.isDuplicateFilter(text: filter.text ?? "",
                                       filterTarget: filterTarget,
                                       filterMatching: filter.filterMatching,
-                                      filterCase: filter.filterCase) else { return }
-
+                                      filterCase: filter.filterCase) else {
+            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' filterTarget → \(filterTarget.logDescription, privacy: .public)")
+            return
+        }
+        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterTarget → \(filterTarget.logDescription, privacy: .public)")
         filter.filterTarget = filterTarget
         self.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
-    
+
     func updateFilter(_ filter: Filter, filterText: String) {
         guard !self.isDuplicateFilter(text: filterText,
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filter.filterMatching,
-                                      filterCase: filter.filterCase) else { return }
-        
+                                      filterCase: filter.filterCase) else {
+            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)'")
+            return
+        }
+        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)'")
         filter.text = filterText
         self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
     
+    func selectedCountries(for rule: RuleType) -> [String] {
+        guard let record = self.fetchAutomaticFiltersRuleRecord(for: rule),
+              let json = record.selectedCountries,
+              let data = json.data(using: .utf8),
+              let countries = try? JSONDecoder().decode([String].self, from: data) else { return [] }
+        return countries
+    }
+
+    func setSelectedCountries(_ countries: [String], for rule: RuleType) {
+        let record = self.ensuredAutomaticFiltersRuleRecord(for: rule)
+        if let data = try? JSONEncoder().encode(countries),
+           let json = String(data: data, encoding: .utf8) {
+            record.selectedCountries = json
+        }
+        self.commitContext()
+        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+    }
+
     func saveCache(with filterList: AutomaticFilterListsResponse) {
+        AppManager.logger.debug("saveCache — saving new automatic filters cache")
         self.deleteExistingCaches()
-        
         let newCache = AutomaticFiltersCache(context: self.context)
         newCache.uuid = UUID()
         newCache.hashed = filterList.hashed
         newCache.filtersData = filterList.encoded
         newCache.age = Date()
-        
         self.commitContext()
     }
-    
+
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
-        guard let automaticFiltersCache = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.first else { return true }
-        
+        guard let automaticFiltersCache = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.first else {
+            AppManager.logger.debug("isCacheStale — no existing cache, returning stale")
+            return true
+        }
         let isStale = automaticFiltersCache.filtersData != newFilterList.encoded
-        
+        AppManager.logger.debug("isCacheStale — \(isStale ? "stale" : "fresh", privacy: .public)")
         if !isStale {
             automaticFiltersCache.age = Date()
             self.commitContext()
         }
-        
         return isStale
     }
     

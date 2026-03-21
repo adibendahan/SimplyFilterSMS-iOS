@@ -64,11 +64,23 @@
 "addFilter_match_exact" = "Exact";
 "addFilter_match_contains" = "Contains";
 
-//MARK: Enable Extension Video View
+//MARK: Enable Extension View
 "enableExtension_ready_callToAction" = "Settings";
 "enableExtension_ready_cancel" = "Cancel";
 "enableExtension_welcome" = "Welcome";
-"enableExtension_welcome_desc" = "You need to enable 'Simply Filter SMS' as your SMS filter app in iOS Settings. Watch the How To video below and when you are ready, tap on the Settings button to go to iOS Settings.";
+"enableExtension_welcome_desc" = "Enable 'Simply Filter SMS' as your SMS filter app in iOS Settings. Follow the steps below, then tap the Settings button when you're ready.";
+"enableExtension_step1_title" = "Open iOS Settings";
+"enableExtension_step1_desc" = "Open iOS Settings, scroll down and tap 'Apps'.";
+"enableExtension_step2_title" = "Tap on Messages";
+"enableExtension_step2_desc" = "Scroll down to find 'Messages' and tap on it.";
+"enableExtension_step3_title" = "Unknown Senders";
+"enableExtension_step3_desc" = "Scroll down to the 'Unknown Senders' section";
+"enableExtension_step4_title" = "Screen Unknown Senders";
+"enableExtension_step4_desc" = "Tap to enable 'Screen Unknown Senders'";
+"enableExtension_step5_title" = "Filter Spam";
+"enableExtension_step5_desc" = "Tap to enable 'Filter Spam'";
+"enableExtension_step6_title" = "Choose 'Simply Filter SMS'";
+"enableExtension_step6_desc" = "Tap 'Text Message Filter' and select 'SimplyFilterSMS'";
 
 
 //MARK: About View
@@ -96,13 +108,13 @@
 "faq_answer_4" = "When a text message is tagged as junk it will still be available for reading on the Messages app under the Junk folder.";
 "faq_question_5" = "What's the difference between Junk/Transactions/Promotions folders?";
 "faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customizable in any way. Only messages filtered to the Junk folder will be delivered silently.";
-"help_automaticFiltering_question" = "How does Automatic Filtering work?";
-"help_automaticFiltering" = "Automatic Filtering is using a pre defined list of terms to determine if a message should be sent to the junk folder or not. The lists are updated periodically with new terms. Your regular filters are still considered when Automatic Filtering is on.";
+"help_automaticFiltering_question" = "How does AI Filtering work?";
+"help_automaticFiltering" = "AI Filtering uses AI-generated keyword lists to detect spam and route messages to the junk folder. The lists are updated periodically. Your regular filters are still applied when AI Filtering is on.";
 "help_deny" = "Add texts that will cause a message to be marked as spam, you can also choose the specific folder you want the message to be stored in.";
 "help_allow" = "Add texts that will cause a message to be marked as valid. It is recommended to add uniqe identifying texts like your name here. Text appear on this list have the highest priority when filtering a message.";
 
 //MARK: Automatic Filtering
-"autoFilter_title" = "Automatic Filtering";
+"autoFilter_title" = "AI Filtering";
 "autoFilter_lastUpdated" = "Updated on %@";
 "autoFilter_forceUpdate" = "Force Update";
 "autoFilter_neverUpdated" = "Never";
@@ -123,10 +135,19 @@
 "autoFilter_yourFilters" = "Your filters";
 "autoFilter_email_shortTitle" = "Email";
 "autoFilter_email" = "Block Email Senders";
-"autoFilter_empty" = "Go online while the app is open at least once to download the Automatic Filtering lists.";
-"autoFilter_error" = "It seems there is a problem downloading the Automatic Filtering lists. Please try again later.";
+"autoFilter_empty" = "Go online while the app is open at least once to download the AI Filtering lists.";
+"autoFilter_error" = "It seems there is a problem downloading the AI Filtering lists. Please try again later.";
 "autoFilter_emojis" = "Block Emojis";
 "autoFilter_emojis_shortTitle" = "Emojis";
+"autoFilter_countryAllowlist" = "Allow by Country";
+"autoFilter_countryAllowlist_shortTitle" = "Country allowlist";
+"autoFilter_countryAllowlist_empty" = "No countries selected";
+"autoFilter_countryAllowlist_explanation" = "Add the countries you want to allow messages from. Messages sent from phone numbers registered in countries not on this list will be filtered. Only senders with a full international calling code (e.g. +1, +972) are checked - senders without one are not affected.";
+"general_search" = "Search";
+"general_more" = "more";
+"general_selected" = "Selected";
+"general_all" = "All Countries";
+"general_noResults" = "No results";
 
 // MARK: Test Filters
 "testFilters_title" = "Test Your Filters";
@@ -146,7 +167,7 @@
 "notification_sync_title" = "iCloud sync is on";
 "notification_sync_subtitle" = "Local device data was updated";
 "notification_hide" = "Hide";
-"notification_automatic_title" = "Automatic Filtering";
+"notification_automatic_title" = "AI Filtering";
 "notification_automatic_subtitle" = "Filters were updated";
 "notification_clipboard_subtitle" = "Copied to clipboard";
 "notification_tipPromotion_title" = "Enjoying the app?";
@@ -156,23 +177,28 @@
 "reportMessage_senderTitle" = "Sender";
 "reportMessage_title" = "Report Message";
 "reportMessage_junk" = "Junk";
-"reportMessage_notJunk" = "Not junk";
+"reportMessage_notJunk" = "Not Junk";
+"reportMessage_junkAndBlockSender" = "Junk & Block Sender";
 "reportMessage_report" = "Report";
 "reportMessage_thankYou" = "Thank you for reporting!";
+
+"reportingExtension_message" = "Message";
+"reportingExtension_messageIndex" = "Message %ld";
+"reportingExtension_footer" = "Your reports train the AI filters, helping keep inboxes clean for Simply Filter SMS users everywhere. Thank you for contributing.";
 
 
 //MARK: What's New
 "whatsNew_title" = "What's New";
 "whatsNew_continue" = "Continue";
 "whatsNew_menuItem" = "What's New";
+"whatsNew_aiFiltering_title" = "AI Filtering";
+"whatsNew_aiFiltering_desc" = "Automatic filtering is now **AI-powered** - smarter, faster, and more accurate, with support for **10 languages** including Spanish, French, German, Arabic, and more.";
+"whatsNew_newLanguages_title" = "8 New Languages";
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** The app is now available in **8 new languages**, all localized with the help of **AI**.";
+"whatsNew_trustedCountries_title" = "Trusted Countries";
+"whatsNew_trustedCountries_desc" = "Automatically allow messages from **specific countries** by phone prefix. Add your trusted countries and filter out the rest.";
 "whatsNew_accessibility_title" = "Accessibility Support";
 "whatsNew_accessibility_desc" = "Fully usable with **VoiceOver** and **Voice Control**. Text scales with **Dynamic Type**. Animations respect your **Reduce Motion** setting.";
-"whatsNew_freshLook_title" = "Fresh New Look";
-"whatsNew_freshLook_desc" = "The app has been redesigned with the latest iOS visual style for a **cleaner**, more modern experience.";
-"whatsNew_iPad_title" = "Native iPad Support";
-"whatsNew_iPad_desc" = "Full native iPad experience with **sidebar navigation** and optimized layouts for larger screens.";
-"whatsNew_singleChar_title" = "Single Character Filters";
-"whatsNew_singleChar_desc" = "You can now create filters with just a **single character**, giving you more precise control over message filtering.";
 "whatsNew_tipJar_title" = "Support the Developer";
 "whatsNew_tipJar_desc" = "A new **Tip Jar** lets you support the app's development. Simply Filter SMS is free forever - tips are just a way to say thanks! **Tap here to tip!**";
 
@@ -216,3 +242,12 @@
 "a11y_filterRow_editHint" = "Double tap to edit";
 "a11y_about_versionHint" = "Double tap to copy version";
 "a11y_about_versionCopied" = "Version";
+"a11y_enableExtension_stepLabel" = "Step %ld: %@. %@";
+
+// Country calling code groups
+"callingCode_+1" = "North America";
+"callingCode_+7" = "Russia & Kazakhstan";
+"callingCode_+47" = "Norway";
+"callingCode_+262" = "Réunion & Mayotte";
+"callingCode_+590" = "Guadeloupe";
+"callingCode_+599" = "Netherlands Antilles";

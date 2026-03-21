@@ -12,9 +12,13 @@ import NaturalLanguage
 //MARK: Localization
 postfix operator ~
 postfix func ~ (string: String) -> String {
-    guard let path = Bundle(for: SnapshotsTestCase.self).path(forResource: Locale.current.languageCode, ofType: "lproj"),
+    let bundle = Bundle(for: SnapshotsTestCase.self)
+    let localeId = Locale.current.identifier.replacingOccurrences(of: "_", with: "-")
+    let langCode = Locale.current.language.languageCode?.identifier ?? "en"
+    let path = bundle.path(forResource: localeId, ofType: "lproj")
+            ?? bundle.path(forResource: langCode, ofType: "lproj")
+    guard let path = path,
           let localizationBundle = Bundle(path: path) else { return "?" }
-
     return NSLocalizedString(string, tableName: nil, bundle: localizationBundle, value: "", comment: "")
 }
 

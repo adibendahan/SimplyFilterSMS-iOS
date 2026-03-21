@@ -60,10 +60,10 @@ Trailing `Menu` (ellipsis icon) with items:
 
 ---
 
-## EnableExtensionVideoView
+## EnableExtensionView
 
-**File:** `View Layer/Screens/EnableExtensionVideoView.swift`
-**Role:** Onboarding screen shown on first launch. Guides user to enable the Message Filter Extension in iOS Settings.
+**File:** `View Layer/Screens/EnableExtensionView.swift`
+**Role:** Onboarding screen shown on first launch. Guides the user through enabling the Message Filter Extension in iOS Settings via an animated step-by-step walkthrough.
 
 Both `Screen.onboarding` and `Screen.enableExtension` map to this same view.
 
@@ -71,18 +71,22 @@ Both `Screen.onboarding` and `Screen.enableExtension` map to this same view.
 
 Presented as a **sheet** (`.interactiveDismissDisabled()`). Contains:
 - Description text
-- A looping `VideoPlayer` (AVKit) — plays `enableExtension.mp4` (English) or `enableExtension.he.mp4` (Hebrew) based on locale. Loops via `.AVPlayerItemDidPlayToEndTime` observer.
-- CTA button that deep-links to app's iOS Settings via `UIApplication.openSettingsURLString`
+- A `ForEach` over `EnableExtensionStep.allCases` rendering `EnableExtensionStepView` rows — one per step, animated sequentially in a looping cycle
+- CTA button (`FilledButton`) pinned via `safeAreaInset(edge: .bottom)` — deep-links to iOS Settings via `UIApplication.openSettingsURLString`
 - Toolbar X button to dismiss
+
+### Animation
+
+A looping `Task` (attached via `.task {}`) cycles through all steps sequentially, setting `@State private var activeStep: Int`. Each `EnableExtensionStepView` receives `isActive: Bool` based on whether its step number is `<= activeStep`. When VoiceOver is active, all steps are shown at full opacity immediately and the loop does not run.
 
 ### ViewModel
 
-- `isAppFirstRun: Bool` — `@Published` with `didSet` writing back to `DefaultsManager`. Both dismiss paths set this to `false`.
-- `videoURLForCurrentLocale()` — Returns bundled `.mp4` URL with Hebrew locale suffix detection.
+- `isAppFirstRun: Bool` — `@Published` with `didSet` writing back to `DefaultsManager`. Both dismiss paths (X button and Settings button) set this to `false`.
 
-### Notable
+### Supporting Components
 
-- Uses `@StateObject` (not `@ObservedObject`) since it owns its ViewModel lifecycle as a sheet.
+- **EnableExtensionStep** (`Others/EnableExtensionStep.swift`) — `CaseIterable, Hashable` enum with 6 cases (`settings`, `messages`, `unknownSenders`, `screenUnknownSenders`, `filterSpam`, `textMessageFilter`). Provides `stepNumber`, `title`, `description`, `symbolName`, `symbolColor`, `showsAppIcon`, `isToggle`, and `isLast` computed properties.
+- **EnableExtensionStepView** (`Others/EnableExtensionStepView.swift`) — Renders a single step row: numbered circle with connector line, icon (SF Symbol, app icon, or none), title, description, and an optional decorative toggle for steps that require enabling a setting. Animations respect `accessibilityReduceMotion`. Toggle activation uses `.task(id: isActive)` to avoid race conditions.
 
 ---
 
@@ -345,26 +349,26 @@ Navigation title and toolbar X button are conditionally hidden during loading/re
 
 A `NavigationView` wrapping a `ScrollView`:
 - **Header** — "What's New" title and subtitle.
-- **Entry cards** — `ForEach` over `WhatsNewEntry.allCases`. Each card shows an emoji icon, title, and description. Actionable entries (e.g., `.tipJar`) are tappable and trigger `onActionnableEntryTapped`.
+- **Entry cards** — `ForEach` over `WhatsNewEntry.allCases`. Each card shows an emoji icon, title, and description. Actionable entries (e.g., `.tipJar`) are tappable and trigger `onActionableEntryTapped`.
 - **Dismiss button** — `FilledButton` at bottom. Sets `lastSeenWhatsNewVersion` to `currentWhatsNewVersion` and dismisses.
 - Toolbar X button to dismiss.
 
 ### ViewModel
 
 - `entries: [WhatsNewEntry]` — All entries sorted by `order`.
-- `onActionnableEntryTapped: ((WhatsNewEntry) -> Void)?` — Optional closure called when an actionable entry is tapped. Passed in from the presenting screen.
+- `onActionableEntryTapped: ((WhatsNewEntry) -> Void)?` — Optional closure called when an actionable entry is tapped. Passed in from the presenting screen.
 - `markAsSeen()` — Sets `lastSeenWhatsNewVersion` to `currentWhatsNewVersion` so the sheet won't re-appear.
 
 ### Actionable Entries
 
-`WhatsNewEntry` has an `isActionnable` computed property. When `true`, the entry row becomes a tappable `Button` that calls `markAsSeen()`, invokes `onActionnableEntryTapped`, and dismisses the sheet. The presenting screen handles navigation — e.g., `AppHomeView` sets `pendingScreenAfterDismiss = .tipJar` so the Tip Jar sheet opens after WhatsNew dismisses.
+`WhatsNewEntry` has an `isActionable` computed property. When `true`, the entry row becomes a tappable `Button` that calls `markAsSeen()`, invokes `onActionableEntryTapped`, and dismisses the sheet. The presenting screen handles navigation — e.g., `AppHomeView` sets `pendingScreenAfterDismiss = .tipJar` so the Tip Jar sheet opens after WhatsNew dismisses.
 
-This pattern is general-purpose: any future `WhatsNewEntry` case can become actionable by returning `true` from `isActionnable`, and the presenting screen decides what to do in the `onActionnableEntryTapped` closure.
+This pattern is general-purpose: any future `WhatsNewEntry` case can become actionable by returning `true` from `isActionable`, and the presenting screen decides what to do in the `onActionableEntryTapped` closure.
 
 ### Notable
 
-- `WhatsNewEntry` is a `CaseIterable` enum in `Constsants.swift` with computed properties for title, description, emoji, order, and `isActionnable`.
-- `currentWhatsNewVersion` must be bumped in `Constsants.swift` when adding new entries.
+- `WhatsNewEntry` is a `CaseIterable` enum in `Constants.swift` with computed properties for title, description, emoji, order, and `isActionable`.
+- `currentWhatsNewVersion` must be bumped in `Constants.swift` when adding new entries.
 - The What's New sheet only shows when: it's not the user's first session (`wasFirstRunOnInit == false`), `isAppFirstRun` is `false`, and `currentWhatsNewVersion > lastSeenWhatsNewVersion`.
 
 ---

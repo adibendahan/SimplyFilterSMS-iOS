@@ -37,11 +37,12 @@ protocol PersistanceManagerProtocol: AnyObject {
                            filterMatching: FilterMatching,
                            filterCase: FilterCase) -> Bool
     
+    @discardableResult
     func addFilter(text: String, type: FilterType,
                    denyFolder: DenyFolderType,
                    filterTarget: FilterTarget,
                    filterMatching: FilterMatching,
-                   filterCase: FilterCase)
+                   filterCase: FilterCase) -> Filter?
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter])
     func deleteFilters(_ filters: Set<Filter>)
@@ -52,6 +53,8 @@ protocol PersistanceManagerProtocol: AnyObject {
     func updateFilter(_ filter: Filter, filterText: String)
     func saveCache(with filterList: AutomaticFilterListsResponse)
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool
+    func selectedCountries(for rule: RuleType) -> [String]
+    func setSelectedCountries(_ countries: [String], for rule: RuleType)
 
     #if DEBUG
     func loadDebugData()

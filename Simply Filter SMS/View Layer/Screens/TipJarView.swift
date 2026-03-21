@@ -19,7 +19,11 @@ struct TipJarView: View {
     @ScaledMetric(relativeTo: .largeTitle) private var heartSizeRegular: CGFloat = 56
     @ScaledMetric(relativeTo: .title2) private var heartSizeCompact: CGFloat = 32
 
-    @ObservedObject var model: ViewModel
+    @StateObject var model: ViewModel
+
+    init(model: ViewModel) {
+        _model = StateObject(wrappedValue: model)
+    }
 
     private var isCompact: Bool { verticalSizeClass == .compact }
 

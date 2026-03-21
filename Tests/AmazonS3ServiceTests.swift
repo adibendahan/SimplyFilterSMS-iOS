@@ -12,13 +12,16 @@ import XCTest
 class AmazonS3ServiceTests: XCTestCase {
 
     var httpService = mock_HTTPService()
-    
+    var networkSyncManager = mock_NetworkSyncManager()
+
     //MARK: Test Lifecycle
     override func setUp() {
         super.setUp()
-        
+
         self.httpService = mock_HTTPService()
-        self.testSubject = AmazonS3Service(httpService: self.httpService)
+        self.networkSyncManager = mock_NetworkSyncManager()
+        self.networkSyncManager.networkStatusClosure = { .online }
+        self.testSubject = AmazonS3Service(httpService: self.httpService, networkSyncManager: self.networkSyncManager)
     }
     
     //MARK: Tests
@@ -34,7 +37,7 @@ class AmazonS3ServiceTests: XCTestCase {
         self.httpService.executeClosure = { (type, baseURL, request) in
             correctType = type is AutomaticFilterListsResponse.Type?
             correctURL = baseURL.absoluteString == "https://grizz-apps-dev.s3.us-east-2.amazonaws.com"
-            correctPath = request.path == "/simply-filter-sms/1.0.0/automatic_filters.json"
+            correctPath = request.path == "/simply-filter-sms/3.0.0/automatic_filters.json"
             correctHTTPMethod = request.method == .get
             correctTask = request.task.isPlain
         }
@@ -56,5 +59,5 @@ class AmazonS3ServiceTests: XCTestCase {
     }
     
     // MARK: Private Variables and Helpers
-    private var testSubject: AmazonS3ServiceProtocol = AmazonS3Service(httpService: mock_HTTPService())
+    private var testSubject: AmazonS3ServiceProtocol = AmazonS3Service(httpService: mock_HTTPService(), networkSyncManager: mock_NetworkSyncManager())
 }
