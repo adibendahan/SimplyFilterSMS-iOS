@@ -29,16 +29,17 @@ class PersistanceManager: PersistanceManagerProtocol {
                                                      attributes: nil)
         }
         
+        container.persistentStoreDescriptions.first?.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        container.persistentStoreDescriptions.first?.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
             }
-            
+
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
             container.viewContext.automaticallyMergesChangesFromParent = true
             container.viewContext.stalenessInterval = 0
-            storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-            storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
         })
     }
 
@@ -82,19 +83,20 @@ class PersistanceManager: PersistanceManagerProtocol {
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
         self.container = container
 
+        container.persistentStoreDescriptions.first?.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        container.persistentStoreDescriptions.first?.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
             }
-            
+
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
             container.viewContext.automaticallyMergesChangesFromParent = true
             container.viewContext.stalenessInterval = 0
-            storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-            storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
         })
     }
-    
+
     //MARK: Fetching
     func fetchFilterRecords() -> [Filter] {
         let sortDescriptor = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
