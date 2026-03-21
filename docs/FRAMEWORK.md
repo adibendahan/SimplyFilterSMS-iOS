@@ -167,6 +167,20 @@ Uses `AppPersistentCloudKitContainer` (subclass of `NSPersistentCloudKitContaine
 - Supports in-memory mode for tests/previews
 - CloudKit sync is automatic via the container
 
+### CloudKit Schema Deployment (IMPORTANT)
+
+**Every CoreData model change requires a manual schema deployment to production.**
+
+The development CloudKit environment auto-evolves its schema when the app runs (new entities and attributes are picked up automatically). The production environment does **not** — it must be explicitly deployed via the CloudKit Console.
+
+**Steps after any CoreData model change:**
+1. Run the debug build on a device or simulator and let it launch fully — the dev schema updates automatically.
+2. Go to [CloudKit Console](https://icloud.developer.apple.com/dashboard) → select the app container → Schema → Environments.
+3. Review the diff between Development and Production carefully. Watch for stale record types from deleted/abandoned features — once deployed to production they **cannot be removed**.
+4. If the diff looks clean, click **Deploy to Production**.
+
+**Symptoms of a missing production schema field:** data syncs correctly in debug builds but not in TestFlight/App Store builds. Fields silently dropped on upload; only previously-deployed fields come back after reinstall.
+
 ### Fingerprint
 
 A computed string concatenation of all filter texts + automatic filter states. Used by `NetworkSyncManager` to detect whether a CloudKit sync actually changed data (by comparing pre-sync and post-sync fingerprints).

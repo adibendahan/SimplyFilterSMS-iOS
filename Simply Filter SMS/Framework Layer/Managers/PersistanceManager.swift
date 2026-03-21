@@ -17,18 +17,18 @@ class PersistanceManager: PersistanceManagerProtocol {
     required init(inMemory: Bool = false) {
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
         self.container = container
-        
+
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
         else if let storeURL = self.container.persistentStoreDescriptions.first?.url?.deletingLastPathComponent(),
                 !FileManager.default.directoryExistsAtPath(storeURL.path) {
-            
+
             try? FileManager.default.createDirectory(at: storeURL,
                                                      withIntermediateDirectories: true,
                                                      attributes: nil)
         }
-        
+
         container.persistentStoreDescriptions.first?.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
         container.persistentStoreDescriptions.first?.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
@@ -55,7 +55,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     var fingerprint: String {
         var fingerprint = ""
         fingerprint.append(self.fetchFilterRecords().map({ "\($0.uuid?.uuidString ?? "")" }).joined())
-        fingerprint.append(self.fetchAutomaticFiltersRuleRecords().map({ "\($0.ruleId)\($0.isActive)" }).joined())
+        fingerprint.append(self.fetchAutomaticFiltersRuleRecords().map({ "\($0.ruleId)\($0.isActive)\($0.selectedCountries ?? "")" }).joined())
         fingerprint.append(self.fetchAutomaticFiltersLanguageRecords().map({ "\($0.lang ?? "")\($0.isActive)" }).joined())
         return fingerprint
     }
