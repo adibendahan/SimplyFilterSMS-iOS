@@ -115,6 +115,10 @@ extension Screen {
         switch host {
         case "enable-extension":
             return .enableExtension
+        case "test-filters":
+            return .testFilters
+        case "tip-jar":
+            return .tipJar
         default:
             return nil
         }
