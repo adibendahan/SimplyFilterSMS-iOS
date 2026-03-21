@@ -99,6 +99,17 @@ extension View {
 }
 
 extension View {
+    @ViewBuilder func sidebarNavigationRow(screen: Screen, isRegular: Bool, onTap: @escaping () -> Void) -> some View {
+        if isRegular {
+            self.contentShape(Rectangle())
+                .highPriorityGesture(TapGesture().onEnded { _ in onTap() })
+        } else {
+            NavigationLink(value: screen) { self }
+        }
+    }
+}
+
+extension View {
     @ViewBuilder func phoneOnlyStackNavigationView() -> some View {
         if UIDevice.current.userInterfaceIdiom == .phone {
             self.navigationViewStyle(.stack)

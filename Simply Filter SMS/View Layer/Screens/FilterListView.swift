@@ -24,9 +24,13 @@ struct FilterListView: View {
     
     @ScaledMetric(relativeTo: .title3) private var addFilterIconSize: CGFloat = 20
 
-    @ObservedObject var model: ViewModel
+    @StateObject var model: ViewModel
     @State private var dotFilterID: NSManagedObjectID? = nil
-    
+
+    init(model: ViewModel) {
+        _model = StateObject(wrappedValue: model)
+    }
+
     var body: some View {
         ScrollViewReader { proxy in
         List (selection: $model.selectedFilters) {

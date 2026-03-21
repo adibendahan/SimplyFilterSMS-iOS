@@ -45,8 +45,7 @@ struct AppHomeView: View {
                 Section {
                     let screen: Screen = .automaticBlocking
                     
-                    NavigationLink(value: screen) {
-                        HStack {
+                    HStack {
                                 Group {
                                     if #available(iOS 17, *) {
                                         if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
@@ -64,20 +63,20 @@ struct AppHomeView: View {
                                 .font(.system(size: shieldIconSize))
                                 .padding(.trailing, 1)
                                 .accessibilityHidden(true)
-                                
+
                                 VStack (alignment: .leading) {
                                     Text("autoFilter_title"~)
                                         .font(.system(size: autoFilterTitleSize, weight: .bold, design: .rounded))
-                                    
+
                                     if !self.model.subtitle.isEmpty {
                                         Text(self.model.subtitle)
                                             .font(.caption2)
                                             .lineLimit(2)
                                     }
                                 }
-                                
+
                                 Spacer()
-                                
+
                                 if self.model.isAutomaticFilteringOn {
                                     Text("autoFilter_ON"~)
                                         .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
@@ -96,7 +95,9 @@ struct AppHomeView: View {
                                 }
                             }
                             .padding(.vertical, 12)
-                        } // Navigation Link
+                            .sidebarNavigationRow(screen: screen, isRegular: horizontalSizeClass == .regular) {
+                                model.navigationScreen = screen
+                            }
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
                         .listRowBackground(model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground))
                         .accessibility(identifier: TestIdentifier.automaticFilterLink.rawValue)
@@ -212,22 +213,23 @@ struct AppHomeView: View {
                 //MARK: User Filters
                 Section {
                     ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
-                        NavigationLink(value: filterType.screen) {
-                            HStack {
-                                Image(systemName: filterType.iconName)
-                                    .foregroundColor(filterType.iconColor)
-                                    .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-                                
-                                Text(filterType.name)
-                                    .padding(.leading, 8)
-                                
-                                Spacer()
-                                
-                                Text(String.localizedStringWithFormat("general_active_count"~, self.model.activeCount(for: filterType)))
-                                    .textCase(.uppercase)
-                                    .foregroundColor(.secondary)
-                                    .font(Font.caption2)
-                            }
+                        HStack {
+                            Image(systemName: filterType.iconName)
+                                .foregroundColor(filterType.iconColor)
+                                .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
+
+                            Text(filterType.name)
+                                .padding(.leading, 8)
+
+                            Spacer()
+
+                            Text(String.localizedStringWithFormat("general_active_count"~, self.model.activeCount(for: filterType)))
+                                .textCase(.uppercase)
+                                .foregroundColor(.secondary)
+                                .font(Font.caption2)
+                        }
+                        .sidebarNavigationRow(screen: filterType.screen, isRegular: horizontalSizeClass == .regular) {
+                            model.navigationScreen = filterType.screen
                         }
                         .listRowBackground(model.navigationScreen == filterType.screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground))
                         .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
@@ -272,7 +274,7 @@ struct AppHomeView: View {
                 }
             }
         } detail: {
-            if let screen = model.navigationScreen {
+            if let screen = selectedScreen ?? model.navigationScreen {
                 screen.build()
             } else {
                 CustomPlaceholderView()
