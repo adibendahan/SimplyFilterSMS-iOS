@@ -417,3 +417,11 @@
 "reportingExtension_messageIndex" = "הודעה %ld";
 
 "reportingExtension_footer" = "הדיווחים שלך מאמנים את פילטרי ה-AI ועוזרים לשמור על תיבות הדואר נקיות עבור משתמשי Simply Filter SMS בכל מקום. תודה על תרומתך.";
+
+"aboutView_contactSection" = "צור קשר";
+
+"aboutView_connectSection" = "ערוצים";
+
+"aboutView_supportSection" = "תמכו בנו";
+
+"general_about" = "אודות";

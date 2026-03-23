@@ -417,3 +417,11 @@
 "reportingExtension_messageIndex" = "メッセージ %ld";
 
 "reportingExtension_footer" = "あなたの報告はAIフィルターのトレーニングに役立ち、世界中のSimply Filter SMSユーザーの受信ボックスをクリーンに保ちます。ご協力ありがとうございます。";
+
+"aboutView_contactSection" = "お問い合わせ";
+
+"aboutView_connectSection" = "SNS";
+
+"aboutView_supportSection" = "アプリをサポート";
+
+"general_about" = "情報";

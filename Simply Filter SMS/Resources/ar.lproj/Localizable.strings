@@ -417,3 +417,11 @@
 "reportingExtension_messageIndex" = "رسالة %ld";
 
 "reportingExtension_footer" = "تساعد تقاريرك في تدريب فلاتر الذكاء الاصطناعي، مما يحافظ على نظافة صناديق البريد الوارد لمستخدمي Simply Filter SMS في كل مكان. شكرًا لمساهمتك.";
+
+"aboutView_contactSection" = "تواصل";
+
+"aboutView_connectSection" = "تابعونا";
+
+"aboutView_supportSection" = "دعم التطبيق";
+
+"general_about" = "حول";

@@ -417,3 +417,11 @@
 "reportingExtension_messageIndex" = "Message %ld";
 
 "reportingExtension_footer" = "Tes signalements entrainent les filtres IA, aidant à maintenir des boites de réception propres pour les utilisateurs de Simply Filter SMS partout. Merci de ta contribution.";
+
+"aboutView_contactSection" = "Contact";
+
+"aboutView_connectSection" = "Réseaux";
+
+"aboutView_supportSection" = "Soutenir l'app";
+
+"general_about" = "À propos";

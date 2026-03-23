@@ -417,3 +417,11 @@
 "reportingExtension_messageIndex" = "Nachricht %ld";
 
 "reportingExtension_footer" = "Deine Meldungen trainieren die KI-Filter und helfen, die Posteingänge von Simply Filter SMS-Nutzern weltweit sauber zu halten. Danke für deinen Beitrag.";
+
+"aboutView_contactSection" = "Kontakt";
+
+"aboutView_connectSection" = "Vernetzen";
+
+"aboutView_supportSection" = "App unterstützen";
+
+"general_about" = "Info";

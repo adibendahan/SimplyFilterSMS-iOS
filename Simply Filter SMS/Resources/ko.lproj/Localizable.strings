@@ -417,3 +417,11 @@
 "reportingExtension_messageIndex" = "메시지 %ld";
 
 "reportingExtension_footer" = "보고해 주신 내용은 AI 필터를 훈련시켜 전 세계 Simply Filter SMS 사용자의 받은 편지함을 깨끗하게 유지하는 데 도움이 됩니다. 기여해 주셔서 감사합니다.";
+
+"aboutView_contactSection" = "문의하기";
+
+"aboutView_connectSection" = "팔로우";
+
+"aboutView_supportSection" = "앱 지원하기";
+
+"general_about" = "정보";
