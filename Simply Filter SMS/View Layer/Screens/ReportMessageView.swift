@@ -12,7 +12,7 @@ import UIKit
 
 //MARK: - View -
 struct ReportMessageView: View {
-    
+
     @Environment(\.dismiss)
     var dismiss
 
@@ -25,7 +25,7 @@ struct ReportMessageView: View {
     init(model: ViewModel = ViewModel()) {
         _model = StateObject(wrappedValue: model)
     }
-    
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -37,20 +37,21 @@ struct ReportMessageView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.top, -20)
                                 .foregroundColor(.secondary)
-                            
+
                             TextField("", text: $model.sender)
                                 .focused($focusedField, equals: .sender)
                                 .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
-                            
+                                
+
                         }
                         .listRowInsets(EdgeInsets(top: 30, leading: 20, bottom: 15, trailing: 20))
-                        
+
                         ZStack (alignment: .top) {
                             Text("testFilters_messageTitle"~)
                                 .font(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundColor(.secondary)
-                            
+
                             TextEditor(text: $model.text)
                                 .frame(minHeight: 80, idealHeight: 80, alignment: .top)
                                 .focused($focusedField, equals: .text)
@@ -59,7 +60,7 @@ struct ReportMessageView: View {
                                 .accessibilityIdentifier(TestIdentifier.testBodyInput.rawValue)
                         }
                         .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
-                        
+
                         Picker(selection: $model.selectedReport, label: EmptyView()) {
                             ForEach(ReportType.allCases.filter { $0 != .junkAndBlockSender }, id: \.rawValue) { reportType in
                                 Text(reportType.name)
@@ -69,7 +70,7 @@ struct ReportMessageView: View {
                         }
                         .pickerStyle(.segmented)
                         .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
-                        
+
                         Button {
                             withAnimation {
                                 self.model.reportMessage()
@@ -97,32 +98,16 @@ struct ReportMessageView: View {
                         }
                     }
                 }
-                
+
                 if self.model.state != .userInput {
-                    Rectangle()
-                        .background(.thinMaterial)
+                    Color.black.opacity(0.25)
                         .ignoresSafeArea()
-                    
-                    switch self.model.state {
-                    case .result(let text):
-                        VStack {
-                            CheckView(size: 50)
-                                .foregroundColor(.green)
-                                .padding()
-                            Text(text)
-                                .font(.body)
-                                .foregroundColor(.primary)
-                        }
-                        .frame(maxHeight: .infinity, alignment: .top)
-                        .padding(.top, 100)
-                    default:
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .tint(.accentColor)
-                            .scaleEffect(2)
-                            .padding(.top, 130)
-                            .frame(maxHeight: .infinity, alignment: .top)
-                    }
+                        .transition(.opacity)
+
+                    ReportSubmitCard(
+                        isDone: self.model.state.isResult,
+                        text: self.model.state.resultText
+                    )
                 }
             }
             .if(self.model.state == .userInput) {
@@ -144,7 +129,7 @@ struct ReportMessageView: View {
             .onChange(of: self.model.state) { newState in
                 if case .result(let text) = newState {
                     UIAccessibility.post(notification: .announcement, argument: text)
-                    let delay: TimeInterval = voiceOverEnabled ? 3 : 1
+                    let delay: TimeInterval = voiceOverEnabled ? 3 : 2.5
                     DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                         dismiss()
                     }
@@ -157,14 +142,14 @@ struct ReportMessageView: View {
 
 //MARK: - ViewModel -
 extension ReportMessageView {
-    
+
     enum Field: Int, Hashable, Equatable {
         case text, sender
     }
-    
+
     enum ViewState: Equatable {
         case userInput, loading, result(String)
-        
+
         var isResult: Bool {
             switch self {
             case .result(_):
@@ -173,7 +158,12 @@ extension ReportMessageView {
                 return false
             }
         }
-        
+
+        var resultText: String? {
+            if case .result(let text) = self { return text }
+            return nil
+        }
+
         static func ==(lhs: ViewState, rhs: ViewState) -> Bool {
             switch (lhs, rhs) {
             case (.userInput, .userInput), (.loading, .loading):
@@ -185,22 +175,24 @@ extension ReportMessageView {
             }
         }
     }
-    
+
     class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject {
         @Published var text: String = ""
         @Published var sender: String = ""
         @Published var state: ViewState = .userInput
         @Published var selectedReport = ReportType.junk
-        
+
         func reportMessage() {
             self.state = .loading
-            
+
             Task(priority: .userInitiated) {
                 let requestBody = ReportMessageRequestBody(sender: self.sender,
                                                            body: self.text,
                                                            type: self.selectedReport.type)
-                
-                await self.appManager.reportMessageService.reportMessage(reportMessageRequestBody: requestBody)
+                async let apiCall = self.appManager.reportMessageService.reportMessage(reportMessageRequestBody: requestBody)
+                async let minDelay: Void = Task.sleep(nanoseconds: 1_500_000_000)
+                _ = await apiCall
+                try? await minDelay
                 DispatchQueue.main.async {
                     withAnimation {
                         self.state = .result("reportMessage_thankYou"~)

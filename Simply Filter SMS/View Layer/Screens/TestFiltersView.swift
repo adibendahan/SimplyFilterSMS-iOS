@@ -165,8 +165,7 @@ extension TestFiltersView {
         }
         
         func evaluateMessage() {
-            let sender = self.sender.isEmpty ? "1234567" : self.sender
-            let result = self.appManager.messageEvaluationManager.evaluateMessage(body: self.text, sender: sender)
+            let result = self.appManager.messageEvaluationManager.evaluateMessage(body: self.text, sender: self.sender)
             
             if let reason = result.reason {
                 self.fadeTextModel.text = "\(result.action.testResult)\n\("testFilters_resultReason"~) \(reason)"
