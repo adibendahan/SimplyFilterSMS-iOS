@@ -425,3 +425,43 @@
 "aboutView_supportSection" = "Soutenir l'app";
 
 "general_about" = "À propos";
+
+"enableReportingExtension_step1_title" = "Ouvre les Réglages iOS";
+
+"enableReportingExtension_step1_desc" = "Ouvre les Réglages iOS, fais défiler vers le bas et touche 'Apps'.";
+
+"enableReportingExtension_step2_title" = "Touche Téléphone";
+
+"enableReportingExtension_step2_desc" = "Fais défiler vers le bas, trouve 'Téléphone' et touche-le.";
+
+"enableReportingExtension_step3_title" = "Rapport SMS/Appels";
+
+"enableReportingExtension_step3_desc" = "Fais défiler vers le bas et touche 'Rapport SMS/Appels'.";
+
+"enableReportingExtension_step4_title" = "Choisir 'Simply Filter SMS'";
+
+"enableReportingExtension_step4_desc" = "Sélectionne 'Simply Filter SMS' pour activer les rapports.";
+
+"notification_reportingExtension_title" = "Améliorer le filtrage IA";
+
+"notification_reportingExtension_subtitle" = "Signalez des SMS indésirables";
+
+"notification_reportingExtension_button" = "Rejoindre";
+
+"autoFilter_reportSpam" = "Signaler du spam";
+
+"enableReportingExtension_desc" = "Activez l'extension de signalement pour signaler des spams directement depuis l'app Messages et aider a améliorer le filtrage IA pour tous les utilisateurs. Suivez les étapes ci-dessous, puis appuyez sur Réglages quand vous êtes prêt.";
+
+"enableReportingExtension_step5_title" = "Appui long sur un message";
+
+"enableReportingExtension_step5_desc" = "Dans l'app Messages, faites un appui long sur une bulle et appuyez sur 'Plus...'.";
+
+"enableReportingExtension_step6_title" = "Sélectionner des messages";
+
+"enableReportingExtension_step6_desc" = "Sélectionnez les messages que vous souhaitez que l'IA analyse.";
+
+"enableReportingExtension_step7_title" = "Signaler les messages";
+
+"enableReportingExtension_step7_desc" = "Appuyez sur 'Signaler les messages' pour les soumettre a l'entrainement de l'IA.";
+
+"autoFilter_improveAIFiltering" = "Améliorer le filtrage IA";

@@ -425,3 +425,43 @@
 "aboutView_supportSection" = "Apoya la App";
 
 "general_about" = "Acerca de";
+
+"enableReportingExtension_step1_title" = "Abrir Ajustes de iOS";
+
+"enableReportingExtension_step1_desc" = "Abre Ajustes de iOS, baja y toca 'Apps'.";
+
+"enableReportingExtension_step2_title" = "Toca Teléfono";
+
+"enableReportingExtension_step2_desc" = "Baja hasta encontrar 'Teléfono' y tócalo.";
+
+"enableReportingExtension_step3_title" = "Informe de SMS/Llamadas";
+
+"enableReportingExtension_step3_desc" = "Baja y toca 'Informe de SMS/Llamadas'.";
+
+"enableReportingExtension_step4_title" = "Elige 'Simply Filter SMS'";
+
+"enableReportingExtension_step4_desc" = "Selecciona 'Simply Filter SMS' para activar los informes.";
+
+"notification_reportingExtension_title" = "Mejorar filtrado de IA";
+
+"notification_reportingExtension_subtitle" = "Reporta mensajes de spam";
+
+"notification_reportingExtension_button" = "Unirse";
+
+"autoFilter_reportSpam" = "Denunciar spam";
+
+"enableReportingExtension_desc" = "Activa la extensión de informes para reportar spam directamente desde la app Mensajes y ayudar a mejorar el filtrado de IA para todos los usuarios. Sigue los pasos y toca el botón Configuración cuando estés listo.";
+
+"enableReportingExtension_step5_title" = "Mantén pulsado un mensaje";
+
+"enableReportingExtension_step5_desc" = "En la app Mensajes, mantén pulsada una burbuja de mensaje y toca 'Más...'.";
+
+"enableReportingExtension_step6_title" = "Selecciona mensajes";
+
+"enableReportingExtension_step6_desc" = "Selecciona los mensajes que quieres que la IA analice.";
+
+"enableReportingExtension_step7_title" = "Informar sobre mensajes";
+
+"enableReportingExtension_step7_desc" = "Toca 'Informar sobre mensajes' para enviarlos al entrenamiento de la IA.";
+
+"autoFilter_improveAIFiltering" = "Mejorar filtrado de IA";

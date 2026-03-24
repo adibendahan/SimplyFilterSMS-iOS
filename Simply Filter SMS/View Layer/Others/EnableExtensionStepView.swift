@@ -10,7 +10,7 @@ import SwiftUI
 private let kEnableExtensionToggleDelay: UInt64 = 400_000_000 // delay before toggle animates on after step activates
 
 struct EnableExtensionStepView: View {
-    let step: EnableExtensionStep
+    let step: any EnableExtensionStepProtocol
     let isActive: Bool
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

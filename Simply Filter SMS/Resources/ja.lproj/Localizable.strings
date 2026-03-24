@@ -180,7 +180,7 @@
 
 "autoFilter_title" = "AIフィルタリング";
 
-"autoFilter_lastUpdated" = "%@ に更新";
+"autoFilter_lastUpdated" = "%@に更新";
 
 "autoFilter_forceUpdate" = "今すぐ更新";
 
@@ -425,3 +425,43 @@
 "aboutView_supportSection" = "アプリをサポート";
 
 "general_about" = "情報";
+
+"enableReportingExtension_step1_title" = "iOSの設定を開く";
+
+"enableReportingExtension_step1_desc" = "iOSの設定を開き、下にスクロールして「アプリ」をタップします。";
+
+"enableReportingExtension_step2_title" = "「電話」をタップ";
+
+"enableReportingExtension_step2_desc" = "下にスクロールして「電話」を見つけ、タップします。";
+
+"enableReportingExtension_step3_title" = "SMSと通話のレポート";
+
+"enableReportingExtension_step3_desc" = "下にスクロールして「SMSと通話のレポート」をタップします。";
+
+"enableReportingExtension_step4_title" = "「Simply Filter SMS」を選択";
+
+"enableReportingExtension_step4_desc" = "「Simply Filter SMS」を選択してレポートを有効にします。";
+
+"notification_reportingExtension_title" = "AIフィルターを改善";
+
+"notification_reportingExtension_subtitle" = "迷惑SMSを報告";
+
+"notification_reportingExtension_button" = "参加する";
+
+"autoFilter_reportSpam" = "スパムを報告";
+
+"enableReportingExtension_desc" = "レポート拡張機能を有効にして、メッセージアプリから直接スパムを報告し、すべてのユーザーのAIフィルタリング改善に貢献できます。以下の手順に従い、準備ができたら設定ボタンをタップしてください。";
+
+"enableReportingExtension_step5_title" = "メッセージを長押し";
+
+"enableReportingExtension_step5_desc" = "メッセージアプリで、メッセージの吹き出しを長押しして「その他...」をタップします。";
+
+"enableReportingExtension_step6_title" = "メッセージを選択";
+
+"enableReportingExtension_step6_desc" = "AIに分析させたいメッセージを選択してください。";
+
+"enableReportingExtension_step7_title" = "メッセージを報告";
+
+"enableReportingExtension_step7_desc" = "「メッセージを報告」をタップして、AIのトレーニングに送信します。";
+
+"autoFilter_improveAIFiltering" = "AIフィルタリングを改善";

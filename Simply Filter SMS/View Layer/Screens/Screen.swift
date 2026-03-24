@@ -13,7 +13,7 @@ enum Screen: Int, Identifiable, Hashable {
     case appHome, onboarding, help, about, enableExtension, testFilters,
          addLanguageFilter, addAllowFilter, addDenyFilter, automaticBlocking,
          denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
-         whatsNew, tipJar, countryList
+         whatsNew, tipJar, countryList, enableReportingExtension
 
     @ViewBuilder func build() -> some View {
         switch self {
@@ -21,7 +21,21 @@ enum Screen: Int, Identifiable, Hashable {
             AppHomeView(model: AppHomeView.ViewModel())
 
         case .onboarding:
-            EnableExtensionView(model: EnableExtensionView.ViewModel())
+            EnableExtensionView(model: EnableExtensionView.ViewModel(
+                steps: Array(EnableExtensionStep.allCases),
+                isInteractiveDismissDisabled: true,
+                onDismiss: {
+                    var defaultsManager = AppManager.shared.defaultsManager
+                    defaultsManager.isAppFirstRun = false
+                },
+                onCTA: {
+                    var defaultsManager = AppManager.shared.defaultsManager
+                    defaultsManager.isAppFirstRun = false
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            ))
 
         case .help:
             HelpView(model: HelpView.ViewModel())
@@ -30,7 +44,21 @@ enum Screen: Int, Identifiable, Hashable {
             AboutView(model: AboutView.ViewModel())
 
         case .enableExtension:
-            EnableExtensionView(model: EnableExtensionView.ViewModel())
+            EnableExtensionView(model: EnableExtensionView.ViewModel(
+                steps: Array(EnableExtensionStep.allCases),
+                isInteractiveDismissDisabled: true,
+                onDismiss: {
+                    var defaultsManager = AppManager.shared.defaultsManager
+                    defaultsManager.isAppFirstRun = false
+                },
+                onCTA: {
+                    var defaultsManager = AppManager.shared.defaultsManager
+                    defaultsManager.isAppFirstRun = false
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            ))
 
         case .testFilters:
             TestFiltersView(model: TestFiltersView.ViewModel())
@@ -67,6 +95,20 @@ enum Screen: Int, Identifiable, Hashable {
 
         case .countryList:
             CountryListView(model: CountryListView.ViewModel())
+
+        case .enableReportingExtension:
+            EnableExtensionView(model: EnableExtensionView.ViewModel(
+                steps: Array(EnableReportingExtensionStep.allCases),
+                title: "autoFilter_improveAIFiltering"~,
+                description: "enableReportingExtension_desc"~,
+                isInteractiveDismissDisabled: false,
+                onDismiss: {},
+                onCTA: {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            ))
         }
     }
 
@@ -106,6 +148,8 @@ enum Screen: Int, Identifiable, Hashable {
             return "tipJar"
         case .countryList:
             return "countryList"
+        case .enableReportingExtension:
+            return "enableReportingExtension"
         }
     }
 }
@@ -115,6 +159,8 @@ extension Screen {
         switch host {
         case "enable-extension":
             return .enableExtension
+        case "enable-reporting-extension":
+            return .enableReportingExtension
         case "test-filters":
             return .testFilters
         case "tip-jar":

@@ -24,41 +24,61 @@ struct EnableExtensionView: View {
 
     @ObservedObject var model: ViewModel
     @State private var activeStep = 0
+    @State private var isPressing = false
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    Text("enableExtension_welcome_desc"~)
+                    Text(model.description)
                         .fixedSize(horizontal: false, vertical: true)
 
                     VStack(alignment: .leading, spacing: 0) {
-                        ForEach(EnableExtensionStep.allCases, id: \.self) { step in
-                            EnableExtensionStepView(step: step, isActive: activeStep >= step.stepNumber)
+                        ForEach(model.steps.indices, id: \.self) { index in
+                            EnableExtensionStepView(step: model.steps[index], isActive: activeStep >= model.steps[index].stepNumber)
                         }
                     }
+                    .background(
+                        PressDetector { isPressing = $0 }
+                    )
                     .task {
                         guard !voiceOverEnabled else {
-                            activeStep = EnableExtensionStep.allCases.count
+                            activeStep = model.steps.last?.stepNumber ?? 0
                             return
                         }
+
+                        @MainActor func pauseableSleep(_ nanoseconds: UInt64) async {
+                            let chunk: UInt64 = 50_000_000
+                            var remaining = nanoseconds
+                            while remaining > 0 && !Task.isCancelled {
+                                if isPressing {
+                                    try? await Task.sleep(nanoseconds: chunk)
+                                } else {
+                                    let slice = min(chunk, remaining)
+                                    try? await Task.sleep(nanoseconds: slice)
+                                    remaining -= slice
+                                }
+                            }
+                        }
+
                         while !Task.isCancelled {
-                            try? await Task.sleep(nanoseconds: kEnableExtensionCycleStartDelay)
-                            for step in EnableExtensionStep.allCases {
+                            await pauseableSleep(kEnableExtensionCycleStartDelay)
+                            for step in model.steps {
                                 withAnimation(reduceMotion ? nil : .default) {
                                     activeStep = step.stepNumber
                                 }
-                                try? await Task.sleep(nanoseconds: kEnableExtensionStepDuration)
+                                await pauseableSleep(kEnableExtensionStepDuration)
                             }
-                            try? await Task.sleep(nanoseconds: kEnableExtensionResetPause)
+                            await pauseableSleep(kEnableExtensionResetPause)
                             withAnimation(reduceMotion ? nil : .default) {
                                 activeStep = 0
                             }
-                            try? await Task.sleep(nanoseconds: kEnableExtensionCycleStartDelay)
+                            await pauseableSleep(kEnableExtensionCycleStartDelay)
                         }
                     }
                 }
                 .padding()
+                .background(RefreshControlDisabler())
             }
             .background(Color(.systemGroupedBackground))
             .safeAreaInset(edge: .bottom) {
@@ -73,7 +93,7 @@ struct EnableExtensionView: View {
                 .accessibilityIdentifier(TestIdentifier.callToActionButton.rawValue)
                 .accessibilityHint("a11y_enableExtension_ctaHint"~)
             }
-            .navigationTitle("enableExtension_welcome"~)
+            .navigationTitle(model.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -87,23 +107,20 @@ struct EnableExtensionView: View {
                 }
             }
         }
-        .interactiveDismissDisabled()
+        .interactiveDismissDisabled(model.isInteractiveDismissDisabled)
     }
 
     private func dismissView() {
         withAnimation {
-            model.isAppFirstRun = false
+            model.onDismiss()
             dismiss()
         }
     }
 
     private func openSettings() {
         withAnimation {
-            model.isAppFirstRun = false
+            model.onCTA()
             dismiss()
-            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-                UIApplication.shared.open(settingsURL)
-            }
         }
     }
 }
@@ -112,14 +129,26 @@ struct EnableExtensionView: View {
 extension EnableExtensionView {
 
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var isAppFirstRun: Bool {
-            didSet {
-                appManager.defaultsManager.isAppFirstRun = isAppFirstRun
-            }
-        }
+        let steps: [any EnableExtensionStepProtocol]
+        let title: String
+        let description: String
+        let isInteractiveDismissDisabled: Bool
+        let onDismiss: () -> Void
+        let onCTA: () -> Void
 
-        override init(appManager: AppManagerProtocol = AppManager.shared) {
-            self.isAppFirstRun = appManager.defaultsManager.isAppFirstRun
+        init(steps: [any EnableExtensionStepProtocol],
+             title: String = "enableExtension_welcome"~,
+             description: String = "enableExtension_welcome_desc"~,
+             isInteractiveDismissDisabled: Bool,
+             onDismiss: @escaping () -> Void,
+             onCTA: @escaping () -> Void,
+             appManager: AppManagerProtocol = AppManager.shared) {
+            self.steps = steps
+            self.title = title
+            self.description = description
+            self.isInteractiveDismissDisabled = isInteractiveDismissDisabled
+            self.onDismiss = onDismiss
+            self.onCTA = onCTA
             super.init(appManager: appManager)
         }
     }
@@ -128,6 +157,12 @@ extension EnableExtensionView {
 // MARK: - Preview -
 #Preview {
     EnableExtensionView(
-        model: EnableExtensionView.ViewModel(appManager: AppManager.previews)
+        model: EnableExtensionView.ViewModel(
+            steps: Array(EnableExtensionStep.allCases),
+            isInteractiveDismissDisabled: false,
+            onDismiss: {},
+            onCTA: {},
+            appManager: AppManager.previews
+        )
     )
 }

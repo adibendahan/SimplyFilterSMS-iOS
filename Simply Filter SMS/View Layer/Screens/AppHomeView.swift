@@ -480,7 +480,9 @@ extension AppHomeView {
                 self.pendingNotification = notification
                 return
             }
-            
+
+            self.didShowNotificationThisSession = true
+
             if !self.notification.show {
                 self.notification.setNotification(notification)
                 self.notification.setOnButtonTap {
@@ -541,8 +543,30 @@ extension AppHomeView {
             }
 
             self.tryShowTipPromotion()
+            self.tryShowReportingExtensionNudge()
         }
-        
+
+        func tryShowReportingExtensionNudge() {
+            let defaultsManager = self.appManager.defaultsManager
+            guard !defaultsManager.isAppFirstRun,
+                  !defaultsManager.didDismissReportingExtensionNudge,
+                  self.isAutomaticFilteringOn,
+                  defaultsManager.sessionCounter > 0 && defaultsManager.sessionCounter % 3 == 0,
+                  !self.didShowNotificationThisSession else { return }
+
+            self.notification.setNotification(.enableReportingExtension)
+            self.notification.onTap = {
+                self.appManager.defaultsManager.didDismissReportingExtensionNudge = true
+                withAnimation { self.notification.show = false }
+                self.sheetScreen = .enableReportingExtension
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                withAnimation {
+                    self.notification.show = true
+                }
+            }
+        }
+
         func tryShowTipPromotion() {
             let defaultsManager = self.appManager.defaultsManager
             guard defaultsManager.sessionCounter % 5 == 0,
@@ -609,6 +633,7 @@ extension AppHomeView {
 
         private let wasFirstRunOnInit: Bool
         private var didAddObservers = false
+        private var didShowNotificationThisSession = false
         private var pendingNotification: NotificationView.Notification?
         private var userIgnoresNetworkStatus: Bool {
             guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }

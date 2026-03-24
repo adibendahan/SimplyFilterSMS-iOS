@@ -425,3 +425,43 @@
 "aboutView_supportSection" = "앱 지원하기";
 
 "general_about" = "정보";
+
+"enableReportingExtension_step1_title" = "iOS 설정 열기";
+
+"enableReportingExtension_step1_desc" = "iOS 설정을 열고 아래로 스크롤하여 '앱'을 탭하세요.";
+
+"enableReportingExtension_step2_title" = "전화 탭하기";
+
+"enableReportingExtension_step2_desc" = "아래로 스크롤하여 '전화'를 찾아 탭하세요.";
+
+"enableReportingExtension_step3_title" = "SMS/통화 보고";
+
+"enableReportingExtension_step3_desc" = "아래로 스크롤하여 'SMS/통화 보고'를 탭하세요.";
+
+"enableReportingExtension_step4_title" = "'Simply Filter SMS' 선택";
+
+"enableReportingExtension_step4_desc" = "보고 기능을 활성화하려면 'Simply Filter SMS'를 선택하세요.";
+
+"notification_reportingExtension_title" = "AI 필터 개선";
+
+"notification_reportingExtension_subtitle" = "스팸 문자 신고";
+
+"notification_reportingExtension_button" = "참여하기";
+
+"autoFilter_reportSpam" = "스팸 신고";
+
+"enableReportingExtension_desc" = "신고 확장 기능을 활성화하여 메시지 앱에서 직접 스팸을 신고하고 모든 사용자를 위한 AI 필터링 개선에 도움을 주세요. 아래 단계를 따른 후 준비가 되면 설정 버튼을 탭하세요.";
+
+"enableReportingExtension_step5_title" = "메시지 길게 누르기";
+
+"enableReportingExtension_step5_desc" = "메시지 앱에서 말풍선을 길게 누른 후 '더 보기...'를 탭하세요.";
+
+"enableReportingExtension_step6_title" = "메시지 선택";
+
+"enableReportingExtension_step6_desc" = "AI가 분석하기를 원하는 메시지를 선택하세요.";
+
+"enableReportingExtension_step7_title" = "메시지 신고";
+
+"enableReportingExtension_step7_desc" = "'메시지 신고'를 탭하여 AI 학습을 위해 제출하세요.";
+
+"autoFilter_improveAIFiltering" = "AI 필터링 개선";

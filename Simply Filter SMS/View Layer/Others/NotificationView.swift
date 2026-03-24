@@ -175,7 +175,7 @@ struct NotificationView: View {
     }
 
     enum Notification {
-        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion
+        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension
 
         var icon: String {
             switch self {
@@ -191,6 +191,8 @@ struct NotificationView: View {
                 return "heart.fill"
             case .tipPromotion:
                 return "heart.fill"
+            case .enableReportingExtension:
+                return "exclamationmark.message.fill"
             }
         }
 
@@ -208,6 +210,8 @@ struct NotificationView: View {
                 return .pink.opacity(0.8)
             case .tipPromotion:
                 return .pink.opacity(0.8)
+            case .enableReportingExtension:
+                return .green.opacity(0.8)
             }
         }
 
@@ -226,6 +230,8 @@ struct NotificationView: View {
                 return "tipJar_toast_title"~
             case .tipPromotion:
                 return "notification_tipPromotion_title"~
+            case .enableReportingExtension:
+                return "notification_reportingExtension_title"~
             }
         }
 
@@ -243,11 +249,18 @@ struct NotificationView: View {
                 return "tipJar_toast_subtitle"~
             case .tipPromotion:
                 return "notification_tipPromotion_subtitle"~
+            case .enableReportingExtension:
+                return "notification_reportingExtension_subtitle"~
             }
         }
 
         var buttonTitle: String {
-            return "notification_hide"~
+            switch self {
+            case .enableReportingExtension:
+                return "notification_reportingExtension_button"~
+            default:
+                return "notification_hide"~
+            }
         }
 
         var timeout: TimeInterval? {
@@ -261,6 +274,8 @@ struct NotificationView: View {
             case .tipSuccessful:
                 return 6
             case .tipPromotion:
+                return 10
+            case .enableReportingExtension:
                 return 10
             }
         }

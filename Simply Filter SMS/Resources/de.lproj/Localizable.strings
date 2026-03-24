@@ -425,3 +425,43 @@
 "aboutView_supportSection" = "App unterstützen";
 
 "general_about" = "Info";
+
+"enableReportingExtension_step1_title" = "iOS-Einstellungen öffnen";
+
+"enableReportingExtension_step1_desc" = "Öffne die iOS-Einstellungen, scrolle nach unten und tippe auf 'Apps'.";
+
+"enableReportingExtension_step2_title" = "Auf Telefon tippen";
+
+"enableReportingExtension_step2_desc" = "Scrolle nach unten, finde 'Telefon' und tippe darauf.";
+
+"enableReportingExtension_step3_title" = "SMS-/Anrufberichte";
+
+"enableReportingExtension_step3_desc" = "Scrolle nach unten und tippe auf 'SMS-/Anrufberichte'.";
+
+"enableReportingExtension_step4_title" = "'Simply Filter SMS' auswählen";
+
+"enableReportingExtension_step4_desc" = "Wähle 'Simply Filter SMS', um Berichte zu aktivieren.";
+
+"notification_reportingExtension_title" = "KI-Filter verbessern";
+
+"notification_reportingExtension_subtitle" = "Spam-Nachrichten melden";
+
+"notification_reportingExtension_button" = "Mitmachen";
+
+"autoFilter_reportSpam" = "Spam melden";
+
+"enableReportingExtension_desc" = "Aktiviere die Melderweiterung, um Spam direkt aus der Nachrichten-App zu melden und die KI-Filterung für alle Nutzer zu verbessern. Folge den Schritten unten und tippe auf Einstellungen, wenn du bereit bist.";
+
+"enableReportingExtension_step5_title" = "Nachricht gedrückt halten";
+
+"enableReportingExtension_step5_desc" = "Halte in der Nachrichten-App eine Nachrichtenblase gedrückt und tippe auf 'Mehr...'.";
+
+"enableReportingExtension_step6_title" = "Nachrichten auswählen";
+
+"enableReportingExtension_step6_desc" = "Wähle die Nachrichten aus, die die KI analysieren soll.";
+
+"enableReportingExtension_step7_title" = "Nachrichten melden";
+
+"enableReportingExtension_step7_desc" = "Tippe auf 'Nachrichten melden', um sie zum KI-Training einzusenden.";
+
+"autoFilter_improveAIFiltering" = "KI-Filterung verbessern";

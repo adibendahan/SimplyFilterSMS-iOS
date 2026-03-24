@@ -89,6 +89,9 @@ struct ReportMessageView: View {
                     } header: {
                         Spacer()
                             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    } footer: {
+                        Text("reportingExtension_footer"~)
+                            .multilineTextAlignment(.center)
                     }
                 }
                 .onAppear {

@@ -128,7 +128,7 @@
 
 "autoFilter_title" = "סינון AI";
 
-"autoFilter_lastUpdated" = "עודכן לארונה ב %@";
+"autoFilter_lastUpdated" = "עודכן ב %@";
 
 "autoFilter_forceUpdate" = "עדכן עכשיו";
 
@@ -425,3 +425,43 @@
 "aboutView_supportSection" = "תמכו בנו";
 
 "general_about" = "אודות";
+
+"enableReportingExtension_step1_title" = "פתיחת הגדרות iOS";
+
+"enableReportingExtension_step1_desc" = "פתחו את הגדרות iOS, גללו למטה ולחצו על 'אפליקציות'.";
+
+"enableReportingExtension_step2_title" = "לחצו על טלפון";
+
+"enableReportingExtension_step2_desc" = "גללו למטה, מצאו את 'טלפון' ולחצו עליו.";
+
+"enableReportingExtension_step3_title" = "דיווח על SMS/שיחות";
+
+"enableReportingExtension_step3_desc" = "גללו למטה ולחצו על 'דיווח על SMS/שיחות'.";
+
+"enableReportingExtension_step4_title" = "בחרו 'Simply Filter SMS'";
+
+"enableReportingExtension_step4_desc" = "בחרו ב'Simply Filter SMS' כדי להפעיל דיווח.";
+
+"notification_reportingExtension_title" = "שפר סינון AI";
+
+"notification_reportingExtension_subtitle" = "דווח על הודעות ספאם";
+
+"notification_reportingExtension_button" = "הצטרף";
+
+"autoFilter_reportSpam" = "דווח על ספאם";
+
+"enableReportingExtension_desc" = "הפעל את תוסף הדיווח כדי לדווח על ספאם ישירות מאפליקציית ההודעות ולעזור לשפר את סינון ה-AI עבור כל המשתמשים. עקוב אחר השלבים הבאים ולחץ על כפתור ההגדרות כשאתה מוכן.";
+
+"enableReportingExtension_step5_title" = "לחץ לחיצה ארוכה על הודעה";
+
+"enableReportingExtension_step5_desc" = "באפליקציית ההודעות, לחץ לחיצה ארוכה על בועת הודעה ולחץ 'עוד...'.";
+
+"enableReportingExtension_step6_title" = "בחר הודעות";
+
+"enableReportingExtension_step6_desc" = "בחר את ההודעות שברצונך שה-AI ינתח.";
+
+"enableReportingExtension_step7_title" = "דווח על הודעות";
+
+"enableReportingExtension_step7_desc" = "לחץ על 'דווח על הודעות' כדי לשלוח אותן לאימון ה-AI.";
+
+"autoFilter_improveAIFiltering" = "שפר סינון AI";

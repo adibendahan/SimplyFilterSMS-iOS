@@ -29,6 +29,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var appAgeSetCounter = 0
     var lastSeenWhatsNewVersionGetCounter = 0
     var lastSeenWhatsNewVersionSetCounter = 0
+    var didDismissReportingExtensionNudgeGetCounter = 0
+    var didDismissReportingExtensionNudgeSetCounter = 0
 
     var isAppFirstRunClosure: (() -> (Bool))?
     var isExpandedAddFilterClosure: (() -> (Bool))?
@@ -39,6 +41,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var didTipClosure: (() -> (Bool))?
     var appAgeClosure: (() -> (Date))?
     var lastSeenWhatsNewVersionClosure: (() -> (Int))?
+    var didDismissReportingExtensionNudgeClosure: (() -> (Bool))?
 
     var isAppFirstRun: Bool {
         get {
@@ -127,6 +130,16 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
         set {
             self.lastSeenWhatsNewVersionSetCounter += 1
+        }
+    }
+
+    var didDismissReportingExtensionNudge: Bool {
+        get {
+            self.didDismissReportingExtensionNudgeGetCounter += 1
+            return self.didDismissReportingExtensionNudgeClosure?() ?? false
+        }
+        set {
+            self.didDismissReportingExtensionNudgeSetCounter += 1
         }
     }
 
