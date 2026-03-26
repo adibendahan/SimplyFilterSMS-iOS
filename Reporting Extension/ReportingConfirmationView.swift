@@ -39,7 +39,9 @@ struct ReportingConfirmationView: View {
                     }
                     .padding(.vertical, 4)
                 } header: {
-                    Text(String.localizedStringWithFormat("reportingExtension_selectedMessage"~, model.bodies.count))
+                    Text(model.isCall
+                         ? "reportingExtension_selectedCall"~
+                         : String.localizedStringWithFormat("reportingExtension_selectedMessage"~, model.bodies.count))
                         .font(.headline)
                         .foregroundColor(.primary)
                         .textCase(nil)
@@ -69,7 +71,7 @@ struct ReportingConfirmationView: View {
                         .accessibilityAddTraits(model.selectedReportType == reportType ? .isSelected : [])
                     }
                 } header: {
-                    Text(String.localizedStringWithFormat("reportingExtension_classify"~, model.bodies.count))
+                    Text(String.localizedStringWithFormat("reportingExtension_classify"~, model.isCall ? 1 : model.bodies.count))
                         .font(.headline)
                         .foregroundColor(.primary)
                         .textCase(nil)
@@ -91,5 +93,6 @@ extension ReportingConfirmationView {
         @Published var selectedReportType: ReportType?
         @Published var sender: String = ""
         @Published var bodies: [String] = []
+        @Published var isCall: Bool = false
     }
 }

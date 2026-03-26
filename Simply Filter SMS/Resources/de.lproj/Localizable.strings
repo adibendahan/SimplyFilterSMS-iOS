@@ -471,3 +471,5 @@
 "menu_filterTools" = "Filter-Tools";
 
 "menu_addFilter" = "Filter hinzufügen";
+
+"reportingExtension_selectedCall" = "Ausgewählter Anruf";

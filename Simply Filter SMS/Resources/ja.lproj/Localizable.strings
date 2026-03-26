@@ -471,3 +471,5 @@
 "menu_filterTools" = "フィルタツール";
 
 "menu_addFilter" = "フィルタを追加";
+
+"reportingExtension_selectedCall" = "選択した通話";

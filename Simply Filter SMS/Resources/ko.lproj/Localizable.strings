@@ -471,3 +471,5 @@
 "menu_filterTools" = "필터 도구";
 
 "menu_addFilter" = "필터 추가";
+
+"reportingExtension_selectedCall" = "선택한 통화";

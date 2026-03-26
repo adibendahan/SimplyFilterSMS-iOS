@@ -225,6 +225,7 @@
 
 "reportingExtension_message" = "Message";
 "reportingExtension_messageIndex" = "Message %ld";
+"reportingExtension_selectedCall" = "Selected Call";
 "reportingExtension_footer" = "Your reports train the AI filters, helping keep inboxes clean for Simply Filter SMS users everywhere. Thank you for contributing.";
 
 

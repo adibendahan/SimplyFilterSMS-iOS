@@ -471,3 +471,5 @@
 "menu_filterTools" = "Outils";
 
 "menu_addFilter" = "Ajouter un filtre";
+
+"reportingExtension_selectedCall" = "Appel sélectionné";
