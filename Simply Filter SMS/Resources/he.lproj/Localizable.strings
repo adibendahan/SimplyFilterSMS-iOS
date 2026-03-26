@@ -164,7 +164,7 @@
 
 "filterList_text" = "טקסט";
 
-"addFilter_addLanguage" = "הוספת שפה";
+"addFilter_addLanguage" = "הוספת שפה חסומה";
 
 "autoFilter_smartFilters" = "פילטרים חכמים";
 
@@ -465,3 +465,9 @@
 "enableReportingExtension_step7_desc" = "לחץ על 'דווח על הודעות' כדי לשלוח אותן לאימון ה-AI.";
 
 "autoFilter_improveAIFiltering" = "שפר סינון AI";
+
+"menu_filters" = "מסננים";
+
+"menu_filterTools" = "כלי מסננים";
+
+"menu_addFilter" = "הוספת מסנן";

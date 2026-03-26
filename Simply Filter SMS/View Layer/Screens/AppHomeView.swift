@@ -326,7 +326,7 @@ struct AppHomeView: View {
     @ViewBuilder
     private func NavigationBarTrailingItem() -> some View {
         Menu {
-            
+
             if isDebug {
                 Button {
                     self.model.loadDebugData()
@@ -335,26 +335,60 @@ struct AppHomeView: View {
                 }
                 .accessibilityIdentifier(TestIdentifier.loadDebugDataMenuButton.rawValue)
             }
-            
-            Button {
-                self.model.sheetScreen = .testFilters
+
+            Menu {
+                Button {
+                    self.model.sheetScreen = .addAllowFilter
+                } label: {
+                    Label("addFilter_addFilter_allow"~, systemImage: "person.crop.circle.badge.checkmark")
+                }
+
+                Button {
+                    self.model.sheetScreen = .addDenyFilter
+                } label: {
+                    Label("addFilter_addFilter_deny"~, systemImage: "person.crop.circle.badge.xmark")
+                }
+
+                Button {
+                    self.model.sheetScreen = .addLanguageFilter
+                } label: {
+                    Label("addFilter_addLanguage"~, systemImage: "globe")
+                }
             } label: {
-                Label("testFilters_title"~, systemImage: "arrow.up.message")
+                Label("menu_addFilter"~, systemImage: "plus.message")
             }
-            .accessibilityIdentifier(TestIdentifier.testYourFiltersMenuButton.rawValue)
-            
-            Button {
-                self.model.sheetScreen = .reportMessage
+
+            Menu {
+                Button {
+                    self.model.sheetScreen = .testFilters
+                } label: {
+                    Label("testFilters_title"~, systemImage: "arrow.up.message")
+                }
+                .accessibilityIdentifier(TestIdentifier.testYourFiltersMenuButton.rawValue)
+
+                Button {
+                    self.model.sheetScreen = .reportMessage
+                } label: {
+                    Label("reportMessage_title"~, systemImage: "exclamationmark.bubble")
+                }
+
+                Button {
+                    self.model.sheetScreen = .enableReportingExtension
+                } label: {
+                    Label("autoFilter_improveAIFiltering"~, systemImage: "wand.and.stars")
+                }
             } label: {
-                Label("reportMessage_title"~, systemImage: "exclamationmark.bubble")
+                Label("menu_filterTools"~, systemImage: "wrench.and.screwdriver.fill")
             }
-            
+
+            Divider()
+
             Button {
                 self.model.sheetScreen = .help
             } label: {
                 Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
             }
-            
+
             Button {
                 self.model.sheetScreen = .about
             } label: {
@@ -374,6 +408,7 @@ struct AppHomeView: View {
                     Label("whatsNew_menuItem"~, systemImage: "sparkles")
                 }
             }
+
         } label: {
             Image(systemName: "ellipsis.circle")
         }

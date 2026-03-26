@@ -50,7 +50,7 @@
 
 "addFilter_addFilter_deny" = "إضافة نص محظور";
 
-"addFilter_addLanguage" = "إضافة لغة";
+"addFilter_addLanguage" = "إضافة لغة محظورة";
 
 "addFilter_text" = "اكتب كلمة/حرفًا";
 
@@ -465,3 +465,9 @@
 "enableReportingExtension_step7_desc" = "اضغط 'الإبلاغ عن الرسائل' لإرسالها لتدريب الذكاء الاصطناعي.";
 
 "autoFilter_improveAIFiltering" = "تحسين تصفية الذكاء الاصطناعي";
+
+"menu_filters" = "المرشحات";
+
+"menu_filterTools" = "أدوات المرشحات";
+
+"menu_addFilter" = "إضافة مرشح";

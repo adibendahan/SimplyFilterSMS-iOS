@@ -50,7 +50,7 @@
 
 "addFilter_addFilter_deny" = "Blockiert hinzufügen";
 
-"addFilter_addLanguage" = "Sprache hinzufügen";
+"addFilter_addLanguage" = "Blockierte Sprache hinzufügen";
 
 "addFilter_text" = "Wort/Buchstabe eingeben";
 
@@ -465,3 +465,9 @@
 "enableReportingExtension_step7_desc" = "Tippe auf 'Nachrichten melden', um sie zum KI-Training einzusenden.";
 
 "autoFilter_improveAIFiltering" = "KI-Filterung verbessern";
+
+"menu_filters" = "Filter";
+
+"menu_filterTools" = "Filter-Tools";
+
+"menu_addFilter" = "Filter hinzufügen";

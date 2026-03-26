@@ -50,7 +50,7 @@
 
 "addFilter_addFilter_deny" = "Adicionar Bloqueado";
 
-"addFilter_addLanguage" = "Adicionar Idioma";
+"addFilter_addLanguage" = "Adicionar idioma bloqueado";
 
 "addFilter_text" = "Digite uma palavra/letra";
 
@@ -465,3 +465,9 @@
 "enableReportingExtension_step7_desc" = "Toque em 'Denunciar mensagens' para enviá-las ao treinamento da IA.";
 
 "autoFilter_improveAIFiltering" = "Melhorar filtragem de IA";
+
+"menu_filters" = "Filtros";
+
+"menu_filterTools" = "Ferramentas";
+
+"menu_addFilter" = "Adicionar filtro";

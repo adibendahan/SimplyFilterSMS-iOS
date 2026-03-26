@@ -32,6 +32,10 @@
 "filterList_menu_filterLanguage" = "Block a Language";
 "filterList_menu_enableExtension" = "Help";
 "filterList_menu_about" = "About";
+
+"menu_filters" = "Filters";
+"menu_filterTools" = "Filter Tools";
+"menu_addFilter" = "Add Filter";
 "filterList_menu_debug" = "Load Debug Data";
 "filterList_deniedLanguage" = "Blocked Languages";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
@@ -43,7 +47,7 @@
 "addFilter_add" = "Add";
 "addFilter_addFilter_allow" = "Add Allowed Text";
 "addFilter_addFilter_deny" = "Add Blocked Text";
-"addFilter_addLanguage" = "Add Language";
+"addFilter_addLanguage" = "Add Blocked Language";
 "addFilter_text" = "Type a word/letter";
 "addFilter_type" = "Type";
 "addFilter_type_caption" = "Select an action:";

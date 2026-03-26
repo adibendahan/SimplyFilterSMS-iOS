@@ -50,7 +50,7 @@
 
 "addFilter_addFilter_deny" = "차단 텍스트 추가";
 
-"addFilter_addLanguage" = "언어 추가";
+"addFilter_addLanguage" = "차단 언어 추가";
 
 "addFilter_text" = "단어/글자 입력";
 
@@ -465,3 +465,9 @@
 "enableReportingExtension_step7_desc" = "'메시지 신고'를 탭하여 AI 학습을 위해 제출하세요.";
 
 "autoFilter_improveAIFiltering" = "AI 필터링 개선";
+
+"menu_filters" = "필터";
+
+"menu_filterTools" = "필터 도구";
+
+"menu_addFilter" = "필터 추가";

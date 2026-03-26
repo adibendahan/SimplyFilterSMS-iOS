@@ -50,7 +50,7 @@
 
 "addFilter_addFilter_deny" = "ブロックテキストを追加";
 
-"addFilter_addLanguage" = "言語を追加";
+"addFilter_addLanguage" = "ブロック言語を追加";
 
 "addFilter_text" = "単語・文字を入力";
 
@@ -465,3 +465,9 @@
 "enableReportingExtension_step7_desc" = "「メッセージを報告」をタップして、AIのトレーニングに送信します。";
 
 "autoFilter_improveAIFiltering" = "AIフィルタリングを改善";
+
+"menu_filters" = "フィルタ";
+
+"menu_filterTools" = "フィルタツール";
+
+"menu_addFilter" = "フィルタを追加";
