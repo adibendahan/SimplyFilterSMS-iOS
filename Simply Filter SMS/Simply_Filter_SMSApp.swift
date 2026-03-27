@@ -10,7 +10,11 @@ import SwiftUI
 @main
 struct Simply_Filter_SMSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+
+    init() {
+        UIScrollView.appearance().delaysContentTouches = false
+    }
+
     var body: some Scene {
         WindowGroup {
             AppHomeView(model: AppHomeView.ViewModel(appManager: AppManager.shared))

@@ -14,7 +14,7 @@ class SnapshotsTestCase: ApplicationTestCase {
     private var isPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
     }
-
+    
     func testCreateSnapshots() throws {
 
         if isPad {
@@ -27,21 +27,22 @@ class SnapshotsTestCase: ApplicationTestCase {
 
         app.tap(.appMenuButton)
         app.tap(.loadDebugDataMenuButton)
-        
+        self.sleep(seconds: 5)
+
         // MARK: countryList Screenshot
         let ruleSwitch = app.switchContaining(RuleType.countryAllowlist.title)
         XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
-        ruleSwitch.switches["0"].firstMatch.tap()
+        ruleSwitch.switches["0"].firstMatch.press(forDuration: 0.7)
         XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
         
         app.tap(.countryAllowlistButton)
         self.sleep(seconds: 1)
         for i in 0..<2 {
-            app.buttons.matching(identifier: TestIdentifier.countryRow.rawValue).element(boundBy: i).tap()
+            app.buttons.matching(identifier: TestIdentifier.countryRow.rawValue).element(boundBy: i).press(forDuration: 0.7)
             self.sleep(seconds: 0.5)
         }
         app.tap(.closeButton)
-        self.sleep(seconds: 0.5)
+        self.sleep(seconds: isPad ? 3.0 : 0.5)
 
         // MARK: applicationHome Screenshot
         for rule in RuleType.allCases.filter({ $0 != .allUnknown && $0 != .countryAllowlist }) {
@@ -57,13 +58,12 @@ class SnapshotsTestCase: ApplicationTestCase {
         let currentLanguage = NLLanguage(rawValue: langCode)
         let activeLang = currentLanguage != .undetermined ? currentLanguage : .english
         app.switches[activeLang~].switches["0"].firstMatch.tap()
-        
-        
+
+        app.buttons["BackButton"].firstMatch.conditionalTap(!isPad)
         app.tap(.countryAllowlistButton)
         snapshot("08.countryList")
         app.tap(.closeButton)
-        self.sleep(seconds: 0.5)
-        app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
+        self.sleep(seconds: isPad ? 2.0 : 0.5)
         
         if !isPad {
             snapshot("01.applicationHome")
@@ -120,7 +120,7 @@ class SnapshotsTestCase: ApplicationTestCase {
                       screenshotName: addFilterScreenshot)
 
         // MARK: denyFilters Screenshot
-        app.tap(.denyFiltersLink)
+        app.conditionalTap(.denyFiltersLink, isPad)
         snapshot("03.denyFilters")
 
 
@@ -143,6 +143,7 @@ class SnapshotsTestCase: ApplicationTestCase {
 
         // MARK: testFilters Screenshot
         app.tap(.appMenuButton)
+        app.tap(.filterToolsMenuButton)
         app.tap(.testYourFiltersMenuButton)
         app.textViews[TestIdentifier.testBodyInput.rawValue].firstMatch.typeText("Your Apple ID Code is: 444291. Don't share it with anyone.")
         app.textFields[TestIdentifier.testSenderInput.rawValue].firstMatch.tap()
@@ -150,4 +151,5 @@ class SnapshotsTestCase: ApplicationTestCase {
         app.tap(.testYourFiltersButton)
         snapshot("07.testFilters")
     }
+    
 }

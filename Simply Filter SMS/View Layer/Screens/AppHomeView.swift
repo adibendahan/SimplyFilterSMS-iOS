@@ -8,7 +8,6 @@
 import SwiftUI
 import StoreKit
 
-
 //MARK: - View -
 struct AppHomeView: View {
     
@@ -99,7 +98,7 @@ struct AppHomeView: View {
                                 model.navigationScreen = screen
                             }
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
-                        .listRowBackground(model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground))
+                        .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
                         .accessibility(identifier: TestIdentifier.automaticFilterLink.rawValue)
                         .accentColor(Color.primary.opacity(0.35))
                 } header: {
@@ -231,7 +230,7 @@ struct AppHomeView: View {
                         .sidebarNavigationRow(screen: filterType.screen, isRegular: horizontalSizeClass == .regular) {
                             model.navigationScreen = filterType.screen
                         }
-                        .listRowBackground(model.navigationScreen == filterType.screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground))
+                        .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == filterType.screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
                         .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
                         .accessibilityIdentifier(filterType.testIdentifier.rawValue)
                         .accentColor(Color.primary.opacity(0.35))
@@ -245,6 +244,7 @@ struct AppHomeView: View {
                     Text("")
                 }
             } // List
+            .background(horizontalSizeClass == .regular ? InstantTouchDisabler(delaysContentTouches: true) : nil)
             .navigationTitle(self.model.title)
             .listStyle(.insetGrouped)
             .navigationBarItems(trailing: NavigationBarTrailingItem())
@@ -253,7 +253,9 @@ struct AppHomeView: View {
                 if let screen = newScreen {
                     model.navigationScreen = screen
                     if horizontalSizeClass == .regular {
-                        DispatchQueue.main.async { selectedScreen = nil }
+                        DispatchQueue.main.async {
+                            selectedScreen = nil
+                        }
                     }
                 } else if horizontalSizeClass == .compact {
                     model.navigationScreen = nil
@@ -380,6 +382,7 @@ struct AppHomeView: View {
             } label: {
                 Label("menu_filterTools"~, systemImage: "wrench.and.screwdriver.fill")
             }
+            .accessibilityIdentifier(TestIdentifier.filterToolsMenuButton.rawValue)
 
             Divider()
 
@@ -461,7 +464,6 @@ extension AppHomeView {
         var pendingScreenAfterDismiss: Screen?
         
         override init(appManager: AppManagerProtocol = AppManager.shared) {
-
             let isAutomaticFilteringOn = appManager.automaticFilterManager.isAutomaticFilteringOn
 
             self.title = "filterList_filters"~
@@ -476,7 +478,7 @@ extension AppHomeView {
             self.notification = NotificationView.ViewModel(notification: .offline)
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
-            
+
             self.rules = appManager.automaticFilterManager.rules
                 .map({
                     StatefulItem<RuleType>(item: $0,
@@ -523,7 +525,6 @@ extension AppHomeView {
                 self.notification.setOnButtonTap {
                     self.appManager.defaultsManager.lastOfflineNotificationDismiss = Date()
                 }
-                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     withAnimation {
                         self.notification.show = true
@@ -535,7 +536,6 @@ extension AppHomeView {
                     self.notification.setNotification(notification)
                 }
             }
-            
         }
         
         func startMonitoring() {
@@ -546,14 +546,14 @@ extension AppHomeView {
 
             if !didAddObservers {
                 self.didAddObservers = true
+
                 NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { _ in
                     self.refresh()
                     self.showNotification(.cloudSyncOperationComplete)
                 }
-                
+
                 NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { notification in
                     guard let networkStatus = notification.object as? NetworkStatus else { return }
-                    
                     if networkStatus == .online {
                         self.notification.show = false
                     }
@@ -563,7 +563,7 @@ extension AppHomeView {
                         }
                     }
                 }
-                
+
                 NotificationCenter.default.addObserver(forName: .filtersStateChanged, object: nil, queue: .main) { _ in
                     withAnimation {
                         self.refresh()
@@ -583,11 +583,11 @@ extension AppHomeView {
 
         func tryShowReportingExtensionNudge() {
             let defaultsManager = self.appManager.defaultsManager
-            guard !defaultsManager.isAppFirstRun,
-                  !defaultsManager.didDismissReportingExtensionNudge,
-                  self.isAutomaticFilteringOn,
-                  defaultsManager.sessionCounter > 0 && defaultsManager.sessionCounter % 3 == 0,
-                  !self.didShowNotificationThisSession else { return }
+            guard !defaultsManager.isAppFirstRun else { return }
+            guard !defaultsManager.didDismissReportingExtensionNudge else { return }
+            guard self.isAutomaticFilteringOn else { return }
+            guard defaultsManager.sessionCounter > 0 && defaultsManager.sessionCounter % 3 == 0 else { return }
+            guard !self.didShowNotificationThisSession else { return }
 
             self.notification.setNotification(.enableReportingExtension)
             self.notification.onTap = {
@@ -609,7 +609,9 @@ extension AppHomeView {
                   !defaultsManager.didTip,
                   !self.notification.show,
                   self.sheetScreen == nil,
-                  self.modalFullScreen == nil else { return }
+                  self.modalFullScreen == nil else {
+                return
+            }
 
             self.notification.setNotification(.tipPromotion)
             self.notification.onTap = {

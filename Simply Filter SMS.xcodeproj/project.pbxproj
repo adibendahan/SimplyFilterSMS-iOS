@@ -40,6 +40,7 @@
 		69218ED02EC8A261000D547B /* EnableExtensionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69218ED12EC8A261000D547B /* EnableExtensionStepView.swift */; };
 		C669D4A928A74191AC2501126961491F /* PressDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6D0065DEA04AF1B2239E6CB0454D40 /* PressDetector.swift */; };
 		D84016F55AA644ED830854A2B12057F5 /* RefreshControlDisabler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6E3998CCF6470F8F6A40A36EE19752 /* RefreshControlDisabler.swift */; };
+		5638F2EE8B314143A89804A08B3EF997 /* InstantTouchDisabler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110F48EF7181478C8AE7B577C0DF518C /* InstantTouchDisabler.swift */; };
 		69218ED22EC8A261000D547B /* EnableExtensionStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69218ED32EC8A261000D547B /* EnableExtensionStep.swift */; };
 		69300B8627A9C4A700DF7982 /* TestFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69300B8527A9C4A700DF7982 /* TestFiltersView.swift */; };
 		6931BAEA27BB270E00636439 /* AmazonS3ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */; };
@@ -208,6 +209,7 @@
 		69218ED12EC8A261000D547B /* EnableExtensionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionStepView.swift; sourceTree = "<group>"; };
 		0E6D0065DEA04AF1B2239E6CB0454D40 /* PressDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PressDetector.swift; sourceTree = "<group>"; };
 		4E6E3998CCF6470F8F6A40A36EE19752 /* RefreshControlDisabler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlDisabler.swift; sourceTree = "<group>"; };
+		110F48EF7181478C8AE7B577C0DF518C /* InstantTouchDisabler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstantTouchDisabler.swift; sourceTree = "<group>"; };
 		69218ED32EC8A261000D547B /* EnableExtensionStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionStep.swift; sourceTree = "<group>"; };
 		69300B8527A9C4A700DF7982 /* TestFiltersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFiltersView.swift; sourceTree = "<group>"; };
 		6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonS3ServiceTests.swift; sourceTree = "<group>"; };
@@ -635,6 +637,7 @@
 				69218ED32EC8A261000D547B /* EnableExtensionStep.swift */,
 				0E6D0065DEA04AF1B2239E6CB0454D40 /* PressDetector.swift */,
 				4E6E3998CCF6470F8F6A40A36EE19752 /* RefreshControlDisabler.swift */,
+				110F48EF7181478C8AE7B577C0DF518C /* InstantTouchDisabler.swift */,
 				4EC977832345515DCFE3C478 /* EnableExtensionStepProtocol.swift */,
 				00FDD7FD5B3D7601BF34B0C6 /* EnableReportingExtensionStep.swift */,
 				37C18038215780F287F19CF9 /* ShieldGlintIcon.swift */,
@@ -936,6 +939,7 @@
 				69218ED22EC8A261000D547B /* EnableExtensionStep.swift in Sources */,
 				C669D4A928A74191AC2501126961491F /* PressDetector.swift in Sources */,
 				D84016F55AA644ED830854A2B12057F5 /* RefreshControlDisabler.swift in Sources */,
+				5638F2EE8B314143A89804A08B3EF997 /* InstantTouchDisabler.swift in Sources */,
 				69C1A0022F12A26100D1E2F3 /* WhatsNewView.swift in Sources */,
 				BDAB65C61C6E4B08B936367E /* TipJarView.swift in Sources */,
 				7E18C04B8C534C59952C491F /* ConfettiView.swift in Sources */,

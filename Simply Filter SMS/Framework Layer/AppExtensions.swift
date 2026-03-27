@@ -103,6 +103,8 @@ extension View {
         if isRegular {
             self.contentShape(Rectangle())
                 .highPriorityGesture(TapGesture().onEnded { _ in onTap() })
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isButton)
         } else {
             NavigationLink(value: screen) { self }
         }

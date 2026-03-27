@@ -466,10 +466,10 @@
 
 "autoFilter_improveAIFiltering" = "שפר סינון AI";
 
-"menu_filters" = "מסננים";
+"menu_filters" = "פילטרים";
 
-"menu_filterTools" = "כלי מסננים";
+"menu_filterTools" = "כלי פילטור";
 
-"menu_addFilter" = "הוספת מסנן";
+"menu_addFilter" = "הוספת פילטר";
 
 "reportingExtension_selectedCall" = "שיחה שנבחרה";
