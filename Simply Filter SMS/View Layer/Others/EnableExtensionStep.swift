@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum EnableExtensionStep: CaseIterable, Hashable {
+enum EnableExtensionStep: CaseIterable, Hashable, EnableExtensionStepProtocol {
     case settings
     case messages
     case unknownSenders

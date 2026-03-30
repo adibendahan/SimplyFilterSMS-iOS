@@ -50,7 +50,7 @@
 
 "addFilter_addFilter_deny" = "إضافة نص محظور";
 
-"addFilter_addLanguage" = "إضافة لغة";
+"addFilter_addLanguage" = "إضافة لغة محظورة";
 
 "addFilter_text" = "اكتب كلمة/حرفًا";
 
@@ -417,3 +417,59 @@
 "reportingExtension_messageIndex" = "رسالة %ld";
 
 "reportingExtension_footer" = "تساعد تقاريرك في تدريب فلاتر الذكاء الاصطناعي، مما يحافظ على نظافة صناديق البريد الوارد لمستخدمي Simply Filter SMS في كل مكان. شكرًا لمساهمتك.";
+
+"aboutView_contactSection" = "تواصل";
+
+"aboutView_connectSection" = "تابعونا";
+
+"aboutView_supportSection" = "دعم التطبيق";
+
+"general_about" = "حول";
+
+"enableReportingExtension_step1_title" = "افتح إعدادات iOS";
+
+"enableReportingExtension_step1_desc" = "افتح إعدادات iOS، مرر للأسفل واضغط على 'التطبيقات'.";
+
+"enableReportingExtension_step2_title" = "اضغط على الهاتف";
+
+"enableReportingExtension_step2_desc" = "مرر للأسفل وابحث عن 'الهاتف' ثم اضغط عليه.";
+
+"enableReportingExtension_step3_title" = "تقارير SMS/المكالمات";
+
+"enableReportingExtension_step3_desc" = "مرر للأسفل واضغط على 'تقارير SMS/المكالمات'.";
+
+"enableReportingExtension_step4_title" = "اختر 'Simply Filter SMS'";
+
+"enableReportingExtension_step4_desc" = "اختر 'Simply Filter SMS' لتفعيل الإبلاغ.";
+
+"notification_reportingExtension_title" = "تحسين تصفية الذكاء الاصطناعي";
+
+"notification_reportingExtension_subtitle" = "أبلغ عن رسائل سبام";
+
+"notification_reportingExtension_button" = "انضم";
+
+"autoFilter_reportSpam" = "الإبلاغ عن سبام";
+
+"enableReportingExtension_desc" = "فعّل ملحق الإبلاغ للإبلاغ عن الرسائل المزعجة مباشرة من تطبيق الرسائل والمساعدة في تحسين تصفية الذكاء الاصطناعي لجميع المستخدمين. اتبع الخطوات أدناه، ثم اضغط زر الإعدادات عندما تكون مستعدًا.";
+
+"enableReportingExtension_step5_title" = "اضغط مطولاً على رسالة";
+
+"enableReportingExtension_step5_desc" = "في تطبيق الرسائل، اضغط مطولاً على فقاعة الرسالة واضغط 'المزيد...'.";
+
+"enableReportingExtension_step6_title" = "حدد الرسائل";
+
+"enableReportingExtension_step6_desc" = "حدد الرسائل التي تريد من الذكاء الاصطناعي تحليلها.";
+
+"enableReportingExtension_step7_title" = "الإبلاغ عن الرسائل";
+
+"enableReportingExtension_step7_desc" = "اضغط 'الإبلاغ عن الرسائل' لإرسالها لتدريب الذكاء الاصطناعي.";
+
+"autoFilter_improveAIFiltering" = "تحسين تصفية الذكاء الاصطناعي";
+
+"menu_filters" = "المرشحات";
+
+"menu_filterTools" = "أدوات المرشحات";
+
+"menu_addFilter" = "إضافة مرشح";
+
+"reportingExtension_selectedCall" = "المكالمة المحددة";

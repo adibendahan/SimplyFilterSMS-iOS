@@ -50,7 +50,7 @@
 
 "addFilter_addFilter_deny" = "Aggiungi bloccato";
 
-"addFilter_addLanguage" = "Aggiungi lingua";
+"addFilter_addLanguage" = "Aggiungi lingua bloccata";
 
 "addFilter_text" = "Digita una parola/lettera";
 
@@ -417,3 +417,59 @@
 "reportingExtension_messageIndex" = "Messaggio %ld";
 
 "reportingExtension_footer" = "Le tue segnalazioni allenano i filtri AI, aiutando a mantenere le caselle di posta pulite per gli utenti di Simply Filter SMS ovunque. Grazie per il tuo contributo.";
+
+"aboutView_contactSection" = "Contatto";
+
+"aboutView_connectSection" = "Social";
+
+"aboutView_supportSection" = "Supporta l'app";
+
+"general_about" = "Info";
+
+"enableReportingExtension_step1_title" = "Apri Impostazioni iOS";
+
+"enableReportingExtension_step1_desc" = "Apri Impostazioni iOS, scorri verso il basso e tocca 'App'.";
+
+"enableReportingExtension_step2_title" = "Tocca Telefono";
+
+"enableReportingExtension_step2_desc" = "Scorri verso il basso per trovare 'Telefono' e toccalo.";
+
+"enableReportingExtension_step3_title" = "Segnalazione SMS/Chiamate";
+
+"enableReportingExtension_step3_desc" = "Scorri verso il basso e tocca 'Segnalazione SMS/Chiamate'.";
+
+"enableReportingExtension_step4_title" = "Scegli 'Simply Filter SMS'";
+
+"enableReportingExtension_step4_desc" = "Seleziona 'Simply Filter SMS' per abilitare la segnalazione.";
+
+"notification_reportingExtension_title" = "Migliora il filtro IA";
+
+"notification_reportingExtension_subtitle" = "Segnala SMS di spam";
+
+"notification_reportingExtension_button" = "Unisciti";
+
+"autoFilter_reportSpam" = "Segnala spam";
+
+"enableReportingExtension_desc" = "Attiva l'estensione di segnalazione per segnalare spam direttamente dall'app Messaggi e migliorare il filtro IA per tutti gli utenti. Segui i passaggi qui sotto, poi tocca il pulsante Impostazioni quando sei pronto.";
+
+"enableReportingExtension_step5_title" = "Tieni premuto un messaggio";
+
+"enableReportingExtension_step5_desc" = "Nell'app Messaggi, tieni premuta una bolla e tocca 'Altro...'.";
+
+"enableReportingExtension_step6_title" = "Seleziona messaggi";
+
+"enableReportingExtension_step6_desc" = "Seleziona i messaggi che vuoi far analizzare all'IA.";
+
+"enableReportingExtension_step7_title" = "Segnala messaggi";
+
+"enableReportingExtension_step7_desc" = "Tocca 'Segnala messaggi' per inviarli all'addestramento dell'IA.";
+
+"autoFilter_improveAIFiltering" = "Migliora il filtro IA";
+
+"menu_filters" = "Filtri";
+
+"menu_filterTools" = "Strumenti filtro";
+
+"menu_addFilter" = "Aggiungi filtro";
+
+"reportingExtension_selectedCall" = "Chiamata selezionata";

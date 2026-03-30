@@ -8,9 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		010F97101ABA9B27E77BA612 /* IdentityLookupUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86271E6E9BC4E58298A43F27 /* IdentityLookupUI.framework */; };
+		024A2AE0066259370C23062C /* EnableExtensionStepProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC977832345515DCFE3C478 /* EnableExtensionStepProtocol.swift */; };
 		03418F10C75ED980A337BD31 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constants.swift */; };
 		12227A4C1D1A26B024EE6B90 /* SharedUITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */; };
 		26CEB1BC9A69CF65DC2CCE90 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constants.swift */; };
+		2DCEE00FC930434394E8E9C9 /* ReportSubmitCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80E2346BDC734C15A77001BC /* ReportSubmitCard.swift */; };
 		32E703F6EE6DCF1AE4C4C0F9 /* ReportMessageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */; };
 		34A2FE52B4B2F54879E8532B /* SharedExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC2278E01C00037C926 /* SharedExtensions.swift */; };
 		35B7864D116243E34AC005DC /* TipJarManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986FCD84F7D2AE7EDB341A2D /* TipJarManagerProtocol.swift */; };
@@ -19,6 +21,7 @@
 		3E71FB36F8B1A765DE7AD92F /* mock_TipJarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC0828F3E9490539D2623CD /* mock_TipJarManager.swift */; };
 		48AC7E6DAD727BDDB0387677 /* SharedUITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */; };
 		552995F006FF06B770B5DDF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C2217AE047F148D8D0D9052 /* Assets.xcassets */; };
+		5638F2EE8B314143A89804A08B3EF997 /* InstantTouchDisabler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110F48EF7181478C8AE7B577C0DF518C /* InstantTouchDisabler.swift */; };
 		690D709C27B31DC0001880DA /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690D709B27B31DC0001880DA /* NotificationView.swift */; };
 		690F054E278200B60036553B /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690F054D278200B60036553B /* ButtonStyles.swift */; };
 		690F055327822DFA0036553B /* AppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690F055227822DFA0036553B /* AppExtensions.swift */; };
@@ -52,7 +55,6 @@
 		694E53EA27A4A106009A7E0E /* mock_PersistanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E53E927A4A106009A7E0E /* mock_PersistanceManager.swift */; };
 		694E53EC27A4A68F009A7E0E /* FilterListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E53EB27A4A68F009A7E0E /* FilterListViewModelTests.swift */; };
 		695D5BC1278DE4B50037C926 /* LanguageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC0278DE4B50037C926 /* LanguageListView.swift */; };
-		69606230287797A0003254AD /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6960622F287797A0003254AD /* CheckView.swift */; };
 		696398DA285BBF1C00FCE865 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6941FE15277DE78B00B99539 /* Localizable.strings */; };
 		696398DE285D308300FCE865 /* TestApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398DD285D308300FCE865 /* TestApplication.swift */; };
 		696398E0285D30C300FCE865 /* UITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398DF285D30C300FCE865 /* UITestsHelpers.swift */; };
@@ -108,6 +110,7 @@
 		7E18C04B8C534C59952C491F /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF981F0B1B564B22AF8F9F0D /* ConfettiView.swift */; };
 		86A055BD32945493D58DE66B /* URLRequestProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4097627B94A9100749552 /* URLRequestProtocol.swift */; };
 		8CF7C6F4EE2D0B0CB0293C01 /* ReportMessageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69ECF1492867646B000380A2 /* ReportMessageRequest.swift */; };
+		8F612F2343D745C9B9BEDDFD /* SpinningLoaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B6CA332807451CB42EB0B4 /* SpinningLoaderView.swift */; };
 		AA03DD65D4B6D2B613076E42 /* ReportMessageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69ECF14B28677505000380A2 /* ReportMessageResponse.swift */; };
 		AA4BCED7D8924F6E9A3B5C04 /* CallingCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1BCED7D8924F6E9A3B5C01 /* CallingCodes.swift */; };
 		AA5BCED7D8924F6E9A3B5C05 /* CallingCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1BCED7D8924F6E9A3B5C01 /* CallingCodes.swift */; };
@@ -120,7 +123,10 @@
 		BDAB65C61C6E4B08B936367E /* TipJarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A340657CC124389AFB10F39 /* TipJarView.swift */; };
 		C5C1EDC1DF8291D00B6D428F /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FF9C8727933CE9007FA2DB /* FooterView.swift */; };
 		C646F01C0DCEC6EE1D98C0A7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constants.swift */; };
+		C669D4A928A74191AC2501126961491F /* PressDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6D0065DEA04AF1B2239E6CB0454D40 /* PressDetector.swift */; };
+		D84016F55AA644ED830854A2B12057F5 /* RefreshControlDisabler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6E3998CCF6470F8F6A40A36EE19752 /* RefreshControlDisabler.swift */; };
 		D852110664A64E9DAD508BFA /* Reporting Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1355C48B10FE4519937D804C /* Reporting Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E4BD986313F1C68187D4B32B /* EnableReportingExtensionStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FDD7FD5B3D7601BF34B0C6 /* EnableReportingExtensionStep.swift */; };
 		F404847E611067D854BE6E93 /* SharedExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC2278E01C00037C926 /* SharedExtensions.swift */; };
 		FCFBBC1D93F273C7B2DFD6F6 /* ReportingConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0A29F7E90E686EC530EA10 /* ReportingConfirmationView.swift */; };
 /* End PBXBuildFile section */
@@ -172,7 +178,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReportMessageViewTests.swift; path = Tests/ReportMessageViewTests.swift; sourceTree = "<group>"; };
+		00FDD7FD5B3D7601BF34B0C6 /* EnableReportingExtensionStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableReportingExtensionStep.swift; sourceTree = "<group>"; };
+		01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMessageViewTests.swift; sourceTree = "<group>"; };
+		0E6D0065DEA04AF1B2239E6CB0454D40 /* PressDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PressDetector.swift; sourceTree = "<group>"; };
+		110F48EF7181478C8AE7B577C0DF518C /* InstantTouchDisabler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstantTouchDisabler.swift; sourceTree = "<group>"; };
 		1355C48B10FE4519937D804C /* Reporting Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Reporting Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		157A0B821C517E1A1D0993A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37C18038215780F287F19CF9 /* ShieldGlintIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldGlintIcon.swift; sourceTree = "<group>"; };
@@ -180,6 +189,8 @@
 		407284382F6C92D50044C403 /* lambda_function.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = lambda_function.py; sourceTree = "<group>"; };
 		4A340657CC124389AFB10F39 /* TipJarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipJarView.swift; sourceTree = "<group>"; };
 		4BE7E38E92044E3CBA6DEB11 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		4E6E3998CCF6470F8F6A40A36EE19752 /* RefreshControlDisabler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlDisabler.swift; sourceTree = "<group>"; };
+		4EC977832345515DCFE3C478 /* EnableExtensionStepProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionStepProtocol.swift; sourceTree = "<group>"; };
 		5EC0828F3E9490539D2623CD /* mock_TipJarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_TipJarManager.swift; sourceTree = "<group>"; };
 		64956935AAF96BFE1AD24A37 /* TipJarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipJarManager.swift; sourceTree = "<group>"; };
 		690D709B27B31DC0001880DA /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
@@ -227,7 +238,6 @@
 		694E53EB27A4A68F009A7E0E /* FilterListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListViewModelTests.swift; sourceTree = "<group>"; };
 		695D5BC0278DE4B50037C926 /* LanguageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageListView.swift; sourceTree = "<group>"; };
 		695D5BC2278E01C00037C926 /* SharedExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedExtensions.swift; sourceTree = "<group>"; };
-		6960622F287797A0003254AD /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
 		696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedUITestsHelpers.swift; sourceTree = "<group>"; };
 		696398DD285D308300FCE865 /* TestApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestApplication.swift; sourceTree = "<group>"; };
 		696398DF285D30C300FCE865 /* UITestsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestsHelpers.swift; sourceTree = "<group>"; };
@@ -288,6 +298,7 @@
 		69FF9C8527921DCC007FA2DB /* QuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionView.swift; sourceTree = "<group>"; };
 		69FF9C8727933CE9007FA2DB /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 		6C2217AE047F148D8D0D9052 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		80E2346BDC734C15A77001BC /* ReportSubmitCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSubmitCard.swift; sourceTree = "<group>"; };
 		86271E6E9BC4E58298A43F27 /* IdentityLookupUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IdentityLookupUI.framework; sourceTree = "<group>"; };
 		94CAF2E81C46665E0069B1AE /* Reporting Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Reporting Extension.entitlements"; sourceTree = "<group>"; };
 		986FCD84F7D2AE7EDB341A2D /* TipJarManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipJarManagerProtocol.swift; sourceTree = "<group>"; };
@@ -299,6 +310,7 @@
 		AA3BCED7D8924F6E9A3B5C03 /* CallingCodesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallingCodesTests.swift; sourceTree = "<group>"; };
 		AA8BCED7D8924F6E9A3B5C08 /* Simply_Filter_SMS 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Simply_Filter_SMS 4.xcdatamodel"; sourceTree = "<group>"; };
 		BF981F0B1B564B22AF8F9F0D /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
+		D6B6CA332807451CB42EB0B4 /* SpinningLoaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinningLoaderView.swift; sourceTree = "<group>"; };
 		DD0B53FCE983DFBEFBCE70F7 /* ReportingExtensionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingExtensionViewController.swift; sourceTree = "<group>"; };
 		DEE20EFA594C4A0FBF07D691 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ko; path = ko.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		F0956A6375EFA3BB6C2877B5 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -404,6 +416,7 @@
 				69F3D32327B961E800D7DDA7 /* AutomaticFilterManagerTests.swift */,
 				6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */,
 				69189C1227A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift */,
+				01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */,
 				AA3BCED7D8924F6E9A3B5C03 /* CallingCodesTests.swift */,
 				694E53EB27A4A68F009A7E0E /* FilterListViewModelTests.swift */,
 				690F09CA27AC33E900BA481F /* Mocks */,
@@ -492,7 +505,6 @@
 				691AA72F285508EC00FCA4AF /* UI Tests */,
 				69CD70C72770D4D100F91A2F /* Products */,
 				6973D01B278B537300A173CD /* Frameworks */,
-				01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -616,11 +628,17 @@
 				69B2D03127A5B0E600F965AB /* StatefulItem.swift */,
 				690D709B27B31DC0001880DA /* NotificationView.swift */,
 				69DE6ABA284AC11900366D10 /* EditableText.swift */,
-				6960622F287797A0003254AD /* CheckView.swift */,
+				D6B6CA332807451CB42EB0B4 /* SpinningLoaderView.swift */,
+				80E2346BDC734C15A77001BC /* ReportSubmitCard.swift */,
 				69E2A0532D26E038002AA0EF /* CustomPlaceholderView.swift */,
 				69FAA7A92F4FB4E90022C033 /* TipCardView.swift */,
 				69218ED12EC8A261000D547B /* EnableExtensionStepView.swift */,
 				69218ED32EC8A261000D547B /* EnableExtensionStep.swift */,
+				0E6D0065DEA04AF1B2239E6CB0454D40 /* PressDetector.swift */,
+				4E6E3998CCF6470F8F6A40A36EE19752 /* RefreshControlDisabler.swift */,
+				110F48EF7181478C8AE7B577C0DF518C /* InstantTouchDisabler.swift */,
+				4EC977832345515DCFE3C478 /* EnableExtensionStepProtocol.swift */,
+				00FDD7FD5B3D7601BF34B0C6 /* EnableReportingExtensionStep.swift */,
 				37C18038215780F287F19CF9 /* ShieldGlintIcon.swift */,
 			);
 			path = Others;
@@ -904,7 +922,8 @@
 				69E2A0542D26E03F002AA0EF /* CustomPlaceholderView.swift in Sources */,
 				69189C1727A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */,
 				69CD70CC2770D4D100F91A2F /* FilterListView.swift in Sources */,
-				69606230287797A0003254AD /* CheckView.swift in Sources */,
+				8F612F2343D745C9B9BEDDFD /* SpinningLoaderView.swift in Sources */,
+				2DCEE00FC930434394E8E9C9 /* ReportSubmitCard.swift in Sources */,
 				6982FE8B27A6FBA000BF6AA4 /* AutomaticFilterManager.swift in Sources */,
 				69D4D1802ED23D7700275627 /* EmojiGenerator.swift in Sources */,
 				69189C1527A97F7400C8FFA5 /* MessageEvaluationManager.swift in Sources */,
@@ -917,6 +936,9 @@
 				69218EC52EC8A261000D547B /* EnableExtensionView.swift in Sources */,
 				69218ED02EC8A261000D547B /* EnableExtensionStepView.swift in Sources */,
 				69218ED22EC8A261000D547B /* EnableExtensionStep.swift in Sources */,
+				C669D4A928A74191AC2501126961491F /* PressDetector.swift in Sources */,
+				D84016F55AA644ED830854A2B12057F5 /* RefreshControlDisabler.swift in Sources */,
+				5638F2EE8B314143A89804A08B3EF997 /* InstantTouchDisabler.swift in Sources */,
 				69C1A0022F12A26100D1E2F3 /* WhatsNewView.swift in Sources */,
 				BDAB65C61C6E4B08B936367E /* TipJarView.swift in Sources */,
 				7E18C04B8C534C59952C491F /* ConfettiView.swift in Sources */,
@@ -956,6 +978,8 @@
 				86A055BD32945493D58DE66B /* URLRequestProtocol.swift in Sources */,
 				8CF7C6F4EE2D0B0CB0293C01 /* ReportMessageRequest.swift in Sources */,
 				AA03DD65D4B6D2B613076E42 /* ReportMessageResponse.swift in Sources */,
+				024A2AE0066259370C23062C /* EnableExtensionStepProtocol.swift in Sources */,
+				E4BD986313F1C68187D4B32B /* EnableReportingExtensionStep.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1046,13 +1070,13 @@
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = "Reporting Extension/Reporting Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603212252;
+				CURRENT_PROJECT_VERSION = 202603302200;
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Reporting Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Reporting Extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Report-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1268,7 +1292,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 202603212252;
+				CURRENT_PROJECT_VERSION = 202603302200;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = AL28LDR9PU;
 				ENABLE_PREVIEWS = YES;
@@ -1286,7 +1310,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "May 22: Simply Filter SMS - Dev";
@@ -1308,7 +1332,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603212252;
+				CURRENT_PROJECT_VERSION = 202603302200;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1325,7 +1349,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1342,7 +1366,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603212252;
+				CURRENT_PROJECT_VERSION = 202603302200;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1353,7 +1377,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1368,7 +1392,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603212252;
+				CURRENT_PROJECT_VERSION = 202603302200;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1379,7 +1403,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1395,13 +1419,13 @@
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = "Reporting Extension/Reporting Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202603212252;
+				CURRENT_PROJECT_VERSION = 202603302200;
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Reporting Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Reporting Extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Report-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

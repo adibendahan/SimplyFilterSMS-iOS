@@ -30,6 +30,9 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("lastSeenWhatsNewVersion", defaultValue: 0)
     var lastSeenWhatsNewVersion: Int
 
+    @StoredDefault("didDismissReportingExtensionNudge", defaultValue: false)
+    var didDismissReportingExtensionNudge: Bool
+
     @StoredDefault("appAge", defaultValue: Date())
     private(set) var appAge: Date
     

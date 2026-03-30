@@ -13,6 +13,8 @@
 "general_null" = "(null)";
 "general_copyright" = "© %ld Adi Ben-Dahan. All rights reserved.";
 "general_close" = "Close";
+
+"general_about" = "About";
 "general_active_count" = "%ld filters";
 "general_lang" = "Language";
 "general_edit" = "Edit";
@@ -30,6 +32,10 @@
 "filterList_menu_filterLanguage" = "Block a Language";
 "filterList_menu_enableExtension" = "Help";
 "filterList_menu_about" = "About";
+
+"menu_filters" = "Filters";
+"menu_filterTools" = "Filter Tools";
+"menu_addFilter" = "Add Filter";
 "filterList_menu_debug" = "Load Debug Data";
 "filterList_deniedLanguage" = "Blocked Languages";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
@@ -41,7 +47,7 @@
 "addFilter_add" = "Add";
 "addFilter_addFilter_allow" = "Add Allowed Text";
 "addFilter_addFilter_deny" = "Add Blocked Text";
-"addFilter_addLanguage" = "Add Language";
+"addFilter_addLanguage" = "Add Blocked Language";
 "addFilter_text" = "Type a word/letter";
 "addFilter_type" = "Type";
 "addFilter_type_caption" = "Select an action:";
@@ -82,6 +88,29 @@
 "enableExtension_step6_title" = "Choose 'Simply Filter SMS'";
 "enableExtension_step6_desc" = "Tap 'Text Message Filter' and select 'SimplyFilterSMS'";
 
+"enableReportingExtension_step1_title" = "Open iOS Settings";
+"enableReportingExtension_step1_desc" = "Open iOS Settings, scroll down and tap 'Apps'.";
+
+"enableReportingExtension_step2_title" = "Tap on Phone";
+"enableReportingExtension_step2_desc" = "Scroll down to find 'Phone' and tap on it.";
+
+"enableReportingExtension_step3_title" = "SMS/Call Reporting";
+"enableReportingExtension_step3_desc" = "Scroll down and tap 'SMS/Call Reporting'.";
+
+"enableReportingExtension_desc" = "Enable the Reporting Extension to report spam directly from iOS Messages and help improve AI filtering for all users. Follow the steps below, then tap the Settings button when you're ready.";
+
+"enableReportingExtension_step4_title" = "Choose 'Simply Filter SMS'";
+"enableReportingExtension_step4_desc" = "Select 'Simply Filter SMS' to enable reporting.";
+
+"enableReportingExtension_step5_title" = "Long Press a Message";
+"enableReportingExtension_step5_desc" = "In the Messages app, long press a message bubble and tap 'More...'.";
+
+"enableReportingExtension_step6_title" = "Select Messages";
+"enableReportingExtension_step6_desc" = "Select the messages you want the AI to analyze.";
+
+"enableReportingExtension_step7_title" = "Report Messages";
+"enableReportingExtension_step7_desc" = "Tap 'Report Messages' to submit them for AI training.";
+
 
 //MARK: About View
 "aboutView_aboutSection" = "Developer Notes";
@@ -93,6 +122,12 @@
 "aboutView_appIconCredit" = "Vitali Levit";
 "aboutView_appIconCreditTitle" = "Icon Designer";
 "aboutView_review" = "Rate us please!";
+
+"aboutView_contactSection" = "Contact";
+
+"aboutView_connectSection" = "Connect";
+
+"aboutView_supportSection" = "Support the App";
 
 //MARK: Help View
 "faq_subtitle" = "Here's a list of frequently asked questions, if you can't find your answer here you can reach out by";
@@ -115,7 +150,7 @@
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "AI Filtering";
-"autoFilter_lastUpdated" = "Updated on %@";
+"autoFilter_lastUpdated" = "Updated %@";
 "autoFilter_forceUpdate" = "Force Update";
 "autoFilter_neverUpdated" = "Never";
 "autoFilter_ON" = "ON";
@@ -143,6 +178,8 @@
 "autoFilter_countryAllowlist_shortTitle" = "Country allowlist";
 "autoFilter_countryAllowlist_empty" = "No countries selected";
 "autoFilter_countryAllowlist_explanation" = "Add the countries you want to allow messages from. Messages sent from phone numbers registered in countries not on this list will be filtered. Only senders with a full international calling code (e.g. +1, +972) are checked - senders without one are not affected.";
+"autoFilter_reportSpam" = "Report Spam";
+"autoFilter_improveAIFiltering" = "Improve AI Filtering";
 "general_search" = "Search";
 "general_more" = "more";
 "general_selected" = "Selected";
@@ -173,6 +210,10 @@
 "notification_tipPromotion_title" = "Enjoying the app?";
 "notification_tipPromotion_subtitle" = "Tap to leave a tip";
 
+"notification_reportingExtension_title" = "Improve AI Filtering";
+"notification_reportingExtension_subtitle" = "Report spam text messages";
+"notification_reportingExtension_button" = "Join";
+
 // MARK: Report Message
 "reportMessage_senderTitle" = "Sender";
 "reportMessage_title" = "Report Message";
@@ -184,6 +225,7 @@
 
 "reportingExtension_message" = "Message";
 "reportingExtension_messageIndex" = "Message %ld";
+"reportingExtension_selectedCall" = "Selected Call";
 "reportingExtension_footer" = "Your reports train the AI filters, helping keep inboxes clean for Simply Filter SMS users everywhere. Thank you for contributing.";
 
 

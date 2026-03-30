@@ -16,6 +16,7 @@ protocol DefaultsManagerProtocol {
     var didPromptForReview: Bool { get set }
     var didTip: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
+    var didDismissReportingExtensionNudge: Bool { get set }
     var appAge: Date { get }
     
     // Session:

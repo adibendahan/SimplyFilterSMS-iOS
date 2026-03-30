@@ -16,7 +16,7 @@ class TestApplication: XCUIApplication {
         super.init()
         
         self.launchArguments.append("-Testing")
-        setupSnapshot(self)
+//        setupSnapshot(self)
         self.launch()
     }
     
@@ -64,14 +64,10 @@ class TestApplication: XCUIApplication {
         self.textField(.filterText).typeText(text + "\n")
         
         if let screenshotName = screenshotName {
-            Snapshot.snapshot(screenshotName)
+            testCase.snapshot(screenshotName)
         }
         
         self.tap(.addFilteraddFilterButton)
-        
-        if UIDevice.current.userInterfaceIdiom != .pad {
-            self.buttons["filterList_filters"~].firstMatch.forceTap()
-        }
     }
     
     func buttonExists(_ testIdentifier: TestIdentifier) -> Bool {
@@ -102,6 +98,14 @@ class TestApplication: XCUIApplication {
     }
     
     func tap(_ testIdentifier: TestIdentifier) {
+        let button = self.button(testIdentifier)
+        if button.exists {
+            button.forceTap()
+        }
+    }
+    
+    func conditionalTap(_ testIdentifier: TestIdentifier,  _ condition: Bool) {
+        guard condition else { return }
         let button = self.button(testIdentifier)
         if button.exists {
             button.forceTap()

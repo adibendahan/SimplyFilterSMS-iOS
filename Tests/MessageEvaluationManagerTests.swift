@@ -389,6 +389,35 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(result, .junk, "allUnknown must override automatic allowSenders")
     }
 
+    // Regression: block filter "Test" (all) must not be bypassed by unrelated allow filter "2" (all)
+    // Repro: body="Test", sender="" → expected .junk, was .allow (reason "2")
+    func test_blockFilterNotBypassedByUnrelatedAllowFilter() {
+        self.flushPersistanceManager()
+
+        let blockFilter = Filter(context: self.testSubject.context)
+        blockFilter.uuid = UUID()
+        blockFilter.filterType = .deny
+        blockFilter.denyFolderType = .junk
+        blockFilter.filterTarget = .all
+        blockFilter.filterMatching = .contains
+        blockFilter.filterCase = .caseInsensitive
+        blockFilter.text = "Test"
+
+        let allowFilter = Filter(context: self.testSubject.context)
+        allowFilter.uuid = UUID()
+        allowFilter.filterType = .allow
+        allowFilter.filterTarget = .all
+        allowFilter.filterMatching = .contains
+        allowFilter.filterCase = .caseInsensitive
+        allowFilter.text = "2"
+
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "Test", sender: "")
+        XCTAssertEqual(result.action, .junk,
+                       "Block filter 'Test' must not be bypassed by allow filter '2' when body='Test' sender=''. Got: \(result.action.debugName), reason: '\(result.reason ?? "nil")'")
+    }
+
     // MARK: Private Variables and Helpers
     private var testSubject: MessageEvaluationManagerProtocol = MessageEvaluationManager(inMemory: true)
     

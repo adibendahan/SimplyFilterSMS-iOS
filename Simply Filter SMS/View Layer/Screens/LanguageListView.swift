@@ -92,15 +92,31 @@ struct LanguageListView: View {
                     Text("lang_supported"~)
                 }
             } footer: {
-                VStack {
-                    Text(.init(self.model.footer))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    
+                VStack(alignment: .leading) {
                     if let helpText = self.model.footerSecondLine {
-                        Spacer(minLength: 20)
-                        
-                        Text(helpText)
+                        Text((self.model.footer.isEmpty ? "" : self.model.footer + ". ") + helpText)
                             .multilineTextAlignment(.leading)
+                    }
+
+                    if self.model.mode == .automaticBlocking {
+                        Button {
+                            self.model.sheetScreen = .enableReportingExtension
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Image(systemName: "wand.and.stars")
+                                    .imageScale(.large)
+                                    .font(.system(size: 20, weight: .bold))
+                                Text("autoFilter_improveAIFiltering"~)
+                                    .font(.body)
+                                Spacer()
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundColor(.accentColor)
+                        .padding(.top, 20)
+                        .padding(.bottom, 40)
                     }
                 }
             } // Section
@@ -123,6 +139,22 @@ struct LanguageListView: View {
                 }
             }
         }
+        .if(self.model.mode == .automaticBlocking) {
+            $0.toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button {
+                            self.model.sheetScreen = .enableReportingExtension
+                        } label: {
+                            Label("autoFilter_improveAIFiltering"~, systemImage: "wand.and.stars")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                }
+            }
+        }
+        .sheet(item: $model.sheetScreen) { $0.build() }
         .if(self.model.shouldAllowRefresh) {
             $0.refreshable(action: self.model.forceUpdateFilters)
         }
@@ -152,6 +184,7 @@ extension LanguageListView {
         @Published private(set) var isOnline: Bool
         @Published private(set) var shouldAllowRefresh: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
+        @Published var sheetScreen: Screen? = nil
         private var didAddObservers = false
         private var onAdded: ((Filter) -> Void)?
 

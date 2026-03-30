@@ -46,6 +46,13 @@ class ReportingExtensionViewController: ILClassificationUIExtensionViewControlle
             pendingBodies = messageRequest.messageCommunications.compactMap { $0.messageBody }.filter { !$0.isEmpty }
             confirmationViewModel.sender = pendingSender
             confirmationViewModel.bodies = pendingBodies
+        } else if let callRequest = classificationRequest as? ILCallClassificationRequest,
+                  let first = callRequest.callCommunications.first {
+            pendingSender = first.sender ?? ""
+            pendingBodies = ["[call]"]
+            confirmationViewModel.sender = pendingSender
+            confirmationViewModel.bodies = []
+            confirmationViewModel.isCall = true
         }
     }
 

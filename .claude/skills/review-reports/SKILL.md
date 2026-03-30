@@ -47,37 +47,31 @@ Review user-reported messages and turn them into automatic filter suggestions.
 
    - Detect the language of the `body` text (use your language knowledge — look at script, common words, and structure).
    - For **deny** reports:
-     - If `sender` looks like a keyword (alphabetic, not a phone number): suggest adding to `deny_sender` for the detected language.
-     - Extract 1–3 distinctive short phrases or keywords from `body` that would be good spam signals. Suggest adding each to `deny_body` for the detected language.
+     - If `sender` looks like a keyword (alphabetic, not a phone number): suggest adding to `deny_sender` for the detected language. Prefer body keywords when the sender name is obscure or highly specific — broad body phrases catch more spam.
+     - Extract 1–3 distinctive short phrases or keywords from `body` that would be good spam signals. Suggest adding each to `deny_body` for the detected language. Prefer short, distinctive phrases over long ones (3–5 words max).
      - Skip sender if it's just digits (phone number — too specific to be a useful filter).
    - For **allow** reports:
-     - If `sender` is a recognizable brand/shortcode name (alphabetic): suggest adding to `allow_sender` for the detected language.
+     - If `sender` is a recognizable brand/shortcode name (alphabetic): suggest adding to `allow_sender` for the detected language. Check if a case-insensitive variant is already present before suggesting.
      - Only suggest `allow_body` entries if the body contains a very distinctive trusted phrase.
+   - **Domain/keyword collision strategy:** If a `deny_body` keyword could also appear in legitimate messages from a real entity (e.g. a brand name that's also used in phishing), pair it with an `allow_body` entry for the legitimate domain/phrase. The evaluation engine checks allow before deny, so the allow entry protects real messages while the deny entry blocks fakes. Example: adding `"carmeltunnels"` to deny_body while adding `"carmeltunnels.co.il"` (the real domain) to allow_body.
    - Skip suggestions for values already present in `automatic_filters.json`.
    - Group suggestions by language and list type.
 
-4. **Present suggestions for review**
+4. **Present suggestions for review — one at a time**
 
-   Display all suggestions in a structured format:
+   Use **AskUserQuestion** to walk through suggestions **one by one** (not in bulk). For each suggestion, show:
+   - Which record it comes from
+   - The list it would be added to (e.g. `he.deny_body`)
+   - The value
+   - A brief rationale
 
+   Present a Yes/Skip choice for each. This lets the user refine or redirect (e.g. "block the sender instead", "what about pairing with an allow entry?") before moving on.
+
+   Display a summary header before starting:
    ```
-   ## Filter Suggestions
-
-   ### English (en)
-   **deny_body** (from record #1, #3):
-   - "free iphone"
-   - "claim your prize"
-   - "0% risk"
-
-   **allow_sender** (from record #2):
-   - "Apple"
-
-   ### Hebrew (he)
-   **deny_body** (from record #5):
-   - "זכית"
+   ## Filter Suggestions (N total)
+   Going through them one by one...
    ```
-
-   Then use **AskUserQuestion** to ask: "Which suggestions would you like to apply? Reply with 'all', specific numbers/ranges (e.g. '1,3,5-7'), or 'none'. You can also edit individual entries."
 
 5. **Apply confirmed suggestions**
 
