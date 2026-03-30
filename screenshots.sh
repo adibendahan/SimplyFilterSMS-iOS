@@ -4,7 +4,7 @@ set -e
 PROJECT="Simply Filter SMS.xcodeproj"
 SCHEME="UI Tests"
 TEST_ID="UI Tests/SnapshotsTestCase/testCreateSnapshots"
-LANGUAGES=("he" "ar" "de" "es" "pt" "fr" "it" "ja" "ko" "en")
+LANGUAGES=("he" "ar" "de" "es" "pt-BR" "fr" "it" "ja" "ko" "en")
 IPHONE_ID="52CD8CF3-38E9-44DA-91F7-B18E7E3DD7EE"
 IPAD_ID="2B6B42CA-E327-44B4-B97F-6E6F3C1AD039"
 

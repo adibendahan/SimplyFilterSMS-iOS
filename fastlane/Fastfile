@@ -52,13 +52,14 @@ platform :ios do
 
   desc "Upload screenshots to App Store Connect"
   lane :upload_screenshots do
-    # Rename simulator locale folders to App Store Connect locale codes
+    # Rename locale folders to App Store Connect locale codes
     {
       "ar" => "ar-SA",
       "de" => "de-DE",
+      "en" => "en-US",
       "es" => "es-ES",
       "fr" => "fr-FR",
-      "he-IL" => "he"
+      "pt" => "pt-BR"
     }.each do |from, to|
       src = File.join(Dir.pwd, "..", ".screenshots", from)
       dst = File.join(Dir.pwd, "..", ".screenshots", to)
