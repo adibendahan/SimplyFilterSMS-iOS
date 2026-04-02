@@ -418,6 +418,94 @@ class MessageEvaluationManagerTests: XCTestCase {
                        "Block filter 'Test' must not be bypassed by allow filter '2' when body='Test' sender=''. Got: \(result.action.debugName), reason: '\(result.reason ?? "nil")'")
     }
 
+    // MARK: Regex filter tests
+
+    func test_evaluateMessage_regexMatch() {
+        self.flushPersistanceManager()
+
+        let filter = Filter(context: self.testSubject.context)
+        filter.filterType = .deny
+        filter.denyFolderType = .junk
+        filter.filterTarget = .body
+        filter.filterMatching = .regex
+        filter.filterCase = .caseInsensitive
+        filter.text = #"\d{5}"#
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "Your code is 12345", sender: "1234567").action
+        XCTAssertEqual(result, .junk, "regex \\d{5} should match body containing 5-digit number")
+    }
+
+    func test_evaluateMessage_regexNoMatch() {
+        self.flushPersistanceManager()
+
+        let filter = Filter(context: self.testSubject.context)
+        filter.filterType = .deny
+        filter.denyFolderType = .junk
+        filter.filterTarget = .body
+        filter.filterMatching = .regex
+        filter.filterCase = .caseInsensitive
+        filter.text = #"\d{5}"#
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "Hello world", sender: "1234567").action
+        XCTAssertEqual(result, .allow, "regex \\d{5} should not match body with no 5-digit number")
+    }
+
+    func test_evaluateMessage_invalidRegexReturnsFalse() {
+        self.flushPersistanceManager()
+
+        let filter = Filter(context: self.testSubject.context)
+        filter.filterType = .deny
+        filter.denyFolderType = .junk
+        filter.filterTarget = .body
+        filter.filterMatching = .regex
+        filter.filterCase = .caseInsensitive
+        filter.text = "[unclosed"
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "Hello world [unclosed", sender: "1234567").action
+        XCTAssertEqual(result, .allow, "invalid regex pattern should not match any message")
+    }
+
+    func test_evaluateMessage_regexCaseSensitive() {
+        self.flushPersistanceManager()
+
+        let filter = Filter(context: self.testSubject.context)
+        filter.filterType = .deny
+        filter.denyFolderType = .junk
+        filter.filterTarget = .body
+        filter.filterMatching = .regex
+        filter.filterCase = .caseInsensitive
+        filter.text = "[A-Z]{3}"
+        try? self.testSubject.context.save()
+
+        let upperResult = self.testSubject.evaluateMessage(body: "ABC", sender: "1234567").action
+        XCTAssertEqual(upperResult, .junk, "pattern [A-Z]{3} should match uppercase ABC")
+
+        let lowerResult = self.testSubject.evaluateMessage(body: "abc", sender: "1234567").action
+        XCTAssertEqual(lowerResult, .allow, "pattern [A-Z]{3} should not match lowercase abc (no (?i) flag)")
+    }
+
+    func test_evaluateMessage_regexInlineFlag() {
+        self.flushPersistanceManager()
+
+        let filter = Filter(context: self.testSubject.context)
+        filter.filterType = .deny
+        filter.denyFolderType = .junk
+        filter.filterTarget = .body
+        filter.filterMatching = .regex
+        filter.filterCase = .caseInsensitive
+        filter.text = "(?i)[a-z]{3}"
+        try? self.testSubject.context.save()
+
+        let lowerResult = self.testSubject.evaluateMessage(body: "abc", sender: "1234567").action
+        XCTAssertEqual(lowerResult, .junk, "(?i)[a-z]{3} should match lowercase abc")
+
+        let upperResult = self.testSubject.evaluateMessage(body: "ABC", sender: "1234567").action
+        XCTAssertEqual(upperResult, .junk, "(?i)[a-z]{3} should match uppercase ABC via inline flag")
+    }
+
     // MARK: Private Variables and Helpers
     private var testSubject: MessageEvaluationManagerProtocol = MessageEvaluationManager(inMemory: true)
     

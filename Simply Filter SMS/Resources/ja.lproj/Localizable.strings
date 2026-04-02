@@ -473,3 +473,19 @@
 "menu_addFilter" = "フィルタを追加";
 
 "reportingExtension_selectedCall" = "選択した通話";
+
+"addFilter_match_regex" = "Regex";
+
+"addFilter_invalidRegex" = "無効なパターン";
+
+"addFilter_regexTestPlaceholder" = "テストテキスト";
+
+"addFilter_regexTestCaption" = "パターンをテスト:";
+
+"addFilter_regexMatch" = "一致";
+
+"addFilter_regexNoMatch" = "不一致";
+
+"whatsNew_regexFilters_title" = "正規表現フィルタ";
+
+"whatsNew_regexFilters_desc" = "上級ユーザー向け - **正規表現**でフィルタリングし、ブロックまたは許可する内容を完全に制御。1つのパターンで数十のフィルタを置き換えられます。";

@@ -473,3 +473,19 @@
 "menu_addFilter" = "Añadir filtro";
 
 "reportingExtension_selectedCall" = "Llamada seleccionada";
+
+"addFilter_match_regex" = "Regex";
+
+"addFilter_invalidRegex" = "Patrón inválido";
+
+"addFilter_regexTestPlaceholder" = "Texto de prueba";
+
+"addFilter_regexTestCaption" = "Prueba tu patrón:";
+
+"addFilter_regexMatch" = "Coincide";
+
+"addFilter_regexNoMatch" = "No coincide";
+
+"whatsNew_regexFilters_title" = "Filtros Regex";
+
+"whatsNew_regexFilters_desc" = "Para usuarios avanzados - filtra con **expresiones regulares** para controlar exactamente qué se bloquea o permite. Un patrón puede reemplazar docenas de filtros.";

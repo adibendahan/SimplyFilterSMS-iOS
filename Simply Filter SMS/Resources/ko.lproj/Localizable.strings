@@ -473,3 +473,19 @@
 "menu_addFilter" = "필터 추가";
 
 "reportingExtension_selectedCall" = "선택한 통화";
+
+"addFilter_match_regex" = "Regex";
+
+"addFilter_invalidRegex" = "잘못된 패턴";
+
+"addFilter_regexTestPlaceholder" = "테스트 텍스트";
+
+"addFilter_regexTestCaption" = "패턴 테스트:";
+
+"addFilter_regexMatch" = "일치";
+
+"addFilter_regexNoMatch" = "불일치";
+
+"whatsNew_regexFilters_title" = "정규식 필터";
+
+"whatsNew_regexFilters_desc" = "고급 사용자를 위한 기능 - **정규 표현식**으로 차단하거나 허용할 내용을 완전히 제어하세요. 하나의 패턴으로 수십 개의 필터를 대체할 수 있습니다.";

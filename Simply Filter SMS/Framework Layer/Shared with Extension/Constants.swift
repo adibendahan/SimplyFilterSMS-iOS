@@ -20,7 +20,7 @@ let kMinimumFilterLength = 1
 let kHideiClouldStatusMemory = 60
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
-let currentWhatsNewVersion = 4
+let currentWhatsNewVersion = 5
 
 
 // URLs
@@ -198,36 +198,42 @@ enum FilterTarget: Int64, CaseIterable, Identifiable {
 
 enum FilterMatching: Int64, CaseIterable, Identifiable {
     var id: Int64 { return self.rawValue }
-    
-    case contains=0, exact
-    
+
+    case contains=0, exact, regex=2
+
     var name: String {
         switch self {
         case .contains:
             return "addFilter_match_contains"~
         case .exact:
             return "addFilter_match_exact"~
+        case .regex:
+            return "addFilter_match_regex"~
         }
     }
-    
+
     var icon: String {
         switch self {
         case .contains:
             return "equal.circle"
         case .exact:
             return "equal.circle.fill"
+        case .regex:
+            return "chevron.left.forwardslash.chevron.right"
         }
     }
-    
+
     var other: FilterMatching {
         switch self {
         case .contains:
             return .exact
         case .exact:
             return .contains
+        case .regex:
+            return .contains
         }
     }
-    
+
     static var title: String {
         return "addFilter_match_title"~
     }
@@ -540,7 +546,7 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar
+    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters
 
     var title: String {
         switch self {
@@ -554,6 +560,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_accessibility_title"~
         case .tipJar:
             return "whatsNew_tipJar_title"~
+        case .regexFilters:
+            return "whatsNew_regexFilters_title"~
         }
     }
 
@@ -569,6 +577,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_accessibility_desc"~
         case .tipJar:
             return "whatsNew_tipJar_desc"~
+        case .regexFilters:
+            return "whatsNew_regexFilters_desc"~
         }
     }
 
@@ -584,6 +594,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "accessibility"
         case .tipJar:
             return "heart.fill"
+        case .regexFilters:
+            return "chevron.left.forwardslash.chevron.right"
         }
     }
 
@@ -599,21 +611,25 @@ enum WhatsNewEntry: String, CaseIterable {
             return .blue
         case .tipJar:
             return .red
+        case .regexFilters:
+            return .orange
         }
     }
 
     var order: Int {
         switch self {
-        case .aiFiltering:
-            return 0
-        case .newLanguages:
-            return 1
-        case .trustedCountries:
-            return 2
-        case .accessibility:
-            return 3
         case .tipJar:
+            return 0
+        case .aiFiltering:
+            return 1
+        case .regexFilters:
+            return 2
+        case .newLanguages:
+            return 3
+        case .trustedCountries:
             return 4
+        case .accessibility:
+            return 5
         }
     }
 

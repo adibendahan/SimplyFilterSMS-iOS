@@ -25,37 +25,89 @@ struct AddFilterView: View {
                     Spacer()
 
                     HStack (alignment: .center) {
-                        
-                        TextField("addFilter_text"~, text: $model.filterText)
-                            .focused($focusedField, equals: .text)
-                            .accessibilityIdentifier(TestIdentifier.filterText.rawValue)
-                        
-                        if self.model.isDuplicateFilter {
-                            HStack {
-                                Image(systemName: "xmark.octagon")
-                                    .foregroundColor(.red.opacity(0.8))
-                                
-                                Text("addFilter_duplicate"~)
-                                    .font(.footnote)
-                                    .foregroundColor(.red)
+
+                        ZStack(alignment: .leading) {
+                            if self.model.selectedFilterMatching == .regex {
+                                if self.model.filterText.isEmpty {
+                                    Text("addFilter_text"~)
+                                        .foregroundColor(Color(.placeholderText))
+                                        .font(.system(.body, design: .monospaced))
+                                        .allowsHitTesting(false)
+                                } else {
+                                    Text(self.model.filterText.highlightedAsRegex)
+                                        .font(.system(.body, design: .monospaced))
+                                        .allowsHitTesting(false)
+                                }
                             }
-                            .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-                            .background(Color.red.opacity(0.1))
-                            .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                            TextField("addFilter_text"~, text: $model.filterText)
+                                .focused($focusedField, equals: .text)
+                                .accessibilityIdentifier(TestIdentifier.filterText.rawValue)
+                                .font(self.model.selectedFilterMatching == .regex ? .system(.body, design: .monospaced) : .body)
+                                .foregroundColor(self.model.selectedFilterMatching == .regex ? .clear : .primary)
+                        }
+
+                        if self.model.isDuplicateFilter {
+                            FilterBadge(text: "addFilter_duplicate"~, color: .red, systemImage: "xmark.circle.fill")
+                        } else if self.model.isInvalidRegex {
+                            FilterBadge(text: "addFilter_invalidRegex"~, color: .red, systemImage: "xmark.circle.fill")
                         }
                     }
-                    
+
                     if self.model.isExpanded {
+                        if self.model.selectedFilterMatching == .regex {
+                            Group {
+                                Spacer()
+
+                                Text("addFilter_regexTestCaption"~)
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                                    .italic()
+                                    .bold()
+
+                                HStack {
+                                    TextField("addFilter_regexTestPlaceholder"~, text: $model.regexTestText)
+                                        .focused($focusedField, equals: .regexTest)
+
+                                    switch self.model.regexTestResult {
+                                    case .match:
+                                        FilterBadge(text: "addFilter_regexMatch"~, color: .green, systemImage: "checkmark.circle.fill")
+                                    case .noMatch:
+                                        FilterBadge(text: "addFilter_regexNoMatch"~, color: .red, systemImage: "xmark.circle.fill")
+                                    case .invalidPattern, .empty:
+                                        EmptyView()
+                                    }
+                                }
+                            }
+                            .transition(reduceMotion ? .identity : .opacity.combined(with: .move(edge: .top)))
+                        }
+
+                        Spacer()
+
+                        Text(FilterMatching.title)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .italic()
+                            .bold()
+
+                        Picker(selection: $model.selectedFilterMatching, label: Text(FilterMatching.title)) {
+                            ForEach(FilterMatching.allCases, id: \.rawValue) { matching in
+                                Text(matching.name)
+                                    .font(.body)
+                                    .tag(matching)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+
                         if self.model.filterType == FilterType.deny {
-                            
+
                             Spacer()
-                            
+
                             Text(DenyFolderType.title)
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
                                 .italic()
                                 .bold()
-                            
+
                             Picker(selection: $model.selectedDenyFolderType, label: Text(DenyFolderType.title)) {
                                 ForEach(DenyFolderType.allCases, id: \.rawValue) { folder in
                                     Text(folder.name)
@@ -65,15 +117,15 @@ struct AddFilterView: View {
                             }
                             .pickerStyle(.segmented)
                         }
-                        
+
                         Spacer()
-                        
+
                         Text(FilterTarget.title)
                             .font(.footnote)
                             .foregroundColor(.secondary)
                             .italic()
                             .bold()
-                        
+
                         Picker(selection: $model.selectedFilterTarget, label: Text(FilterTarget.title)) {
                             ForEach(FilterTarget.allCases, id: \.rawValue) { target in
                                 Text(target.name)
@@ -82,40 +134,26 @@ struct AddFilterView: View {
                             }
                         }
                         .pickerStyle(.segmented)
-                        
-                        Spacer()
-                        
-                        Text(FilterMatching.title)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                            .italic()
-                            .bold()
-                        
-                        Picker(selection: $model.selectedFilterMatching, label: Text(FilterMatching.title)) {
-                            ForEach(FilterMatching.allCases, id: \.rawValue) { matching in
-                                Text(matching.name)
-                                    .font(.body)
-                                    .tag(matching)
+
+                        if self.model.selectedFilterMatching != .regex {
+                            Spacer()
+
+                            Text(FilterCase.title)
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                                .italic()
+                                .bold()
+
+                            Picker(selection: $model.selectedFilterCase, label: Text(FilterCase.title)) {
+                                ForEach(FilterCase.allCases, id: \.rawValue) { filterCase in
+                                    Text(filterCase.name)
+                                        .font(.body)
+                                        .tag(filterCase)
+                                }
                             }
+                            .pickerStyle(.segmented)
                         }
-                        .pickerStyle(.segmented)
-                        
-                        Spacer()
-                        
-                        Text(FilterCase.title)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                            .italic()
-                            .bold()
-                        
-                        Picker(selection: $model.selectedFilterCase, label: Text(FilterCase.title)) {
-                            ForEach(FilterCase.allCases, id: \.rawValue) { filterCase in
-                                Text(filterCase.name)
-                                    .font(.body)
-                                    .tag(filterCase)
-                            }
-                        }
-                        .pickerStyle(.segmented)
+
                     }
 
                     Button {
@@ -156,10 +194,11 @@ struct AddFilterView: View {
                     }
                     .buttonStyle(FilledButton())
                     .accessibilityIdentifier(TestIdentifier.addFilteraddFilterButton.rawValue)
-                    .disabled(self.model.filterText.count < kMinimumFilterLength || self.model.isDuplicateFilter)
+                    .disabled(self.model.filterText.count < kMinimumFilterLength || self.model.isDuplicateFilter || self.model.isInvalidRegex)
                     .contentShape(Rectangle())
                 } // VStack
                 .padding(.horizontal, 16)
+                .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: self.model.selectedFilterMatching)
                 .navigationTitle(self.model.title)
                 .toolbar {
                     ToolbarItem {
@@ -189,9 +228,13 @@ struct AddFilterView: View {
 
 //MARK: - ViewModel -
 extension AddFilterView {
-    
+
     enum Field: Int, Hashable {
-        case text
+        case text, regexTest
+    }
+
+    enum RegexTestResult {
+        case match, noMatch, invalidPattern, empty
     }
     
     class ViewModel: BaseViewModel, ObservableObject, Identifiable {
@@ -204,6 +247,7 @@ extension AddFilterView {
         @Published var selectedFilterTarget = FilterTarget.all
         @Published var selectedFilterMatching = FilterMatching.contains
         @Published var selectedFilterCase = FilterCase.caseInsensitive
+        @Published var regexTestText = ""
         @Published var isExpanded: Bool {
             didSet {
                 self.appManager.defaultsManager.isExpandedAddFilter = self.isExpanded
@@ -242,7 +286,20 @@ extension AddFilterView {
                                                                                               filterMatching: self.selectedFilterMatching,
                                                                                               filterCase: self.selectedFilterCase)
         }
-        
+
+        var isInvalidRegex: Bool {
+            guard selectedFilterMatching == .regex, !filterText.isEmpty else { return false }
+            return (try? Regex(filterText)) == nil
+        }
+
+        var regexTestResult: RegexTestResult {
+            guard selectedFilterMatching == .regex else { return .empty }
+            guard !regexTestText.isEmpty else { return .empty }
+            guard let regex = try? Regex(filterText) else { return .invalidPattern }
+            guard let matched = try? regexTestText.contains(regex) else { return .invalidPattern }
+            return matched ? .match : .noMatch
+        }
+
         func addFilter() {
             self.didAddFilter = true
             let filter = self.appManager.persistanceManager.addFilter(text: self.filterText,

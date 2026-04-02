@@ -473,3 +473,19 @@
 "menu_addFilter" = "Ajouter un filtre";
 
 "reportingExtension_selectedCall" = "Appel sélectionné";
+
+"addFilter_match_regex" = "Regex";
+
+"addFilter_invalidRegex" = "Modèle invalide";
+
+"addFilter_regexTestPlaceholder" = "Texte de test";
+
+"addFilter_regexTestCaption" = "Testez votre modèle :";
+
+"addFilter_regexMatch" = "Correspond";
+
+"addFilter_regexNoMatch" = "Ne correspond pas";
+
+"whatsNew_regexFilters_title" = "Filtres Regex";
+
+"whatsNew_regexFilters_desc" = "Pour les utilisateurs avancés - filtrez avec des **expressions régulières** pour contrôler exactement ce qui est bloqué ou autorisé. Un seul motif peut remplacer des dizaines de filtres.";

@@ -54,6 +54,7 @@
 		694E53E827A4300E009A7E0E /* PersistanceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E53E727A4300E009A7E0E /* PersistanceManagerTests.swift */; };
 		694E53EA27A4A106009A7E0E /* mock_PersistanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E53E927A4A106009A7E0E /* mock_PersistanceManager.swift */; };
 		694E53EC27A4A68F009A7E0E /* FilterListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E53EB27A4A68F009A7E0E /* FilterListViewModelTests.swift */; };
+		AA1B2C3D4E5F6A7B8C9D0E1F /* AddFilterViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B2C3D4E5F6A7B8C9D0E1E /* AddFilterViewModelTests.swift */; };
 		695D5BC1278DE4B50037C926 /* LanguageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC0278DE4B50037C926 /* LanguageListView.swift */; };
 		696398DA285BBF1C00FCE865 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6941FE15277DE78B00B99539 /* Localizable.strings */; };
 		696398DE285D308300FCE865 /* TestApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398DD285D308300FCE865 /* TestApplication.swift */; };
@@ -236,6 +237,7 @@
 		694E53E727A4300E009A7E0E /* PersistanceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceManagerTests.swift; sourceTree = "<group>"; };
 		694E53E927A4A106009A7E0E /* mock_PersistanceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_PersistanceManager.swift; sourceTree = "<group>"; };
 		694E53EB27A4A68F009A7E0E /* FilterListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListViewModelTests.swift; sourceTree = "<group>"; };
+		AA1B2C3D4E5F6A7B8C9D0E1E /* AddFilterViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFilterViewModelTests.swift; sourceTree = "<group>"; };
 		695D5BC0278DE4B50037C926 /* LanguageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageListView.swift; sourceTree = "<group>"; };
 		695D5BC2278E01C00037C926 /* SharedExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedExtensions.swift; sourceTree = "<group>"; };
 		696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedUITestsHelpers.swift; sourceTree = "<group>"; };
@@ -419,6 +421,7 @@
 				01B64360FD14BB45E7A4DDF9 /* ReportMessageViewTests.swift */,
 				AA3BCED7D8924F6E9A3B5C03 /* CallingCodesTests.swift */,
 				694E53EB27A4A68F009A7E0E /* FilterListViewModelTests.swift */,
+				AA1B2C3D4E5F6A7B8C9D0E1E /* AddFilterViewModelTests.swift */,
 				690F09CA27AC33E900BA481F /* Mocks */,
 			);
 			path = Tests;
@@ -898,6 +901,7 @@
 				AA7BCED7D8924F6E9A3B5C07 /* CallingCodesTests.swift in Sources */,
 				6987D7FF27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift in Sources */,
 				694E53EC27A4A68F009A7E0E /* FilterListViewModelTests.swift in Sources */,
+				AA1B2C3D4E5F6A7B8C9D0E1F /* AddFilterViewModelTests.swift in Sources */,
 				698FBB0027B4629800435699 /* mock_NetworkSyncManager.swift in Sources */,
 				694E53EA27A4A106009A7E0E /* mock_PersistanceManager.swift in Sources */,
 				69F3D32B27B9824B00D7DDA7 /* mock_AmazonS3Service.swift in Sources */,

@@ -473,3 +473,19 @@
 "menu_addFilter" = "إضافة مرشح";
 
 "reportingExtension_selectedCall" = "المكالمة المحددة";
+
+"addFilter_match_regex" = "Regex";
+
+"addFilter_invalidRegex" = "نمط غير صالح";
+
+"addFilter_regexTestPlaceholder" = "نص الاختبار";
+
+"addFilter_regexTestCaption" = "اختبر النمط:";
+
+"addFilter_regexMatch" = "تطابق";
+
+"addFilter_regexNoMatch" = "لا تطابق";
+
+"whatsNew_regexFilters_title" = "فلاتر Regex";
+
+"whatsNew_regexFilters_desc" = "للمستخدمين المتقدمين - صفِّ بـ**التعبيرات النمطية** للتحكم الكامل فيما يُحجب أو يُسمح به. نمط واحد يمكن أن يحل محل عشرات الفلاتر.";

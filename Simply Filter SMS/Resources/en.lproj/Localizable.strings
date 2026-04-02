@@ -56,6 +56,13 @@
 "addFilter_folder_transactions" = "Transactions";
 "addFilter_folder_promotions" = "Promotions";
 "addFilter_duplicate" = "Duplicate Filter";
+"addFilter_invalidRegex" = "Invalid pattern";
+"addFilter_regexTestPlaceholder" = "Test text";
+"addFilter_regexTestCaption" = "Test your pattern:";
+
+"addFilter_regexMatch" = "Match";
+
+"addFilter_regexNoMatch" = "No match";
 "addFilter_more" = "See more options";
 "addFilter_less" = "See less";
 "addFilter_target_all" = "Sender + Body";
@@ -69,6 +76,7 @@
 "addFilter_match_title" = "Select matching type:";
 "addFilter_match_exact" = "Exact";
 "addFilter_match_contains" = "Contains";
+"addFilter_match_regex" = "Regex";
 
 //MARK: Enable Extension View
 "enableExtension_ready_callToAction" = "Settings";
@@ -243,6 +251,10 @@
 "whatsNew_accessibility_desc" = "Fully usable with **VoiceOver** and **Voice Control**. Text scales with **Dynamic Type**. Animations respect your **Reduce Motion** setting.";
 "whatsNew_tipJar_title" = "Support the Developer";
 "whatsNew_tipJar_desc" = "A new **Tip Jar** lets you support the app's development. Simply Filter SMS is free forever - tips are just a way to say thanks! **Tap here to tip!**";
+
+"whatsNew_regexFilters_title" = "Regex Filters";
+
+"whatsNew_regexFilters_desc" = "For power users - filter with **regular expressions** for full control over what gets blocked or allowed. One pattern can replace dozens of filters.";
 
 //MARK: Tip Jar
 "tipJar_title" = "Tip Jar";

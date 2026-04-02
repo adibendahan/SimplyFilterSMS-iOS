@@ -473,3 +473,19 @@
 "menu_addFilter" = "Filter hinzufügen";
 
 "reportingExtension_selectedCall" = "Ausgewählter Anruf";
+
+"addFilter_match_regex" = "Regex";
+
+"addFilter_invalidRegex" = "Ungültiges Muster";
+
+"addFilter_regexTestPlaceholder" = "Testtext";
+
+"addFilter_regexTestCaption" = "Muster testen:";
+
+"addFilter_regexMatch" = "Treffer";
+
+"addFilter_regexNoMatch" = "Kein Treffer";
+
+"whatsNew_regexFilters_title" = "Regex-Filter";
+
+"whatsNew_regexFilters_desc" = "Für fortgeschrittene Nutzer - filtere mit **regulären Ausdrücken** für volle Kontrolle über was blockiert oder erlaubt wird. Ein Muster kann Dutzende von Filtern ersetzen.";
