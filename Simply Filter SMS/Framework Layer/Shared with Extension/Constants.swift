@@ -188,7 +188,18 @@ enum FilterTarget: Int64, CaseIterable, Identifiable {
             return self.name
         }
     }
-    
+
+    var icon: String {
+        switch self {
+        case .all:
+            return "asterisk"
+        case .sender:
+            return "person"
+        case .body:
+            return "text.bubble"
+        }
+    }
+
     static var title: String {
         return "addFilter_target_title"~
     }
@@ -264,6 +275,15 @@ enum FilterCase: Int64, CaseIterable, Identifiable {
         }
     }
     
+    var icon: String {
+        switch self {
+        case .caseInsensitive:
+            return "characters.lowercase"
+        case .caseSensitive:
+            return "textformat.characters"
+        }
+    }
+
     var other: FilterCase {
         switch self {
         case .caseInsensitive:

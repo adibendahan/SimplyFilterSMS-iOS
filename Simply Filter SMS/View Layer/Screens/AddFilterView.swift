@@ -296,8 +296,7 @@ extension AddFilterView {
             guard selectedFilterMatching == .regex else { return .empty }
             guard !regexTestText.isEmpty else { return .empty }
             guard let regex = try? Regex(filterText) else { return .invalidPattern }
-            guard let matched = try? regexTestText.contains(regex) else { return .invalidPattern }
-            return matched ? .match : .noMatch
+            return regexTestText.contains(regex) ? .match : .noMatch
         }
 
         func addFilter() {

@@ -344,7 +344,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         }
         if filter.filterMatching == .regex {
             guard let regex = try? Regex(textForEvaluation) else { return false }
-            return (try? messageForEvaluation.contains(regex)) ?? false
+            return messageForEvaluation.contains(regex)
         }
         if filter.filterCase == .caseInsensitive {
             messageForEvaluation = messageForEvaluation.lowercased()
