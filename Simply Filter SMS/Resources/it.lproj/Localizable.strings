@@ -72,9 +72,9 @@
 
 "addFilter_less" = "Vedi meno";
 
-"addFilter_target_all" = "Mittente + Testo";
+"addFilter_target_all" = "Tutti";
 
-"addFilter_target_all_multiline" = "Mittente +\nTesto";
+"addFilter_target_all_multiline" = "Tutti";
 
 "addFilter_target_sender" = "Mittente";
 

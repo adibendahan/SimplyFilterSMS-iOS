@@ -72,9 +72,9 @@
 
 "addFilter_less" = "간단히 보기";
 
-"addFilter_target_all" = "발신자 + 본문";
+"addFilter_target_all" = "전체";
 
-"addFilter_target_all_multiline" = "발신자 +\n본문";
+"addFilter_target_all_multiline" = "전체";
 
 "addFilter_target_sender" = "발신자";
 

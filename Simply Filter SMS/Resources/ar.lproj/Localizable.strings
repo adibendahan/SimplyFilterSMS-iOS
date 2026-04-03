@@ -72,9 +72,9 @@
 
 "addFilter_less" = "عرض أقل";
 
-"addFilter_target_all" = "المُرسِل + المحتوى";
+"addFilter_target_all" = "الكل";
 
-"addFilter_target_all_multiline" = "المُرسِل +\nالمحتوى";
+"addFilter_target_all_multiline" = "الكل";
 
 "addFilter_target_sender" = "المُرسِل";
 

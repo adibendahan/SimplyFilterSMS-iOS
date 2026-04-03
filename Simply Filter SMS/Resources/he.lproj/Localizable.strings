@@ -202,7 +202,7 @@
 
 "addFilter_addFilter_deny" = "הוספת טקסט חסום";
 
-"addFilter_target_all" = "שולח + הודעה";
+"addFilter_target_all" = "הכל";
 
 "addFilter_target_sender" = "שולח";
 
@@ -228,7 +228,7 @@
 
 "filterList_options" = "אפשרויות";
 
-"addFilter_target_all_multiline" = "שולח +\nהודעה";
+"addFilter_target_all_multiline" = "הכל";
 
 "general_lang" = "שפה";
 

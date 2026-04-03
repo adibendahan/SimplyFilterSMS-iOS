@@ -43,6 +43,7 @@
 		69300B8627A9C4A700DF7982 /* TestFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69300B8527A9C4A700DF7982 /* TestFiltersView.swift */; };
 		6931BAEA27BB270E00636439 /* AmazonS3ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */; };
 		69398EBC27B0A613003C5123 /* FilterListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69398EBB27B0A613003C5123 /* FilterListRowView.swift */; };
+		AD52D9D8E84445009A675029 /* GlassPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADE64A0B14A4D788A30E40A /* GlassPicker.swift */; };
 		6941FE13277DE78B00B99539 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6941FE15277DE78B00B99539 /* Localizable.strings */; };
 		6941FE1A277E19CC00B99539 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE19277E19CC00B99539 /* AboutView.swift */; };
 		6941FE1C277FDBE700B99539 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE1B277FDBE700B99539 /* MailView.swift */; };
@@ -215,6 +216,7 @@
 		69300B8527A9C4A700DF7982 /* TestFiltersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFiltersView.swift; sourceTree = "<group>"; };
 		6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonS3ServiceTests.swift; sourceTree = "<group>"; };
 		69398EBB27B0A613003C5123 /* FilterListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListRowView.swift; sourceTree = "<group>"; };
+		0ADE64A0B14A4D788A30E40A /* GlassPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassPicker.swift; sourceTree = "<group>"; };
 		6941FE14277DE78B00B99539 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6941FE16277DE78E00B99539 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6941FE17277DE78F00B99540 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -628,6 +630,7 @@
 				69FF9C8727933CE9007FA2DB /* FooterView.swift */,
 				698844A327A8C200005BF9DA /* FadingTextView.swift */,
 				69398EBB27B0A613003C5123 /* FilterListRowView.swift */,
+				0ADE64A0B14A4D788A30E40A /* GlassPicker.swift */,
 				69B2D03127A5B0E600F965AB /* StatefulItem.swift */,
 				690D709B27B31DC0001880DA /* NotificationView.swift */,
 				69DE6ABA284AC11900366D10 /* EditableText.swift */,
@@ -933,6 +936,7 @@
 				69189C1527A97F7400C8FFA5 /* MessageEvaluationManager.swift in Sources */,
 				69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */,
 				69398EBC27B0A613003C5123 /* FilterListRowView.swift in Sources */,
+				AD52D9D8E84445009A675029 /* GlassPicker.swift in Sources */,
 				690F054E278200B60036553B /* ButtonStyles.swift in Sources */,
 				69ECF148286763F4000380A2 /* ReportMessageService.swift in Sources */,
 				69AA2C59279D793600CEABE5 /* DefaultsManager.swift in Sources */,

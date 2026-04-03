@@ -72,9 +72,9 @@
 
 "addFilter_less" = "Ver menos";
 
-"addFilter_target_all" = "Remetente + Conteúdo";
+"addFilter_target_all" = "Todos";
 
-"addFilter_target_all_multiline" = "Remetente +\nConteúdo";
+"addFilter_target_all_multiline" = "Todos";
 
 "addFilter_target_sender" = "Remetente";
 

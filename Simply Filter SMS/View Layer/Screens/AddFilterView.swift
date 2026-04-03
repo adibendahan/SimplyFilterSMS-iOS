@@ -16,6 +16,9 @@ struct AddFilterView: View {
     
     @ObservedObject var model: ViewModel
     @FocusState private var focusedField: Field?
+    @State private var casePickerVisible = true
+    @State private var regexTestVisible = false
+    private let layoutAnimationDelay: TimeInterval = 0.35
     
     var body: some View {
         NavigationView {
@@ -29,22 +32,29 @@ struct AddFilterView: View {
                         ZStack(alignment: .leading) {
                             if self.model.selectedFilterMatching == .regex {
                                 if self.model.filterText.isEmpty {
-                                    Text("addFilter_text"~)
-                                        .foregroundColor(Color(.placeholderText))
+                                    Text("[A-Za-z0-9]+".highlightedAsRegex)
                                         .font(.system(.body, design: .monospaced))
+                                        .opacity(0.4)
                                         .allowsHitTesting(false)
+                                        .transition(.opacity)
                                 } else {
                                     Text(self.model.filterText.highlightedAsRegex)
                                         .font(.system(.body, design: .monospaced))
                                         .allowsHitTesting(false)
                                 }
+                            } else if self.model.filterText.isEmpty {
+                                Text("addFilter_text"~)
+                                    .foregroundColor(Color(.placeholderText))
+                                    .allowsHitTesting(false)
+                                    .transition(.opacity)
                             }
-                            TextField("addFilter_text"~, text: $model.filterText)
+                            TextField("", text: $model.filterText)
                                 .focused($focusedField, equals: .text)
                                 .accessibilityIdentifier(TestIdentifier.filterText.rawValue)
                                 .font(self.model.selectedFilterMatching == .regex ? .system(.body, design: .monospaced) : .body)
                                 .foregroundColor(self.model.selectedFilterMatching == .regex ? .clear : .primary)
                         }
+                        .animation(.easeInOut(duration: 0.25), value: self.model.selectedFilterMatching)
 
                         if self.model.isDuplicateFilter {
                             FilterBadge(text: "addFilter_duplicate"~, color: .red, systemImage: "xmark.circle.fill")
@@ -54,7 +64,64 @@ struct AddFilterView: View {
                     }
 
                     if self.model.isExpanded {
-                        if self.model.selectedFilterMatching == .regex {
+                      Group {
+                        Spacer()
+
+                        Text(FilterMatching.title)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .italic()
+                            .bold()
+
+                        GlassPicker(selection: $model.selectedFilterMatching) { matching in
+                            Label(matching.name, systemImage: matching.icon)
+                        }
+
+                        if self.model.filterType == FilterType.deny {
+
+                            Spacer()
+
+                            Text(DenyFolderType.title)
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                                .italic()
+                                .bold()
+
+                            GlassPicker(selection: $model.selectedDenyFolderType) { folder in
+                                Label(folder.name, systemImage: folder.iconName)
+                            }
+                        }
+
+                        Spacer()
+
+                        Text(FilterTarget.title)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .italic()
+                            .bold()
+
+                        GlassPicker(selection: $model.selectedFilterTarget) { target in
+                            Label(target.name, systemImage: target.icon)
+                        }
+
+                        if casePickerVisible {
+                            Group {
+                                Spacer()
+
+                                Text(FilterCase.title)
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                                    .italic()
+                                    .bold()
+
+                                GlassPicker(selection: $model.selectedFilterCase) { filterCase in
+                                    Label(filterCase.name, systemImage: filterCase.icon)
+                                }
+                            }
+                            .transition(reduceMotion ? .identity : .opacity)
+                        }
+
+                        if regexTestVisible {
                             Group {
                                 Spacer()
 
@@ -78,86 +145,14 @@ struct AddFilterView: View {
                                     }
                                 }
                             }
-                            .transition(reduceMotion ? .identity : .opacity.combined(with: .move(edge: .top)))
+                            .transition(reduceMotion ? .identity : .opacity)
                         }
-
-                        Spacer()
-
-                        Text(FilterMatching.title)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                            .italic()
-                            .bold()
-
-                        Picker(selection: $model.selectedFilterMatching, label: Text(FilterMatching.title)) {
-                            ForEach(FilterMatching.allCases, id: \.rawValue) { matching in
-                                Text(matching.name)
-                                    .font(.body)
-                                    .tag(matching)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-
-                        if self.model.filterType == FilterType.deny {
-
-                            Spacer()
-
-                            Text(DenyFolderType.title)
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
-                                .italic()
-                                .bold()
-
-                            Picker(selection: $model.selectedDenyFolderType, label: Text(DenyFolderType.title)) {
-                                ForEach(DenyFolderType.allCases, id: \.rawValue) { folder in
-                                    Text(folder.name)
-                                        .font(.body)
-                                        .tag(folder)
-                                }
-                            }
-                            .pickerStyle(.segmented)
-                        }
-
-                        Spacer()
-
-                        Text(FilterTarget.title)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                            .italic()
-                            .bold()
-
-                        Picker(selection: $model.selectedFilterTarget, label: Text(FilterTarget.title)) {
-                            ForEach(FilterTarget.allCases, id: \.rawValue) { target in
-                                Text(target.name)
-                                    .font(.body)
-                                    .tag(target)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-
-                        if self.model.selectedFilterMatching != .regex {
-                            Spacer()
-
-                            Text(FilterCase.title)
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
-                                .italic()
-                                .bold()
-
-                            Picker(selection: $model.selectedFilterCase, label: Text(FilterCase.title)) {
-                                ForEach(FilterCase.allCases, id: \.rawValue) { filterCase in
-                                    Text(filterCase.name)
-                                        .font(.body)
-                                        .tag(filterCase)
-                                }
-                            }
-                            .pickerStyle(.segmented)
-                        }
-
+                      }
+                      .transition(reduceMotion ? .identity : .opacity.combined(with: .move(edge: .top)))
                     }
 
                     Button {
-                        withAnimation {
+                        withAnimation(.easeInOut(duration: 0.35)) {
                             self.model.isExpanded.toggle()
                         }
                     } label: {
@@ -220,6 +215,31 @@ struct AddFilterView: View {
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                 focusedField = .text
+            }
+        }
+        .onChange(of: model.isExpanded) { expanded in
+            if expanded {
+                if model.selectedFilterMatching == .regex {
+                    casePickerVisible = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + layoutAnimationDelay) {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            regexTestVisible = true
+                        }
+                    }
+                }
+            } else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    regexTestVisible = false
+                    casePickerVisible = model.selectedFilterMatching != .regex
+                }
+            }
+        }
+        .onChange(of: model.selectedFilterMatching) { matching in
+            DispatchQueue.main.asyncAfter(deadline: .now() + layoutAnimationDelay) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    regexTestVisible = matching == .regex
+                    casePickerVisible = matching != .regex
+                }
             }
         }
     }

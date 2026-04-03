@@ -72,9 +72,9 @@
 
 "addFilter_less" = "折りたたむ";
 
-"addFilter_target_all" = "送信者 + 本文";
+"addFilter_target_all" = "すべて";
 
-"addFilter_target_all_multiline" = "送信者 +\n本文";
+"addFilter_target_all_multiline" = "すべて";
 
 "addFilter_target_sender" = "送信者";
 

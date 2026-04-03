@@ -72,9 +72,9 @@
 
 "addFilter_less" = "Moins d'options";
 
-"addFilter_target_all" = "Expéditeur + Contenu";
+"addFilter_target_all" = "Tous";
 
-"addFilter_target_all_multiline" = "Expéditeur +\nContenu";
+"addFilter_target_all_multiline" = "Tous";
 
 "addFilter_target_sender" = "Expéditeur";
 

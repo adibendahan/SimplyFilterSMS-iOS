@@ -65,8 +65,8 @@
 "addFilter_regexNoMatch" = "No match";
 "addFilter_more" = "See more options";
 "addFilter_less" = "See less";
-"addFilter_target_all" = "Sender + Body";
-"addFilter_target_all_multiline" = "Sender +\nBody";
+"addFilter_target_all" = "All";
+"addFilter_target_all_multiline" = "All";
 "addFilter_target_sender" = "Sender";
 "addFilter_target_body" = "Body";
 "addFilter_target_title" = "Select a target:";

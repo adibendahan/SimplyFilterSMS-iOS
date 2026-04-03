@@ -72,9 +72,9 @@
 
 "addFilter_less" = "Weniger anzeigen";
 
-"addFilter_target_all" = "Absender + Inhalt";
+"addFilter_target_all" = "Alle";
 
-"addFilter_target_all_multiline" = "Absender +\nInhalt";
+"addFilter_target_all_multiline" = "Alle";
 
 "addFilter_target_sender" = "Absender";
 
