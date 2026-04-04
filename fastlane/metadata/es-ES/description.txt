@@ -3,6 +3,7 @@ Recupera el control de tu buzón de entrada.
 Simply Filter SMS es un filtro de mensajes de texto de código abierto y privacidad primero para iPhone e iPad. Crea reglas de palabras clave y filtros inteligentes para mover automáticamente los mensajes no deseados de remitentes desconocidos a No deseado, Promociones o Transacciones, completamente en el dispositivo.
 
 Novedades de esta versión:
+• Filtros Regex - Crea potentes filtros de coincidencia de patrones usando expresiones regulares para un control preciso.
 • Filtrado con IA - El filtrado automático ahora es impulsado por IA, más inteligente y preciso, con soporte para 10 idiomas incluyendo español, francés, alemán, árabe y más.
 • Países de confianza - Permite automáticamente mensajes de países específicos por prefijo telefónico.
 • 8 nuevos idiomas - La app ya está disponible en español, árabe, francés, alemán, portugués, japonés, coreano e italiano.

@@ -1,4 +1,2 @@
-Filtrage par IA - Désormais propulsé par l'IA avec support pour 10 langues dont l'espagnol, le français, l'allemand, l'arabe et plus.
-Pays de confiance - Autorisez les messages de pays spécifiques par préfixe téléphonique.
-8 nouvelles langues - L'app est maintenant disponible en espagnol, arabe, français, allemand, portugais, japonais, coréen et italien.
+Filtres Regex - Créez des filtres de correspondance de motifs puissants avec des expressions régulières pour un contrôle précis.
 Plusieurs corrections de bugs et améliorations des performances.
