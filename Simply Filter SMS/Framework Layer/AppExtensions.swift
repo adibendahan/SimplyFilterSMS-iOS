@@ -13,7 +13,7 @@ extension EnvironmentValues {
         return ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 #else
         return false
-#endif
+#endif // DEBUG
     }
     
     var isDebug: Bool {
@@ -21,7 +21,7 @@ extension EnvironmentValues {
         return true
 #else
         return false
-#endif
+#endif // DEBUG
     }
 }
 
@@ -80,6 +80,32 @@ extension FileManager {
         var isDirectory = ObjCBool(true)
         let exists = self.fileExists(atPath: path, isDirectory: &isDirectory)
         return exists && isDirectory.boolValue
+    }
+}
+
+extension String {
+    var highlightedAsRegex: AttributedString {
+        let nsAttr = NSMutableAttributedString(string: self)
+        let nsLen = (self as NSString).length
+        let fullRange = NSRange(location: 0, length: nsLen)
+
+        let rules: [(String, UIColor)] = [
+            (#"\^|\$"#,                         .systemGreen),    // anchors
+            (#"\|"#,                             .secondaryLabel), // alternation
+            (#"[*+?]|\{[0-9,]*\}"#,             .systemOrange),   // quantifiers
+            (#"[()]"#,                           .systemPurple),   // groups
+            (#"\[(?:[^\]\\]|\\.)*\]"#,           .systemBlue),     // character classes
+            (#"\\."#,                            .systemTeal),     // escape sequences
+        ]
+
+        for (pat, color) in rules {
+            guard let re = try? NSRegularExpression(pattern: pat) else { continue }
+            for match in re.matches(in: self, range: fullRange) {
+                nsAttr.addAttribute(.foregroundColor, value: color, range: match.range)
+            }
+        }
+
+        return (try? AttributedString(nsAttr, including: \.uiKit)) ?? AttributedString(self)
     }
 }
 

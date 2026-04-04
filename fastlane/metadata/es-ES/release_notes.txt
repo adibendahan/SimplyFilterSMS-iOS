@@ -1,4 +1,2 @@
-Filtrado con IA - Ahora con inteligencia artificial con soporte para 10 idiomas incluyendo español, francés, alemán, árabe y más.
-Países de confianza - Permite mensajes de países específicos por prefijo telefónico.
-8 nuevos idiomas - La app ya está disponible en español, árabe, francés, alemán, portugués, japonés, coreano e italiano.
+Filtros Regex - Crea potentes filtros de coincidencia de patrones usando expresiones regulares para un control preciso.
 Múltiples correcciones de errores y mejoras de rendimiento.

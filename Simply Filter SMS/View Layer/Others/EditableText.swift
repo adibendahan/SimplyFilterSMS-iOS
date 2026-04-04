@@ -21,9 +21,11 @@ struct EditableText: View {
     private var onEditingChanged: ((Bool) -> ())?
     private var onTextChange: ((String) -> ())?
     private var minimumCharacters: Int
+    private var attributedText: ((String) -> AttributedString)?
 
     public init(_ text: Binding<String>,
                 minimumCharacters: Int = 0,
+                attributedText: ((String) -> AttributedString)? = nil,
                 onCommit: (() -> ())? = nil,
                 onEditingChanged: ((Bool) -> ())? = nil,
                 onTextChange: ((String) -> ())? = nil) {
@@ -33,15 +35,23 @@ struct EditableText: View {
         self.onEditingChanged = onEditingChanged
         self.onTextChange = onTextChange
         self.minimumCharacters = minimumCharacters
+        self.attributedText = attributedText
     }
 
     @ViewBuilder
     public var body: some View {
         ZStack {
-            Text(self.text)
-                .opacity(self.editProcessGoing ? 0 : 1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .accessibilityHidden(true)
+            if let attributedText {
+                let displayText = editProcessGoing ? newValue : text
+                Text(displayText.isEmpty ? AttributedString("") : attributedText(displayText))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityHidden(true)
+            } else {
+                Text(self.text)
+                    .opacity(self.editProcessGoing ? 0 : 1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityHidden(true)
+            }
 
             TextField(
                 "",
@@ -65,7 +75,8 @@ struct EditableText: View {
                     self.editProcessGoing = false
                     onCommit?()
                 })
-            .opacity(self.editProcessGoing ? 1 : 0)
+            .opacity(self.editProcessGoing || attributedText == nil ? 1 : 0)
+            .foregroundColor(attributedText != nil ? .clear : .primary)
             .frame(maxWidth: .infinity, alignment: .leading)
             .focused($isFocused)
             .accessibilityLabel(self.text)

@@ -9,7 +9,8 @@ import SwiftUI
 
 struct FooterView: View {
     var onTap: (() ->())? = nil
-    
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
         VStack(spacing: 0) {
             Spacer(minLength: 0)

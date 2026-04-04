@@ -342,6 +342,10 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         case .body:
             messageForEvaluation = body
         }
+        if filter.filterMatching == .regex {
+            guard let regex = try? Regex(textForEvaluation) else { return false }
+            return messageForEvaluation.contains(regex)
+        }
         if filter.filterCase == .caseInsensitive {
             messageForEvaluation = messageForEvaluation.lowercased()
             textForEvaluation = textForEvaluation.lowercased()

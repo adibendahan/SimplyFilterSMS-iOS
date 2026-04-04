@@ -1,0 +1,528 @@
+//
+//  DebugDataManager.swift
+//  Simply Filter SMS
+//
+//  Created by Adi Ben-Dahan on 04/04/2026.
+//
+
+import Foundation
+import NaturalLanguage
+
+class DebugDataManager: DebugDataManagerProtocol {
+
+    struct FilterEntry {
+        let text: String
+        let type: FilterType
+        let denyFolder: DenyFolderType
+        let filterTarget: FilterTarget
+        let filterMatching: FilterMatching
+        let filterCase: FilterCase
+    }
+
+    struct LanguageData {
+        let filters: [FilterEntry]
+        let allowedCountryCodes: [String]
+        let denyLanguages: [NLLanguage]
+    }
+
+    private let persistanceManager: PersistanceManagerProtocol
+    private let defaultsManager: DefaultsManagerProtocol
+    private let automaticFilterManager: AutomaticFilterManagerProtocol
+
+    init(persistanceManager: PersistanceManagerProtocol,
+         defaultsManager: DefaultsManagerProtocol,
+         automaticFilterManager: AutomaticFilterManagerProtocol) {
+        self.persistanceManager = persistanceManager
+        self.defaultsManager = defaultsManager
+        self.automaticFilterManager = automaticFilterManager
+    }
+
+    // MARK: - DebugDataManagerProtocol
+
+    func load() {
+        load(for: Bundle.main.preferredLocalizations[0])
+    }
+
+    func load(for langCode: String) {
+        let data = DebugDataManager.data(for: langCode)
+
+        for entry in data.filters {
+            persistanceManager.addFilter(text: entry.text,
+                                         type: entry.type,
+                                         denyFolder: entry.denyFolder,
+                                         filterTarget: entry.filterTarget,
+                                         filterMatching: entry.filterMatching,
+                                         filterCase: entry.filterCase)
+        }
+
+        for language in data.denyLanguages {
+            persistanceManager.addFilter(text: language.filterText,
+                                         type: .denyLanguage,
+                                         denyFolder: .junk,
+                                         filterTarget: .body,
+                                         filterMatching: .contains,
+                                         filterCase: .caseInsensitive)
+        }
+
+        persistanceManager.setSelectedCountries(data.allowedCountryCodes, for: .countryAllowlist)
+
+        for rule in RuleType.allCases {
+            guard rule != .allUnknown else { continue }
+            automaticFilterManager.setAutomaticRuleState(for: rule, value: true)
+        }
+
+        let normalizedCode = String(langCode.split(separator: "-").first ?? Substring(langCode))
+        let language = NLLanguage(normalizedCode)
+        if language != .undetermined {
+            automaticFilterManager.setLanguageAutomaticState(for: language, value: true)
+        }
+    }
+
+    // MARK: - Language Data
+
+    static func data(for rawLangCode: String) -> LanguageData {
+        let langCode = String(rawLangCode.split(separator: "-").first ?? Substring(rawLangCode))
+        return languageData[langCode] ?? languageData["en"]!
+    }
+
+    private static let languageData: [String: LanguageData] = [
+        "en": LanguageData(
+            filters: [
+                FilterEntry(text: "^\\+?[0-9]{7,15}$",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .regex,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Adi",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .exact,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Apple",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Bet",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .exact,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Bitcoin",
+                            type: .deny,
+                            denyFolder: .transaction,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Cash",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .all,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Loan",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Mortgage",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .all,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+1", "+44"],
+            denyLanguages: [.arabic]
+        ),
+        "he": LanguageData(
+            filters: [
+                FilterEntry(text: "^\\+?[0-9]{7,15}$",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .regex,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Adi",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .exact,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "bit",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "עדי",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "קנאביס",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .all,
+                            filterMatching: .exact,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "גנץ",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "נתניהו",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+972", "+1"],
+            denyLanguages: [.arabic]
+        ),
+        "ar": LanguageData(
+            filters: [
+                FilterEntry(text: "أحمد",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "سامي",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "ربح",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "مجاني",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "فوز",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "عرض",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+966", "+971", "+20"],
+            denyLanguages: [.hebrew]
+        ),
+        "de": LanguageData(
+            filters: [
+                FilterEntry(text: "Max",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "DHL",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Gewinn",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Gratis",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Wette",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Darlehen",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+49", "+43", "+41"],
+            denyLanguages: [.arabic]
+        ),
+        "es": LanguageData(
+            filters: [
+                FilterEntry(text: "Carlos",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Maria",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Gratis",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Premio",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Ganaste",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Oferta",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+34", "+52", "+54"],
+            denyLanguages: [.arabic]
+        ),
+        "pt": LanguageData(
+            filters: [
+                FilterEntry(text: "João",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Maria",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Grátis",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Prêmio",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Ganhou",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Oferta",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+55", "+351"],
+            denyLanguages: [.arabic]
+        ),
+        "fr": LanguageData(
+            filters: [
+                FilterEntry(text: "Pierre",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Sophie",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Crédit",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Gratuit",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Gagné",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Offre",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+33", "+32", "+41"],
+            denyLanguages: [.arabic]
+        ),
+        "it": LanguageData(
+            filters: [
+                FilterEntry(text: "Marco",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Giulia",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "Gratis",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Vincita",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Offerta",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Mutuo",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+39"],
+            denyLanguages: [.arabic]
+        ),
+        "ja": LanguageData(
+            filters: [
+                FilterEntry(text: "田中",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Apple",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "無料",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "当選",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "キャンペーン",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "出会い",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+81"],
+            denyLanguages: [.arabic]
+        ),
+        "ko": LanguageData(
+            filters: [
+                FilterEntry(text: "김철수",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Apple",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "무료",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "당첨",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "이벤트",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "할인",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+82"],
+            denyLanguages: [.arabic]
+        ),
+    ]
+}

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Simply Filter SMS is an iOS app (Swift/SwiftUI, iOS 15.2+) that filters unknown SMS messages using Apple's IdentityLookup framework. It includes a Message Filter Extension that classifies incoming messages as junk, transaction, or promotion, and a Reporting Extension that lets users report messages directly from iOS Messages. Data syncs across devices via CoreData + CloudKit (NSPersistentCloudKitContainer).
+Simply Filter SMS is an iOS app (Swift/SwiftUI, iOS 16.6+) that filters unknown SMS messages using Apple's IdentityLookup framework. It includes a Message Filter Extension that classifies incoming messages as junk, transaction, or promotion, and a Reporting Extension that lets users report messages directly from iOS Messages. Data syncs across devices via CoreData + CloudKit (NSPersistentCloudKitContainer).
 
 App Store: https://apps.apple.com/us/app/simply-filter-sms/id1603222959
 

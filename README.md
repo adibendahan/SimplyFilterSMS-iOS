@@ -2,7 +2,7 @@
   <a href="https://github.com/adibendahan/SimplyFilterSMS-iOS"><img src="_screenshots/logo.png" width="256" height="256"></a>
   <h1>Simply Filter SMS</h1>
   <p>
-    <b>Simply filter text messages from unknown senders using keywords</b>
+    <b>Filter text messages from unknown senders using keywords, regex, and AI</b>
   </p>
   <br>
   <br>
@@ -17,7 +17,7 @@
 [![MIT License][license-shield]][license-url]
 
 
-Simply Filter SMS is a private, free and fast way to filter out spam text messages on iPhones.
+Simply Filter SMS is a private, free and fast way to filter out spam text messages on iPhone and iPad.
 
 ## Download
 
@@ -25,22 +25,28 @@ Simply Filter SMS is a private, free and fast way to filter out spam text messag
 
 [![](https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg)](https://apps.apple.com/us/app/simply-filter-sms/id1603222959)
 
-Requires iOS 15 or later.
+Requires iOS 16.6 or later.
 
 
 ## Features
 
 ### User Defined Filters
-You can add your filters to allow/deny any specific text.
+Add keyword or regex filters to allow or deny any specific text with full control over matching rules.
+
+### Regex Filters
+Create powerful pattern-matching filters using regular expressions for precise, flexible filtering.
 
 ### Automatic Filtering
-Enabling it will filter messages using a pre defined list of terms (English/Hebrew only).
+AI-powered automatic filtering with support for 10 languages including English, Hebrew, Spanish, French, German, Arabic, and more.
 
 ### Smart Filters
-Easily filter messages from short/email/all unknown senders, containing links/emojis or allow sender with phone numbers only. 
+Easily filter messages from short/email/all unknown senders, containing links or emojis, or allow senders with phone numbers only.
+
+### Trusted Countries
+Automatically allow messages from specific countries by phone number prefix.
 
 ### Block Languages
-Easily block all text messages in any specific language(s). 
+Easily block all text messages in any specific language(s).
 
 ## Why choose Simply Filter SMS?
 
@@ -48,7 +54,7 @@ Easily block all text messages in any specific language(s).
 Simply Filter SMS does not collect any data whatsoever. Nothing leaves your device.
 
 ### Free
-Everything is free of charge. Forever. No in-app purchases, no nonsense. 
+Simply Filter SMS is free forever. An optional tip jar is available to support development.
 
 ### Fast
 The app is primarily a host of rules that integrates with iOS in a native, lightweight way, making the filtering efficient and fast.
@@ -70,6 +76,7 @@ Simply Filter SMS is written in Apple's latest programming paradigm SwiftUI.
 <img width="250" src="_screenshots/05.png">
 <img width="250" src="_screenshots/06.png">
 <img width="250" src="_screenshots/07.png">
+<img width="250" src="_screenshots/08.png">
 </p>
 
 
@@ -77,8 +84,8 @@ Simply Filter SMS is written in Apple's latest programming paradigm SwiftUI.
 
 #### ***How does message filtering work?***
 
-When you recive a text message from a number that is not in your contact list, Simply Filter SMS will filter it based on the following rules:
-* If a text message contains text matching to a filter from the 'Allowed Texts' it will be delivered regularly.
+When you receive a text message from a number that is not in your contact list, Simply Filter SMS will filter it based on the following rules:
+* If a text message contains text matching a filter from the 'Allowed Texts' it will be delivered regularly.
 * If not, the message will be scanned for matching filters from the 'Blocked Texts' and in case any were found it will be delivered to the Junk folder.
 *  If the text doesn't contain any text that matches the filters, it will be delivered regularly.
 
@@ -96,16 +103,16 @@ When a text message is tagged as junk it will still be available for reading on 
 
 #### ***What's the difference between Junk/Transactions/Promotions folders?***
 
-Not much, you can filter any word to any folder. Those folders are not customable in any way. Only messages filtered to the Junk folder will be delivered silently.
+Not much, you can filter any word to any folder. Those folders are not customizable in any way. Only messages filtered to the Junk folder will be delivered silently.
 
 #### ***How does Automatic Filtering work?***
 
-Automatic Filtering is using a pre defined list of terms to determine if a message should be sent to the Junk folder or not. The lists are updated periodically with new terms. Your regular filters are still considered when Automatic Filtering is on.
+Automatic Filtering uses an AI-powered list of terms to determine if a message should be sent to the Junk folder or not. The lists are updated periodically and support 10 languages. Your regular filters are still considered when Automatic Filtering is on.
 
 
 ## Building from source
 
-Just open the project on Xcode and build (Xcode >= 13.2.1). 
+Just open the project in Xcode and build (Xcode 15 or later).
 
 
 ## Contributing
@@ -115,7 +122,7 @@ Simply Filter SMS is open for pull-request business.
 
 ## License
 
-[MIT](https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/main/LICENSE) 2025 © Adi Ben-Dahan. All rights reserved.
+[MIT](https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/main/LICENSE) 2026 © Adi Ben-Dahan. All rights reserved.
 
 
 [contributors-shield]: https://img.shields.io/github/contributors/adibendahan/SimplyFilterSMS-iOS?style=for-the-badge

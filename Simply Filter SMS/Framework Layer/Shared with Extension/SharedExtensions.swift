@@ -171,7 +171,7 @@ extension ILMessageFilterAction {
         }
     }
     
-#if DEBUG
+    #if DEBUG
     var debugName: String {
         switch self {
         case .none:
@@ -190,7 +190,7 @@ extension ILMessageFilterAction {
             return "Unknown"
         }
     }
-#endif
+    #endif // DEBUG
 }
 
 extension String {

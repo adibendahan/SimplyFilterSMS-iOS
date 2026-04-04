@@ -202,7 +202,7 @@
 
 "addFilter_addFilter_deny" = "הוספת טקסט חסום";
 
-"addFilter_target_all" = "שולח + הודעה";
+"addFilter_target_all" = "הכל";
 
 "addFilter_target_sender" = "שולח";
 
@@ -228,7 +228,7 @@
 
 "filterList_options" = "אפשרויות";
 
-"addFilter_target_all_multiline" = "שולח +\nהודעה";
+"addFilter_target_all_multiline" = "הכל";
 
 "general_lang" = "שפה";
 
@@ -473,3 +473,19 @@
 "menu_addFilter" = "הוספת פילטר";
 
 "reportingExtension_selectedCall" = "שיחה שנבחרה";
+
+"addFilter_match_regex" = "Regex";
+
+"addFilter_invalidRegex" = "ביטוי לא תקין";
+
+"addFilter_regexTestPlaceholder" = "טקסט לבדיקה";
+
+"addFilter_regexTestCaption" = "בדוק את הביטוי שלך:";
+
+"addFilter_regexMatch" = "התאמה";
+
+"addFilter_regexNoMatch" = "אין התאמה";
+
+"whatsNew_regexFilters_title" = "פילטרי Regex";
+
+"whatsNew_regexFilters_desc" = "למשתמשים מתקדמים - סנן עם **ביטויים רגולריים** לשליטה מלאה על מה שנחסם או מותר. תבנית אחת יכולה להחליף עשרות פילטרים.";

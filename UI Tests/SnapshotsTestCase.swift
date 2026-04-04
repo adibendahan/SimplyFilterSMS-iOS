@@ -26,55 +26,27 @@ class SnapshotsTestCase: ApplicationTestCase {
         app.dismissCallToActionViewIfPresented()
 
         app.tap(.appMenuButton)
+        app.tap(.debugToolsButton)
         app.tap(.loadDebugDataMenuButton)
         self.sleep(seconds: 5)
 
-        // MARK: countryList Screenshot
-        let ruleSwitch = app.switchContaining(RuleType.countryAllowlist.title)
-        XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
-        ruleSwitch.switches["0"].firstMatch.press(forDuration: 0.7)
-        XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
-        
-        app.tap(.countryAllowlistButton)
-        self.sleep(seconds: 1)
-        for i in 0..<2 {
-            app.buttons.matching(identifier: TestIdentifier.countryRow.rawValue).element(boundBy: i).press(forDuration: 0.7)
-            self.sleep(seconds: 0.5)
-        }
-        app.tap(.closeButton)
-        self.sleep(seconds: isPad ? 3.0 : 0.5)
-
-        // MARK: applicationHome Screenshot
-        for rule in RuleType.allCases.filter({ $0 != .allUnknown && $0 != .countryAllowlist }) {
-            let ruleSwitch = app.switchContaining(rule.title)
-            XCTAssert(ruleSwitch.switches["0"].firstMatch.value as? String == "0")
-            ruleSwitch.switches["0"].firstMatch.tap()
-            XCTAssert(ruleSwitch.switches["1"].firstMatch.value as? String == "1")
-        }
-        
-        // MARK: automaticFilters Screenshot
-        app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_OFF"~)
-        app.tap(.automaticFilterLink)
-        let currentLanguage = NLLanguage(rawValue: langCode)
-        let activeLang = currentLanguage != .undetermined ? currentLanguage : .english
-        app.switches[activeLang~].switches["0"].firstMatch.tap()
-
-        app.buttons["BackButton"].firstMatch.conditionalTap(!isPad)
-        app.tap(.countryAllowlistButton)
-        snapshot("08.countryList")
-        app.tap(.closeButton)
-        self.sleep(seconds: isPad ? 2.0 : 0.5)
-        
         if !isPad {
             snapshot("01.applicationHome")
         }
-
+        
+        app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_ON"~)
         app.tap(.automaticFilterLink)
         snapshot("02.automaticFilters")
         app.tap(.closeButton)
-        app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
+        app.buttons["BackButton"].firstMatch.conditionalTap(!isPad)
         self.sleep(seconds: 1)
-        app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_ON"~)
+
+        app.tap(.countryAllowlistButton)
+        self.sleep(seconds: 2)
+        snapshot("08.countryList")
+        app.tap(.closeButton)
+        self.sleep(seconds: isPad ? 2.0 : 0.5)
+
 
         // MARK: addFilter Screenshot
         let addFilterText: String

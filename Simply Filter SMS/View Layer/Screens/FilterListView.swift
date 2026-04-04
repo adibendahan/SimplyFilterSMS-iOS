@@ -35,7 +35,7 @@ struct FilterListView: View {
         ScrollViewReader { proxy in
         List (selection: $model.selectedFilters) {
             Section {
-                ForEach(self.model.filters, id: \.self) { filter in
+                ForEach(self.model.regularFilters, id: \.self) { filter in
                     FilterListRowView(
                         filterObjectID: filter.objectID,
                         dotFilterID: dotFilterID,
@@ -54,27 +54,66 @@ struct FilterListView: View {
                     .id(filter.objectID)
                 }
                 .onDelete {
-                    self.model.deleteFilters(withOffsets: $0, in: self.model.filters)
+                    self.model.deleteFilters(withOffsets: $0, in: self.model.regularFilters)
                 }
             } header: {
-                if self.model.filters.count > 0 {
+                if self.model.regularFilters.count > 0 {
                     HStack {
                         Text(self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~)
-                        
+
                         Spacer()
-                        
+
                         Text(self.model.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~)
                             .padding(.trailing, 8)
                     }
                 }
             } footer: {
-                VStack {
-                    Text(.init(self.model.footer))
-                    
-                    Spacer()
-                    
-                    AddFilterButton()
-                        .padding(.top, self.model.filters.count > 0 ? 0 : 120)
+                if self.model.regexFilters.isEmpty {
+                    VStack {
+                        Text(.init(self.model.footer))
+
+                        Spacer()
+
+                        AddFilterButton()
+                            .padding(.top, self.model.filters.count > 0 ? 0 : 120)
+                    }
+                }
+            }
+
+            if !self.model.regexFilters.isEmpty {
+                Section {
+                    ForEach(self.model.regexFilters, id: \.self) { filter in
+                        FilterListRowView(
+                            filterObjectID: filter.objectID,
+                            dotFilterID: dotFilterID,
+                            model: FilterListRowView.ViewModel(
+                                filter: filter,
+                                onUpdate: { animated in
+                                    if animated {
+                                        withAnimation { self.model.refresh() }
+                                    }
+                                    else {
+                                        self.model.refresh()
+                                    }
+                                },
+                                appManager: self.model.appManager))
+                        .environment(\.editMode, $model.editMode)
+                        .id(filter.objectID)
+                    }
+                    .onDelete {
+                        self.model.deleteFilters(withOffsets: $0, in: self.model.regexFilters)
+                    }
+                } header: {
+                    Text("addFilter_match_regex"~)
+                } footer: {
+                    VStack {
+                        Text(.init(self.model.footer))
+
+                        Spacer()
+
+                        AddFilterButton()
+                            .padding(.top, self.model.filters.count > 0 ? 0 : 120)
+                    }
                 }
             }
         } // List
@@ -236,6 +275,9 @@ extension FilterListView {
     
     class ViewModel: BaseViewModel, ObservableObject {
         @Published private(set) var filters: [Filter]
+
+        var regularFilters: [Filter] { filters.filter { $0.filterMatching != .regex } }
+        var regexFilters: [Filter] { filters.filter { $0.filterMatching == .regex } }
         @Published private(set) var filterType: FilterType
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var canBlockAnotherLanguage: Bool

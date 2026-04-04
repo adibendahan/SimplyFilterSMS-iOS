@@ -44,6 +44,6 @@ run_screenshots() {
 }
 
 run_screenshots "$IPHONE_ID" "iPhone 17 Pro Max (26.1)"
-run_screenshots "$IPAD_ID" "iPad Pro 13-inch (M5) (26.1)"
+#run_screenshots "$IPAD_ID" "iPad Pro 13-inch (M5) (26.1)"
 
 echo "Done. Screenshots saved to Screenshots/"

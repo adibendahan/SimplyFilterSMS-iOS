@@ -18,14 +18,10 @@ struct FilterListRowView: View {
     @ObservedObject var model: ViewModel
     @State private var isEditingText = false
     @State private var showDuplicateError = false
+    @State private var showInvalidRegexError = false
     @State private var dotOpacity: Double = 0
 
-    @ScaledMetric(relativeTo: .caption2) private var badgeFontSize: CGFloat = 8
-    @ScaledMetric(relativeTo: .caption2) private var badgeWidth: CGFloat = 60
-    @ScaledMetric(relativeTo: .caption2) private var badgeHeight: CGFloat = 20
-    @ScaledMetric(relativeTo: .body) private var matchingIconSize: CGFloat = 18
-    @ScaledMetric(relativeTo: .body) private var caseIconSize: CGFloat = 20
-    @ScaledMetric(relativeTo: .caption) private var folderIconSize: CGFloat = 16
+    @ScaledMetric(relativeTo: .body) private var optionIconSize: CGFloat = 15
 
     var body: some View {
         HStack (alignment: .center) {
@@ -65,32 +61,32 @@ struct FilterListRowView: View {
                 EditableText(
                     $model.text,
                     minimumCharacters: 3,
+                    attributedText: self.model.filter.filterMatching == .regex ? { $0.highlightedAsRegex } : nil,
                     onCommit: {
                         self.model.updateFilter(filterText: self.model.text)
                         self.showDuplicateError = false
+                        self.showInvalidRegexError = false
                         self.isEditingText = false
                     },
                     onEditingChanged: { isEditing in
                         withAnimation {
                             self.isEditingText = isEditing
-                            if !isEditing { self.showDuplicateError = false }
+                            if !isEditing {
+                                self.showDuplicateError = false
+                                self.showInvalidRegexError = false
+                            }
                         }
                     },
                     onTextChange: { text in
                         self.showDuplicateError = self.model.isLiveDuplicate(text: text)
+                        self.showInvalidRegexError = self.model.isLiveInvalidRegex(text: text)
                     })
+                    .font(self.model.filter.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
 
                 if self.isEditingText && self.showDuplicateError {
-                    HStack {
-                        Image(systemName: "xmark.octagon")
-                            .foregroundColor(.red.opacity(0.8))
-                        Text("addFilter_duplicate"~)
-                            .font(.footnote)
-                            .foregroundColor(.red)
-                    }
-                    .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-                    .background(Color.red.opacity(0.1))
-                    .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    FilterBadge(text: "addFilter_duplicate"~, color: .red, systemImage: "xmark.circle.fill")
+                } else if self.isEditingText && self.showInvalidRegexError {
+                    FilterBadge(text: "addFilter_invalidRegex"~, color: .red, systemImage: "xmark.circle.fill")
                 }
             }
             
@@ -102,103 +98,80 @@ struct FilterListRowView: View {
                         Button {
                             self.model.updateFilter(filterTarget: filterTarget)
                         } label: {
-                            Text(filterTarget.name)
+                            Label(filterTarget.name, systemImage: filterTarget.icon)
                         }
                     }
                 } label: {
-                    Text(self.model.filter.filterTarget.multilineName.uppercased())
-                        .frame(width: badgeWidth, height: badgeHeight, alignment: .center)
-                        .font(.system(size: badgeFontSize, weight: .semibold, design: .default))
-                        .multilineTextAlignment(.center)
-                        .padding(EdgeInsets(top: 6, leading: 4, bottom: 6, trailing: 4))
-                        .background(Color.secondary.opacity(0.1))
-                        .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                        .foregroundColor(.secondary)
-                        .truncationMode(.middle)
-                } // Menu
-                .accessibilityLabel(String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
+                    OptionButton(image: Image(systemName: self.model.filter.filterTarget.icon),
+                                 isActive: self.model.filter.filterTarget != .all)
+                }
+                .accessibilityLabel(self.model.filter.filterMatching == .regex
+                    ? String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name) + ", " + String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name)
+                    : String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
 
-                Menu {
-                    ForEach(FilterMatching.allCases) { filterMatching in
-                        Button {
-                            self.model.updateFilter(filterMatching: filterMatching)
-                        } label: {
-                            Label(filterMatching.name, systemImage: filterMatching.icon)
+                if self.model.filter.filterMatching != .regex {
+                    Menu {
+                        ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
+                            Button {
+                                self.model.updateFilter(filterMatching: filterMatching)
+                            } label: {
+                                Label(filterMatching.name, systemImage: filterMatching.icon)
+                            }
                         }
-                    }
-                } label: {
-                    Button {
-                        self.model.updateFilter(filterMatching: self.model.filter.filterMatching.other)
                     } label: {
-                        let color = self.model.filter.filterMatching == .exact ? Color.green : .secondary
-                        
-                        Image(systemName: self.model.filter.filterMatching.icon)
-                            .resizable()
-                            .foregroundColor(color)
-                            .frame(width: matchingIconSize, height: matchingIconSize, alignment: .center)
-                            .padding(EdgeInsets(top: 7, leading: 7, bottom: 7, trailing: 7))
-                            .background(color.opacity(0.1))
-                            .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                        OptionButton(image: Image(systemName: self.model.filter.filterMatching.icon),
+                                     isActive: self.model.filter.filterMatching == .exact)
                     }
-                    .buttonStyle(BorderlessButtonStyle())
-                } // Menu
-                .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filter.filterMatching.name))
+                    .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filter.filterMatching.name))
 
-                Menu {
-                    ForEach(FilterCase.allCases) { filterCase in
-                        Button {
-                            self.model.updateFilter(filterCase: filterCase)
-                        } label: {
-                            Text(filterCase.name)
+                    Menu {
+                        ForEach(FilterCase.allCases) { filterCase in
+                            Button {
+                                self.model.updateFilter(filterCase: filterCase)
+                            } label: {
+                                Label(filterCase.name, systemImage: filterCase.icon)
+                            }
                         }
-                    }
-                } label: {
-                    Button {
-                        self.model.updateFilter(filterCase: self.model.filter.filterCase.other)
                     } label: {
-                        let color = self.model.filter.filterCase == .caseSensitive ? Color.green : .secondary
-                        
-                        Image("caseSensitive")
-                            .resizable()
-                            .foregroundColor(color)
-                            .frame(width: caseIconSize, height: caseIconSize, alignment: .center)
-                            .padding(EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6))
-                            .background(color.opacity(0.1))
-                            .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                        OptionButton(image: Image(systemName: self.model.filter.filterCase.icon),
+                                     isActive: self.model.filter.filterCase == .caseSensitive)
                     }
-                    .buttonStyle(BorderlessButtonStyle())
-                } // Menu
-                .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
+                    .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
+                }
             }
 
             if !self.isEditingText && self.model.filter.filterType.supportsFolders {
-                
                 Menu {
                     ForEach(DenyFolderType.allCases) { folder in
                         Button {
                             self.model.updateFilter(denyFolder: folder)
                         } label: {
-                            Label {
-                                Text(folder.name)
-                            } icon: {
-                                Image(systemName: folder.iconName)
-                            }
+                            Label(folder.name, systemImage: folder.iconName)
                         }
                     }
                 } label: {
-                    Image(systemName: self.model.filter.denyFolderType.iconName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(.secondary)
-                        .frame(width: folderIconSize, height: folderIconSize, alignment: .center)
-                        .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-                        .background(Color.secondary.opacity(0.1))
-                        .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                } // Menu
+                    OptionButton(image: Image(systemName: self.model.filter.denyFolderType.iconName), isActive: true)
+                }
                 .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.denyFolderType.name))
             }
         }  // HStack
         .accessibilityElement(children: .contain)
+    }
+
+    @ViewBuilder
+    private func OptionButton(image: Image, isActive: Bool) -> some View {
+        let color: Color = isActive ? .green : .secondary
+        image
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .foregroundStyle(color)
+            .frame(width: optionIconSize, height: optionIconSize)
+            .padding(7)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(Color.primary.opacity(0.12), lineWidth: 0.5)
+            )
     }
 }
 
@@ -249,9 +222,19 @@ extension FilterListRowView {
                 filterCase: self.filter.filterCase)
         }
 
+        func isLiveInvalidRegex(text: String) -> Bool {
+            guard self.filter.filterMatching == .regex, !text.isEmpty else { return false }
+            return (try? Regex(text)) == nil
+        }
+
         @discardableResult
         func updateFilter(filterText: String) -> Bool {
             guard filterText != self.filter.text else { return false }
+
+            if self.filter.filterMatching == .regex, (try? Regex(filterText)) == nil {
+                self.text = self.filter.text ?? ""
+                return true
+            }
 
             guard !self.appManager.persistanceManager.isDuplicateFilter(
                 text: filterText,

@@ -23,4 +23,10 @@ protocol AppManagerProtocol {
     func onAppLaunch()
     func onNewUserSession()
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel]
+
+    #if DEBUG
+    var debugDataManager: DebugDataManagerProtocol { get }
+    func loadDebugData()
+    func reset()
+    #endif // DEBUG
 }

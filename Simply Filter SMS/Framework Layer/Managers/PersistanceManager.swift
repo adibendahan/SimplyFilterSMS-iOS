@@ -385,117 +385,20 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     #if DEBUG
-    func loadDebugData() {
-        
-        let langCode = Bundle.main.preferredLocalizations[0]
-        
-        if langCode == "he" {
-            self.addFilter(text: "Adi",
-                           type: .allow,
-                           filterTarget: .body,
-                           filterMatching: .exact,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: "bit",
-                           type: .allow,
-                           filterTarget: .sender,
-                           filterMatching: .exact,
-                           filterCase: .caseSensitive)
-            
-            self.addFilter(text: "עדי",
-                           type: .allow,
-                           filterTarget: .body,
-                           filterMatching: .contains,
-                           filterCase: .caseInsensitive)
-            
-            
-            self.addFilter(text: "קנאביס",
-                           type: .deny,
-                           denyFolder: .junk,
-                           filterTarget: .all,
-                           filterMatching: .exact,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: "גנץ",
-                           type: .deny,
-                           denyFolder: .junk,
-                           filterTarget: .body,
-                           filterMatching: .contains,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: "נתניהו",
-                           type: .deny,
-                           denyFolder: .junk,
-                           filterTarget: .body,
-                           filterMatching: .contains,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: NLLanguage.arabic.filterText,
-                           type: .denyLanguage,
-                           denyFolder: .junk,
-                           filterTarget: .body,
-                           filterMatching: .contains,
-                           filterCase: .caseInsensitive)
+    func clearAllUserData() {
+        for filter in fetchFilterRecords() {
+            self.context.delete(filter)
         }
-        else {
-            self.addFilter(text: "Adi",
-                           type: .allow,
-                           filterTarget: .body,
-                           filterMatching: .exact,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: "Apple",
-                           type: .allow,
-                           filterTarget: .sender,
-                           filterMatching: .exact,
-                           filterCase: .caseSensitive)
-            
-            
-            self.addFilter(text: "Bet",
-                           type: .deny,
-                           denyFolder: .junk,
-                           filterTarget: .body,
-                           filterMatching: .exact,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: "Bitcoin",
-                           type: .deny,
-                           denyFolder: .transaction,
-                           filterTarget: .body,
-                           filterMatching: .contains,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: "Cash",
-                           type: .deny,
-                           denyFolder: .junk,
-                           filterTarget: .all,
-                           filterMatching: .contains,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: "Loan",
-                           type: .deny,
-                           denyFolder: .junk,
-                           filterTarget: .body,
-                           filterMatching: .contains,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: "Mortgage",
-                           type: .deny,
-                           denyFolder: .junk,
-                           filterTarget: .all,
-                           filterMatching: .contains,
-                           filterCase: .caseInsensitive)
-            
-            self.addFilter(text: NLLanguage.arabic.filterText,
-                           type: .denyLanguage,
-                           denyFolder: .junk,
-                           filterTarget: .body,
-                           filterMatching: .contains,
-                           filterCase: .caseInsensitive)
+        for language in fetchAutomaticFiltersLanguageRecords() {
+            self.context.delete(language)
         }
+        for rule in fetchAutomaticFiltersRuleRecords() {
+            self.context.delete(rule)
+        }
+        commitContext()
     }
 
-    func reset() {
+    func resetContainer() {
         // Get a reference to a NSPersistentStoreCoordinator
         let storeContainer = self.container.persistentStoreCoordinator
         
@@ -511,7 +414,7 @@ class PersistanceManager: PersistanceManagerProtocol {
 
         self.reloadContainer()
     }
-    #endif
+    #endif // DEBUG
     
     //MARK: - Private -
     private func fetch<T: NSManagedObject>(_ entity: T.Type,

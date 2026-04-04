@@ -57,8 +57,8 @@ class ReportMessageViewTests: XCTestCase {
         // Assert loading state is set synchronously
         XCTAssertEqual(self.testSubject.state, .loading)
 
-        // Wait for async task to complete
-        try? await Task.sleep(nanoseconds: 500_000_000)
+        // Wait for async task to complete (minimum delay in reportMessage is 1.5s)
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
 
         // Assert result state
         if case .result(let text) = self.testSubject.state {
@@ -82,7 +82,7 @@ class ReportMessageViewTests: XCTestCase {
 
         // Act
         self.testSubject.reportMessage()
-        try? await Task.sleep(nanoseconds: 500_000_000)
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
 
         // Assert
         XCTAssertEqual(self.mockReportService.reportMessageCounter, 1)
@@ -98,7 +98,7 @@ class ReportMessageViewTests: XCTestCase {
 
         // Act
         self.testSubject.reportMessage()
-        try? await Task.sleep(nanoseconds: 500_000_000)
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
 
         // Assert — result state reached regardless of service success/failure
         XCTAssertTrue(self.testSubject.state.isResult, "Should show result state even when service returns false")
