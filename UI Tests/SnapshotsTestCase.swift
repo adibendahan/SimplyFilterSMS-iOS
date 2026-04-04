@@ -42,6 +42,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         self.sleep(seconds: 1)
 
         app.tap(.countryAllowlistButton)
+        self.sleep(seconds: 2)
         snapshot("08.countryList")
         app.tap(.closeButton)
         self.sleep(seconds: isPad ? 2.0 : 0.5)
