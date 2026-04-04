@@ -105,7 +105,9 @@ struct FilterListRowView: View {
                     OptionButton(image: Image(systemName: self.model.filter.filterTarget.icon),
                                  isActive: self.model.filter.filterTarget != .all)
                 }
-                .accessibilityLabel(String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
+                .accessibilityLabel(self.model.filter.filterMatching == .regex
+                    ? String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name) + ", " + String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name)
+                    : String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
 
                 if self.model.filter.filterMatching != .regex {
                     Menu {
@@ -135,10 +137,6 @@ struct FilterListRowView: View {
                                      isActive: self.model.filter.filterCase == .caseSensitive)
                     }
                     .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
-                } else {
-                    OptionButton(image: Image(systemName: FilterMatching.regex.icon), isActive: true)
-                        .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name))
-                        .allowsHitTesting(false)
                 }
             }
 
@@ -172,7 +170,7 @@ struct FilterListRowView: View {
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(.white.opacity(0.25), lineWidth: 0.5)
+                    .strokeBorder(Color.primary.opacity(0.12), lineWidth: 0.5)
             )
     }
 }

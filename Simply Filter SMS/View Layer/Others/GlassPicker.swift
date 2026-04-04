@@ -27,7 +27,6 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var allCases: [T] { Array(T.allCases) }
     @Namespace private var chipNamespace
-    @State private var containerWidth: CGFloat = 0
 
     var body: some View {
         HStack(spacing: 0) {
@@ -55,12 +54,16 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
                 .buttonStyle(.plain)
             }
         }
+        .background(
+            HorizontalDragRecognizer(selection: $selection, allCases: allCases, reduceMotion: reduceMotion)
+        )
         .accessibilityRepresentation {
             Picker("", selection: $selection) {
                 ForEach(allCases) { option in
                     content(option).tag(option)
                 }
             }
+            .pickerStyle(.segmented)
         }
         .frame(height: 36)
         .padding(4)
@@ -74,23 +77,6 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
                             startPoint: .top,
                             endPoint: .bottom
                         ), lineWidth: 0.5)
-                }
-        )
-        .background(GeometryReader { geo in
-            Color.clear
-                .onAppear { containerWidth = geo.size.width }
-                .onChange(of: geo.size.width) { containerWidth = $0 }
-        })
-        .highPriorityGesture(
-            DragGesture(minimumDistance: 4)
-                .onChanged { value in
-                    let segmentWidth = containerWidth / CGFloat(allCases.count)
-                    let index = min(max(Int((value.location.x - segmentWidth / 3.0) / segmentWidth), 0), allCases.count - 1)
-                    let option = allCases[index]
-                    guard selection != option else { return }
-                    withAnimation(reduceMotion ? nil : .spring(response: 0.28, dampingFraction: 0.72)) {
-                        selection = option
-                    }
                 }
         )
     }
