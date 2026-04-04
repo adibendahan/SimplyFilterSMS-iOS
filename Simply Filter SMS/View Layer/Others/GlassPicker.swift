@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 private struct GlassPickerLabelStyle: LabelStyle {
     let isSelected: Bool
@@ -32,6 +33,7 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
         HStack(spacing: 0) {
             ForEach(allCases) { option in
                 Button {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                     withAnimation(reduceMotion ? nil : .spring(response: 0.28, dampingFraction: 0.72)) {
                         selection = option
                     }

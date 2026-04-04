@@ -67,6 +67,9 @@ where T: CaseIterable & Equatable, T.AllCases: RandomAccessCollection {
         }
 
         @objc func handlePan(_ pan: UIPanGestureRecognizer) {
+            if pan.state == .began {
+                pan.view?.window?.endEditing(true)
+            }
             guard pan.state == .changed, let view = pan.view else { return }
             let location = pan.location(in: view)
             let segmentWidth = view.bounds.width / CGFloat(allCases.count)

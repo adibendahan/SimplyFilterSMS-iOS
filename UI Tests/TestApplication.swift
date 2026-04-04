@@ -60,6 +60,8 @@ class TestApplication: XCUIApplication {
         self.buttonContaining(filterTarget.name).forceTap()
         self.buttonContaining(filterMatching.name).forceTap()
         self.buttonContaining(filterCase.name).forceTap()
+        self.textField(.filterText).forceTap()
+        self.testCase.sleep(seconds: 2)
         
         self.textField(.filterText).typeText(text + "\n")
         

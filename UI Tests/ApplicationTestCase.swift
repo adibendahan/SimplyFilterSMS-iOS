@@ -8,7 +8,7 @@
 import XCTest
 
 class ApplicationTestCase: XCTestCase {
-    private let snapshotBasePath = "/Users/adi/Developer/SimplyFilterSMS-iOS/.screenshots2"
+    private let snapshotBasePath = "/Users/adi/Developer/SimplyFilterSMS-iOS/.screenshots"
 
     override func setUp() {
         super.setUp()
