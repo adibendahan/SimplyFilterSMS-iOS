@@ -20,10 +20,11 @@ private struct GlassPickerLabelStyle: LabelStyle {
     }
 }
 
-struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable & Equatable, T.AllCases: RandomAccessCollection {
+struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable & Equatable & Hashable, T.AllCases: RandomAccessCollection {
     @Binding var selection: T
     let content: (T) -> Content
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var allCases: [T] { Array(T.allCases) }
     @Namespace private var chipNamespace
     @State private var containerWidth: CGFloat = 0
@@ -32,7 +33,7 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
         HStack(spacing: 0) {
             ForEach(allCases) { option in
                 Button {
-                    withAnimation(.spring(response: 0.28, dampingFraction: 0.72)) {
+                    withAnimation(reduceMotion ? nil : .spring(response: 0.28, dampingFraction: 0.72)) {
                         selection = option
                     }
                 } label: {
@@ -52,6 +53,13 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
                         }
                 }
                 .buttonStyle(.plain)
+            }
+        }
+        .accessibilityRepresentation {
+            Picker("", selection: $selection) {
+                ForEach(allCases) { option in
+                    content(option).tag(option)
+                }
             }
         }
         .frame(height: 36)
@@ -80,7 +88,7 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
                     let index = min(max(Int((value.location.x - segmentWidth / 3.0) / segmentWidth), 0), allCases.count - 1)
                     let option = allCases[index]
                     guard selection != option else { return }
-                    withAnimation(.spring(response: 0.28, dampingFraction: 0.72)) {
+                    withAnimation(reduceMotion ? nil : .spring(response: 0.28, dampingFraction: 0.72)) {
                         selection = option
                     }
                 }

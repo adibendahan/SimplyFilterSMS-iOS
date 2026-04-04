@@ -135,6 +135,10 @@ struct FilterListRowView: View {
                                      isActive: self.model.filter.filterCase == .caseSensitive)
                     }
                     .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
+                } else {
+                    OptionButton(image: Image(systemName: FilterMatching.regex.icon), isActive: true)
+                        .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name))
+                        .allowsHitTesting(false)
                 }
             }
 

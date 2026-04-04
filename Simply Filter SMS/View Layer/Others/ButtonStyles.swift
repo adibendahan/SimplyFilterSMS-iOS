@@ -33,6 +33,7 @@ struct FilterBadge: View {
             if let systemImage {
                 Image(systemName: systemImage)
                     .font(.footnote)
+                    .accessibilityHidden(true)
             }
             Text(text)
                 .font(.footnote)
@@ -43,6 +44,7 @@ struct FilterBadge: View {
         .padding(.vertical, 5)
         .background(color.opacity(0.12))
         .clipShape(Capsule())
+        .accessibilityElement(children: .combine)
     }
 }
 

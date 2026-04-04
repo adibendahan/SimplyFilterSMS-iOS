@@ -134,6 +134,16 @@ struct AddFilterView: View {
                                 HStack {
                                     TextField("addFilter_regexTestPlaceholder"~, text: $model.regexTestText)
                                         .focused($focusedField, equals: .regexTest)
+                                        .onSubmit {
+                                            switch model.regexTestResult {
+                                            case .match:
+                                                UIAccessibility.post(notification: .announcement, argument: "addFilter_regexMatch"~)
+                                            case .noMatch:
+                                                UIAccessibility.post(notification: .announcement, argument: "addFilter_regexNoMatch"~)
+                                            case .invalidPattern, .empty:
+                                                break
+                                            }
+                                        }
 
                                     switch self.model.regexTestResult {
                                     case .match:
