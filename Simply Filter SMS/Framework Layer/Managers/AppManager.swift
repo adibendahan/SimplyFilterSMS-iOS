@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NaturalLanguage
 import Network
 import OSLog
 import UIKit
@@ -22,6 +23,7 @@ class AppManager: AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol
     var reportMessageService: ReportMessageServiceProtocol
     var tipJarManager: TipJarManagerProtocol
+    var debugDataManager: DebugDataManagerProtocol
 
     init(inMemory: Bool = false) {
         let persistanceManager = PersistanceManager(inMemory: inMemory)
@@ -33,20 +35,24 @@ class AppManager: AppManagerProtocol {
         
         messageEvaluationManager.setLogger(AppManager.logger)
         
+        let automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager,
+                                                             amazonS3Service: amazonS3Service)
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
-        self.automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager,
-                                                             amazonS3Service: amazonS3Service)
+        self.automaticFilterManager = automaticFilterManager
         self.messageEvaluationManager = messageEvaluationManager
         self.networkSyncManager = networkSyncManager
         self.amazonS3Service = amazonS3Service
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
+        self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
+                                                 defaultsManager: defaultsManager,
+                                                 automaticFilterManager: automaticFilterManager)
 
         #if DEBUG
         if UIApplication.shared.isInTestingMode {
             defaultsManager.reset()
-            persistanceManager.reset()
+            persistanceManager.resetContainer()
             let emptyList = LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])
             let seedCache = AutomaticFilterListsResponse(filterLists: [
                 "en": emptyList, "he": emptyList, "ar": emptyList,
@@ -55,7 +61,7 @@ class AppManager: AppManagerProtocol {
             ])
             persistanceManager.saveCache(with: seedCache)
         }
-        #endif
+        #endif // DEBUG
     }
     
     func onAppLaunch() {
@@ -103,16 +109,27 @@ class AppManager: AppManagerProtocol {
                 QuestionView.ViewModel(text: "help_automaticFiltering_question"~, answer: "help_automaticFiltering"~)]
     }
     
+    #if DEBUG
+    func loadDebugData() {
+        debugDataManager.load()
+    }
+
+    func reset() {
+        self.defaultsManager.reset()
+        self.persistanceManager.clearAllUserData()
+    }
+    #endif // DEBUG
+
     //MARK: - Previews -
     static private var inMemoryManager = AppManager(inMemory: true)
     static private var didLoadDebugData = false
     static var previews: AppManagerProtocol {
         #if DEBUG
         if !didLoadDebugData {
-            inMemoryManager.persistanceManager.loadDebugData()
+            inMemoryManager.loadDebugData()
             didLoadDebugData = true
         }
-        #endif
+        #endif // DEBUG
         return inMemoryManager
     }
 }

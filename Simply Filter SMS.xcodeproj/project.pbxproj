@@ -76,6 +76,9 @@
 		69AA2C57279D78E700CEABE5 /* DefaultsManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C56279D78E700CEABE5 /* DefaultsManagerProtocol.swift */; };
 		69AA2C59279D793600CEABE5 /* DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C58279D793600CEABE5 /* DefaultsManager.swift */; };
 		69B2A9A9279CD89E000DFAFC /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2A9A8279CD89E000DFAFC /* AppManager.swift */; };
+		E35862B339E54B54A79D65A2AF0C8C10 /* DebugDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461600A3BF8E48F5A39D9B0C9CC8C77D /* DebugDataManager.swift */; };
+		EABCA17395164EA18CE84A83BA8BAF39 /* DebugDataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76CE78982A134F52B1487E949E3617F9 /* DebugDataManagerProtocol.swift */; };
+		C05FA5740F8443179A8D3FCD817FB3FE /* mock_DebugDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFBDEA463B84374A61E16E73070A6E4 /* mock_DebugDataManager.swift */; };
 		69B2A9AB279CD964000DFAFC /* PersistanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */; };
 		69B2D03227A5B0E600F965AB /* StatefulItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2D03127A5B0E600F965AB /* StatefulItem.swift */; };
 		69C1A0022F12A26100D1E2F3 /* WhatsNewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C1A0012F12A26100D1E2F3 /* WhatsNewView.swift */; };
@@ -196,6 +199,7 @@
 		4E6E3998CCF6470F8F6A40A36EE19752 /* RefreshControlDisabler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlDisabler.swift; sourceTree = "<group>"; };
 		4EC977832345515DCFE3C478 /* EnableExtensionStepProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionStepProtocol.swift; sourceTree = "<group>"; };
 		5EC0828F3E9490539D2623CD /* mock_TipJarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_TipJarManager.swift; sourceTree = "<group>"; };
+		DDFBDEA463B84374A61E16E73070A6E4 /* mock_DebugDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_DebugDataManager.swift; sourceTree = "<group>"; };
 		64956935AAF96BFE1AD24A37 /* TipJarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipJarManager.swift; sourceTree = "<group>"; };
 		690D709B27B31DC0001880DA /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		690F054D278200B60036553B /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
@@ -262,9 +266,11 @@
 		69A2EE472F450B3B0033B191 /* TipJar.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = TipJar.storekit; sourceTree = "<group>"; };
 		69AA2C51279D755200CEABE5 /* PersistanceManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceManagerProtocol.swift; sourceTree = "<group>"; };
 		69AA2C54279D75B100CEABE5 /* AppManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManagerProtocol.swift; sourceTree = "<group>"; };
+		76CE78982A134F52B1487E949E3617F9 /* DebugDataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugDataManagerProtocol.swift; sourceTree = "<group>"; };
 		69AA2C56279D78E700CEABE5 /* DefaultsManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManagerProtocol.swift; sourceTree = "<group>"; };
 		69AA2C58279D793600CEABE5 /* DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManager.swift; sourceTree = "<group>"; };
 		69B2A9A8279CD89E000DFAFC /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
+		461600A3BF8E48F5A39D9B0C9CC8C77D /* DebugDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugDataManager.swift; sourceTree = "<group>"; };
 		69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceManager.swift; sourceTree = "<group>"; };
 		69B2D03127A5B0E600F965AB /* StatefulItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatefulItem.swift; sourceTree = "<group>"; };
 		69C1A0012F12A26100D1E2F3 /* WhatsNewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewView.swift; sourceTree = "<group>"; };
@@ -398,6 +404,7 @@
 				69ECF14D286777ED000380A2 /* mock_ReportMessageService.swift */,
 				691D57C927BB2E0500DDA267 /* mock_HTTPService.swift */,
 				5EC0828F3E9490539D2623CD /* mock_TipJarManager.swift */,
+				DDFBDEA463B84374A61E16E73070A6E4 /* mock_DebugDataManager.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -476,6 +483,7 @@
 			isa = PBXGroup;
 			children = (
 				69AA2C54279D75B100CEABE5 /* AppManagerProtocol.swift */,
+				76CE78982A134F52B1487E949E3617F9 /* DebugDataManagerProtocol.swift */,
 				69AA2C51279D755200CEABE5 /* PersistanceManagerProtocol.swift */,
 				69AA2C56279D78E700CEABE5 /* DefaultsManagerProtocol.swift */,
 				6982FE8827A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift */,
@@ -491,6 +499,7 @@
 			children = (
 				69AA2C53279D757600CEABE5 /* Protocols */,
 				69B2A9A8279CD89E000DFAFC /* AppManager.swift */,
+				461600A3BF8E48F5A39D9B0C9CC8C77D /* DebugDataManager.swift */,
 				69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */,
 				69AA2C58279D793600CEABE5 /* DefaultsManager.swift */,
 				6982FE8A27A6FBA000BF6AA4 /* AutomaticFilterManager.swift */,
@@ -913,6 +922,7 @@
 				69F3D32B27B9824B00D7DDA7 /* mock_AmazonS3Service.swift in Sources */,
 				690F09C927AC310600BA481F /* mock_AutomaticFilterManager.swift in Sources */,
 				3E71FB36F8B1A765DE7AD92F /* mock_TipJarManager.swift in Sources */,
+				C05FA5740F8443179A8D3FCD817FB3FE /* mock_DebugDataManager.swift in Sources */,
 				69F3D32427B961E800D7DDA7 /* AutomaticFilterManagerTests.swift in Sources */,
 				32E703F6EE6DCF1AE4C4C0F9 /* ReportMessageViewTests.swift in Sources */,
 			);
@@ -961,6 +971,8 @@
 				69FF9C8627921DCC007FA2DB /* QuestionView.swift in Sources */,
 				69CD70CA2770D4D100F91A2F /* Simply_Filter_SMSApp.swift in Sources */,
 				69B2A9A9279CD89E000DFAFC /* AppManager.swift in Sources */,
+				E35862B339E54B54A79D65A2AF0C8C10 /* DebugDataManager.swift in Sources */,
+				EABCA17395164EA18CE84A83BA8BAF39 /* DebugDataManagerProtocol.swift in Sources */,
 				69D87E442877445E00266D86 /* ReportMessageView.swift in Sources */,
 				69B2A9AB279CD964000DFAFC /* PersistanceManager.swift in Sources */,
 				69F4096F27B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */,

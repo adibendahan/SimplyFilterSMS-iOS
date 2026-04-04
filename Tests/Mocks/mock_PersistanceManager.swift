@@ -253,9 +253,6 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.setSelectedCountriesCounter = 0
     }
     
-    func loadDebugData() {
-        self.persistance.loadDebugData()
-    }
-    
-    func reset() { }
+    func clearAllUserData() { }
+    func resetContainer() { }
 }

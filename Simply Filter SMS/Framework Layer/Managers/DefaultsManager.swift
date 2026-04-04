@@ -53,13 +53,13 @@ class DefaultsManager: DefaultsManagerProtocol {
         }
     }
     
-#if DEBUG
+    #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)
         }
     }
-#endif
+    #endif // DEBUG
 }

@@ -57,8 +57,8 @@ protocol PersistanceManagerProtocol: AnyObject {
     func setSelectedCountries(_ countries: [String], for rule: RuleType)
 
     #if DEBUG
-    func loadDebugData()
-    func reset()
-    #endif
+    func clearAllUserData()
+    func resetContainer()
+    #endif // DEBUG
 }
 

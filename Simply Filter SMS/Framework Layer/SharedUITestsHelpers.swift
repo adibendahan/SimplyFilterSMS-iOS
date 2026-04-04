@@ -19,7 +19,7 @@ extension UIApplication {
         return ProcessInfo.processInfo.isInTestingMode
     }
 }
-#endif
+#endif // DEBUG
 
 
 enum TestIdentifier: String {
@@ -35,6 +35,7 @@ enum TestIdentifier: String {
     case closeButton = "closeButton"
     case filterText = "filterText"
     case appMenuButton = "appMenuButton"
+    case debugToolsButton = "debugToolsButton"
     case loadDebugDataMenuButton = "loadDebugDataMenuButton"
     case testYourFiltersMenuButton = "testYourFiltersMenuButton"
     case testYourFiltersButton = "testYourFiltersButton"

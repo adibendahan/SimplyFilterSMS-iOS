@@ -11,9 +11,6 @@ import StoreKit
 //MARK: - View -
 struct AppHomeView: View {
     
-    @Environment(\.isDebug)
-    var isDebug
-    
     @Environment(\.isPreview)
     var isPreview
     
@@ -329,14 +326,25 @@ struct AppHomeView: View {
     private func NavigationBarTrailingItem() -> some View {
         Menu {
 
-            if isDebug {
+            #if DEBUG
+            Menu {
                 Button {
                     self.model.loadDebugData()
                 } label: {
                     Label("filterList_menu_debug"~, systemImage: "chevron.left.forwardslash.chevron.right")
                 }
                 .accessibilityIdentifier(TestIdentifier.loadDebugDataMenuButton.rawValue)
+
+                Button(role: .destructive) {
+                    self.model.reset()
+                } label: {
+                    Label("Reset", systemImage: "trash")
+                }
+            } label: {
+                Label("Debug Tools", systemImage: "hammer")
             }
+            .accessibilityIdentifier(TestIdentifier.debugToolsButton.rawValue)
+            #endif // DEBUG
 
             Menu {
                 Button {
@@ -637,12 +645,17 @@ extension AppHomeView {
             }
         }
         
+        #if DEBUG
         func loadDebugData() {
-            #if DEBUG
-            self.appManager.persistanceManager.loadDebugData()
-            #endif
+            self.appManager.loadDebugData()
             self.refresh()
         }
+
+        func reset() {
+            self.appManager.reset()
+            self.refresh()
+        }
+        #endif // DEBUG
         
         func handleDeepLink(url: URL) {
             guard url.scheme == "simplyfiltersms",

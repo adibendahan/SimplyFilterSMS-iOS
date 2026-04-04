@@ -22,7 +22,8 @@ class mock_AppManager: AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol = mock_AmazonS3Service()
     var reportMessageService: ReportMessageServiceProtocol = mock_ReportMessageService()
     var tipJarManager: TipJarManagerProtocol = mock_TipJarManager()
-    
+    var debugDataManager: DebugDataManagerProtocol = mock_DebugDataManager()
+
     var getFrequentlyAskedQuestionsCounter = 0
     var onAppLaunchCounter = 0
     var onNewUserSessionCounter = 0
@@ -48,4 +49,7 @@ class mock_AppManager: AppManagerProtocol {
     func resetCounters() {
         self.getFrequentlyAskedQuestionsCounter = 0
     }
+
+    func loadDebugData() { }
+    func reset() { }
 }
