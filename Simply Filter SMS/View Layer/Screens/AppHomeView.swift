@@ -598,11 +598,14 @@ extension AppHomeView {
             guard !self.didShowNotificationThisSession else { return }
 
             self.notification.setNotification(.enableReportingExtension)
-            self.notification.onTap = {
+            let onTap = { [weak self] in
+                guard let self = self else { return }
                 self.appManager.defaultsManager.didDismissReportingExtensionNudge = true
                 withAnimation { self.notification.show = false }
                 self.sheetScreen = .enableReportingExtension
             }
+            self.notification.onTap = onTap
+            self.notification.setOnButtonTap(onTap)
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 withAnimation {
                     self.notification.show = true
