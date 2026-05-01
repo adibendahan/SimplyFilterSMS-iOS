@@ -31,9 +31,7 @@ enum Screen: Int, Identifiable, Hashable {
                 onCTA: {
                     var defaultsManager = AppManager.shared.defaultsManager
                     defaultsManager.isAppFirstRun = false
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
+                    UIApplication.shared.openSettings()
                 }
             ))
 
@@ -54,9 +52,7 @@ enum Screen: Int, Identifiable, Hashable {
                 onCTA: {
                     var defaultsManager = AppManager.shared.defaultsManager
                     defaultsManager.isAppFirstRun = false
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
+                    UIApplication.shared.openSettings()
                 }
             ))
 
@@ -103,11 +99,7 @@ enum Screen: Int, Identifiable, Hashable {
                 description: "enableReportingExtension_desc"~,
                 isInteractiveDismissDisabled: false,
                 onDismiss: {},
-                onCTA: {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                }
+                onCTA: UIApplication.shared.openSettings
             ))
         }
     }
