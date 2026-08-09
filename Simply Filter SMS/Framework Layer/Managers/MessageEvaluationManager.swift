@@ -47,20 +47,20 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         defer {
             logger?.debug("━━━━ Final decision: action=\(result.action.logName, privacy: .public), reason='\(result.reason ?? "", privacy: .public)' ━━━━")
         }
-        // Priority #1 - allUnknown (absolute gate, overrides everything)
-        result = self.runAllUnknownRule()
-        guard !result.action.isFiltered else {
-            logger?.debug("Priority #1 (allUnknown) → DECISION: \(result.action.logName, privacy: .public)")
-            return result
-        }
-        logger?.debug("Priority #1 (allUnknown) → not active, continuing")
-        // Priority #2 - Allow Filters
+        // Priority #1 - Allow Filters
         result = self.runUserFilters(type: .allow, body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #2 (Allow Filters) → DECISION: \(result.action.logName, privacy: .public)")
+            logger?.debug("Priority #1 (Allow Filters) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
-        logger?.debug("Priority #2 (Allow Filters) → no match, continuing")
+        logger?.debug("Priority #1 (Allow Filters) → no match, continuing")
+        // Priority #2 - allUnknown (absolute gate, overrides everything)
+        result = self.runAllUnknownRule()
+        guard !result.action.isFiltered else {
+            logger?.debug("Priority #2 (allUnknown) → DECISION: \(result.action.logName, privacy: .public)")
+            return result
+        }
+        logger?.debug("Priority #2 (allUnknown) → not active, continuing")
         // Priority #3 - Automatic Filters (allow)
         result = self.runAutomaticFiltersAllow(body: body, sender: sender)
         guard !result.action.isFiltered else {

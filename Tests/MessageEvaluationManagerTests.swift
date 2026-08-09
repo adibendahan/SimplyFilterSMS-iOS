@@ -278,8 +278,8 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(result, .allow, "countryAllowlist with isActive=false should skip the rule and allow")
     }
 
-    // P1 allUnknown overrides P2 allow filters — even an explicit allow match must not escape allUnknown
-    func test_priorityOrder_allUnknownBeatsAllowFilters() {
+    // P1 allUnknown overrides P2 allow filters — explicit allow veats everything
+    func test_priorityOrder_allowFiltersBeatsAllUnknown() {
         self.flushPersistanceManager()
 
         let allowFilter = Filter(context: self.testSubject.context)
@@ -296,7 +296,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         try? self.testSubject.context.save()
 
         let result = self.testSubject.evaluateMessage(body: "hello world", sender: "1234567").action
-        XCTAssertEqual(result, .junk, "allUnknown must override allow filters")
+        XCTAssertEqual(result, .allow, "allow filters must override allUnknown")
     }
 
     // P3 automatic allowSenders overrides P4 rules — trusted sender with a link must not be blocked by links rule
