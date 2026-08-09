@@ -1,2 +1,1 @@
-Regex Filters - Create powerful pattern-matching filters using regular expressions for precise control.
-Multiple bug fixes and performance improvements.
+Minor bug fixes and performance improvements.

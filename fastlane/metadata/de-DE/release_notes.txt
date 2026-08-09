@@ -1,2 +1,1 @@
-Regex-Filter - Erstelle leistungsstarke Mustererkennungsfilter mit regulären Ausdrücken für präzise Kontrolle.
-Mehrere Fehlerbehebungen und Leistungsverbesserungen.
+Kleinere Fehlerbehebungen und Leistungsverbesserungen.

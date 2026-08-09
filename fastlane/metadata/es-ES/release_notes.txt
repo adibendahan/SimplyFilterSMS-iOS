@@ -1,2 +1,1 @@
-Filtros Regex - Crea potentes filtros de coincidencia de patrones usando expresiones regulares para un control preciso.
-Múltiples correcciones de errores y mejoras de rendimiento.
+Pequeñas correcciones de errores y mejoras de rendimiento.

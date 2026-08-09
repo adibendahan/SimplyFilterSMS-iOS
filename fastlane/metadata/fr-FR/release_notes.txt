@@ -1,2 +1,1 @@
-Filtres Regex - Créez des filtres de correspondance de motifs puissants avec des expressions régulières pour un contrôle précis.
-Plusieurs corrections de bugs et améliorations des performances.
+Corrections mineures de bugs et améliorations des performances.
