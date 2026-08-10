@@ -4,7 +4,7 @@ description: Review user-reported messages from DynamoDB, compile filter suggest
 license: MIT
 metadata:
   author: SimplyFilterSMS
-  version: "1.2"
+  version: "1.3"
 ---
 
 Review user-reported messages and turn them into automatic filter suggestions.
@@ -22,14 +22,20 @@ Review user-reported messages and turn them into automatic filter suggestions.
 
 ## CRITICAL — no irreversible deletes without archive
 
-**DynamoDB deletes are permanent.** Point-in-time recovery may be disabled. Never treat the table as disposable.
+**DynamoDB deletes are permanent.** Point-in-time recovery may be disabled. Never treat the table as disposable. Reported messages are irreplaceable user content.
+
+Also mirrored in `.cursor/rules/never-destroy-user-data.mdc` (always-apply).
 
 **Hard rules (non-negotiable):**
-1. **Before the first DynamoDB delete of a session**, export the **entire** current table to a local JSON archive and verify the file.
-2. **Never delete mid-batch during review.** Mark records processed/dismissed in local state only until the user explicitly asks to clear the table (or finish cleanup).
-3. Before any bulk clear / table wipe: confirm the archive file exists, `count` in the archive matches a fresh DynamoDB scan, and get explicit user confirmation.
-4. If archive write fails or counts don't match — **STOP. Do not delete anything.**
-5. When in doubt, ask the user before any destructive action.
+1. **Session start with any table data:** run `archive` first; print path, count, size; keep dated unique snapshots.
+2. **Before the first DynamoDB delete of a session**, export the **entire** current table to a local JSON archive and verify the file.
+3. **Never delete mid-batch during review.** Mark records processed/dismissed in local state only until the user explicitly asks to clear the table (or finish cleanup). During review: **zero** DynamoDB deletes.
+4. Before any bulk clear / table wipe: confirm the archive file exists, `count` in the archive matches a fresh DynamoDB scan, and get explicit user confirmation (show path + count).
+5. If archive write fails or counts don't match — **STOP. Do not delete anything.**
+6. **Never overwrite a good archive** with a smaller/empty scan. Dated files must use unique timestamps.
+7. **Never** treat "fixing docs/tools" as permission to run destructive or archive-overwrite commands against live data.
+8. **Never** assume chat history, tool transcripts, or `/tmp` will retain recoverable copies — write durable local files.
+9. When in doubt, ask the user before any destructive action. Prefer keeping uncertain rows in DynamoDB over deleting them.
 
 ### Archive format
 

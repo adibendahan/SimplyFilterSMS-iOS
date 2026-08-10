@@ -1,0 +1,22 @@
+---
+description: Hard ban on irreversible data destruction for DynamoDB, S3, and local archives
+alwaysApply: true
+---
+
+# NEVER destroy user data
+
+Reported messages and filter archives are irreplaceable user content. Treat every delete as permanent.
+
+## Never do
+
+- **Never** DynamoDB-delete (single, batch, or wipe) without a verified full-table local archive first.
+- **Never** delete mid-review. Local dismiss/process only until the user explicitly asks to clear the table.
+- **Never** overwrite an archive with a smaller or empty dump. Dated unique filenames; refuse shrink/empty overwrite.
+- **Never** treat "fixing docs/tools" as permission to run destructive or overwrite commands against live data or archives.
+- **Never** assume chat history, tool transcripts, or `/tmp` will retain recoverable copies.
+- **Never** skip user confirmation before any wipe/clear of DynamoDB or any other durable store.
+- If archive write fails or counts don't match live data — **STOP. Delete nothing.**
+
+## Required pattern
+
+Archive → verify count/path/size → (optional) user confirms wipe → only then delete. See `.claude/skills/review-reports/SKILL.md`.
