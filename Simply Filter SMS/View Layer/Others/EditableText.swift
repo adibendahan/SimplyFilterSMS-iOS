@@ -10,12 +10,8 @@ import SwiftUI
 struct EditableText: View {
     @Binding private var text: String
     @FocusState private var isFocused: Bool
-    @State private var newValue: String = ""
-    @State private var editProcessGoing = false {
-        didSet {
-            self.newValue = self.text
-        }
-    }
+    @State private var newValue: String
+    @State private var editProcessGoing = false
 
     private var onCommit: (() -> ())?
     private var onEditingChanged: ((Bool) -> ())?
@@ -31,6 +27,7 @@ struct EditableText: View {
                 onTextChange: ((String) -> ())? = nil) {
 
         self._text = text
+        self._newValue = State(initialValue: text.wrappedValue)
         self.onCommit = onCommit
         self.onEditingChanged = onEditingChanged
         self.onTextChange = onTextChange
@@ -40,7 +37,7 @@ struct EditableText: View {
 
     @ViewBuilder
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .leading) {
             if let attributedText {
                 let displayText = editProcessGoing ? newValue : text
                 Text(displayText.isEmpty ? AttributedString("") : attributedText(displayText))
@@ -53,6 +50,8 @@ struct EditableText: View {
                     .accessibilityHidden(true)
             }
 
+            // Keep the TextField hittable at full width when idle (tap-to-edit), but
+            // opacity 0 so it does not paint a second RTL copy over the display Text.
             TextField(
                 "",
                 text: $newValue,
@@ -75,7 +74,7 @@ struct EditableText: View {
                     self.editProcessGoing = false
                     onCommit?()
                 })
-            .opacity(self.editProcessGoing || attributedText == nil ? 1 : 0)
+            .opacity(self.editProcessGoing ? 1 : 0)
             .foregroundColor(attributedText != nil ? .clear : .primary)
             .frame(maxWidth: .infinity, alignment: .leading)
             .focused($isFocused)
@@ -84,14 +83,21 @@ struct EditableText: View {
                 self.onTextChange?(value)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
         .onTapGesture(count: 1, perform: {
-            self.isFocused = true
-            self.editProcessGoing = true
+            self.beginEditing()
         })
         .onChange(of: isFocused) { focused in
             if focused && !editProcessGoing {
-                editProcessGoing = true
+                beginEditing()
             }
         }
+    }
+
+    private func beginEditing() {
+        newValue = text
+        isFocused = true
+        editProcessGoing = true
     }
 }
