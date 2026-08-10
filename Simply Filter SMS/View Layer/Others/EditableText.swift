@@ -8,10 +8,27 @@
 import SwiftUI
 
 struct EditableText: View {
+
+    private enum EndReason {
+        case onCommit
+        case onEditingChanged
+        case focusChanged
+
+        var logDescription: String {
+            switch self {
+            case .onCommit: return "onCommit"
+            case .onEditingChanged: return "onEditingChanged(false)"
+            case .focusChanged: return "focusChanged"
+            }
+        }
+    }
+
     @Binding private var text: String
-    @FocusState private var isFocused: Bool
+    private let focusID: UUID
+    private var focusedID: FocusState<UUID?>.Binding
+
     @State private var newValue: String
-    @State private var editProcessGoing = false
+    @State private var sessionActive = false
 
     private var onCommit: (() -> ())?
     private var onEditingChanged: ((Bool) -> ())?
@@ -20,6 +37,8 @@ struct EditableText: View {
     private var attributedText: ((String) -> AttributedString)?
 
     public init(_ text: Binding<String>,
+                focusID: UUID,
+                focusedID: FocusState<UUID?>.Binding,
                 minimumCharacters: Int = 0,
                 attributedText: ((String) -> AttributedString)? = nil,
                 onCommit: (() -> ())? = nil,
@@ -27,6 +46,8 @@ struct EditableText: View {
                 onTextChange: ((String) -> ())? = nil) {
 
         self._text = text
+        self.focusID = focusID
+        self.focusedID = focusedID
         self._newValue = State(initialValue: text.wrappedValue)
         self.onCommit = onCommit
         self.onEditingChanged = onEditingChanged
@@ -35,41 +56,50 @@ struct EditableText: View {
         self.attributedText = attributedText
     }
 
+    private var isFocused: Bool {
+        focusedID.wrappedValue == focusID
+    }
+
+    private var isEditorVisible: Bool {
+        sessionActive || isFocused
+    }
+
     @ViewBuilder
     public var body: some View {
         ZStack(alignment: .leading) {
             if let attributedText {
-                let displayText = editProcessGoing ? newValue : text
+                let displayText = isEditorVisible ? newValue : text
                 Text(displayText.isEmpty ? AttributedString("") : attributedText(displayText))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityHidden(true)
             } else {
                 Text(self.text)
-                    .opacity(self.editProcessGoing ? 0 : 1)
+                    .opacity(isEditorVisible ? 0 : 1)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityHidden(true)
             }
 
-            // Keep the TextField hittable at full width when idle (tap-to-edit), but
-            // opacity 0 so it does not paint a second RTL copy over the display Text.
             TextField(
                 "",
                 text: $newValue,
                 onEditingChanged: { isEditing in
-                    AppManager.logger.debug("EditableText.onEditingChanged — isEditing: \(isEditing, privacy: .public), editProcessGoing: \(editProcessGoing, privacy: .public)")
-                    self.onEditingChanged?(isEditing)
-                    if !isEditing {
-                        finishEditingIfNeeded(source: "onEditingChanged(false)")
+                    AppManager.logger.debug("EditableText.onEditingChanged — isEditing: \(isEditing, privacy: .public), sessionActive: \(sessionActive, privacy: .public)")
+                    if isEditing {
+                        if !sessionActive {
+                            beginEditing()
+                        }
+                    } else {
+                        finishEditingIfNeeded(reason: .onEditingChanged)
                     }
                 },
                 onCommit: {
-                    AppManager.logger.debug("EditableText.onCommit — editProcessGoing: \(editProcessGoing, privacy: .public)")
-                    finishEditingIfNeeded(source: "onCommit")
+                    AppManager.logger.debug("EditableText.onCommit — sessionActive: \(sessionActive, privacy: .public)")
+                    finishEditingIfNeeded(reason: .onCommit)
                 })
-            .opacity(self.editProcessGoing ? 1 : 0)
+            .opacity(isEditorVisible ? 1 : 0)
             .foregroundColor(attributedText != nil ? .clear : .primary)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .focused($isFocused)
+            .focused(focusedID, equals: focusID)
             .accessibilityLabel(self.text)
             .onChange(of: newValue) { value in
                 self.onTextChange?(value)
@@ -80,36 +110,54 @@ struct EditableText: View {
         .onTapGesture(count: 1, perform: {
             self.beginEditing()
         })
-        .onChange(of: isFocused) { focused in
-            if focused && !editProcessGoing {
-                beginEditing()
+        .onChange(of: focusedID.wrappedValue) { newFocus in
+            if newFocus == focusID {
+                if !sessionActive {
+                    beginEditing()
+                }
+            } else if sessionActive {
+                finishEditingIfNeeded(reason: .focusChanged)
             }
         }
     }
 
     private func beginEditing() {
-        newValue = text
-        isFocused = true
-        editProcessGoing = true
-    }
-
-    /// Return fires both TextField.onCommit and onEditingChanged(false). Guard so business
-    /// onCommit (save/refresh) runs only once per edit session.
-    private func finishEditingIfNeeded(source: String) {
-        guard editProcessGoing else {
-            AppManager.logger.debug("EditableText — finish ignored from \(source, privacy: .public) (already finished)")
+        guard !sessionActive else {
+            focusedID.wrappedValue = focusID
             return
         }
 
-        if minimumCharacters == 0 || newValue.count >= minimumCharacters {
+        newValue = text
+        sessionActive = true
+        focusedID.wrappedValue = focusID
+        onEditingChanged?(true)
+        AppManager.logger.debug("EditableText.beginEditing — sessionActive: true")
+    }
+
+    private func finishEditingIfNeeded(reason: EndReason) {
+        guard sessionActive else {
+            AppManager.logger.debug("EditableText — finish ignored from \(reason.logDescription, privacy: .public) (no active session)")
+            return
+        }
+
+        let shouldCommit = minimumCharacters == 0 || newValue.count >= minimumCharacters
+        if shouldCommit {
             text = newValue
         } else {
             newValue = text
         }
 
-        editProcessGoing = false
-        isFocused = false
-        AppManager.logger.debug("EditableText — invoking onCommit from \(source, privacy: .public)")
-        onCommit?()
+        sessionActive = false
+        if focusedID.wrappedValue == focusID {
+            focusedID.wrappedValue = nil
+        }
+        onEditingChanged?(false)
+
+        if shouldCommit {
+            AppManager.logger.debug("EditableText — invoking onCommit from \(reason.logDescription, privacy: .public)")
+            onCommit?()
+        } else {
+            AppManager.logger.debug("EditableText — skipped onCommit from \(reason.logDescription, privacy: .public) (below minimumCharacters)")
+        }
     }
 }

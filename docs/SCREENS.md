@@ -269,10 +269,13 @@ A `NavigationView` wrapping a `ScrollView` with a `VStack`:
 
 ### Layout
 
-Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). A `List` with multi-selection support (`selection: $model.selectedFilters`) containing a single section:
-- **Header** — Column labels: "Text" (or "Language") + "Options" (or "Folder").
-- **Rows** — `ForEach` over `model.filters` rendering `FilterListRowView` components. Supports `.onDelete` for swipe-to-delete.
-- **Footer** — Help text explaining the filter type + an `AddFilterButton` at the bottom (opens the appropriate add-filter sheet). The button is hidden for `.denyLanguage` when no more languages are available to block.
+Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). Uses `@StateObject` for the ViewModel. A `List` with multi-selection support (`selection: $model.selectedFilters`) inside a `ScrollViewReader`:
+- **Regular section** — `ForEach` over `model.regularRowViewModels` (non-regex). Header labels: "Text" (or "Language") + "Options" (or "Folder"). Supports `.onDelete`.
+- **Regex section** — Shown when any regex filters exist. Same row component; header is the regex match label. Footer (help text + `AddFilterButton`) lives on this section when present, otherwise on the regular section.
+- **Footer** — Help text explaining the filter type + an `AddFilterButton` (opens the appropriate add-filter sheet). The button is hidden for `.denyLanguage` when no more languages are available to block.
+- **Identity** — Row identity, scroll targets, new-item dots, and inline-edit focus all use `Filter.uuid` (`UUID`), not `NSManagedObjectID`.
+- **Focus** — List-owned `@FocusState private var focusedFilterID: UUID?`. Tap outside clears focus and calls `hideKeyboard()`.
+- **New filter highlight** — `newlyAddedFilter` drives `dotFilterID` + `scrollTo` by UUID; row shows a fading accent `Circle` via `.onAppear` / `.onChange`.
 
 ### Navigation Bar
 
@@ -284,24 +287,26 @@ Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). A `List`
 
 - `filterType: FilterType` — Set at init, determines which filters to fetch and which add-filter screen to present.
 - `filters: [Filter]` — Fetched from `PersistanceManager.fetchFilterRecords(for:)`, filtered by type.
+- `rowViewModels: [FilterListRowView.ViewModel]` — Cached row ViewModels, rebuilt/updated in `updateRowViewModels()` keyed by `id` (`Filter.uuid`). `ForEach` uses `regularRowViewModels` / `regexRowViewModels` — never construct row ViewModels inside `ForEach`.
 - `selectedFilters: Set<Filter>` — Multi-selection state for edit mode.
 - `editMode: EditMode` — Controls List edit mode (`.inactive` / `.active`).
 - `canBlockAnotherLanguage: Bool` — Whether the add-language button should be shown (checks if unblocked languages remain).
 - `footer: String` — Help text, varies by filter type.
-- `sheetScreen: Screen?` — For presenting add-filter sheets. Triggers `refresh()` on dismiss.
-- `refresh()` — Re-fetches filters from persistence.
+- `addFilterViewModel` / `addLanguageViewModel` — Owned sheet ViewModels with `onAdded` closures (see sheet-callback convention in CLAUDE.md). `refresh()` on dismiss.
+- `newlyAddedFilter: Filter?` — Set after add; view scrolls/highlights then clears by UUID identity.
+- `refresh()` — Re-fetches filters and syncs the row ViewModel cache.
 - `deleteFilters(withOffsets:in:)` — Swipe-to-delete. Delegates to `PersistanceManager.deleteFilters()`.
 - `deleteFilters(_:)` — Bulk delete from edit mode selection.
 
 ### Supporting Components
 
-- **FilterListRowView** (`Others/FilterListRowView.swift`) — Individual filter row with inline editing. Has its own `ViewModel` (subclasses `BaseViewModel`). Layout varies by filter type:
-  - **Deny/Allow:** `EditableText` for inline text editing (tap to edit, minimum 3 chars) + three `Menu` buttons for filter target, matching mode, and case sensitivity — each with tap-to-toggle and long-press for full menu. Color-coded: green when non-default option is active.
+- **FilterListRowView** (`Others/FilterListRowView.swift`) — Individual filter row with inline editing. Has its own `ViewModel` (subclasses `BaseViewModel`) with stable `let id: UUID` from `filter.uuid` (assigns one if missing). Layout varies by filter type:
+  - **Deny/Allow:** `EditableText` for inline text editing (tap to edit, minimum `kMinimumFilterLength`) + three `Menu` buttons for filter target, matching mode, and case sensitivity — each with tap-to-toggle and long-press for full menu. Color-coded: green when non-default option is active.
   - **Deny Language:** Read-only localized language name (resolved from `$lang:` format via `NLLanguage(filterText:)`).
   - **Deny types with folder support:** Additional `Menu` for deny folder (junk/transaction/promotion).
-  - All updates call through to `PersistanceManager.updateFilter()` and trigger `onUpdate` callback to parent.
+  - All updates call through to `PersistanceManager.updateFilter()` and trigger `onUpdate` callback to parent (which calls `refresh()`).
 
-- **EditableText** (`Others/EditableText.swift`) — Tap-to-edit text component. Uses a ZStack with overlapping `Text` (display) and `TextField` (edit) toggled by `editProcessGoing` state. Enforces minimum character count. Calls `onCommit` when editing ends.
+- **EditableText** (`Others/EditableText.swift`) — Tap-to-edit text component. Parent owns `@FocusState<UUID?>`; each instance takes `focusID: UUID`. A `sessionActive` flag gates a single finish path (`EndReason`: onCommit / onEditingChanged / focusChanged) so Return does not double-save. ZStack overlays display `Text`/`AttributedString` with a `TextField`; idle field stays opacity 0 but layout-stable (important for RTL). Below `minimumCharacters`, the session ends without calling business `onCommit`.
 
 ---
 

@@ -6,15 +6,14 @@
 //
 
 import SwiftUI
-import CoreData
 import NaturalLanguage
 
 
 //MARK: - View -
 struct FilterListRowView: View {
 
-    var filterObjectID: NSManagedObjectID
-    var dotFilterID: NSManagedObjectID?
+    var dotFilterID: UUID?
+    var focusedFilterID: FocusState<UUID?>.Binding
     @ObservedObject var model: ViewModel
     @State private var isEditingText = false
     @State private var showDuplicateError = false
@@ -31,7 +30,7 @@ struct FilterListRowView: View {
                 .frame(width: 8, height: 8)
                 .opacity(dotOpacity)
                 .onAppear {
-                    guard dotFilterID == filterObjectID, dotOpacity == 0 else { return }
+                    guard dotFilterID == model.id, dotOpacity == 0 else { return }
                     dotOpacity = 1.0
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                         withAnimation(.easeOut(duration: 1.0)) {
@@ -40,7 +39,7 @@ struct FilterListRowView: View {
                     }
                 }
                 .onChange(of: dotFilterID) { newID in
-                    guard newID == filterObjectID, dotOpacity == 0 else { return }
+                    guard newID == model.id, dotOpacity == 0 else { return }
                     dotOpacity = 1.0
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                         withAnimation(.easeOut(duration: 1.0)) {
@@ -60,13 +59,14 @@ struct FilterListRowView: View {
             else {
                 EditableText(
                     $model.text,
-                    minimumCharacters: 3,
+                    focusID: model.id,
+                    focusedID: focusedFilterID,
+                    minimumCharacters: kMinimumFilterLength,
                     attributedText: self.model.filter.filterMatching == .regex ? { $0.highlightedAsRegex } : nil,
                     onCommit: {
                         self.model.updateFilter(filterText: self.model.text)
                         self.showDuplicateError = false
                         self.showInvalidRegexError = false
-                        self.isEditingText = false
                     },
                     onEditingChanged: { isEditing in
                         withAnimation {
@@ -179,6 +179,7 @@ struct FilterListRowView: View {
 extension FilterListRowView {
     
     class ViewModel: BaseViewModel, ObservableObject {
+        let id: UUID
         @Published private(set) var filter: Filter
         @Published private(set) var onUpdate: ((Bool) -> ())?
         @Published var text: String
@@ -187,10 +188,26 @@ extension FilterListRowView {
              onUpdate: ((Bool) -> ())? = nil,
              appManager: AppManagerProtocol = AppManager.shared) {
 
+            if let uuid = filter.uuid {
+                self.id = uuid
+            }
+            else {
+                let uuid = UUID()
+                filter.uuid = uuid
+                self.id = uuid
+            }
             self.filter = filter
             self.onUpdate = onUpdate
             self.text = filter.text ?? "general_null"~
             super.init(appManager: appManager)
+        }
+
+        func updateFilter(_ filter: Filter) {
+            let previousText = self.filter.text ?? ""
+            self.filter = filter
+            if self.text == previousText {
+                self.text = filter.text ?? "general_null"~
+            }
         }
         
         func updateFilter(denyFolder: DenyFolderType) {
@@ -265,10 +282,8 @@ extension FilterListRowView {
 //MARK: - Preview -
 struct FilterListRowView_Previews: PreviewProvider {
     static var previews: some View {
-        let appManager = AppManager.previews
-        let filter = appManager.persistanceManager.fetchFilterRecords(for: .deny).first!
-        
-        FilterListRowView(filterObjectID: filter.objectID, dotFilterID: nil, model: FilterListRowView.ViewModel(filter: filter, appManager: appManager))
-            .padding()
+        NavigationView {
+            FilterListView(model: FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews))
+        }
     }
 }

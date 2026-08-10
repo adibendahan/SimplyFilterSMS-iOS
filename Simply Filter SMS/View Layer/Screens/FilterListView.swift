@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import CoreData
 import NaturalLanguage
 
 
@@ -25,7 +24,8 @@ struct FilterListView: View {
     @ScaledMetric(relativeTo: .title3) private var addFilterIconSize: CGFloat = 20
 
     @StateObject var model: ViewModel
-    @State private var dotFilterID: NSManagedObjectID? = nil
+    @State private var dotFilterID: UUID? = nil
+    @FocusState private var focusedFilterID: UUID?
 
     init(model: ViewModel) {
         _model = StateObject(wrappedValue: model)
@@ -35,23 +35,13 @@ struct FilterListView: View {
         ScrollViewReader { proxy in
         List (selection: $model.selectedFilters) {
             Section {
-                ForEach(self.model.regularFilters, id: \.self) { filter in
+                ForEach(self.model.regularRowViewModels, id: \.id) { rowModel in
                     FilterListRowView(
-                        filterObjectID: filter.objectID,
                         dotFilterID: dotFilterID,
-                        model: FilterListRowView.ViewModel(
-                            filter: filter,
-                            onUpdate: { animated in
-                                if animated {
-                                    withAnimation { self.model.refresh() }
-                                }
-                                else {
-                                    self.model.refresh()
-                                }
-                            },
-                            appManager: self.model.appManager))
+                        focusedFilterID: $focusedFilterID,
+                        model: rowModel)
                     .environment(\.editMode, $model.editMode)
-                    .id(filter.objectID)
+                    .id(rowModel.id)
                 }
                 .onDelete {
                     self.model.deleteFilters(withOffsets: $0, in: self.model.regularFilters)
@@ -82,23 +72,13 @@ struct FilterListView: View {
 
             if !self.model.regexFilters.isEmpty {
                 Section {
-                    ForEach(self.model.regexFilters, id: \.self) { filter in
+                    ForEach(self.model.regexRowViewModels, id: \.id) { rowModel in
                         FilterListRowView(
-                            filterObjectID: filter.objectID,
                             dotFilterID: dotFilterID,
-                            model: FilterListRowView.ViewModel(
-                                filter: filter,
-                                onUpdate: { animated in
-                                    if animated {
-                                        withAnimation { self.model.refresh() }
-                                    }
-                                    else {
-                                        self.model.refresh()
-                                    }
-                                },
-                                appManager: self.model.appManager))
+                            focusedFilterID: $focusedFilterID,
+                            model: rowModel)
                         .environment(\.editMode, $model.editMode)
-                        .id(filter.objectID)
+                        .id(rowModel.id)
                     }
                     .onDelete {
                         self.model.deleteFilters(withOffsets: $0, in: self.model.regexFilters)
@@ -147,17 +127,17 @@ struct FilterListView: View {
         })
         .environment(\.editMode, $model.editMode)
         .onTapGesture {
+            focusedFilterID = nil
             hideKeyboard()
         }
         .onChange(of: model.newlyAddedFilter) { newFilter in
-            guard let filter = newFilter else { return }
-            dotFilterID = filter.objectID
+            guard let filter = newFilter, let id = filter.uuid else { return }
+            dotFilterID = id
             withAnimation {
-                proxy.scrollTo(filter.objectID, anchor: .center)
+                proxy.scrollTo(id, anchor: .center)
             }
-            let targetID = filter.objectID
             DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
-                if dotFilterID == targetID { dotFilterID = nil }
+                if dotFilterID == id { dotFilterID = nil }
             }
         }
         } // ScrollViewReader
@@ -275,9 +255,7 @@ extension FilterListView {
     
     class ViewModel: BaseViewModel, ObservableObject {
         @Published private(set) var filters: [Filter]
-
-        var regularFilters: [Filter] { filters.filter { $0.filterMatching != .regex } }
-        var regexFilters: [Filter] { filters.filter { $0.filterMatching == .regex } }
+        @Published private(set) var rowViewModels: [FilterListRowView.ViewModel] = []
         @Published private(set) var filterType: FilterType
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var canBlockAnotherLanguage: Bool
@@ -288,6 +266,15 @@ extension FilterListView {
         @Published var addFilterViewModel: AddFilterView.ViewModel? = nil
         @Published var addLanguageViewModel: LanguageListView.ViewModel? = nil
         @Published private(set) var newlyAddedFilter: Filter? = nil
+
+        var regularFilters: [Filter] { filters.filter { $0.filterMatching != .regex } }
+        var regexFilters: [Filter] { filters.filter { $0.filterMatching == .regex } }
+        var regularRowViewModels: [FilterListRowView.ViewModel] {
+            self.rowViewModels.filter({ $0.filter.filterMatching != .regex })
+        }
+        var regexRowViewModels: [FilterListRowView.ViewModel] {
+            self.rowViewModels.filter({ $0.filter.filterMatching == .regex })
+        }
         
         init(filterType: FilterType,
              appManager: AppManagerProtocol = AppManager.shared) {
@@ -310,6 +297,7 @@ extension FilterListView {
             self.filters = fetchedFilters.filter({ $0.filterType == filterType })
             
             super.init(appManager: appManager)
+            self.updateRowViewModels()
         }
         
         func refresh() {
@@ -318,6 +306,35 @@ extension FilterListView {
             self.filters = fetchedFilters.filter({ $0.filterType == self.filterType })
             self.isAllUnknownFilteringOn = self.appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.canBlockAnotherLanguage = !self.appManager.automaticFilterManager.languages(for: .blockLanguage).isEmpty
+            self.updateRowViewModels()
+        }
+
+        private func updateRowViewModels() {
+            let existingViewModels = Dictionary(uniqueKeysWithValues: self.rowViewModels.map({ ($0.id, $0) }))
+            var updatedViewModels: [FilterListRowView.ViewModel] = []
+
+            for filter in self.filters {
+                if let uuid = filter.uuid, let existing = existingViewModels[uuid] {
+                    existing.updateFilter(filter)
+                    updatedViewModels.append(existing)
+                }
+                else {
+                    let vm = FilterListRowView.ViewModel(
+                        filter: filter,
+                        onUpdate: { [weak self] animated in
+                            if animated {
+                                withAnimation { self?.refresh() }
+                            }
+                            else {
+                                self?.refresh()
+                            }
+                        },
+                        appManager: self.appManager)
+                    updatedViewModels.append(vm)
+                }
+            }
+
+            self.rowViewModels = updatedViewModels
         }
 
         func showAddFilter() {
