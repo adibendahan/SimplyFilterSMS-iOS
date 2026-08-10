@@ -189,7 +189,8 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         }
         AppManager.logger.debug("updateAutomaticFiltersIfNeeded — cache is stale, fetching from S3")
         Task(priority: .background) {
-            if let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() {
+            guard let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() else { return }
+            await MainActor.run {
                 self.updateCacheIfNeeded(newFilterList: automaticFilterList)
             }
         }
@@ -198,7 +199,9 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     func forceUpdateAutomaticFilters() async {
         AppManager.logger.debug("forceUpdateAutomaticFilters — forcing S3 fetch")
         guard let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() else { return }
-        self.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
+        await MainActor.run {
+            self.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
+        }
     }
     
     //MARK: - Private  -
