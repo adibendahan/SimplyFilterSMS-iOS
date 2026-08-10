@@ -229,10 +229,17 @@ extension FilterListRowView {
 
         @discardableResult
         func updateFilter(filterText: String) -> Bool {
-            guard filterText != self.filter.text else { return false }
+            let current = self.filter.text ?? ""
+            AppManager.logger.debug("FilterListRow.updateFilter(text) — proposed: '\(filterText, privacy: .public)', current: '\(current, privacy: .public)'")
+
+            guard filterText != current else {
+                AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, unchanged")
+                return false
+            }
 
             if self.filter.filterMatching == .regex, (try? Regex(filterText)) == nil {
-                self.text = self.filter.text ?? ""
+                AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, invalid regex")
+                self.text = current
                 return true
             }
 
@@ -241,10 +248,12 @@ extension FilterListRowView {
                 filterTarget: self.filter.filterTarget,
                 filterMatching: self.filter.filterMatching,
                 filterCase: self.filter.filterCase) else {
-                self.text = self.filter.text ?? ""
+                AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, duplicate")
+                self.text = current
                 return true
             }
 
+            AppManager.logger.debug("FilterListRow.updateFilter(text) — saving")
             self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
             self.onUpdate?(false)
             return false

@@ -56,23 +56,15 @@ struct EditableText: View {
                 "",
                 text: $newValue,
                 onEditingChanged: { isEditing in
+                    AppManager.logger.debug("EditableText.onEditingChanged — isEditing: \(isEditing, privacy: .public), editProcessGoing: \(editProcessGoing, privacy: .public)")
                     self.onEditingChanged?(isEditing)
                     if !isEditing {
-                        if self.minimumCharacters > 0 && newValue.count >= self.minimumCharacters {
-                            self.text = newValue
-                            self.isFocused = false
-                        }
-                        self.editProcessGoing = false
-                        onCommit?()
+                        finishEditingIfNeeded(source: "onEditingChanged(false)")
                     }
                 },
                 onCommit: {
-                    if self.minimumCharacters > 0 && newValue.count >= self.minimumCharacters {
-                        self.text = newValue
-                        self.isFocused = false
-                    }
-                    self.editProcessGoing = false
-                    onCommit?()
+                    AppManager.logger.debug("EditableText.onCommit — editProcessGoing: \(editProcessGoing, privacy: .public)")
+                    finishEditingIfNeeded(source: "onCommit")
                 })
             .opacity(self.editProcessGoing ? 1 : 0)
             .foregroundColor(attributedText != nil ? .clear : .primary)
@@ -99,5 +91,25 @@ struct EditableText: View {
         newValue = text
         isFocused = true
         editProcessGoing = true
+    }
+
+    /// Return fires both TextField.onCommit and onEditingChanged(false). Guard so business
+    /// onCommit (save/refresh) runs only once per edit session.
+    private func finishEditingIfNeeded(source: String) {
+        guard editProcessGoing else {
+            AppManager.logger.debug("EditableText — finish ignored from \(source, privacy: .public) (already finished)")
+            return
+        }
+
+        if minimumCharacters == 0 || newValue.count >= minimumCharacters {
+            text = newValue
+        } else {
+            newValue = text
+        }
+
+        editProcessGoing = false
+        isFocused = false
+        AppManager.logger.debug("EditableText — invoking onCommit from \(source, privacy: .public)")
+        onCommit?()
     }
 }
