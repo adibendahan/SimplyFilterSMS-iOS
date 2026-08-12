@@ -140,6 +140,8 @@ struct EditableText: View {
             return
         }
 
+        sessionActive = false
+
         let shouldCommit = minimumCharacters == 0 || newValue.count >= minimumCharacters
         if shouldCommit {
             text = newValue
@@ -147,17 +149,24 @@ struct EditableText: View {
             newValue = text
         }
 
-        sessionActive = false
-        if focusedID.wrappedValue == focusID {
-            focusedID.wrappedValue = nil
-        }
-        onEditingChanged?(false)
+        let commit = shouldCommit ? onCommit : nil
+        let editingChanged = onEditingChanged
+        let focus = focusedID
+        let id = focusID
+        let reasonDescription = reason.logDescription
 
-        if shouldCommit {
-            AppManager.logger.debug("EditableText — invoking onCommit from \(reason.logDescription, privacy: .public)")
-            onCommit?()
-        } else {
-            AppManager.logger.debug("EditableText — skipped onCommit from \(reason.logDescription, privacy: .public) (below minimumCharacters)")
+        DispatchQueue.main.async {
+            if focus.wrappedValue == id {
+                focus.wrappedValue = nil
+            }
+            editingChanged?(false)
+
+            if let commit {
+                AppManager.logger.debug("EditableText — invoking onCommit from \(reasonDescription, privacy: .public)")
+                commit()
+            } else {
+                AppManager.logger.debug("EditableText — skipped onCommit from \(reasonDescription, privacy: .public) (below minimumCharacters)")
+            }
         }
     }
 }

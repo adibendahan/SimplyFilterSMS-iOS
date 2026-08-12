@@ -306,7 +306,7 @@ Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). Uses `@S
   - **Deny types with folder support:** Additional `Menu` for deny folder (junk/transaction/promotion).
   - All updates call through to `PersistanceManager.updateFilter()` and trigger `onUpdate` callback to parent (which calls `refresh()`).
 
-- **EditableText** (`Others/EditableText.swift`) — Tap-to-edit text component. Parent owns `@FocusState<UUID?>`; each instance takes `focusID: UUID`. A `sessionActive` flag gates a single finish path (`EndReason`: onCommit / onEditingChanged / focusChanged) so Return does not double-save. ZStack overlays display `Text`/`AttributedString` with a `TextField`; idle field stays opacity 0 but layout-stable (important for RTL). Below `minimumCharacters`, the session ends without calling business `onCommit`.
+- **EditableText** (`Others/EditableText.swift`) — Tap-to-edit text component. Parent owns `@FocusState<UUID?>`; each instance takes `focusID: UUID`. A `sessionActive` flag gates a single finish path (`EndReason`: onCommit / onEditingChanged / focusChanged) so Return does not double-save. After ending the session, focus clear, `onEditingChanged(false)`, and business `onCommit` are deferred to the next main-run-loop turn — Return’s `PlatformTextFieldCoordinator.triggerPrimaryAction` still writes `TextFieldState` after the `onCommit` callback returns; rebuilding the `List` (or tearing down the field) inside that callback crashes with `EXC_BAD_ACCESS`. ZStack overlays display `Text`/`AttributedString` with a `TextField`; idle field stays opacity 0 but layout-stable (important for RTL). Below `minimumCharacters`, the session ends without calling business `onCommit`.
 
 ---
 
