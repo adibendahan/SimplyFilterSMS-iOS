@@ -53,7 +53,7 @@ Trailing `Menu` (ellipsis icon) with items:
 
 **Key methods:**
 - `refresh()` — Reloads all state from managers. Called on every navigation pop, sheet dismiss, and notification.
-- `startMonitoring()` — Registers `NotificationCenter` observers (once) for `.cloudSyncOperationComplete`, `.networkStatusChange`, `.automaticFiltersUpdated`.
+- `startMonitoring()` — Registers `NotificationCenter` observers (once) for `.cloudSyncOperationComplete`, `.networkStatusChange`, `.filtersStateChanged`, `.automaticFiltersUpdated`. Then compares store fingerprint to last UI fingerprint and `refresh()`es if the store is ahead (CloudKit import finished before observers were registered).
 - `showNotification(_:)` — Queues notifications if a sheet/modal is active (`pendingNotification`). Some notifications auto-dismiss after a timeout.
 - `tryRequestReview()` — Prompts `SKStoreReviewController` after 7+ days and 5+ sessions. Triggered when user pops back from a navigation screen.
 - `activeCount(for:)` — Returns count of filters for a given `FilterType`.

@@ -486,6 +486,7 @@ extension AppHomeView {
             self.notification = NotificationView.ViewModel(notification: .offline)
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
+            self.lastUIFingerprint = appManager.persistanceManager.fingerprint
 
             self.rules = appManager.automaticFilterManager.rules
                 .map({
@@ -509,6 +510,7 @@ extension AppHomeView {
             self.rules = self.appManager.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
                                                                                                    getter: self.appManager.automaticFilterManager.automaticRuleState,
                                                                                                    setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
+            self.lastUIFingerprint = self.appManager.persistanceManager.fingerprint
         }
         
         func setSelectedChoice(for rule: RuleType, choice: Int) {
@@ -585,8 +587,16 @@ extension AppHomeView {
                 }
             }
 
+            self.catchUpFromStoreIfNeeded()
             self.tryShowTipPromotion()
             self.tryShowReportingExtensionNudge()
+        }
+
+        private func catchUpFromStoreIfNeeded() {
+            let currentFingerprint = self.appManager.persistanceManager.fingerprint
+            guard currentFingerprint != self.lastUIFingerprint else { return }
+            AppManager.logger.debug("AppHome — store ahead of UI, catching up")
+            self.refresh()
         }
 
         func tryShowReportingExtensionNudge() {
@@ -685,6 +695,7 @@ extension AppHomeView {
         }
 
         private let wasFirstRunOnInit: Bool
+        private var lastUIFingerprint: String = ""
         private var didAddObservers = false
         private var didShowNotificationThisSession = false
         private var pendingNotification: NotificationView.Notification?

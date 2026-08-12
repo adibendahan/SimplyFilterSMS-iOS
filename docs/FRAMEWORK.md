@@ -33,7 +33,7 @@ protocol AppManagerProtocol {
 
 1. `PersistanceManager` (in-memory if specified)
 2. `DefaultsManager`
-3. `MessageEvaluationManager` (receives persistance container)
+3. `MessageEvaluationManager` (app: receives persistance manager; follows live context across `reloadContainer()`)
 4. `NetworkSyncManager` (receives persistance manager)
 5. `AmazonS3Service` (receives network sync manager)
 6. `ReportMessageService` (receives network sync manager)
@@ -110,8 +110,8 @@ For each filter, matching depends on three settings:
 
 ### Database Access
 
-Creates its own `NSManagedObjectContext` from the shared `AppPersistentCloudKitContainer`. When instantiated by the extension, uses `isReadOnly: true`.
-
+**App:** `init(persistanceManager:)` — `context` is always `PersistanceManager.context`, so evaluation stays on the live store after `reloadContainer()`.  
+**Extension / tests:** `init(inMemory:)` — owns an `AppPersistentCloudKitContainer` (`isReadOnly: true` in the extension).
 ---
 
 ## PersistanceManager
@@ -304,12 +304,15 @@ Uses `NWPathMonitor` on a background queue. Posts `.networkStatusChange` on stat
 
 ### CloudKit Sync Monitoring
 
-Subscribes to `NSPersistentCloudKitContainer.eventChangedNotification`. Tracks three event types (setup, import, export). Maintains a "pre-sync fingerprint" (from `PersistanceManager.fingerprint`) to detect actual data changes during import. Posts `.cloudSyncOperationComplete` only when fingerprint changed.
+Subscribes to `NSPersistentCloudKitContainer.eventChangedNotification`. Tracks three event types (setup, import, export). Maintains a "pre-sync fingerprint" (from `PersistanceManager.fingerprint`) to detect actual data changes during import.
+
+On **successful import**: posts `.cloudSyncOperationComplete` (toast + refresh) when the fingerprint changed. Failed imports are logged separately.
+
+`AppHomeView.startMonitoring` also compares store fingerprint to the last UI fingerprint once and `refresh()`es if the store is already ahead (import finished before observers were registered).
 
 ### Recovery Logic
 
-When network comes online after a failed sync, calls `PersistanceManager.reloadContainer()` to retry CloudKit sync.
-
+When network comes online after a failed sync, calls `PersistanceManager.reloadContainer()` to retry CloudKit sync. If setup fails while already online, schedules up to two delayed `reloadContainer()` retries (5s, then 10s), cancelled if setup later succeeds. Retries run unless the network is known offline (`.unknown` is allowed — path monitor may not have reported yet).
 ---
 
 ## TipJarManager

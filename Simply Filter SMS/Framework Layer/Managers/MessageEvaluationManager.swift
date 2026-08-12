@@ -15,16 +15,14 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
 
     //MARK: - Initialization -
 
-    /// Initializer for use in Extension/Tests context *creates a new container*
-    /// - Parameter container: NSPersistentCloudKitContainer
+    /// Extension/tests — owns its container.
     init(inMemory: Bool = false) {
         let isReadOnly = inMemory ? false : true
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: isReadOnly)
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
-        self.persistentContainer = container
-        self.context = container.viewContext
+        self.ownedContainer = container
         container.loadPersistentStores(completionHandler: { [weak self] (storeDescription, error) in
             if let error = error as NSError? {
                 self?.logger?.error("ERROR! While initializing MessageEvaluationManager: \(error), \(error.userInfo)")
@@ -32,11 +30,9 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         })
     }
 
-    /// Initializer for use in application context
-    /// - Parameter container: NSPersistentCloudKitContainer
-    init(container: NSPersistentCloudKitContainer) {
-        self.persistentContainer = container
-        self.context = container.viewContext
+    /// App — uses `PersistanceManager.context`.
+    init(persistanceManager: PersistanceManagerProtocol) {
+        self.persistanceManager = persistanceManager
     }
 
     //MARK: - Public API (MessageEvaluationManagerProtocol) -
@@ -108,8 +104,15 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     //MARK: - Private -
 
     private var logger: Logger?
-    private var persistentContainer: NSPersistentContainer?
-    private(set) var context: NSManagedObjectContext
+    private weak var persistanceManager: PersistanceManagerProtocol?
+    private var ownedContainer: NSPersistentCloudKitContainer?
+
+    var context: NSManagedObjectContext {
+        if let persistanceManager {
+            return persistanceManager.context
+        }
+        return self.ownedContainer!.viewContext
+    }
 
     private func runAllUnknownRule() -> MessageEvaluationResult {
         let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
