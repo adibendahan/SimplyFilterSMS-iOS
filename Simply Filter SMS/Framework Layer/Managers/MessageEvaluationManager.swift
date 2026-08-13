@@ -28,7 +28,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             loadFailed = error != nil
             loaded.signal()
         }
-        if loaded.wait(timeout: .now() + 1.0) == .success, !loadFailed {
+        if loaded.wait(timeout: .now() + kOwnedStoreLoadTimeout) == .success, !loadFailed {
             container.viewContext.stalenessInterval = 0
             container.viewContext.automaticallyMergesChangesFromParent = true
         }

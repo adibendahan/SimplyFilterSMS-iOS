@@ -111,7 +111,7 @@ For each filter, matching depends on three settings:
 ### Database Access
 
 **App:** `init(persistanceManager:)` — uses live `PersistanceManager.context` (survives `reloadContainer()`).  
-**Extension / tests:** `init(inMemory:)` — owns a read-only App Group store, loaded synchronously in init (1s timeout). Load failure → evaluate allows without running filters.
+**Extension / tests:** `init(inMemory:)` — owns a read-only App Group store, loaded synchronously in init (`kOwnedStoreLoadTimeout`). Load failure → evaluate allows without running filters.
 ---
 
 ## PersistanceManager
