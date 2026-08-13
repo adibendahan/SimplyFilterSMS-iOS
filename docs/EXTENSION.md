@@ -64,7 +64,8 @@ The extension and main app share code via the `Shared with Extension` folder:
 The extension reads the same CoreData database as the main app via:
 - **App Group:** `group.com.grizz.apps.dev.simply-filter-sms`
 - **Container:** `AppPersistentCloudKitContainer` overrides `defaultDirectoryURL()` to point to the shared container
-- **Read-only:** When `MessageEvaluationManager` is initialized without a container (as in the extension), it creates its own with `isReadOnly: true` to avoid write conflicts with the main app
+- **Read-only:** Extension opens the App Group store with `isReadOnly: true`
+- **Sync load:** Store finishes loading in `MessageEvaluationManager` init; if it fails, evaluation allows instead of matching against an empty store
 
 ## Key Constraints
 

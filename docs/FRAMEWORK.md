@@ -110,8 +110,8 @@ For each filter, matching depends on three settings:
 
 ### Database Access
 
-**App:** `init(persistanceManager:)` — `context` is always `PersistanceManager.context`, so evaluation stays on the live store after `reloadContainer()`.  
-**Extension / tests:** `init(inMemory:)` — owns an `AppPersistentCloudKitContainer` (`isReadOnly: true` in the extension).
+**App:** `init(persistanceManager:)` — uses live `PersistanceManager.context` (survives `reloadContainer()`).  
+**Extension / tests:** `init(inMemory:)` — owns a read-only App Group store, loaded synchronously in init (1s timeout). Load failure → evaluate allows without running filters.
 ---
 
 ## PersistanceManager

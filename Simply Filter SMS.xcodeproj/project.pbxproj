@@ -61,6 +61,7 @@
 		696398E2285D311700FCE865 /* ApplicationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398E1285D311700FCE865 /* ApplicationTestCase.swift */; };
 		696B011127A822BE0061FE15 /* AppHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B011027A822BE0061FE15 /* AppHomeView.swift */; };
 		6973D01D278B537300A173CD /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6973D01C278B537300A173CD /* CloudKit.framework */; };
+		697979A9302E68E5000260F0 /* PersistanceManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C51279D755200CEABE5 /* PersistanceManagerProtocol.swift */; };
 		6982FE8927A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6982FE8827A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift */; };
 		6982FE8B27A6FBA000BF6AA4 /* AutomaticFilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6982FE8A27A6FBA000BF6AA4 /* AutomaticFilterManager.swift */; };
 		698322832F50AD35008FFD1D /* XCUIElementExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698322822F50AD2C008FFD1D /* XCUIElementExtensions.swift */; };
@@ -1014,6 +1015,7 @@
 				AA5BCED7D8924F6E9A3B5C05 /* CallingCodes.swift in Sources */,
 				691D57CB27BBE63300DDA267 /* MessageEvaluationManager.swift in Sources */,
 				69F4097027B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */,
+				697979A9302E68E5000260F0 /* PersistanceManagerProtocol.swift in Sources */,
 				69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */,
 				69DB7018277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */,
 				694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */,
