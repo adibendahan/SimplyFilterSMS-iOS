@@ -312,7 +312,7 @@ On **successful import**: posts `.cloudSyncOperationComplete` (toast + refresh) 
 
 ### Recovery Logic
 
-When network comes online after a failed sync, calls `PersistanceManager.reloadContainer()` to retry CloudKit sync. If setup fails while already online, schedules up to two delayed `reloadContainer()` retries (5s, then 10s), cancelled if setup later succeeds. Retries run unless the network is known offline (`.unknown` is allowed — path monitor may not have reported yet).
+When network comes online after a failed sync, or setup fails while online, reloads the CloudKit container. Failed setup schedules up to two delayed retries (5s, then 10s); a pending retry is cancelled if network recovery reloads first or setup succeeds. Retries run unless the network is known offline (`.unknown` is allowed — path monitor may not have reported yet).
 ---
 
 ## TipJarManager

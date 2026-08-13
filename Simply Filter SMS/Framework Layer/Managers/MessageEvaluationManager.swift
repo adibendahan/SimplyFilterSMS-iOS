@@ -22,15 +22,25 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
 
-        var loadFailed = false
+        var loadError: Error?
         let loaded = DispatchSemaphore(value: 0)
         container.loadPersistentStores { (_, error) in
-            loadFailed = error != nil
+            loadError = error
             loaded.signal()
         }
-        if loaded.wait(timeout: .now() + kOwnedStoreLoadTimeout) == .success, !loadFailed {
+        if loaded.wait(timeout: .now() + kOwnedStoreLoadTimeout) == .success, loadError == nil {
             container.viewContext.stalenessInterval = 0
             container.viewContext.automaticallyMergesChangesFromParent = true
+        }
+        else {
+            // Logger may not be set yet (extension calls setLogger after init).
+            let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "evaluation")
+            if let loadError {
+                logger.error("Owned store load failed: \(loadError.localizedDescription, privacy: .public)")
+            }
+            else {
+                logger.error("Owned store load timed out after \(kOwnedStoreLoadTimeout, privacy: .public)s")
+            }
         }
 
         self.contextSource = .owned(container)

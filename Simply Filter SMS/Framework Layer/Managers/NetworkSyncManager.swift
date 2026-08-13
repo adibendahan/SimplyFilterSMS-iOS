@@ -49,6 +49,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
                     if cloudEvent.succeeded {
                         self.syncStatus = .active
                         self.setupRetryCount = 0
+                        self.pendingSetupRetry = nil
                         AppManager.logger.debug("CloudKit setup event ended — succeeded: true, syncStatus: \(self.syncStatus.name, privacy: .public)")
                     }
                     else {
@@ -94,6 +95,9 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
     private var firstStatusHandlers: [() -> Void] = []
     private var setupRetryCount = 0
     private let maxSetupRetries = 2
+    private var pendingSetupRetry: DispatchWorkItem? {
+        didSet { oldValue?.cancel() }
+    }
 
     func onFirstStatusKnown(_ handler: @escaping () -> Void) {
         if networkStatus != .unknown {
@@ -111,15 +115,16 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
         }
         self.setupRetryCount += 1
         let attempt = self.setupRetryCount
-        let delay = TimeInterval(attempt * 5)
-        AppManager.logger.debug("CloudKit setup retry — scheduling attempt \(attempt, privacy: .public) in \(delay, privacy: .public)s")
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+        AppManager.logger.debug("CloudKit setup retry — scheduling attempt \(attempt, privacy: .public) in \(attempt * 5, privacy: .public)s")
+        let work = DispatchWorkItem { [weak self] in
             guard let self else { return }
-            guard self.syncStatus == .failed else { return }
-            guard self.networkStatus != .offline else { return }
+            self.pendingSetupRetry = nil
+            guard self.syncStatus == .failed, self.networkStatus != .offline else { return }
             AppManager.logger.debug("CloudKit setup retry — reloading container (attempt \(attempt, privacy: .public))")
             self.persistanceManager?.reloadContainer()
         }
+        self.pendingSetupRetry = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(attempt * 5), execute: work)
     }
 
     private func onNetworkChange(_ newPath: NWPath) {
@@ -129,6 +134,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
             AppManager.logger.debug("Network status changed — \(self.networkStatus.name, privacy: .public) → \(newStatus.name, privacy: .public)")
             if newStatus == .online && self.syncStatus == .failed {
                 AppManager.logger.debug("Network back online with failed sync — reloading CloudKit container")
+                self.pendingSetupRetry = nil
                 self.persistanceManager?.reloadContainer()
             }
             self.networkStatus = newStatus
