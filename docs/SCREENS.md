@@ -17,7 +17,7 @@ A `NavigationView` containing a `List` with three sections:
 
 1. **Automatic Filtering** — Single `NavigationLink` to `.automaticBlocking` (LanguageListView in automatic mode). Displays an ON/OFF badge. Entire section is disabled when "block all unknown" rule is active.
 
-2. **Smart Filters** — `ForEach` over `model.rules: [StatefulItem<RuleType>]`. Each rule renders as a `Toggle`. Toggling calls through `StatefulItem.didSet` -> ViewModel's `setAutomaticRuleState` -> `AutomaticFilterManager`. The `.shortSender` rule has an additional `Menu` picker for character threshold (3-6). All rules except `.allUnknown` are disabled when "block all unknown" is active.
+2. **Smart Filters** — `ForEach` over `model.rules: [StatefulItem<RuleType>]`. Each rule renders as a `Toggle`. Toggling calls through `StatefulItem.didSet` -> ViewModel's `setAutomaticRuleState` -> `AutomaticFilterManager`. The `.shortSender` rule has an additional `Menu` picker for character threshold (3-6). The `.countryAllowlist` rule has a button that opens `CountryListView` (selected countries summary when on). All rules except `.allUnknown` are disabled when "block all unknown" is active.
 
 3. **User Filters** — Three `NavigationLink` rows (allow, deny, denyLanguage) each showing an active filter count badge. Links to `FilterListView` with the corresponding `FilterType`.
 

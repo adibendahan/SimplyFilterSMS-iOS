@@ -60,16 +60,16 @@ The system SHALL present the What's New sheet via the existing `sheetScreen` mec
 ---
 
 ### Requirement: Screen enum routing
-The `Screen` enum SHALL include a `.whatsNew` case. When presented from `AppHomeView`, the view is constructed inline (not via `build()`) to pass the `onActionnableEntryTapped` closure.
+The `Screen` enum SHALL include a `.whatsNew` case. When presented from `AppHomeView`, the view is constructed inline (not via `build()`) to pass the `onActionableEntryTapped` closure.
 
 #### Scenario: Screen.whatsNew from AppHomeView
 - **WHEN** `sheetScreen == .whatsNew` in AppHomeView
-- **THEN** the sheet content SHALL construct `WhatsNewView` with an `onActionnableEntryTapped` closure that handles actionable entry navigation
+- **THEN** the sheet content SHALL construct `WhatsNewView` with an `onActionableEntryTapped` closure that handles actionable entry navigation
 
 ---
 
 ### Requirement: Data model
-The system SHALL define a `WhatsNewEntry` enum conforming to `CaseIterable` in `Constsants.swift` with computed properties for: `emoji` (String), `title` (localized String via `~`), `description` (localized String via `~`), `order` (Int for sorting), and `isActionnable` (Bool). A top-level constant `currentWhatsNewVersion: Int` SHALL be defined in `Constsants.swift` and manually incremented when entries change.
+The system SHALL define a `WhatsNewEntry` enum conforming to `CaseIterable` in `Constants.swift` with computed properties for: `emoji` (String), `title` (localized String via `~`), `description` (localized String via `~`), `order` (Int for sorting), and `isActionable` (Bool). A top-level constant `currentWhatsNewVersion: Int` SHALL be defined in `Constants.swift` and manually incremented when entries change.
 
 #### Scenario: Entries are enumerable
 - **WHEN** the app accesses `WhatsNewEntry.allCases`
@@ -82,22 +82,22 @@ The system SHALL define a `WhatsNewEntry` enum conforming to `CaseIterable` in `
 ---
 
 ### Requirement: Actionable entries
-`WhatsNewEntry` cases MAY be actionable, indicated by `isActionnable` returning `true`. Actionable entries are rendered as tappable buttons in the sheet. When tapped, the entry calls `markAsSeen()`, invokes the `onActionnableEntryTapped` closure, and dismisses the sheet. The presenting screen handles the resulting navigation.
+`WhatsNewEntry` cases MAY be actionable, indicated by `isActionable` returning `true`. Actionable entries are rendered as tappable buttons in the sheet. When tapped, the entry calls `markAsSeen()`, invokes the `onActionableEntryTapped` closure, and dismisses the sheet. The presenting screen handles the resulting navigation.
 
 #### Scenario: Actionable entry is tappable
-- **WHEN** an entry has `isActionnable == true` and `onActionnableEntryTapped` is provided
+- **WHEN** an entry has `isActionable == true` and `onActionableEntryTapped` is provided
 - **THEN** the entry row SHALL be wrapped in a `Button` that is visually distinct (e.g., accent-colored chevron)
 
 #### Scenario: Non-actionable entry is static
-- **WHEN** an entry has `isActionnable == false`
+- **WHEN** an entry has `isActionable == false`
 - **THEN** the entry row SHALL be a plain, non-interactive display row
 
 #### Scenario: Tapping actionable entry navigates
 - **WHEN** the user taps an actionable entry
-- **THEN** the system SHALL call `markAsSeen()`, invoke `onActionnableEntryTapped(entry)`, and dismiss the sheet
+- **THEN** the system SHALL call `markAsSeen()`, invoke `onActionableEntryTapped(entry)`, and dismiss the sheet
 
 #### Scenario: Presenting screen handles navigation
-- **WHEN** `onActionnableEntryTapped` is called with an entry (e.g., `.tipJar`)
+- **WHEN** `onActionableEntryTapped` is called with an entry (e.g., `.tipJar`)
 - **THEN** the presenting screen SHALL set `pendingScreenAfterDismiss` to the appropriate `Screen` case, which is presented after the sheet dismiss completes
 
 ---
@@ -120,7 +120,7 @@ The system SHALL define a `WhatsNewEntry` enum conforming to `CaseIterable` in `
 ---
 
 ### Requirement: ViewModel pattern
-`WhatsNewView.ViewModel` SHALL subclass `BaseViewModel`, conform to `ObservableObject`, and expose: `entries: [WhatsNewEntry]` (sorted by `order`), and `onActionnableEntryTapped: ((WhatsNewEntry) -> Void)?` (optional closure). It SHALL provide a `markAsSeen()` method that sets `lastSeenWhatsNewVersion` to `currentWhatsNewVersion` via `DefaultsManager`.
+`WhatsNewView.ViewModel` SHALL subclass `BaseViewModel`, conform to `ObservableObject`, and expose: `entries: [WhatsNewEntry]` (sorted by `order`), and `onActionableEntryTapped: ((WhatsNewEntry) -> Void)?` (optional closure). It SHALL provide a `markAsSeen()` method that sets `lastSeenWhatsNewVersion` to `currentWhatsNewVersion` via `DefaultsManager`.
 
 #### Scenario: ViewModel loads entries
 - **WHEN** the ViewModel is initialized

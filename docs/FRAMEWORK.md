@@ -67,6 +67,7 @@ Core filtering engine. Shared between the main app and the Message Filter Extens
 
 ```swift
 protocol MessageEvaluationManagerProtocol {
+    var context: NSManagedObjectContext { get }
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult
     func setLogger(_ logger: Logger)
 }
@@ -76,42 +77,49 @@ protocol MessageEvaluationManagerProtocol {
 
 ```swift
 struct MessageEvaluationResult {
-    let action: ILMessageFilterAction  // .allow, .junk, .transaction, .promotion
-    let reason: String?                // Human-readable reason for the decision
+    var action: ILMessageFilterAction  // .allow, .junk, .transaction, .promotion
+    var reason: String?                // Human-readable reason for the decision
 }
 ```
 
 ### Evaluation Pipeline (order matters — first match wins)
 
-1. **Allow filters** — Fetches `Filter` records with `type == .allow`. Checks if sender or body matches (per filter's target, matching, and case settings). Returns `.allow` if matched.
+1. **Allow filters** — `Filter` records with `type == .allow`. Returns `.allow` if matched.
 
-2. **Deny filters** — Fetches `Filter` records with `type == .deny`. Same matching logic. Returns the filter's `denyFolderType.action` (`.junk`, `.transaction`, or `.promotion`).
+2. **All Unknown** — Active `AutomaticFiltersRule` for `.allUnknown`. Returns `.junk` (absolute gate after allows).
 
-3. **Language deny** — Fetches `Filter` records with `type == .denyLanguage`. Uses `NLLanguageRecognizer` to detect the message body's dominant language. If that language is in the deny list, returns `.junk`.
+3. **Automatic filters (allow)** — Active languages’ cached community lists: `allowSenders` / `allowBody`. Returns `.allow`.
 
-4. **Automatic filters** — Fetches `AutomaticFiltersLanguage` records (active ones). For each active language, loads the cached `AutomaticFilterListsResponse` (base64-decoded from CoreData). Checks sender against `allowSenders`/`denySender` and body against `allowBody`/`denyBody`.
+4. **Filter rules** — Other active `AutomaticFiltersRule`s (`.allUnknown` skipped here):
+   - `links` — Body contains a URL (`NSDataDetector`)
+   - `numbersOnly` — Sender contains letters (i.e. not numbers-only)
+   - `shortSender` — Sender length ≤ configurable threshold (3–6)
+   - `email` — Sender looks like an email
+   - `emojis` — Body contains emoji
+   - `countryAllowlist` — Sender’s calling code not in the selected allowlist
 
-5. **Smart rules** — Fetches `AutomaticFiltersRule` records (active ones). Checks in order:
-   - `allUnknown` — Block everything (most destructive)
-   - `links` — Body contains a URL (via `NSDataDetector`)
-   - `numbersOnly` — Sender is all digits
-   - `shortSender` — Sender length <= configurable threshold (3-6 chars)
-   - `email` — Sender contains `@` and `.`
-   - `emojis` — Body contains emoji characters
+5. **Deny filters** — `Filter` records with `type == .deny`. Returns the filter’s `denyFolderType.action`.
 
-6. **No match** — Returns `.allow` with reason `"noMatch"`.
+6. **Language deny** — `Filter` records with `type == .denyLanguage`. Dominant body language via `NLLanguageRecognizer`.
+
+7. **Automatic filters (deny)** — Cached community `denySender` / `denyBody`. Returns `.junk`.
+
+8. **No match** — `.allow` with reason `"testFilters_resultReason_noMatch"`.
+
+Owned-store load failure (extension/tests) returns `.allow` with reason `"storeUnavailable"` before the pipeline runs.
 
 ### Filter Matching Logic
 
-For each filter, matching depends on three settings:
+For each user filter, matching depends on three settings:
 - **FilterTarget:** `.all` (sender+body combined), `.sender`, or `.body`
-- **FilterMatching:** `.contains` (substring) or `.exact` (full string match using word boundaries)
+- **FilterMatching:** `.contains`, `.exact` (word boundaries), or `.regex`
 - **FilterCase:** `.caseInsensitive` or `.caseSensitive`
 
 ### Database Access
 
-**App:** `init(persistanceManager:)` — uses live `PersistanceManager.context` (survives `reloadContainer()`).  
-**Extension / tests:** `init(inMemory:)` — owns a read-only App Group store, loaded synchronously in init (`kOwnedStoreLoadTimeout`). Load failure → evaluate allows without running filters.
+**App:** `init(persistanceManager:)` — `ContextSource.persistance`; `context` always reads `PersistanceManager.context` (survives `reloadContainer()`).
+
+**Extension / tests:** `init(inMemory:)` — `ContextSource.owned`; owns an `AppPersistentCloudKitContainer` (`isReadOnly: true` unless in-memory). Loads the store synchronously in init (waits up to `kOwnedStoreLoadTimeout`). On failure/timeout, logs and leaves an empty store; evaluate then allows without running filters. Successful load sets `stalenessInterval = 0`.
 ---
 
 ## PersistanceManager
@@ -183,7 +191,7 @@ The development CloudKit environment auto-evolves its schema when the app runs (
 
 ### Fingerprint
 
-A computed string concatenation of all filter texts + automatic filter states. Used by `NetworkSyncManager` to detect whether a CloudKit sync actually changed data (by comparing pre-sync and post-sync fingerprints).
+A computed string of filter UUIDs + automatic rule states (`ruleId` / `isActive` / `selectedCountries`) + language rows (`lang` / `isActive`). Does **not** include `AutomaticFiltersCache`. Used by `NetworkSyncManager` to detect whether a CloudKit import changed user-visible filter data.
 
 ### Cache Management
 
@@ -233,6 +241,7 @@ protocol AutomaticFilterManagerProtocol {
   - `.blockLanguage` — All supported `NLLanguage` cases minus already-blocked ones
 - `updateAutomaticFiltersIfNeeded()` — Checks if cache is older than `kUpdateAutomaticFiltersMinDays` (3 days). If so, fetches from S3 in a background `Task`.
 - `forceUpdateAutomaticFilters()` — Async. Always fetches regardless of cache age. Used by pull-to-refresh.
+- After an S3 fetch, cache writes (`updateCacheIfNeeded`) run on the **MainActor** so Core Data view-context work stays on the main thread.
 - Rule/language state changes persist immediately via `PersistanceManager.commitContext()`.
 
 ---
@@ -284,6 +293,7 @@ Monitors network connectivity and CloudKit sync status.
 protocol NetworkSyncManagerProtocol: AnyObject {
     var syncStatus: SyncStatus { get }    // .unknown, .active, .failed
     var networkStatus: NetworkStatus { get } // .unknown, .online, .offline
+    func onFirstStatusKnown(_ handler: @escaping () -> Void)
 }
 ```
 
@@ -295,6 +305,7 @@ extension NSNotification.Name {
     static let cloudSyncOperationComplete
     static let automaticFiltersUpdated
     static let onClipboardSet
+    static let filtersStateChanged
 }
 ```
 
@@ -352,7 +363,7 @@ enum TipPurchaseResult {
 
 ### TipTier
 
-Defined in `Constsants.swift`. `CaseIterable` enum with `String` raw values (product IDs). Computed properties: `emoji`, `displayName`, `tierDescription`, `iconColor`, `confettiBirthRate`, `confettiLifetime`, `confettiVelocity`.
+Defined in `Constants.swift`. `CaseIterable` enum with `String` raw values (product IDs). Computed properties: `emoji`, `displayName`, `tierDescription`, `iconColor`, `confettiBirthRate`, `confettiLifetime`, `confettiVelocity`.
 
 ---
 
