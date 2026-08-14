@@ -84,7 +84,7 @@ The confirmation UI SHALL follow the app's existing design system — accent col
 ---
 
 ### Requirement: ReportType extended with junkAndBlockSender case
-`ReportType` in `Constsants.swift` SHALL have a `junkAndBlockSender` case (raw value 2) that maps to `ILClassificationAction.reportJunkAndBlockSender` and sends `type: "deny"` to Lambda (same as `junk`).
+`ReportType` in `Constants.swift` SHALL have a `junkAndBlockSender` case (raw value 2) that maps to `ILClassificationAction.reportJunkAndBlockSender` and sends `type: "deny"` to Lambda (same as `junk`).
 
 #### Scenario: junkAndBlockSender maps to deny
 - **WHEN** the extension constructs a classification report for `junkAndBlockSender`

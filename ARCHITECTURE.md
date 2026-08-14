@@ -45,7 +45,7 @@ AppManager (Singleton)
 ├── NetworkSyncManager ──── NWPathMonitor + CloudKit events
 │   └── depends on: PersistanceManager
 ├── MessageEvaluationManager ── Filter evaluation engine
-│   └── depends on: PersistanceManager (container)
+│   └── app: PersistanceManager (live context) / extension: owned App Group store
 ├── AutomaticFilterManager ─── Community filter lists
 │   └── depends on: PersistanceManager, AmazonS3Service
 ├── TipJarManager ─────────── StoreKit 2 IAP
@@ -59,11 +59,13 @@ AppManager (Singleton)
 
 When an SMS arrives, `MessageEvaluationManager.evaluateMessage(body:sender:)` runs these checks in order (first match wins):
 
-1. **All Unknown** → `.junk` (absolute gate — if enabled, blocks everything regardless of other filters)
-2. **Allow filters** → `.allow` (user-created allowlist)
+1. **Allow filters** → `.allow` (user-created allowlist)
+2. **All Unknown** → `.junk` (absolute gate — if enabled, blocks everything remaining)
 3. **Automatic filters (allow)** → `.allow` (trusted senders/body phrases from S3 community lists)
-4. **Filter rules** → `.junk` (links, numbersOnly, shortSender, email, emojis, countryAllowlist)
+4. **Filter rules** → `.junk` (links, numbersOnly, shortSender, email, emojis, countryAllowlist; `allUnknown` is handled earlier)
 5. **Deny filters** → `.junk` / `.transaction` / `.promotion` (user-created blocklist)
 6. **Deny language filters** → `.junk` (blocked languages via NLLanguageRecognizer)
 7. **Automatic filters (deny)** → `.junk` (spam keywords/senders from S3 community lists)
 8. **No match** → `.allow` (default)
+
+See [docs/FRAMEWORK.md](docs/FRAMEWORK.md) for matching details and app vs extension store access.

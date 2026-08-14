@@ -43,7 +43,7 @@ fastlane/
 
 **Tests:** `MessageEvaluationManager` — the core filtering engine.
 
-**Setup:** In-memory CoreData (`MessageEvaluationManager(inMemory: true)`). Each test flushes all entities (`Filter`, `AutomaticFiltersCache`, `AutomaticFiltersLanguage`, `AutomaticFiltersRule`) and re-populates with specific test data.
+**Setup:** In-memory CoreData (`MessageEvaluationManager(inMemory: true)` — owned store loads synchronously in init). Each test flushes all entities (`Filter`, `AutomaticFiltersCache`, `AutomaticFiltersLanguage`, `AutomaticFiltersRule`) and re-populates with specific test data.
 
 **Test approach:** Uses a `MessageTestCase` struct with `sender`, `body`, `expectedAction` fields. Iterates over arrays of test cases and asserts each result.
 
@@ -51,7 +51,7 @@ fastlane/
 - Allow/deny filter matching with various target/matching/case combinations
 - Language detection and blocking (Hebrew, English, Arabic)
 - Automatic filter lists (allow senders, deny body, etc.)
-- Smart rules (links, numbers-only senders, short senders, emails, emojis, all-unknown)
+- Smart rules (links, numbers-only senders, short senders, emails, emojis, all-unknown, country allowlist)
 - Priority ordering (allow takes precedence over deny)
 - Edge cases (empty body/sender, combined targets)
 

@@ -33,11 +33,11 @@ Three-layer clean architecture with protocol-based dependency injection:
 
 ### Framework Layer (`Simply Filter SMS/Framework Layer/`)
 - **AppManager** — Singleton service locator (`AppManager.shared`). Creates and holds all managers/services. Use `AppManager(inMemory: true)` for previews/tests.
-- **MessageEvaluationManager** — Core filtering engine. Evaluates sender + body against user filters, automatic rules, and language filters. Shared between app and extension.
+- **MessageEvaluationManager** — Core filtering engine. App uses `init(persistanceManager:)` (live context across `reloadContainer()`). Extension/tests use `init(inMemory:)` with a synchronously loaded owned App Group store (`kOwnedStoreLoadTimeout`).
 - **PersistanceManager** — CoreData CRUD operations for `Filter`, `AutomaticFiltersRule`, `AutomaticFiltersLanguage` entities.
-- **AutomaticFilterManager** — Fetches community filter lists from S3, applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown).
+- **AutomaticFilterManager** — Fetches community filter lists from S3, applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown, country allowlist). S3 fetch completions hop to the MainActor before Core Data cache writes.
 - **DefaultsManager** — UserDefaults wrapper for app settings.
-- **NetworkSyncManager** — NWPathMonitor + CloudKit sync status tracking.
+- **NetworkSyncManager** — NWPathMonitor + CloudKit sync status tracking (setup retries; pending retry cancelled if network recovery reloads first).
 - **TipJarManager** — StoreKit 2 in-app purchase manager for consumable tip jar products.
 
 Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testability.
@@ -53,12 +53,12 @@ Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testa
 
 ### Shared with Extension (`Framework Layer/Shared with Extension/`)
 Code compiled into both the app and the Message Filter Extension:
-- `Constsants.swift` — All enums (`FilterType`, `DenyFolderType`, `FilterTarget`, `FilterMatching`, `FilterCase`, `RuleType`, `ReportType`) and global constants.
+- `Constants.swift` — All enums (`FilterType`, `DenyFolderType`, `FilterTarget`, `FilterMatching`, `FilterCase`, `RuleType`, `ReportType`) and global constants.
 - `SharedExtensions.swift` — Extensions on `Filter` (CoreData), `NLLanguage`, `ILMessageFilterAction`, `String`, plus the `~` postfix operator.
 - `AppPersistentCloudKitContainer.swift` — CoreData/CloudKit container setup with App Group (`group.com.grizz.apps.dev.simply-filter-sms`).
 
 ### Message Filter Extension (`Message Filter Extension/`)
-- `MessageFilterExtension.swift` — Entry point implementing `ILMessageFilterQueryHandling`. Uses `MessageEvaluationManager` to evaluate messages offline (no network deferral).
+- `MessageFilterExtension.swift` — Entry point implementing `ILMessageFilterQueryHandling`. Instantiates `MessageEvaluationManager()` (owned sync-loaded store) and evaluates offline (no network deferral).
 
 ## MVVM Pattern
 
@@ -66,7 +66,7 @@ Every screen follows the same structure:
 
 - **Nested ViewModel:** Declared as `class ViewModel: BaseViewModel, ObservableObject` inside `extension SomeView { }`. Always accessed as `SomeView.ViewModel`.
 - **BaseViewModel:** Holds a single `appManager: AppManagerProtocol` property (defaults to `AppManager.shared`). All ViewModels subclass it for DI access.
-- **View owns ViewModel:** Most views use `@ObservedObject var model: ViewModel`. However, screens presented as sheets or that experienced re-rendering bugs use `@StateObject` with the `init(model:) { _model = StateObject(wrappedValue: model) }` pattern — this prevents SwiftUI from recreating the ViewModel on parent re-renders. Current `@StateObject` screens: `AboutView`, `CountryListView`, `ReportMessageView`, `TestFiltersView`, `TipJarView`. Views never access managers directly.
+- **View owns ViewModel:** Most views use `@ObservedObject var model: ViewModel`. However, screens presented as sheets or that experienced re-rendering bugs use `@StateObject` with the `init(model:) { _model = StateObject(wrappedValue: model) }` pattern — this prevents SwiftUI from recreating the ViewModel on parent re-renders. Current `@StateObject` screens: `AboutView`, `CountryListView`, `FilterListView`, `ReportMessageView`, `TestFiltersView`, `TipJarView`. Views never access managers directly.
 - **Screen enum router:** `Screen.swift` defines all screens as enum cases with a `build()` factory method that instantiates the View+ViewModel pair. Used for both navigation and sheet presentation.
 - **Navigation via published optionals:** ViewModels expose `@Published var navigationScreen: Screen?` (push), `sheetScreen: Screen?` (sheet), and `modalFullScreen: Screen?` (full-screen cover) to drive navigation declaratively.
 - **StatefulItem<T>:** Generic wrapper (`View Layer/Others/StatefulItem.swift`) that bridges getter/setter closures to a `Bool state` property with `didSet`. Used for Toggle bindings backed by manager calls.
@@ -79,18 +79,19 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full documentation index, depende
 ## Key Conventions
 
 - **Localization operator:** Postfix `~` operator converts string keys to localized strings: `"key"~` equals `NSLocalizedString("key", comment: "")`.
-- **Enums over structs for constant data:** When defining a fixed set of entries with computed properties (display names, icons, colors, etc.), prefer `CaseIterable` enums with computed properties over structs with separate arrays. See `FilterType`, `RuleType`, `WhatsNewEntry` in `Constsants.swift` for examples.
+- **Enums over structs for constant data:** When defining a fixed set of entries with computed properties (display names, icons, colors, etc.), prefer `CaseIterable` enums with computed properties over structs with separate arrays. See `FilterType`, `RuleType`, `WhatsNewEntry` in `Constants.swift` for examples.
 - **Extensions over scattered conditionals:** When a conditional pattern repeats across a file (e.g., `if (!isPad) { element.tap() }`), extract it into a type extension (e.g., `element.conditionalTap(!isPad)`) rather than duplicating the conditional at every call site.
 - **Naming:** `*Protocol` for interfaces, `mock_*` prefix for test mocks, `*Manager` for services, `*View` for SwiftUI views.
 - **Logging:** `AppManager.logger` (OSLog `Logger`) used throughout. Extension has its own logger instance.
-- **CoreData model:** Versioned at `Resources/Simply-Filter-SMS.xcdatamodeld` (v3). Entities use Int64 raw values mapped to Swift enums via computed properties in `SharedExtensions.swift`.
+- **CoreData model:** Versioned at `Resources/Simply-Filter-SMS.xcdatamodeld` (v4). Entities use Int64 raw values mapped to Swift enums via computed properties in `SharedExtensions.swift`.
 - **Test mocks:** Located in `Tests/Mocks/` — one mock per protocol.
 - **App Group:** Shared container `group.com.grizz.apps.dev.simply-filter-sms` allows CoreData access from both app and extension.
 - **Dark mode colors:** Avoid `Color(.systemGray6)` for card/surface backgrounds — it blends into the system background in dark mode. Use `.gray.opacity(...)` for visible contrast in both appearances.
 - **Avoid `.task` for one-time loads:** SwiftUI `.task` re-fires when the view tree identity changes (e.g., conditional overlays). For one-time async work, use `Task { }` in the ViewModel's `init` instead.
-- **What's New entries:** When adding a new `WhatsNewEntry` case, always bump `currentWhatsNewVersion` in `Constsants.swift`. The sheet only shows when this version exceeds the user's last-seen version in defaults. Entries can be **actionable** by returning `true` from `isActionable` — the presenting screen handles navigation via the `onActionableEntryTapped` closure (e.g., opening Tip Jar via `pendingScreenAfterDismiss`).
+- **What's New entries:** When adding a new `WhatsNewEntry` case, always bump `currentWhatsNewVersion` in `Constants.swift`. The sheet only shows when this version exceeds the user's last-seen version in defaults. Entries can be **actionable** by returning `true` from `isActionable` — the presenting screen handles navigation via the `onActionableEntryTapped` closure (e.g., opening Tip Jar via `pendingScreenAfterDismiss`).
 - **`listRowBackground` does not animate:** SwiftUI's `listRowBackground` content is not part of the normal animation hierarchy. Applying `.animation(_:value:)` or `withAnimation` to it has no effect. For animated row decorations (highlights, indicators), use `.overlay` or regular view modifiers on the row content itself.
 - **New-item indicators in Lists:** The reliable iOS pattern is a small filled `Circle()` dot (accent color, ~8pt) driven by local `@State var dotOpacity: Double` + `.onAppear`/`.onChange(of:)`. Background-flash via `listRowBackground` is not reliably achievable in SwiftUI Lists.
 - **`.onAppear` + `.onChange` together for state-dependent row animations:** Use both modifiers. `.onAppear` handles rows that enter the hierarchy with the flag already `true`; `.onChange(of:)` handles rows already in the hierarchy when the flag becomes `true`. Guard with the current state to prevent double-triggering.
-- **Timer identity guards:** When scheduling a delayed clear of a `@Published` property, guard by value identity to prevent an earlier timer from clobbering a later update: `if self?.newlyAddedFilter == filter { self?.newlyAddedFilter = nil }`.
+- **Filter / list identity:** Prefer `Filter.uuid` (`UUID`) for `ForEach` ids, `scrollTo`, new-item dots, and `@FocusState` — not `NSManagedObjectID`. Cache row ViewModels on the parent keyed by that UUID; do not construct them inside `ForEach`.
+- **Timer identity guards:** When scheduling a delayed clear of a `@Published` property, guard by value identity to prevent an earlier timer from clobbering a later update: `if self?.newlyAddedFilter == filter { self?.newlyAddedFilter = nil }` (or compare the same `UUID` used for the UI indicator).
 - **Sheet callbacks — don't touch `Screen`:** Never add associated values to `Screen` cases to pass closures — it breaks `Int` raw value conformance and ripples across the entire routing system. Instead, have the presenting ViewModel own the presented ViewModel directly, inject the closure at creation time, and present via a dedicated `@Published var fooViewModel: FooView.ViewModel?` + `.sheet(item:)`. The presented ViewModel must conform to `Identifiable` (add `let id = UUID()`). Example: `FilterListView.ViewModel` owns `addFilterViewModel: AddFilterView.ViewModel?`, creates it with `onAdded: { [weak self] filter in ... }` in `showAddFilter()`, and presents it via `.sheet(item: $model.addFilterViewModel)`.

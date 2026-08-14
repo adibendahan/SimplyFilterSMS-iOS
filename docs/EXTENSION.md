@@ -57,14 +57,16 @@ The extension and main app share code via the `Shared with Extension` folder:
 |------|---------|
 | `AppPersistentCloudKitContainer.swift` | CoreData container using App Group for shared database access |
 | `SharedExtensions.swift` | Extensions on `Filter`, `NLLanguage`, `ILMessageFilterAction`, `String` + the `~` localization operator |
-| `Constsants.swift` | All enums (`FilterType`, `DenyFolderType`, etc.) and global constants |
+| `Constants.swift` | All enums (`FilterType`, `DenyFolderType`, etc.) and global constants (including `kOwnedStoreLoadTimeout`) |
 
 ## Database Access
 
 The extension reads the same CoreData database as the main app via:
 - **App Group:** `group.com.grizz.apps.dev.simply-filter-sms`
 - **Container:** `AppPersistentCloudKitContainer` overrides `defaultDirectoryURL()` to point to the shared container
-- **Read-only:** When `MessageEvaluationManager` is initialized without a container (as in the extension), it creates its own with `isReadOnly: true` to avoid write conflicts with the main app
+- **Read-only:** Extension opens the App Group store with `isReadOnly: true` via `MessageEvaluationManager(inMemory: false)` → `ContextSource.owned`
+- **Sync load:** Store load completes in that init (waits up to `kOwnedStoreLoadTimeout`). Failure/timeout is logged; `evaluateMessage` then allows without running filters (avoids treating an empty store as “no match”)
+- **Shared protocol:** Extension target also compiles `PersistanceManagerProtocol` so the shared `MessageEvaluationManager` app initializer type-checks (extension only uses the owned-store path)
 
 ## Key Constraints
 
@@ -132,7 +134,7 @@ The Reporting Extension compiles these files from the main app (not shared via f
 
 | File | Purpose |
 |------|---------|
-| `Constsants.swift` | `ReportType` enum (junk / notJunk / junkAndBlockSender), `reportMessageURL` |
+| `Constants.swift` | `ReportType` enum (junk / notJunk / junkAndBlockSender), `reportMessageURL` |
 | `SharedExtensions.swift` | `~` localization operator; CoreData extensions guarded with `#if !REPORTING_EXTENSION` |
 | `HTTPService.swift` + `URLRequestProtocol.swift` | Base networking (not used directly — iOS delivers report via system) |
 | `ReportMessageRequest.swift` + `ReportMessageResponse.swift` | Request/response types (compiled in for completeness) |

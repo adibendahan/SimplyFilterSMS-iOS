@@ -61,10 +61,14 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
     
     func commitContext() {
-        guard self.context.hasChanges else { return }
+        guard self.context.hasChanges else {
+            AppManager.logger.debug("commitContext — skipped, no changes")
+            return
+        }
         
         do {
             try self.context.save()
+            AppManager.logger.debug("commitContext — save succeeded")
         } catch {
             let nsError = error as NSError
             AppManager.logger.error("ERROR! While commiting context: \(nsError), \(nsError.userInfo)")
@@ -334,8 +338,9 @@ class PersistanceManager: PersistanceManagerProtocol {
             AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)'")
             return
         }
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)'")
+        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)', hasChangesBefore: \(self.context.hasChanges, privacy: .public)")
         filter.text = filterText
+        AppManager.logger.debug("updateFilter — after set text, hasChanges: \(self.context.hasChanges, privacy: .public)")
         self.commitContext()
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }

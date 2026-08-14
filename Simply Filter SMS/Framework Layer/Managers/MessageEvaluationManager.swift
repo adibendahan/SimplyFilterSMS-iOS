@@ -1,6 +1,6 @@
 //
-//  ExtensionManager.swift
-//  Simply Filter SMS Extension
+//  MessageEvaluationManager.swift
+//  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 01/02/2022.
 //
@@ -15,33 +15,51 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
 
     //MARK: - Initialization -
 
-    /// Initializer for use in Extension/Tests context *creates a new container*
-    /// - Parameter container: NSPersistentCloudKitContainer
+    /// Extension/tests — owns a read-only App Group store (in-memory when `inMemory` is true).
     init(inMemory: Bool = false) {
-        let isReadOnly = inMemory ? false : true
-        let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: isReadOnly)
+        let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: !inMemory)
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
-        self.persistentContainer = container
-        self.context = container.viewContext
-        container.loadPersistentStores(completionHandler: { [weak self] (storeDescription, error) in
-            if let error = error as NSError? {
-                self?.logger?.error("ERROR! While initializing MessageEvaluationManager: \(error), \(error.userInfo)")
+
+        var loadError: Error?
+        let loaded = DispatchSemaphore(value: 0)
+        container.loadPersistentStores { (_, error) in
+            loadError = error
+            loaded.signal()
+        }
+        if loaded.wait(timeout: .now() + kOwnedStoreLoadTimeout) == .success, loadError == nil {
+            container.viewContext.stalenessInterval = 0
+            container.viewContext.automaticallyMergesChangesFromParent = true
+        }
+        else {
+            // Logger may not be set yet (extension calls setLogger after init).
+            let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "evaluation")
+            if let loadError {
+                logger.error("Owned store load failed: \(loadError.localizedDescription, privacy: .public)")
             }
-        })
+            else {
+                logger.error("Owned store load timed out after \(kOwnedStoreLoadTimeout, privacy: .public)s")
+            }
+        }
+
+        self.contextSource = .owned(container)
     }
 
-    /// Initializer for use in application context
-    /// - Parameter container: NSPersistentCloudKitContainer
-    init(container: NSPersistentCloudKitContainer) {
-        self.persistentContainer = container
-        self.context = container.viewContext
+    /// App — always reads the live `PersistanceManager` context.
+    init(persistanceManager: PersistanceManagerProtocol) {
+        self.contextSource = .persistance(persistanceManager)
     }
 
     //MARK: - Public API (MessageEvaluationManagerProtocol) -
 
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult {
+        if case .owned(let container) = self.contextSource,
+           container.persistentStoreCoordinator.persistentStores.isEmpty {
+            self.logger?.error("Owned store unavailable — skipping evaluation (allow)")
+            return MessageEvaluationResult(action: .allow, reason: "storeUnavailable")
+        }
+
         logger?.debug("━━━━ Evaluating message | sender: '\(sender, privacy: .public)' | body: '\(body, privacy: .public)' ━━━━")
         var result = MessageEvaluationResult(action: .none)
         defer {
@@ -105,11 +123,24 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         self.logger = logger
     }
 
+    var context: NSManagedObjectContext {
+        switch self.contextSource {
+        case .persistance(let persistanceManager):
+            return persistanceManager.context
+        case .owned(let container):
+            return container.viewContext
+        }
+    }
+
     //MARK: - Private -
 
+    private enum ContextSource {
+        case persistance(PersistanceManagerProtocol)
+        case owned(NSPersistentCloudKitContainer)
+    }
+
     private var logger: Logger?
-    private var persistentContainer: NSPersistentContainer?
-    private(set) var context: NSManagedObjectContext
+    private let contextSource: ContextSource
 
     private func runAllUnknownRule() -> MessageEvaluationResult {
         let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()

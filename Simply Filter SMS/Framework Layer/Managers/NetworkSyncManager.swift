@@ -38,29 +38,44 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
 
         NotificationCenter.default.publisher(for: NSPersistentCloudKitContainer.eventChangedNotification)
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { notification in
+            .sink(receiveValue: { [weak self] notification in
+                guard let self else { return }
                 guard let cloudEvent = notification.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey]
                         as? NSPersistentCloudKitContainer.Event else { return }
 
                 switch cloudEvent.type {
                 case .setup:
-                    if cloudEvent.endDate != nil {
-                        self.syncStatus = cloudEvent.succeeded ? .active : .failed
-                        AppManager.logger.debug("CloudKit setup event ended — succeeded: \(cloudEvent.succeeded, privacy: .public), syncStatus: \(self.syncStatus.name, privacy: .public)")
+                    guard cloudEvent.endDate != nil else { return }
+                    if cloudEvent.succeeded {
+                        self.syncStatus = .active
+                        self.setupRetryCount = 0
+                        self.pendingSetupRetry = nil
+                        AppManager.logger.debug("CloudKit setup event ended — succeeded: true, syncStatus: \(self.syncStatus.name, privacy: .public)")
+                    }
+                    else {
+                        self.syncStatus = .failed
+                        let errorDescription = cloudEvent.error?.localizedDescription ?? "nil"
+                        AppManager.logger.debug("CloudKit setup event ended — succeeded: false, syncStatus: \(self.syncStatus.name, privacy: .public), error: \(errorDescription, privacy: .public)")
+                        self.scheduleSetupRetryIfNeeded()
                     }
                 case .import:
                     if cloudEvent.endDate == nil {
                         self.preSyncFingerprint = self.persistanceManager?.fingerprint ?? kNone
                         AppManager.logger.debug("CloudKit import started — fingerprint: \(self.preSyncFingerprint, privacy: .public)")
                     }
-                    else if cloudEvent.succeeded &&
-                                self.preSyncFingerprint != kNone &&
-                                self.preSyncFingerprint != self.persistanceManager?.fingerprint ?? self.preSyncFingerprint {
-                        AppManager.logger.debug("CloudKit import complete — data changed, posting cloudSyncOperationComplete")
-                        NotificationCenter.default.post(name: .cloudSyncOperationComplete, object: nil)
+                    else if !cloudEvent.succeeded {
+                        let errorDescription = cloudEvent.error?.localizedDescription ?? "nil"
+                        AppManager.logger.debug("CloudKit import complete — failed, error: \(errorDescription, privacy: .public)")
                     }
                     else {
-                        AppManager.logger.debug("CloudKit import complete — no data change detected")
+                        let currentFingerprint = self.persistanceManager?.fingerprint ?? kNone
+                        if self.preSyncFingerprint != currentFingerprint {
+                            AppManager.logger.debug("CloudKit import complete — data changed, posting cloudSyncOperationComplete")
+                            NotificationCenter.default.post(name: .cloudSyncOperationComplete, object: nil)
+                        }
+                        else {
+                            AppManager.logger.debug("CloudKit import complete — no data change detected")
+                        }
                     }
                 case .export:
                     AppManager.logger.debug("CloudKit export event — succeeded: \(cloudEvent.succeeded, privacy: .public)")
@@ -78,6 +93,11 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
     private var preSyncFingerprint: String
     private var disposables = Set<AnyCancellable>()
     private var firstStatusHandlers: [() -> Void] = []
+    private var setupRetryCount = 0
+    private let maxSetupRetries = 2
+    private var pendingSetupRetry: DispatchWorkItem? {
+        didSet { oldValue?.cancel() }
+    }
 
     func onFirstStatusKnown(_ handler: @escaping () -> Void) {
         if networkStatus != .unknown {
@@ -88,6 +108,25 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
         }
     }
 
+    private func scheduleSetupRetryIfNeeded() {
+        guard self.setupRetryCount < self.maxSetupRetries else {
+            AppManager.logger.debug("CloudKit setup retry — exhausted (\(self.maxSetupRetries, privacy: .public) attempts)")
+            return
+        }
+        self.setupRetryCount += 1
+        let attempt = self.setupRetryCount
+        AppManager.logger.debug("CloudKit setup retry — scheduling attempt \(attempt, privacy: .public) in \(attempt * 5, privacy: .public)s")
+        let work = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            self.pendingSetupRetry = nil
+            guard self.syncStatus == .failed, self.networkStatus != .offline else { return }
+            AppManager.logger.debug("CloudKit setup retry — reloading container (attempt \(attempt, privacy: .public))")
+            self.persistanceManager?.reloadContainer()
+        }
+        self.pendingSetupRetry = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(attempt * 5), execute: work)
+    }
+
     private func onNetworkChange(_ newPath: NWPath) {
         let newStatus = newPath.status.networkStatus
         DispatchQueue.main.async {
@@ -95,6 +134,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
             AppManager.logger.debug("Network status changed — \(self.networkStatus.name, privacy: .public) → \(newStatus.name, privacy: .public)")
             if newStatus == .online && self.syncStatus == .failed {
                 AppManager.logger.debug("Network back online with failed sync — reloading CloudKit container")
+                self.pendingSetupRetry = nil
                 self.persistanceManager?.reloadContainer()
             }
             self.networkStatus = newStatus
