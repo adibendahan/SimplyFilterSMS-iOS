@@ -19,9 +19,11 @@ let kUpdateAutomaticFiltersMinDays = 3
 let kMinimumFilterLength = 1
 let kHideiClouldStatusMemory = 60
 let kOwnedStoreLoadTimeout: TimeInterval = 3.0
+let kFilterExportFileExtension = "sfsfilters"
+let kFilterExportTypeIdentifier = "com.grizz.apps.dev.simply-filter-sms.filters"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
-let currentWhatsNewVersion = 5
+let currentWhatsNewVersion = 6
 
 
 // URLs
@@ -567,7 +569,7 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters
+    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters, filterImportExport
 
     var title: String {
         switch self {
@@ -583,6 +585,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_tipJar_title"~
         case .regexFilters:
             return "whatsNew_regexFilters_title"~
+        case .filterImportExport:
+            return "whatsNew_filterImportExport_title"~
         }
     }
 
@@ -600,6 +604,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_tipJar_desc"~
         case .regexFilters:
             return "whatsNew_regexFilters_desc"~
+        case .filterImportExport:
+            return "whatsNew_filterImportExport_desc"~
         }
     }
 
@@ -617,6 +623,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "heart.fill"
         case .regexFilters:
             return "chevron.left.forwardslash.chevron.right"
+        case .filterImportExport:
+            return "square.and.arrow.up.on.square"
         }
     }
 
@@ -634,23 +642,27 @@ enum WhatsNewEntry: String, CaseIterable {
             return .red
         case .regexFilters:
             return .orange
+        case .filterImportExport:
+            return .blue
         }
     }
 
     var order: Int {
         switch self {
-        case .tipJar:
+        case .filterImportExport:
             return 0
-        case .aiFiltering:
+        case .tipJar:
             return 1
-        case .regexFilters:
+        case .aiFiltering:
             return 2
-        case .newLanguages:
+        case .regexFilters:
             return 3
-        case .trustedCountries:
+        case .newLanguages:
             return 4
-        case .accessibility:
+        case .trustedCountries:
             return 5
+        case .accessibility:
+            return 6
         }
     }
 

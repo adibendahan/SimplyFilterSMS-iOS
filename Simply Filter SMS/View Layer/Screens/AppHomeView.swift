@@ -263,11 +263,8 @@ struct AppHomeView: View {
                     withAnimation {
                         self.model.refresh()
 
-                        if !isPreview && self.model.isAppFirstRun {
-                            self.model.sheetScreen = .enableExtension
-                        }
-                        else if !isPreview && self.model.shouldShowWhatsNew {
-                            self.model.sheetScreen = .whatsNew
+                        if !isPreview {
+                            self.model.presentLaunchIfNeeded()
                         }
                     }
                 }
@@ -288,6 +285,9 @@ struct AppHomeView: View {
         .modifier(EmbeddedNotificationView(model: self.model.notification))
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
+            if !isPreview {
+                self.model.presentLaunchIfNeeded()
+            }
             if self.model.pendingScreenAfterDismiss != nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     self.model.sheetScreen = self.model.pendingScreenAfterDismiss
@@ -311,11 +311,19 @@ struct AppHomeView: View {
         }
         .fullScreenCover(item: $model.modalFullScreen) {
             self.model.refresh()
+            if !isPreview {
+                self.model.presentLaunchIfNeeded()
+            }
         } content: { modalFullScreen in
             modalFullScreen.build()
         }
+        .modifier(FilterImportExportPresentation(model: self.model.importExport))
         .onAppear {
             self.model.startMonitoring()
+            if !isPreview {
+                self.model.presentLaunchIfNeeded()
+                self.model.scheduleWhatsNewIfNeeded()
+            }
         }
         .onOpenURL { url in
             self.model.handleDeepLink(url: url)
@@ -387,6 +395,23 @@ struct AppHomeView: View {
                 } label: {
                     Label("autoFilter_improveAIFiltering"~, systemImage: "wand.and.stars")
                 }
+
+                Divider()
+
+                Button {
+                    self.model.importExport.export()
+                } label: {
+                    Label("menu_exportFilters"~, systemImage: "square.and.arrow.up")
+                }
+                .disabled(self.model.filters.isEmpty)
+                .accessibilityIdentifier(TestIdentifier.exportFiltersMenuButton.rawValue)
+
+                Button {
+                    self.model.importExport.beginFileImport()
+                } label: {
+                    Label("menu_importFilters"~, systemImage: "square.and.arrow.down")
+                }
+                .accessibilityIdentifier(TestIdentifier.importFiltersMenuButton.rawValue)
             } label: {
                 Label("menu_filterTools"~, systemImage: "wrench.and.screwdriver.fill")
             }
@@ -453,23 +478,33 @@ extension AppHomeView {
         }
         @Published var modalFullScreen: Screen? = nil {
             didSet {
-                if self.modalFullScreen == nil,
-                   let pendingNotification = self.pendingNotification {
-                    self.showNotification(pendingNotification)
-                    self.pendingNotification = nil
+                if self.modalFullScreen == nil {
+                    self.processPendingWork()
                 }
             }
         }
         @Published var sheetScreen: Screen? = nil {
             didSet {
-                if self.sheetScreen == nil,
-                   let pendingNotification = self.pendingNotification {
-                    self.showNotification(pendingNotification)
-                    self.pendingNotification = nil
+                if self.sheetScreen == nil {
+                    self.processPendingWork()
                 }
             }
         }
         var pendingScreenAfterDismiss: Screen?
+        lazy var importExport: FilterImportExportPresentation.ViewModel = {
+            return FilterImportExportPresentation.ViewModel(
+                appManager: self.appManager,
+                isPresentationBlocked: { [weak self] in
+                    guard let self else { return true }
+                    return self.isAppFirstRun || self.sheetScreen == .whatsNew
+                },
+                onImported: { [weak self] in
+                    self?.refresh()
+                },
+                onNotification: { [weak self] notification in
+                    self?.showNotification(notification)
+                })
+        }()
         
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             let isAutomaticFilteringOn = appManager.automaticFilterManager.isAutomaticFilteringOn
@@ -511,6 +546,7 @@ extension AppHomeView {
                                                                                                    getter: self.appManager.automaticFilterManager.automaticRuleState,
                                                                                                    setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
             self.lastUIFingerprint = self.appManager.persistanceManager.fingerprint
+            self.processPendingWork()
         }
         
         func setSelectedChoice(for rule: RuleType, choice: Int) {
@@ -521,9 +557,91 @@ extension AppHomeView {
         func activeCount(for filterType: FilterType) -> Int {
             return self.filters.filter({ $0.filterType == filterType }).count
         }
+
+        func handleDeepLink(url: URL) {
+            if self.importExport.handleIncomingURL(url) {
+                self.claimLaunchFollowUp(.openedFilterFile)
+                return
+            }
+
+            guard url.scheme == "simplyfiltersms",
+                  let host = url.host,
+                  let screen = Screen.fromDeepLink(host: host) else { return }
+
+            if self.importExport.isPresenting {
+                return
+            }
+
+            self.claimLaunchFollowUp(.deepLink(screen))
+        }
+
+        func presentLaunchIfNeeded() {
+            self.isAppFirstRun = self.appManager.defaultsManager.isAppFirstRun
+            if self.isAppFirstRun {
+                self.sheetScreen = .enableExtension
+                return
+            }
+
+            if let followUp = self.launchFollowUp {
+                self.launchFollowUp = nil
+                self.skipWhatsNewThisSession = true
+                switch followUp {
+                case .openedFilterFile:
+                    self.importExport.presentPendingIfPossible()
+                case .deepLink(let screen):
+                    self.modalFullScreen = screen
+                }
+            }
+        }
+
+        func scheduleWhatsNewIfNeeded() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.presentWhatsNewIfNeeded()
+            }
+        }
+
+        private func claimLaunchFollowUp(_ followUp: LaunchFollowUp) {
+            self.skipWhatsNewThisSession = true
+            self.launchFollowUp = followUp
+
+            if self.isAppFirstRun {
+                self.presentLaunchIfNeeded()
+                return
+            }
+
+            if self.sheetScreen == .whatsNew {
+                self.sheetScreen = nil
+                return
+            }
+
+            self.presentLaunchIfNeeded()
+        }
+
+        private func presentWhatsNewIfNeeded() {
+            guard self.isAppFirstRun == false,
+                  self.skipWhatsNewThisSession == false,
+                  self.launchFollowUp == nil,
+                  self.importExport.isPresenting == false,
+                  self.navigationScreen == nil,
+                  self.sheetScreen == nil,
+                  self.modalFullScreen == nil,
+                  self.shouldShowWhatsNew else { return }
+            self.sheetScreen = .whatsNew
+        }
+
+        private func processPendingWork() {
+            self.importExport.presentPendingIfPossible()
+
+            guard self.modalFullScreen == nil,
+                  self.sheetScreen == nil,
+                  !self.importExport.isPresenting,
+                  let pendingNotification = self.pendingNotification else { return }
+            self.pendingNotification = nil
+            self.showNotification(pendingNotification)
+        }
         
         func showNotification(_ notification: NotificationView.Notification) {
-            guard self.modalFullScreen == nil && self.sheetScreen == nil else {
+            guard self.modalFullScreen == nil && self.sheetScreen == nil && !self.importExport.isPresenting else {
                 self.pendingNotification = notification
                 return
             }
@@ -590,6 +708,7 @@ extension AppHomeView {
             self.catchUpFromStoreIfNeeded()
             self.tryShowTipPromotion()
             self.tryShowReportingExtensionNudge()
+            self.processPendingWork()
         }
 
         private func catchUpFromStoreIfNeeded() {
@@ -667,26 +786,10 @@ extension AppHomeView {
         func reset() {
             self.appManager.reset()
             self.refresh()
+            self.presentLaunchIfNeeded()
         }
         #endif // DEBUG
         
-        func handleDeepLink(url: URL) {
-            guard url.scheme == "simplyfiltersms",
-                  let host = url.host,
-                  let screen = Screen.fromDeepLink(host: host) else { return }
-
-            if self.sheetScreen != nil || self.modalFullScreen != nil {
-                self.sheetScreen = nil
-                self.modalFullScreen = nil
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.sheetScreen = screen
-                }
-            } else {
-                self.sheetScreen = screen
-            }
-        }
-
         var shouldShowWhatsNew: Bool {
             !self.wasFirstRunOnInit
             && !self.isAppFirstRun
@@ -694,7 +797,14 @@ extension AppHomeView {
             && currentWhatsNewVersion > self.appManager.defaultsManager.lastSeenWhatsNewVersion
         }
 
+        private enum LaunchFollowUp {
+            case openedFilterFile
+            case deepLink(Screen)
+        }
+
         private let wasFirstRunOnInit: Bool
+        private var launchFollowUp: LaunchFollowUp?
+        private var skipWhatsNewThisSession = false
         private var lastUIFingerprint: String = ""
         private var didAddObservers = false
         private var didShowNotificationThisSession = false

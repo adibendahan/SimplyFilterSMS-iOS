@@ -298,6 +298,28 @@
 "a11y_about_versionCopied" = "Version";
 "a11y_enableExtension_stepLabel" = "Step %ld: %@. %@";
 
+//MARK: Filter Import / Export
+"menu_exportFilters" = "Export Filters";
+"menu_importFilters" = "Import Filters";
+"importFilters_title" = "Import Filters";
+"importFilters_sectionTitle" = "Filters to Import";
+"importFilters_subtitle" = "Tap a list to review the filters in this file and choose which ones to add. Filters that already exist on this device are skipped. Nothing is overwritten or deleted.";
+"importFilters_toAdd" = "New";
+"importFilters_duplicates" = "Already exist";
+"importFilters_invalid" = "Skipped";
+"importFilters_confirm" = "Import";
+"importFilters_nothingToAdd" = "Nothing new to import.";
+"importFilters_selectAll" = "Select All";
+"importFilters_selectNone" = "Select None";
+"notification_import_title" = "Filters Imported";
+"notification_import_subtitle" = "%ld added, %ld skipped";
+"notification_importFailed_title" = "Import Failed";
+"notification_importFailed_subtitle" = "This file isn’t a valid filter export.";
+"notification_exportFailed_title" = "Export Failed";
+"notification_exportFailed_subtitle" = "Couldn’t create the export file.";
+"whatsNew_filterImportExport_title" = "Export & Import";
+"whatsNew_filterImportExport_desc" = "Back up your filters or copy them to another device. Export a file, then import it to **merge** — duplicates are skipped, nothing is deleted.";
+
 // Country calling code groups
 "callingCode_+1" = "North America";
 "callingCode_+7" = "Russia & Kazakhstan";

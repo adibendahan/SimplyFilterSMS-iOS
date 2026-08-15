@@ -489,3 +489,24 @@
 "whatsNew_regexFilters_title" = "פילטרי Regex";
 
 "whatsNew_regexFilters_desc" = "למשתמשים מתקדמים - סנן עם **ביטויים רגולריים** לשליטה מלאה על מה שנחסם או מותר. תבנית אחת יכולה להחליף עשרות פילטרים.";
+
+"menu_exportFilters" = "ייצוא פילטרים";
+"menu_importFilters" = "ייבוא פילטרים";
+"importFilters_title" = "ייבוא פילטרים";
+"importFilters_sectionTitle" = "פילטרים לייבוא";
+"importFilters_subtitle" = "הקישו על רשימה כדי לעיין בפילטרים שבקובץ ולבחור מה להוסיף. פילטרים שכבר קיימים במכשיר הזה מדולגים. שום דבר לא יוחלף ולא יימחק.";
+"importFilters_toAdd" = "חדשים";
+"importFilters_duplicates" = "כבר קיימים";
+"importFilters_invalid" = "לא תקינים";
+"importFilters_confirm" = "ייבוא";
+"importFilters_nothingToAdd" = "אין מה לייבא.";
+"importFilters_selectAll" = "בחר הכל";
+"importFilters_selectNone" = "בטל בחירה";
+"notification_import_title" = "הפילטרים יובאו";
+"notification_import_subtitle" = "%ld נוספו, %ld לא יובאו";
+"notification_importFailed_title" = "הייבוא נכשל";
+"notification_importFailed_subtitle" = "הקובץ אינו ייצוא פילטרים תקין.";
+"notification_exportFailed_title" = "הייצוא נכשל";
+"notification_exportFailed_subtitle" = "לא ניתן ליצור את קובץ הייצוא.";
+"whatsNew_filterImportExport_title" = "ייצוא וייבוא";
+"whatsNew_filterImportExport_desc" = "גבו את הפילטרים שלכם או העתיקו אותם למכשיר אחר. ייצאו קובץ ואז ייבאו אותו ל**מיזוג** — כפילויות מדולגות, שום דבר לא נמחק.";

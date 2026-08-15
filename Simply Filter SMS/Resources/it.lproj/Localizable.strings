@@ -489,3 +489,24 @@
 "whatsNew_regexFilters_title" = "Filtri Regex";
 
 "whatsNew_regexFilters_desc" = "Per utenti avanzati - filtra con **espressioni regolari** per il controllo completo su cosa viene bloccato o consentito. Un solo pattern può sostituire decine di filtri.";
+
+"menu_exportFilters" = "Esporta filtri";
+"menu_importFilters" = "Importa filtri";
+"importFilters_title" = "Importa filtri";
+"importFilters_sectionTitle" = "Filtri da importare";
+"importFilters_subtitle" = "Tocca un elenco per rivedere i filtri di questo file e scegliere quali aggiungere. I filtri già presenti su questo dispositivo vengono ignorati. Nulla viene sovrascritto o eliminato.";
+"importFilters_toAdd" = "Nuovi";
+"importFilters_duplicates" = "Già presenti";
+"importFilters_invalid" = "Ignorati";
+"importFilters_confirm" = "Importa";
+"importFilters_nothingToAdd" = "Niente di nuovo da importare.";
+"importFilters_selectAll" = "Seleziona tutto";
+"importFilters_selectNone" = "Deseleziona tutto";
+"notification_import_title" = "Filtri importati";
+"notification_import_subtitle" = "%ld aggiunti, %ld ignorati";
+"notification_importFailed_title" = "Importazione non riuscita";
+"notification_importFailed_subtitle" = "Questo file non è un export di filtri valido.";
+"notification_exportFailed_title" = "Esportazione non riuscita";
+"notification_exportFailed_subtitle" = "Impossibile creare il file di esportazione.";
+"whatsNew_filterImportExport_title" = "Esporta e importa";
+"whatsNew_filterImportExport_desc" = "Fai il backup dei filtri o copiali su un altro dispositivo. Esporta un file e importalo per **unire** — i duplicati vengono ignorati, niente viene eliminato.";

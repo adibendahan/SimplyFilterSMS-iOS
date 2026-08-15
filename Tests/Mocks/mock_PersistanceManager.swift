@@ -229,6 +229,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     func resetCounters() {
         self.addFilterCounter = 0
         self.isDuplicateFilterCounter = 0
+        self.isDuplicateFilterCounter = 0
         self.deleteFiltersOffsetsCounter = 0
         self.deleteFiltersCounter = 0
         self.updateFilterDenyFolderCounter = 0

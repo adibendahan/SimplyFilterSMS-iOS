@@ -23,6 +23,7 @@ class AppManager: AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol
     var reportMessageService: ReportMessageServiceProtocol
     var tipJarManager: TipJarManagerProtocol
+    var filterImportExportManager: FilterImportExportManagerProtocol
     var debugDataManager: DebugDataManagerProtocol
 
     init(inMemory: Bool = false) {
@@ -45,6 +46,7 @@ class AppManager: AppManagerProtocol {
         self.amazonS3Service = amazonS3Service
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
+        self.filterImportExportManager = FilterImportExportManager(persistanceManager: persistanceManager)
         self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
                                                  defaultsManager: defaultsManager,
                                                  automaticFilterManager: automaticFilterManager)

@@ -489,3 +489,24 @@
 "whatsNew_regexFilters_title" = "Regex-Filter";
 
 "whatsNew_regexFilters_desc" = "Für fortgeschrittene Nutzer - filtere mit **regulären Ausdrücken** für volle Kontrolle über was blockiert oder erlaubt wird. Ein Muster kann Dutzende von Filtern ersetzen.";
+
+"menu_exportFilters" = "Filter exportieren";
+"menu_importFilters" = "Filter importieren";
+"importFilters_title" = "Filter importieren";
+"importFilters_sectionTitle" = "Zu importierende Filter";
+"importFilters_subtitle" = "Tippe auf eine Liste, um die Filter in dieser Datei zu prüfen und auszuwählen, welche hinzugefügt werden. Filter, die auf diesem Gerät bereits vorhanden sind, werden übersprungen. Nichts wird überschrieben oder gelöscht.";
+"importFilters_toAdd" = "Neu";
+"importFilters_duplicates" = "Bereits vorhanden";
+"importFilters_invalid" = "Übersprungen";
+"importFilters_confirm" = "Importieren";
+"importFilters_nothingToAdd" = "Nichts Neues zum Importieren.";
+"importFilters_selectAll" = "Alle auswählen";
+"importFilters_selectNone" = "Keine auswählen";
+"notification_import_title" = "Filter importiert";
+"notification_import_subtitle" = "%ld hinzugefügt, %ld übersprungen";
+"notification_importFailed_title" = "Import fehlgeschlagen";
+"notification_importFailed_subtitle" = "Diese Datei ist kein gültiger Filter-Export.";
+"notification_exportFailed_title" = "Export fehlgeschlagen";
+"notification_exportFailed_subtitle" = "Die Exportdatei konnte nicht erstellt werden.";
+"whatsNew_filterImportExport_title" = "Export & Import";
+"whatsNew_filterImportExport_desc" = "Sichere deine Filter oder kopiere sie auf ein anderes Gerät. Exportiere eine Datei und importiere sie zum **Zusammenführen** — Duplikate werden übersprungen, nichts wird gelöscht.";
