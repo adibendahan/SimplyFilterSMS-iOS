@@ -12,6 +12,8 @@ Tests/
 ├── AutomaticFilterManagerTests.swift     # Cloud filter management
 ├── PersistanceManagerTests.swift         # CoreData operations
 ├── FilterListViewModelTests.swift        # ViewModel integration
+├── FilterImportExportManagerTests.swift  # Merge-only import/export
+├── FlowManagerTests.swift                # Launch-order queue
 ├── AmazonS3ServiceTests.swift            # HTTP service
 └── Mocks/
     ├── mock_AppManager.swift
@@ -22,7 +24,9 @@ Tests/
     ├── mock_NetworkSyncManager.swift
     ├── mock_AmazonS3Service.swift
     ├── mock_HTTPService.swift
-    └── mock_ReportMessageService.swift
+    ├── mock_ReportMessageService.swift
+    ├── mock_FilterImportExportManager.swift
+    └── mock_FlowManager.swift
 
 UI Tests/
 ├── ApplicationTestCase.swift             # Base XCTestCase

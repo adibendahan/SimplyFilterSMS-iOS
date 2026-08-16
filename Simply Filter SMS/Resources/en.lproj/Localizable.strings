@@ -304,7 +304,6 @@
 "importFilters_title" = "Import Filters";
 "importFilters_sectionTitle" = "Filters to Import";
 "importFilters_subtitle" = "Tap a list to review the filters in this file and choose which ones to add. Filters that already exist on this device are skipped. Nothing is overwritten or deleted.";
-"importFilters_toAdd" = "New";
 "importFilters_duplicates" = "Already exist";
 "importFilters_invalid" = "Skipped";
 "importFilters_confirm" = "Import";

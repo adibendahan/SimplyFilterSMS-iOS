@@ -1,6 +1,6 @@
 //
 //  mock_FilterImportExportManager.swift
-//  Simply Filter SMS Tests
+//  Tests
 //
 //  Created by Adi Ben-Dahan on 15/08/2026.
 //
@@ -10,8 +10,12 @@ import Foundation
 
 class mock_FilterImportExportManager: FilterImportExportManagerProtocol {
 
+    var pendingPreview = FilterImportPreview.empty
+    var lastImportResult: FilterImportResult?
+
     var exportPayloadCounter = 0
     var writeExportFileCounter = 0
+    var deleteExportFileCounter = 0
     var isExportFileCounter = 0
     var readFileCounter = 0
     var previewImportCounter = 0
@@ -19,10 +23,10 @@ class mock_FilterImportExportManager: FilterImportExportManagerProtocol {
 
     var exportPayloadClosure: (() throws -> Data)?
     var writeExportFileClosure: (() throws -> URL)?
+    var deleteExportFileClosure: ((URL) -> ())?
     var isExportFileClosure: ((URL) -> (Bool))?
     var readFileClosure: ((URL) throws -> Data)?
     var previewImportClosure: ((Data) throws -> FilterImportPreview)?
-    var importFiltersClosure: ((Data) throws -> FilterImportResult)?
     var importCandidatesClosure: (([FilterImportCandidate]) -> FilterImportResult)?
 
     func exportPayload() throws -> Data {
@@ -39,6 +43,11 @@ class mock_FilterImportExportManager: FilterImportExportManagerProtocol {
             return try writeExportFileClosure()
         }
         return FileManager.default.temporaryDirectory.appendingPathComponent("test.sfsfilters")
+    }
+
+    func deleteExportFile(at url: URL) {
+        self.deleteExportFileCounter += 1
+        self.deleteExportFileClosure?(url)
     }
 
     func isExportFile(_ url: URL) -> Bool {
@@ -62,28 +71,40 @@ class mock_FilterImportExportManager: FilterImportExportManagerProtocol {
         if let previewImportClosure = self.previewImportClosure {
             return try previewImportClosure(data)
         }
-        return FilterImportPreview(toAdd: [], duplicateCount: 0, invalidCount: 0)
+        return FilterImportPreview.empty
+    }
+
+    func queueImport(data: Data) throws -> FilterImportPreview {
+        let preview = try self.previewImport(data: data)
+        self.pendingPreview = preview
+        return preview
+    }
+
+    func clearPendingImport() -> FilterImportResult? {
+        let result = self.lastImportResult
+        self.pendingPreview = FilterImportPreview.empty
+        self.lastImportResult = nil
+        return result
     }
 
     func importFilters(_ candidates: [FilterImportCandidate]) -> FilterImportResult {
         self.importFiltersCounter += 1
         if let importCandidatesClosure = self.importCandidatesClosure {
-            return importCandidatesClosure(candidates)
+            let result = importCandidatesClosure(candidates)
+            self.lastImportResult = result
+            return result
         }
-        return FilterImportResult(added: candidates.count, duplicateCount: 0, invalidCount: 0)
-    }
-
-    func importFilters(data: Data) throws -> FilterImportResult {
-        self.importFiltersCounter += 1
-        if let importFiltersClosure = self.importFiltersClosure {
-            return try importFiltersClosure(data)
-        }
-        return FilterImportResult(added: 0, duplicateCount: 0, invalidCount: 0)
+        let result = FilterImportResult(added: candidates.count,
+                                        duplicateCount: self.pendingPreview.duplicateCount,
+                                        invalidCount: self.pendingPreview.invalidCount)
+        self.lastImportResult = result
+        return result
     }
 
     func resetCounters() {
         self.exportPayloadCounter = 0
         self.writeExportFileCounter = 0
+        self.deleteExportFileCounter = 0
         self.isExportFileCounter = 0
         self.readFileCounter = 0
         self.previewImportCounter = 0

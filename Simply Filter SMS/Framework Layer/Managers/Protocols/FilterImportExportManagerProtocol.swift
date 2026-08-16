@@ -38,6 +38,11 @@ struct FilterExportRecord: Codable, Equatable {
     }
 }
 
+struct ExportFile: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+
 struct FilterImportCandidate: Equatable, Identifiable {
     let id: UUID
     let text: String
@@ -69,16 +74,14 @@ struct FilterImportCandidate: Equatable, Identifiable {
 }
 
 struct FilterImportPreview: Equatable {
+    static let empty = FilterImportPreview(toAdd: [], duplicateCount: 0, invalidCount: 0)
+
     let toAdd: [FilterImportCandidate]
     let duplicateCount: Int
     let invalidCount: Int
 
     var addedCount: Int { return self.toAdd.count }
     var skippedCount: Int { return self.duplicateCount + self.invalidCount }
-
-    func count(for type: FilterType) -> Int {
-        return self.toAdd.filter({ $0.type == type }).count
-    }
 }
 
 struct FilterImportResult: Equatable {
@@ -90,13 +93,17 @@ struct FilterImportResult: Equatable {
 }
 
 protocol FilterImportExportManagerProtocol {
+    var pendingPreview: FilterImportPreview { get }
+
     func exportPayload() throws -> Data
     func writeExportFile() throws -> URL
+    func deleteExportFile(at url: URL)
     func isExportFile(_ url: URL) -> Bool
     func readFile(at url: URL) throws -> Data
     func previewImport(data: Data) throws -> FilterImportPreview
+    func queueImport(data: Data) throws -> FilterImportPreview
+    func clearPendingImport() -> FilterImportResult?
     func importFilters(_ candidates: [FilterImportCandidate]) -> FilterImportResult
-    func importFilters(data: Data) throws -> FilterImportResult
 }
 
 

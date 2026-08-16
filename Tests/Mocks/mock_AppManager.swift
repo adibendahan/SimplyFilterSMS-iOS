@@ -23,6 +23,7 @@ class mock_AppManager: AppManagerProtocol {
     var reportMessageService: ReportMessageServiceProtocol = mock_ReportMessageService()
     var tipJarManager: TipJarManagerProtocol = mock_TipJarManager()
     var filterImportExportManager: FilterImportExportManagerProtocol = mock_FilterImportExportManager()
+    var flowManager: FlowManagerProtocol = mock_FlowManager()
     var debugDataManager: DebugDataManagerProtocol = mock_DebugDataManager()
 
     var getFrequentlyAskedQuestionsCounter = 0

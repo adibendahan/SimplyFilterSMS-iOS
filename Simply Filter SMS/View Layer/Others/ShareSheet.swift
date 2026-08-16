@@ -17,8 +17,3 @@ struct ShareSheet: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) { }
 }
-
-struct ExportFile: Identifiable {
-    let id = UUID()
-    let url: URL
-}

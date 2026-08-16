@@ -23,6 +23,8 @@ protocol AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol { get }
     var reportMessageService: ReportMessageServiceProtocol { get }
     var tipJarManager: TipJarManagerProtocol { get }
+    var filterImportExportManager: FilterImportExportManagerProtocol { get }
+    var flowManager: FlowManagerProtocol { get }
     func onAppLaunch()
     func onNewUserSession()
     func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel]
@@ -39,7 +41,9 @@ protocol AppManagerProtocol {
 6. `ReportMessageService` (receives network sync manager)
 7. `AutomaticFilterManager` (receives persistance manager + S3 service)
 8. `TipJarManager`
-9. Logger wired to MessageEvaluationManager
+9. `FilterImportExportManager` (receives persistance manager)
+10. `FlowManager` (receives defaults manager)
+11. Logger wired to MessageEvaluationManager
 
 In `#if DEBUG` + testing mode (`-Testing` launch argument): resets DefaultsManager and PersistanceManager.
 
@@ -364,6 +368,67 @@ enum TipPurchaseResult {
 ### TipTier
 
 Defined in `Constants.swift`. `CaseIterable` enum with `String` raw values (product IDs). Computed properties: `emoji`, `displayName`, `tierDescription`, `iconColor`, `confettiBirthRate`, `confettiLifetime`, `confettiVelocity`.
+
+---
+
+## FilterImportExportManager
+
+**Files:** `Framework Layer/Managers/FilterImportExportManager.swift`, `Protocols/FilterImportExportManagerProtocol.swift`
+
+Merge-only import/export of user filters. Export writes a versioned JSON payload to a `.sfsfilters` file in the temp directory. Import never deletes existing filters; new rows get new UUIDs via `addFilter`. One in-flight import at a time (`pendingPreview` / `lastImportResult`).
+
+### Protocol
+
+```swift
+protocol FilterImportExportManagerProtocol {
+    var pendingPreview: FilterImportPreview { get }
+    func exportPayload() throws -> Data
+    func writeExportFile() throws -> URL
+    func deleteExportFile(at url: URL)
+    func isExportFile(_ url: URL) -> Bool
+    func readFile(at url: URL) throws -> Data
+    func previewImport(data: Data) throws -> FilterImportPreview
+    func queueImport(data: Data) throws -> FilterImportPreview
+    func clearPendingImport() -> FilterImportResult?
+    func importFilters(_ candidates: [FilterImportCandidate]) -> FilterImportResult
+}
+```
+
+### Key Behaviors
+
+- **`queueImport`** starts the session (`pendingPreview`). Empty preview (nothing to add) is cleared by Home; it does not enter `FlowManager`.
+- **`importFilters`** writes onto that session. **`clearPendingImport`** ends it and returns the result (or nil) for the dismiss toast.
+- **`isExportFile`** is `.sfsfilters` only. **`deleteExportFile`** only removes a `.sfsfilters` file inside the temp directory.
+- Custom UTI / document type: `kFilterExportTypeIdentifier` in `Constants.swift`.
+
+---
+
+## FlowManager
+
+**Files:** `Framework Layer/Managers/FlowManager.swift`, `Protocols/FlowManagerProtocol.swift`
+
+Launch-order queue for Home sheets. It is not a navigator — Home still owns `sheetScreen`.
+
+### Protocol
+
+```swift
+protocol FlowManagerProtocol {
+    func recordLaunch(_ screen: Screen) -> Bool
+    func request(_ screen: Screen)
+    func enableWhatsNew()
+    func next() -> Screen?
+    func complete(_ screen: Screen)
+    func resetSession()
+}
+```
+
+### Key Behaviors
+
+- **Occupancy:** `next()` sets `activeScreen`. Further `next()` returns nil until `complete`.
+- **Order:** first run (`.enableExtension`) → launch (file / deep link) → automatic What's New (after `enableWhatsNew()`) → user `request`.
+- **`recordLaunch`** returns `false` for `.enableExtension` during first run (already showing that sheet). Last successful launch wins.
+- Automatic What's New is skipped if the session started as first run or a launch claimed the session.
+- Debug `AppManager.reset()` clears the pending import and `resetSession()`.
 
 ---
 

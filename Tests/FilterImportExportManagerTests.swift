@@ -1,6 +1,6 @@
 //
 //  FilterImportExportManagerTests.swift
-//  Simply Filter SMS Tests
+//  Tests
 //
 //  Created by Adi Ben-Dahan on 15/08/2026.
 //
@@ -58,7 +58,8 @@ class FilterImportExportManagerTests: XCTestCase {
         self.persistanceManager.deleteFilters(Set(self.persistanceManager.fetchFilterRecords()))
         XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 0)
 
-        let result = try self.testSubject.importFilters(data: data)
+        let preview = try self.testSubject.queueImport(data: data)
+        let result = self.testSubject.importFilters(preview.toAdd)
 
         XCTAssertEqual(result.added, 4)
         XCTAssertEqual(result.duplicateCount, 0)
@@ -100,7 +101,8 @@ class FilterImportExportManagerTests: XCTestCase {
             record(text: "new-one", type: "deny")
         ])
 
-        let result = try self.testSubject.importFilters(data: data)
+        let preview = try self.testSubject.queueImport(data: data)
+        let result = self.testSubject.importFilters(preview.toAdd)
 
         XCTAssertEqual(result.added, 1)
         XCTAssertEqual(result.duplicateCount, 1)
@@ -187,6 +189,23 @@ class FilterImportExportManagerTests: XCTestCase {
         let imported = try self.testSubject.previewImport(data: Data(contentsOf: url))
         XCTAssertEqual(imported.addedCount, 0)
         XCTAssertEqual(imported.duplicateCount, 1)
+        self.testSubject.deleteExportFile(at: url)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
+    }
+
+    func test_deleteExportFile_ignoresNonExportAndNonTemp() throws {
+        let jsonInTemp = FileManager.default.temporaryDirectory.appendingPathComponent("x.json")
+        try Data("{}".utf8).write(to: jsonInTemp)
+        self.testSubject.deleteExportFile(at: jsonInTemp)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: jsonInTemp.path))
+        try FileManager.default.removeItem(at: jsonInTemp)
+
+        let outsideTemp = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("x.sfsfilters")
+        try Data("{}".utf8).write(to: outsideTemp)
+        self.testSubject.deleteExportFile(at: outsideTemp)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: outsideTemp.path))
+        try FileManager.default.removeItem(at: outsideTemp)
     }
 
     func test_isExportFile_matchesExtension() {
@@ -200,6 +219,7 @@ class FilterImportExportManagerTests: XCTestCase {
         let data = try self.testSubject.readFile(at: url)
         let preview = try self.testSubject.previewImport(data: data)
         XCTAssertEqual(preview.duplicateCount, 0)
+        self.testSubject.deleteExportFile(at: url)
     }
 
     // MARK: - Helpers

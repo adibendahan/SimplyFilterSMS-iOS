@@ -15,57 +15,53 @@ struct FilterImportPreviewView: View {
     @Environment(\.dismiss)
     var dismiss
 
-    @ObservedObject var model: ViewModel
+    @StateObject var model: ViewModel
+
+    init(model: ViewModel) {
+        _model = StateObject(wrappedValue: model)
+    }
 
     var body: some View {
         NavigationView {
             List {
-                if self.model.preview.addedCount == 0 {
-                    Section {
-                        Text("importFilters_nothingToAdd"~)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                else {
-                    Section {
-                        ForEach(FilterType.allCases
-                            .sorted(by: { $0.sortIndex < $1.sortIndex })
-                            .filter({ self.model.candidates(for: $0).isEmpty == false }), id: \.self) { filterType in
-                            NavigationLink {
-                                FilterImportCandidateListView(model: self.model, filterType: filterType)
-                            } label: {
-                                HStack {
-                                    Image(systemName: filterType.iconName)
-                                        .foregroundColor(filterType.iconColor)
-                                        .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
+                Section {
+                    ForEach(FilterType.allCases
+                        .sorted(by: { $0.sortIndex < $1.sortIndex })
+                        .filter({ self.model.candidates(for: $0).isEmpty == false }), id: \.self) { filterType in
+                        NavigationLink {
+                            FilterImportCandidateListView(model: self.model, filterType: filterType)
+                        } label: {
+                            HStack {
+                                Image(systemName: filterType.iconName)
+                                    .foregroundColor(filterType.iconColor)
+                                    .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
 
-                                    Text(filterType.name)
-                                        .padding(.leading, 8)
+                                Text(filterType.name)
+                                    .padding(.leading, 8)
 
-                                    Spacer()
+                                Spacer()
 
-                                    Text(String.localizedStringWithFormat("general_active_count"~, self.model.selectedCount(for: filterType)))
-                                        .textCase(.uppercase)
-                                        .foregroundColor(.secondary)
-                                        .font(Font.caption2)
-                                }
+                                Text(String.localizedStringWithFormat("general_active_count"~, self.model.selectedCount(for: filterType)))
+                                    .textCase(.uppercase)
+                                    .foregroundColor(.secondary)
+                                    .font(Font.caption2)
                             }
-                            .accentColor(Color.primary.opacity(0.35))
                         }
-                    } header: {
-                        Text("importFilters_sectionTitle"~)
-                            .accessibilityAddTraits(.isHeader)
-                    } footer: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("importFilters_subtitle"~)
+                        .accentColor(Color.primary.opacity(0.35))
+                    }
+                } header: {
+                    Text("importFilters_sectionTitle"~)
+                        .accessibilityAddTraits(.isHeader)
+                } footer: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("importFilters_subtitle"~)
 
-                            if self.model.preview.duplicateCount > 0 {
-                                Text("importFilters_duplicates"~ + ": \(self.model.preview.duplicateCount)")
-                            }
+                        if self.model.preview.duplicateCount > 0 {
+                            Text("importFilters_duplicates"~ + ": \(self.model.preview.duplicateCount)")
+                        }
 
-                            if self.model.preview.invalidCount > 0 {
-                                Text("importFilters_invalid"~ + ": \(self.model.preview.invalidCount)")
-                            }
+                        if self.model.preview.invalidCount > 0 {
+                            Text("importFilters_invalid"~ + ": \(self.model.preview.invalidCount)")
                         }
                     }
                 }
@@ -140,7 +136,7 @@ struct FilterImportCandidateListView: View {
                 }
             }
         }
-        .listStyle(InsetGroupedListStyle())
+        .listStyle(.insetGrouped)
         .environment(\.editMode, .constant(.active))
         .navigationTitle(self.filterType.name)
         .navigationBarTitleDisplayMode(.inline)
@@ -211,19 +207,13 @@ extension FilterImportPreviewView {
         case none, some, all
     }
 
-    class ViewModel: BaseViewModel, ObservableObject, Identifiable {
-        let id = UUID()
+    class ViewModel: BaseViewModel, ObservableObject {
         let preview: FilterImportPreview
         @Published var selectedIDs: Set<UUID>
 
-        private let onImported: ((FilterImportResult) -> ())?
-
-        init(preview: FilterImportPreview,
-             appManager: AppManagerProtocol = AppManager.shared,
-             onImported: ((FilterImportResult) -> ())? = nil) {
-            self.preview = preview
-            self.selectedIDs = Set(preview.toAdd.map({ $0.id }))
-            self.onImported = onImported
+        override init(appManager: AppManagerProtocol = AppManager.shared) {
+            self.preview = appManager.filterImportExportManager.pendingPreview
+            self.selectedIDs = Set(self.preview.toAdd.map({ $0.id }))
             super.init(appManager: appManager)
         }
 
@@ -274,10 +264,7 @@ extension FilterImportPreviewView {
             let selected = self.preview.toAdd.filter({ self.selectedIDs.contains($0.id) })
             guard selected.isEmpty == false else { return }
 
-            let imported = self.appManager.filterImportExportManager.importFilters(selected)
-            self.onImported?(FilterImportResult(added: imported.added,
-                                                duplicateCount: self.preview.duplicateCount,
-                                                invalidCount: self.preview.invalidCount))
+            _ = self.appManager.filterImportExportManager.importFilters(selected)
         }
     }
 }
@@ -286,26 +273,36 @@ extension FilterImportPreviewView {
 //MARK: - Preview -
 struct FilterImportPreviewView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterImportPreviewView(model: FilterImportPreviewView.ViewModel(
-            preview: FilterImportPreview(
-                toAdd: [
-                    FilterImportCandidate(text: "promo",
-                                          type: .deny,
-                                          denyFolder: .junk,
-                                          filterTarget: .body,
-                                          filterMatching: .contains,
-                                          filterCase: .caseInsensitive),
-                    FilterImportCandidate(text: NLLanguage.english.filterText,
-                                          type: .denyLanguage,
-                                          denyFolder: .junk,
-                                          filterTarget: .body,
-                                          filterMatching: .contains,
-                                          filterCase: .caseInsensitive)
-                ],
-                duplicateCount: 2,
-                invalidCount: 1
-            ),
-            appManager: AppManager.previews
-        ))
+        FilterImportPreviewView(model: self.previewModel())
+    }
+
+    private static func previewModel() -> FilterImportPreviewView.ViewModel {
+        let appManager = AppManager.previews
+        let payload = FilterExportPayload(
+            format: FilterExportPayload.formatIdentifier,
+            version: FilterExportPayload.currentVersion,
+            exportedAt: Date(),
+            appVersion: appVersion,
+            filters: [
+                FilterExportRecord(text: "promo",
+                                   type: FilterType.deny.exportKey,
+                                   folder: DenyFolderType.junk.exportKey,
+                                   target: FilterTarget.body.exportKey,
+                                   matching: FilterMatching.contains.exportKey,
+                                   caseSensitivity: FilterCase.caseInsensitive.exportKey),
+                FilterExportRecord(text: NLLanguage.english.filterText,
+                                   type: FilterType.denyLanguage.exportKey,
+                                   folder: DenyFolderType.junk.exportKey,
+                                   target: FilterTarget.body.exportKey,
+                                   matching: FilterMatching.contains.exportKey,
+                                   caseSensitivity: FilterCase.caseInsensitive.exportKey)
+            ]
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        if let data = try? encoder.encode(payload) {
+            _ = try? appManager.filterImportExportManager.queueImport(data: data)
+        }
+        return FilterImportPreviewView.ViewModel(appManager: appManager)
     }
 }

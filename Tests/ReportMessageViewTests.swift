@@ -1,6 +1,6 @@
 //
 //  ReportMessageViewTests.swift
-//  Simply Filter SMS Tests
+//  Tests
 //
 //  Created by Adi Ben-Dahan on 20/03/2026.
 //

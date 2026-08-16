@@ -10,6 +10,8 @@ import NaturalLanguage
 
 class FilterImportExportManager: FilterImportExportManagerProtocol {
 
+    private(set) var pendingPreview = FilterImportPreview.empty
+
     //MARK: - Initialization -
     init(persistanceManager: PersistanceManagerProtocol,
          fileManager: FileManager = .default) {
@@ -53,6 +55,12 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
         let url = self.fileManager.temporaryDirectory.appendingPathComponent(filename)
         try data.write(to: url, options: .atomic)
         return url
+    }
+
+    func deleteExportFile(at url: URL) {
+        guard self.isExportFile(url) else { return }
+        guard url.path.hasPrefix(self.fileManager.temporaryDirectory.path) else { return }
+        try? self.fileManager.removeItem(at: url)
     }
 
     func isExportFile(_ url: URL) -> Bool {
@@ -104,6 +112,19 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
         return FilterImportPreview(toAdd: toAdd, duplicateCount: duplicateCount, invalidCount: invalidCount)
     }
 
+    func queueImport(data: Data) throws -> FilterImportPreview {
+        let preview = try self.previewImport(data: data)
+        self.pendingPreview = preview
+        return preview
+    }
+
+    func clearPendingImport() -> FilterImportResult? {
+        let result = self.lastImportResult
+        self.pendingPreview = FilterImportPreview.empty
+        self.lastImportResult = nil
+        return result
+    }
+
     func importFilters(_ candidates: [FilterImportCandidate]) -> FilterImportResult {
         var added = 0
 
@@ -118,21 +139,18 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
             }
         }
 
-        return FilterImportResult(added: added, duplicateCount: 0, invalidCount: 0)
-    }
-
-    func importFilters(data: Data) throws -> FilterImportResult {
-        let preview = try self.previewImport(data: data)
-        let imported = self.importFilters(preview.toAdd)
-        return FilterImportResult(added: imported.added,
-                                  duplicateCount: preview.duplicateCount,
-                                  invalidCount: preview.invalidCount)
+        let result = FilterImportResult(added: added,
+                                        duplicateCount: self.pendingPreview.duplicateCount,
+                                        invalidCount: self.pendingPreview.invalidCount)
+        self.lastImportResult = result
+        return result
     }
 
 
     //MARK: - Private -
     private let persistanceManager: PersistanceManagerProtocol
     private let fileManager: FileManager
+    private var lastImportResult: FilterImportResult?
 
     private func decodePayload(_ data: Data) throws -> FilterExportPayload {
         let decoder = JSONDecoder()

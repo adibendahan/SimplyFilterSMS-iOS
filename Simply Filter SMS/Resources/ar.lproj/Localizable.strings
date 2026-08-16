@@ -495,7 +495,6 @@
 "importFilters_title" = "استيراد الفلاتر";
 "importFilters_sectionTitle" = "فلاتر للاستيراد";
 "importFilters_subtitle" = "اضغط على قائمة لمراجعة الفلاتر في هذا الملف واختيار ما تريد إضافته. الفلاتر الموجودة مسبقًا على هذا الجهاز تُتخطى. لا يُستبدل شيء ولا يُحذف.";
-"importFilters_toAdd" = "جديدة";
 "importFilters_duplicates" = "موجودة مسبقًا";
 "importFilters_invalid" = "تم التخطي";
 "importFilters_confirm" = "استيراد";

@@ -20,6 +20,7 @@ protocol AppManagerProtocol {
     var reportMessageService: ReportMessageServiceProtocol { get }
     var tipJarManager: TipJarManagerProtocol { get }
     var filterImportExportManager: FilterImportExportManagerProtocol { get }
+    var flowManager: FlowManagerProtocol { get }
 
     func onAppLaunch()
     func onNewUserSession()

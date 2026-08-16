@@ -7,9 +7,13 @@ The system SHALL store a `lastSeenWhatsNewVersion` integer in `DefaultsManager` 
 - **WHEN** the app is installed for the first time
 - **THEN** `lastSeenWhatsNewVersion` SHALL be `0`
 
-#### Scenario: Value is set on any dismissal
-- **WHEN** the What's New sheet is dismissed (Continue button, X button, swipe-to-dismiss, or actionable entry tap)
+#### Scenario: Value is set on user dismissal
+- **WHEN** the What's New sheet is dismissed by the user (Continue button, X button, swipe-to-dismiss, or actionable entry tap)
 - **THEN** `lastSeenWhatsNewVersion` SHALL be set to `currentWhatsNewVersion`
+
+#### Scenario: Value is not set when a launch replaces the sheet
+- **WHEN** the What's New sheet is dismissed because a file or deep link presents another sheet
+- **THEN** `lastSeenWhatsNewVersion` SHALL NOT change
 
 #### Scenario: Value persists across launches
 - **WHEN** the user has dismissed the What's New sheet and `currentWhatsNewVersion` is `2`
@@ -159,7 +163,7 @@ Every user-facing string in the What's New feature MUST be localized via the `~`
 ---
 
 ### Requirement: Dismissal behavior
-Any method of dismissing the What's New sheet (Continue button, X button, swipe-to-dismiss, or actionable entry tap) SHALL invoke `markAsSeen()` to record the current version, ensuring the sheet auto-displays only once per version.
+User dismissal of the What's New sheet (Continue button, X button, swipe-to-dismiss, or actionable entry tap) SHALL record the current version. Dismissal caused by a file or deep link SHALL NOT record the version.
 
 #### Scenario: Dismiss via Continue button
 - **WHEN** the user taps the Continue button
@@ -171,7 +175,11 @@ Any method of dismissing the What's New sheet (Continue button, X button, swipe-
 
 #### Scenario: Dismiss via swipe
 - **WHEN** the user swipes down to dismiss the sheet
-- **THEN** `markAsSeen()` SHALL be called
+- **THEN** the version SHALL be recorded as seen
+
+#### Scenario: Replaced by a launch URL
+- **WHEN** a file or deep link dismisses the What's New sheet
+- **THEN** the version SHALL NOT be recorded as seen
 
 #### Scenario: Dismiss via actionable entry
 - **WHEN** the user taps an actionable entry

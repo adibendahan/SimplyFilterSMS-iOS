@@ -495,7 +495,6 @@
 "importFilters_title" = "필터 가져오기";
 "importFilters_sectionTitle" = "가져올 필터";
 "importFilters_subtitle" = "목록을 탭하여 이 파일의 필터를 확인하고 추가할 항목을 고르세요. 이 기기에 이미 있는 필터는 건너뜁니다. 덮어쓰거나 삭제되지 않습니다.";
-"importFilters_toAdd" = "새로 추가";
 "importFilters_duplicates" = "이미 있음";
 "importFilters_invalid" = "건너뜀";
 "importFilters_confirm" = "가져오기";

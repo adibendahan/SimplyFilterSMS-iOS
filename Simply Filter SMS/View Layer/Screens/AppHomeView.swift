@@ -7,6 +7,7 @@
 
 import SwiftUI
 import StoreKit
+import UniformTypeIdentifiers
 
 //MARK: - View -
 struct AppHomeView: View {
@@ -174,7 +175,7 @@ struct AppHomeView: View {
                                                 .lineLimit(1)
 
                                             Button {
-                                                self.model.sheetScreen = .countryList
+                                                self.model.requestSheet(.countryList)
                                             } label: {
                                                 Text("autoFilter_shortSender_change"~)
                                                     .font(.caption2)
@@ -264,7 +265,7 @@ struct AppHomeView: View {
                         self.model.refresh()
 
                         if !isPreview {
-                            self.model.presentLaunchIfNeeded()
+                            self.model.presentNextFlow()
                         }
                     }
                 }
@@ -280,18 +281,18 @@ struct AppHomeView: View {
         } // NavigationSplitView
         .modifier(EmbeddedFooterView {
             guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
-            self.model.sheetScreen = .about
+            self.model.requestSheet(.about)
         })
         .modifier(EmbeddedNotificationView(model: self.model.notification))
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
             if !isPreview {
-                self.model.presentLaunchIfNeeded()
+                self.model.presentNextFlow()
             }
-            if self.model.pendingScreenAfterDismiss != nil {
+            if let pending = self.model.pendingScreenAfterDismiss {
+                self.model.pendingScreenAfterDismiss = nil
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.model.sheetScreen = self.model.pendingScreenAfterDismiss
-                    self.model.pendingScreenAfterDismiss = nil
+                    self.model.requestSheet(pending)
                 }
             }
         } content: { sheetScreen in
@@ -309,20 +310,28 @@ struct AppHomeView: View {
                 sheetScreen.build()
             }
         }
-        .fullScreenCover(item: $model.modalFullScreen) {
-            self.model.refresh()
-            if !isPreview {
-                self.model.presentLaunchIfNeeded()
-            }
-        } content: { modalFullScreen in
-            modalFullScreen.build()
+        .sheet(item: self.$model.exportFile) { file in
+            ShareSheet(items: [file.url])
         }
-        .modifier(FilterImportExportPresentation(model: self.model.importExport))
+        .alert("importFilters_title"~, isPresented: self.$model.showNothingToImportAlert) {
+            Button("general_close"~, role: .cancel) { }
+        } message: {
+            Text("importFilters_nothingToAdd"~)
+        }
+        .background {
+            Color.clear
+                .frame(width: 0, height: 0)
+                .fileImporter(isPresented: self.$model.isImportingFile,
+                              allowedContentTypes: [.sfsFilters],
+                              allowsMultipleSelection: false) { result in
+                    self.model.handlePickedFiles(result)
+                }
+                .id(self.model.fileImporterID)
+        }
         .onAppear {
             self.model.startMonitoring()
             if !isPreview {
-                self.model.presentLaunchIfNeeded()
-                self.model.scheduleWhatsNewIfNeeded()
+                self.model.enableWhatsNewAndPresent()
             }
         }
         .onOpenURL { url in
@@ -356,19 +365,19 @@ struct AppHomeView: View {
 
             Menu {
                 Button {
-                    self.model.sheetScreen = .addAllowFilter
+                    self.model.requestSheet(.addAllowFilter)
                 } label: {
                     Label("addFilter_addFilter_allow"~, systemImage: "person.crop.circle.badge.checkmark")
                 }
 
                 Button {
-                    self.model.sheetScreen = .addDenyFilter
+                    self.model.requestSheet(.addDenyFilter)
                 } label: {
                     Label("addFilter_addFilter_deny"~, systemImage: "person.crop.circle.badge.xmark")
                 }
 
                 Button {
-                    self.model.sheetScreen = .addLanguageFilter
+                    self.model.requestSheet(.addLanguageFilter)
                 } label: {
                     Label("addFilter_addLanguage"~, systemImage: "globe")
                 }
@@ -378,20 +387,20 @@ struct AppHomeView: View {
 
             Menu {
                 Button {
-                    self.model.sheetScreen = .testFilters
+                    self.model.requestSheet(.testFilters)
                 } label: {
                     Label("testFilters_title"~, systemImage: "arrow.up.message")
                 }
                 .accessibilityIdentifier(TestIdentifier.testYourFiltersMenuButton.rawValue)
 
                 Button {
-                    self.model.sheetScreen = .reportMessage
+                    self.model.requestSheet(.reportMessage)
                 } label: {
                     Label("reportMessage_title"~, systemImage: "exclamationmark.bubble")
                 }
 
                 Button {
-                    self.model.sheetScreen = .enableReportingExtension
+                    self.model.requestSheet(.enableReportingExtension)
                 } label: {
                     Label("autoFilter_improveAIFiltering"~, systemImage: "wand.and.stars")
                 }
@@ -399,7 +408,7 @@ struct AppHomeView: View {
                 Divider()
 
                 Button {
-                    self.model.importExport.export()
+                    self.model.exportFilters()
                 } label: {
                     Label("menu_exportFilters"~, systemImage: "square.and.arrow.up")
                 }
@@ -407,7 +416,7 @@ struct AppHomeView: View {
                 .accessibilityIdentifier(TestIdentifier.exportFiltersMenuButton.rawValue)
 
                 Button {
-                    self.model.importExport.beginFileImport()
+                    self.model.beginFileImport()
                 } label: {
                     Label("menu_importFilters"~, systemImage: "square.and.arrow.down")
                 }
@@ -420,26 +429,26 @@ struct AppHomeView: View {
             Divider()
 
             Button {
-                self.model.sheetScreen = .help
+                self.model.requestSheet(.help)
             } label: {
                 Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
             }
 
             Button {
-                self.model.sheetScreen = .about
+                self.model.requestSheet(.about)
             } label: {
                 Label("filterList_menu_about"~, systemImage: "info.circle")
             }
 
             Button {
-                self.model.sheetScreen = .tipJar
+                self.model.requestSheet(.tipJar)
             } label: {
                 Label("tipJar_menuItem"~, systemImage: "heart.fill")
             }
 
             if !WhatsNewEntry.allCases.isEmpty {
                 Button {
-                    self.model.sheetScreen = .whatsNew
+                    self.model.requestSheet(.whatsNew)
                 } label: {
                     Label("whatsNew_menuItem"~, systemImage: "sparkles")
                 }
@@ -460,7 +469,6 @@ extension AppHomeView {
     class ViewModel: BaseViewModel, ObservableObject {
         @Published private(set) var filters: [Filter]
         @Published private(set) var title: String
-        @Published private(set) var isAppFirstRun: Bool
         @Published private(set) var isAutomaticFilteringOn: Bool
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var shortSenderChoice: Int
@@ -476,43 +484,31 @@ extension AppHomeView {
                 }
             }
         }
-        @Published var modalFullScreen: Screen? = nil {
-            didSet {
-                if self.modalFullScreen == nil {
-                    self.processPendingWork()
-                }
-            }
-        }
         @Published var sheetScreen: Screen? = nil {
             didSet {
-                if self.sheetScreen == nil {
+                if self.sheetScreen == nil, let dismissed = oldValue {
+                    self.completeDismissedSheet(dismissed)
                     self.processPendingWork()
                 }
             }
         }
         var pendingScreenAfterDismiss: Screen?
-        lazy var importExport: FilterImportExportPresentation.ViewModel = {
-            return FilterImportExportPresentation.ViewModel(
-                appManager: self.appManager,
-                isPresentationBlocked: { [weak self] in
-                    guard let self else { return true }
-                    return self.isAppFirstRun || self.sheetScreen == .whatsNew
-                },
-                onImported: { [weak self] in
-                    self?.refresh()
-                },
-                onNotification: { [weak self] notification in
-                    self?.showNotification(notification)
-                })
-        }()
+        @Published var exportFile: ExportFile? {
+            didSet {
+                if let oldValue, oldValue.url != self.exportFile?.url {
+                    self.appManager.filterImportExportManager.deleteExportFile(at: oldValue.url)
+                }
+            }
+        }
+        @Published var showNothingToImportAlert = false
+        @Published var isImportingFile = false
+        @Published var fileImporterID = UUID()
         
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             let isAutomaticFilteringOn = appManager.automaticFilterManager.isAutomaticFilteringOn
 
             self.title = "filterList_filters"~
             self.subtitle = isAutomaticFilteringOn ? appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
-            self.isAppFirstRun = appManager.defaultsManager.isAppFirstRun
-            self.wasFirstRunOnInit = appManager.defaultsManager.isAppFirstRun
             self.isAutomaticFilteringOn = isAutomaticFilteringOn
             self.isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.shortSenderChoice = appManager.automaticFilterManager.selectedChoice(for: .shortSender)
@@ -536,7 +532,6 @@ extension AppHomeView {
 
             self.title = "filterList_filters"~
             self.subtitle = isAutomaticFilteringOn ? self.appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
-            self.isAppFirstRun = self.appManager.defaultsManager.isAppFirstRun
             self.isAutomaticFilteringOn = isAutomaticFilteringOn
             self.isAllUnknownFilteringOn = self.appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.shortSenderChoice = self.appManager.automaticFilterManager.selectedChoice(for: .shortSender)
@@ -559,89 +554,149 @@ extension AppHomeView {
         }
 
         func handleDeepLink(url: URL) {
-            if self.importExport.handleIncomingURL(url) {
-                self.claimLaunchFollowUp(.openedFilterFile)
+            if self.appManager.filterImportExportManager.isExportFile(url) {
+                self.importFromFileURL(url)
                 return
             }
 
-            guard url.scheme == "simplyfiltersms",
-                  let host = url.host,
-                  let screen = Screen.fromDeepLink(host: host) else { return }
-
-            if self.importExport.isPresenting {
-                return
+            if url.scheme == "simplyfiltersms",
+               let host = url.host,
+               let screen = Screen.fromDeepLink(host: host),
+               self.appManager.flowManager.recordLaunch(screen) {
+                self.presentLaunch()
             }
-
-            self.claimLaunchFollowUp(.deepLink(screen))
         }
 
-        func presentLaunchIfNeeded() {
-            self.isAppFirstRun = self.appManager.defaultsManager.isAppFirstRun
-            if self.isAppFirstRun {
-                self.sheetScreen = .enableExtension
-                return
+        func exportFilters() {
+            do {
+                let url = try self.appManager.filterImportExportManager.writeExportFile()
+                self.exportFile = ExportFile(url: url)
+            } catch {
+                AppManager.logger.error("exportFilters — failed: \(error.localizedDescription, privacy: .public)")
+                self.showNotification(.filterExportFailed)
+            }
+        }
+
+        func beginFileImport() {
+            self.isImportingFile = false
+            DispatchQueue.main.async {
+                self.isImportingFile = true
+            }
+        }
+
+        func handlePickedFiles(_ result: Result<[URL], Error>) {
+            self.isImportingFile = false
+            self.fileImporterID = UUID()
+
+            switch result {
+            case .failure(let error):
+                let nsError = error as NSError
+                if nsError.domain == NSCocoaErrorDomain && nsError.code == NSUserCancelledError {
+                    return
+                }
+                AppManager.logger.error("importFilters — picker failed: \(error.localizedDescription, privacy: .public)")
+                self.showNotification(.filterImportFailed)
+
+            case .success(let urls):
+                guard let url = urls.first else {
+                    self.showNotification(.filterImportFailed)
+                    return
+                }
+                self.importFromFileURL(url)
+            }
+        }
+
+        func requestSheet(_ screen: Screen) {
+            self.appManager.flowManager.request(screen)
+            self.presentNextFlow()
+        }
+
+        private func importFromFileURL(_ url: URL) {
+            do {
+                let data = try self.appManager.filterImportExportManager.readFile(at: url)
+                let preview = try self.appManager.filterImportExportManager.queueImport(data: data)
+                guard preview.addedCount > 0 else {
+                    _ = self.appManager.filterImportExportManager.clearPendingImport()
+                    self.showNothingToImportAlert = true
+                    return
+                }
+                if self.appManager.flowManager.recordLaunch(.filterImport) {
+                    self.presentLaunch(preservingImportSession: true)
+                }
+            } catch {
+                AppManager.logger.error("importFilters — could not read file: \(url.lastPathComponent, privacy: .public)")
+                self.showNotification(.filterImportFailed)
+            }
+        }
+
+        private func completeDismissedSheet(_ screen: Screen) {
+            self.appManager.flowManager.complete(screen)
+
+            if screen == .whatsNew && !self.isReplacingSheetForLaunch {
+                self.markWhatsNewSeen()
             }
 
-            if let followUp = self.launchFollowUp {
-                self.launchFollowUp = nil
-                self.skipWhatsNewThisSession = true
-                switch followUp {
-                case .openedFilterFile:
-                    self.importExport.presentPendingIfPossible()
-                case .deepLink(let screen):
-                    self.modalFullScreen = screen
+            if screen == .filterImport, !self.isReplacingSheetForLaunch {
+                if let result = self.appManager.filterImportExportManager.clearPendingImport() {
+                    self.showNotification(.filtersImported(added: result.added, skipped: result.skippedCount))
                 }
             }
         }
 
-        func scheduleWhatsNewIfNeeded() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                self?.presentWhatsNewIfNeeded()
-            }
+        func presentNextFlow() {
+            guard !self.isReplacingSheetForLaunch else { return }
+            guard let screen = self.appManager.flowManager.next() else { return }
+            self.sheetScreen = screen
         }
 
-        private func claimLaunchFollowUp(_ followUp: LaunchFollowUp) {
-            self.skipWhatsNewThisSession = true
-            self.launchFollowUp = followUp
+        func enableWhatsNewAndPresent() {
+            self.appManager.flowManager.enableWhatsNew()
+            self.presentNextFlow()
+        }
 
-            if self.isAppFirstRun {
-                self.presentLaunchIfNeeded()
+        private func markWhatsNewSeen() {
+            var defaultsManager = self.appManager.defaultsManager
+            guard defaultsManager.lastSeenWhatsNewVersion < currentWhatsNewVersion else { return }
+            defaultsManager.lastSeenWhatsNewVersion = currentWhatsNewVersion
+        }
+
+        private func presentLaunch(preservingImportSession: Bool = false) {
+            self.pendingScreenAfterDismiss = nil
+            self.isImportingFile = false
+
+            if self.sheetScreen == .filterImport && !preservingImportSession {
+                _ = self.appManager.filterImportExportManager.clearPendingImport()
+            }
+
+            let isBlockingFirstRun = self.sheetScreen == .enableExtension
+                && self.appManager.defaultsManager.isAppFirstRun
+            let hasSheet = self.sheetScreen != nil || self.exportFile != nil
+
+            guard hasSheet, !isBlockingFirstRun else {
+                self.presentNextFlow()
                 return
             }
 
-            if self.sheetScreen == .whatsNew {
-                self.sheetScreen = nil
-                return
+            self.isReplacingSheetForLaunch = true
+            self.sheetScreen = nil
+            self.exportFile = nil
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                guard let self = self else { return }
+                self.isReplacingSheetForLaunch = false
+                self.presentNextFlow()
             }
-
-            self.presentLaunchIfNeeded()
-        }
-
-        private func presentWhatsNewIfNeeded() {
-            guard self.isAppFirstRun == false,
-                  self.skipWhatsNewThisSession == false,
-                  self.launchFollowUp == nil,
-                  self.importExport.isPresenting == false,
-                  self.navigationScreen == nil,
-                  self.sheetScreen == nil,
-                  self.modalFullScreen == nil,
-                  self.shouldShowWhatsNew else { return }
-            self.sheetScreen = .whatsNew
         }
 
         private func processPendingWork() {
-            self.importExport.presentPendingIfPossible()
-
-            guard self.modalFullScreen == nil,
-                  self.sheetScreen == nil,
-                  !self.importExport.isPresenting,
+            guard self.sheetScreen == nil,
+                  !self.isImportExportPresenting,
                   let pendingNotification = self.pendingNotification else { return }
             self.pendingNotification = nil
             self.showNotification(pendingNotification)
         }
         
         func showNotification(_ notification: NotificationView.Notification) {
-            guard self.modalFullScreen == nil && self.sheetScreen == nil && !self.importExport.isPresenting else {
+            guard self.sheetScreen == nil && !self.isImportExportPresenting else {
                 self.pendingNotification = notification
                 return
             }
@@ -731,7 +786,7 @@ extension AppHomeView {
                 guard let self = self else { return }
                 self.appManager.defaultsManager.didDismissReportingExtensionNudge = true
                 withAnimation { self.notification.show = false }
-                self.sheetScreen = .enableReportingExtension
+                self.requestSheet(.enableReportingExtension)
             }
             self.notification.onTap = onTap
             self.notification.setOnButtonTap(onTap)
@@ -748,15 +803,14 @@ extension AppHomeView {
                   defaultsManager.sessionCounter > 0,
                   !defaultsManager.didTip,
                   !self.notification.show,
-                  self.sheetScreen == nil,
-                  self.modalFullScreen == nil else {
+                  self.sheetScreen == nil else {
                 return
             }
 
             self.notification.setNotification(.tipPromotion)
             self.notification.onTap = {
                 withAnimation { self.notification.show = false }
-                self.sheetScreen = .tipJar
+                self.requestSheet(.tipJar)
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 withAnimation {
@@ -784,31 +838,21 @@ extension AppHomeView {
         }
 
         func reset() {
+            self.exportFile = nil
             self.appManager.reset()
             self.refresh()
-            self.presentLaunchIfNeeded()
+            self.presentNextFlow()
         }
         #endif // DEBUG
         
-        var shouldShowWhatsNew: Bool {
-            !self.wasFirstRunOnInit
-            && !self.isAppFirstRun
-            && !WhatsNewEntry.allCases.isEmpty
-            && currentWhatsNewVersion > self.appManager.defaultsManager.lastSeenWhatsNewVersion
-        }
-
-        private enum LaunchFollowUp {
-            case openedFilterFile
-            case deepLink(Screen)
-        }
-
-        private let wasFirstRunOnInit: Bool
-        private var launchFollowUp: LaunchFollowUp?
-        private var skipWhatsNewThisSession = false
         private var lastUIFingerprint: String = ""
         private var didAddObservers = false
         private var didShowNotificationThisSession = false
         private var pendingNotification: NotificationView.Notification?
+        private var isReplacingSheetForLaunch = false
+        private var isImportExportPresenting: Bool {
+            return self.exportFile != nil || self.showNothingToImportAlert
+        }
         private var userIgnoresNetworkStatus: Bool {
             guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }
             return Date().minutesBetween(date: lastOfflineNotificationDismiss) < kHideiClouldStatusMemory

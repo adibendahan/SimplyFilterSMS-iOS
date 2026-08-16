@@ -1,6 +1,6 @@
 //
 //  AddFilterViewModelTests.swift
-//  Simply Filter SMS Tests
+//  Tests
 //
 
 import Foundation

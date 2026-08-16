@@ -102,9 +102,6 @@ struct WhatsNewView: View {
                     .accessibilityIdentifier(TestIdentifier.cancelButton.rawValue)
                 }
             }
-            .onDisappear {
-                model.markAsSeen()
-            }
         }
     }
 }

@@ -24,6 +24,7 @@ class AppManager: AppManagerProtocol {
     var reportMessageService: ReportMessageServiceProtocol
     var tipJarManager: TipJarManagerProtocol
     var filterImportExportManager: FilterImportExportManagerProtocol
+    var flowManager: FlowManagerProtocol
     var debugDataManager: DebugDataManagerProtocol
 
     init(inMemory: Bool = false) {
@@ -47,6 +48,7 @@ class AppManager: AppManagerProtocol {
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
         self.filterImportExportManager = FilterImportExportManager(persistanceManager: persistanceManager)
+        self.flowManager = FlowManager(defaultsManager: defaultsManager)
         self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
                                                  defaultsManager: defaultsManager,
                                                  automaticFilterManager: automaticFilterManager)
@@ -119,6 +121,8 @@ class AppManager: AppManagerProtocol {
     func reset() {
         self.defaultsManager.reset()
         self.persistanceManager.clearAllUserData()
+        _ = self.filterImportExportManager.clearPendingImport()
+        self.flowManager.resetSession()
     }
     #endif // DEBUG
 

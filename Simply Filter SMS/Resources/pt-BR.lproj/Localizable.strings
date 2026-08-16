@@ -495,7 +495,6 @@
 "importFilters_title" = "Importar filtros";
 "importFilters_sectionTitle" = "Filtros para importar";
 "importFilters_subtitle" = "Toque em uma lista para revisar os filtros deste arquivo e escolher quais adicionar. Filtros que já existem neste dispositivo são ignorados. Nada é substituído ou excluído.";
-"importFilters_toAdd" = "Novos";
 "importFilters_duplicates" = "Já existem";
 "importFilters_invalid" = "Ignorados";
 "importFilters_confirm" = "Importar";
