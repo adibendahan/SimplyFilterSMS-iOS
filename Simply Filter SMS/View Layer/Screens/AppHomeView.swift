@@ -335,6 +335,8 @@ struct AppHomeView: View {
             if !isPreview {
                 self.model.enableWhatsNewAndPresent()
             }
+            self.model.tryShowTipPromotion()
+            self.model.tryShowReportingExtensionNudge()
         }
         .onOpenURL { url in
             self.model.handleDeepLink(url: url)
@@ -490,7 +492,7 @@ extension AppHomeView {
             didSet {
                 if self.sheetScreen == nil, let dismissed = oldValue {
                     self.completeDismissedSheet(dismissed)
-                    self.processPendingWork()
+                    self.showPendingNotification()
                 }
             }
         }
@@ -502,7 +504,13 @@ extension AppHomeView {
                 }
             }
         }
-        @Published var showNothingToImportAlert = false
+        @Published var showNothingToImportAlert = false {
+            didSet {
+                if oldValue && !self.showNothingToImportAlert {
+                    self.showPendingNotification()
+                }
+            }
+        }
         @Published var isImportingFile = false
         @Published var fileImporterID = UUID()
         
@@ -543,7 +551,7 @@ extension AppHomeView {
                                                                                                    getter: self.appManager.automaticFilterManager.automaticRuleState,
                                                                                                    setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
             self.lastUIFingerprint = self.appManager.persistanceManager.fingerprint
-            self.processPendingWork()
+            self.showPendingNotification()
         }
         
         func setSelectedChoice(for rule: RuleType, choice: Int) {
@@ -642,7 +650,10 @@ extension AppHomeView {
 
         func presentNextFlow() {
             guard !self.isReplacingSheetForLaunch else { return }
-            guard let screen = self.appManager.flowManager.next() else { return }
+            guard let screen = self.appManager.flowManager.next() else {
+                self.showPendingNotification()
+                return
+            }
             if screen == .filterImport,
                self.appManager.filterImportExportManager.pendingPreview.addedCount == 0 {
                 _ = self.appManager.filterImportExportManager.clearPendingImport()
@@ -699,27 +710,58 @@ extension AppHomeView {
             self.exportFile = nil
         }
 
-        private func processPendingWork() {
-            guard self.sheetScreen == nil,
-                  !self.isImportExportPresenting,
+        private var isHomeUnobstructed: Bool {
+            return self.sheetScreen == nil
+                && self.pendingScreenAfterDismiss == nil
+                && !self.isImportExportPresenting
+                && !self.isReplacingSheetForLaunch
+        }
+
+        private func showPendingNotification() {
+            guard self.isHomeUnobstructed,
                   let pendingNotification = self.pendingNotification else { return }
             self.pendingNotification = nil
             self.showNotification(pendingNotification)
         }
         
         func showNotification(_ notification: NotificationView.Notification) {
-            guard self.sheetScreen == nil && !self.isImportExportPresenting else {
+            guard self.isHomeUnobstructed else {
                 self.pendingNotification = notification
                 return
             }
 
             self.didShowNotificationThisSession = true
+            self.notification.onTap = nil
 
-            if !self.notification.show {
-                self.notification.setNotification(notification)
+            switch notification {
+            case .enableReportingExtension:
+                let onTap = { [weak self] in
+                    guard let self = self else { return }
+                    self.appManager.defaultsManager.didDismissReportingExtensionNudge = true
+                    withAnimation { self.notification.show = false }
+                    self.requestSheet(.enableReportingExtension)
+                }
+                self.notification.onTap = onTap
+                self.notification.setOnButtonTap(onTap)
+
+            case .tipPromotion:
+                self.notification.onTap = { [weak self] in
+                    withAnimation { self?.notification.show = false }
+                    self?.requestSheet(.tipJar)
+                }
+                self.notification.setOnButtonTap(nil)
+
+            case .offline:
                 self.notification.setOnButtonTap {
                     self.appManager.defaultsManager.lastOfflineNotificationDismiss = Date()
                 }
+
+            default:
+                self.notification.setOnButtonTap(nil)
+            }
+
+            if !self.notification.show {
+                self.notification.setNotification(notification)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     withAnimation {
                         self.notification.show = true
@@ -773,9 +815,7 @@ extension AppHomeView {
             }
 
             self.catchUpFromStoreIfNeeded()
-            self.tryShowTipPromotion()
-            self.tryShowReportingExtensionNudge()
-            self.processPendingWork()
+            self.showPendingNotification()
         }
 
         private func catchUpFromStoreIfNeeded() {
@@ -793,20 +833,7 @@ extension AppHomeView {
             guard defaultsManager.sessionCounter > 0 && defaultsManager.sessionCounter % 3 == 0 else { return }
             guard !self.didShowNotificationThisSession else { return }
 
-            self.notification.setNotification(.enableReportingExtension)
-            let onTap = { [weak self] in
-                guard let self = self else { return }
-                self.appManager.defaultsManager.didDismissReportingExtensionNudge = true
-                withAnimation { self.notification.show = false }
-                self.requestSheet(.enableReportingExtension)
-            }
-            self.notification.onTap = onTap
-            self.notification.setOnButtonTap(onTap)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                withAnimation {
-                    self.notification.show = true
-                }
-            }
+            self.showNotification(.enableReportingExtension)
         }
 
         func tryShowTipPromotion() {
@@ -814,21 +841,11 @@ extension AppHomeView {
             guard defaultsManager.sessionCounter % 5 == 0,
                   defaultsManager.sessionCounter > 0,
                   !defaultsManager.didTip,
-                  !self.notification.show,
-                  self.sheetScreen == nil else {
+                  !self.notification.show else {
                 return
             }
 
-            self.notification.setNotification(.tipPromotion)
-            self.notification.onTap = {
-                withAnimation { self.notification.show = false }
-                self.requestSheet(.tipJar)
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                withAnimation {
-                    self.notification.show = true
-                }
-            }
+            self.showNotification(.tipPromotion)
         }
 
         func tryRequestReview() {
