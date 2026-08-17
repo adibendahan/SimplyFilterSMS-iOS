@@ -184,6 +184,7 @@ class FilterImportExportManagerTests: XCTestCase {
 
         let url = try self.testSubject.writeExportFile()
         XCTAssertEqual(url.pathExtension, kFilterExportFileExtension)
+        XCTAssertTrue(url.lastPathComponent.range(of: #"^SimplyFilterSMS-filters-\d{4}-\d{2}-\d{2}-\d{4}\.sfsfilters$"#, options: .regularExpression) != nil)
         XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
 
         let imported = try self.testSubject.previewImport(data: Data(contentsOf: url))

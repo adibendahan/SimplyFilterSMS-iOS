@@ -49,8 +49,8 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "yyyy-MM-dd-HHmm"
         let filename = "SimplyFilterSMS-filters-\(formatter.string(from: Date())).\(kFilterExportFileExtension)"
         let url = self.fileManager.temporaryDirectory.appendingPathComponent(filename)
         try data.write(to: url, options: .atomic)
