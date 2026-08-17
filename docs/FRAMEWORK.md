@@ -396,7 +396,7 @@ protocol FilterImportExportManagerProtocol {
 
 ### Key Behaviors
 
-- **`queueImport`** starts the session (`pendingPreview`). Empty preview (nothing to add) is cleared by Home; it does not enter `FlowManager`.
+- **`queueImport`** starts the session (`pendingPreview`). Home still `recordLaunch(.filterImport)` when there is nothing to add; `presentNextFlow` shows the native alert instead of the preview sheet.
 - **`importFilters`** writes onto that session. **`clearPendingImport`** ends it and returns the result (or nil) for the dismiss toast.
 - **`isExportFile`** is `.sfsfilters` only. **`deleteExportFile`** only removes a `.sfsfilters` file inside the temp directory.
 - Custom UTI / document type: `kFilterExportTypeIdentifier` in `Constants.swift`.

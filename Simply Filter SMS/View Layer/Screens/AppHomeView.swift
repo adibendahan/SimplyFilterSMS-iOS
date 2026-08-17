@@ -286,7 +286,7 @@ struct AppHomeView: View {
         .modifier(EmbeddedNotificationView(model: self.model.notification))
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
-            if !isPreview {
+            if !self.model.completeInterruptedSheet(), !isPreview {
                 self.model.presentNextFlow()
             }
             if let pending = self.model.pendingScreenAfterDismiss {
@@ -310,7 +310,9 @@ struct AppHomeView: View {
                 sheetScreen.build()
             }
         }
-        .sheet(item: self.$model.exportFile) { file in
+        .sheet(item: self.$model.exportFile) {
+            _ = self.model.completeInterruptedSheet()
+        } content: { file in
             ShareSheet(items: [file.url])
         }
         .alert("importFilters_title"~, isPresented: self.$model.showNothingToImportAlert) {
@@ -614,12 +616,7 @@ extension AppHomeView {
         private func importFromFileURL(_ url: URL) {
             do {
                 let data = try self.appManager.filterImportExportManager.readFile(at: url)
-                let preview = try self.appManager.filterImportExportManager.queueImport(data: data)
-                guard preview.addedCount > 0 else {
-                    _ = self.appManager.filterImportExportManager.clearPendingImport()
-                    self.showNothingToImportAlert = true
-                    return
-                }
+                _ = try self.appManager.filterImportExportManager.queueImport(data: data)
                 if self.appManager.flowManager.recordLaunch(.filterImport) {
                     self.presentLaunch(preservingImportSession: true)
                 }
@@ -646,6 +643,13 @@ extension AppHomeView {
         func presentNextFlow() {
             guard !self.isReplacingSheetForLaunch else { return }
             guard let screen = self.appManager.flowManager.next() else { return }
+            if screen == .filterImport,
+               self.appManager.filterImportExportManager.pendingPreview.addedCount == 0 {
+                _ = self.appManager.filterImportExportManager.clearPendingImport()
+                self.appManager.flowManager.complete(.filterImport)
+                self.showNothingToImportAlert = true
+                return
+            }
             self.sheetScreen = screen
         }
 
@@ -661,12 +665,25 @@ extension AppHomeView {
         }
 
         private func presentLaunch(preservingImportSession: Bool = false) {
-            self.pendingScreenAfterDismiss = nil
-            self.isImportingFile = false
-
             if self.sheetScreen == .filterImport && !preservingImportSession {
                 _ = self.appManager.filterImportExportManager.clearPendingImport()
             }
+
+            self.replacePresentedSheetIfNeeded()
+        }
+
+        func completeInterruptedSheet() -> Bool {
+            guard self.isReplacingSheetForLaunch else { return false }
+            self.isReplacingSheetForLaunch = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.presentNextFlow()
+            }
+            return true
+        }
+
+        private func replacePresentedSheetIfNeeded() {
+            self.pendingScreenAfterDismiss = nil
+            self.isImportingFile = false
 
             let isBlockingFirstRun = self.sheetScreen == .enableExtension
                 && self.appManager.defaultsManager.isAppFirstRun
@@ -680,11 +697,6 @@ extension AppHomeView {
             self.isReplacingSheetForLaunch = true
             self.sheetScreen = nil
             self.exportFile = nil
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                guard let self = self else { return }
-                self.isReplacingSheetForLaunch = false
-                self.presentNextFlow()
-            }
         }
 
         private func processPendingWork() {
