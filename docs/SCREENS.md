@@ -30,7 +30,8 @@ Trailing `Menu` (ellipsis icon) with items:
 - About -> `.about` sheet
 - Tip Jar -> `.tipJar` sheet
 - What's New -> `.whatsNew` sheet (only if `WhatsNewEntry.allCases` is non-empty)
-- Load Debug Data (DEBUG builds only)
+- Filter Tools submenu — add allow/deny/language, test filters, report, enable reporting extension, export, import
+- Load Debug Data / Reset (DEBUG builds only)
 
 ### Overlays
 
@@ -49,7 +50,7 @@ Trailing `Menu` (ellipsis icon) with items:
 - `subtitle: String` — Summary of active automatic filters
 - `rules: [StatefulItem<RuleType>]` — Smart filter toggles with two-way binding
 - `notification: NotificationView.ViewModel` — Toast notification state
-- `navigationScreen`, `sheetScreen`, `modalFullScreen` — Navigation drivers
+- `navigationScreen`, `sheetScreen` — Navigation drivers. Sheets go through `FlowManager`.
 
 **Key methods:**
 - `refresh()` — Reloads all state from managers. Called on every navigation pop, sheet dismiss, and notification.
@@ -362,7 +363,7 @@ A `NavigationView` wrapping a `ScrollView`:
 
 - `entries: [WhatsNewEntry]` — All entries sorted by `order`.
 - `onActionableEntryTapped: ((WhatsNewEntry) -> Void)?` — Optional closure called when an actionable entry is tapped. Passed in from the presenting screen.
-- `markAsSeen()` — Sets `lastSeenWhatsNewVersion` to `currentWhatsNewVersion` so the sheet won't re-appear.
+- `markAsSeen()` — Sets `lastSeenWhatsNewVersion` to `currentWhatsNewVersion` so the sheet won't re-appear. Home also records this on user dismiss (including swipe). A file or deep link that replaces the sheet does not.
 
 ### Actionable Entries
 
@@ -375,6 +376,15 @@ This pattern is general-purpose: any future `WhatsNewEntry` case can become acti
 - `WhatsNewEntry` is a `CaseIterable` enum in `Constants.swift` with computed properties for title, description, emoji, order, and `isActionable`.
 - `currentWhatsNewVersion` must be bumped in `Constants.swift` when adding new entries.
 - The What's New sheet only shows when: it's not the user's first session (`wasFirstRunOnInit == false`), `isAppFirstRun` is `false`, and `currentWhatsNewVersion > lastSeenWhatsNewVersion`.
+
+---
+
+## FilterImportPreviewView
+
+**File:** `View Layer/Screens/FilterImportPreviewView.swift`
+**Role:** Merge-only import preview. Presented as a Home sheet via `Screen.filterImport`. Uses `@StateObject` with `init(model:)`.
+
+The ViewModel reads `pendingPreview` from `filterImportExportManager` (no associated value on `Screen`). Confirm calls `importFilters`; Home toasts on dismiss from `clearPendingImport()`.
 
 ---
 

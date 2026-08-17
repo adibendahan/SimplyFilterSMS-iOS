@@ -19,6 +19,16 @@
 		35DB90809C90181516FBD284 /* ShieldGlintIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C18038215780F287F19CF9 /* ShieldGlintIcon.swift */; };
 		3A0C95A77D36D89D7D96A797 /* SharedUITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */; };
 		3E71FB36F8B1A765DE7AD92F /* mock_TipJarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC0828F3E9490539D2623CD /* mock_TipJarManager.swift */; };
+		A1B2C3D4E5F60718293A1001 /* FilterImportExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0001 /* FilterImportExportManager.swift */; };
+		A1B2C3D4E5F60718293A1002 /* FilterImportExportManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0002 /* FilterImportExportManagerProtocol.swift */; };
+		A1B2C3D4E5F60718293A1003 /* FilterImportPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0003 /* FilterImportPreviewView.swift */; };
+		A1B2C3D4E5F60718293A1004 /* FilterImportExportManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0004 /* FilterImportExportManagerTests.swift */; };
+		A1B2C3D4E5F60718293A1005 /* mock_FilterImportExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0005 /* mock_FilterImportExportManager.swift */; };
+		A1B2C3D4E5F60718293A1006 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0006 /* ShareSheet.swift */; };
+		A1B2C3D4E5F60718293A1010 /* FlowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0010 /* FlowManager.swift */; };
+		A1B2C3D4E5F60718293A1011 /* FlowManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0011 /* FlowManagerProtocol.swift */; };
+		A1B2C3D4E5F60718293A1012 /* mock_FlowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0012 /* mock_FlowManager.swift */; };
+		A1B2C3D4E5F60718293A1013 /* FlowManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0013 /* FlowManagerTests.swift */; };
 		48AC7E6DAD727BDDB0387677 /* SharedUITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */; };
 		552995F006FF06B770B5DDF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C2217AE047F148D8D0D9052 /* Assets.xcassets */; };
 		5638F2EE8B314143A89804A08B3EF997 /* InstantTouchDisabler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110F48EF7181478C8AE7B577C0DF518C /* InstantTouchDisabler.swift */; };
@@ -201,6 +211,16 @@
 		4E6E3998CCF6470F8F6A40A36EE19752 /* RefreshControlDisabler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlDisabler.swift; sourceTree = "<group>"; };
 		4EC977832345515DCFE3C478 /* EnableExtensionStepProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionStepProtocol.swift; sourceTree = "<group>"; };
 		5EC0828F3E9490539D2623CD /* mock_TipJarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_TipJarManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0001 /* FilterImportExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImportExportManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0002 /* FilterImportExportManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImportExportManagerProtocol.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0003 /* FilterImportPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImportPreviewView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0004 /* FilterImportExportManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImportExportManagerTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0005 /* mock_FilterImportExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_FilterImportExportManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0006 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0010 /* FlowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0011 /* FlowManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowManagerProtocol.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0012 /* mock_FlowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_FlowManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0013 /* FlowManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowManagerTests.swift; sourceTree = "<group>"; };
 		64956935AAF96BFE1AD24A37 /* TipJarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipJarManager.swift; sourceTree = "<group>"; };
 		690D709B27B31DC0001880DA /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		690F054D278200B60036553B /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
@@ -405,6 +425,8 @@
 				69ECF14D286777ED000380A2 /* mock_ReportMessageService.swift */,
 				691D57C927BB2E0500DDA267 /* mock_HTTPService.swift */,
 				5EC0828F3E9490539D2623CD /* mock_TipJarManager.swift */,
+				A1B2C3D4E5F60718293A0005 /* mock_FilterImportExportManager.swift */,
+				A1B2C3D4E5F60718293A0012 /* mock_FlowManager.swift */,
 				DDFBDEA463B84374A61E16E73070A6E4 /* mock_DebugDataManager.swift */,
 			);
 			path = Mocks;
@@ -434,6 +456,8 @@
 				AA3BCED7D8924F6E9A3B5C03 /* CallingCodesTests.swift */,
 				694E53EB27A4A68F009A7E0E /* FilterListViewModelTests.swift */,
 				AA1B2C3D4E5F6A7B8C9D0E1E /* AddFilterViewModelTests.swift */,
+				A1B2C3D4E5F60718293A0004 /* FilterImportExportManagerTests.swift */,
+				A1B2C3D4E5F60718293A0013 /* FlowManagerTests.swift */,
 				690F09CA27AC33E900BA481F /* Mocks */,
 			);
 			path = Tests;
@@ -464,6 +488,7 @@
 				69218EC42EC8A261000D547B /* EnableExtensionView.swift */,
 				69C1A0012F12A26100D1E2F3 /* WhatsNewView.swift */,
 				4A340657CC124389AFB10F39 /* TipJarView.swift */,
+				A1B2C3D4E5F60718293A0003 /* FilterImportPreviewView.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -491,6 +516,8 @@
 				69189C1627A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift */,
 				698FBAFD27B44A0700435699 /* NetworkSyncManagerProtocol.swift */,
 				986FCD84F7D2AE7EDB341A2D /* TipJarManagerProtocol.swift */,
+				A1B2C3D4E5F60718293A0002 /* FilterImportExportManagerProtocol.swift */,
+				A1B2C3D4E5F60718293A0011 /* FlowManagerProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -507,6 +534,8 @@
 				69189C0F27A9621100C8FFA5 /* MessageEvaluationManager.swift */,
 				691C370D27B400A500B3D061 /* NetworkSyncManager.swift */,
 				64956935AAF96BFE1AD24A37 /* TipJarManager.swift */,
+				A1B2C3D4E5F60718293A0001 /* FilterImportExportManager.swift */,
+				A1B2C3D4E5F60718293A0010 /* FlowManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -639,6 +668,7 @@
 				BF981F0B1B564B22AF8F9F0D /* ConfettiView.swift */,
 				69FF9C8527921DCC007FA2DB /* QuestionView.swift */,
 				6941FE1B277FDBE700B99539 /* MailView.swift */,
+				A1B2C3D4E5F60718293A0006 /* ShareSheet.swift */,
 				69FF9C8727933CE9007FA2DB /* FooterView.swift */,
 				698844A327A8C200005BF9DA /* FadingTextView.swift */,
 				69398EBB27B0A613003C5123 /* FilterListRowView.swift */,
@@ -923,6 +953,10 @@
 				69F3D32B27B9824B00D7DDA7 /* mock_AmazonS3Service.swift in Sources */,
 				690F09C927AC310600BA481F /* mock_AutomaticFilterManager.swift in Sources */,
 				3E71FB36F8B1A765DE7AD92F /* mock_TipJarManager.swift in Sources */,
+				A1B2C3D4E5F60718293A1005 /* mock_FilterImportExportManager.swift in Sources */,
+				A1B2C3D4E5F60718293A1004 /* FilterImportExportManagerTests.swift in Sources */,
+				A1B2C3D4E5F60718293A1012 /* mock_FlowManager.swift in Sources */,
+				A1B2C3D4E5F60718293A1013 /* FlowManagerTests.swift in Sources */,
 				C05FA5740F8443179A8D3FCD817FB3FE /* mock_DebugDataManager.swift in Sources */,
 				69F3D32427B961E800D7DDA7 /* AutomaticFilterManagerTests.swift in Sources */,
 				32E703F6EE6DCF1AE4C4C0F9 /* ReportMessageViewTests.swift in Sources */,
@@ -988,6 +1022,12 @@
 				69FAA7AA2F4FB4E90022C033 /* TipCardView.swift in Sources */,
 				691C370E27B400A500B3D061 /* NetworkSyncManager.swift in Sources */,
 				BA05827BCDAD8210282FD0B0 /* TipJarManager.swift in Sources */,
+				A1B2C3D4E5F60718293A1001 /* FilterImportExportManager.swift in Sources */,
+				A1B2C3D4E5F60718293A1002 /* FilterImportExportManagerProtocol.swift in Sources */,
+				A1B2C3D4E5F60718293A1010 /* FlowManager.swift in Sources */,
+				A1B2C3D4E5F60718293A1011 /* FlowManagerProtocol.swift in Sources */,
+				A1B2C3D4E5F60718293A1003 /* FilterImportPreviewView.swift in Sources */,
+				A1B2C3D4E5F60718293A1006 /* ShareSheet.swift in Sources */,
 				35B7864D116243E34AC005DC /* TipJarManagerProtocol.swift in Sources */,
 				69AA2C55279D75B100CEABE5 /* AppManagerProtocol.swift in Sources */,
 				69DB7017277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */,

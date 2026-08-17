@@ -15,6 +15,51 @@
 			</array>
 		</dict>
 	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Simply Filter SMS Filters</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.grizz.apps.dev.simply-filter-sms.filters</string>
+			</array>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sfsfilters</string>
+			</array>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.grizz.apps.dev.simply-filter-sms.filters</string>
+			<key>UTTypeDescription</key>
+			<string>Simply Filter SMS Filters</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>sfsfilters</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/vnd.simply-filter-sms.filters</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

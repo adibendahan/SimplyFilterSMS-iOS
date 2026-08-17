@@ -1,1 +1,2 @@
-Kleinere Fehlerbehebungen und Leistungsverbesserungen.
+- Filter exportieren & importieren - teile deine Filter mit einem Freund. Exportiere eine Datei aus Filter-Tools im Menü und sende sie.
+- Kleinere Fehlerbehebungen und Leistungsverbesserungen.

@@ -489,3 +489,23 @@
 "whatsNew_regexFilters_title" = "فلاتر Regex";
 
 "whatsNew_regexFilters_desc" = "للمستخدمين المتقدمين - صفِّ بـ**التعبيرات النمطية** للتحكم الكامل فيما يُحجب أو يُسمح به. نمط واحد يمكن أن يحل محل عشرات الفلاتر.";
+
+"menu_exportFilters" = "تصدير الفلاتر";
+"menu_importFilters" = "استيراد الفلاتر";
+"importFilters_title" = "استيراد الفلاتر";
+"importFilters_sectionTitle" = "فلاتر للاستيراد";
+"importFilters_subtitle" = "اضغط على قائمة لمراجعة الفلاتر في هذا الملف واختيار ما تريد إضافته. الفلاتر الموجودة مسبقًا على هذا الجهاز تُتخطى. لا يُستبدل شيء ولا يُحذف.";
+"importFilters_duplicates" = "موجودة مسبقًا";
+"importFilters_invalid" = "تم التخطي";
+"importFilters_confirm" = "استيراد";
+"importFilters_nothingToAdd" = "لا يوجد شيء جديد للاستيراد.";
+"importFilters_selectAll" = "تحديد الكل";
+"importFilters_selectNone" = "إلغاء التحديد";
+"notification_import_title" = "تم استيراد الفلاتر";
+"notification_import_subtitle" = "أُضيف %ld، وتُخطي %ld";
+"notification_importFailed_title" = "فشل الاستيراد";
+"notification_importFailed_subtitle" = "هذا الملف ليس تصدير فلاتر صالحًا.";
+"notification_exportFailed_title" = "فشل التصدير";
+"notification_exportFailed_subtitle" = "تعذّر إنشاء ملف التصدير.";
+"whatsNew_filterImportExport_title" = "تصدير واستيراد الفلاتر";
+"whatsNew_filterImportExport_desc" = "شارك فلاترك مع صديق - صدّر ملفًا من **أدوات المرشحات** في القائمة وأرسله.";

@@ -1,6 +1,6 @@
 //
 //  mock_MessageEvaluationManager.swift
-//  Simply Filter SMS Tests
+//  Tests
 //
 //  Created by Adi Ben-Dahan on 02/02/2022.
 //

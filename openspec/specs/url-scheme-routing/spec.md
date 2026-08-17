@@ -27,16 +27,12 @@ On cold launch via a URL, the app SHALL present the resolved `Screen` as a sheet
 - **WHEN** the app is not running and a user opens `simplyfiltersms://enable-extension`
 - **THEN** the app SHALL launch, display AppHomeView, and present EnableExtensionVideoView as a sheet
 
-### Requirement: Deep link dismisses active sheet or modal before presenting
-On warm launch (app already open), the app SHALL dismiss any currently active `sheetScreen` or `modalFullScreen` before presenting the deep link target as a sheet. The current navigation stack (pushed screens) SHALL remain unchanged.
+### Requirement: Deep link dismisses active sheet before presenting
+On warm launch (app already open), the app SHALL dismiss any currently active `sheetScreen` before presenting the deep link target as a sheet. The current navigation stack (pushed screens) SHALL remain unchanged. There is no full-screen cover (`modalFullScreen` was removed).
 
 #### Scenario: Sheet already showing
 - **WHEN** the app is open with an active sheet (e.g. HelpView) and a URL `simplyfiltersms://enable-extension` is received
 - **THEN** the app SHALL dismiss the active sheet and present EnableExtensionVideoView as a sheet
-
-#### Scenario: Modal full screen showing
-- **WHEN** the app is open with an active full-screen cover and a URL `simplyfiltersms://enable-extension` is received
-- **THEN** the app SHALL dismiss the full-screen cover and present EnableExtensionVideoView as a sheet
 
 #### Scenario: Pushed screen showing, no sheet
 - **WHEN** the app is on a pushed screen (e.g. FilterListView) with no active sheet and a URL `simplyfiltersms://enable-extension` is received

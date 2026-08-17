@@ -1,6 +1,6 @@
 //
 //  CallingCodesTests.swift
-//  Simply Filter SMS Tests
+//  Tests
 //
 //  Created by Adi Ben-Dahan on 13/03/2026.
 //

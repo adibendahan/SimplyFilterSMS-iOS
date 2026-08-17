@@ -1,6 +1,6 @@
 //
 //  mock_PersistanceManager.swift
-//  Simply Filter SMS Tests
+//  Tests
 //
 //  Created by Adi Ben-Dahan on 29/01/2022.
 //
@@ -228,6 +228,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     
     func resetCounters() {
         self.addFilterCounter = 0
+        self.isDuplicateFilterCounter = 0
         self.isDuplicateFilterCounter = 0
         self.deleteFiltersOffsetsCounter = 0
         self.deleteFiltersCounter = 0

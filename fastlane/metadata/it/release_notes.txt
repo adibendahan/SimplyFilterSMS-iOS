@@ -1,1 +1,2 @@
-Correzioni minori di bug e miglioramenti delle prestazioni.
+- Esporta e importa filtri - condividi i tuoi filtri con un amico. Esporta un file da Strumenti filtro nel menu e invialo.
+- Correzioni minori di bug e miglioramenti delle prestazioni.

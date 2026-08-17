@@ -489,3 +489,23 @@
 "whatsNew_regexFilters_title" = "Filtres Regex";
 
 "whatsNew_regexFilters_desc" = "Pour les utilisateurs avancés - filtrez avec des **expressions régulières** pour contrôler exactement ce qui est bloqué ou autorisé. Un seul motif peut remplacer des dizaines de filtres.";
+
+"menu_exportFilters" = "Exporter les filtres";
+"menu_importFilters" = "Importer les filtres";
+"importFilters_title" = "Importer les filtres";
+"importFilters_sectionTitle" = "Filtres à importer";
+"importFilters_subtitle" = "Touchez une liste pour examiner les filtres de ce fichier et choisir ceux à ajouter. Les filtres déjà présents sur cet appareil sont ignorés. Rien n’est écrasé ni supprimé.";
+"importFilters_duplicates" = "Déjà présents";
+"importFilters_invalid" = "Ignorés";
+"importFilters_confirm" = "Importer";
+"importFilters_nothingToAdd" = "Rien de nouveau à importer.";
+"importFilters_selectAll" = "Tout sélectionner";
+"importFilters_selectNone" = "Tout désélectionner";
+"notification_import_title" = "Filtres importés";
+"notification_import_subtitle" = "%ld ajoutés, %ld ignorés";
+"notification_importFailed_title" = "Échec de l’import";
+"notification_importFailed_subtitle" = "Ce fichier n’est pas un export de filtres valide.";
+"notification_exportFailed_title" = "Échec de l’export";
+"notification_exportFailed_subtitle" = "Impossible de créer le fichier d’export.";
+"whatsNew_filterImportExport_title" = "Exporter et importer des filtres";
+"whatsNew_filterImportExport_desc" = "Partage tes filtres avec un ami - exporte un fichier depuis **Outils de filtrage** dans le menu et envoie-le.";

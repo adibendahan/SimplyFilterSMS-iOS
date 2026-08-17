@@ -40,6 +40,8 @@ enum TestIdentifier: String {
     case testYourFiltersMenuButton = "testYourFiltersMenuButton"
     case testYourFiltersButton = "testYourFiltersButton"
     case filterToolsMenuButton = "filterToolsMenuButton"
+    case exportFiltersMenuButton = "exportFiltersMenuButton"
+    case importFiltersMenuButton = "importFiltersMenuButton"
     case testSenderInput = "testSenderInput"
     case testBodyInput = "testBodyInput"
     case countryAllowlistButton = "countryAllowlistButton"

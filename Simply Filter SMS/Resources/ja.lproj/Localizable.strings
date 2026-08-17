@@ -489,3 +489,23 @@
 "whatsNew_regexFilters_title" = "正規表現フィルタ";
 
 "whatsNew_regexFilters_desc" = "上級ユーザー向け - **正規表現**でフィルタリングし、ブロックまたは許可する内容を完全に制御。1つのパターンで数十のフィルタを置き換えられます。";
+
+"menu_exportFilters" = "フィルタを書き出す";
+"menu_importFilters" = "フィルタを読み込む";
+"importFilters_title" = "フィルタを読み込む";
+"importFilters_sectionTitle" = "読み込むフィルタ";
+"importFilters_subtitle" = "リストをタップして、このファイルのフィルタを確認し、追加するものを選べます。このデバイスにすでに存在するフィルタはスキップされます。上書きや削除は行われません。";
+"importFilters_duplicates" = "既存";
+"importFilters_invalid" = "スキップ";
+"importFilters_confirm" = "読み込む";
+"importFilters_nothingToAdd" = "読み込む新しいフィルタはありません。";
+"importFilters_selectAll" = "すべて選択";
+"importFilters_selectNone" = "選択を解除";
+"notification_import_title" = "フィルタを読み込みました";
+"notification_import_subtitle" = "%ld 件追加、%ld 件スキップ";
+"notification_importFailed_title" = "読み込みに失敗";
+"notification_importFailed_subtitle" = "このファイルは有効なフィルタ書き出しではありません。";
+"notification_exportFailed_title" = "書き出しに失敗";
+"notification_exportFailed_subtitle" = "書き出しファイルを作成できませんでした。";
+"whatsNew_filterImportExport_title" = "フィルタの書き出しと読み込み";
+"whatsNew_filterImportExport_desc" = "友だちとフィルタを共有 - メニューの**フィルタツール**からファイルを書き出して送信できます。";

@@ -13,14 +13,14 @@ enum Screen: Int, Identifiable, Hashable {
     case appHome, onboarding, help, about, enableExtension, testFilters,
          addLanguageFilter, addAllowFilter, addDenyFilter, automaticBlocking,
          denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
-         whatsNew, tipJar, countryList, enableReportingExtension
+         whatsNew, tipJar, countryList, enableReportingExtension, filterImport
 
     @ViewBuilder func build() -> some View {
         switch self {
         case .appHome:
             AppHomeView(model: AppHomeView.ViewModel())
 
-        case .onboarding:
+        case .onboarding, .enableExtension:
             EnableExtensionView(model: EnableExtensionView.ViewModel(
                 steps: Array(EnableExtensionStep.allCases),
                 isInteractiveDismissDisabled: true,
@@ -40,21 +40,6 @@ enum Screen: Int, Identifiable, Hashable {
 
         case .about:
             AboutView(model: AboutView.ViewModel())
-
-        case .enableExtension:
-            EnableExtensionView(model: EnableExtensionView.ViewModel(
-                steps: Array(EnableExtensionStep.allCases),
-                isInteractiveDismissDisabled: true,
-                onDismiss: {
-                    var defaultsManager = AppManager.shared.defaultsManager
-                    defaultsManager.isAppFirstRun = false
-                },
-                onCTA: {
-                    var defaultsManager = AppManager.shared.defaultsManager
-                    defaultsManager.isAppFirstRun = false
-                    UIApplication.shared.openSettings()
-                }
-            ))
 
         case .testFilters:
             TestFiltersView(model: TestFiltersView.ViewModel())
@@ -101,6 +86,9 @@ enum Screen: Int, Identifiable, Hashable {
                 onDismiss: {},
                 onCTA: UIApplication.shared.openSettings
             ))
+
+        case .filterImport:
+            FilterImportPreviewView(model: FilterImportPreviewView.ViewModel())
         }
     }
 
@@ -142,6 +130,8 @@ enum Screen: Int, Identifiable, Hashable {
             return "countryList"
         case .enableReportingExtension:
             return "enableReportingExtension"
+        case .filterImport:
+            return "filterImport"
         }
     }
 }

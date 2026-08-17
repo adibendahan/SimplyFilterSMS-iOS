@@ -489,3 +489,23 @@
 "whatsNew_regexFilters_title" = "정규식 필터";
 
 "whatsNew_regexFilters_desc" = "고급 사용자를 위한 기능 - **정규 표현식**으로 차단하거나 허용할 내용을 완전히 제어하세요. 하나의 패턴으로 수십 개의 필터를 대체할 수 있습니다.";
+
+"menu_exportFilters" = "필터 내보내기";
+"menu_importFilters" = "필터 가져오기";
+"importFilters_title" = "필터 가져오기";
+"importFilters_sectionTitle" = "가져올 필터";
+"importFilters_subtitle" = "목록을 탭하여 이 파일의 필터를 확인하고 추가할 항목을 고르세요. 이 기기에 이미 있는 필터는 건너뜁니다. 덮어쓰거나 삭제되지 않습니다.";
+"importFilters_duplicates" = "이미 있음";
+"importFilters_invalid" = "건너뜀";
+"importFilters_confirm" = "가져오기";
+"importFilters_nothingToAdd" = "가져올 새 필터가 없습니다.";
+"importFilters_selectAll" = "모두 선택";
+"importFilters_selectNone" = "선택 해제";
+"notification_import_title" = "필터를 가져왔습니다";
+"notification_import_subtitle" = "%ld개 추가, %ld개 건너뜀";
+"notification_importFailed_title" = "가져오기 실패";
+"notification_importFailed_subtitle" = "이 파일은 올바른 필터 내보내기 파일이 아닙니다.";
+"notification_exportFailed_title" = "내보내기 실패";
+"notification_exportFailed_subtitle" = "내보내기 파일을 만들 수 없습니다.";
+"whatsNew_filterImportExport_title" = "필터 내보내기 및 가져오기";
+"whatsNew_filterImportExport_desc" = "친구와 필터를 공유하세요 - 메뉴의 **필터 도구**에서 파일을 내보낸 뒤 보내세요.";

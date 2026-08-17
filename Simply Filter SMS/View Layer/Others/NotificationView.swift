@@ -175,7 +175,7 @@ struct NotificationView: View {
     }
 
     enum Notification {
-        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension
+        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed
 
         var icon: String {
             switch self {
@@ -193,6 +193,10 @@ struct NotificationView: View {
                 return "heart.fill"
             case .enableReportingExtension:
                 return "exclamationmark.message.fill"
+            case .filtersImported:
+                return "square.and.arrow.down.fill"
+            case .filterImportFailed, .filterExportFailed:
+                return "exclamationmark.triangle.fill"
             }
         }
 
@@ -212,6 +216,10 @@ struct NotificationView: View {
                 return .pink.opacity(0.8)
             case .enableReportingExtension:
                 return .green.opacity(0.8)
+            case .filtersImported:
+                return .green.opacity(0.6)
+            case .filterImportFailed, .filterExportFailed:
+                return .red.opacity(0.6)
             }
         }
 
@@ -232,6 +240,12 @@ struct NotificationView: View {
                 return "notification_tipPromotion_title"~
             case .enableReportingExtension:
                 return "notification_reportingExtension_title"~
+            case .filtersImported:
+                return "notification_import_title"~
+            case .filterImportFailed:
+                return "notification_importFailed_title"~
+            case .filterExportFailed:
+                return "notification_exportFailed_title"~
             }
         }
 
@@ -251,6 +265,12 @@ struct NotificationView: View {
                 return "notification_tipPromotion_subtitle"~
             case .enableReportingExtension:
                 return "notification_reportingExtension_subtitle"~
+            case .filtersImported(let added, let skipped):
+                return String(format: "notification_import_subtitle"~, added, skipped)
+            case .filterImportFailed:
+                return "notification_importFailed_subtitle"~
+            case .filterExportFailed:
+                return "notification_exportFailed_subtitle"~
             }
         }
 
@@ -277,6 +297,8 @@ struct NotificationView: View {
                 return 10
             case .enableReportingExtension:
                 return 10
+            case .filtersImported, .filterImportFailed, .filterExportFailed:
+                return 6
             }
         }
     }

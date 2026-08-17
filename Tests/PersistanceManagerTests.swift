@@ -1,6 +1,6 @@
 //
 //  mock_PersistanceManager.swift
-//  Simply Filter SMS Tests
+//  Tests
 //
 //  Created by Adi Ben-Dahan on 28/01/2022.
 //

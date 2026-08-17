@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 extension EnvironmentValues {
     var isPreview: Bool {
@@ -148,6 +149,12 @@ extension View {
     }
 }
 
+
+extension UTType {
+    static var sfsFilters: UTType {
+        UTType(exportedAs: kFilterExportTypeIdentifier)
+    }
+}
 
 extension UIApplication {
     func openSettings() {
