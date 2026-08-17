@@ -507,5 +507,5 @@
 "notification_importFailed_subtitle" = "Questo file non è un export di filtri valido.";
 "notification_exportFailed_title" = "Esportazione non riuscita";
 "notification_exportFailed_subtitle" = "Impossibile creare il file di esportazione.";
-"whatsNew_filterImportExport_title" = "Esporta e importa";
-"whatsNew_filterImportExport_desc" = "Fai il backup dei filtri o copiali su un altro dispositivo. Esporta un file e importalo per **unire** — i duplicati vengono ignorati, niente viene eliminato.";
+"whatsNew_filterImportExport_title" = "Esporta e importa filtri";
+"whatsNew_filterImportExport_desc" = "Condividi i tuoi filtri con un amico - esporta un file da **Strumenti filtro** nel menu e invialo.";

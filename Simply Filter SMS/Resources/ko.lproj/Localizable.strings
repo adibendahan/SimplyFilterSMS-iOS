@@ -507,5 +507,5 @@
 "notification_importFailed_subtitle" = "이 파일은 올바른 필터 내보내기 파일이 아닙니다.";
 "notification_exportFailed_title" = "내보내기 실패";
 "notification_exportFailed_subtitle" = "내보내기 파일을 만들 수 없습니다.";
-"whatsNew_filterImportExport_title" = "내보내기 및 가져오기";
-"whatsNew_filterImportExport_desc" = "필터를 백업하거나 다른 기기로 복사하세요. 파일을 내보낸 뒤 가져오면 **병합**됩니다. 중복은 건너뛰며 아무것도 삭제되지 않습니다.";
+"whatsNew_filterImportExport_title" = "필터 내보내기 및 가져오기";
+"whatsNew_filterImportExport_desc" = "친구와 필터를 공유하세요 - 메뉴의 **필터 도구**에서 파일을 내보낸 뒤 보내세요.";

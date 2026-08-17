@@ -1,1 +1,2 @@
-Pequeñas correcciones de errores y mejoras de rendimiento.
+- Exportar e importar filtros - comparte tus filtros con un amigo. Exporta un archivo desde Herramientas de filtro en el menú y envíalo.
+- Pequeñas correcciones de errores y mejoras de rendimiento.

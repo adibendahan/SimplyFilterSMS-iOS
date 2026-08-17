@@ -507,5 +507,5 @@
 "notification_importFailed_subtitle" = "このファイルは有効なフィルタ書き出しではありません。";
 "notification_exportFailed_title" = "書き出しに失敗";
 "notification_exportFailed_subtitle" = "書き出しファイルを作成できませんでした。";
-"whatsNew_filterImportExport_title" = "書き出しと読み込み";
-"whatsNew_filterImportExport_desc" = "フィルタをバックアップしたり、別のデバイスにコピーできます。ファイルを書き出してから読み込むと**結合**されます。重複はスキップされ、何も削除されません。";
+"whatsNew_filterImportExport_title" = "フィルタの書き出しと読み込み";
+"whatsNew_filterImportExport_desc" = "友だちとフィルタを共有 - メニューの**フィルタツール**からファイルを書き出して送信できます。";

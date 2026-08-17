@@ -507,5 +507,5 @@
 "notification_importFailed_subtitle" = "הקובץ אינו ייצוא פילטרים תקין.";
 "notification_exportFailed_title" = "הייצוא נכשל";
 "notification_exportFailed_subtitle" = "לא ניתן ליצור את קובץ הייצוא.";
-"whatsNew_filterImportExport_title" = "ייצוא וייבוא";
-"whatsNew_filterImportExport_desc" = "גבו את הפילטרים שלכם או העתיקו אותם למכשיר אחר. ייצאו קובץ ואז ייבאו אותו ל**מיזוג** — כפילויות מדולגות, שום דבר לא נמחק.";
+"whatsNew_filterImportExport_title" = "ייצוא וייבוא פילטרים";
+"whatsNew_filterImportExport_desc" = "שתפו את הפילטרים שלכם עם חבר - ייצאו קובץ מ**כלי פילטור** בתפריט ושלחו אותו.";

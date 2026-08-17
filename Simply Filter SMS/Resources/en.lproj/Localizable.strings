@@ -316,8 +316,8 @@
 "notification_importFailed_subtitle" = "This file isn’t a valid filter export.";
 "notification_exportFailed_title" = "Export Failed";
 "notification_exportFailed_subtitle" = "Couldn’t create the export file.";
-"whatsNew_filterImportExport_title" = "Export & Import";
-"whatsNew_filterImportExport_desc" = "Back up your filters or copy them to another device. Export a file, then import it to **merge** — duplicates are skipped, nothing is deleted.";
+"whatsNew_filterImportExport_title" = "Export & Import Filters";
+"whatsNew_filterImportExport_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
 
 // Country calling code groups
 "callingCode_+1" = "North America";

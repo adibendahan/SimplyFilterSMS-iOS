@@ -1,1 +1,2 @@
-Minor bug fixes and performance improvements.
+- Export & Import Filters - share your filters with a friend. Export a file from Filter Tools in the menu and send it.
+- Minor bug fixes and performance improvements.

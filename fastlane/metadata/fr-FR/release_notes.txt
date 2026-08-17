@@ -1,1 +1,2 @@
-Corrections mineures de bugs et améliorations des performances.
+- Exporter et importer des filtres - partage tes filtres avec un ami. Exporte un fichier depuis Outils de filtrage dans le menu et envoie-le.
+- Corrections mineures de bugs et améliorations des performances.

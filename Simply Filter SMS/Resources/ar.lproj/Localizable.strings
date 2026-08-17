@@ -507,5 +507,5 @@
 "notification_importFailed_subtitle" = "هذا الملف ليس تصدير فلاتر صالحًا.";
 "notification_exportFailed_title" = "فشل التصدير";
 "notification_exportFailed_subtitle" = "تعذّر إنشاء ملف التصدير.";
-"whatsNew_filterImportExport_title" = "تصدير واستيراد";
-"whatsNew_filterImportExport_desc" = "انسخ فلاترك احتياطيًا أو انقلها إلى جهاز آخر. صدّر ملفًا ثم استورده **للدمج** — يتم تخطي التكرارات ولا يُحذف شيء.";
+"whatsNew_filterImportExport_title" = "تصدير واستيراد الفلاتر";
+"whatsNew_filterImportExport_desc" = "شارك فلاترك مع صديق - صدّر ملفًا من **أدوات المرشحات** في القائمة وأرسله.";
