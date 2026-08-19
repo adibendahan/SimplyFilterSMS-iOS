@@ -44,7 +44,7 @@ struct FilterListView: View {
                     .id(rowModel.id)
                 }
                 .onDelete {
-                    self.model.deleteFilters(withOffsets: $0, in: self.model.regularFilters)
+                    self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regularRowViewModels)
                 }
             } header: {
                 if self.model.regularFilters.count > 0 {
@@ -81,7 +81,7 @@ struct FilterListView: View {
                         .id(rowModel.id)
                     }
                     .onDelete {
-                        self.model.deleteFilters(withOffsets: $0, in: self.model.regexFilters)
+                        self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regexRowViewModels)
                     }
                 } header: {
                     Text("addFilter_match_regex"~)
@@ -361,14 +361,19 @@ extension FilterListView {
             }
         }
         
-        func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
-            self.appManager.persistanceManager.deleteFilters(withOffsets: offsets, in: filters)
-            self.refresh()
+        func deleteFilters(withOffsets offsets: IndexSet, rowViewModels: [FilterListRowView.ViewModel]) {
+            let toDelete = Set(offsets.map { rowViewModels[$0].filter })
+            self.deleteFilters(toDelete)
         }
         
         func deleteFilters(_ filters: Set<Filter>) {
+            guard !filters.isEmpty else { return }
             self.appManager.persistanceManager.deleteFilters(filters)
-            self.refresh()
+            withAnimation {
+                self.filters.removeAll { filters.contains($0) }
+                self.selectedFilters.subtract(filters)
+                self.updateRowViewModels()
+            }
         }
     }
 }

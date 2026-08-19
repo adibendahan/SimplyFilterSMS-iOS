@@ -230,25 +230,26 @@
 
 "testFilters_title" = "اختبر مرشّحاتك";
 
-"testFilters_action" = "اختبار";
-
 "testFilters_messageTitle" = "الرسالة";
 
 "testFilters_senderTitle" = "المُرسِل (اختياري)";
 
-"testFilters_resultAllowed" = "مسموح بها! 🥳";
+"testFilters_resultAllowed" = "مسموح بها";
 
-"testFilters_resultJunk" = "غير مرغوب فيها! 😈";
+"testFilters_resultJunk" = "غير مرغوب فيه";
 
-"testFilters_resultPromotion" = "عرض ترويجي! 📢";
+"testFilters_resultPromotion" = "عرض ترويجي";
 
-"testFilters_resultTransaction" = "معاملة! 🧾";
+"testFilters_resultTransaction" = "معاملة";
 
 "testFilters_resultReason_noMatch" = "لا مطابقة";
 
 "testFilters_resultReason_unknownSender" = "مُرسِل مجهول";
 
-"testFilters_resultReason" = "السبب:";
+"testFilters_resultMatchedFilter" = "مرشّح:";
+"testFilters_resultMatchedSmartFilter" = "مرشّح ذكي:";
+"testFilters_resultMatchedAutomaticFilter" = "تصفية AI:";
+"testFilters_footer" = "اكتب مُرسِلاً ورسالة لترى كيف ستُصفّى. المُرسِل اختياري، اتركه فارغاً لاختبار النص فقط.";
 
 "notification_offline_title" = "مزامنة iCloud متوقفة";
 
@@ -339,8 +340,6 @@
 "a11y_home_menuButton" = "المزيد من الخيارات";
 
 "a11y_addFilter_expandHint" = "اضغط مرتين لتبديل الخيارات المتقدمة";
-
-"a11y_testFilters_testHint" = "اضغط مرتين لاختبار هذه الرسالة مقابل مرشّحاتك";
 
 "a11y_reportMessage_submitHint" = "اضغط مرتين للإبلاغ عن هذه الرسالة";
 

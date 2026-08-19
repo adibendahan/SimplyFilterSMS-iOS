@@ -80,9 +80,15 @@ protocol MessageEvaluationManagerProtocol {
 ### MessageEvaluationResult
 
 ```swift
+enum MessageEvaluationMatch {
+    case none, noMatch, storeUnavailable
+    case userFilter(String), smartFilter(String), automaticFilter(String)
+}
+
 struct MessageEvaluationResult {
     var action: ILMessageFilterAction  // .allow, .junk, .transaction, .promotion
-    var reason: String?                // Human-readable reason for the decision
+    var match: MessageEvaluationMatch
+    var reason: String? { match.caption }  // logs / Test Filters caption
 }
 ```
 
@@ -108,7 +114,7 @@ struct MessageEvaluationResult {
 
 7. **Automatic filters (deny)** — Cached community `denySender` / `denyBody`. Returns `.junk`.
 
-8. **No match** — `.allow` with reason `"testFilters_resultReason_noMatch"`.
+8. **No match** — `.allow` with `match: .noMatch`.
 
 Owned-store load failure (extension/tests) returns `.allow` with reason `"storeUnavailable"` before the pipeline runs.
 

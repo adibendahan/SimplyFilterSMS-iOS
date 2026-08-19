@@ -164,29 +164,27 @@ A `NavigationView` containing a `VStack` with:
 ## TestFiltersView
 
 **File:** `View Layer/Screens/TestFiltersView.swift`
-**Role:** Debug/testing tool for users to test their filters against sample input. Presented as a sheet from AppHomeView's menu.
+**Role:** Lets the user type a sender and message and see how current filters would classify it. Presented as a sheet from AppHomeView's menu.
 
 ### Layout
 
-A `NavigationView` wrapping a `ZStack` (for loading overlay) containing a `Form` with a single section:
-- **Sender** `TextField` — with floating label above (manually positioned via ZStack + negative padding).
-- **Message body** `TextEditor` — multiline input (fixed 80pt height), auto-focused 0.7s after appear.
-- **Result display** — `FadingTextView` showing the filter evaluation result with a fade-in/fade-out animation on text change.
-- **Test button** — `FilledButton` style. Disabled when both inputs are empty. Calls `evaluateMessage()` and dismisses the keyboard.
-- **Loading overlay** — Semi-transparent background + `ProgressView` shown when `state == .loading` (currently `state` is declared but never set to `.loading`).
+`NavigationView` + `ScrollView` (not Form — Form cannot interpolate row height). One grouped card, Add Filter style:
+- **Sender** `TextField` — optional, floating caption.
+- **Message** `TextEditor` — `minHeight`/`idealHeight` 80, focused 0.7s after appear.
+- **Result row** — `TestFilterResultRow` (Home-style icon + heavy title + caption). Live as you type. The row owns the crossfade. VoiceOver: fields labeled, result combined, change announced (focus stays on the field). Height animation off when Reduce Motion is on; opacity crossfade stays.
+- **Footer** — how to test (`testFilters_footer`).
+
+Blank sender means “test the body only”: the ViewModel probes a numeric stand-in that is not itself filtered.
 
 ### ViewModel
 
-- `text: String`, `sender: String` — Two-way bound to the input fields.
-- `fadeTextModel: FadingTextView.ViewModel` — Drives the result text display.
-- `state: ViewState` — Enum with `.userInput`, `.loading`, `.result(String)` cases. Has custom `==` conformance.
-- `evaluateMessage()` — Calls `MessageEvaluationManager.evaluateMessage(body:sender:)` directly. If sender is empty, defaults to `"1234567"`. Displays both the action result (junk/allow/promotion/transaction) and the reason (which filter matched).
+- `text`, `sender` — bound to the fields; `didSet` re-evaluates.
+- `result: MessageEvaluationResult?` — written by `updateResult()` after `evaluateMessage`. Card height animation is keyed off `result.action`.
 
-### Supporting Components
+### Supporting
 
-- **FadingTextView** (`Others/FadingTextView.swift`) — Animates text transitions: fades out old text, swaps, fades in new text. Has its own lightweight `ViewModel` (plain `ObservableObject`, not `BaseViewModel`). Uses `onReceive` to react to text changes.
-- **Field enum** — Defined inside the `TestFiltersView` extension. Used with `@FocusState` for keyboard focus management.
-- **ViewState enum** — Also defined inside the extension. Supports associated value for result text.
+- `Field` enum for `@FocusState`.
+- **TestFilterResultRow** (`Others/TestFilterResultRow.swift`) — Draws the verdict. Crossfade identity lives on the row; the screen animates the card.
 
 ---
 
@@ -318,7 +316,7 @@ Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). Uses `@S
 
 ### Layout
 
-Structurally similar to TestFiltersView — a `NavigationView` wrapping a `ZStack` (for state overlays) containing a `Form`:
+Structurally similar input card to TestFiltersView — a `NavigationView` wrapping a `ZStack` (for state overlays) containing a `Form`:
 - **Sender** `TextField` — floating label, auto-focused after 0.7s.
 - **Message body** `TextEditor` — multiline, 80pt height.
 - **Report type** segmented `Picker` — junk / not junk (`ReportType.allCases`).
@@ -334,14 +332,13 @@ Navigation title and toolbar X button are conditionally hidden during loading/re
 
 - `text: String`, `sender: String` — Two-way bound inputs.
 - `selectedReport: ReportType` — Junk or not junk.
-- `state: ViewState` — Same enum pattern as TestFiltersView (`.userInput`, `.loading`, `.result(String)`) with `isResult` computed property.
+- `state: ViewState` — `.userInput`, `.loading`, `.result(String)` with `isResult` computed property.
 - `reportMessage()` — Sets state to `.loading`, creates `ReportMessageRequestBody`, calls `ReportMessageService.reportMessage()` via async `Task`. On completion, sets state to `.result` on main queue.
 
 ### Notable
 
 - Conforms to `@unchecked Sendable` for the async `Task` in `reportMessage()`.
-- The `ViewState` enum is nearly identical to TestFiltersView's — both defined independently inside their respective extensions.
-- Unlike TestFiltersView, this screen fully uses all three states (userInput -> loading -> result -> auto-dismiss).
+- `ViewState` lives on this screen only (Test Filters evaluates live and has no loading/result overlay).
 - `CheckView` (`Others/CheckView.swift`) — Animated checkmark using `Path` with `trim` animation. Purely cosmetic, no ViewModel.
 
 ---
@@ -385,6 +382,8 @@ This pattern is general-purpose: any future `WhatsNewEntry` case can become acti
 **Role:** Merge-only import preview. Presented as a Home sheet via `Screen.filterImport`. Uses `@StateObject` with `init(model:)`.
 
 The ViewModel reads `pendingPreview` from `filterImportExportManager` (no associated value on `Screen`). Confirm calls `importFilters`; Home toasts on dismiss from `clearPendingImport()`.
+
+VoiceOver: close is labeled, section title is a header, select-all is labeled from the existing select strings, candidate rows combine text with the same target/match/case/folder labels as Filter List. Option icons are hidden from VoiceOver. Icon frames use `@ScaledMetric`.
 
 ---
 

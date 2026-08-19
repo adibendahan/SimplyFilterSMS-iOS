@@ -68,25 +68,39 @@ class FilterListViewModelTests: XCTestCase {
     func test_deleteFiltersOffsets() {
         // Prepare
         let filter = self.makeFilter()
+        var stored = [filter]
+        self.persistanceManager.fetchFilterRecordsForTypeClosure = { _ in stored }
+        self.persistanceManager.deleteFiltersClosure = { deleted in
+            stored.removeAll { deleted.contains($0) }
+        }
+        self.testSubject.refresh()
+        XCTAssertEqual(self.testSubject.regularRowViewModels.count, 1)
         
         // Act
-        self.testSubject.deleteFilters(withOffsets: IndexSet(arrayLiteral: 0), in: [filter])
+        self.testSubject.deleteFilters(withOffsets: IndexSet(arrayLiteral: 0),
+                                       rowViewModels: self.testSubject.regularRowViewModels)
         
         // Verify
-        XCTAssertEqual(self.persistanceManager.deleteFiltersOffsetsCounter, 1)
-        XCTAssertTrue(self.testSubject.filters.isEmpty) // Verify refresh
+        XCTAssertEqual(self.persistanceManager.deleteFiltersCounter, 1)
+        XCTAssertTrue(self.testSubject.filters.isEmpty)
     }
     
     func test_deleteFilters() {
         // Prepare
         let filter = self.makeFilter()
+        var stored = [filter]
+        self.persistanceManager.fetchFilterRecordsForTypeClosure = { _ in stored }
+        self.persistanceManager.deleteFiltersClosure = { deleted in
+            stored.removeAll { deleted.contains($0) }
+        }
+        self.testSubject.refresh()
         
         // Act
         self.testSubject.deleteFilters(Set(arrayLiteral: filter))
         
         // Verify
         XCTAssertEqual(self.persistanceManager.deleteFiltersCounter, 1)
-        XCTAssertTrue(self.testSubject.filters.isEmpty) // Verify refresh
+        XCTAssertTrue(self.testSubject.filters.isEmpty)
     }
     
     private func makeFilter() -> Filter {

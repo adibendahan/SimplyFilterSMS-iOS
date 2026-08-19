@@ -210,7 +210,7 @@ Used in AddFilterView and ReportMessageView:
 ### Text Input Cards
 
 Used in TestFiltersView, ReportMessageView, AddFilterView:
-- Grouped card background (from `.insetGrouped` list style)
+- Grouped card background (Test Filters uses ScrollView + `secondarySystemGroupedBackground`; Report uses Form)
 - Labeled text fields with placeholder text
 - Separator lines between fields within the same card
 

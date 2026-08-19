@@ -248,25 +248,26 @@
 
 "testFilters_title" = "필터 테스트";
 
-"testFilters_action" = "테스트";
-
 "testFilters_messageTitle" = "메시지";
 
 "testFilters_senderTitle" = "발신자 (선택 사항)";
 
-"testFilters_resultAllowed" = "허용됩니다! 🥳";
+"testFilters_resultAllowed" = "허용";
 
-"testFilters_resultJunk" = "스팸입니다! 😈";
+"testFilters_resultJunk" = "스팸";
 
-"testFilters_resultPromotion" = "프로모션입니다! 📢";
+"testFilters_resultPromotion" = "프로모션";
 
-"testFilters_resultTransaction" = "거래입니다! 🧾";
+"testFilters_resultTransaction" = "거래";
 
 "testFilters_resultReason_noMatch" = "일치 없음";
 
 "testFilters_resultReason_unknownSender" = "알 수 없는 발신자";
 
-"testFilters_resultReason" = "이유:";
+"testFilters_resultMatchedFilter" = "필터:";
+"testFilters_resultMatchedSmartFilter" = "스마트 필터:";
+"testFilters_resultMatchedAutomaticFilter" = "AI 필터링:";
+"testFilters_footer" = "발신자와 메시지를 입력하면 어떻게 필터링되는지 확인할 수 있습니다. 발신자는 선택 사항입니다. 비워 두면 본문만 테스트합니다.";
 
 "notification_offline_title" = "iCloud 동기화 일시 중지됨";
 
@@ -357,8 +358,6 @@
 "a11y_home_menuButton" = "추가 옵션";
 
 "a11y_addFilter_expandHint" = "이중 탭하여 고급 옵션 전환";
-
-"a11y_testFilters_testHint" = "이중 탭하여 필터로 메시지 테스트";
 
 "a11y_reportMessage_submitHint" = "이중 탭하여 메시지 신고";
 

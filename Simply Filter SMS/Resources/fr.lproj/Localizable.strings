@@ -230,25 +230,26 @@
 
 "testFilters_title" = "Tester tes filtres";
 
-"testFilters_action" = "Tester";
-
 "testFilters_messageTitle" = "Message";
 
 "testFilters_senderTitle" = "Expéditeur (optionnel)";
 
-"testFilters_resultAllowed" = "Autorisé ! 🥳";
+"testFilters_resultAllowed" = "Autorisé";
 
-"testFilters_resultJunk" = "Indésirable ! 😈";
+"testFilters_resultJunk" = "Indésirable";
 
-"testFilters_resultPromotion" = "C'est une promo ! 📢";
+"testFilters_resultPromotion" = "Promotion";
 
-"testFilters_resultTransaction" = "C'est une transaction ! 🧾";
+"testFilters_resultTransaction" = "Transaction";
 
 "testFilters_resultReason_noMatch" = "Aucun résultat";
 
 "testFilters_resultReason_unknownSender" = "Expéditeur inconnu";
 
-"testFilters_resultReason" = "Raison :";
+"testFilters_resultMatchedFilter" = "Filtre :";
+"testFilters_resultMatchedSmartFilter" = "Filtre intelligent :";
+"testFilters_resultMatchedAutomaticFilter" = "Filtrage AI :";
+"testFilters_footer" = "Saisis un expéditeur et un message pour voir comment ils seraient filtrés. L'expéditeur est optionnel, laisse-le vide pour tester uniquement le corps du message.";
 
 "notification_offline_title" = "Synchronisation iCloud suspendue";
 
@@ -339,8 +340,6 @@
 "a11y_home_menuButton" = "Plus d'options";
 
 "a11y_addFilter_expandHint" = "Appuyer deux fois pour basculer les options avancées";
-
-"a11y_testFilters_testHint" = "Appuyer deux fois pour tester ce message avec tes filtres";
 
 "a11y_reportMessage_submitHint" = "Appuyer deux fois pour signaler ce message";
 

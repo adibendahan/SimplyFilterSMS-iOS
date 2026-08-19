@@ -196,16 +196,18 @@
 
 // MARK: Test Filters
 "testFilters_title" = "Test Your Filters";
-"testFilters_action" = "Test";
 "testFilters_messageTitle" = "Message";
 "testFilters_senderTitle" = "Sender (optional)";
-"testFilters_resultAllowed" = "It's Allowed! 🥳";
-"testFilters_resultJunk" = "It's Junk! 😈";
-"testFilters_resultPromotion" = "It's a Promotion! 📢";
-"testFilters_resultTransaction" = "It's a Transaction! 🧾";
+"testFilters_resultAllowed" = "Allowed";
+"testFilters_resultJunk" = "Junk";
+"testFilters_resultPromotion" = "Promotion";
+"testFilters_resultTransaction" = "Transaction";
 "testFilters_resultReason_noMatch" = "No match";
 "testFilters_resultReason_unknownSender" = "Unknown sender";
-"testFilters_resultReason" = "Reason:";
+"testFilters_resultMatchedFilter" = "Filter:";
+"testFilters_resultMatchedSmartFilter" = "Smart Filter:";
+"testFilters_resultMatchedAutomaticFilter" = "AI Filtering:";
+"testFilters_footer" = "Type a sender and message to see how they would be filtered. Sender is optional, leave it blank to test the body only.";
 
 "notification_offline_title" = "iCloud sync is paused";
 "notification_offline_subtitle" = "Your device has no network";
@@ -283,7 +285,6 @@
 //MARK: Accessibility
 "a11y_home_menuButton" = "More options";
 "a11y_addFilter_expandHint" = "Double tap to toggle advanced options";
-"a11y_testFilters_testHint" = "Double tap to test this message against your filters";
 "a11y_reportMessage_submitHint" = "Double tap to report this message";
 "a11y_enableExtension_ctaHint" = "Double tap to open iOS Settings";
 "a11y_filterRow_targetLabel" = "Filter target: %@";
