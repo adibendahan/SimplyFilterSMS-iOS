@@ -62,6 +62,10 @@ Interactive elements that perform non-obvious actions SHALL have `.accessibility
 - **WHEN** VoiceOver focuses on the expand/collapse button in AddFilterView
 - **THEN** VoiceOver reads a hint like "Double tap to show advanced options" or "Double tap to hide advanced options"
 
-#### Scenario: Test filters button has hint
-- **WHEN** VoiceOver focuses on the test button in TestFiltersView
-- **THEN** VoiceOver reads a hint like "Double tap to test this message against your filters"
+#### Scenario: Test filters fields have labels
+- **WHEN** VoiceOver focuses on the sender or message field in TestFiltersView
+- **THEN** VoiceOver reads the field purpose (sender optional, message) instead of an unlabeled text field
+
+#### Scenario: Test filters result is one element
+- **WHEN** a live test result is visible in TestFiltersView
+- **THEN** VoiceOver reads the verdict and match caption as a single element (e.g., "Junk. Filter: \"amazon\"")

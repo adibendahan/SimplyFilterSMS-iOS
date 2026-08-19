@@ -1,2 +1,3 @@
 - Esporta e importa filtri - condividi i tuoi filtri con un amico. Esporta un file da Strumenti filtro nel menu e invialo.
+- Testa i tuoi filtri - ridisegnato con risultati in tempo reale.
 - Correzioni minori di bug e miglioramenti delle prestazioni.

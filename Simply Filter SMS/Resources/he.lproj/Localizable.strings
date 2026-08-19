@@ -180,15 +180,13 @@
 
 "testFilters_senderTitle" = "שולח (אופציונאלי)";
 
-"testFilters_resultAllowed" = "זו הודעה תקינה! 🥳";
+"testFilters_resultAllowed" = "תקינה";
 
-"testFilters_resultJunk" = "זו הודעת זבל! 😈";
+"testFilters_resultJunk" = "זבל";
 
-"testFilters_resultPromotion" = "זו הודעה פרסומית! 📢";
+"testFilters_resultPromotion" = "קידומי מכירות";
 
-"testFilters_resultTransaction" = "זו הודעה על פעולה! 🧾";
-
-"testFilters_action" = "לחצו לבדיקה";
+"testFilters_resultTransaction" = "עסקאות";
 
 "help_automaticFiltering_question" = "איך עובד סינון AI?";
 
@@ -256,7 +254,10 @@
 
 "testFilters_resultReason_unknownSender" = "שולח לא מוכר";
 
-"testFilters_resultReason" = "סיבה:";
+"testFilters_resultMatchedFilter" = "פילטר:";
+"testFilters_resultMatchedSmartFilter" = "פילטר חכם:";
+"testFilters_resultMatchedAutomaticFilter" = "סינון AI:";
+"testFilters_footer" = "הקלידו שולח והודעה כדי לראות איך ההודעה תסונן. השולח אופציונאלי, השאירו אותו ריק כדי לבחון את גוף ההודעה בלבד.";
 
 "autoFilter_emojis" = "חסום אימוג'ים";
 
@@ -367,8 +368,6 @@
 "a11y_home_menuButton" = "אפשרויות נוספות";
 
 "a11y_addFilter_expandHint" = "הקשה כפולה להצגת אפשרויות מתקדמות";
-
-"a11y_testFilters_testHint" = "הקשה כפולה לבדיקת ההודעה מול הפילטרים שלך";
 
 "a11y_reportMessage_submitHint" = "הקשה כפולה לדיווח על הודעה זו";
 

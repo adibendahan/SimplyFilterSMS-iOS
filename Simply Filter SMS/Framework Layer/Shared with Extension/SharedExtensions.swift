@@ -7,7 +7,6 @@
 
 import Foundation
 import NaturalLanguage
-import SwiftUI
 import IdentityLookup
 
 extension Collection {
@@ -130,25 +129,6 @@ extension ILMessageFilterAction {
             return true
         @unknown default:
             return false
-        }
-    }
-    
-    var testResult: String {
-        switch self {
-        case .none, .allow:
-            return "testFilters_resultAllowed"~
-
-        case .junk, .filter:
-            return "testFilters_resultJunk"~
-
-        case .promotion:
-            return "testFilters_resultPromotion"~
-
-        case .transaction:
-            return "testFilters_resultTransaction"~
-
-        @unknown default:
-            return "🧐"
         }
     }
 

@@ -463,7 +463,7 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
         }
     }
 
-    var shortTitle: String? {
+    var shortTitle: String {
         switch self {
         case .allUnknown:
             return "autoFilter_allUnknown_shortTitle"~

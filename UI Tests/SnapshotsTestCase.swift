@@ -120,7 +120,6 @@ class SnapshotsTestCase: ApplicationTestCase {
         app.textViews[TestIdentifier.testBodyInput.rawValue].firstMatch.typeText("Your Apple ID Code is: 444291. Don't share it with anyone.")
         app.textFields[TestIdentifier.testSenderInput.rawValue].firstMatch.tap()
         app.textFields[TestIdentifier.testSenderInput.rawValue].firstMatch.typeText("Apple\n")
-        app.tap(.testYourFiltersButton)
         snapshot("07.testFilters")
     }
     

@@ -248,25 +248,26 @@
 
 "testFilters_title" = "フィルターをテスト";
 
-"testFilters_action" = "テスト";
-
 "testFilters_messageTitle" = "メッセージ";
 
 "testFilters_senderTitle" = "送信者 (任意)";
 
-"testFilters_resultAllowed" = "許可されています! 🥳";
+"testFilters_resultAllowed" = "許可";
 
-"testFilters_resultJunk" = "迷惑メールです! 😈";
+"testFilters_resultJunk" = "迷惑メール";
 
-"testFilters_resultPromotion" = "プロモーションです! 📢";
+"testFilters_resultPromotion" = "プロモーション";
 
-"testFilters_resultTransaction" = "トランザクションです! 🧾";
+"testFilters_resultTransaction" = "トランザクション";
 
 "testFilters_resultReason_noMatch" = "一致なし";
 
 "testFilters_resultReason_unknownSender" = "不明な送信者";
 
-"testFilters_resultReason" = "理由:";
+"testFilters_resultMatchedFilter" = "フィルター:";
+"testFilters_resultMatchedSmartFilter" = "スマートフィルター:";
+"testFilters_resultMatchedAutomaticFilter" = "AIフィルタリング:";
+"testFilters_footer" = "送信者とメッセージを入力すると、どのようにフィルタリングされるか確認できます。送信者は任意です。空欄のままにすると本文のみをテストします。";
 
 "notification_offline_title" = "iCloud同期が一時停止中";
 
@@ -357,8 +358,6 @@
 "a11y_home_menuButton" = "その他のオプション";
 
 "a11y_addFilter_expandHint" = "ダブルタップで詳細オプションを切り替え";
-
-"a11y_testFilters_testHint" = "ダブルタップでフィルターに対してメッセージをテスト";
 
 "a11y_reportMessage_submitHint" = "ダブルタップでこのメッセージを報告";
 

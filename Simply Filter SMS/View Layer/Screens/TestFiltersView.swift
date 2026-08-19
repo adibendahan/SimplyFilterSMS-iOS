@@ -7,20 +7,18 @@
 
 import SwiftUI
 import UIKit
-import IdentityLookup
 
 
 //MARK: - View -
 struct TestFiltersView: View {
     
-    @Environment(\.colorScheme)
-    var colorScheme: ColorScheme
-    
     @Environment(\.dismiss)
     var dismiss
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
     
     @FocusState private var focusedField: Field?
-    @AccessibilityFocusState private var isResultFocused: Bool
     @StateObject private var model: ViewModel
 
     init(model: ViewModel = ViewModel()) {
@@ -29,88 +27,82 @@ struct TestFiltersView: View {
     
     var body: some View {
         NavigationView {
-            ZStack {
-                Form {
-                    Section {
-                        ZStack (alignment: .top) {
+            ScrollView {
+                VStack(spacing: 0) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        ZStack(alignment: .top) {
                             Text("testFilters_senderTitle"~)
                                 .font(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, -20)
                                 .foregroundColor(.secondary)
-                            
+                                .accessibilityHidden(true)
+
                             TextField("", text: $model.sender)
                                 .focused($focusedField, equals: .sender)
+                                .padding(.top, 18)
+                                .accessibilityLabel("testFilters_senderTitle"~)
                                 .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
-                            
                         }
-                        .listRowInsets(EdgeInsets(top: 30, leading: 20, bottom: 15, trailing: 20))
-                        
-                        ZStack (alignment: .top) {
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                        .padding(.bottom, 15)
+
+                        Divider()
+                            .padding(.leading, 20)
+
+                        ZStack(alignment: .top) {
                             Text("testFilters_messageTitle"~)
                                 .font(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundColor(.secondary)
-                            
+                                .accessibilityHidden(true)
+
                             TextEditor(text: $model.text)
                                 .frame(minHeight: 80, idealHeight: 80, alignment: .top)
                                 .focused($focusedField, equals: .text)
                                 .multilineTextAlignment(.leading)
-                                .padding(.top, 15)
+                                .padding(.top, 18)
+                                .accessibilityLabel("testFilters_messageTitle"~)
                                 .accessibilityIdentifier(TestIdentifier.testBodyInput.rawValue)
                         }
-                        .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
-                        
-                        
-                        FadingTextView(model: self.model.fadeTextModel)
-                            .multilineTextAlignment(.leading)
-                            .frame(minHeight: 45, alignment: .top)
-                            .accessibilityFocused($isResultFocused)
-                        
-                        Button {
-                            self.isResultFocused = false
-                            withAnimation {
-                                self.model.evaluateMessage()
-                                self.focusedField = nil
+                        .padding(.horizontal, 20)
+                        .padding(.top, 15)
+
+                        ZStack(alignment: .topLeading) {
+                            if let result = self.model.result {
+                                TestFilterResultRow(result: result)
+                                    .padding(.horizontal, 20)
+                                    .padding(.top, 16)
+                                    .id(result.action.rawValue)
+                                    .transition(.opacity)
                             }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                self.isResultFocused = true
-                            }
-                        } label: {
-                            Text("testFilters_action"~)
-                                .frame(maxWidth: .infinity)
                         }
-                        .buttonStyle(FilledButton())
-                        .listRowSeparator(.hidden)
-                        .padding(.bottom, 8)
-                        .disabled(self.model.text.isEmpty && self.model.sender.isEmpty)
-                        .accessibilityIdentifier(TestIdentifier.testYourFiltersButton.rawValue)
-                        .accessibilityHint("a11y_testFilters_testHint"~)
-                    } header: {
-                        Spacer()
-                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                     }
+                    .padding(.bottom, 15)
+                    .background(Color(UIColor.secondarySystemGroupedBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .padding(.horizontal, 16)
+                    .padding(.top, 20)
+
+                    Text("testFilters_footer"~)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 32)
+                        .padding(.top, 8)
+                        .padding(.bottom, 20)
                 }
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                        focusedField = .text
-                    }
-                }
-                .onChange(of: focusedField) { newValue in
-                    if newValue != nil && !self.model.fadeTextModel.text.isEmpty {
-                        self.model.fadeTextModel.text = ""
-                    }
-                }
-                
-                if self.model.state == .loading {
-                    Color.listBackgroundColor(for: colorScheme)
-                        .opacity(0.7)
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .tint(.accentColor)
-                        .scaleEffect(2)
-                        .padding(.top, 130)
-                        .frame(maxHeight: .infinity, alignment: .top)
+                .animation(self.reduceMotion ? nil : .easeInOut(duration: 0.28), value: self.model.result?.action.rawValue)
+            }
+            .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .onChange(of: self.model.result) { result in
+                guard UIAccessibility.isVoiceOverRunning, let result else { return }
+                UIAccessibility.post(notification: .announcement, argument: TestFilterResultRow.accessibilityText(for: result))
+            }
+            .onAppear {
+                guard self.model.result == nil else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                    focusedField = .text
                 }
             }
             .navigationTitle("testFilters_title"~)
@@ -138,53 +130,58 @@ extension TestFiltersView {
         case text, sender
     }
     
-    enum ViewState {
-        case userInput, loading, result(String)
-        
-        static func ==(lhs: ViewState, rhs: ViewState) -> Bool {
-            switch (lhs, rhs) {
-            case (.userInput, .userInput), (.loading, .loading):
-                return true
-            case (let .result(lhsTitle), let .result(rhsTitle)):
-                return lhsTitle == rhsTitle
-            default:
-                return false
-            }
-        }
-    }
-    
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published private(set) var fadeTextModel: FadingTextView.ViewModel
-        @Published var text: String = ""
-        @Published var sender: String = ""
-        @Published var state: ViewState = .userInput
-        
-        override init(appManager: AppManagerProtocol = AppManager.shared) {
-            self.fadeTextModel = FadingTextView.ViewModel()
-            super.init(appManager: appManager)
+        @Published var text: String = "" {
+            didSet { self.updateResult() }
         }
+        @Published var sender: String = "" {
+            didSet { self.updateResult() }
+        }
+        @Published var result: MessageEvaluationResult?
         
-        func evaluateMessage() {
-            let result = self.appManager.messageEvaluationManager.evaluateMessage(body: self.text, sender: self.sender)
-            
-            if let reason = result.reason {
-                self.fadeTextModel.text = "\(result.action.testResult)\n\("testFilters_resultReason"~) \(reason)"
-            }
-            else {
-                self.fadeTextModel.text = result.action.testResult
+        private lazy var bodyOnlySender: String = {
+            let evaluator = self.appManager.messageEvaluationManager
+            let candidates = (0...9).map { String(repeating: String($0), count: 12) }
+            return candidates.first(where: { evaluator.evaluateMessage(body: "", sender: $0).action == .allow })
+                ?? candidates[0]
+        }()
+        
+        func updateResult() {
+            guard !self.text.isEmpty || !self.sender.isEmpty else {
+                if self.result != nil {
+                    self.result = nil
+                }
+                return
             }
 
-            // VoiceOver focus is moved to the result by @AccessibilityFocusState in the View
+            let next = self.appManager.messageEvaluationManager.evaluateMessage(
+                body: self.text,
+                sender: self.sender.isEmpty ? self.bodyOnlySender : self.sender
+            )
+            guard next != self.result else { return }
+            self.result = next
         }
     }
 }
 
 
 //MARK: - Preview -
-struct TestFiltersView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            TestFiltersView(model: TestFiltersView.ViewModel(appManager: AppManager.previews))
-        }
-    }
+#Preview("Empty") {
+    TestFiltersView(model: TestFiltersView.ViewModel(appManager: AppManager.previews))
+}
+
+#Preview("Junk result") {
+    let model = TestFiltersView.ViewModel(appManager: AppManager.previews)
+    model.sender = "Amazon"
+    model.text = "Your package has shipped. Track it here: https://amzn.to/xyz"
+    model.result = MessageEvaluationResult(action: .junk, match: .userFilter("amazon"))
+    return TestFiltersView(model: model)
+}
+
+#Preview("Allowed result") {
+    let model = TestFiltersView.ViewModel(appManager: AppManager.previews)
+    model.sender = "Mom"
+    model.text = "Running late, be home soon"
+    model.result = MessageEvaluationResult(action: .allow, match: .noMatch)
+    return TestFiltersView(model: model)
 }

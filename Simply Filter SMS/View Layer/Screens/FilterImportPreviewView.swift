@@ -16,6 +16,7 @@ struct FilterImportPreviewView: View {
     var dismiss
 
     @StateObject var model: ViewModel
+    @ScaledMetric(relativeTo: .body) private var typeIconSize: CGFloat = 20
 
     init(model: ViewModel) {
         _model = StateObject(wrappedValue: model)
@@ -34,7 +35,7 @@ struct FilterImportPreviewView: View {
                             HStack {
                                 Image(systemName: filterType.iconName)
                                     .foregroundColor(filterType.iconColor)
-                                    .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
+                                    .frame(maxWidth: typeIconSize, maxHeight: .infinity, alignment: .center)
 
                                 Text(filterType.name)
                                     .padding(.leading, 8)
@@ -181,6 +182,23 @@ struct FilterImportCandidateListView: View {
             }
         }
         .tag(candidate.id)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(self.candidateAccessibilityLabel(candidate))
+    }
+
+    private func candidateAccessibilityLabel(_ candidate: FilterImportCandidate) -> String {
+        var parts = [self.model.displayName(for: candidate)]
+        if candidate.type.supportsAdvancedOptions {
+            parts.append(String(format: "a11y_filterRow_targetLabel"~, candidate.filterTarget.name))
+            parts.append(String(format: "a11y_filterRow_matchLabel"~, candidate.filterMatching.name))
+            if candidate.filterMatching != .regex {
+                parts.append(String(format: "a11y_filterRow_caseLabel"~, candidate.filterCase.name))
+            }
+        }
+        if candidate.type.supportsFolders {
+            parts.append(String(format: "a11y_filterRow_folderLabel"~, candidate.denyFolder.name))
+        }
+        return parts.joined(separator: ", ")
     }
 
     private func optionIcon(systemName: String, isActive: Bool) -> some View {
@@ -196,6 +214,7 @@ struct FilterImportCandidateListView: View {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .strokeBorder(Color.primary.opacity(0.12), lineWidth: 0.5)
             )
+            .accessibilityHidden(true)
     }
 }
 

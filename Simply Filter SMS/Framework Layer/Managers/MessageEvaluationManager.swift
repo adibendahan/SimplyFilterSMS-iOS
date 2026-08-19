@@ -57,7 +57,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         if case .owned(let container) = self.contextSource,
            container.persistentStoreCoordinator.persistentStores.isEmpty {
             self.logger?.error("Owned store unavailable — skipping evaluation (allow)")
-            return MessageEvaluationResult(action: .allow, reason: "storeUnavailable")
+            return MessageEvaluationResult(action: .allow, match: .storeUnavailable)
         }
 
         logger?.debug("━━━━ Evaluating message | sender: '\(sender, privacy: .public)' | body: '\(body, privacy: .public)' ━━━━")
@@ -110,7 +110,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         // Priority #7 - Automatic Filters (deny)
         result = self.runAutomaticFiltersDeny(body: body, sender: sender)
         if !result.action.isFiltered {
-            result = MessageEvaluationResult(action: .allow, reason: "testFilters_resultReason_noMatch"~)
+            result = MessageEvaluationResult(action: .allow, match: .noMatch)
             logger?.debug("Priority #7 (Automatic Filters Deny) → no match → fallthrough ALLOW")
         }
         else {
@@ -151,7 +151,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             return MessageEvaluationResult(action: .none)
         }
         logger?.debug("[allUnknown] rule is active")
-        return MessageEvaluationResult(action: .junk, reason: "testFilters_resultReason_unknownSender"~)
+        return MessageEvaluationResult(action: .junk, match: .smartFilter("testFilters_resultReason_unknownSender"~))
     }
 
     private func runUserFilters(type: FilterType, body: String, sender: String) -> MessageEvaluationResult {
@@ -170,7 +170,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 let matched = self.isMatching(filter: filter, body: body, sender: sender)
                 logger?.debug("  Checking allow filter '\(filter.text ?? "?", privacy: .public)' [target: \(filter.filterTarget.logDescription, privacy: .public), matching: \(filter.filterMatching.logDescription, privacy: .public), case: \(filter.filterCase.logDescription, privacy: .public)] → \(matched ? "MATCH" : "no match", privacy: .public)")
                 guard matched else { continue }
-                result = MessageEvaluationResult(action: .allow, reason: filter.text)
+                result = MessageEvaluationResult(action: .allow, match: .userFilter(filter.text ?? ""))
                 logger?.debug("  → Returning ALLOW")
                 break
             }
@@ -180,7 +180,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 let matched = self.isMatching(filter: filter, body: body, sender: sender)
                 logger?.debug("  Checking deny filter '\(filter.text ?? "?", privacy: .public)' [target: \(filter.filterTarget.logDescription, privacy: .public), matching: \(filter.filterMatching.logDescription, privacy: .public), case: \(filter.filterCase.logDescription, privacy: .public), folder: \(filter.denyFolderType.logDescription, privacy: .public)] → \(matched ? "MATCH" : "no match", privacy: .public)")
                 guard matched else { continue }
-                result = MessageEvaluationResult(action: filter.denyFolderType.action, reason: filter.text)
+                result = MessageEvaluationResult(action: filter.denyFolderType.action, match: .userFilter(filter.text ?? ""))
                 logger?.debug("  → Returning \(result.action.logName, privacy: .public) (folder: \(filter.denyFolderType.logDescription, privacy: .public))")
                 break
             }
@@ -193,7 +193,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 let matched = language != .undetermined && detectedLanguage == language
                 logger?.debug("  Checking language filter '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(matched ? "MATCH" : "no match", privacy: .public)")
                 guard matched else { continue }
-                result = MessageEvaluationResult(action: filter.denyFolderType.action, reason: language.localizedName)
+                result = MessageEvaluationResult(action: filter.denyFolderType.action, match: .userFilter(language.localizedName ?? language.rawValue))
                 logger?.debug("  → Returning \(result.action.logName, privacy: .public) for language '\(language.localizedName ?? language.rawValue, privacy: .public)'")
                 break
             }
@@ -230,7 +230,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             let lang = NLLanguage(rawValue: langRawValue)
             for allowedSender in languageResponse.allowSenders {
                 if lowercasedSender == allowedSender.lowercased() {
-                    result = MessageEvaluationResult(action: .allow, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
+                    result = MessageEvaluationResult(action: .allow, match: .automaticFilter(lang.localizedName ?? langRawValue))
                     logger?.debug("  → ALLOW: matched allow sender '\(allowedSender, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
@@ -238,7 +238,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             guard !result.action.isFiltered else { break }
             for allowedBody in languageResponse.allowBody {
                 if lowercasedBody.contains(allowedBody.lowercased()) {
-                    result = MessageEvaluationResult(action: .allow, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
+                    result = MessageEvaluationResult(action: .allow, match: .automaticFilter(lang.localizedName ?? langRawValue))
                     logger?.debug("  → ALLOW: matched allow body phrase '\(allowedBody, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
@@ -265,7 +265,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             logger?.debug("  Checking language '\(lang.localizedName ?? langRawValue, privacy: .public)' — denySenders: \(languageResponse.denySender.count, privacy: .public), denyBody: \(languageResponse.denyBody.count, privacy: .public)")
             for deniedSender in languageResponse.denySender {
                 if lowercasedSender == deniedSender.lowercased() {
-                    result = MessageEvaluationResult(action: .junk, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
+                    result = MessageEvaluationResult(action: .junk, match: .automaticFilter(lang.localizedName ?? langRawValue))
                     logger?.debug("  → JUNK: matched deny sender '\(deniedSender, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
@@ -273,7 +273,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             guard !result.action.isFiltered else { break }
             for deniedBody in languageResponse.denyBody {
                 if lowercasedBody.contains(deniedBody.lowercased()) {
-                    result = MessageEvaluationResult(action: .junk, reason: "\("autoFilter_title"~) (\(lang.localizedName ?? langRawValue))")
+                    result = MessageEvaluationResult(action: .junk, match: .automaticFilter(lang.localizedName ?? langRawValue))
                     logger?.debug("  → JUNK: matched deny body phrase '\(deniedBody, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
@@ -299,7 +299,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 break
             case .links:
                 if body.containsLink {
-                    result = MessageEvaluationResult(action: .junk, reason: ruleType.shortTitle)
+                    result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
                     logger?.debug("  → JUNK: links — body contains a link")
                 }
                 else {
@@ -307,7 +307,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 }
             case .numbersOnly:
                 if sender.rangeOfCharacter(from: .letters) != nil {
-                    result = MessageEvaluationResult(action: .junk, reason: ruleType.shortTitle)
+                    result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
                     logger?.debug("  → JUNK: numbersOnly — sender '\(sender, privacy: .public)' triggered rule")
                 }
                 else {
@@ -315,7 +315,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 }
             case .shortSender:
                 if sender.count <= Int(activeRule.selectedChoice) {
-                    result = MessageEvaluationResult(action: .junk, reason: ruleType.shortTitle)
+                    result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
                     logger?.debug("  → JUNK: shortSender — sender length \(sender.count, privacy: .public) ≤ threshold \(Int(activeRule.selectedChoice), privacy: .public)")
                 }
                 else {
@@ -323,7 +323,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 }
             case .email:
                 if sender.containsEmail {
-                    result = MessageEvaluationResult(action: .junk, reason: ruleType.shortTitle)
+                    result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
                     logger?.debug("  → JUNK: email — sender '\(sender, privacy: .public)' looks like an email address")
                 }
                 else {
@@ -331,7 +331,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 }
             case .emojis:
                 if body.containsEmoji {
-                    result = MessageEvaluationResult(action: .junk, reason: ruleType.shortTitle)
+                    result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
                     logger?.debug("  → JUNK: emojis — body contains emoji(s)")
                 }
                 else {
@@ -350,7 +350,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     break
                 }
                 if !allowedCodes.contains(entry.callingCode) {
-                    result = MessageEvaluationResult(action: .junk, reason: ruleType.shortTitle)
+                    result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
                     logger?.debug("  → JUNK: countryAllowlist — sender country '\(entry.callingCode, privacy: .public)' not in allowed list \(allowedCodes, privacy: .public)")
                 }
                 else {

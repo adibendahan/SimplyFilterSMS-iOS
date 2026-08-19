@@ -14,12 +14,18 @@ When `NotificationView` becomes visible, the system SHALL post a `UIAccessibilit
 - **THEN** no announcement is posted (standard visual behavior only)
 
 ### Requirement: Filter test results SHALL be announced to VoiceOver
-When the user taps the test button in `TestFiltersView` and results appear, the system SHALL announce the result to VoiceOver.
+When the live evaluation result in `TestFiltersView` appears or changes, the system SHALL announce the result to VoiceOver without moving focus away from the field the user is editing.
 
 #### Scenario: Filter test produces a result
-- **WHEN** the user activates the test button in TestFiltersView
+- **WHEN** the evaluation result in TestFiltersView appears or changes
 - **AND** VoiceOver is running
-- **THEN** VoiceOver announces the filter evaluation result (e.g., "Message would be moved to junk" or "Message would not be filtered")
+- **THEN** VoiceOver announces the verdict and match caption (e.g., "Junk. Filter: \"amazon\"")
+- **AND** VoiceOver focus stays on the sender or message field
+
+#### Scenario: Filter test result is not announced when VoiceOver is inactive
+- **WHEN** the evaluation result in TestFiltersView appears or changes
+- **AND** VoiceOver is not running
+- **THEN** no announcement is posted
 
 ### Requirement: State changes on toggle controls SHALL be announced
 When a smart filter toggle or automatic filter toggle changes state, VoiceOver SHALL announce the new state through the standard toggle accessibility value (no custom announcement needed — SwiftUI handles this if labels are properly set).
