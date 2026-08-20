@@ -216,11 +216,11 @@ Used in TestFiltersView, ReportMessageView, AddFilterView:
 
 ### Accordion (FAQ)
 
-Used in HelpView (QuestionView):
-- Circled chevron icon per row (rotates on expand)
-- All items start collapsed
-- Answer text appears below on tap
-- Answers may contain tappable links
+Used in HelpView (`DisclosureGroup` in an inset grouped List):
+- Question text only; system chevron
+- One question open at a time
+- Answer aligned with the question (`.padding(.leading, -20)`, same as About)
+- Question is `.subheadline.weight(.semibold)`; answer is `.footnote.weight(.regular)` / `.primary` with markdown bold
 
 ### Tip Cards (TipJarView)
 

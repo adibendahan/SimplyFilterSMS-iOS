@@ -16,10 +16,10 @@ When `@Environment(\.accessibilityReduceMotion)` is `true`, all rotation effects
 ### Requirement: Rotation effects SHALL be zeroed out when Reduce Motion is enabled
 Chevron and arrow icons that rotate to indicate expand/collapse state SHALL stay at 0° when Reduce Motion is enabled. The expand/collapse state change itself SHALL still occur.
 
-#### Scenario: QuestionView chevron with Reduce Motion enabled
+#### Scenario: Help FAQ with Reduce Motion enabled
 - **WHEN** the user taps a question in HelpView
 - **AND** Reduce Motion is enabled
-- **THEN** the chevron stays at 0° and the answer appears instantly
+- **THEN** the DisclosureGroup expands or collapses with no animation
 
 #### Scenario: AddFilterView arrow with Reduce Motion enabled
 - **WHEN** the user taps the expand/collapse button in AddFilterView

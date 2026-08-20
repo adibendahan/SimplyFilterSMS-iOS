@@ -144,15 +144,47 @@
 
 "aboutView_review" = "Bewerte uns bitte!";
 
-"faq_subtitle" = "Hier sind häufig gestellte Fragen. Falls du keine Antwort findest, kontaktiere uns per";
+"faq_subtitle" = "Keine Antwort gefunden? Schreib eine E-Mail oder öffne ein GitHub-Issue.";
 
-"faq_question_0" = "Wie aktiviere ich die Nachrichtenfilterung in iOS?";
+"faq_section" = "FAQ";
 
-"faq_answer_0" = "Tippe hier, um zum Einrichtungsbildschirm zu gelangen.";
+"help_getStarted" = "Erste Schritte";
+
+"help_enableFiltering_title" = "Filterung aktivieren";
+
+"help_enableFiltering_caption" = "In den iOS-Einstellungen nötig, bevor unbekannte SMS gefiltert werden können.";
+
+"help_enableReporting_title" = "Melderweiterung aktivieren";
+
+"help_enableReporting_caption" = "Optional. Melde aus einem Verlauf in Nachrichten, um die KI-Filterung zu verbessern.";
+
+"faq_question_notFiltering" = "Warum werden meine Nachrichten nicht gefiltert?";
+
+"faq_answer_notFiltering" = "Meist einer dieser Gründe:\n\n• Simply Filter SMS ist in den iOS-Einstellungen nicht als Filter ausgewählt.\n• Der Verlauf ist **iMessage** (blaue Blasen), keine SMS. Apple lässt keine App diese filtern.\n• Der Absender ist in **Kontakten**. iOS überspringt die Filterung für sie.\n\nTippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**, dann **Filter testen**, und füge Absender und Nachricht ein. Der Test läuft in der App auch wenn die Filterung aus ist, deshalb kann er „gefiltert“ zeigen, während Nachrichten die SMS trotzdem zustellt. Wenn Simply Filter SMS in den iOS-Einstellungen aktiv ist und der Test trotzdem sagt, sie hätte gefiltert werden sollen, schreib mir.";
+
+"faq_question_smartFilters" = "Was sind Smarte Filter?";
+
+"faq_answer_smartFilters" = "**Smarte Filter** auf dem Startbildschirm fangen häufigen Spam: Links, E-Mails, Emojis, kurze Absender, Absender nur aus Zahlen oder alle unbekannten Absender. Sie arbeiten mit deinen eigenen Filtern. **Alle Unbekannten blockieren** ist am stärksten und schaltet die anderen Smarten Filter aus.";
+
+"faq_question_trustedCountries" = "Was ist Nach Land erlauben?";
+
+"faq_answer_trustedCountries" = "**Nach Land erlauben** lässt SMS von Nummern mit einer von dir gewählten Landesvorwahl durch, zum Beispiel +1 oder +49. Absender aus anderen Ländern werden gefiltert. Nummern ohne Landesvorwahl werden nicht geprüft.";
+
+"faq_question_testFilters" = "Wie teste ich meine Filter?";
+
+"faq_answer_testFilters" = "Tippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**, dann **Filter testen**. Tippe Absender und Nachricht ein. Das Ergebnis aktualisiert sich beim Tippen. Lass den Absender leer, um nur den Text zu testen.";
+
+"faq_question_shareFilters" = "Kann ich meine Filter teilen?";
+
+"faq_answer_shareFilters" = "Tippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**, dann **Filter exportieren**, und sende die Datei. Auf dem anderen Gerät fügst du sie mit **Filter importieren** hinzu. Filter, die dort schon existieren, werden übersprungen. Nichts wird überschrieben oder gelöscht.";
+
+"faq_question_report" = "Wie helfe ich, die KI-Filterung zu verbessern?";
+
+"faq_answer_report" = "Tippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**. **Nachricht melden** sendet eine Nachricht aus dieser App. **KI-Filterung verbessern** aktiviert das Melden aus einem Verlauf in Nachrichten. Meldungen trainieren die KI-Listen. Die Filterung auf deinem Gerät bleibt lokal.";
 
 "faq_question_1" = "Wie funktioniert die Nachrichtenfilterung?";
 
-"faq_answer_1" = "Wenn du eine SMS von einer Nummer erhältst, die nicht in deinen Kontakten ist, filtert Simply Filter SMS sie nach folgenden Regeln:\n\n• Enthält die Nachricht Text aus der 'Erlaubte Texte'-Liste, wird sie normal zugestellt.\n• Andernfalls wird sie nach 'Blockierte Texte' durchsucht. Wird ein Treffer gefunden, kommt sie in den Junk-Ordner.\n• Ohne Treffer wird die Nachricht normal zugestellt.\n";
+"faq_answer_1" = "Wenn du eine SMS von einer Nummer bekommst, die nicht in Kontakten ist, prüft Simply Filter SMS sie in dieser Reihenfolge:\n\n• **Erlaubte Texte** kommen immer durch.\n• **Blockierte Texte**, blockierte Sprachen, Smarte Filter, Nach Land erlauben und **KI-Filterung** können sie nach Junk, Transaktionen oder Werbung schicken.\n• Gibt es keine Übereinstimmung, wird die Nachricht normal zugestellt.\n\niMessage und Absender in Kontakten werden der App nie übergeben.";
 
 "faq_question_2" = "Sind meine Nachrichten für den App-Entwickler einsehbar?";
 
@@ -166,7 +198,7 @@
 
 "faq_answer_4" = "Wenn eine Nachricht als Junk markiert wird, ist sie weiterhin in der Nachrichten-App im Junk-Ordner lesbar.";
 
-"faq_question_5" = "Was ist der Unterschied zwischen Junk/Transaktionen/Werbung-Ordnern?";
+"faq_question_5" = "Was ist der Unterschied zwischen Junk/Transaktionen/Werbung?";
 
 "faq_answer_5" = "Kaum etwas. Du kannst jedes Wort in jeden Ordner filtern. Die Ordner sind nicht anpassbar. Nur Nachrichten im Junk-Ordner werden lautlos zugestellt.";
 
@@ -366,6 +398,15 @@
 "a11y_about_versionCopied" = "Version";
 
 "a11y_enableExtension_stepLabel" = "Schritt %ld: %@. %@";
+
+
+"a11y_help_enableFilteringHint" = "Doppeltippen, um die Filter-Einrichtung zu öffnen";
+
+"a11y_help_enableReportingHint" = "Doppeltippen, um die Melde-Einrichtung zu öffnen";
+
+"a11y_help_faqHint" = "Doppeltippen, um die Antwort ein- oder auszublenden";
+
+"a11y_help_emailHint" = "Doppeltippen, um eine E-Mail zu senden. Kopiert die Adresse, wenn Mail nicht eingerichtet ist";
 
 "autoFilter_countryAllowlist" = "Nach Land erlauben";
 

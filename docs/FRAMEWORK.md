@@ -27,7 +27,6 @@ protocol AppManagerProtocol {
     var flowManager: FlowManagerProtocol { get }
     func onAppLaunch()
     func onNewUserSession()
-    func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel]
 }
 ```
 

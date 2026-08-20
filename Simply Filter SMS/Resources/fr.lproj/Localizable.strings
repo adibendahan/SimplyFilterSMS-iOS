@@ -144,15 +144,47 @@
 
 "aboutView_review" = "Note-nous s'il te plaît !";
 
-"faq_subtitle" = "Voici une liste de questions fréquentes. Si tu ne trouves pas ta réponse, contacte-nous par";
+"faq_subtitle" = "Pas de réponse ? Envoie un e-mail ou ouvre une issue GitHub.";
 
-"faq_question_0" = "Comment activer le filtrage dans iOS ?";
+"faq_section" = "FAQ";
 
-"faq_answer_0" = "Touche pour ouvrir l'écran de configuration.";
+"help_getStarted" = "Pour commencer";
+
+"help_enableFiltering_title" = "Activer le filtrage";
+
+"help_enableFiltering_caption" = "Obligatoire dans Réglages iOS avant de filtrer les SMS inconnus.";
+
+"help_enableReporting_title" = "Activer l'extension de signalement";
+
+"help_enableReporting_caption" = "Facultatif. Signale depuis une conversation dans Messages pour aider à améliorer le Filtrage AI.";
+
+"faq_question_notFiltering" = "Pourquoi mes messages ne sont-ils pas filtrés ?";
+
+"faq_answer_notFiltering" = "En général, l'une de ces raisons :\n\n• Simply Filter SMS n'est pas sélectionné comme filtre dans Réglages iOS.\n• La conversation est **iMessage** (bulles bleues), pas SMS. Apple n'autorise aucune app à les filtrer.\n• L'expéditeur est dans **Contacts**. iOS ignore le filtrage pour eux.\n\nSur l'écran d'accueil, appuie sur le bouton ••• en haut à droite, puis **Outils de filtrage**, puis **Tester tes filtres**, et colle l'expéditeur et le message. Le test tourne dans l'app même si le filtrage est désactivé, donc il peut afficher « filtré » alors que Messages livre encore le SMS. Si Simply Filter SMS est activé dans Réglages iOS et que le test dit encore qu'il aurait dû être filtré, envoie-moi un e-mail.";
+
+"faq_question_smartFilters" = "Que sont les Filtres intelligents ?";
+
+"faq_answer_smartFilters" = "Les **Filtres intelligents** sur l'écran d'accueil attrapent le spam courant : liens, e-mails, emojis, expéditeurs courts, expéditeurs chiffres seuls, ou tous les inconnus. Ils fonctionnent avec tes propres filtres. **Bloquer tous les inconnus** est le plus fort et désactive les autres Filtres intelligents.";
+
+"faq_question_trustedCountries" = "Qu'est-ce qu'Autoriser par pays ?";
+
+"faq_answer_trustedCountries" = "**Autoriser par pays** laisse passer les SMS de numéros avec un indicatif que tu choisis, par exemple +1 ou +33. Les expéditeurs d'autres pays sont filtrés. Les numéros sans indicatif pays ne sont pas vérifiés.";
+
+"faq_question_testFilters" = "Comment tester mes filtres ?";
+
+"faq_answer_testFilters" = "Sur l'écran d'accueil, appuie sur le bouton ••• en haut à droite, puis **Outils de filtrage**, puis **Tester tes filtres**. Tape un expéditeur et un message. Le résultat se met à jour pendant que tu tapes. Laisse l'expéditeur vide pour tester uniquement le corps.";
+
+"faq_question_shareFilters" = "Puis-je partager mes filtres ?";
+
+"faq_answer_shareFilters" = "Sur l'écran d'accueil, appuie sur le bouton ••• en haut à droite, puis **Outils de filtrage**, puis **Exporter les filtres**, et envoie le fichier. Sur l'autre appareil, utilise **Importer les filtres** pour les ajouter. Les filtres déjà présents sont ignorés. Rien n'est écrasé ni supprimé.";
+
+"faq_question_report" = "Comment aider à améliorer le Filtrage AI ?";
+
+"faq_answer_report" = "Sur l'écran d'accueil, appuie sur le bouton ••• en haut à droite, puis **Outils de filtrage**. **Signaler un message** envoie un message depuis cette app. **Améliorer le filtrage IA** active le signalement depuis une conversation dans Messages. Les signalements entraînent les listes IA. Le filtrage sur ton appareil reste local.";
 
 "faq_question_1" = "Comment fonctionne le filtrage des messages ?";
 
-"faq_answer_1" = "Quand tu reçois un SMS d'un numéro absent de tes contacts, Simply Filter SMS le filtre selon les règles suivantes :\n\n• Si le message contient un texte correspondant à un filtre des 'Textes autorisés', il sera livré normalement.\n• Sinon, il sera analysé pour trouver des filtres des 'Textes bloqués' et, si l'un est trouvé, il sera envoyé dans le dossier Indésirables.\n• Si le message ne contient aucun texte bloqué, il sera livré normalement.\n";
+"faq_answer_1" = "Quand tu reçois un SMS d'un numéro qui n'est pas dans Contacts, Simply Filter SMS le vérifie dans cet ordre :\n\n• Les **Textes autorisés** passent toujours.\n• Les **Textes bloqués**, langues bloquées, Filtres intelligents, Autoriser par pays et le **Filtrage AI** peuvent l'envoyer dans Indésirables, Transactions ou Promotions.\n• Si rien ne correspond, le message est livré normalement.\n\nLes iMessage et les expéditeurs dans Contacts ne sont jamais envoyés à l'app.";
 
 "faq_question_2" = "Mes messages sont-ils exposés au développeur ?";
 
@@ -366,6 +398,15 @@
 "a11y_about_versionCopied" = "Version";
 
 "a11y_enableExtension_stepLabel" = "Étape %ld : %@. %@";
+
+
+"a11y_help_enableFilteringHint" = "Appuyer deux fois pour ouvrir la configuration du filtrage";
+
+"a11y_help_enableReportingHint" = "Appuyer deux fois pour ouvrir la configuration des signalements";
+
+"a11y_help_faqHint" = "Appuyer deux fois pour afficher ou masquer la réponse";
+
+"a11y_help_emailHint" = "Appuyer deux fois pour envoyer un e-mail. Copie l’adresse si Mail n’est pas configuré";
 
 "autoFilter_countryAllowlist" = "Autoriser par pays";
 

@@ -144,15 +144,47 @@
 
 "aboutView_review" = "Avalie-nos, por favor!";
 
-"faq_subtitle" = "Aqui está uma lista de perguntas frequentes. Se não encontrar sua resposta, entre em contato por";
+"faq_subtitle" = "Não achou a resposta? Envie um e-mail ou abra uma issue no GitHub.";
 
-"faq_question_0" = "Como ativo o filtro de mensagens no iOS?";
+"faq_section" = "Perguntas frequentes";
 
-"faq_answer_0" = "Toque para abrir a tela de configuração.";
+"help_getStarted" = "Primeiros passos";
+
+"help_enableFiltering_title" = "Ativar filtragem";
+
+"help_enableFiltering_caption" = "Obrigatório nos Ajustes do iOS para filtrar SMS desconhecidos.";
+
+"help_enableReporting_title" = "Ativar a extensão de denúncias";
+
+"help_enableReporting_caption" = "Opcional. Denuncie a partir de uma conversa no app Mensagens para ajudar a melhorar o Filtro AI.";
+
+"faq_question_notFiltering" = "Por que minhas mensagens não estão sendo filtradas?";
+
+"faq_answer_notFiltering" = "Geralmente é um destes:\n\n• O Simply Filter SMS não está selecionado como filtro nos Ajustes do iOS.\n• A conversa é **iMessage** (balões azuis), não SMS. A Apple não deixa nenhum app filtrar essas.\n• O remetente está em **Contatos**. O iOS ignora a filtragem para eles.\n\nNa tela inicial, toque no botão ••• no canto superior direito, depois **Ferramentas de filtro**, depois **Testar Seus Filtros**, e cole o remetente e a mensagem. O teste roda no app mesmo com a filtragem desligada, então pode mostrar filtrado enquanto o app Mensagens ainda entrega o SMS. Se o Simply Filter SMS estiver ativado nos Ajustes do iOS e o teste ainda disser que deveria ter sido filtrado, envie um e-mail.";
+
+"faq_question_smartFilters" = "O que são Filtros inteligentes?";
+
+"faq_answer_smartFilters" = "Os **Filtros inteligentes** na tela inicial pegam spam comum: links, e-mails, emojis, remetentes curtos, remetentes só de números ou todos os desconhecidos. Eles funcionam junto com os seus filtros. **Bloquear Todos Desconhecidos** é o mais forte e desliga os outros Filtros inteligentes.";
+
+"faq_question_trustedCountries" = "O que é Permitir por país?";
+
+"faq_answer_trustedCountries" = "**Permitir por país** deixa passar SMS de números com um código de país que você escolhe, como +1 ou +55. Remetentes de outros países são filtrados. Números sem código de país não são verificados.";
+
+"faq_question_testFilters" = "Como testo meus filtros?";
+
+"faq_answer_testFilters" = "Na tela inicial, toque no botão ••• no canto superior direito, depois **Ferramentas de filtro**, depois **Testar Seus Filtros**. Digite um remetente e uma mensagem. O resultado atualiza enquanto você digita. Deixe o remetente em branco para testar só o corpo.";
+
+"faq_question_shareFilters" = "Posso compartilhar meus filtros?";
+
+"faq_answer_shareFilters" = "Na tela inicial, toque no botão ••• no canto superior direito, depois **Ferramentas de filtro**, depois **Exportar filtros**, e envie o arquivo. No outro dispositivo, use **Importar filtros** para adicioná-los. Filtros que já existem lá são ignorados. Nada é substituído ou apagado.";
+
+"faq_question_report" = "Como ajudo a melhorar o Filtro AI?";
+
+"faq_answer_report" = "Na tela inicial, toque no botão ••• no canto superior direito, depois **Ferramentas de filtro**. **Reportar Mensagem** envia uma mensagem deste app. **Melhorar filtragem de IA** ativa denúncias a partir de uma conversa no app Mensagens. As denúncias treinam as listas de IA. A filtragem no seu dispositivo continua local.";
 
 "faq_question_1" = "Como funciona o filtro de mensagens?";
 
-"faq_answer_1" = "Quando você recebe uma mensagem de um número que não está em seus contatos, o Simply Filter SMS a filtrará com base nas seguintes regras:\n\n• Se a mensagem contiver texto que corresponda a um filtro de 'Textos Permitidos', ela será entregue normalmente.\n• Caso contrário, a mensagem será verificada por filtros de 'Textos Bloqueados' e, se algum for encontrado, será enviada para a pasta Lixo Eletrônico.\n• Se não houver correspondência com filtros bloqueados, a mensagem será entregue normalmente.\n";
+"faq_answer_1" = "Quando você recebe um SMS de um número que não está em Contatos, o Simply Filter SMS verifica nesta ordem:\n\n• **Textos Permitidos** sempre passam.\n• **Textos Bloqueados**, idiomas bloqueados, Filtros inteligentes, Permitir por país e o **Filtro AI** podem enviar para Lixo Eletrônico, Transações ou Promoções.\n• Se nada corresponder, a mensagem é entregue normalmente.\n\niMessage e remetentes em Contatos nunca são enviados ao app.";
 
 "faq_question_2" = "Minhas mensagens são expostas ao desenvolvedor?";
 
@@ -166,7 +198,7 @@
 
 "faq_answer_4" = "Quando uma mensagem é marcada como lixo eletrônico, ainda pode ser lida no app Mensagens, na pasta Lixo Eletrônico.";
 
-"faq_question_5" = "Qual a diferença entre as pastas Lixo Eletrônico/Transações/Promoções?";
+"faq_question_5" = "Qual a diferença entre Lixo Eletrônico/Transações/Promoções?";
 
 "faq_answer_5" = "Não há muita diferença. Você pode filtrar qualquer palavra para qualquer pasta. As pastas não são personalizáveis. Apenas mensagens filtradas para Lixo Eletrônico chegam sem notificação.";
 
@@ -366,6 +398,15 @@
 "a11y_about_versionCopied" = "Versão";
 
 "a11y_enableExtension_stepLabel" = "Passo %ld: %@. %@";
+
+
+"a11y_help_enableFilteringHint" = "Toque duas vezes para abrir a configuração de filtragem";
+
+"a11y_help_enableReportingHint" = "Toque duas vezes para abrir a configuração de denúncia";
+
+"a11y_help_faqHint" = "Toque duas vezes para mostrar ou ocultar a resposta";
+
+"a11y_help_emailHint" = "Toque duas vezes para enviar e-mail. Copia o endereço se o Mail não estiver configurado";
 
 "autoFilter_countryAllowlist" = "Permitir por país";
 
