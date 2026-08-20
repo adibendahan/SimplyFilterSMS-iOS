@@ -1,3 +1,4 @@
 - Filter exportieren & importieren - teile deine Filter mit einem Freund. Exportiere eine Datei aus Filter-Tools im Menü und sende sie.
 - Filter testen - neu gestaltet, mit Live-Ergebnissen.
+- Hilfe - neu gestaltet, mit FAQ und Erste Schritte.
 - Kleinere Fehlerbehebungen und Leistungsverbesserungen.

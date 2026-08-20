@@ -98,34 +98,31 @@ A looping `Task` (attached via `.task {}`) cycles through all steps sequentially
 
 ### Layout
 
-A `NavigationView` wrapping a `ScrollView` with:
-- Subtitle text
-- Two contact buttons side by side:
-  - **Email** (conditionally shown via `MFMailComposeViewController.canSendMail()`) — opens `MailView` sheet, a `UIViewControllerRepresentable` wrapper around `MFMailComposeViewController` pre-filled with `kSupportEmail`.
-  - **GitHub** — external `Link` to the repo URL.
-- **FAQ list** — `ForEach` over `model.questions: [QuestionView.ViewModel]`. Each `QuestionView` is an expandable accordion: tap the question to toggle `isExpanded`, which reveals the answer with an `opacitySlowInFastOut` transition. The first question has an `.activateFilters` action that opens the EnableExtension sheet when tapped.
-- Toolbar X button to dismiss
-- `EmbeddedFooterView` overlay (tapping opens About sheet via `sheetScreen`)
+A `NavigationView` + `List` (`.insetGrouped`), same language as About:
+
+- **Get Started** — Enable Filtering and Enable Reporting Extension. Each uses `onRequestScreen`, then dismisses Help. Home presents the matching onboarding after Help closes.
+- **FAQ** — `DisclosureGroup` per `HelpFAQ`. One open at a time. Footer is `faq_subtitle`.
+- **Contact** — Email + GitHub. Same as About: Mail composer if Mail is set up, otherwise copy the address and toast.
+- Toolbar X. No footer overlay to About.
+- VoiceOver: section headers in the rotor; Get Started/FAQ/email hints; decorative icons hidden; GitHub and email rows combined. Dynamic Type via text styles and `@ScaledMetric` icon frames. Reduce Motion zeros FAQ expand animation. Clipboard toast uses the same announcement as About.
+
+List owns row-height and scroll offset. A custom accordion in `ScrollView` jumped the scroll position when a question opened.
 
 ### ViewModel
 
-- `questions: [QuestionView.ViewModel]` — Loaded from `AppManager.getFrequentlyAskedQuestions()` which returns hardcoded localized FAQ entries.
-- `title: String` — Navigation title.
-- `sheetScreen: Screen?` — For presenting sub-sheets (About, EnableExtension).
-- `composeMailScreen: Bool` — Drives the `MailView` sheet presentation.
-- `result: Result<MFMailComposeResult, Error>?` — Mail compose result (unused beyond storage).
+- `expandedFAQ: HelpFAQ?` — which question is open.
+- `composeMailScreen` / `result` — mail composer.
+- `notification` — clipboard toast when email is copied.
+- `onRequestScreen` — Home sets this so Get Started rows can present after Help dismisses.
 
-### Supporting Components
-
-- **QuestionView** (`Others/QuestionView.swift`) — Self-contained accordion. Has its own `ViewModel` (not a `BaseViewModel` subclass — just `ObservableObject`). Supports an optional `QuestionAction` enum (`.none`, `.activateFilters`) with an `onAction` closure. RTL-aware chevron icon.
-- **MailView** (`Others/MailView.swift`) — `UIViewControllerRepresentable` wrapping `MFMailComposeViewController`. Uses Coordinator pattern for delegate callbacks. Pre-fills recipient with `kSupportEmail`.
+`HelpFAQ` is a `CaseIterable` enum on `HelpView.swift`. Copy lives in Localizable strings, not AppManager.
 
 ---
 
 ## AboutView
 
 **File:** `View Layer/Screens/AboutView.swift`
-**Role:** App info, credits, and external links. Presented as a sheet from AppHomeView or HelpView.
+**Role:** App info, credits, and external links. Presented as a sheet from AppHomeView.
 
 ### Layout
 

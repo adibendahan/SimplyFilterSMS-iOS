@@ -138,11 +138,15 @@
 "aboutView_supportSection" = "Support the App";
 
 //MARK: Help View
-"faq_subtitle" = "Here's a list of frequently asked questions, if you can't find your answer here you can reach out by";
-"faq_question_0" = "How do I activate message filtering in iOS?";
-"faq_answer_0" = "Tap to open the onboarding screen.";
+"faq_subtitle" = "Can't find your answer? Email or open a GitHub issue.";
+"faq_section" = "FAQ";
+"help_getStarted" = "Get Started";
+"help_enableFiltering_title" = "Enable Filtering";
+"help_enableFiltering_caption" = "Required in iOS Settings before unknown SMS can be filtered.";
+"help_enableReporting_title" = "Enable Reporting Extension";
+"help_enableReporting_caption" = "Optional. Report from a thread in Messages to help improve AI Filtering.";
 "faq_question_1" = "How does message filtering work?";
-"faq_answer_1" = "When you recive a text message from a number that is not in your contact list, Simply Filter SMS will filter it based on the following rules:\n\n• If a text message contains text matching to a filter from the 'Allowed Texts' it will be delivered regularly.\n• If not, the message will be scanned for matching filters from the 'Blocked Texts' and in case any were found it will be delivered to the Junk folder.\n• If the text doesn't contain any text that matches the filters, it will be delivered regularly.\n";
+"faq_answer_1" = "When you get an SMS from a number that isn't in Contacts, Simply Filter SMS checks it in this order:\n\n• **Allowed Texts** always get through.\n• **Blocked Texts**, blocked languages, Smart Filters, Trusted Countries, and **AI Filtering** can send it to Junk, Transactions, or Promotions.\n• If nothing matches, the message is delivered normally.\n\niMessage and senders in Contacts are never sent to the app.";
 "faq_question_2" = "Are my messages exposed to the app developer?";
 "faq_answer_2" = "No. Simply Filter SMS does not collect any information whatsoever, all message processing is done locally on your device without any logging.";
 "faq_question_3" = "What about iMessages and messages from my contacts?";
@@ -153,6 +157,18 @@
 "faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customizable in any way. Only messages filtered to the Junk folder will be delivered silently.";
 "help_automaticFiltering_question" = "How does AI Filtering work?";
 "help_automaticFiltering" = "AI Filtering uses AI-generated keyword lists to detect spam and route messages to the junk folder. The lists are updated periodically. Your regular filters are still applied when AI Filtering is on.";
+"faq_question_notFiltering" = "Why aren't my messages being filtered?";
+"faq_answer_notFiltering" = "Usually one of these:\n\n• Simply Filter SMS isn't selected as the filter in iOS Settings.\n• The thread is **iMessage** (blue bubbles), not SMS. Apple doesn't let any app filter those.\n• The sender is in **Contacts**. iOS skips filtering for them.\n\nOn the home screen, tap the ••• button at the top right, then **Filter Tools**, then **Test Your Filters**, and paste the sender and message. The test runs in the app even when filtering is off, so it can show filtered while Messages still delivers. If Simply Filter SMS is enabled in iOS Settings and the test still says it should have been filtered, email me.";
+"faq_question_smartFilters" = "What are Smart Filters?";
+"faq_answer_smartFilters" = "**Smart Filters** on the home screen catch common spam: links, emails, emojis, short senders, numbers-only senders, or all unknown senders. They work together with your own filters. **Block All Unknown** is the strongest and turns the other Smart Filters off.";
+"faq_question_trustedCountries" = "What are Trusted Countries?";
+"faq_answer_trustedCountries" = "**Allow by Country** lets through SMS from numbers with a country code you choose, such as +1 or +972. Senders from other countries are filtered. Numbers without a country code are not checked.";
+"faq_question_testFilters" = "How do I test my filters?";
+"faq_answer_testFilters" = "On the home screen, tap the ••• button at the top right, then **Filter Tools**, then **Test Your Filters**. Type a sender and message. The result updates as you type. Leave the sender blank to test the body only.";
+"faq_question_shareFilters" = "Can I share my filters?";
+"faq_answer_shareFilters" = "On the home screen, tap the ••• button at the top right, then **Filter Tools**, then **Export Filters**, and send the file. On the other device, use **Import Filters** to add them. Filters that already exist there are skipped. Nothing is overwritten or deleted.";
+"faq_question_report" = "How do I help improve AI Filtering?";
+"faq_answer_report" = "On the home screen, tap the ••• button at the top right, then **Filter Tools**. **Report Message** sends a message from this app. **Improve AI Filtering** turns on reporting from a thread in Messages. Reports train the AI lists. Filtering on your device still happens locally.";
 "help_deny" = "Add texts that will cause a message to be marked as spam, you can also choose the specific folder you want the message to be stored in.";
 "help_allow" = "Add texts that will cause a message to be marked as valid. It is recommended to add uniqe identifying texts like your name here. Text appear on this list have the highest priority when filtering a message.";
 
@@ -298,6 +314,10 @@
 "a11y_about_versionHint" = "Double tap to copy version";
 "a11y_about_versionCopied" = "Version";
 "a11y_enableExtension_stepLabel" = "Step %ld: %@. %@";
+"a11y_help_enableFilteringHint" = "Double tap to open filtering setup";
+"a11y_help_enableReportingHint" = "Double tap to open reporting setup";
+"a11y_help_faqHint" = "Double tap to show or hide the answer";
+"a11y_help_emailHint" = "Double tap to send email. Copies the address if Mail is not set up";
 
 //MARK: Filter Import / Export
 "menu_exportFilters" = "Export Filters";

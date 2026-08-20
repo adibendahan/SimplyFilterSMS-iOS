@@ -1,3 +1,4 @@
 - Export & Import Filters - share your filters with a friend. Export a file from Filter Tools in the menu and send it.
 - Test Your Filters - redesigned with live results.
+- Help - redesigned with FAQs and Get Started.
 - Minor bug fixes and performance improvements.

@@ -26,11 +26,9 @@ class mock_AppManager: AppManagerProtocol {
     var flowManager: FlowManagerProtocol = mock_FlowManager()
     var debugDataManager: DebugDataManagerProtocol = mock_DebugDataManager()
 
-    var getFrequentlyAskedQuestionsCounter = 0
     var onAppLaunchCounter = 0
     var onNewUserSessionCounter = 0
     
-    var getFrequentlyAskedQuestionsClosuer: (() -> ([QuestionView.ViewModel]))?
     var onAppLaunchClosuer: (() -> ())?
     var onNewUserSessionClosuer: (() -> ())?
     
@@ -44,12 +42,9 @@ class mock_AppManager: AppManagerProtocol {
         self.onNewUserSessionClosuer?()
     }
     
-    func getFrequentlyAskedQuestions() -> [QuestionView.ViewModel] {
-        return self.getFrequentlyAskedQuestionsClosuer?() ?? []
-    }
-    
     func resetCounters() {
-        self.getFrequentlyAskedQuestionsCounter = 0
+        self.onAppLaunchCounter = 0
+        self.onNewUserSessionCounter = 0
     }
 
     func loadDebugData() { }
