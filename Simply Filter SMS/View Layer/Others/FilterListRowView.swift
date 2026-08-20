@@ -160,7 +160,7 @@ struct FilterListRowView: View {
 
     @ViewBuilder
     private func OptionButton(image: Image, isActive: Bool) -> some View {
-        let color: Color = isActive ? .green : .secondary
+        let color: Color = isActive ? .accentColor : .secondary
         image
             .resizable()
             .aspectRatio(contentMode: .fit)

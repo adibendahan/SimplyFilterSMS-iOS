@@ -202,7 +202,7 @@ struct FilterImportCandidateListView: View {
     }
 
     private func optionIcon(systemName: String, isActive: Bool) -> some View {
-        let color: Color = isActive ? .green : .secondary
+        let color: Color = isActive ? .accentColor : .secondary
         return Image(systemName: systemName)
             .resizable()
             .aspectRatio(contentMode: .fit)

@@ -297,7 +297,7 @@ Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). Uses `@S
 ### Supporting Components
 
 - **FilterListRowView** (`Others/FilterListRowView.swift`) — Individual filter row with inline editing. Has its own `ViewModel` (subclasses `BaseViewModel`) with stable `let id: UUID` from `filter.uuid` (assigns one if missing). Layout varies by filter type:
-  - **Deny/Allow:** `EditableText` for inline text editing (tap to edit, minimum `kMinimumFilterLength`) + three `Menu` buttons for filter target, matching mode, and case sensitivity — each with tap-to-toggle and long-press for full menu. Color-coded: green when non-default option is active.
+  - **Deny/Allow:** `EditableText` for inline text editing (tap to edit, minimum `kMinimumFilterLength`) + three `Menu` buttons for filter target, matching mode, and case sensitivity — each with tap-to-toggle and long-press for full menu. Color-coded: accent when non-default option is active.
   - **Deny Language:** Read-only localized language name (resolved from `$lang:` format via `NLLanguage(filterText:)`).
   - **Deny types with folder support:** Additional `Menu` for deny folder (junk/transaction/promotion).
   - All updates call through to `PersistanceManager.updateFilter()` and trigger `onUpdate` callback to parent (which calls `refresh()`).
