@@ -23,7 +23,7 @@ struct NotificationView: View {
             Image(systemName: self.model.icon)
                 .font(.body)
                 .padding(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 0))
-                .foregroundColor(self.model.iconColor)
+                .foregroundStyle(self.model.iconColor)
 
             VStack (alignment: .leading, spacing: 0) {
                 Text(self.model.title)
@@ -40,17 +40,16 @@ struct NotificationView: View {
                 self.model.onButtonTap?()
             } label: {
                 Text(self.model.buttonTitle)
-                    .padding(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
-                    .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-                    .background(Color.secondary.opacity(0.2))
                     .font(.caption.bold())
                     .foregroundColor(.primary)
+                    .padding(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
+                    .modifier(NotificationActionChipBackground())
             }
+            .modifier(NotificationActionButtonStyle())
             .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
         }
         .accessibilityElement(children: .combine)
-        .background(.ultraThinMaterial)
-        .containerShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .modifier(NotificationGlassBackground())
         .gesture(
             DragGesture(minimumDistance: 20, coordinateSpace: .global)
                 .onChanged({ value in
@@ -209,7 +208,7 @@ struct NotificationView: View {
             case .automaticFiltersUpdated:
                 return .indigo.opacity(0.6)
             case .onClipboardSet:
-                return .accentColor.opacity(0.6)
+                return .primary.opacity(0.6)
             case .tipSuccessful:
                 return .pink.opacity(0.8)
             case .tipPromotion:
@@ -300,6 +299,46 @@ struct NotificationView: View {
             case .filtersImported, .filterImportFailed, .filterExportFailed:
                 return 6
             }
+        }
+    }
+}
+
+private struct NotificationGlassBackground: ViewModifier {
+    private let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
+
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+                .glassEffect(.clear.interactive(), in: shape)
+                .containerShape(shape)
+        } else {
+            content
+                .background(.ultraThinMaterial)
+                .containerShape(shape)
+        }
+    }
+}
+
+private struct NotificationActionChipBackground: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+        } else {
+            content
+                .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .background(Color.secondary.opacity(0.2))
+        }
+    }
+}
+
+private struct NotificationActionButtonStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+                .buttonStyle(.plain)
+                .glassEffect(.clear.interactive(), in: Capsule())
+        } else {
+            content.buttonStyle(.plain)
         }
     }
 }

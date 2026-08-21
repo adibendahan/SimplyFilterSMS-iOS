@@ -73,6 +73,7 @@ struct CountryListView: View {
                     Image(systemName: "xmark")
                         .foregroundColor(.secondary)
                 }
+                .tint(.primary)
                 .accessibilityLabel("general_close"~)
                 .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
                 .contentShape(Rectangle())
@@ -103,7 +104,7 @@ struct CountryListView: View {
 
                 if model.isSelected(entry) {
                     Image(systemName: "checkmark")
-                        .foregroundColor(.accentColor)
+                        .foregroundStyle(.tint)
                         .font(Font.body.bold())
                 }
             }

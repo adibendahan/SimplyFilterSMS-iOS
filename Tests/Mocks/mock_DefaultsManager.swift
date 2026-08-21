@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 import XCTest
 @testable import Simply_Filter_SMS
 
@@ -142,6 +143,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
             self.didDismissReportingExtensionNudgeSetCounter += 1
         }
     }
+
+    var accentColorRGB: [String: Double] = kNoColorDict
 
     func resetCounters() {
         self.isAppFirstRunGetCounter = 0

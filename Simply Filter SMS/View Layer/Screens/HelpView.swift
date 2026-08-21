@@ -38,7 +38,7 @@ struct HelpView: View {
                     } label: {
                         HStack {
                             Image(systemName: "switch.2")
-                                .foregroundColor(.accentColor)
+                                .foregroundStyle(.tint)
                                 .frame(maxWidth: rowIconSize, maxHeight: .infinity, alignment: .center)
                                 .font(.body)
                                 .accessibilityHidden(true)
@@ -62,7 +62,7 @@ struct HelpView: View {
                     } label: {
                         HStack {
                             Image(systemName: "wand.and.stars")
-                                .foregroundColor(.accentColor)
+                                .foregroundStyle(.tint)
                                 .frame(maxWidth: rowIconSize, maxHeight: .infinity, alignment: .center)
                                 .font(.body)
                                 .accessibilityHidden(true)
@@ -138,7 +138,7 @@ struct HelpView: View {
                             }
                         } icon: {
                             Image(systemName: "envelope.fill")
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.tint)
                                 .accessibilityHidden(true)
                         }
                     }
@@ -178,6 +178,7 @@ struct HelpView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
+                    .tint(.primary)
                     .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                 }

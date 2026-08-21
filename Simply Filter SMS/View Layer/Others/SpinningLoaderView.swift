@@ -88,5 +88,5 @@ struct SpinningLoaderView: View {
 
 #Preview {
     SpinningLoaderView()
-        .foregroundColor(.accentColor)
+        .foregroundStyle(.tint)
 }

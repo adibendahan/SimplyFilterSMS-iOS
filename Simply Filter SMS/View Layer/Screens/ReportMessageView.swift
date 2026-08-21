@@ -124,6 +124,7 @@ struct ReportMessageView: View {
                                 Image(systemName: "xmark")
                                     .foregroundColor(.secondary)
                             }
+                            .tint(.primary)
                             .accessibilityLabel("general_close"~)
                             .contentShape(Rectangle())
                         }

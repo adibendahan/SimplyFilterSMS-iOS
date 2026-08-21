@@ -97,6 +97,7 @@ struct WhatsNewView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
+                    .tint(.primary)
                     .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(TestIdentifier.cancelButton.rawValue)

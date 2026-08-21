@@ -28,6 +28,11 @@
 
 "filterList_menu_about" = "אודות";
 
+"accentColor_menuItem" = "צבע הדגשה";
+"accentColor_title" = "צבע הדגשה";
+"accentColor_picker" = "צבע";
+"accentColor_reset" = "איפוס לברירת מחדל";
+
 "filterList_menu_debug" = "טעינת נתוני דיבאג";
 
 "filterList_deniedLanguage" = "שפות חסומות";
@@ -435,6 +440,7 @@
 "a11y_help_faqHint" = "הקשה כפולה להצגה או הסתרה של התשובה";
 
 "a11y_help_emailHint" = "הקשה כפולה לשליחת אימייל. הכתובת מועתקת אם אין חשבון דואר";
+"a11y_accentColor_resetHint" = "הקשה כפולה לאיפוס לצבע ברירת המחדל";
 
 "callingCode_+1" = "צפון אמריקה";
 
@@ -548,4 +554,6 @@
 "notification_exportFailed_title" = "הייצוא נכשל";
 "notification_exportFailed_subtitle" = "לא ניתן ליצור את קובץ הייצוא.";
 "whatsNew_filterImportExport_title" = "ייצוא וייבוא פילטרים";
-"whatsNew_filterImportExport_desc" = "שתפו את הפילטרים שלכם עם חבר - ייצאו קובץ מ**כלי פילטור** בתפריט ושלחו אותו.";
+"whatsNew_filterImportExport_desc" = "שתפו את הפילטרים שלכם עם חברים - ייצאו קובץ מ**כלי פילטור** בתפריט ושלחו אותו.";
+"whatsNew_appearanceTouchup_title" = "ליטוש מראה";
+"whatsNew_appearanceTouchup_desc" = "ל**עזרה** ול**בחנו את הפילטרים שלכם** יש מראה חדש. אפשר גם לבחור **צבע הדגשה** מהתפריט - כפתורים וסמלים יתאימו אליו.";

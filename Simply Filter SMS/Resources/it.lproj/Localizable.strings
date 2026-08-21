@@ -32,6 +32,11 @@
 
 "filterList_menu_about" = "Informazioni";
 
+"accentColor_menuItem" = "Colore di accento";
+"accentColor_title" = "Colore di accento";
+"accentColor_picker" = "Colore";
+"accentColor_reset" = "Ripristina predefinito";
+
 "filterList_menu_debug" = "Carica dati di debug";
 
 "filterList_deniedLanguage" = "Lingue bloccate";
@@ -425,6 +430,7 @@
 "a11y_help_faqHint" = "Doppio tocco per mostrare o nascondere la risposta";
 
 "a11y_help_emailHint" = "Doppio tocco per inviare un’e-mail. Copia l’indirizzo se Mail non è configurata";
+"a11y_accentColor_resetHint" = "Doppio tocco per ripristinare il colore predefinito";
 
 "callingCode_+1" = "Nord America";
 
@@ -549,3 +555,5 @@
 "notification_exportFailed_subtitle" = "Impossibile creare il file di esportazione.";
 "whatsNew_filterImportExport_title" = "Esporta e importa filtri";
 "whatsNew_filterImportExport_desc" = "Condividi i tuoi filtri con un amico - esporta un file da **Strumenti filtro** nel menu e invialo.";
+"whatsNew_appearanceTouchup_title" = "Ritocco dell'aspetto";
+"whatsNew_appearanceTouchup_desc" = "**Aiuto** e **Testa i tuoi filtri** hanno un nuovo aspetto. Puoi anche scegliere un **Colore di accento** dal menu - pulsanti e icone lo seguono.";

@@ -48,11 +48,10 @@ struct EnableExtensionStepView: View {
                         if step.showsAppIcon {
                             AppIconView()
                                 .accessibilityHidden(true)
-                        } else if let symbolName = step.symbolName,
-                                  let symbolColor = step.symbolColor {
+                        } else if let symbolName = step.symbolName {
                             Image(systemName: symbolName)
                                 .font(.system(size: 15, weight: .semibold))
-                                .foregroundStyle(symbolColor)
+                                .foregroundStyle(step.symbolColor.map { AnyShapeStyle($0) } ?? AnyShapeStyle(.tint))
                                 .accessibilityHidden(true)
                         }
                         Text(step.title)

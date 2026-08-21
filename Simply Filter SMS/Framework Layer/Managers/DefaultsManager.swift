@@ -33,6 +33,9 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("didDismissReportingExtensionNudge", defaultValue: false)
     var didDismissReportingExtensionNudge: Bool
 
+    @StoredDefault("accentColorRGB", defaultValue: kNoColorDict)
+    var accentColorRGB: [String: Double]
+
     @StoredDefault("appAge", defaultValue: Date())
     private(set) var appAge: Date
     
@@ -55,7 +58,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge", "accentColorRGB"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)

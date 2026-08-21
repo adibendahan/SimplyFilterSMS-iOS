@@ -26,7 +26,7 @@ struct FilterListRowView: View {
         HStack (alignment: .center) {
 
             Circle()
-                .fill(Color.accentColor)
+                .fill(.tint)
                 .frame(width: 8, height: 8)
                 .opacity(dotOpacity)
                 .onAppear {
@@ -94,12 +94,16 @@ struct FilterListRowView: View {
             
             if !self.isEditingText && self.model.filter.filterType.supportsAdvancedOptions {
                 Menu {
-                    ForEach(FilterTarget.allCases) { filterTarget in
-                        Button {
-                            self.model.updateFilter(filterTarget: filterTarget)
-                        } label: {
+                    Picker(selection: Binding(
+                        get: { self.model.filter.filterTarget },
+                        set: { self.model.updateFilter(filterTarget: $0) }
+                    )) {
+                        ForEach(FilterTarget.allCases) { filterTarget in
                             Label(filterTarget.name, systemImage: filterTarget.icon)
+                                .tag(filterTarget)
                         }
+                    } label: {
+                        EmptyView()
                     }
                 } label: {
                     OptionButton(image: Image(systemName: self.model.filter.filterTarget.icon),
@@ -111,12 +115,16 @@ struct FilterListRowView: View {
 
                 if self.model.filter.filterMatching != .regex {
                     Menu {
-                        ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
-                            Button {
-                                self.model.updateFilter(filterMatching: filterMatching)
-                            } label: {
+                        Picker(selection: Binding(
+                            get: { self.model.filter.filterMatching },
+                            set: { self.model.updateFilter(filterMatching: $0) }
+                        )) {
+                            ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
                                 Label(filterMatching.name, systemImage: filterMatching.icon)
+                                    .tag(filterMatching)
                             }
+                        } label: {
+                            EmptyView()
                         }
                     } label: {
                         OptionButton(image: Image(systemName: self.model.filter.filterMatching.icon),
@@ -125,12 +133,16 @@ struct FilterListRowView: View {
                     .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filter.filterMatching.name))
 
                     Menu {
-                        ForEach(FilterCase.allCases) { filterCase in
-                            Button {
-                                self.model.updateFilter(filterCase: filterCase)
-                            } label: {
+                        Picker(selection: Binding(
+                            get: { self.model.filter.filterCase },
+                            set: { self.model.updateFilter(filterCase: $0) }
+                        )) {
+                            ForEach(FilterCase.allCases) { filterCase in
                                 Label(filterCase.name, systemImage: filterCase.icon)
+                                    .tag(filterCase)
                             }
+                        } label: {
+                            EmptyView()
                         }
                     } label: {
                         OptionButton(image: Image(systemName: self.model.filter.filterCase.icon),
@@ -142,12 +154,16 @@ struct FilterListRowView: View {
 
             if !self.isEditingText && self.model.filter.filterType.supportsFolders {
                 Menu {
-                    ForEach(DenyFolderType.allCases) { folder in
-                        Button {
-                            self.model.updateFilter(denyFolder: folder)
-                        } label: {
+                    Picker(selection: Binding(
+                        get: { self.model.filter.denyFolderType },
+                        set: { self.model.updateFilter(denyFolder: $0) }
+                    )) {
+                        ForEach(DenyFolderType.allCases) { folder in
                             Label(folder.name, systemImage: folder.iconName)
+                                .tag(folder)
                         }
+                    } label: {
+                        EmptyView()
                     }
                 } label: {
                     OptionButton(image: Image(systemName: self.model.filter.denyFolderType.iconName), isActive: true)
@@ -160,11 +176,10 @@ struct FilterListRowView: View {
 
     @ViewBuilder
     private func OptionButton(image: Image, isActive: Bool) -> some View {
-        let color: Color = isActive ? .green : .secondary
         image
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .foregroundStyle(color)
+            .foregroundStyle(isActive ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
             .frame(width: optionIconSize, height: optionIconSize)
             .padding(7)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))

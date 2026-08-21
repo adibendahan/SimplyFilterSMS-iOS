@@ -32,6 +32,11 @@
 
 "filterList_menu_about" = "Sobre";
 
+"accentColor_menuItem" = "Cor de destaque";
+"accentColor_title" = "Cor de destaque";
+"accentColor_picker" = "Cor";
+"accentColor_reset" = "Restaurar o padrão";
+
 "filterList_menu_debug" = "Carregar Dados de Teste";
 
 "filterList_deniedLanguage" = "Idiomas Bloqueados";
@@ -407,6 +412,7 @@
 "a11y_help_faqHint" = "Toque duas vezes para mostrar ou ocultar a resposta";
 
 "a11y_help_emailHint" = "Toque duas vezes para enviar e-mail. Copia o endereço se o Mail não estiver configurado";
+"a11y_accentColor_resetHint" = "Toque duas vezes para restaurar a cor padrão";
 
 "autoFilter_countryAllowlist" = "Permitir por país";
 
@@ -549,3 +555,5 @@
 "notification_exportFailed_subtitle" = "Não foi possível criar o arquivo de exportação.";
 "whatsNew_filterImportExport_title" = "Exportar e importar filtros";
 "whatsNew_filterImportExport_desc" = "Compartilhe seus filtros com um amigo - exporte um arquivo em **Ferramentas de filtro** no menu e envie.";
+"whatsNew_appearanceTouchup_title" = "Retoque de aparência";
+"whatsNew_appearanceTouchup_desc" = "**Ajuda** e **Testar Seus Filtros** estão com visual novo. Você também pode escolher uma **Cor de destaque** no menu - botões e ícones a seguem.";

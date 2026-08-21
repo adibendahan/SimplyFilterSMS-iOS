@@ -35,6 +35,37 @@ extension Color {
             return Color(uiColor: UIColor.systemBackground)
         }
     }
+
+    init?(accentRGB: [String: Double]) {
+        guard accentRGB != kNoColorDict,
+              let red = accentRGB["red"],
+              let green = accentRGB["green"],
+              let blue = accentRGB["blue"] else {
+            return nil
+        }
+        self.init(.sRGB, red: red, green: green, blue: blue, opacity: 1)
+    }
+
+    var accentRGB: [String: Double] {
+        get {
+            if #available(iOS 17.0, *) {
+                var red: CGFloat = 0
+                var green: CGFloat = 0
+                var blue: CGFloat = 0
+                var alpha: CGFloat = 0
+                guard UIColor(self).getRed(&red, green: &green, blue: &blue, alpha: &alpha) else {
+                    return kNoColorDict
+                }
+                return ["red": Double(red), "green": Double(green), "blue": Double(blue)]
+            }
+            return kNoColorDict
+        }
+        set {
+            if let color = Color(accentRGB: newValue) {
+                self = color
+            }
+        }
+    }
 }
 
 extension AnyTransition {
@@ -167,5 +198,11 @@ extension UIApplication {
                 UIApplication.shared.open(url)
             }
         }
+    }
+}
+
+extension View {
+    func optionalTint(_ color: Color?) -> some View {
+        self.tint(color ?? Color.accentColor)
     }
 }

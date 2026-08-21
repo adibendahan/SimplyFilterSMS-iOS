@@ -20,15 +20,15 @@ static func listBackgroundColor(for colorScheme: ColorScheme) -> Color {
 }
 ```
 
-**Accent color:** iOS system blue (no custom override in `Assets.xcassets/AccentColor`).
+**Accent color:** One environment tint on Home (`.optionalTint`). Toolbar `•••` menus **and toolbar close X** pin `.tint(.primary)` so those controls stay label-colored (they were never accent). `borderedProminent` actions (Import) keep the environment tint. Chrome that should follow the pick uses `ShapeStyle.tint`. Do **not** paint those with `Color.accentColor`. Dim NavigationLink chevrons still use `.accentColor(Color.primary.opacity(0.35))`. Semantic colors (deny red, allow green icons, delete red, smart-filter icons, indigo bolt) do not follow the custom tint. Help/About envelope icons use `.foregroundStyle(.tint)`. `.optionalTint(nil)` uses `Color.accentColor` so UISwitch resets.
 
 ### Semantic Color Assignments
 
 | Context | Color | Usage |
 |---------|-------|-------|
-| Primary action buttons | `.accentColor` (system blue) | FilledButton background, links, active toggles |
+| Primary action / selected chrome | Environment `.tint` | FilledButton, OutlineButton, option chips, ON badge, active toggles, links |
 | Deny / error | `.red` | FilterType.deny icon, allUnknown toggle tint, OFF badge |
-| Allow / success | `.green` | FilterType.allow icon, ON badge |
+| Allow / success | `.green` | FilterType.allow icon, ON badge when no custom accent |
 | Language filters | `.cyan` | FilterType.denyLanguage icon |
 | Automatic filtering | `.indigo` | Lightning bolt icon, notification icon |
 | Secondary text | `.secondary` | Subtitles, captions, close button, form labels |
@@ -51,7 +51,7 @@ static func listBackgroundColor(for colorScheme: ColorScheme) -> Color {
 | Rule | Tint |
 |------|------|
 | `allUnknown` | `.red` (destructive) |
-| All others | `.accentColor` (system blue) |
+| All others | Environment `.tint` |
 
 ### Opacity Scale
 
@@ -59,7 +59,7 @@ static func listBackgroundColor(for colorScheme: ColorScheme) -> Color {
 |-------|-------|
 | `0.05` | Separator lines (`.primary.opacity(0.05)`) |
 | `0.1` | Badge backgrounds (`.secondary.opacity(0.1)`), ON/OFF badge tint backgrounds |
-| `0.2` | Notification button background (`.secondary.opacity(0.2)`) |
+| `0.2` | Pre-iOS 26 notification action chip (`.secondary.opacity(0.2)`) |
 | `0.35` | NavigationLink chevron tint (`.primary.opacity(0.35)`) |
 | `0.4–0.6` | Notification icon colors (e.g. `.red.opacity(0.4)`, `.green.opacity(0.6)`) |
 | `0.5` | Disabled state |
@@ -80,7 +80,6 @@ static func listBackgroundColor(for colorScheme: ColorScheme) -> Color {
 | Form label | `.footnote.bold().italic()` | "Select a target:", "Select matching type:", etc. |
 | Supporting text | `.caption` | Notification subtitle, supporting info |
 | Small caption | `.caption2` | Filter counts ("16 FILTERS"), subtitles, timestamps |
-| Micro badge | `.system(size: 8, weight: .semibold)` | Inline filter option badges (SENDER, BODY, etc.) |
 | Footer | `.footnote` | App version and copyright |
 
 ### Patterns
@@ -132,23 +131,23 @@ EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8)
 ### Buttons
 
 **FilledButton** (`ButtonStyles.swift`):
-- Background: `.accentColor` (blue), `.gray` when disabled
+- Background: `.tint`, `.gray` when disabled
 - Text: white, gray when pressed
 - Corner radius: 8pt
 - Full default padding
 - Used for: "Test", "Add", "Report", "Settings"
 
 **OutlineButton** (`ButtonStyles.swift`):
-- Border: `.accentColor` stroke on `RoundedRectangle(cornerRadius: 8, style: .continuous)`
-- Text: `.accentColor`, gray when pressed
+- Border: `.tint` stroke on `RoundedRectangle(cornerRadius: 8, style: .continuous)`
+- Text: `.tint`, gray when pressed
 - No fill
 
 ### Close Button
 
-Applied via `EmbeddedCloseButton` modifier (`ViewModfiers.swift`):
-- SF Symbol: `xmark`, size 20
-- Color: `.secondary`
-- Positioned: top-trailing with default padding
+Applied via `EmbeddedCloseButton` modifier (`ViewModfiers.swift`) or a toolbar `xmark`:
+- SF Symbol: `xmark`
+- Toolbar / overlay close: `.tint(.primary)` so the control does not follow the custom accent
+- Overlay close also uses `.secondary` on the glyph
 - `contentShape(Rectangle())` for expanded tap target
 
 ### Footer
@@ -164,14 +163,15 @@ Applied via `EmbeddedFooterView` modifier (`ViewModfiers.swift`):
 ### Notification Toast
 
 `NotificationView` — slides in from top:
-- Background: `.ultraThinMaterial`
+- Background: iOS 26+ `.glassEffect(.clear.interactive())` in a 24pt continuous rounded rect; older iOS `.ultraThinMaterial`
+- Action chip: iOS 26+ clear interactive glass `Capsule`; older iOS `.secondary.opacity(0.2)` fill
 - Shape: `RoundedRectangle(cornerRadius: 24, style: .continuous)` (pill)
 - Animation: `.interpolatingSpring(mass: 1, stiffness: 200, damping: 30)`
 - Offset: -200 (hidden) to 25 (shown)
 - Dismiss: tap, swipe up, or button
 - Contains: icon + title/subtitle VStack + action button
-- Types: offline (red icon), cloudSync (green), automaticFiltersUpdated (indigo), clipboard (blue), tipSuccessful (green)
-- Timeout: nil (offline stays), 6s (sync/filters), 3s (clipboard/tip)
+- Types: offline (red icon), cloudSync (green), automaticFiltersUpdated (indigo), clipboard (primary), tipSuccessful (pink), reporting nudge (green), import/export (green/red)
+- Timeout: nil (offline stays), 6s (sync / filters / import-export / tip success), 3s (clipboard), 10s (tip promotion / reporting nudge)
 
 ### Toggle Rows (Smart Filters)
 
@@ -179,8 +179,8 @@ Each row in the smart filters section:
 - Icon: 20pt frame, color-coded per rule type (SF Symbol or emoji text)
 - Title: `.primary` (`.red` when destructive rule is active)
 - Optional subtitle: `.caption2`, `.secondary` color
-- Optional action link: `.caption2`, accent color (e.g. "Tap to change")
-- Toggle: tinted per rule (`.red` for allUnknown, `.accentColor` for others)
+- Optional action link: `.caption2`, `.tint` (e.g. "Tap to change")
+- Toggle: inherit environment tint (`.red` for allUnknown only)
 - Disabled: 0.5 opacity when `allUnknown` is active (except the allUnknown toggle itself)
 - Leading padding between icon and text: 8pt
 
@@ -191,13 +191,13 @@ Each row in the smart filters section:
 - Count badge: `.caption2`, `.secondary`, uppercase ("16 FILTERS")
 - Chevron: `.primary.opacity(0.35)`
 
-### Inline Filter Option Badges (FilterListRowView)
+### Filter row option chips (FilterListRowView)
 
-Compact tappable badges in filter list rows:
-- Font: `.system(size: 8, weight: .semibold)`
-- Background: `.secondary.opacity(0.1)`
-- Corner radius: 4pt (via `containerShape`)
-- Tappable to cycle through options (target, folder, case, matching)
+Icon chips (`OptionButton`, ~15pt, ultra-thin material, 8pt continuous rounded rect):
+- `.tint` when the option is non-default (exact match, case sensitive, target ≠ all); folder chip always tinted
+- `.secondary` otherwise
+- Tap opens a `Menu` whose body is a `Picker` so the current value gets the system checkmark
+- Regex rows hide matching/case chips; target chip stays
 
 ### Segmented Pickers
 
@@ -229,7 +229,7 @@ Card-based IAP buttons arranged in an `HStack`:
 - Emoji icon: tier-specific (☕️/🍕/🍸), large size
 - Title: `.system(size: 15, weight: .semibold)`, `.primary`
 - Description: `.system(size: 11)`, `.secondary`, centered, fixed height for alignment
-- Price badge: `.subheadline.bold()`, `.accentColor`, with `.accentColor.opacity(0.1)` background pill (`RoundedRectangle(cornerRadius: 8)`)
+- Price badge: `.subheadline.bold()`, `.tint`, with `.tint.opacity(0.1)` background pill (`RoundedRectangle(cornerRadius: 8)`)
 - Press effect: `TipCardButtonStyle` scales to 0.95 and dims to 0.7 opacity with 0.15s ease-in-out
 - Purchasing state: price badge replaced with `ProgressView` spinner on the tapped card
 - Disabled during purchase (all cards)
@@ -260,7 +260,7 @@ Used in AddFilterView:
 Used for: creation, input, info, and onboarding screens.
 - Close button: X (top-right) via `EmbeddedCloseButton` or toolbar
 - Large bold title: left-aligned
-- Screens: AddFilterView, TestFiltersView, ReportMessageView, HelpView, AboutView, EnableExtensionView, WhatsNewView, TipJarView, FilterImportPreviewView
+- Screens: AddFilterView, TestFiltersView, ReportMessageView, HelpView, AboutView, ChooseAccentColorView, EnableExtensionView, WhatsNewView, TipJarView, FilterImportPreviewView
 
 ### Push Navigation
 
@@ -296,7 +296,7 @@ All lists use `.insetGrouped` — the iOS standard grouped card appearance with 
 1. **Follow iOS conventions** — use system list styles, standard toggles, segmented pickers, navigation patterns. The app feels like an extension of iOS Settings.
 2. **Adaptive colors only** — use SwiftUI adaptive colors (`.primary`, `.secondary`, `.accentColor`, named colors like `.red`, `.green`). Never hardcode hex values. Both dark and light mode must work.
 3. **Grouped sections** — new content areas should use `Section` within `.insetGrouped` lists with localized text headers (no custom header styling).
-4. **Consistent actions** — primary actions use `FilledButton` (blue, full-width). Secondary/inline actions use text links in accent color.
+4. **Consistent actions** — primary actions use `FilledButton` (environment tint, full-width). Secondary/inline actions use text links in `.tint`.
 5. **Flat hierarchy** — sheets for creation/input, push navigation for lists/details. No nested modals.
 6. **Minimal decoration** — no gradients, shadows, or decorative elements. Rely on system materials (`.ultraThinMaterial`) for overlays.
 7. **Consistent icon pattern** — SF Symbols at 20pt frame width with semantic color coding. One emoji exception for the emojis rule.

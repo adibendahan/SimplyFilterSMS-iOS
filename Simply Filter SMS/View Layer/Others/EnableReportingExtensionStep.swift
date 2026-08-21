@@ -61,9 +61,9 @@ enum EnableReportingExtensionStep: CaseIterable, Hashable, EnableExtensionStepPr
         case .longPressMessage:
             return .green
         case .selectMessages:
-            return .accentColor
+            return nil
         case .reportMessages:
-            return .accentColor
+            return nil
         default:
             return nil
         }

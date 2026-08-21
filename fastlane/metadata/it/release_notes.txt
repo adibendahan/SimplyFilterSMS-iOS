@@ -1,4 +1,5 @@
 - Esporta e importa filtri - condividi i tuoi filtri con un amico. Esporta un file da Strumenti filtro nel menu e invialo.
 - Testa i tuoi filtri - ridisegnato con risultati in tempo reale.
 - Aiuto - ridisegnato con FAQ e Per iniziare.
+- Colore di accento - scegli un colore dal menu. Pulsanti e icone lo seguono.
 - Correzioni minori di bug e miglioramenti delle prestazioni.

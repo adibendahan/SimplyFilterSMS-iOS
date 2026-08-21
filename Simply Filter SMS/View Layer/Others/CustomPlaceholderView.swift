@@ -47,7 +47,7 @@ struct CustomPlaceholderView: View {
                     
                     Image(systemName: symbol)
                         .font(.body)
-                        .foregroundColor(.accentColor)
+                        .foregroundStyle(.tint)
                     
                     Text("placeholder_choose_sub_detail2"~)
                         .font(.body)

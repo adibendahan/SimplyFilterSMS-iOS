@@ -32,6 +32,11 @@
 
 "filterList_menu_about" = "정보";
 
+"accentColor_menuItem" = "강조 색상";
+"accentColor_title" = "강조 색상";
+"accentColor_picker" = "색상";
+"accentColor_reset" = "기본값으로 재설정";
+
 "filterList_menu_debug" = "디버그 데이터 로드";
 
 "filterList_deniedLanguage" = "차단된 언어";
@@ -425,6 +430,7 @@
 "a11y_help_faqHint" = "이중 탭하여 답변을 표시하거나 숨깁니다";
 
 "a11y_help_emailHint" = "이중 탭하여 이메일을 보냅니다. Mail이 설정되지 않으면 주소를 복사합니다";
+"a11y_accentColor_resetHint" = "이중 탭하여 기본 색상으로 되돌립니다";
 
 "callingCode_+1" = "북미";
 
@@ -549,3 +555,5 @@
 "notification_exportFailed_subtitle" = "내보내기 파일을 만들 수 없습니다.";
 "whatsNew_filterImportExport_title" = "필터 내보내기 및 가져오기";
 "whatsNew_filterImportExport_desc" = "친구와 필터를 공유하세요 - 메뉴의 **필터 도구**에서 파일을 내보낸 뒤 보내세요.";
+"whatsNew_appearanceTouchup_title" = "모양 다듬기";
+"whatsNew_appearanceTouchup_desc" = "**도움말**과 **필터 테스트**가 새 모습입니다. 메뉴에서 **강조 색상**을 고르면 버튼과 아이콘에 적용됩니다.";

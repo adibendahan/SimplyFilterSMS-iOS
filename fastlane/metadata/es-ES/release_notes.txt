@@ -1,4 +1,5 @@
 - Exportar e importar filtros - comparte tus filtros con un amigo. Exporta un archivo desde Herramientas de filtro en el menú y envíalo.
 - Prueba tus filtros - rediseñado con resultados en vivo.
 - Ayuda - rediseñado con preguntas frecuentes y primeros pasos.
+- Color de acento - elige un color en el menú. Botones e iconos lo siguen.
 - Pequeñas correcciones de errores y mejoras de rendimiento.

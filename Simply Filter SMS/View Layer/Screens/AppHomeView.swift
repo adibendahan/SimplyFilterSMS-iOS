@@ -75,10 +75,11 @@ struct AppHomeView: View {
                                 Spacer()
 
                                 if self.model.isAutomaticFilteringOn {
+                                    let onColor = model.customAccent ?? Color.green
                                     Text("autoFilter_ON"~)
                                         .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-                                        .background(Color.green.opacity(0.1))
-                                        .foregroundColor(.green)
+                                        .background(onColor.opacity(0.1))
+                                        .foregroundColor(onColor)
                                         .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                                         .font(.system(size: badgeFontSize, weight: .heavy, design: .default))
                                 }
@@ -179,7 +180,7 @@ struct AppHomeView: View {
                                             } label: {
                                                 Text("autoFilter_shortSender_change"~)
                                                     .font(.caption2)
-                                                    .foregroundColor(.accentColor)
+                                                    .foregroundStyle(.tint)
                                             }
                                             .buttonStyle(.plain)
                                             .accessibilityIdentifier(TestIdentifier.countryAllowlistButton.rawValue)
@@ -189,7 +190,7 @@ struct AppHomeView: View {
                                 .padding(.leading, 8)
                             }
                         } // Toggle
-                        .tint(rule.toggleBackgroundColor)
+                        .if(rule.isDestructive) { $0.tint(.red) }
                         .disabled(isDisabled)
                         .listRowBackground(Color(UIColor.secondarySystemGroupedBackground))
                         .if(rule.subtitle != nil) {
@@ -306,6 +307,10 @@ struct AppHomeView: View {
                 HelpView(model: HelpView.ViewModel(onRequestScreen: { screen in
                     self.model.pendingScreenAfterDismiss = screen
                 }))
+            } else if sheetScreen == .chooseAccentColor {
+                ChooseAccentColorView(model: ChooseAccentColorView.ViewModel(onAccentChanged: { color in
+                    self.model.customAccent = color
+                }))
             } else {
                 sheetScreen.build()
             }
@@ -330,17 +335,10 @@ struct AppHomeView: View {
                 }
                 .id(self.model.fileImporterID)
         }
-        .onAppear {
-            self.model.startMonitoring()
-            if !isPreview {
-                self.model.enableWhatsNewAndPresent()
-            }
-            self.model.tryShowTipPromotion()
-            self.model.tryShowReportingExtensionNudge()
-        }
         .onOpenURL { url in
             self.model.handleDeepLink(url: url)
         }
+        .optionalTint(model.customAccent)
     }
     
     @ViewBuilder
@@ -445,6 +443,12 @@ struct AppHomeView: View {
             }
 
             Button {
+                self.model.requestSheet(.chooseAccentColor)
+            } label: {
+                Label("accentColor_menuItem"~, systemImage: "paintpalette")
+            }
+
+            Button {
                 self.model.requestSheet(.tipJar)
             } label: {
                 Label("tipJar_menuItem"~, systemImage: "heart.fill")
@@ -461,6 +465,7 @@ struct AppHomeView: View {
         } label: {
             Image(systemName: "ellipsis.circle")
         }
+        .tint(.primary)
         .accessibilityLabel("a11y_home_menuButton"~)
         .accessibilityIdentifier(TestIdentifier.appMenuButton.rawValue)
     }
@@ -513,7 +518,8 @@ extension AppHomeView {
         }
         @Published var isImportingFile = false
         @Published var fileImporterID = UUID()
-        
+        @Published var customAccent: Color? = nil
+
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             let isAutomaticFilteringOn = appManager.automaticFilterManager.isAutomaticFilteringOn
 
@@ -527,6 +533,7 @@ extension AppHomeView {
             self.notification = NotificationView.ViewModel(notification: .offline)
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
+            self.customAccent = Color(accentRGB: appManager.defaultsManager.accentColorRGB)
             self.lastUIFingerprint = appManager.persistanceManager.fingerprint
 
             self.rules = appManager.automaticFilterManager.rules
@@ -535,6 +542,8 @@ extension AppHomeView {
                                            getter: appManager.automaticFilterManager.automaticRuleState,
                                            setter: self.setAutomaticRuleState) })
                 .sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
+
+            self.runLaunchFlowIfNeeded()
         }
         
         func refresh() {
@@ -551,6 +560,9 @@ extension AppHomeView {
                                                                                                    getter: self.appManager.automaticFilterManager.automaticRuleState,
                                                                                                    setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
             self.lastUIFingerprint = self.appManager.persistanceManager.fingerprint
+            if self.sheetScreen != .chooseAccentColor {
+                self.customAccent = Color(accentRGB: self.appManager.defaultsManager.accentColorRGB)
+            }
             self.showPendingNotification()
         }
         
@@ -646,6 +658,10 @@ extension AppHomeView {
                     self.showNotification(.filtersImported(added: result.added, skipped: result.skippedCount))
                 }
             }
+
+            if screen == .chooseAccentColor {
+                self.customAccent = Color(accentRGB: self.appManager.defaultsManager.accentColorRGB)
+            }
         }
 
         func presentNextFlow() {
@@ -667,6 +683,18 @@ extension AppHomeView {
         func enableWhatsNewAndPresent() {
             self.appManager.flowManager.enableWhatsNew()
             self.presentNextFlow()
+        }
+
+        private func runLaunchFlowIfNeeded() {
+            #if DEBUG
+            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+                return
+            }
+            #endif
+            self.startMonitoring()
+            self.enableWhatsNewAndPresent()
+            self.tryShowTipPromotion()
+            self.tryShowReportingExtensionNudge()
         }
 
         private func markWhatsNewSeen() {
