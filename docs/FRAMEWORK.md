@@ -271,6 +271,9 @@ protocol DefaultsManagerProtocol {
     var sessionAge: Date? { get set }
     var sessionCounter: Int { get set }
     var didPromptForReview: Bool { get set }
+    var lastSeenWhatsNewVersion: Int { get set }
+    var didDismissReportingExtensionNudge: Bool { get set }
+    var accentColorRGB: [String: Double] { get set }
     var appAge: Date { get }
     #if DEBUG
     func reset()
@@ -287,6 +290,7 @@ protocol DefaultsManagerProtocol {
 - `didPromptForReview` — Ensures App Store review prompt is shown only once.
 - `lastOfflineNotificationDismiss` — Suppresses offline notification for `kHideiClouldStatusMemory` (60) minutes after dismiss.
 - `lastSeenWhatsNewVersion` — Tracks the last What's New version the user has seen. Compared against `currentWhatsNewVersion` to decide whether to show the What's New sheet.
+- `accentColorRGB` — `@StoredDefault` dictionary (`kNoColorDict` = system accent). `Color(accentRGB:)` / `Color.accentRGB` convert. Debug `reset()` clears the key.
 
 ---
 

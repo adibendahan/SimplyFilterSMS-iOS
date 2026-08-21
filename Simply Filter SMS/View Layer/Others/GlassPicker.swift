@@ -14,7 +14,7 @@ private struct GlassPickerLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 4) {
             configuration.icon
-                .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
+                .foregroundStyle(isSelected ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
             configuration.title
                 .foregroundStyle(isSelected ? Color.primary : Color.secondary)
         }
@@ -40,7 +40,7 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
                 } label: {
                     content(option)
                         .labelStyle(GlassPickerLabelStyle(isSelected: selection == option))
-                        .foregroundStyle(selection == option ? Color.accentColor : Color.secondary)
+                        .foregroundStyle(selection == option ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
                         .font(.footnote.weight(selection == option ? .semibold : .regular))
                         .lineLimit(1)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)

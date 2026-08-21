@@ -38,6 +38,7 @@ struct EmbeddedCloseButton: ViewModifier {
                     .font(.system(size: closeIconSize))
                     .foregroundColor(.secondary)
             }
+            .tint(.primary)
             .accessibilityLabel("general_close"~)
             .padding()
             .contentShape(Rectangle())

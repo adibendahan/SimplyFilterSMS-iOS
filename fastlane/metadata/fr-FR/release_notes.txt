@@ -1,4 +1,5 @@
 - Exporter et importer des filtres - partage tes filtres avec un ami. Exporte un fichier depuis Outils de filtrage dans le menu et envoie-le.
 - Tester tes filtres - refonte avec résultats en direct.
 - Aide - refonte avec FAQ et Pour commencer.
+- Couleur d'accentuation - choisis une couleur dans le menu. Boutons et icônes la suivent.
 - Corrections mineures de bugs et améliorations des performances.

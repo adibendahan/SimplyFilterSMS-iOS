@@ -86,7 +86,7 @@ How users report messages from iOS Messages and how reports reach the backend.
 
 ## Overview
 
-The Reporting Extension is an iOS app extension (`.appex`) that implements `ILClassificationUIExtensionViewController`. When a user long-presses one or more messages in iOS Messages and taps "Report Messages", iOS invokes this extension to present a confirmation UI and collect the user's classification choice.
+The Reporting Extension is an iOS app extension (`.appex`) that implements `ILClassificationUIExtensionViewController`. When a user long-presses one or more messages in iOS Messages and taps "Report Messages", iOS invokes this extension to present a confirmation UI and collect the user's classification choice. It does **not** read `accentColorRGB` — chrome stays the system tint.
 
 **Files:**
 - `Reporting Extension/ReportingExtensionViewController.swift` — principal class

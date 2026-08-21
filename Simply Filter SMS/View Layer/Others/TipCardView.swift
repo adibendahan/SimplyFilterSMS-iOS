@@ -47,10 +47,10 @@ struct TipCardView: View {
                 } else {
                     Text(displayPrice)
                         .font(isCompact ? .caption.bold() : .subheadline.bold())
-                        .foregroundColor(.accentColor)
+                        .foregroundStyle(.tint)
                         .padding(.horizontal, 10)
                         .padding(.vertical, isCompact ? 2 : 4)
-                        .background(Color.accentColor.opacity(0.1))
+                        .background(.tint.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
             }

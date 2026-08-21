@@ -32,6 +32,11 @@
 
 "filterList_menu_about" = "このアプリについて";
 
+"accentColor_menuItem" = "アクセントカラー";
+"accentColor_title" = "アクセントカラー";
+"accentColor_picker" = "カラー";
+"accentColor_reset" = "デフォルトに戻す";
+
 "filterList_menu_debug" = "デバッグデータを読み込む";
 
 "filterList_deniedLanguage" = "ブロック言語";
@@ -425,6 +430,7 @@
 "a11y_help_faqHint" = "ダブルタップで回答を表示または非表示";
 
 "a11y_help_emailHint" = "ダブルタップでメールを送信。Mailが未設定の場合はアドレスをコピー";
+"a11y_accentColor_resetHint" = "ダブルタップでデフォルトの色に戻す";
 
 "callingCode_+1" = "北米";
 
@@ -549,3 +555,5 @@
 "notification_exportFailed_subtitle" = "書き出しファイルを作成できませんでした。";
 "whatsNew_filterImportExport_title" = "フィルタの書き出しと読み込み";
 "whatsNew_filterImportExport_desc" = "友だちとフィルタを共有 - メニューの**フィルタツール**からファイルを書き出して送信できます。";
+"whatsNew_appearanceTouchup_title" = "外観の仕上げ";
+"whatsNew_appearanceTouchup_desc" = "**ヘルプ**と**フィルターをテスト**のデザインを一新。メニューから**アクセントカラー**を選ぶと、ボタンとアイコンに反映されます。";

@@ -194,6 +194,7 @@ struct FilterListView: View {
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
+                .tint(.primary)
                 .accessibilityLabel("a11y_home_menuButton"~)
             }
         }

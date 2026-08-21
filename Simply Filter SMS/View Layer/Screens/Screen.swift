@@ -13,7 +13,8 @@ enum Screen: Int, Identifiable, Hashable {
     case appHome, onboarding, help, about, enableExtension, testFilters,
          addLanguageFilter, addAllowFilter, addDenyFilter, automaticBlocking,
          denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
-         whatsNew, tipJar, countryList, enableReportingExtension, filterImport
+         whatsNew, tipJar, countryList, enableReportingExtension, filterImport,
+         chooseAccentColor
 
     @ViewBuilder func build() -> some View {
         switch self {
@@ -89,6 +90,9 @@ enum Screen: Int, Identifiable, Hashable {
 
         case .filterImport:
             FilterImportPreviewView(model: FilterImportPreviewView.ViewModel())
+
+        case .chooseAccentColor:
+            ChooseAccentColorView(model: ChooseAccentColorView.ViewModel())
         }
     }
 
@@ -132,6 +136,8 @@ enum Screen: Int, Identifiable, Hashable {
             return "enableReportingExtension"
         case .filterImport:
             return "filterImport"
+        case .chooseAccentColor:
+            return "chooseAccentColor"
         }
     }
 }

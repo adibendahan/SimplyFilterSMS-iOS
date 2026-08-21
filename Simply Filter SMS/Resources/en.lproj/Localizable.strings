@@ -32,6 +32,10 @@
 "filterList_menu_filterLanguage" = "Block a Language";
 "filterList_menu_enableExtension" = "Help";
 "filterList_menu_about" = "About";
+"accentColor_menuItem" = "Accent Color";
+"accentColor_title" = "Accent Color";
+"accentColor_picker" = "Color";
+"accentColor_reset" = "Reset to Default";
 
 "menu_filters" = "Filters";
 "menu_filterTools" = "Filter Tools";
@@ -318,6 +322,7 @@
 "a11y_help_enableReportingHint" = "Double tap to open reporting setup";
 "a11y_help_faqHint" = "Double tap to show or hide the answer";
 "a11y_help_emailHint" = "Double tap to send email. Copies the address if Mail is not set up";
+"a11y_accentColor_resetHint" = "Double tap to restore the default color";
 
 //MARK: Filter Import / Export
 "menu_exportFilters" = "Export Filters";
@@ -339,6 +344,8 @@
 "notification_exportFailed_subtitle" = "Couldn’t create the export file.";
 "whatsNew_filterImportExport_title" = "Export & Import Filters";
 "whatsNew_filterImportExport_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
+"whatsNew_appearanceTouchup_title" = "Appearance Touch-up";
+"whatsNew_appearanceTouchup_desc" = "**Help** and **Test Your Filters** have a new look. You can also pick an **Accent Color** from the menu - buttons and icons follow it.";
 
 // Country calling code groups
 "callingCode_+1" = "North America";

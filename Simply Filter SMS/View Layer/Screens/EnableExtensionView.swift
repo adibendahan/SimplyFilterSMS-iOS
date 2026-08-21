@@ -101,6 +101,7 @@ struct EnableExtensionView: View {
                         Image(systemName: "xmark")
                             .foregroundStyle(.primary)
                     }
+                    .tint(.primary)
                     .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(TestIdentifier.cancelButton.rawValue)

@@ -14,6 +14,7 @@ import SwiftUI
 let kAppWorkingDirectory = "Simply-Filter-SMS"
 let kDatabaseFilename = "CoreData.sqlite"
 let kAppGroupContainer = "group.com.grizz.apps.dev.simply-filter-sms"
+let kNoColorDict: [String: Double] = [:]
 let kSupportEmail = "grizz.apps.dev@gmail.com"
 let kUpdateAutomaticFiltersMinDays = 3
 let kMinimumFilterLength = 1
@@ -487,15 +488,6 @@ enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
     }
 
     var logDescription: String { String(describing: self) }
-
-    var toggleBackgroundColor: Color {
-        switch self {
-        case .allUnknown:
-            return .red
-        default:
-            return .accentColor
-        }
-    }
 }
 
 enum TipTier: String, CaseIterable {
@@ -569,7 +561,7 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters, filterImportExport
+    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters, filterImportExport, appearanceTouchup
 
     var title: String {
         switch self {
@@ -587,6 +579,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_regexFilters_title"~
         case .filterImportExport:
             return "whatsNew_filterImportExport_title"~
+        case .appearanceTouchup:
+            return "whatsNew_appearanceTouchup_title"~
         }
     }
 
@@ -606,6 +600,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_regexFilters_desc"~
         case .filterImportExport:
             return "whatsNew_filterImportExport_desc"~
+        case .appearanceTouchup:
+            return "whatsNew_appearanceTouchup_desc"~
         }
     }
 
@@ -625,6 +621,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "chevron.left.forwardslash.chevron.right"
         case .filterImportExport:
             return "square.and.arrow.up.on.square"
+        case .appearanceTouchup:
+            return "paintpalette"
         }
     }
 
@@ -644,6 +642,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return .orange
         case .filterImportExport:
             return .blue
+        case .appearanceTouchup:
+            return .purple
         }
     }
 
@@ -651,18 +651,20 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .filterImportExport:
             return 0
-        case .tipJar:
+        case .appearanceTouchup:
             return 1
-        case .aiFiltering:
+        case .tipJar:
             return 2
-        case .regexFilters:
+        case .aiFiltering:
             return 3
-        case .newLanguages:
+        case .regexFilters:
             return 4
-        case .trustedCountries:
+        case .newLanguages:
             return 5
-        case .accessibility:
+        case .trustedCountries:
             return 6
+        case .accessibility:
+            return 7
         }
     }
 

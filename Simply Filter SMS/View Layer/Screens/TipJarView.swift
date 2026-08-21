@@ -48,7 +48,9 @@ struct TipJarView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
+                            .foregroundStyle(.primary)
                     }
+                    .tint(.primary)
                     .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                 }

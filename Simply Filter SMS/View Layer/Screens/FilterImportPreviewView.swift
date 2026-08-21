@@ -78,6 +78,7 @@ struct FilterImportPreviewView: View {
                         Image(systemName: "xmark")
                             .foregroundColor(.secondary)
                     }
+                    .tint(.primary)
                     .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                 }
@@ -149,7 +150,7 @@ struct FilterImportCandidateListView: View {
             self.model.toggleSelection(for: candidates)
         } label: {
             Image(systemName: state == .all ? "checkmark.circle.fill" : (state == .some ? "minus.circle.fill" : "circle"))
-                .foregroundColor(.accentColor)
+                .foregroundStyle(.tint)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(state == .all ? "importFilters_selectNone"~ : "importFilters_selectAll"~)
@@ -202,11 +203,10 @@ struct FilterImportCandidateListView: View {
     }
 
     private func optionIcon(systemName: String, isActive: Bool) -> some View {
-        let color: Color = isActive ? .green : .secondary
-        return Image(systemName: systemName)
+        Image(systemName: systemName)
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .foregroundStyle(color)
+            .foregroundStyle(isActive ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
             .frame(width: self.optionIconSize, height: self.optionIconSize)
             .padding(7)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))

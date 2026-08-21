@@ -14,6 +14,7 @@ Tests/
 ├── FilterListViewModelTests.swift        # ViewModel integration
 ├── FilterImportExportManagerTests.swift  # Merge-only import/export
 ├── FlowManagerTests.swift                # Launch-order queue
+├── DefaultsManagerTests.swift            # Accent RGB storage / Color round-trip
 ├── AmazonS3ServiceTests.swift            # HTTP service
 └── Mocks/
     ├── mock_AppManager.swift
@@ -115,6 +116,14 @@ func expectingSaveContext() {
 - `refresh()` — verifies it fetches records, checks allUnknown state, checks language availability
 - `deleteFilters(withOffsets:)` — verifies PersistanceManager called + refresh
 - `deleteFilters(_:)` — verifies PersistanceManager called + refresh
+
+### DefaultsManagerTests
+
+**Tests:** `DefaultsManager` accent storage via `UserDefaults.standard` (`DefaultsManager()`, no injected store).
+
+**Coverage:**
+- Empty `accentColorRGB` means no custom color (`Color(accentRGB:)` is nil)
+- Writing RGB round-trips through `Color.accentRGB` / `Color(accentRGB:)`
 
 ### AmazonS3ServiceTests
 

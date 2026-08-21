@@ -32,6 +32,11 @@
 
 "filterList_menu_about" = "حول";
 
+"accentColor_menuItem" = "لون التمييز";
+"accentColor_title" = "لون التمييز";
+"accentColor_picker" = "اللون";
+"accentColor_reset" = "إعادة التعيين إلى الافتراضي";
+
 "filterList_menu_debug" = "تحميل بيانات اختبار";
 
 "filterList_deniedLanguage" = "اللغات المحظورة";
@@ -407,6 +412,7 @@
 "a11y_help_faqHint" = "اضغط مرتين لإظهار الإجابة أو إخفائها";
 
 "a11y_help_emailHint" = "اضغط مرتين لإرسال بريد. تُنسخ العنوان إذا لم يكن البريد مضبوطًا";
+"a11y_accentColor_resetHint" = "اضغط مرتين لاستعادة اللون الافتراضي";
 
 "autoFilter_countryAllowlist" = "السماح حسب البلد";
 
@@ -549,3 +555,5 @@
 "notification_exportFailed_subtitle" = "تعذّر إنشاء ملف التصدير.";
 "whatsNew_filterImportExport_title" = "تصدير واستيراد الفلاتر";
 "whatsNew_filterImportExport_desc" = "شارك فلاترك مع صديق - صدّر ملفًا من **أدوات المرشحات** في القائمة وأرسله.";
+"whatsNew_appearanceTouchup_title" = "لمسة على المظهر";
+"whatsNew_appearanceTouchup_desc" = "**مساعدة** و**اختبر مرشّحاتك** بمظهر جديد. يمكنك أيضاً اختيار **لون التمييز** من القائمة - تتبعه الأزرار والأيقونات.";

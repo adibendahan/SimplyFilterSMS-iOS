@@ -122,7 +122,7 @@ struct AboutView: View {
                             }
                         } icon: {
                             Image(systemName: "envelope.fill")
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.tint)
                         }
                     }
                 }
@@ -216,6 +216,7 @@ struct AboutView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
+                    .tint(.primary)
                     .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier("AboutView.closeButton")

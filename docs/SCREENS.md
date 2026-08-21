@@ -8,8 +8,10 @@ For MVVM patterns and conventions, see [../CLAUDE.md](../CLAUDE.md). For the scr
 
 ## AppHomeView
 
-**File:** `View Layer/Screens/AppHomeView.swift`
+**Files:** `Simply_Filter_SMSApp.swift`, `View Layer/Screens/AppHomeView.swift`
 **Role:** Main screen and app entry point. Hosts all primary navigation.
+
+The `App` owns Home’s ViewModel as `@StateObject` and passes it in (`AppHomeView` is `@ObservedObject`). That keeps one instance for the process so launch work in `init` does not re-run when Home’s view appears again (the system color picker can do that).
 
 ### Layout
 
@@ -23,20 +25,17 @@ A `NavigationView` containing a `List` with three sections:
 
 ### Navigation Bar
 
-Trailing `Menu` (ellipsis icon) with items:
-- Test Filters -> `.testFilters` sheet
-- Report Message -> `.reportMessage` sheet
-- Help -> `.help` sheet
-- About -> `.about` sheet
-- Tip Jar -> `.tipJar` sheet
-- What's New -> `.whatsNew` sheet (only if `WhatsNewEntry.allCases` is non-empty)
-- Filter Tools submenu — add allow/deny/language, test filters, report, enable reporting extension, export, import
-- Load Debug Data / Reset (DEBUG builds only)
+Trailing `Menu` (ellipsis, `.tint(.primary)`) with items:
+- Debug Tools (DEBUG only)
+- Add Filter submenu
+- Filter Tools submenu — test, report, reporting extension, export, import
+- Help, About, Accent Color, Tip Jar
+- What's New (only if `WhatsNewEntry.allCases` is non-empty)
 
 ### Overlays
 
 - `EmbeddedFooterView` — App version + copyright at bottom. Tap opens About sheet. Uses iOS 26 `glassEffect` with `ultraThinMaterial` fallback.
-- `EmbeddedNotificationView` — Toast banner at top with spring animation. Shows offline status, sync completion, and filter update notifications.
+- `EmbeddedNotificationView` — Toast banner at top with spring animation. iOS 26+ clear Liquid Glass (toast + action chip); older iOS ultra-thin material. Shows offline status, sync completion, import/export, and filter update notifications.
 
 ### ViewModel
 
@@ -54,6 +53,7 @@ Trailing `Menu` (ellipsis icon) with items:
 
 **Key methods:**
 - `refresh()` — Reloads all state from managers. Called on every navigation pop, sheet dismiss, and notification.
+- `runLaunchFlowIfNeeded()` — Called from Home ViewModel `init` (the App `@StateObject`, once per process). Skipped in SwiftUI previews. Starts observers, enables automatic What's New, then tip / reporting toasts. Not tied to Home `.onAppear` (the system color picker can make Home appear again).
 - `startMonitoring()` — Registers `NotificationCenter` observers (once) for `.cloudSyncOperationComplete`, `.networkStatusChange`, `.filtersStateChanged`, `.automaticFiltersUpdated`. Then compares store fingerprint to last UI fingerprint and `refresh()`es if the store is ahead (CloudKit import finished before observers were registered).
 - `showNotification(_:)` — Queues notifications if a sheet/modal is active (`pendingNotification`). Some notifications auto-dismiss after a timeout.
 - `tryRequestReview()` — Prompts `SKStoreReviewController` after 7+ days and 5+ sessions. Triggered when user pops back from a navigation screen.
@@ -102,7 +102,7 @@ A `NavigationView` + `List` (`.insetGrouped`), same language as About:
 
 - **Get Started** — Enable Filtering and Enable Reporting Extension. Each uses `onRequestScreen`, then dismisses Help. Home presents the matching onboarding after Help closes.
 - **FAQ** — `DisclosureGroup` per `HelpFAQ`. One open at a time. Footer is `faq_subtitle`.
-- **Contact** — Email + GitHub. Same as About: Mail composer if Mail is set up, otherwise copy the address and toast.
+- **Contact** — Email + GitHub. Same as About: Mail composer if Mail is set up, otherwise copy the address and toast. Envelope icon uses `.foregroundStyle(.tint)`.
 - Toolbar X. No footer overlay to About.
 - VoiceOver: section headers in the rotor; Get Started/FAQ/email hints; decorative icons hidden; GitHub and email rows combined. Dynamic Type via text styles and `@ScaledMetric` icon frames. Reduce Motion zeros FAQ expand animation. Clipboard toast uses the same announcement as About.
 
@@ -132,7 +132,7 @@ A `NavigationView` containing a `VStack` with:
   1. **About** — Markdown-rendered about text (`AttributedString(markdown:)` with inline-only parsing, fallback to plain text).
   2. **Links** — Five rows, each with an icon + title + subtitle:
      - GitHub -> external `Link` to `appGithubURL`
-     - Email -> opens `MailView` sheet if mail is available, otherwise copies `kSupportEmail` to clipboard via `setClipboard()` and shows a toast notification
+     - Email -> opens `MailView` sheet if mail is available, otherwise copies `kSupportEmail` to clipboard via `setClipboard()` and shows a toast notification. Envelope icon uses `.foregroundStyle(.tint)`.
      - Twitter -> external `Link` to `appTwitterURL`
      - Icon designer credit -> external `Link` to `iconDesignerURL` (Instagram)
      - App Store review -> external `Link` to `appReviewURL`
@@ -155,6 +155,30 @@ A `NavigationView` containing a `VStack` with:
 - The clipboard fallback pattern: when `MFMailComposeViewController.canSendMail()` is false (e.g., simulator or no mail account), tapping Email copies the address to clipboard and shows a toast instead of opening the mail composer.
 - Has its own `EmbeddedNotificationView` instance (separate from AppHomeView's) — each screen that needs toast notifications manages its own.
 - Custom `NSNotification.Name` constants are all defined in `NetworkSyncManagerProtocol.swift`: `.networkStatusChange`, `.cloudSyncOperationComplete`, `.automaticFiltersUpdated`, `.onClipboardSet`.
+
+---
+
+## ChooseAccentColorView
+
+**File:** `View Layer/Screens/ChooseAccentColorView.swift`
+**Role:** Lets the user pick the app tint. Presented as a sheet from the Home `•••` menu only (not About, not Filter Tools).
+
+### Layout
+
+Help/About pattern: `NavigationView`, **inline** title, X close (`.tint(.primary)`). Not a List.
+- **Color** — Full `UIColorPickerViewController` filling the sheet (`supportsAlpha` off). Writes `accentColorRGB` as the user picks. VoiceOver: container labeled `accentColor_picker` ("Color") with children contained.
+- **Reset to Default** — Clears storage. Disabled when no custom color is stored. VoiceOver hint: restore the default color.
+
+The sheet applies `.optionalTint` while a custom color is set. Home builds this ViewModel like Help (managers defaulted; optional `onAccentChanged`) so Home’s tint updates while the sheet is up. `refresh()` does not reload tint from defaults while this sheet is up.
+
+### ViewModel
+
+- `init(appManager:defaultsManager:onAccentChanged:)` — both managers default; `defaultsManager` falls back to `appManager.defaultsManager`. Home passes only `onAccentChanged`.
+- `pickerColor` / `hasCustomColor` — picker binding and Reset enabled state.
+- `applyPickedColor(_:)` — writes `accentColorRGB`, then `onAccentChanged`.
+- `reset()` — `accentColorRGB = kNoColorDict`, then `onAccentChanged(nil)`.
+
+Home uses `requestSheet(.chooseAccentColor)` and constructs the view in the sheet content (same as Help). `Screen.chooseAccentColor.build()` still returns this view with no callback.
 
 ---
 
@@ -297,7 +321,7 @@ Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). Uses `@S
 ### Supporting Components
 
 - **FilterListRowView** (`Others/FilterListRowView.swift`) — Individual filter row with inline editing. Has its own `ViewModel` (subclasses `BaseViewModel`) with stable `let id: UUID` from `filter.uuid` (assigns one if missing). Layout varies by filter type:
-  - **Deny/Allow:** `EditableText` for inline text editing (tap to edit, minimum `kMinimumFilterLength`) + three `Menu` buttons for filter target, matching mode, and case sensitivity — each with tap-to-toggle and long-press for full menu. Color-coded: green when non-default option is active.
+  - **Deny/Allow:** `EditableText` for inline text editing (tap to edit, minimum `kMinimumFilterLength`) + `Menu` + `Picker` chips for filter target, matching (hidden when regex), case, and deny folder. The open menu shows a system checkmark on the current value. Chip icon uses `.tint` when the option is non-default.
   - **Deny Language:** Read-only localized language name (resolved from `$lang:` format via `NLLanguage(filterText:)`).
   - **Deny types with folder support:** Additional `Menu` for deny folder (junk/transaction/promotion).
   - All updates call through to `PersistanceManager.updateFilter()` and trigger `onUpdate` callback to parent (which calls `refresh()`).
@@ -349,7 +373,7 @@ Navigation title and toolbar X button are conditionally hidden during loading/re
 
 A `NavigationView` wrapping a `ScrollView`:
 - **Header** — "What's New" title and subtitle.
-- **Entry cards** — `ForEach` over `WhatsNewEntry.allCases`. Each card shows an emoji icon, title, and description. Actionable entries (e.g., `.tipJar`) are tappable and trigger `onActionableEntryTapped`.
+- **Entry cards** — `ForEach` over `WhatsNewEntry.allCases` sorted by `order`. Each card shows an SF Symbol in a tinted rounded square, title, and description. Actionable entries (e.g., `.tipJar`) are tappable and trigger `onActionableEntryTapped`. Current lead cards: import/export (`order` 0), then Appearance Touch-up (`order` 1).
 - **Dismiss button** — `FilledButton` at bottom. Sets `lastSeenWhatsNewVersion` to `currentWhatsNewVersion` and dismisses.
 - Toolbar X button to dismiss.
 
@@ -367,8 +391,8 @@ This pattern is general-purpose: any future `WhatsNewEntry` case can become acti
 
 ### Notable
 
-- `WhatsNewEntry` is a `CaseIterable` enum in `Constants.swift` with computed properties for title, description, emoji, order, and `isActionable`.
-- `currentWhatsNewVersion` must be bumped in `Constants.swift` when adding new entries.
+- `WhatsNewEntry` is a `CaseIterable` enum in `Constants.swift` with computed properties for title, description, SF Symbol (`imageName`), color, order, and `isActionable`.
+- `currentWhatsNewVersion` must be bumped in `Constants.swift` when adding entries **for a version that already shipped**. This branch added `.appearanceTouchup` (second card, after import/export) **without** bumping — still `6` — because that What's New had not been released yet.
 - The What's New sheet only shows when: it's not the user's first session (`wasFirstRunOnInit == false`), `isAppFirstRun` is `false`, and `currentWhatsNewVersion > lastSeenWhatsNewVersion`.
 
 ---

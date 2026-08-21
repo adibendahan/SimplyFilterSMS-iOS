@@ -22,6 +22,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | `onboarding` | EnableExtensionView | Sheet (first run) |
 | `help` | HelpView | Sheet |
 | `about` | AboutView | Sheet |
+| `chooseAccentColor` | ChooseAccentColorView | Sheet |
 | `enableExtension` | EnableExtensionView (= onboarding) | Sheet |
 | `testFilters` | TestFiltersView | Sheet |
 | `addLanguageFilter` | LanguageListView (mode: .blockLanguage) | Sheet |

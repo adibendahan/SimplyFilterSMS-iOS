@@ -32,6 +32,11 @@
 
 "filterList_menu_about" = "À propos";
 
+"accentColor_menuItem" = "Couleur d'accentuation";
+"accentColor_title" = "Couleur d'accentuation";
+"accentColor_picker" = "Couleur";
+"accentColor_reset" = "Rétablir la couleur par défaut";
+
 "filterList_menu_debug" = "Charger données de test";
 
 "filterList_deniedLanguage" = "Langues bloquées";
@@ -407,6 +412,7 @@
 "a11y_help_faqHint" = "Appuyer deux fois pour afficher ou masquer la réponse";
 
 "a11y_help_emailHint" = "Appuyer deux fois pour envoyer un e-mail. Copie l’adresse si Mail n’est pas configuré";
+"a11y_accentColor_resetHint" = "Appuyer deux fois pour rétablir la couleur par défaut";
 
 "autoFilter_countryAllowlist" = "Autoriser par pays";
 
@@ -549,3 +555,5 @@
 "notification_exportFailed_subtitle" = "Impossible de créer le fichier d’export.";
 "whatsNew_filterImportExport_title" = "Exporter et importer des filtres";
 "whatsNew_filterImportExport_desc" = "Partage tes filtres avec un ami - exporte un fichier depuis **Outils de filtrage** dans le menu et envoie-le.";
+"whatsNew_appearanceTouchup_title" = "Retouche d'apparence";
+"whatsNew_appearanceTouchup_desc" = "**Aide** et **Tester tes filtres** ont un nouveau look. Tu peux aussi choisir une **Couleur d'accentuation** dans le menu - boutons et icônes la suivent.";

@@ -55,7 +55,6 @@ struct LanguageListView: View {
                             
                         case .automaticBlocking:
                             Toggle(localizedName, isOn: $model.languages[index].state)
-                                .tint(.accentColor)
                         }
                     }
                 }
@@ -114,7 +113,7 @@ struct LanguageListView: View {
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .foregroundColor(.accentColor)
+                        .foregroundStyle(.tint)
                         .padding(.top, 20)
                         .padding(.bottom, 40)
                     }
@@ -133,6 +132,7 @@ struct LanguageListView: View {
                         Image(systemName: "xmark")
                             .foregroundColor(.secondary)
                     }
+                    .tint(.primary)
                     .accessibilityLabel("general_close"~)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
@@ -151,6 +151,7 @@ struct LanguageListView: View {
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
+                    .tint(.primary)
                 }
             }
         }

@@ -17,6 +17,7 @@ protocol DefaultsManagerProtocol {
     var didTip: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
     var didDismissReportingExtensionNudge: Bool { get set }
+    var accentColorRGB: [String: Double] { get set }
     var appAge: Date { get }
     
     // Session:
@@ -51,13 +52,27 @@ struct StoredDefault<T: PropertyListValue> {
     
     var wrappedValue: T {
         get {
-            if let val = UserDefaults.standard.object(forKey: self.key) as? T {
-                return val
-            }
-            else {
+            guard let object = UserDefaults.standard.object(forKey: self.key) else {
                 UserDefaults.standard.set(self.defaultValue, forKey: self.key)
                 return self.defaultValue
             }
+            if let val = object as? T {
+                return val
+            }
+            if let anyDict = object as? [String: Any] {
+                var converted: [String: Double] = [:]
+                for (key, value) in anyDict {
+                    if let number = value as? NSNumber {
+                        converted[key] = number.doubleValue
+                    } else if let double = value as? Double {
+                        converted[key] = double
+                    }
+                }
+                if let typed = converted as? T {
+                    return typed
+                }
+            }
+            return self.defaultValue
         }
         set {
             UserDefaults.standard.set(newValue, forKey:self.key)
