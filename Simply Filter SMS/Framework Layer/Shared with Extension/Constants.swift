@@ -561,7 +561,7 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters, filterImportExport, appearanceTouchup
+    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters, filterTransfer, appearanceTouchup
 
     var title: String {
         switch self {
@@ -577,8 +577,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_tipJar_title"~
         case .regexFilters:
             return "whatsNew_regexFilters_title"~
-        case .filterImportExport:
-            return "whatsNew_filterImportExport_title"~
+        case .filterTransfer:
+            return "whatsNew_filterTransfer_title"~
         case .appearanceTouchup:
             return "whatsNew_appearanceTouchup_title"~
         }
@@ -598,8 +598,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_tipJar_desc"~
         case .regexFilters:
             return "whatsNew_regexFilters_desc"~
-        case .filterImportExport:
-            return "whatsNew_filterImportExport_desc"~
+        case .filterTransfer:
+            return "whatsNew_filterTransfer_desc"~
         case .appearanceTouchup:
             return "whatsNew_appearanceTouchup_desc"~
         }
@@ -619,7 +619,7 @@ enum WhatsNewEntry: String, CaseIterable {
             return "heart.fill"
         case .regexFilters:
             return "chevron.left.forwardslash.chevron.right"
-        case .filterImportExport:
+        case .filterTransfer:
             return "square.and.arrow.up.on.square"
         case .appearanceTouchup:
             return "paintpalette"
@@ -640,7 +640,7 @@ enum WhatsNewEntry: String, CaseIterable {
             return .red
         case .regexFilters:
             return .orange
-        case .filterImportExport:
+        case .filterTransfer:
             return .blue
         case .appearanceTouchup:
             return .purple
@@ -649,7 +649,7 @@ enum WhatsNewEntry: String, CaseIterable {
 
     var order: Int {
         switch self {
-        case .filterImportExport:
+        case .filterTransfer:
             return 0
         case .appearanceTouchup:
             return 1

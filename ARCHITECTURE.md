@@ -37,7 +37,8 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | `tipJar` | TipJarView | Sheet |
 | `countryList` | CountryListView | Sheet |
 | `enableReportingExtension` | EnableExtensionView (reporting steps) | Sheet |
-| `filterImport` | FilterImportPreviewView | Sheet |
+| `filterImport` | FilterTransferPreviewView | Sheet |
+| `filterExport` | FilterTransferPreviewView | Sheet |
 
 ## Manager Dependency Graph
 
@@ -52,7 +53,7 @@ AppManager (Singleton)
 ├── AutomaticFilterManager ─── Community filter lists
 │   └── depends on: PersistanceManager, AmazonS3Service
 ├── TipJarManager ─────────── StoreKit 2 IAP
-├── FilterImportExportManager ── Merge-only import/export
+├── FilterTransferManager ── Merge-only import/export
 │   └── depends on: PersistanceManager
 ├── FlowManager ────────────── Launch-order queue
 │   └── depends on: DefaultsManager

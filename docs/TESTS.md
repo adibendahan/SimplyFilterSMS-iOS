@@ -12,7 +12,7 @@ Tests/
 ├── AutomaticFilterManagerTests.swift     # Cloud filter management
 ├── PersistanceManagerTests.swift         # CoreData operations
 ├── FilterListViewModelTests.swift        # ViewModel integration
-├── FilterImportExportManagerTests.swift  # Merge-only import/export
+├── FilterTransferManagerTests.swift      # Merge-only import/export picker
 ├── FlowManagerTests.swift                # Launch-order queue
 ├── DefaultsManagerTests.swift            # Accent RGB storage / Color round-trip
 ├── AmazonS3ServiceTests.swift            # HTTP service
@@ -26,7 +26,7 @@ Tests/
     ├── mock_AmazonS3Service.swift
     ├── mock_HTTPService.swift
     ├── mock_ReportMessageService.swift
-    ├── mock_FilterImportExportManager.swift
+    ├── mock_FilterTransferManager.swift
     └── mock_FlowManager.swift
 
 UI Tests/

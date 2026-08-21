@@ -12,7 +12,6 @@ protocol URLRequestProtocol {
     var method: HTTPMethod { get }
     var task: HTTPTask { get }
     var errorDomain: String { get }
-    var auth: Bool { get }
 }
 
 extension URLRequest {
@@ -41,12 +40,7 @@ extension URLRequest {
                 }
             }
         }
-        
-        if request.auth,
-           let apiKey = Bundle.main.infoDictionary?["API_KEY"] as? String {
-            self.addValue(apiKey, forHTTPHeaderField: "x-api-key")
-        }
-        
+
         self.url = urlComponents?.url
     }
 }

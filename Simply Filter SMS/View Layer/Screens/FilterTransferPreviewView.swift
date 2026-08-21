@@ -1,5 +1,5 @@
 //
-//  FilterImportPreviewView.swift
+//  FilterTransferPreviewView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 15/08/2026.
@@ -10,7 +10,7 @@ import NaturalLanguage
 
 
 //MARK: - View -
-struct FilterImportPreviewView: View {
+struct FilterTransferPreviewView: View {
 
     @Environment(\.dismiss)
     var dismiss
@@ -30,7 +30,7 @@ struct FilterImportPreviewView: View {
                         .sorted(by: { $0.sortIndex < $1.sortIndex })
                         .filter({ self.model.candidates(for: $0).isEmpty == false }), id: \.self) { filterType in
                         NavigationLink {
-                            FilterImportCandidateListView(model: self.model, filterType: filterType)
+                            FilterTransferCandidateListView(model: self.model, filterType: filterType)
                         } label: {
                             HStack {
                                 Image(systemName: filterType.iconName)
@@ -51,24 +51,24 @@ struct FilterImportPreviewView: View {
                         .accentColor(Color.primary.opacity(0.35))
                     }
                 } header: {
-                    Text("importFilters_sectionTitle"~)
+                    Text(self.model.sectionTitle)
                         .accessibilityAddTraits(.isHeader)
                 } footer: {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("importFilters_subtitle"~)
+                        Text(self.model.subtitle)
 
-                        if self.model.preview.duplicateCount > 0 {
+                        if self.model.kind == .importFilters, self.model.preview.duplicateCount > 0 {
                             Text("importFilters_duplicates"~ + ": \(self.model.preview.duplicateCount)")
                         }
 
-                        if self.model.preview.invalidCount > 0 {
+                        if self.model.kind == .importFilters, self.model.preview.invalidCount > 0 {
                             Text("importFilters_invalid"~ + ": \(self.model.preview.invalidCount)")
                         }
                     }
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("importFilters_title"~)
+            .navigationTitle(self.model.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -83,23 +83,29 @@ struct FilterImportPreviewView: View {
                     .contentShape(Rectangle())
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("importFilters_confirm"~) {
-                        self.model.confirm()
-                        self.dismiss()
+                    Button(self.model.confirmTitle) {
+                        if self.model.confirm() {
+                            self.dismiss()
+                        }
                     }
                     .buttonStyle(.borderedProminent)
-                    .disabled(self.model.selectedCount == 0)
+                    .disabled(self.model.selectedCount == 0 || self.model.exportFile != nil)
                 }
             }
+        }
+        .sheet(item: self.$model.exportFile) {
+            self.dismiss()
+        } content: { file in
+            ShareSheet(items: [file.url])
         }
     }
 }
 
 
 //MARK: - Candidate List -
-struct FilterImportCandidateListView: View {
+struct FilterTransferCandidateListView: View {
 
-    @ObservedObject var model: FilterImportPreviewView.ViewModel
+    @ObservedObject var model: FilterTransferPreviewView.ViewModel
     let filterType: FilterType
 
     @ScaledMetric(relativeTo: .body) private var optionIconSize: CGFloat = 15
@@ -144,7 +150,7 @@ struct FilterImportCandidateListView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func sectionSelectAll(_ candidates: [FilterImportCandidate]) -> some View {
+    private func sectionSelectAll(_ candidates: [FilterTransferCandidate]) -> some View {
         let state = self.model.selectionState(for: candidates)
         return Button {
             self.model.toggleSelection(for: candidates)
@@ -157,7 +163,7 @@ struct FilterImportCandidateListView: View {
     }
 
     @ViewBuilder
-    private func candidateRow(_ candidate: FilterImportCandidate) -> some View {
+    private func candidateRow(_ candidate: FilterTransferCandidate) -> some View {
         HStack(alignment: .center) {
             Text(self.model.displayName(for: candidate))
                 .font(candidate.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
@@ -187,7 +193,7 @@ struct FilterImportCandidateListView: View {
         .accessibilityLabel(self.candidateAccessibilityLabel(candidate))
     }
 
-    private func candidateAccessibilityLabel(_ candidate: FilterImportCandidate) -> String {
+    private func candidateAccessibilityLabel(_ candidate: FilterTransferCandidate) -> String {
         var parts = [self.model.displayName(for: candidate)]
         if candidate.type.supportsAdvancedOptions {
             parts.append(String(format: "a11y_filterRow_targetLabel"~, candidate.filterTarget.name))
@@ -220,35 +226,54 @@ struct FilterImportCandidateListView: View {
 
 
 //MARK: - ViewModel -
-extension FilterImportPreviewView {
+extension FilterTransferPreviewView {
 
     enum SectionSelection {
         case none, some, all
     }
 
     class ViewModel: BaseViewModel, ObservableObject {
-        let preview: FilterImportPreview
+        let preview: FilterTransferPreview
+        let kind: FilterTransferKind
         @Published var selectedIDs: Set<UUID>
+        @Published var exportFile: ExportFile?
 
         override init(appManager: AppManagerProtocol = AppManager.shared) {
-            self.preview = appManager.filterImportExportManager.pendingPreview
-            self.selectedIDs = Set(self.preview.toAdd.map({ $0.id }))
+            self.preview = appManager.filterTransferManager.pendingPreview
+            self.kind = appManager.filterTransferManager.pendingKind
+            self.selectedIDs = Set(self.preview.candidates.map({ $0.id }))
             super.init(appManager: appManager)
+        }
+
+        var title: String {
+            return self.kind == .exportFilters ? "exportFilters_title"~ : "importFilters_title"~
+        }
+
+        var sectionTitle: String {
+            return self.kind == .exportFilters ? "exportFilters_sectionTitle"~ : "importFilters_sectionTitle"~
+        }
+
+        var subtitle: String {
+            return self.kind == .exportFilters ? "exportFilters_subtitle"~ : "importFilters_subtitle"~
+        }
+
+        var confirmTitle: String {
+            return self.kind == .exportFilters ? "exportFilters_confirm"~ : "importFilters_confirm"~
         }
 
         var selectedCount: Int {
             return self.selectedIDs.count
         }
 
-        func candidates(for type: FilterType) -> [FilterImportCandidate] {
-            return self.preview.toAdd.filter({ $0.type == type })
+        func candidates(for type: FilterType) -> [FilterTransferCandidate] {
+            return self.preview.candidates.filter({ $0.type == type })
         }
 
-        func regularCandidates(for type: FilterType) -> [FilterImportCandidate] {
+        func regularCandidates(for type: FilterType) -> [FilterTransferCandidate] {
             return self.candidates(for: type).filter({ $0.filterMatching != .regex })
         }
 
-        func regexCandidates(for type: FilterType) -> [FilterImportCandidate] {
+        func regexCandidates(for type: FilterType) -> [FilterTransferCandidate] {
             return self.candidates(for: type).filter({ $0.filterMatching == .regex })
         }
 
@@ -256,14 +281,14 @@ extension FilterImportPreviewView {
             return self.candidates(for: type).filter({ self.selectedIDs.contains($0.id) }).count
         }
 
-        func selectionState(for candidates: [FilterImportCandidate]) -> SectionSelection {
+        func selectionState(for candidates: [FilterTransferCandidate]) -> SectionSelection {
             let selected = candidates.filter({ self.selectedIDs.contains($0.id) }).count
             if selected == 0 { return .none }
             if selected == candidates.count { return .all }
             return .some
         }
 
-        func toggleSelection(for candidates: [FilterImportCandidate]) {
+        func toggleSelection(for candidates: [FilterTransferCandidate]) {
             let ids = Set(candidates.map({ $0.id }))
             if self.selectionState(for: candidates) == .all {
                 self.selectedIDs.subtract(ids)
@@ -273,29 +298,42 @@ extension FilterImportPreviewView {
             }
         }
 
-        func displayName(for candidate: FilterImportCandidate) -> String {
+        func displayName(for candidate: FilterTransferCandidate) -> String {
             guard candidate.type == .denyLanguage else { return candidate.text }
             let language = NLLanguage(filterText: candidate.text)
             return language.localizedName ?? candidate.text
         }
 
-        func confirm() {
-            let selected = self.preview.toAdd.filter({ self.selectedIDs.contains($0.id) })
-            guard selected.isEmpty == false else { return }
+        func confirm() -> Bool {
+            let selected = self.preview.candidates.filter({ self.selectedIDs.contains($0.id) })
+            guard selected.isEmpty == false else { return false }
 
-            _ = self.appManager.filterImportExportManager.importFilters(selected)
+            switch self.kind {
+            case .importFilters:
+                _ = self.appManager.filterTransferManager.importFilters(selected)
+                return true
+            case .exportFilters:
+                do {
+                    let url = try self.appManager.filterTransferManager.writeExportFile(candidates: selected)
+                    self.exportFile = ExportFile(url: url)
+                    return false
+                } catch {
+                    AppManager.logger.error("exportFilters — failed: \(error.localizedDescription, privacy: .public)")
+                    return false
+                }
+            }
         }
     }
 }
 
 
 //MARK: - Preview -
-struct FilterImportPreviewView_Previews: PreviewProvider {
+struct FilterTransferPreviewView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterImportPreviewView(model: self.previewModel())
+        FilterTransferPreviewView(model: self.previewModel())
     }
 
-    private static func previewModel() -> FilterImportPreviewView.ViewModel {
+    private static func previewModel() -> FilterTransferPreviewView.ViewModel {
         let appManager = AppManager.previews
         let payload = FilterExportPayload(
             format: FilterExportPayload.formatIdentifier,
@@ -320,8 +358,8 @@ struct FilterImportPreviewView_Previews: PreviewProvider {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         if let data = try? encoder.encode(payload) {
-            _ = try? appManager.filterImportExportManager.queueImport(data: data)
+            _ = try? appManager.filterTransferManager.queueImport(data: data)
         }
-        return FilterImportPreviewView.ViewModel(appManager: appManager)
+        return FilterTransferPreviewView.ViewModel(appManager: appManager)
     }
 }

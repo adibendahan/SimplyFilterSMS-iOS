@@ -23,7 +23,7 @@ protocol AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol { get }
     var reportMessageService: ReportMessageServiceProtocol { get }
     var tipJarManager: TipJarManagerProtocol { get }
-    var filterImportExportManager: FilterImportExportManagerProtocol { get }
+    var filterTransferManager: FilterTransferManagerProtocol { get }
     var flowManager: FlowManagerProtocol { get }
     func onAppLaunch()
     func onNewUserSession()
@@ -40,7 +40,7 @@ protocol AppManagerProtocol {
 6. `ReportMessageService` (receives network sync manager)
 7. `AutomaticFilterManager` (receives persistance manager + S3 service)
 8. `TipJarManager`
-9. `FilterImportExportManager` (receives persistance manager)
+9. `FilterTransferManager` (receives persistance manager)
 10. `FlowManager` (receives defaults manager)
 11. Logger wired to MessageEvaluationManager
 
@@ -380,33 +380,38 @@ Defined in `Constants.swift`. `CaseIterable` enum with `String` raw values (prod
 
 ---
 
-## FilterImportExportManager
+## FilterTransferManager
 
-**Files:** `Framework Layer/Managers/FilterImportExportManager.swift`, `Protocols/FilterImportExportManagerProtocol.swift`
+**Files:** `Framework Layer/Managers/FilterTransferManager.swift`, `Protocols/FilterTransferManagerProtocol.swift`
 
-Merge-only import/export of user filters. Export writes a versioned JSON payload to a `.sfsfilters` file in the temp directory. Import never deletes existing filters; new rows get new UUIDs via `addFilter`. One in-flight import at a time (`pendingPreview` / `lastImportResult`).
+Merge-only import/export of user filters. Export writes a versioned JSON payload to a `.sfsfilters` file in the temp directory — the user picks which filters first (same picker UI as import). Import never deletes existing filters; new rows get new UUIDs via `addFilter`. One in-flight picker at a time (`pendingPreview` / `pendingKind` / `lastImportResult`).
 
 ### Protocol
 
 ```swift
-protocol FilterImportExportManagerProtocol {
-    var pendingPreview: FilterImportPreview { get }
+protocol FilterTransferManagerProtocol {
+    var pendingPreview: FilterTransferPreview { get }
+    var pendingKind: FilterTransferKind { get }
     func exportPayload() throws -> Data
-    func writeExportFile() throws -> URL
+    func writeExportFile(candidates: [FilterTransferCandidate]) throws -> URL
+    func queueExport() -> FilterTransferPreview
+    func clearPendingExport()
     func deleteExportFile(at url: URL)
     func isExportFile(_ url: URL) -> Bool
     func readFile(at url: URL) throws -> Data
-    func previewImport(data: Data) throws -> FilterImportPreview
-    func queueImport(data: Data) throws -> FilterImportPreview
-    func clearPendingImport() -> FilterImportResult?
-    func importFilters(_ candidates: [FilterImportCandidate]) -> FilterImportResult
+    func previewImport(data: Data) throws -> FilterTransferPreview
+    func queueImport(data: Data) throws -> FilterTransferPreview
+    func clearPendingImport() -> FilterTransferResult?
+    func importFilters(_ candidates: [FilterTransferCandidate]) -> FilterTransferResult
 }
 ```
 
 ### Key Behaviors
 
-- **`queueImport`** starts the session (`pendingPreview`). Home still `recordLaunch(.filterImport)` when there is nothing to add; `presentNextFlow` shows the native alert instead of the preview sheet.
+- **`queueImport`** starts an import session (`pendingPreview`, `pendingKind = .importFilters`). Home still `recordLaunch(.filterImport)` when there is nothing to add; `presentNextFlow` shows the native alert instead of the preview sheet.
+- **`queueExport`** starts an export session from local filters (`pendingKind = .exportFilters`). Home `requestSheet(.filterExport)`.
 - **`importFilters`** writes onto that session. **`clearPendingImport`** ends it and returns the result (or nil) for the dismiss toast.
+- **`writeExportFile(candidates:)`** writes only the selected rows and holds the temp URL. The export picker presents the share sheet on top of itself. **`clearPendingExport()`** runs when that picker dismisses and deletes the temp file.
 - **`isExportFile`** is `.sfsfilters` only. **`deleteExportFile`** only removes a `.sfsfilters` file inside the temp directory.
 - Custom UTI / document type: `kFilterExportTypeIdentifier` in `Constants.swift`.
 
@@ -455,11 +460,9 @@ protocol HTTPServiceProtocol {
 }
 ```
 
-**URLRequestProtocol** defines: `path`, `method` (GET/POST/PUT/DELETE/PATCH), `task` (plain or with parameters), `errorDomain`, `auth` (whether to include API key).
+**URLRequestProtocol** defines: `path`, `method` (GET/POST/PUT/DELETE/PATCH), `task` (plain or with parameters), `errorDomain`.
 
 **HTTPServiceBase** — Common base for services. Holds `httpService: HTTPServiceProtocol` and a weak `networkSyncManager` reference.
-
-**Authentication:** When `auth: true`, reads `API_KEY` from `Info.plist` and adds it as `x-api-key` header.
 
 ### AmazonS3Service
 
@@ -472,7 +475,6 @@ protocol AmazonS3ServiceProtocol: AnyObject {
 ```
 
 - Fetches `GET /simply-filter-sms/1.0.0/automatic_filters.json` from S3
-- No authentication required
 - Guards against duplicate concurrent requests via `isFetching` flag
 - Returns `nil` when offline or already fetching
 
@@ -487,9 +489,8 @@ protocol ReportMessageServiceProtocol: AnyObject {
 }
 ```
 
-- Posts to `POST /ReportMessage` on AWS Lambda
-- Requires API key authentication
-- Body: `{ sender, body, type }` where type is "deny" or "allow"
+- Posts to `POST /report` (`https://api.ben-dahan.com/report`, public, no auth)
+- Body: `{ classification: { sender, bodies, type } }`
 - Returns `true` on HTTP 200
 
 ### Request/Response DTOs

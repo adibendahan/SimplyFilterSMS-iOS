@@ -19,7 +19,7 @@ protocol AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol { get }
     var reportMessageService: ReportMessageServiceProtocol { get }
     var tipJarManager: TipJarManagerProtocol { get }
-    var filterImportExportManager: FilterImportExportManagerProtocol { get }
+    var filterTransferManager: FilterTransferManagerProtocol { get }
     var flowManager: FlowManagerProtocol { get }
 
     func onAppLaunch()
