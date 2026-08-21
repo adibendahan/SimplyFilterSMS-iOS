@@ -1,5 +1,5 @@
 //
-//  FilterImportExportManagerProtocol.swift
+//  FilterTransferManagerProtocol.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 15/08/2026.
@@ -8,7 +8,7 @@
 import Foundation
 
 
-enum FilterImportExportError: Error, Equatable {
+enum FilterTransferError: Error, Equatable {
     case invalidFile
     case unsupportedVersion
 }
@@ -43,7 +43,7 @@ struct ExportFile: Identifiable {
     let url: URL
 }
 
-struct FilterImportCandidate: Equatable, Identifiable {
+struct FilterTransferCandidate: Equatable, Identifiable {
     let id: UUID
     let text: String
     let type: FilterType
@@ -73,18 +73,18 @@ struct FilterImportCandidate: Equatable, Identifiable {
     }
 }
 
-struct FilterImportPreview: Equatable {
-    static let empty = FilterImportPreview(toAdd: [], duplicateCount: 0, invalidCount: 0)
+struct FilterTransferPreview: Equatable {
+    static let empty = FilterTransferPreview(candidates: [], duplicateCount: 0, invalidCount: 0)
 
-    let toAdd: [FilterImportCandidate]
+    let candidates: [FilterTransferCandidate]
     let duplicateCount: Int
     let invalidCount: Int
 
-    var addedCount: Int { return self.toAdd.count }
+    var count: Int { return self.candidates.count }
     var skippedCount: Int { return self.duplicateCount + self.invalidCount }
 }
 
-struct FilterImportResult: Equatable {
+struct FilterTransferResult: Equatable {
     let added: Int
     let duplicateCount: Int
     let invalidCount: Int
@@ -92,18 +92,26 @@ struct FilterImportResult: Equatable {
     var skippedCount: Int { return self.duplicateCount + self.invalidCount }
 }
 
-protocol FilterImportExportManagerProtocol {
-    var pendingPreview: FilterImportPreview { get }
+enum FilterTransferKind: Equatable {
+    case importFilters
+    case exportFilters
+}
+
+protocol FilterTransferManagerProtocol {
+    var pendingPreview: FilterTransferPreview { get }
+    var pendingKind: FilterTransferKind { get }
 
     func exportPayload() throws -> Data
-    func writeExportFile() throws -> URL
+    func writeExportFile(candidates: [FilterTransferCandidate]) throws -> URL
+    func queueExport() -> FilterTransferPreview
+    func clearPendingExport()
     func deleteExportFile(at url: URL)
     func isExportFile(_ url: URL) -> Bool
     func readFile(at url: URL) throws -> Data
-    func previewImport(data: Data) throws -> FilterImportPreview
-    func queueImport(data: Data) throws -> FilterImportPreview
-    func clearPendingImport() -> FilterImportResult?
-    func importFilters(_ candidates: [FilterImportCandidate]) -> FilterImportResult
+    func previewImport(data: Data) throws -> FilterTransferPreview
+    func queueImport(data: Data) throws -> FilterTransferPreview
+    func clearPendingImport() -> FilterTransferResult?
+    func importFilters(_ candidates: [FilterTransferCandidate]) -> FilterTransferResult
 }
 
 

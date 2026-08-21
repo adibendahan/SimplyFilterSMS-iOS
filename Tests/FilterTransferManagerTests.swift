@@ -1,5 +1,5 @@
 //
-//  FilterImportExportManagerTests.swift
+//  FilterTransferManagerTests.swift
 //  Tests
 //
 //  Created by Adi Ben-Dahan on 15/08/2026.
@@ -10,16 +10,16 @@ import XCTest
 import NaturalLanguage
 @testable import Simply_Filter_SMS
 
-class FilterImportExportManagerTests: XCTestCase {
+class FilterTransferManagerTests: XCTestCase {
 
     private var persistanceManager: PersistanceManager!
-    private var testSubject: FilterImportExportManager!
+    private var testSubject: FilterTransferManager!
 
     //MARK: Test Lifecycle
     override func setUp() {
         super.setUp()
         self.persistanceManager = PersistanceManager(inMemory: true)
-        self.testSubject = FilterImportExportManager(persistanceManager: self.persistanceManager)
+        self.testSubject = FilterTransferManager(persistanceManager: self.persistanceManager)
     }
 
     override func tearDown() {
@@ -59,7 +59,7 @@ class FilterImportExportManagerTests: XCTestCase {
         XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 0)
 
         let preview = try self.testSubject.queueImport(data: data)
-        let result = self.testSubject.importFilters(preview.toAdd)
+        let result = self.testSubject.importFilters(preview.candidates)
 
         XCTAssertEqual(result.added, 4)
         XCTAssertEqual(result.duplicateCount, 0)
@@ -102,7 +102,7 @@ class FilterImportExportManagerTests: XCTestCase {
         ])
 
         let preview = try self.testSubject.queueImport(data: data)
-        let result = self.testSubject.importFilters(preview.toAdd)
+        let result = self.testSubject.importFilters(preview.candidates)
 
         XCTAssertEqual(result.added, 1)
         XCTAssertEqual(result.duplicateCount, 1)
@@ -119,28 +119,28 @@ class FilterImportExportManagerTests: XCTestCase {
 
         let preview = try self.testSubject.previewImport(data: data)
 
-        XCTAssertEqual(preview.addedCount, 1)
+        XCTAssertEqual(preview.count, 1)
         XCTAssertEqual(preview.duplicateCount, 1)
         XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 0)
     }
 
     func test_invalidJSON_throws() {
         XCTAssertThrowsError(try self.testSubject.previewImport(data: Data("not-json".utf8))) { error in
-            XCTAssertEqual(error as? FilterImportExportError, .invalidFile)
+            XCTAssertEqual(error as? FilterTransferError, .invalidFile)
         }
     }
 
     func test_wrongFormat_throws() throws {
         let data = try self.payload(format: "other", filters: [])
         XCTAssertThrowsError(try self.testSubject.previewImport(data: data)) { error in
-            XCTAssertEqual(error as? FilterImportExportError, .invalidFile)
+            XCTAssertEqual(error as? FilterTransferError, .invalidFile)
         }
     }
 
     func test_unsupportedVersion_throws() throws {
         let data = try self.payload(version: 99, filters: [record(text: "x", type: "deny")])
         XCTAssertThrowsError(try self.testSubject.previewImport(data: data)) { error in
-            XCTAssertEqual(error as? FilterImportExportError, .unsupportedVersion)
+            XCTAssertEqual(error as? FilterTransferError, .unsupportedVersion)
         }
     }
 
@@ -153,9 +153,9 @@ class FilterImportExportManagerTests: XCTestCase {
 
         let preview = try self.testSubject.previewImport(data: data)
 
-        XCTAssertEqual(preview.addedCount, 1)
+        XCTAssertEqual(preview.count, 1)
         XCTAssertEqual(preview.invalidCount, 2)
-        XCTAssertEqual(preview.toAdd.first?.text, "ok")
+        XCTAssertEqual(preview.candidates.first?.text, "ok")
     }
 
     func test_importFilters_selectedSubsetOnly() throws {
@@ -165,13 +165,13 @@ class FilterImportExportManagerTests: XCTestCase {
         ])
 
         let preview = try self.testSubject.previewImport(data: data)
-        XCTAssertEqual(preview.toAdd.count, 2)
+        XCTAssertEqual(preview.candidates.count, 2)
 
-        let result = self.testSubject.importFilters(Array(preview.toAdd.prefix(1)))
+        let result = self.testSubject.importFilters(Array(preview.candidates.prefix(1)))
 
         XCTAssertEqual(result.added, 1)
         XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 1)
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords().first?.text, preview.toAdd.first?.text)
+        XCTAssertEqual(self.persistanceManager.fetchFilterRecords().first?.text, preview.candidates.first?.text)
     }
 
     func test_writeExportFile_createsSfsfilters() throws {
@@ -182,16 +182,62 @@ class FilterImportExportManagerTests: XCTestCase {
                                           filterMatching: .contains,
                                           filterCase: .caseInsensitive)
 
-        let url = try self.testSubject.writeExportFile()
+        let preview = self.testSubject.queueExport()
+        let url = try self.testSubject.writeExportFile(candidates: preview.candidates)
         XCTAssertEqual(url.pathExtension, kFilterExportFileExtension)
         XCTAssertTrue(url.lastPathComponent.range(of: #"^SimplyFilterSMS-filters-\d{4}-\d{2}-\d{2}-\d{4}\.sfsfilters$"#, options: .regularExpression) != nil)
         XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
 
         let imported = try self.testSubject.previewImport(data: Data(contentsOf: url))
-        XCTAssertEqual(imported.addedCount, 0)
+        XCTAssertEqual(imported.count, 0)
         XCTAssertEqual(imported.duplicateCount, 1)
         self.testSubject.deleteExportFile(at: url)
         XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
+    }
+
+    func test_queueExport_listsLocalFilters() {
+        self.persistanceManager.addFilter(text: "promo",
+                                          type: .deny,
+                                          denyFolder: .junk,
+                                          filterTarget: .all,
+                                          filterMatching: .contains,
+                                          filterCase: .caseInsensitive)
+        self.persistanceManager.addFilter(text: "Mom",
+                                          type: .allow,
+                                          denyFolder: .junk,
+                                          filterTarget: .sender,
+                                          filterMatching: .exact,
+                                          filterCase: .caseSensitive)
+
+        let preview = self.testSubject.queueExport()
+        XCTAssertEqual(self.testSubject.pendingKind, .exportFilters)
+        XCTAssertEqual(preview.candidates.count, 2)
+        XCTAssertEqual(preview.duplicateCount, 0)
+        XCTAssertEqual(preview.invalidCount, 0)
+    }
+
+    func test_writeExportFile_onlySelectedCandidates() throws {
+        self.persistanceManager.addFilter(text: "promo",
+                                          type: .deny,
+                                          denyFolder: .junk,
+                                          filterTarget: .all,
+                                          filterMatching: .contains,
+                                          filterCase: .caseInsensitive)
+        self.persistanceManager.addFilter(text: "Mom",
+                                          type: .allow,
+                                          denyFolder: .junk,
+                                          filterTarget: .sender,
+                                          filterMatching: .exact,
+                                          filterCase: .caseSensitive)
+
+        let preview = self.testSubject.queueExport()
+        let selected = preview.candidates.filter({ $0.type == .deny })
+        let url = try self.testSubject.writeExportFile(candidates: selected)
+        self.persistanceManager.deleteFilters(Set(self.persistanceManager.fetchFilterRecords()))
+        let imported = try self.testSubject.previewImport(data: Data(contentsOf: url))
+        XCTAssertEqual(imported.count, 1)
+        XCTAssertEqual(imported.candidates.first?.text, "promo")
+        self.testSubject.deleteExportFile(at: url)
     }
 
     func test_deleteExportFile_ignoresNonExportAndNonTemp() throws {
@@ -216,7 +262,7 @@ class FilterImportExportManagerTests: XCTestCase {
     }
 
     func test_readFile_roundTrip() throws {
-        let url = try self.testSubject.writeExportFile()
+        let url = try self.testSubject.writeExportFile(candidates: [])
         let data = try self.testSubject.readFile(at: url)
         let preview = try self.testSubject.previewImport(data: data)
         XCTAssertEqual(preview.duplicateCount, 0)

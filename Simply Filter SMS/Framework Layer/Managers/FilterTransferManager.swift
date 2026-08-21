@@ -1,5 +1,5 @@
 //
-//  FilterImportExportManager.swift
+//  FilterTransferManager.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 15/08/2026.
@@ -8,9 +8,10 @@
 import Foundation
 import NaturalLanguage
 
-class FilterImportExportManager: FilterImportExportManagerProtocol {
+class FilterTransferManager: FilterTransferManagerProtocol {
 
-    private(set) var pendingPreview = FilterImportPreview.empty
+    private(set) var pendingPreview = FilterTransferPreview.empty
+    private(set) var pendingKind: FilterTransferKind = .importFilters
 
     //MARK: - Initialization -
     init(persistanceManager: PersistanceManagerProtocol,
@@ -20,32 +21,13 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
     }
 
 
-    //MARK: - Public API (FilterImportExportManagerProtocol) -
+    //MARK: - Public API (FilterTransferManagerProtocol) -
     func exportPayload() throws -> Data {
-        let records = self.persistanceManager.fetchFilterRecords().compactMap { filter -> FilterExportRecord? in
-            guard let text = filter.text, text.isEmpty == false else { return nil }
-            return FilterExportRecord(text: text,
-                                      type: filter.filterType.exportKey,
-                                      folder: filter.denyFolderType.exportKey,
-                                      target: filter.filterTarget.exportKey,
-                                      matching: filter.filterMatching.exportKey,
-                                      caseSensitivity: filter.filterCase.exportKey)
-        }
-
-        let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
-                                          version: FilterExportPayload.currentVersion,
-                                          exportedAt: Date(),
-                                          appVersion: appVersion,
-                                          filters: records)
-
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        encoder.dateEncodingStrategy = .iso8601
-        return try encoder.encode(payload)
+        return try self.encodePayload(records: self.storeRecords())
     }
 
-    func writeExportFile() throws -> URL {
-        let data = try self.exportPayload()
+    func writeExportFile(candidates: [FilterTransferCandidate]) throws -> URL {
+        let data = try self.encodePayload(records: candidates.map({ self.record(from: $0) }))
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -54,7 +36,26 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
         let filename = "SimplyFilterSMS-filters-\(formatter.string(from: Date())).\(kFilterExportFileExtension)"
         let url = self.fileManager.temporaryDirectory.appendingPathComponent(filename)
         try data.write(to: url, options: .atomic)
+        self.pendingExportURL = url
         return url
+    }
+
+    func queueExport() -> FilterTransferPreview {
+        self.clearPendingExportFile()
+        let preview = FilterTransferPreview(candidates: self.candidatesFromStore(),
+                                          duplicateCount: 0,
+                                          invalidCount: 0)
+        self.pendingPreview = preview
+        self.pendingKind = .exportFilters
+        return preview
+    }
+
+    func clearPendingExport() {
+        self.clearPendingExportFile()
+        if self.pendingKind == .exportFilters {
+            self.pendingPreview = FilterTransferPreview.empty
+            self.pendingKind = .importFilters
+        }
     }
 
     func deleteExportFile(at url: URL) {
@@ -78,13 +79,13 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
         do {
             return try Data(contentsOf: url)
         } catch {
-            throw FilterImportExportError.invalidFile
+            throw FilterTransferError.invalidFile
         }
     }
 
-    func previewImport(data: Data) throws -> FilterImportPreview {
+    func previewImport(data: Data) throws -> FilterTransferPreview {
         let payload = try self.decodePayload(data)
-        var toAdd: [FilterImportCandidate] = []
+        var accepted: [FilterTransferCandidate] = []
         var duplicateCount = 0
         var invalidCount = 0
         var seenKeys = Set<String>()
@@ -106,26 +107,29 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
             }
 
             seenKeys.insert(key)
-            toAdd.append(candidate)
+            accepted.append(candidate)
         }
 
-        return FilterImportPreview(toAdd: toAdd, duplicateCount: duplicateCount, invalidCount: invalidCount)
+        return FilterTransferPreview(candidates: accepted, duplicateCount: duplicateCount, invalidCount: invalidCount)
     }
 
-    func queueImport(data: Data) throws -> FilterImportPreview {
+    func queueImport(data: Data) throws -> FilterTransferPreview {
+        self.clearPendingExportFile()
         let preview = try self.previewImport(data: data)
         self.pendingPreview = preview
+        self.pendingKind = .importFilters
         return preview
     }
 
-    func clearPendingImport() -> FilterImportResult? {
+    func clearPendingImport() -> FilterTransferResult? {
         let result = self.lastImportResult
-        self.pendingPreview = FilterImportPreview.empty
+        self.pendingPreview = FilterTransferPreview.empty
         self.lastImportResult = nil
+        self.pendingKind = .importFilters
         return result
     }
 
-    func importFilters(_ candidates: [FilterImportCandidate]) -> FilterImportResult {
+    func importFilters(_ candidates: [FilterTransferCandidate]) -> FilterTransferResult {
         var added = 0
 
         for candidate in candidates {
@@ -139,7 +143,7 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
             }
         }
 
-        let result = FilterImportResult(added: added,
+        let result = FilterTransferResult(added: added,
                                         duplicateCount: self.pendingPreview.duplicateCount,
                                         invalidCount: self.pendingPreview.invalidCount)
         self.lastImportResult = result
@@ -150,7 +154,53 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
     //MARK: - Private -
     private let persistanceManager: PersistanceManagerProtocol
     private let fileManager: FileManager
-    private var lastImportResult: FilterImportResult?
+    private var lastImportResult: FilterTransferResult?
+    private var pendingExportURL: URL?
+
+    private func encodePayload(records: [FilterExportRecord]) throws -> Data {
+        let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                          version: FilterExportPayload.currentVersion,
+                                          exportedAt: Date(),
+                                          appVersion: appVersion,
+                                          filters: records)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.dateEncodingStrategy = .iso8601
+        return try encoder.encode(payload)
+    }
+
+    private func storeRecords() -> [FilterExportRecord] {
+        return self.candidatesFromStore().map({ self.record(from: $0) })
+    }
+
+    private func candidatesFromStore() -> [FilterTransferCandidate] {
+        return self.persistanceManager.fetchFilterRecords().compactMap { filter in
+            guard let text = filter.text, text.isEmpty == false else { return nil }
+            return FilterTransferCandidate(id: filter.uuid ?? UUID(),
+                                         text: text,
+                                         type: filter.filterType,
+                                         denyFolder: filter.denyFolderType,
+                                         filterTarget: filter.filterTarget,
+                                         filterMatching: filter.filterMatching,
+                                         filterCase: filter.filterCase)
+        }
+    }
+
+    private func record(from candidate: FilterTransferCandidate) -> FilterExportRecord {
+        return FilterExportRecord(text: candidate.text,
+                                  type: candidate.type.exportKey,
+                                  folder: candidate.denyFolder.exportKey,
+                                  target: candidate.filterTarget.exportKey,
+                                  matching: candidate.filterMatching.exportKey,
+                                  caseSensitivity: candidate.filterCase.exportKey)
+    }
+
+    private func clearPendingExportFile() {
+        if let url = self.pendingExportURL {
+            self.deleteExportFile(at: url)
+            self.pendingExportURL = nil
+        }
+    }
 
     private func decodePayload(_ data: Data) throws -> FilterExportPayload {
         let decoder = JSONDecoder()
@@ -159,23 +209,23 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
         do {
             let payload = try decoder.decode(FilterExportPayload.self, from: data)
             guard payload.format == FilterExportPayload.formatIdentifier else {
-                throw FilterImportExportError.invalidFile
+                throw FilterTransferError.invalidFile
             }
             guard payload.version >= 1 else {
-                throw FilterImportExportError.invalidFile
+                throw FilterTransferError.invalidFile
             }
             guard payload.version <= FilterExportPayload.currentVersion else {
-                throw FilterImportExportError.unsupportedVersion
+                throw FilterTransferError.unsupportedVersion
             }
             return payload
-        } catch let error as FilterImportExportError {
+        } catch let error as FilterTransferError {
             throw error
         } catch {
-            throw FilterImportExportError.invalidFile
+            throw FilterTransferError.invalidFile
         }
     }
 
-    private static func candidate(from record: FilterExportRecord) -> FilterImportCandidate? {
+    private static func candidate(from record: FilterExportRecord) -> FilterTransferCandidate? {
         guard let text = record.text?.trimmingCharacters(in: .whitespacesAndNewlines),
               text.count >= kMinimumFilterLength,
               let type = FilterType(exportKey: record.type),
@@ -195,7 +245,7 @@ class FilterImportExportManager: FilterImportExportManagerProtocol {
             guard (try? Regex(text)) != nil else { return nil }
         }
 
-        return FilterImportCandidate(text: text,
+        return FilterTransferCandidate(text: text,
                                      type: type,
                                      denyFolder: folder,
                                      filterTarget: target,

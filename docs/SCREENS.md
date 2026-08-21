@@ -28,7 +28,7 @@ A `NavigationView` containing a `List` with three sections:
 Trailing `Menu` (ellipsis, `.tint(.primary)`) with items:
 - Debug Tools (DEBUG only)
 - Add Filter submenu
-- Filter Tools submenu — test, report, reporting extension, export, import
+- Filter Tools submenu — test, report, reporting extension, export (picker, then share on that screen), import
 - Help, About, Accent Color, Tip Jar
 - What's New (only if `WhatsNewEntry.allCases` is non-empty)
 
@@ -58,6 +58,7 @@ Trailing `Menu` (ellipsis, `.tint(.primary)`) with items:
 - `showNotification(_:)` — Queues notifications if a sheet/modal is active (`pendingNotification`). Some notifications auto-dismiss after a timeout.
 - `tryRequestReview()` — Prompts `SKStoreReviewController` after 7+ days and 5+ sessions. Triggered when user pops back from a navigation screen.
 - `activeCount(for:)` — Returns count of filters for a given `FilterType`.
+- `exportFilters()` — `queueExport()` then `requestSheet(.filterExport)`. Disabled in the menu when there are no filters.
 
 ---
 
@@ -397,12 +398,12 @@ This pattern is general-purpose: any future `WhatsNewEntry` case can become acti
 
 ---
 
-## FilterImportPreviewView
+## FilterTransferPreviewView
 
-**File:** `View Layer/Screens/FilterImportPreviewView.swift`
-**Role:** Merge-only import preview. Presented as a Home sheet via `Screen.filterImport`. Uses `@StateObject` with `init(model:)`.
+**File:** `View Layer/Screens/FilterTransferPreviewView.swift`
+**Role:** Shared allow/deny/language picker for import and export. Home presents it as `.filterImport` or `.filterExport`. Uses `@StateObject` with `init(model:)`.
 
-The ViewModel reads `pendingPreview` from `filterImportExportManager` (no associated value on `Screen`). Confirm calls `importFilters`; Home toasts on dismiss from `clearPendingImport()`.
+The ViewModel reads `pendingPreview` and `pendingKind` from `filterTransferManager` (no associated value on `Screen`). Import confirm calls `importFilters`; Home toasts on dismiss from `clearPendingImport()`. Export confirm writes the file and presents the share sheet on this screen; the picker dismisses when share closes. Home `clearPendingExport()` on picker dismiss deletes the temp file.
 
 VoiceOver: close is labeled, section title is a header, select-all is labeled from the existing select strings, candidate rows combine text with the same target/match/case/folder labels as Filter List. Option icons are hidden from VoiceOver. Icon frames use `@ScaledMetric`.
 

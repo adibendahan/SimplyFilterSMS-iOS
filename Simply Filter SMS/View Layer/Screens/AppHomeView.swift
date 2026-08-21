@@ -315,11 +315,6 @@ struct AppHomeView: View {
                 sheetScreen.build()
             }
         }
-        .sheet(item: self.$model.exportFile) {
-            _ = self.model.completeInterruptedSheet()
-        } content: { file in
-            ShareSheet(items: [file.url])
-        }
         .alert("importFilters_title"~, isPresented: self.$model.showNothingToImportAlert) {
             Button("general_close"~, role: .cancel) { }
         } message: {
@@ -502,13 +497,6 @@ extension AppHomeView {
             }
         }
         var pendingScreenAfterDismiss: Screen?
-        @Published var exportFile: ExportFile? {
-            didSet {
-                if let oldValue, oldValue.url != self.exportFile?.url {
-                    self.appManager.filterImportExportManager.deleteExportFile(at: oldValue.url)
-                }
-            }
-        }
         @Published var showNothingToImportAlert = false {
             didSet {
                 if oldValue && !self.showNothingToImportAlert {
@@ -576,7 +564,7 @@ extension AppHomeView {
         }
 
         func handleDeepLink(url: URL) {
-            if self.appManager.filterImportExportManager.isExportFile(url) {
+            if self.appManager.filterTransferManager.isExportFile(url) {
                 self.importFromFileURL(url)
                 return
             }
@@ -590,13 +578,8 @@ extension AppHomeView {
         }
 
         func exportFilters() {
-            do {
-                let url = try self.appManager.filterImportExportManager.writeExportFile()
-                self.exportFile = ExportFile(url: url)
-            } catch {
-                AppManager.logger.error("exportFilters — failed: \(error.localizedDescription, privacy: .public)")
-                self.showNotification(.filterExportFailed)
-            }
+            _ = self.appManager.filterTransferManager.queueExport()
+            self.requestSheet(.filterExport)
         }
 
         func beginFileImport() {
@@ -635,8 +618,8 @@ extension AppHomeView {
 
         private func importFromFileURL(_ url: URL) {
             do {
-                let data = try self.appManager.filterImportExportManager.readFile(at: url)
-                _ = try self.appManager.filterImportExportManager.queueImport(data: data)
+                let data = try self.appManager.filterTransferManager.readFile(at: url)
+                _ = try self.appManager.filterTransferManager.queueImport(data: data)
                 if self.appManager.flowManager.recordLaunch(.filterImport) {
                     self.presentLaunch(preservingImportSession: true)
                 }
@@ -654,9 +637,13 @@ extension AppHomeView {
             }
 
             if screen == .filterImport, !self.isReplacingSheetForLaunch {
-                if let result = self.appManager.filterImportExportManager.clearPendingImport() {
+                if let result = self.appManager.filterTransferManager.clearPendingImport() {
                     self.showNotification(.filtersImported(added: result.added, skipped: result.skippedCount))
                 }
+            }
+
+            if screen == .filterExport {
+                self.appManager.filterTransferManager.clearPendingExport()
             }
 
             if screen == .chooseAccentColor {
@@ -671,8 +658,8 @@ extension AppHomeView {
                 return
             }
             if screen == .filterImport,
-               self.appManager.filterImportExportManager.pendingPreview.addedCount == 0 {
-                _ = self.appManager.filterImportExportManager.clearPendingImport()
+               self.appManager.filterTransferManager.pendingPreview.count == 0 {
+                _ = self.appManager.filterTransferManager.clearPendingImport()
                 self.appManager.flowManager.complete(.filterImport)
                 self.showNothingToImportAlert = true
                 return
@@ -705,7 +692,10 @@ extension AppHomeView {
 
         private func presentLaunch(preservingImportSession: Bool = false) {
             if self.sheetScreen == .filterImport && !preservingImportSession {
-                _ = self.appManager.filterImportExportManager.clearPendingImport()
+                _ = self.appManager.filterTransferManager.clearPendingImport()
+            }
+            if self.sheetScreen == .filterExport {
+                self.appManager.filterTransferManager.clearPendingExport()
             }
 
             self.replacePresentedSheetIfNeeded()
@@ -726,7 +716,7 @@ extension AppHomeView {
 
             let isBlockingFirstRun = self.sheetScreen == .enableExtension
                 && self.appManager.defaultsManager.isAppFirstRun
-            let hasSheet = self.sheetScreen != nil || self.exportFile != nil
+            let hasSheet = self.sheetScreen != nil
 
             guard hasSheet, !isBlockingFirstRun else {
                 self.presentNextFlow()
@@ -735,13 +725,12 @@ extension AppHomeView {
 
             self.isReplacingSheetForLaunch = true
             self.sheetScreen = nil
-            self.exportFile = nil
         }
 
         private var isHomeUnobstructed: Bool {
             return self.sheetScreen == nil
                 && self.pendingScreenAfterDismiss == nil
-                && !self.isImportExportPresenting
+                && !self.isFilterTransferPresenting
                 && !self.isReplacingSheetForLaunch
         }
 
@@ -895,7 +884,6 @@ extension AppHomeView {
         }
 
         func reset() {
-            self.exportFile = nil
             self.appManager.reset()
             self.refresh()
             self.presentNextFlow()
@@ -907,8 +895,8 @@ extension AppHomeView {
         private var didShowNotificationThisSession = false
         private var pendingNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
-        private var isImportExportPresenting: Bool {
-            return self.exportFile != nil || self.showNothingToImportAlert
+        private var isFilterTransferPresenting: Bool {
+            return self.showNothingToImportAlert
         }
         private var userIgnoresNetworkStatus: Bool {
             guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }

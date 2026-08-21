@@ -336,14 +336,18 @@
 "importFilters_nothingToAdd" = "Nothing new to import.";
 "importFilters_selectAll" = "Select All";
 "importFilters_selectNone" = "Select None";
+"exportFilters_title" = "Export Filters";
+"exportFilters_sectionTitle" = "Your Filters";
+"exportFilters_subtitle" = "Tap a list to choose which filters to include. Only selected filters go in the file.";
+"exportFilters_confirm" = "Export";
 "notification_import_title" = "Filters Imported";
 "notification_import_subtitle" = "%ld added, %ld skipped";
 "notification_importFailed_title" = "Import Failed";
 "notification_importFailed_subtitle" = "This file isn’t a valid filter export.";
 "notification_exportFailed_title" = "Export Failed";
 "notification_exportFailed_subtitle" = "Couldn’t create the export file.";
-"whatsNew_filterImportExport_title" = "Export & Import Filters";
-"whatsNew_filterImportExport_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
+"whatsNew_filterTransfer_title" = "Export & Import Filters";
+"whatsNew_filterTransfer_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
 "whatsNew_appearanceTouchup_title" = "Appearance Touch-up";
 "whatsNew_appearanceTouchup_desc" = "**Help** and **Test Your Filters** have a new look. You can also pick an **Accent Color** from the menu - buttons and icons follow it.";
 

@@ -23,7 +23,7 @@ class AppManager: AppManagerProtocol {
     var amazonS3Service: AmazonS3ServiceProtocol
     var reportMessageService: ReportMessageServiceProtocol
     var tipJarManager: TipJarManagerProtocol
-    var filterImportExportManager: FilterImportExportManagerProtocol
+    var filterTransferManager: FilterTransferManagerProtocol
     var flowManager: FlowManagerProtocol
     var debugDataManager: DebugDataManagerProtocol
 
@@ -47,7 +47,7 @@ class AppManager: AppManagerProtocol {
         self.amazonS3Service = amazonS3Service
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
-        self.filterImportExportManager = FilterImportExportManager(persistanceManager: persistanceManager)
+        self.filterTransferManager = FilterTransferManager(persistanceManager: persistanceManager)
         self.flowManager = FlowManager(defaultsManager: defaultsManager)
         self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
                                                  defaultsManager: defaultsManager,
@@ -111,7 +111,8 @@ class AppManager: AppManagerProtocol {
     func reset() {
         self.defaultsManager.reset()
         self.persistanceManager.clearAllUserData()
-        _ = self.filterImportExportManager.clearPendingImport()
+        _ = self.filterTransferManager.clearPendingImport()
+        self.filterTransferManager.clearPendingExport()
         self.flowManager.resetSession()
     }
     #endif // DEBUG
