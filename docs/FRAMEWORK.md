@@ -460,11 +460,9 @@ protocol HTTPServiceProtocol {
 }
 ```
 
-**URLRequestProtocol** defines: `path`, `method` (GET/POST/PUT/DELETE/PATCH), `task` (plain or with parameters), `errorDomain`, `auth` (whether to include API key).
+**URLRequestProtocol** defines: `path`, `method` (GET/POST/PUT/DELETE/PATCH), `task` (plain or with parameters), `errorDomain`.
 
 **HTTPServiceBase** — Common base for services. Holds `httpService: HTTPServiceProtocol` and a weak `networkSyncManager` reference.
-
-**Authentication:** When `auth: true`, reads `API_KEY` from `Info.plist` and adds it as `x-api-key` header.
 
 ### AmazonS3Service
 
@@ -477,7 +475,6 @@ protocol AmazonS3ServiceProtocol: AnyObject {
 ```
 
 - Fetches `GET /simply-filter-sms/1.0.0/automatic_filters.json` from S3
-- No authentication required
 - Guards against duplicate concurrent requests via `isFetching` flag
 - Returns `nil` when offline or already fetching
 
@@ -492,9 +489,8 @@ protocol ReportMessageServiceProtocol: AnyObject {
 }
 ```
 
-- Posts to `POST /ReportMessage` on AWS Lambda
-- Requires API key authentication
-- Body: `{ sender, body, type }` where type is "deny" or "allow"
+- Posts to `POST /report` (`https://api.ben-dahan.com/report`, public, no auth)
+- Body: `{ classification: { sender, bodies, type } }`
 - Returns `true` on HTTP 200
 
 ### Request/Response DTOs

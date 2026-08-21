@@ -12,7 +12,6 @@ class ReportMessageRequest: URLRequestProtocol {
     var method: HTTPMethod = .post
     var task: HTTPTask
     var errorDomain: String = "com.grizz.apps.dev.Simply-Filter-SMS.ReportMessageRequest"
-    var auth: Bool = false
 
     init(body: ReportMessageRequestBody) {
         let jsonDict: [String: Any] = [

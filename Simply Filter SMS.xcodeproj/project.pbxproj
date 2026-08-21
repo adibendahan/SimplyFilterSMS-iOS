@@ -314,7 +314,6 @@
 		69DE6ABA284AC11900366D10 /* EditableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableText.swift; sourceTree = "<group>"; };
 		69E2A0532D26E038002AA0EF /* CustomPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPlaceholderView.swift; sourceTree = "<group>"; };
 		69E6F5642790E98400AD6BFA /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
-		69ECF14628676122000380A2 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		69ECF147286763F4000380A2 /* ReportMessageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMessageService.swift; sourceTree = "<group>"; };
 		69ECF1492867646B000380A2 /* ReportMessageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMessageRequest.swift; sourceTree = "<group>"; };
 		69ECF14B28677505000380A2 /* ReportMessageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMessageResponse.swift; sourceTree = "<group>"; };
@@ -608,7 +607,6 @@
 				69CD70CD2770D4D100F91A2F /* Assets.xcassets */,
 				69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */,
 				69CD71082770D74300F91A2F /* Simply Filter SMS.entitlements */,
-				69ECF14628676122000380A2 /* Config.xcconfig */,
 				6941FE15277DE78B00B99539 /* Localizable.strings */,
 				6941FE1D277DE79100B99540 /* Localizable.stringsdict */,
 				69A2EE472F450B3B0033B191 /* TipJar.storekit */,
@@ -1355,7 +1353,6 @@
 		};
 		69CD70F02770D4D100F91A2F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 69ECF14628676122000380A2 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1395,7 +1392,6 @@
 		};
 		69CD70F12770D4D100F91A2F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 69ECF14628676122000380A2 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

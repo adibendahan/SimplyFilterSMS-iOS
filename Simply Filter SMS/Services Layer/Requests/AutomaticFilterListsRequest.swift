@@ -12,5 +12,4 @@ class AutomaticFilterListsRequest: URLRequestProtocol {
     var method: HTTPMethod = .get
     var task: HTTPTask = .requestPlain
     var errorDomain: String = "com.grizz.apps.dev.Simply-Filter-SMS.AutomaticFiltersRequest"
-    var auth : Bool = false
 }
