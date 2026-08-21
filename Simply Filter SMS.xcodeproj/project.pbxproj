@@ -19,18 +19,6 @@
 		35DB90809C90181516FBD284 /* ShieldGlintIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C18038215780F287F19CF9 /* ShieldGlintIcon.swift */; };
 		3A0C95A77D36D89D7D96A797 /* SharedUITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */; };
 		3E71FB36F8B1A765DE7AD92F /* mock_TipJarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC0828F3E9490539D2623CD /* mock_TipJarManager.swift */; };
-		A11CE47C01000000C0100002 /* ChooseAccentColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11CE47C01000000C0100001 /* ChooseAccentColorView.swift */; };
-		A11CE47C01000000C0100004 /* DefaultsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11CE47C01000000C0100003 /* DefaultsManagerTests.swift */; };
-		A1B2C3D4E5F60718293A1001 /* FilterTransferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0001 /* FilterTransferManager.swift */; };
-		A1B2C3D4E5F60718293A1002 /* FilterTransferManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0002 /* FilterTransferManagerProtocol.swift */; };
-		A1B2C3D4E5F60718293A1003 /* FilterTransferPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0003 /* FilterTransferPreviewView.swift */; };
-		A1B2C3D4E5F60718293A1004 /* FilterTransferManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0004 /* FilterTransferManagerTests.swift */; };
-		A1B2C3D4E5F60718293A1005 /* mock_FilterTransferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0005 /* mock_FilterTransferManager.swift */; };
-		A1B2C3D4E5F60718293A1006 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0006 /* ShareSheet.swift */; };
-		A1B2C3D4E5F60718293A1010 /* FlowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0010 /* FlowManager.swift */; };
-		A1B2C3D4E5F60718293A1011 /* FlowManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0011 /* FlowManagerProtocol.swift */; };
-		A1B2C3D4E5F60718293A1012 /* mock_FlowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0012 /* mock_FlowManager.swift */; };
-		A1B2C3D4E5F60718293A1013 /* FlowManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0013 /* FlowManagerTests.swift */; };
 		48AC7E6DAD727BDDB0387677 /* SharedUITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */; };
 		552995F006FF06B770B5DDF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C2217AE047F148D8D0D9052 /* Assets.xcassets */; };
 		5638F2EE8B314143A89804A08B3EF997 /* InstantTouchDisabler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110F48EF7181478C8AE7B577C0DF518C /* InstantTouchDisabler.swift */; };
@@ -55,7 +43,6 @@
 		69300B8627A9C4A700DF7982 /* TestFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69300B8527A9C4A700DF7982 /* TestFiltersView.swift */; };
 		6931BAEA27BB270E00636439 /* AmazonS3ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */; };
 		69398EBC27B0A613003C5123 /* FilterListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69398EBB27B0A613003C5123 /* FilterListRowView.swift */; };
-		B4E81F0B2F44C00100BF8D01 /* TestFilterResultRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E81F0A2F44C00100BF8D01 /* TestFilterResultRow.swift */; };
 		6941FE13277DE78B00B99539 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6941FE15277DE78B00B99539 /* Localizable.strings */; };
 		6941FE1A277E19CC00B99539 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE19277E19CC00B99539 /* AboutView.swift */; };
 		6941FE1C277FDBE700B99539 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6941FE1B277FDBE700B99539 /* MailView.swift */; };
@@ -123,6 +110,18 @@
 		86A055BD32945493D58DE66B /* URLRequestProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4097627B94A9100749552 /* URLRequestProtocol.swift */; };
 		8CF7C6F4EE2D0B0CB0293C01 /* ReportMessageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69ECF1492867646B000380A2 /* ReportMessageRequest.swift */; };
 		8F612F2343D745C9B9BEDDFD /* SpinningLoaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B6CA332807451CB42EB0B4 /* SpinningLoaderView.swift */; };
+		A11CE47C01000000C0100002 /* ChooseAccentColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11CE47C01000000C0100001 /* ChooseAccentColorView.swift */; };
+		A11CE47C01000000C0100004 /* DefaultsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11CE47C01000000C0100003 /* DefaultsManagerTests.swift */; };
+		A1B2C3D4E5F60718293A1001 /* FilterTransferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0001 /* FilterTransferManager.swift */; };
+		A1B2C3D4E5F60718293A1002 /* FilterTransferManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0002 /* FilterTransferManagerProtocol.swift */; };
+		A1B2C3D4E5F60718293A1003 /* FilterTransferPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0003 /* FilterTransferPreviewView.swift */; };
+		A1B2C3D4E5F60718293A1004 /* FilterTransferManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0004 /* FilterTransferManagerTests.swift */; };
+		A1B2C3D4E5F60718293A1005 /* mock_FilterTransferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0005 /* mock_FilterTransferManager.swift */; };
+		A1B2C3D4E5F60718293A1006 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0006 /* ShareSheet.swift */; };
+		A1B2C3D4E5F60718293A1010 /* FlowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0010 /* FlowManager.swift */; };
+		A1B2C3D4E5F60718293A1011 /* FlowManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0011 /* FlowManagerProtocol.swift */; };
+		A1B2C3D4E5F60718293A1012 /* mock_FlowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0012 /* mock_FlowManager.swift */; };
+		A1B2C3D4E5F60718293A1013 /* FlowManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0013 /* FlowManagerTests.swift */; };
 		AA03DD65D4B6D2B613076E42 /* ReportMessageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69ECF14B28677505000380A2 /* ReportMessageResponse.swift */; };
 		AA1B2C3D4E5F6A7B8C9D0E1F /* AddFilterViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B2C3D4E5F6A7B8C9D0E1E /* AddFilterViewModelTests.swift */; };
 		AA4BCED7D8924F6E9A3B5C04 /* CallingCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1BCED7D8924F6E9A3B5C01 /* CallingCodes.swift */; };
@@ -132,6 +131,7 @@
 		AC3A45A0754E4FCF8DF4078D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6941FE15277DE78B00B99539 /* Localizable.strings */; };
 		AD52D9D8E84445009A675029 /* GlassPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADE64A0B14A4D788A30E40A /* GlassPicker.swift */; };
 		ADD90F4F6CA2754AD5451D71 /* SharedUITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */; };
+		B4E81F0B2F44C00100BF8D01 /* TestFilterResultRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E81F0A2F44C00100BF8D01 /* TestFilterResultRow.swift */; };
 		B7148B033514FBE9227AB175 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constants.swift */; };
 		BA05827BCDAD8210282FD0B0 /* TipJarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64956935AAF96BFE1AD24A37 /* TipJarManager.swift */; };
 		BDAB65C61C6E4B08B936367E /* TipJarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A340657CC124389AFB10F39 /* TipJarView.swift */; };
@@ -212,18 +212,6 @@
 		4E6E3998CCF6470F8F6A40A36EE19752 /* RefreshControlDisabler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlDisabler.swift; sourceTree = "<group>"; };
 		4EC977832345515DCFE3C478 /* EnableExtensionStepProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionStepProtocol.swift; sourceTree = "<group>"; };
 		5EC0828F3E9490539D2623CD /* mock_TipJarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_TipJarManager.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0001 /* FilterTransferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTransferManager.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0002 /* FilterTransferManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTransferManagerProtocol.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0003 /* FilterTransferPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTransferPreviewView.swift; sourceTree = "<group>"; };
-		A11CE47C01000000C0100001 /* ChooseAccentColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseAccentColorView.swift; sourceTree = "<group>"; };
-		A11CE47C01000000C0100003 /* DefaultsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManagerTests.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0004 /* FilterTransferManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTransferManagerTests.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0005 /* mock_FilterTransferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_FilterTransferManager.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0006 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0010 /* FlowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowManager.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0011 /* FlowManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowManagerProtocol.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0012 /* mock_FlowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_FlowManager.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A0013 /* FlowManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowManagerTests.swift; sourceTree = "<group>"; };
 		64956935AAF96BFE1AD24A37 /* TipJarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipJarManager.swift; sourceTree = "<group>"; };
 		690D709B27B31DC0001880DA /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		690F054D278200B60036553B /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
@@ -246,7 +234,6 @@
 		69300B8527A9C4A700DF7982 /* TestFiltersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFiltersView.swift; sourceTree = "<group>"; };
 		6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonS3ServiceTests.swift; sourceTree = "<group>"; };
 		69398EBB27B0A613003C5123 /* FilterListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListRowView.swift; sourceTree = "<group>"; };
-		B4E81F0A2F44C00100BF8D01 /* TestFilterResultRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFilterResultRow.swift; sourceTree = "<group>"; };
 		6941FE14277DE78B00B99539 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6941FE16277DE78E00B99539 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6941FE17277DE78F00B99540 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -334,6 +321,18 @@
 		94CAF2E81C46665E0069B1AE /* Reporting Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Reporting Extension.entitlements"; sourceTree = "<group>"; };
 		986FCD84F7D2AE7EDB341A2D /* TipJarManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipJarManagerProtocol.swift; sourceTree = "<group>"; };
 		9F0A29F7E90E686EC530EA10 /* ReportingConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportingConfirmationView.swift; sourceTree = "<group>"; };
+		A11CE47C01000000C0100001 /* ChooseAccentColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseAccentColorView.swift; sourceTree = "<group>"; };
+		A11CE47C01000000C0100003 /* DefaultsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManagerTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0001 /* FilterTransferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTransferManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0002 /* FilterTransferManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTransferManagerProtocol.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0003 /* FilterTransferPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTransferPreviewView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0004 /* FilterTransferManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTransferManagerTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0005 /* mock_FilterTransferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_FilterTransferManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0006 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0010 /* FlowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0011 /* FlowManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowManagerProtocol.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0012 /* mock_FlowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_FlowManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0013 /* FlowManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowManagerTests.swift; sourceTree = "<group>"; };
 		AA001122334455667788990A /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AA001122334455667788990B /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = it; path = it.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		AA1B2C3D4E5F6A7B8C9D0E1E /* AddFilterViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFilterViewModelTests.swift; sourceTree = "<group>"; };
@@ -341,6 +340,7 @@
 		AA2BCED7D8924F6E9A3B5C02 /* CountryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryListView.swift; sourceTree = "<group>"; };
 		AA3BCED7D8924F6E9A3B5C03 /* CallingCodesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallingCodesTests.swift; sourceTree = "<group>"; };
 		AA8BCED7D8924F6E9A3B5C08 /* Simply_Filter_SMS 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Simply_Filter_SMS 4.xcdatamodel"; sourceTree = "<group>"; };
+		B4E81F0A2F44C00100BF8D01 /* TestFilterResultRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFilterResultRow.swift; sourceTree = "<group>"; };
 		BF981F0B1B564B22AF8F9F0D /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		D6B6CA332807451CB42EB0B4 /* SpinningLoaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinningLoaderView.swift; sourceTree = "<group>"; };
 		DB47C925DCD65DCB268C31FF /* HorizontalDragRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalDragRecognizer.swift; sourceTree = "<group>"; };
@@ -1138,13 +1138,13 @@
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = "Reporting Extension/Reporting Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202608141350;
+				CURRENT_PROJECT_VERSION = 202608220100;
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Reporting Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Reporting Extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
-				MARKETING_VERSION = 3.0.5;
+				MARKETING_VERSION = 3.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Report-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1359,7 +1359,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 202608141350;
+				CURRENT_PROJECT_VERSION = 202608220100;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = AL28LDR9PU;
 				ENABLE_PREVIEWS = YES;
@@ -1377,7 +1377,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.5;
+				MARKETING_VERSION = 3.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "May 22: Simply Filter SMS - Dev";
@@ -1398,7 +1398,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Simply Filter SMS/Resources/Simply Filter SMS.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202608141350;
+				CURRENT_PROJECT_VERSION = 202608220100;
 				DEVELOPMENT_ASSET_PATHS = "\"Simply Filter SMS/Resources/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1415,7 +1415,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.5;
+				MARKETING_VERSION = 3.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1432,7 +1432,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202608141350;
+				CURRENT_PROJECT_VERSION = 202608220100;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1443,7 +1443,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.0.5;
+				MARKETING_VERSION = 3.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1458,7 +1458,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Message Filter Extension/Simply Filter SMS Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202608141350;
+				CURRENT_PROJECT_VERSION = 202608220100;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Message Filter Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Extension";
@@ -1469,7 +1469,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.0.5;
+				MARKETING_VERSION = 3.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1485,13 +1485,13 @@
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = "Reporting Extension/Reporting Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202608141350;
+				CURRENT_PROJECT_VERSION = 202608220100;
 				DEVELOPMENT_TEAM = AL28LDR9PU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Reporting Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Simply Filter SMS Reporting Extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
-				MARKETING_VERSION = 3.0.5;
+				MARKETING_VERSION = 3.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Report-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
