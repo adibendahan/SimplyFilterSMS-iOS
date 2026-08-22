@@ -280,7 +280,7 @@ struct AppHomeView: View {
                     .background(Color.listBackgroundColor(for: colorScheme))
             }
         } // NavigationSplitView
-        .modifier(EmbeddedFooterView {
+        .modifier(EmbeddedFooterView(isHidden: self.model.sheetScreen != nil) {
             guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
             self.model.requestSheet(.about)
         })

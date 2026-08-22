@@ -9,7 +9,6 @@ import SwiftUI
 
 struct FooterView: View {
     var onTap: (() ->())? = nil
-    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(spacing: 0) {
@@ -39,6 +38,8 @@ struct FooterView: View {
 }
 
 private struct FooterBackground: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
@@ -46,11 +47,13 @@ private struct FooterBackground: ViewModifier {
                     Color.clear
                         .glassEffect(.regular, in: .rect(cornerRadius: 0))
                         .ignoresSafeArea(.container, edges: .bottom)
+                        .id(colorScheme)
                 }
         } else {
             content
                 .background(.ultraThinMaterial)
                 .ignoresSafeArea(.container, edges: .bottom)
+                .id(colorScheme)
         }
     }
 }
