@@ -9,15 +9,18 @@ import SwiftUI
 
 
 struct EmbeddedFooterView: ViewModifier {
+    var isHidden: Bool = false
     var onTap: (() ->())? = nil
     
     func body(content: Content) -> some View {
         ZStack (alignment: .bottom) {
             content
                 .accessibilitySortPriority(1)
-            FooterView(onTap: onTap)
-                .ignoresSafeArea(.keyboard, edges: .all)
-                .allowsHitTesting(!ProcessInfo.processInfo.isInTestingMode)
+            if !isHidden {
+                FooterView(onTap: onTap)
+                    .ignoresSafeArea(.keyboard, edges: .all)
+                    .allowsHitTesting(!ProcessInfo.processInfo.isInTestingMode)
+            }
         }
     }
 }

@@ -309,7 +309,7 @@ private struct NotificationGlassBackground: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
-                .glassEffect(.clear.interactive(), in: shape)
+                .glassEffect(.clear, in: shape)
                 .containerShape(shape)
         } else {
             content
@@ -323,6 +323,7 @@ private struct NotificationActionChipBackground: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
+                .contentShape(Capsule())
         } else {
             content
                 .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))

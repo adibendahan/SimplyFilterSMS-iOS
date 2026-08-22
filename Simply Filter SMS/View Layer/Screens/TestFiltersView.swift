@@ -58,6 +58,7 @@ struct TestFiltersView: View {
                                 .accessibilityHidden(true)
 
                             TextEditor(text: $model.text)
+                                .scrollContentBackground(.hidden)
                                 .frame(minHeight: 80, idealHeight: 80, alignment: .top)
                                 .focused($focusedField, equals: .text)
                                 .multilineTextAlignment(.leading)
