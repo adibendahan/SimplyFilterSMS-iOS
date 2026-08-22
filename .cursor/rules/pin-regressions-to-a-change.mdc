@@ -1,0 +1,22 @@
+---
+description: Do not guess at regressions. Find the commit that broke working behavior, then fix that.
+alwaysApply: true
+---
+
+# Pin regressions to a recent change
+
+If something **used to work** and then stopped, do not invent a new architecture or a vague framework theory and start rewriting.
+
+## Do this instead
+
+1. Treat “it worked, then it didn’t” as a **regression**, not a missing feature.
+2. Find when it last worked (`git log` / `git blame` on the path that used to work).
+3. Diff **that path** from the last good commit to `HEAD`. Name the commit that changed behavior.
+4. Fix **that** change. Leave the old working structure alone unless the diff proves it is the problem.
+5. Tell the user the breaking commit and what it did, in plain words. No jargon.
+
+## Never do
+
+- Rewrite unrelated handling because a tap, gesture, or theme “might” be the cause.
+- Ship a speculative fix and only look at history after being called out.
+- Explain the bug with acronyms or framework trivia the user did not ask for.

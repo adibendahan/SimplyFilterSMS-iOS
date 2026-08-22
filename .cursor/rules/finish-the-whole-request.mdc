@@ -1,0 +1,26 @@
+---
+description: Finish the whole request. Do not ship the smallest reply and wait to be told the rest.
+alwaysApply: true
+---
+
+# Finish the whole request
+
+The failure mode is **doing the smallest thing that answers the last message**, then waiting for the user to find the rest.
+
+If you are about to write generic bullets and call that done, stop. Do the actual class of work, all the way through.
+
+## What complete means
+
+- A feature follows the patterns already in the project. Do not invent a parallel coordinator, a wrapper type, or a placeholder “for now.”
+- UI matches existing screens: spacing, titles, toolbar, close control, button styles. Propose source-language copy first; do not translate a draft.
+- After two failures on a side quest, say so and offer to drop it. Do not keep generating files.
+- Fix the path they named. If they gave an order of operations, that order is the spec. Tests before more conditionals.
+- Cleanup means hunt. Grep what they killed. Delete the file. Remove unused strings. Do not leave leftovers for them to find.
+- “Don’t touch code” means don’t. No tiny follow-up. If tools wrote bytes, say which files. Finish or revert.
+- Review findings must be real. If the user cannot physically do two things at once, it is not a race. Do not flag existing product behavior as a new bug.
+- Small asks stay small. Diagrams are mermaid or ASCII, not a generated image.
+
+## Also
+
+- Obey the last standing order at every call site, not just the one you touched.
+- Explain like they are looking at the phone, not at a framework story.
