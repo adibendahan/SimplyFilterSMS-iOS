@@ -29,23 +29,30 @@ class SnapshotsTestCase: ApplicationTestCase {
         app.tap(.debugToolsButton)
         app.tap(.loadDebugDataMenuButton)
         self.sleep(seconds: 5)
+        app.waitForHittable(app.button(.automaticFilterLink))
+        let allowLink = app.button(.allowFiltersLink)
+        XCTAssertTrue(allowLink.waitForExistence(timeout: 8))
+        let populated = self.expectation(for: NSPredicate(format: "label MATCHES %@", ".*[1-9].*"), evaluatedWith: allowLink)
+        XCTAssertEqual(XCTWaiter.wait(for: [populated], timeout: 15), .completed, "Debug filters did not appear on Home")
+        self.waitForUIToSettle()
 
         if !isPad {
-            snapshot("01.applicationHome")
+            snapshotSettled("01.applicationHome")
         }
         
         app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_ON"~)
         app.tap(.automaticFilterLink)
-        snapshot("02.automaticFilters")
+        app.waitForHittable(app.switches.firstMatch)
+        snapshotSettled("02.automaticFilters")
         app.tap(.closeButton)
         app.buttons["BackButton"].firstMatch.conditionalTap(!isPad)
-        self.sleep(seconds: 1)
+        self.waitForUIToSettle()
 
         app.tap(.countryAllowlistButton)
-        self.sleep(seconds: 2)
-        snapshot("08.countryList")
+        app.waitForHittable(app.button(.closeButton))
+        snapshotSettled("08.countryList")
         app.tap(.closeButton)
-        self.sleep(seconds: isPad ? 2.0 : 0.5)
+        self.waitForUIToSettle()
 
 
         // MARK: addFilter Screenshot
@@ -93,34 +100,52 @@ class SnapshotsTestCase: ApplicationTestCase {
 
         // MARK: denyFilters Screenshot
         app.conditionalTap(.denyFiltersLink, isPad)
-        snapshot("03.denyFilters")
+        snapshotSettled("03.denyFilters")
 
 
         // MARK: allowFilters Screenshot
         app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
         app.tap(.allowFiltersLink)
-        snapshot("04.allowFilters")
+        snapshotSettled("04.allowFilters")
         app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
 
 
         // MARK: denyLanguages Screenshot
         app.conditionalSwipeUp(!isPad)
         app.tap(.denyLanguageLink)
-        self.sleep(seconds: 1)
+        app.waitForHittable(app.button(.addFilterButton))
+        self.waitForUIToSettle()
         app.tap(.addFilterButton)
-        snapshot("06.denyLanguages")
+        app.waitForHittable(app.button(.closeButton))
+        snapshotSettled("06.denyLanguages")
         app.tap(.closeButton)
         app.buttons["filterList_filters"~].firstMatch.conditionalTap(!isPad)
+        self.waitForUIToSettle()
 
 
         // MARK: testFilters Screenshot
         app.tap(.appMenuButton)
         app.tap(.filterToolsMenuButton)
         app.tap(.testYourFiltersMenuButton)
-        app.textViews[TestIdentifier.testBodyInput.rawValue].firstMatch.typeText("Your Apple ID Code is: 444291. Don't share it with anyone.")
-        app.textFields[TestIdentifier.testSenderInput.rawValue].firstMatch.tap()
-        app.textFields[TestIdentifier.testSenderInput.rawValue].firstMatch.typeText("Apple\n")
-        snapshot("07.testFilters")
+
+        let senderField = app.textField(.testSenderInput)
+        let bodyView = app.textField(.testBodyInput)
+        XCTAssertTrue(bodyView.waitForExistence(timeout: 5), "Test Filters message field missing")
+        self.sleep(seconds: 1)
+
+        bodyView.tap()
+        bodyView.typeText("Your Apple ID Code is: 444291. Don't share it with anyone.")
+        senderField.tap()
+        senderField.typeText("Apple\n")
+
+        let resultVisible =
+            app.staticTexts["testFilters_resultJunk"~].waitForExistence(timeout: 5) ||
+            app.staticTexts["testFilters_resultPromotion"~].waitForExistence(timeout: 2) ||
+            app.staticTexts["testFilters_resultTransaction"~].waitForExistence(timeout: 2) ||
+            app.staticTexts["testFilters_resultAllowed"~].waitForExistence(timeout: 2)
+        XCTAssertTrue(resultVisible, "Live test result did not appear")
+        app.waitForKeyboardToDismiss()
+        snapshotSettled("07.testFilters")
     }
     
 }
