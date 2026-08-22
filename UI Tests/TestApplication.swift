@@ -51,7 +51,10 @@ class TestApplication: XCUIApplication {
         XCTAssert(self.staticTexts[type.name].exists)
         
         self.tap(.addFilterButton)
+        self.waitForHittable(self.button(.expandButton))
+        self.testCase.waitForUIToSettle()
         self.tap(.expandButton)
+        self.testCase.waitForUIToSettle()
         
         if let denyFolderType = denyFolderType {
             self.buttonContaining(denyFolderType.name).forceTap()
@@ -61,15 +64,37 @@ class TestApplication: XCUIApplication {
         self.buttonContaining(filterMatching.name).forceTap()
         self.buttonContaining(filterCase.name).forceTap()
         self.textField(.filterText).forceTap()
-        self.testCase.sleep(seconds: 2)
+        self.testCase.sleep(seconds: 1)
         
         self.textField(.filterText).typeText(text + "\n")
+        self.waitForKeyboardToDismiss()
+        self.waitForHittable(self.button(.addFilteraddFilterButton))
         
         if let screenshotName = screenshotName {
-            testCase.snapshot(screenshotName)
+            testCase.snapshotSettled(screenshotName)
         }
         
         self.tap(.addFilteraddFilterButton)
+        self.testCase.waitForUIToSettle()
+    }
+
+    func waitForHittable(_ element: XCUIElement, timeout: TimeInterval = 8) {
+        XCTAssertTrue(element.waitForExistence(timeout: timeout), "Missing \(element)")
+        let expectation = testCase.expectation(for: NSPredicate(format: "isHittable == 1"), evaluatedWith: element)
+        let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
+        XCTAssertEqual(result, .completed, "Timed out waiting until hittable: \(element)")
+    }
+
+    func waitForKeyboardToDismiss(timeout: TimeInterval = 6) {
+        let keyboard = self.keyboards.firstMatch
+        guard keyboard.exists else { return }
+        if self.buttons["Done"].exists {
+            self.buttons["Done"].tap()
+        } else {
+            self.navigationBars.firstMatch.tap()
+        }
+        let dismissed = testCase.expectation(for: NSPredicate(format: "exists == 0"), evaluatedWith: keyboard)
+        _ = XCTWaiter.wait(for: [dismissed], timeout: timeout)
     }
     
     func buttonExists(_ testIdentifier: TestIdentifier) -> Bool {
@@ -83,9 +108,9 @@ class TestApplication: XCUIApplication {
     func textField(_ testIdentifier: TestIdentifier) -> XCUIElement {
         switch testIdentifier {
         case .testSenderInput:
-            return self.tables.textFields[testIdentifier.rawValue].firstMatch
+            return self.textFields[testIdentifier.rawValue].firstMatch
         case .testBodyInput:
-            return self.tables.textViews[testIdentifier.rawValue].firstMatch
+            return self.textViews[testIdentifier.rawValue].firstMatch
         default:
             return self.textFields.element(matching: .textField, identifier: testIdentifier.rawValue).firstMatch
         }
