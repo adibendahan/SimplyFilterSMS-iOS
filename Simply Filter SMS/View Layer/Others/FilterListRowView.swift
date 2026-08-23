@@ -17,15 +17,12 @@ struct FilterListRowView: View {
     @ObservedObject var model: ViewModel
     @Environment(\.editMode) private var editMode
     @State private var isEditingText = false
+    @State private var optionChromeVisible = true
     @State private var showDuplicateError = false
     @State private var showInvalidRegexError = false
     @State private var dotOpacity: Double = 0
 
     @ScaledMetric(relativeTo: .body) private var optionIconSize: CGFloat = 15
-
-    private var showOptionChrome: Bool {
-        !self.isEditingText && self.editMode?.wrappedValue.isEditing != true
-    }
 
     var body: some View {
         HStack (alignment: .center) {
@@ -75,6 +72,7 @@ struct FilterListRowView: View {
                     onEditingChanged: { isEditing in
                         withAnimation {
                             self.isEditingText = isEditing
+                            self.updateOptionChromeVisibility()
                             if !isEditing {
                                 self.showDuplicateError = false
                                 self.showInvalidRegexError = false
@@ -176,11 +174,27 @@ struct FilterListRowView: View {
                     .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.denyFolderType.name))
                 }
             }
-            .opacity(self.showOptionChrome ? 1 : 0)
-            .allowsHitTesting(self.showOptionChrome)
+            .opacity(self.optionChromeVisible ? 1 : 0)
+            .allowsHitTesting(self.optionChromeVisible)
+            .accessibilityHidden(!self.optionChromeVisible)
         }  // HStack
-        .allowsHitTesting(self.editMode?.wrappedValue.isEditing != true)
+        .onAppear {
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                self.updateOptionChromeVisibility()
+            }
+        }
+        .onChange(of: self.editMode?.wrappedValue.isEditing) { _ in
+            withAnimation {
+                self.updateOptionChromeVisibility()
+            }
+        }
         .accessibilityElement(children: .contain)
+    }
+
+    private func updateOptionChromeVisibility() {
+        self.optionChromeVisible = !self.isEditingText && self.editMode?.wrappedValue.isEditing != true
     }
 
     @ViewBuilder

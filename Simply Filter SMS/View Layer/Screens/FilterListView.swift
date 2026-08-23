@@ -41,6 +41,7 @@ struct FilterListView: View {
                         focusedFilterID: $focusedFilterID,
                         model: rowModel)
                     .environment(\.editMode, $model.editMode)
+                    .deleteDisabled(self.model.editMode.isEditing)
                     .id(rowModel.id)
                     .tag(rowModel.filter)
                 }
@@ -79,6 +80,7 @@ struct FilterListView: View {
                             focusedFilterID: $focusedFilterID,
                             model: rowModel)
                         .environment(\.editMode, $model.editMode)
+                        .deleteDisabled(self.model.editMode.isEditing)
                         .id(rowModel.id)
                         .tag(rowModel.filter)
                     }
@@ -128,10 +130,11 @@ struct FilterListView: View {
             }
         })
         .environment(\.editMode, $model.editMode)
-        .modifier(DismissKeyboardOnBackgroundTap(isEnabled: !self.model.editMode.isEditing) {
+        .onTapGesture {
+            guard !self.model.editMode.isEditing else { return }
             focusedFilterID = nil
             hideKeyboard()
-        })
+        }
         .onChange(of: model.newlyAddedFilter) { newFilter in
             guard let filter = newFilter, let id = filter.uuid else { return }
             dotFilterID = id
@@ -155,7 +158,9 @@ struct FilterListView: View {
                     withAnimation {
                         self.model.deleteFilters(toDelete)
                     }
-                    self.model.editMode = .inactive
+                    withAnimation {
+                        self.model.editMode = .inactive
+                    }
                 },
                 label: {
                     Text(String(format: "filterList_deleteFiltersCount"~, self.model.selectedFilters.count))
@@ -371,20 +376,6 @@ extension FilterListView {
         func deleteFilters(_ filters: Set<Filter>) {
             self.appManager.persistanceManager.deleteFilters(filters)
             self.refresh()
-        }
-    }
-}
-
-
-private struct DismissKeyboardOnBackgroundTap: ViewModifier {
-    let isEnabled: Bool
-    let onTap: () -> Void
-
-    func body(content: Content) -> some View {
-        if isEnabled {
-            content.onTapGesture(perform: onTap)
-        } else {
-            content
         }
     }
 }
