@@ -42,12 +42,13 @@ struct FilterListView: View {
                         model: rowModel)
                     .environment(\.editMode, $model.editMode)
                     .id(rowModel.id)
+                    .tag(rowModel.filter)
                 }
                 .onDelete {
                     self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regularRowViewModels)
                 }
             } header: {
-                if self.model.regularFilters.count > 0 {
+                if !self.model.regularRowViewModels.isEmpty {
                     HStack {
                         Text(self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~)
 
@@ -58,7 +59,7 @@ struct FilterListView: View {
                     }
                 }
             } footer: {
-                if self.model.regexFilters.isEmpty {
+                if self.model.regexRowViewModels.isEmpty {
                     VStack {
                         Text(.init(self.model.footer))
 
@@ -70,7 +71,7 @@ struct FilterListView: View {
                 }
             }
 
-            if !self.model.regexFilters.isEmpty {
+            if !self.model.regexRowViewModels.isEmpty {
                 Section {
                     ForEach(self.model.regexRowViewModels, id: \.id) { rowModel in
                         FilterListRowView(
@@ -79,6 +80,7 @@ struct FilterListView: View {
                             model: rowModel)
                         .environment(\.editMode, $model.editMode)
                         .id(rowModel.id)
+                        .tag(rowModel.filter)
                     }
                     .onDelete {
                         self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regexRowViewModels)
@@ -126,10 +128,10 @@ struct FilterListView: View {
             }
         })
         .environment(\.editMode, $model.editMode)
-        .onTapGesture {
+        .modifier(DismissKeyboardOnBackgroundTap(isEnabled: !self.model.editMode.isEditing) {
             focusedFilterID = nil
             hideKeyboard()
-        }
+        })
         .onChange(of: model.newlyAddedFilter) { newFilter in
             guard let filter = newFilter, let id = filter.uuid else { return }
             dotFilterID = id
@@ -148,11 +150,12 @@ struct FilterListView: View {
         if self.model.editMode.isEditing && self.model.selectedFilters.count > 0 {
             Button(
                 action: {
+                    let toDelete = self.model.selectedFilters
+                    self.model.selectedFilters = Set()
                     withAnimation {
-                        self.model.deleteFilters(self.model.selectedFilters)
-                        self.model.selectedFilters = Set()
-                        self.model.refresh()
+                        self.model.deleteFilters(toDelete)
                     }
+                    self.model.editMode = .inactive
                 },
                 label: {
                     Text(String(format: "filterList_deleteFiltersCount"~, self.model.selectedFilters.count))
@@ -268,13 +271,11 @@ extension FilterListView {
         @Published var addLanguageViewModel: LanguageListView.ViewModel? = nil
         @Published private(set) var newlyAddedFilter: Filter? = nil
 
-        var regularFilters: [Filter] { filters.filter { $0.filterMatching != .regex } }
-        var regexFilters: [Filter] { filters.filter { $0.filterMatching == .regex } }
         var regularRowViewModels: [FilterListRowView.ViewModel] {
-            self.rowViewModels.filter({ $0.filter.filterMatching != .regex })
+            self.rowViewModels.filter({ $0.filterMatching != .regex })
         }
         var regexRowViewModels: [FilterListRowView.ViewModel] {
-            self.rowViewModels.filter({ $0.filter.filterMatching == .regex })
+            self.rowViewModels.filter({ $0.filterMatching == .regex })
         }
         
         init(filterType: FilterType,
@@ -366,15 +367,24 @@ extension FilterListView {
             let toDelete = Set(offsets.map { rowViewModels[$0].filter })
             self.deleteFilters(toDelete)
         }
-        
+
         func deleteFilters(_ filters: Set<Filter>) {
-            guard !filters.isEmpty else { return }
             self.appManager.persistanceManager.deleteFilters(filters)
-            withAnimation {
-                self.filters.removeAll { filters.contains($0) }
-                self.selectedFilters.subtract(filters)
-                self.updateRowViewModels()
-            }
+            self.refresh()
+        }
+    }
+}
+
+
+private struct DismissKeyboardOnBackgroundTap: ViewModifier {
+    let isEnabled: Bool
+    let onTap: () -> Void
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content.onTapGesture(perform: onTap)
+        } else {
+            content
         }
     }
 }

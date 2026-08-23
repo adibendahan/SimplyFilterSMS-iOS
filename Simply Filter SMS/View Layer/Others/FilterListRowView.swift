@@ -15,12 +15,17 @@ struct FilterListRowView: View {
     var dotFilterID: UUID?
     var focusedFilterID: FocusState<UUID?>.Binding
     @ObservedObject var model: ViewModel
+    @Environment(\.editMode) private var editMode
     @State private var isEditingText = false
     @State private var showDuplicateError = false
     @State private var showInvalidRegexError = false
     @State private var dotOpacity: Double = 0
 
     @ScaledMetric(relativeTo: .body) private var optionIconSize: CGFloat = 15
+
+    private var showOptionChrome: Bool {
+        !self.isEditingText && self.editMode?.wrappedValue.isEditing != true
+    }
 
     var body: some View {
         HStack (alignment: .center) {
@@ -48,9 +53,8 @@ struct FilterListRowView: View {
                     }
                 }
 
-            if self.model.filter.filterType == .denyLanguage,
-               let filterText = self.model.filter.text {
-                let blockedLanguage = NLLanguage(filterText: filterText)
+            if self.model.filterType == .denyLanguage {
+                let blockedLanguage = NLLanguage(filterText: self.model.text)
                 if blockedLanguage != .undetermined,
                    let localizedName = blockedLanguage.localizedName {
                     Text(localizedName)
@@ -62,7 +66,7 @@ struct FilterListRowView: View {
                     focusID: model.id,
                     focusedID: focusedFilterID,
                     minimumCharacters: kMinimumFilterLength,
-                    attributedText: self.model.filter.filterMatching == .regex ? { $0.highlightedAsRegex } : nil,
+                    attributedText: self.model.filterMatching == .regex ? { $0.highlightedAsRegex } : nil,
                     onCommit: {
                         self.model.updateFilter(filterText: self.model.text)
                         self.showDuplicateError = false
@@ -81,7 +85,7 @@ struct FilterListRowView: View {
                         self.showDuplicateError = self.model.isLiveDuplicate(text: text)
                         self.showInvalidRegexError = self.model.isLiveInvalidRegex(text: text)
                     })
-                    .font(self.model.filter.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
+                    .font(self.model.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
 
                 if self.isEditingText && self.showDuplicateError {
                     FilterBadge(text: "addFilter_duplicate"~, color: .red, systemImage: "xmark.circle.fill")
@@ -92,85 +96,90 @@ struct FilterListRowView: View {
             
             Spacer()
             
-            if !self.isEditingText && self.model.filter.filterType.supportsAdvancedOptions {
-                Menu {
-                    Picker(selection: Binding(
-                        get: { self.model.filter.filterTarget },
-                        set: { self.model.updateFilter(filterTarget: $0) }
-                    )) {
-                        ForEach(FilterTarget.allCases) { filterTarget in
-                            Label(filterTarget.name, systemImage: filterTarget.icon)
-                                .tag(filterTarget)
-                        }
-                    } label: {
-                        EmptyView()
-                    }
-                } label: {
-                    OptionButton(image: Image(systemName: self.model.filter.filterTarget.icon),
-                                 isActive: self.model.filter.filterTarget != .all)
-                }
-                .accessibilityLabel(self.model.filter.filterMatching == .regex
-                    ? String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name) + ", " + String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name)
-                    : String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
-
-                if self.model.filter.filterMatching != .regex {
+            Group {
+                if self.model.filterType.supportsAdvancedOptions {
                     Menu {
                         Picker(selection: Binding(
-                            get: { self.model.filter.filterMatching },
-                            set: { self.model.updateFilter(filterMatching: $0) }
+                            get: { self.model.filterTarget },
+                            set: { self.model.updateFilter(filterTarget: $0) }
                         )) {
-                            ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
-                                Label(filterMatching.name, systemImage: filterMatching.icon)
-                                    .tag(filterMatching)
+                            ForEach(FilterTarget.allCases) { filterTarget in
+                                Label(filterTarget.name, systemImage: filterTarget.icon)
+                                    .tag(filterTarget)
                             }
                         } label: {
                             EmptyView()
                         }
                     } label: {
-                        OptionButton(image: Image(systemName: self.model.filter.filterMatching.icon),
-                                     isActive: self.model.filter.filterMatching == .exact)
+                        OptionButton(image: Image(systemName: self.model.filterTarget.icon),
+                                     isActive: self.model.filterTarget != .all)
                     }
-                    .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filter.filterMatching.name))
+                    .accessibilityLabel(self.model.filterMatching == .regex
+                        ? String(format: "a11y_filterRow_targetLabel"~, self.model.filterTarget.name) + ", " + String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name)
+                        : String(format: "a11y_filterRow_targetLabel"~, self.model.filterTarget.name))
 
+                    if self.model.filterMatching != .regex {
+                        Menu {
+                            Picker(selection: Binding(
+                                get: { self.model.filterMatching },
+                                set: { self.model.updateFilter(filterMatching: $0) }
+                            )) {
+                                ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
+                                    Label(filterMatching.name, systemImage: filterMatching.icon)
+                                        .tag(filterMatching)
+                                }
+                            } label: {
+                                EmptyView()
+                            }
+                        } label: {
+                            OptionButton(image: Image(systemName: self.model.filterMatching.icon),
+                                         isActive: self.model.filterMatching == .exact)
+                        }
+                        .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filterMatching.name))
+
+                        Menu {
+                            Picker(selection: Binding(
+                                get: { self.model.filterCase },
+                                set: { self.model.updateFilter(filterCase: $0) }
+                            )) {
+                                ForEach(FilterCase.allCases) { filterCase in
+                                    Label(filterCase.name, systemImage: filterCase.icon)
+                                        .tag(filterCase)
+                                }
+                            } label: {
+                                EmptyView()
+                            }
+                        } label: {
+                            OptionButton(image: Image(systemName: self.model.filterCase.icon),
+                                         isActive: self.model.filterCase == .caseSensitive)
+                        }
+                        .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filterCase.name))
+                    }
+                }
+
+                if self.model.filterType.supportsFolders {
                     Menu {
                         Picker(selection: Binding(
-                            get: { self.model.filter.filterCase },
-                            set: { self.model.updateFilter(filterCase: $0) }
+                            get: { self.model.denyFolderType },
+                            set: { self.model.updateFilter(denyFolder: $0) }
                         )) {
-                            ForEach(FilterCase.allCases) { filterCase in
-                                Label(filterCase.name, systemImage: filterCase.icon)
-                                    .tag(filterCase)
+                            ForEach(DenyFolderType.allCases) { folder in
+                                Label(folder.name, systemImage: folder.iconName)
+                                    .tag(folder)
                             }
                         } label: {
                             EmptyView()
                         }
                     } label: {
-                        OptionButton(image: Image(systemName: self.model.filter.filterCase.icon),
-                                     isActive: self.model.filter.filterCase == .caseSensitive)
+                        OptionButton(image: Image(systemName: self.model.denyFolderType.iconName), isActive: true)
                     }
-                    .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
+                    .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.denyFolderType.name))
                 }
             }
-
-            if !self.isEditingText && self.model.filter.filterType.supportsFolders {
-                Menu {
-                    Picker(selection: Binding(
-                        get: { self.model.filter.denyFolderType },
-                        set: { self.model.updateFilter(denyFolder: $0) }
-                    )) {
-                        ForEach(DenyFolderType.allCases) { folder in
-                            Label(folder.name, systemImage: folder.iconName)
-                                .tag(folder)
-                        }
-                    } label: {
-                        EmptyView()
-                    }
-                } label: {
-                    OptionButton(image: Image(systemName: self.model.filter.denyFolderType.iconName), isActive: true)
-                }
-                .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.denyFolderType.name))
-            }
+            .opacity(self.showOptionChrome ? 1 : 0)
+            .allowsHitTesting(self.showOptionChrome)
         }  // HStack
+        .allowsHitTesting(self.editMode?.wrappedValue.isEditing != true)
         .accessibilityElement(children: .contain)
     }
 
@@ -196,8 +205,14 @@ extension FilterListRowView {
     class ViewModel: BaseViewModel, ObservableObject {
         let id: UUID
         @Published private(set) var filter: Filter
+        @Published private(set) var filterType: FilterType
+        @Published private(set) var denyFolderType: DenyFolderType
+        @Published private(set) var filterTarget: FilterTarget
+        @Published private(set) var filterMatching: FilterMatching
+        @Published private(set) var filterCase: FilterCase
         @Published private(set) var onUpdate: ((Bool) -> ())?
         @Published var text: String
+        private var committedText: String
 
         init(filter: Filter,
              onUpdate: ((Bool) -> ())? = nil,
@@ -212,81 +227,99 @@ extension FilterListRowView {
                 self.id = uuid
             }
             self.filter = filter
+            self.filterType = filter.filterType
+            self.denyFolderType = filter.denyFolderType
+            self.filterTarget = filter.filterTarget
+            self.filterMatching = filter.filterMatching
+            self.filterCase = filter.filterCase
             self.onUpdate = onUpdate
-            self.text = filter.text ?? "general_null"~
+            let initialText = filter.text ?? "general_null"~
+            self.text = initialText
+            self.committedText = initialText
             super.init(appManager: appManager)
         }
 
         func updateFilter(_ filter: Filter) {
-            let previousText = self.filter.text ?? ""
+            let previousText = self.committedText
             self.filter = filter
+            self.filterType = filter.filterType
+            self.denyFolderType = filter.denyFolderType
+            self.filterTarget = filter.filterTarget
+            self.filterMatching = filter.filterMatching
+            self.filterCase = filter.filterCase
+            let updatedText = filter.text ?? "general_null"~
+            self.committedText = updatedText
             if self.text == previousText {
-                self.text = filter.text ?? "general_null"~
+                self.text = updatedText
             }
         }
         
         func updateFilter(denyFolder: DenyFolderType) {
+            self.denyFolderType = denyFolder
             self.appManager.persistanceManager.updateFilter(self.filter, denyFolder: denyFolder)
             self.onUpdate?(true)
         }
         
         func updateFilter(filterMatching: FilterMatching) {
+            self.filterMatching = filterMatching
             self.appManager.persistanceManager.updateFilter(self.filter, filterMatching: filterMatching)
             self.onUpdate?(true)
         }
         
         func updateFilter(filterCase: FilterCase) {
+            self.filterCase = filterCase
             self.appManager.persistanceManager.updateFilter(self.filter, filterCase: filterCase)
             self.onUpdate?(true)
         }
         
         func updateFilter(filterTarget: FilterTarget) {
+            self.filterTarget = filterTarget
             self.appManager.persistanceManager.updateFilter(self.filter, filterTarget: filterTarget)
             self.onUpdate?(true)
         }
         
         func isLiveDuplicate(text: String) -> Bool {
-            guard text != (self.filter.text ?? "") else { return false }
+            guard text != self.committedText else { return false }
             return self.appManager.persistanceManager.isDuplicateFilter(
                 text: text,
-                filterTarget: self.filter.filterTarget,
-                filterMatching: self.filter.filterMatching,
-                filterCase: self.filter.filterCase)
+                filterTarget: self.filterTarget,
+                filterMatching: self.filterMatching,
+                filterCase: self.filterCase)
         }
 
         func isLiveInvalidRegex(text: String) -> Bool {
-            guard self.filter.filterMatching == .regex, !text.isEmpty else { return false }
+            guard self.filterMatching == .regex, !text.isEmpty else { return false }
             return (try? Regex(text)) == nil
         }
 
         @discardableResult
         func updateFilter(filterText: String) -> Bool {
-            let current = self.filter.text ?? ""
-            AppManager.logger.debug("FilterListRow.updateFilter(text) — proposed: '\(filterText, privacy: .public)', current: '\(current, privacy: .public)'")
+            AppManager.logger.debug("FilterListRow.updateFilter(text) — proposed: '\(filterText, privacy: .public)', current: '\(self.committedText, privacy: .public)'")
 
-            guard filterText != current else {
+            guard filterText != self.committedText else {
                 AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, unchanged")
                 return false
             }
 
-            if self.filter.filterMatching == .regex, (try? Regex(filterText)) == nil {
+            if self.filterMatching == .regex, (try? Regex(filterText)) == nil {
                 AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, invalid regex")
-                self.text = current
+                self.text = self.committedText
                 return true
             }
 
             guard !self.appManager.persistanceManager.isDuplicateFilter(
                 text: filterText,
-                filterTarget: self.filter.filterTarget,
-                filterMatching: self.filter.filterMatching,
-                filterCase: self.filter.filterCase) else {
+                filterTarget: self.filterTarget,
+                filterMatching: self.filterMatching,
+                filterCase: self.filterCase) else {
                 AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, duplicate")
-                self.text = current
+                self.text = self.committedText
                 return true
             }
 
             AppManager.logger.debug("FilterListRow.updateFilter(text) — saving")
             self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
+            self.committedText = filterText
             self.onUpdate?(false)
             return false
         }

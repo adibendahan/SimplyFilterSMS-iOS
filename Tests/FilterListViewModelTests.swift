@@ -102,6 +102,52 @@ class FilterListViewModelTests: XCTestCase {
         XCTAssertEqual(self.persistanceManager.deleteFiltersCounter, 1)
         XCTAssertTrue(self.testSubject.filters.isEmpty)
     }
+
+    func test_sectionSplitUsesCachedMatching() {
+        let regular = self.makeFilter()
+        regular.text = "Adi"
+        let regex = self.makeFilter()
+        regex.text = #"\d+"#
+        regex.filterMatching = .regex
+        var stored = [regular, regex]
+        self.persistanceManager.fetchFilterRecordsForTypeClosure = { _ in stored }
+        self.testSubject.refresh()
+
+        XCTAssertEqual(self.testSubject.regularRowViewModels.count, 1)
+        XCTAssertEqual(self.testSubject.regexRowViewModels.count, 1)
+        XCTAssertEqual(self.testSubject.regularRowViewModels.first?.text, "Adi")
+        XCTAssertEqual(self.testSubject.regexRowViewModels.first?.text, #"\d+"#)
+
+        // Simulate a reset/faulted Core Data object flipping matching back to the default.
+        regex.filterMatching = .contains
+        XCTAssertEqual(self.testSubject.regularRowViewModels.count, 1)
+        XCTAssertEqual(self.testSubject.regexRowViewModels.count, 1)
+    }
+
+    func test_deleteSelectedFilters() {
+        let first = self.makeFilter()
+        first.text = "first"
+        let second = self.makeFilter()
+        second.text = "second"
+        var stored = [first, second]
+        self.persistanceManager.fetchFilterRecordsForTypeClosure = { _ in stored }
+        self.persistanceManager.deleteFiltersClosure = { deleted in
+            stored.removeAll { deleted.contains($0) }
+        }
+        self.testSubject.refresh()
+        self.testSubject.editMode = .active
+        self.testSubject.selectedFilters = Set([first])
+
+        self.testSubject.deleteFilters(self.testSubject.selectedFilters)
+        self.testSubject.selectedFilters = Set()
+        self.testSubject.editMode = .inactive
+
+        XCTAssertEqual(self.persistanceManager.deleteFiltersCounter, 1)
+        XCTAssertEqual(self.testSubject.filters.count, 1)
+        XCTAssertEqual(self.testSubject.filters.first?.text, "second")
+        XCTAssertTrue(self.testSubject.selectedFilters.isEmpty)
+        XCTAssertFalse(self.testSubject.editMode.isEditing)
+    }
     
     private func makeFilter() -> Filter {
         let filter = Filter(context: self.persistanceManager.context)

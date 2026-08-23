@@ -302,14 +302,14 @@ Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). Uses `@S
 
 `NavigationBarMenu` — contextual trailing items:
 - **Normal mode:** Ellipsis `Menu` with "Edit" (enters edit mode) and "Add Filter" options.
-- **Edit mode:** Shows `EditButton` + a red "Delete (N)" button when filters are selected. Bulk-deletes selected filters.
+- **Edit mode:** Shows `EditButton` + a red "Delete (N)" button when filters are selected. Same as before the inline-edit work: delete selection → clear selection → `refresh()` → leave edit mode.
 
 ### ViewModel
 
 - `filterType: FilterType` — Set at init, determines which filters to fetch and which add-filter screen to present.
 - `filters: [Filter]` — Fetched from `PersistanceManager.fetchFilterRecords(for:)`, filtered by type.
-- `rowViewModels: [FilterListRowView.ViewModel]` — Cached row ViewModels, rebuilt/updated in `updateRowViewModels()` keyed by `id` (`Filter.uuid`). `ForEach` uses `regularRowViewModels` / `regexRowViewModels` — never construct row ViewModels inside `ForEach`.
-- `selectedFilters: Set<Filter>` — Multi-selection state for edit mode.
+- `rowViewModels: [FilterListRowView.ViewModel]` — Cached row ViewModels, rebuilt/updated in `updateRowViewModels()` keyed by `id` (`Filter.uuid`). `ForEach` uses `regularRowViewModels` / `regexRowViewModels` — never construct row ViewModels inside `ForEach`. Section membership uses each row’s cached `filterMatching`, not a live Core Data read (store reloads can temporarily make `Filter` properties default).
+- `selectedFilters: Set<Filter>` — Multi-selection state for edit mode (same as pre-inline-edit).
 - `editMode: EditMode` — Controls List edit mode (`.inactive` / `.active`).
 - `canBlockAnotherLanguage: Bool` — Whether the add-language button should be shown (checks if unblocked languages remain).
 - `footer: String` — Help text, varies by filter type.
