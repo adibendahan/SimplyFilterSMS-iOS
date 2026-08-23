@@ -158,9 +158,6 @@ struct FilterListView: View {
                     withAnimation {
                         self.model.deleteFilters(toDelete)
                     }
-                    withAnimation {
-                        self.model.editMode = .inactive
-                    }
                 },
                 label: {
                     Text(String(format: "filterList_deleteFiltersCount"~, self.model.selectedFilters.count))

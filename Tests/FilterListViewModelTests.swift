@@ -140,13 +140,12 @@ class FilterListViewModelTests: XCTestCase {
 
         self.testSubject.deleteFilters(self.testSubject.selectedFilters)
         self.testSubject.selectedFilters = Set()
-        self.testSubject.editMode = .inactive
 
         XCTAssertEqual(self.persistanceManager.deleteFiltersCounter, 1)
         XCTAssertEqual(self.testSubject.filters.count, 1)
         XCTAssertEqual(self.testSubject.filters.first?.text, "second")
         XCTAssertTrue(self.testSubject.selectedFilters.isEmpty)
-        XCTAssertFalse(self.testSubject.editMode.isEditing)
+        XCTAssertTrue(self.testSubject.editMode.isEditing)
     }
     
     private func makeFilter() -> Filter {

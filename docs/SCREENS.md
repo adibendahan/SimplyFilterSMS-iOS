@@ -302,7 +302,7 @@ Pushed via `NavigationLink` from AppHomeView (no own `NavigationView`). Uses `@S
 
 `NavigationBarMenu` — contextual trailing items:
 - **Normal mode:** Ellipsis `Menu` with "Edit" (enters edit mode) and "Add Filter" options.
-- **Edit mode:** Shows `EditButton` + a red "Delete (N)" button when filters are selected. Same as before the inline-edit work: delete selection → clear selection → `refresh()` → leave edit mode.
+- **Edit mode:** Shows `EditButton` + a red "Delete (N)" button when filters are selected. Deletes the selection and clears it; stays in edit mode until Done.
 
 ### ViewModel
 
