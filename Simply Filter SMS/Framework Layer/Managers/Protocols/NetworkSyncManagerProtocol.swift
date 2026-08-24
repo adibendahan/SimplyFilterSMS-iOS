@@ -23,6 +23,7 @@ extension NSNotification.Name {
     static let automaticFiltersUpdated: NSNotification.Name = NSNotification.Name("AutomaticFiltersUpdated")
     static let onClipboardSet: NSNotification.Name = NSNotification.Name("OnClipboardSet")
     static let filtersStateChanged: NSNotification.Name = NSNotification.Name("FiltersStateChanged")
+    static let persistentStoreReloaded: NSNotification.Name = NSNotification.Name("PersistentStoreReloaded")
 }
 
 

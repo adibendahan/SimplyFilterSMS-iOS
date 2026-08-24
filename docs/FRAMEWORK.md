@@ -319,6 +319,7 @@ extension NSNotification.Name {
     static let automaticFiltersUpdated
     static let onClipboardSet
     static let filtersStateChanged
+    static let persistentStoreReloaded
 }
 ```
 
@@ -337,6 +338,8 @@ On **successful import**: posts `.cloudSyncOperationComplete` (toast + refresh) 
 ### Recovery Logic
 
 When network comes online after a failed sync, or setup fails while online, reloads the CloudKit container. Failed setup schedules up to two delayed retries (5s, then 10s); a pending retry is cancelled if network recovery reloads first or setup succeeds. Retries run unless the network is known offline (`.unknown` is allowed — path monitor may not have reported yet).
+
+`PersistanceManager.reloadContainer()` resets the view context (invalidating all managed objects), loads a new container, then posts `.persistentStoreReloaded` on the main queue. Screens that cache Core Data objects conform to `ViewWithPersistentStoreReload` and apply `.modifier(persistentStoreReload)` (`PersistentStoreReload.swift`).
 ---
 
 ## TipJarManager

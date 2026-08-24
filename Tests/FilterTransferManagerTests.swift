@@ -111,6 +111,35 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertEqual(texts, ["keep-me", "promo", "new-one"])
     }
 
+    func test_forceClearBeforeImport_clearsListedTypesThenAdds() throws {
+        self.persistanceManager.addFilter(text: "old-deny",
+                                          type: .deny,
+                                          denyFolder: .junk,
+                                          filterTarget: .all,
+                                          filterMatching: .contains,
+                                          filterCase: .caseInsensitive)
+        self.persistanceManager.addFilter(text: "keep-allow",
+                                          type: .allow,
+                                          denyFolder: .junk,
+                                          filterTarget: .all,
+                                          filterMatching: .contains,
+                                          filterCase: .caseInsensitive)
+
+        let data = try self.payload(filters: [
+            record(text: "old-deny", type: "deny"),
+            record(text: "fresh-deny", type: "deny")
+        ], forceClearBeforeImport: ["deny"])
+
+        let preview = try self.testSubject.queueImport(data: data)
+        let result = self.testSubject.importFilters(preview.candidates)
+
+        XCTAssertEqual(result.added, 2)
+        XCTAssertEqual(result.duplicateCount, 0)
+        let denyTexts = Set(self.persistanceManager.fetchFilterRecords(for: .deny).compactMap({ $0.text }))
+        XCTAssertEqual(denyTexts, ["old-deny", "fresh-deny"])
+        XCTAssertEqual(self.persistanceManager.fetchFilterRecords(for: .allow).first?.text, "keep-allow")
+    }
+
     func test_preview_skipsIntraFileDuplicates() throws {
         let data = try self.payload(filters: [
             record(text: "same", type: "deny"),
@@ -289,14 +318,18 @@ class FilterTransferManagerTests: XCTestCase {
 
     private func payload(format: String = FilterExportPayload.formatIdentifier,
                          version: Int = FilterExportPayload.currentVersion,
-                         filters: [[String: String]]) throws -> Data {
-        let object: [String: Any] = [
+                         filters: [[String: String]],
+                         forceClearBeforeImport: [String]? = nil) throws -> Data {
+        var object: [String: Any] = [
             "format": format,
             "version": version,
             "exportedAt": "2026-08-15T18:00:00Z",
             "appVersion": "1.0",
             "filters": filters
         ]
+        if let forceClearBeforeImport {
+            object["forceClearBeforeImport"] = forceClearBeforeImport
+        }
         return try JSONSerialization.data(withJSONObject: object)
     }
 }

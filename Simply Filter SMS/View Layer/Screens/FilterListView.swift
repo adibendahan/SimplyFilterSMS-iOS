@@ -10,7 +10,7 @@ import NaturalLanguage
 
 
 //MARK: - View -
-struct FilterListView: View {
+struct FilterListView: View, ViewWithPersistentStoreReload {
     
     @Environment(\.presentationMode)
     var presentationMode: Binding<PresentationMode>
@@ -42,10 +42,12 @@ struct FilterListView: View {
                         model: rowModel)
                     .environment(\.editMode, $model.editMode)
                     .id(rowModel.id)
+                    .tag(rowModel.filter)
                 }
                 .onDelete {
                     self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regularRowViewModels)
                 }
+                .deleteDisabled(self.model.editMode.isEditing)
             } header: {
                 if self.model.regularFilters.count > 0 {
                     HStack {
@@ -79,10 +81,12 @@ struct FilterListView: View {
                             model: rowModel)
                         .environment(\.editMode, $model.editMode)
                         .id(rowModel.id)
+                        .tag(rowModel.filter)
                     }
                     .onDelete {
                         self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regexRowViewModels)
                     }
+                    .deleteDisabled(self.model.editMode.isEditing)
                 } header: {
                     Text("addFilter_match_regex"~)
                 } footer: {
@@ -141,6 +145,7 @@ struct FilterListView: View {
             }
         }
         } // ScrollViewReader
+        .modifier(persistentStoreReload)
     }
     
     @ViewBuilder
@@ -254,7 +259,7 @@ struct FilterListView: View {
 //MARK: - ViewModel -
 extension FilterListView {
     
-    class ViewModel: BaseViewModel, ObservableObject {
+    class ViewModel: BaseViewModel, ObservableObject, PersistentStoreReloadRefreshing {
         @Published private(set) var filters: [Filter]
         @Published private(set) var rowViewModels: [FilterListRowView.ViewModel] = []
         @Published private(set) var filterType: FilterType

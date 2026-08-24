@@ -28,7 +28,7 @@ struct FilterTransferPreviewView: View {
                 Section {
                     ForEach(FilterType.allCases
                         .sorted(by: { $0.sortIndex < $1.sortIndex })
-                        .filter({ self.model.candidates(for: $0).isEmpty == false }), id: \.self) { filterType in
+                        .filter({ self.model.candidates(for: $0).isEmpty == false || self.model.willForceClear($0) }), id: \.self) { filterType in
                         NavigationLink {
                             FilterTransferCandidateListView(model: self.model, filterType: filterType)
                         } label: {
@@ -37,8 +37,17 @@ struct FilterTransferPreviewView: View {
                                     .foregroundColor(filterType.iconColor)
                                     .frame(maxWidth: typeIconSize, maxHeight: .infinity, alignment: .center)
 
-                                Text(filterType.name)
-                                    .padding(.leading, 8)
+                                VStack(alignment: .leading, spacing: 0) {
+                                    Text(filterType.name)
+                                        .padding(.leading, 8)
+
+                                    if self.model.willForceClear(filterType) {
+                                        Text("\(Image(systemName: "exclamationmark.triangle.fill")) \("importFilters_willClear"~)")
+                                            .font(.caption2)
+                                            .foregroundColor(.red)
+                                            .padding(.leading, 8)
+                                    }
+                                }
 
                                 Spacer()
 
@@ -49,6 +58,7 @@ struct FilterTransferPreviewView: View {
                             }
                         }
                         .accentColor(Color.primary.opacity(0.35))
+                        .disabled(self.model.candidates(for: filterType).isEmpty)
                     }
                 } header: {
                     Text(self.model.sectionTitle)
@@ -265,6 +275,10 @@ extension FilterTransferPreviewView {
             return self.selectedIDs.count
         }
 
+        func willForceClear(_ type: FilterType) -> Bool {
+            return self.kind == .importFilters && self.preview.forceClearTypes.contains(type)
+        }
+
         func candidates(for type: FilterType) -> [FilterTransferCandidate] {
             return self.preview.candidates.filter({ $0.type == type })
         }
@@ -353,7 +367,8 @@ struct FilterTransferPreviewView_Previews: PreviewProvider {
                                    target: FilterTarget.body.exportKey,
                                    matching: FilterMatching.contains.exportKey,
                                    caseSensitivity: FilterCase.caseInsensitive.exportKey)
-            ]
+            ],
+            forceClearBeforeImport: nil
         )
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601

@@ -22,6 +22,7 @@ struct FilterExportPayload: Codable, Equatable {
     let exportedAt: Date
     let appVersion: String
     let filters: [FilterExportRecord]
+    let forceClearBeforeImport: [String]?
 }
 
 struct FilterExportRecord: Codable, Equatable {
@@ -74,11 +75,12 @@ struct FilterTransferCandidate: Equatable, Identifiable {
 }
 
 struct FilterTransferPreview: Equatable {
-    static let empty = FilterTransferPreview(candidates: [], duplicateCount: 0, invalidCount: 0)
+    static let empty = FilterTransferPreview(candidates: [], duplicateCount: 0, invalidCount: 0, forceClearTypes: [])
 
     let candidates: [FilterTransferCandidate]
     let duplicateCount: Int
     let invalidCount: Int
+    let forceClearTypes: Set<FilterType>
 
     var count: Int { return self.candidates.count }
     var skippedCount: Int { return self.duplicateCount + self.invalidCount }
