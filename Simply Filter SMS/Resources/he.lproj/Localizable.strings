@@ -541,6 +541,7 @@
 "importFilters_title" = "ייבוא פילטרים";
 "importFilters_sectionTitle" = "פילטרים לייבוא";
 "importFilters_subtitle" = "הקישו על רשימה כדי לעיין בפילטרים שבקובץ ולבחור מה להוסיף. פילטרים שכבר קיימים במכשיר הזה מדולגים. שום דבר לא יוחלף ולא יימחק.";
+"importFilters_willClear" = "כל הפילטרים הקיימים יימחקו";
 "importFilters_duplicates" = "כבר קיימים";
 "importFilters_invalid" = "לא תקינים";
 "importFilters_confirm" = "ייבוא";

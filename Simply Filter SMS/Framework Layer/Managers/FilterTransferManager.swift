@@ -44,7 +44,8 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         self.clearPendingExportFile()
         let preview = FilterTransferPreview(candidates: self.candidatesFromStore(),
                                           duplicateCount: 0,
-                                          invalidCount: 0)
+                                          invalidCount: 0,
+                                          forceClearTypes: [])
         self.pendingPreview = preview
         self.pendingKind = .exportFilters
         return preview
@@ -85,6 +86,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
 
     func previewImport(data: Data) throws -> FilterTransferPreview {
         let payload = try self.decodePayload(data)
+        let typesToClear = Self.forceClearTypes(from: payload)
         var accepted: [FilterTransferCandidate] = []
         var duplicateCount = 0
         var invalidCount = 0
@@ -97,11 +99,12 @@ class FilterTransferManager: FilterTransferManagerProtocol {
             }
 
             let key = candidate.duplicateKey
-            if seenKeys.contains(key) ||
+            let isStoreDuplicate = !typesToClear.contains(candidate.type) &&
                 self.persistanceManager.isDuplicateFilter(text: candidate.text,
                                                           filterTarget: candidate.filterTarget,
                                                           filterMatching: candidate.filterMatching,
-                                                          filterCase: candidate.filterCase) {
+                                                          filterCase: candidate.filterCase)
+            if seenKeys.contains(key) || isStoreDuplicate {
                 duplicateCount += 1
                 continue
             }
@@ -110,7 +113,10 @@ class FilterTransferManager: FilterTransferManagerProtocol {
             accepted.append(candidate)
         }
 
-        return FilterTransferPreview(candidates: accepted, duplicateCount: duplicateCount, invalidCount: invalidCount)
+        return FilterTransferPreview(candidates: accepted,
+                                     duplicateCount: duplicateCount,
+                                     invalidCount: invalidCount,
+                                     forceClearTypes: typesToClear)
     }
 
     func queueImport(data: Data) throws -> FilterTransferPreview {
@@ -130,6 +136,13 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     func importFilters(_ candidates: [FilterTransferCandidate]) -> FilterTransferResult {
+        for type in self.pendingPreview.forceClearTypes {
+            let existing = self.persistanceManager.fetchFilterRecords(for: type)
+            if !existing.isEmpty {
+                self.persistanceManager.deleteFilters(Set(existing))
+            }
+        }
+
         var added = 0
 
         for candidate in candidates {
@@ -162,7 +175,8 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                           version: FilterExportPayload.currentVersion,
                                           exportedAt: Date(),
                                           appVersion: appVersion,
-                                          filters: records)
+                                          filters: records,
+                                          forceClearBeforeImport: nil)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         encoder.dateEncodingStrategy = .iso8601
@@ -223,6 +237,10 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         } catch {
             throw FilterTransferError.invalidFile
         }
+    }
+
+    private static func forceClearTypes(from payload: FilterExportPayload) -> Set<FilterType> {
+        Set((payload.forceClearBeforeImport ?? []).compactMap({ FilterType(exportKey: $0) }))
     }
 
     private static func candidate(from record: FilterExportRecord) -> FilterTransferCandidate? {

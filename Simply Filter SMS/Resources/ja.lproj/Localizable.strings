@@ -541,6 +541,7 @@
 "importFilters_title" = "フィルタを読み込む";
 "importFilters_sectionTitle" = "読み込むフィルタ";
 "importFilters_subtitle" = "リストをタップして、このファイルのフィルタを確認し、追加するものを選べます。このデバイスにすでに存在するフィルタはスキップされます。上書きや削除は行われません。";
+"importFilters_willClear" = "既存のフィルタはすべて削除されます";
 "importFilters_duplicates" = "既存";
 "importFilters_invalid" = "スキップ";
 "importFilters_confirm" = "読み込む";
