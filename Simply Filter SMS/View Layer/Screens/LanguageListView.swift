@@ -12,7 +12,7 @@ import CryptoKit
 
 
 //MARK: - View -
-struct LanguageListView: View {
+struct LanguageListView: View, ViewWithPersistentStoreReload {
     
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
@@ -162,6 +162,7 @@ struct LanguageListView: View {
         .onAppear {
             self.model.startMonitoring()
         }
+        .modifier(persistentStoreReload)
     }
 }
 
@@ -173,7 +174,7 @@ extension LanguageListView {
         case blockLanguage, automaticBlocking
     }
     
-    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject, Identifiable {
+    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject, Identifiable, PersistentStoreReloadRefreshing {
         let id = UUID()
         @Published private(set) var mode: LanguageListView.Mode
         @Published private(set) var title: String

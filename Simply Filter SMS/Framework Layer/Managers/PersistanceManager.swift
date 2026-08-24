@@ -98,6 +98,11 @@ class PersistanceManager: PersistanceManagerProtocol {
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
             container.viewContext.automaticallyMergesChangesFromParent = true
             container.viewContext.stalenessInterval = 0
+
+            DispatchQueue.main.async {
+                AppManager.logger.debug("reloadContainer — store loaded, posting persistentStoreReloaded")
+                NotificationCenter.default.post(name: .persistentStoreReloaded, object: nil)
+            }
         })
     }
 

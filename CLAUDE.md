@@ -37,7 +37,7 @@ Three-layer clean architecture with protocol-based dependency injection:
 - **PersistanceManager** — CoreData CRUD operations for `Filter`, `AutomaticFiltersRule`, `AutomaticFiltersLanguage` entities.
 - **AutomaticFilterManager** — Fetches community filter lists from S3, applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown, country allowlist). S3 fetch completions hop to the MainActor before Core Data cache writes.
 - **DefaultsManager** — UserDefaults wrapper for app settings. Custom accent is `@StoredDefault("accentColorRGB", defaultValue: kNoColorDict)`.
-- **NetworkSyncManager** — NWPathMonitor + CloudKit sync status tracking (setup retries; pending retry cancelled if network recovery reloads first).
+- **NetworkSyncManager** — NWPathMonitor + CloudKit sync status tracking (setup retries; pending retry cancelled if network recovery reloads first). `reloadContainer()` posts `.persistentStoreReloaded`; screens use `.modifier(persistentStoreReload)`.
 - **TipJarManager** — StoreKit 2 in-app purchase manager for consumable tip jar products.
 - **FilterTransferManager** — Merge-only filter import/export (`.sfsfilters`). Holds one in-flight picker (`pendingPreview` / `pendingKind`); Home presents `.filterImport` or `.filterExport`. Writes/deletes export files in the temp directory.
 - **FlowManager** — Launch-order queue (not a navigator). Occupancy: `next()` sets `activeScreen`; further `next()` is nil until `complete`. Order: first run → launch (file/deep link) → automatic What's New → user `request`.

@@ -10,7 +10,7 @@ import StoreKit
 import UniformTypeIdentifiers
 
 //MARK: - View -
-struct AppHomeView: View {
+struct AppHomeView: View, ViewWithPersistentStoreReload {
     
     @Environment(\.isPreview)
     var isPreview
@@ -285,6 +285,7 @@ struct AppHomeView: View {
             self.model.requestSheet(.about)
         })
         .modifier(EmbeddedNotificationView(model: self.model.notification))
+        .modifier(persistentStoreReload)
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
             if !self.model.completeInterruptedSheet(), !isPreview {
@@ -470,7 +471,7 @@ struct AppHomeView: View {
 //MARK: - ViewModel -
 extension AppHomeView {
     
-    class ViewModel: BaseViewModel, ObservableObject {
+    class ViewModel: BaseViewModel, ObservableObject, PersistentStoreReloadRefreshing {
         @Published private(set) var filters: [Filter]
         @Published private(set) var title: String
         @Published private(set) var isAutomaticFilteringOn: Bool
