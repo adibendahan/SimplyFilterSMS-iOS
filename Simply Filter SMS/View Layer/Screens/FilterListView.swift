@@ -42,10 +42,12 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                         model: rowModel)
                     .environment(\.editMode, $model.editMode)
                     .id(rowModel.id)
+                    .tag(rowModel.filter)
                 }
                 .onDelete {
                     self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regularRowViewModels)
                 }
+                .deleteDisabled(self.model.editMode.isEditing)
             } header: {
                 if self.model.regularFilters.count > 0 {
                     HStack {
@@ -79,10 +81,12 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                             model: rowModel)
                         .environment(\.editMode, $model.editMode)
                         .id(rowModel.id)
+                        .tag(rowModel.filter)
                     }
                     .onDelete {
                         self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regexRowViewModels)
                     }
+                    .deleteDisabled(self.model.editMode.isEditing)
                 } header: {
                     Text("addFilter_match_regex"~)
                 } footer: {
