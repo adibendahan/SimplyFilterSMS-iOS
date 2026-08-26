@@ -1,0 +1,337 @@
+/*
+  Localizable.strings
+  Simply Filter SMS
+
+  简体中文本地化
+*/
+
+//MARK: General
+"general_allow" = "允许";
+"general_deny" = "拒绝";
+"general_null" = "（空）";
+"general_copyright" = "© %ld Adi Ben-Dahan。保留所有权利。";
+"general_close" = "关闭";
+"general_about" = "关于";
+"general_active_count" = "%ld 个过滤器";
+"general_lang" = "语言";
+"general_edit" = "编辑";
+
+//MARK: Languages
+"lang_supported" = "支持的语言";
+"lang_allBlocked" = "你已屏蔽所有支持的语言！";
+"lang_how" = "语言处理和识别由 iOS 的自然语言引擎在设备上**本地**完成。只有当文本的**主要语言**位于“已屏蔽语言”列表中时，信息才会被过滤。";
+
+//MARK: Filter List View
+"filterList_filters" = "过滤器";
+"filterList_allowed" = "允许的文本";
+"filterList_denied" = "已屏蔽的文本";
+"filterList_menu_filterLanguage" = "屏蔽语言";
+"filterList_menu_enableExtension" = "帮助";
+"filterList_menu_about" = "关于";
+"accentColor_menuItem" = "强调色";
+"accentColor_title" = "强调色";
+"accentColor_picker" = "颜色";
+"accentColor_reset" = "恢复默认";
+"menu_filters" = "过滤器";
+"menu_filterTools" = "过滤工具";
+"menu_addFilter" = "添加过滤器";
+"filterList_menu_debug" = "加载调试数据";
+"filterList_deniedLanguage" = "已屏蔽的语言";
+"filterList_deleteFiltersCount" = "删除（%ld）";
+"filterList_folder" = "文件夹";
+"filterList_text" = "文本";
+"filterList_options" = "选项";
+
+//MARK: Add Filter View
+"addFilter_add" = "添加";
+"addFilter_addFilter_allow" = "添加允许的文本";
+"addFilter_addFilter_deny" = "添加屏蔽的文本";
+"addFilter_addLanguage" = "添加屏蔽的语言";
+"addFilter_text" = "输入单词或字母";
+"addFilter_type" = "类型";
+"addFilter_type_caption" = "选择操作：";
+"addFilter_folder_caption" = "选择目标文件夹（轻点可更改）：";
+"addFilter_folder_junk" = "垃圾短信";
+"addFilter_folder_transactions" = "交易信息";
+"addFilter_folder_promotions" = "推广信息";
+"addFilter_duplicate" = "过滤器重复";
+"addFilter_invalidRegex" = "模式无效";
+"addFilter_regexTestPlaceholder" = "测试文本";
+"addFilter_regexTestCaption" = "测试你的模式：";
+"addFilter_regexMatch" = "匹配";
+"addFilter_regexNoMatch" = "不匹配";
+"addFilter_more" = "查看更多选项";
+"addFilter_less" = "收起";
+"addFilter_target_all" = "全部";
+"addFilter_target_all_multiline" = "全部";
+"addFilter_target_sender" = "发件人";
+"addFilter_target_body" = "正文";
+"addFilter_target_title" = "选择目标：";
+"addFilter_case_title" = "选择大小写：";
+"addFilter_case_sensitive" = "区分大小写";
+"addFilter_case_insensitive" = "不区分大小写";
+"addFilter_match_title" = "选择匹配类型：";
+"addFilter_match_exact" = "完全匹配";
+"addFilter_match_contains" = "包含";
+"addFilter_match_regex" = "正则表达式";
+
+//MARK: Enable Extension View
+"enableExtension_ready_callToAction" = "设置";
+"enableExtension_ready_cancel" = "取消";
+"enableExtension_welcome" = "欢迎";
+"enableExtension_welcome_desc" = "在“设置”中将“Simply Filter SMS”启用为短信过滤器。请按以下步骤操作，准备好后轻点“设置”。";
+"enableExtension_step1_title" = "打开“设置”";
+"enableExtension_step1_desc" = "打开“设置”，向下滚动并轻点“App”。";
+"enableExtension_step2_title" = "轻点“信息”";
+"enableExtension_step2_desc" = "向下滚动找到“信息”，然后轻点它。";
+"enableExtension_step3_title" = "未知发件人";
+"enableExtension_step3_desc" = "向下滚动找到“未知发件人”部分。";
+"enableExtension_step4_title" = "筛选未知发件人";
+"enableExtension_step4_desc" = "轻点以启用“筛选未知发件人”。";
+"enableExtension_step5_title" = "过滤垃圾信息";
+"enableExtension_step5_desc" = "轻点以启用“过滤垃圾信息”。";
+"enableExtension_step6_title" = "选择“Simply Filter SMS”";
+"enableExtension_step6_desc" = "轻点“短信过滤器”，然后选择“SimplyFilterSMS”。";
+"enableReportingExtension_step1_title" = "打开“设置”";
+"enableReportingExtension_step1_desc" = "打开“设置”，向下滚动并轻点“App”。";
+"enableReportingExtension_step2_title" = "轻点“电话”";
+"enableReportingExtension_step2_desc" = "向下滚动找到“电话”，然后轻点它。";
+"enableReportingExtension_step3_title" = "短信/通话报告";
+"enableReportingExtension_step3_desc" = "向下滚动并轻点“短信/通话报告”。";
+"enableReportingExtension_desc" = "启用报告扩展，以便直接从“信息”报告垃圾短信，帮助改进所有用户的 AI 过滤。请按以下步骤操作，准备好后轻点“设置”。";
+"enableReportingExtension_step4_title" = "选择“Simply Filter SMS”";
+"enableReportingExtension_step4_desc" = "选择“Simply Filter SMS”以启用报告。";
+"enableReportingExtension_step5_title" = "长按一条信息";
+"enableReportingExtension_step5_desc" = "在“信息”App 中长按信息气泡，然后轻点“更多…”";
+"enableReportingExtension_step6_title" = "选择信息";
+"enableReportingExtension_step6_desc" = "选择要让 AI 分析的信息。";
+"enableReportingExtension_step7_title" = "报告信息";
+"enableReportingExtension_step7_desc" = "轻点“报告信息”以提交信息用于 AI 训练。";
+
+//MARK: About View
+"aboutView_aboutSection" = "开发者说明";
+"aboutView_linksSection" = "链接";
+"aboutView_aboutText" = "**Adi Ben-Dahan 在特拉维夫 🇮🇱 用 ❤️ 制作**\n\n这个项目源于我个人的一个愿望：找到一款真正尊重隐私的消息工具。\n\n没有云端。\n没有分析。\n没有默默观察你的服务。\n\n只有一个快速可靠的过滤器，完全在你的设备上运行，不让任何内容离开你的手中。\n而且，既然这个领域的许多工具都需要订阅或付费，我觉得拥有一个无需附加条件、拿来即用的版本会很好。这款 App **免费**使用，并且会**一直免费**。\n\n**如果你愿意在 App Store 给我们五星好评 ⭐️❤️，我会非常开心。**\n\n如果哪里感觉不对或运行异常，欢迎在 GitHub Issues 页面留言或发送邮件。";
+"aboutView_twitter" = "a_bd";
+"aboutView_github" = "GitHub";
+"aboutView_sendMail" = "邮件";
+"aboutView_appIconCredit" = "Vitali Levit";
+"aboutView_appIconCreditTitle" = "图标设计师";
+"aboutView_review" = "请给我们评分！";
+"aboutView_contactSection" = "联系";
+"aboutView_connectSection" = "关注";
+"aboutView_supportSection" = "支持 App";
+
+//MARK: Help View
+"faq_subtitle" = "找不到答案？请发送邮件或打开 GitHub Issue。";
+"faq_section" = "常见问题";
+"help_getStarted" = "开始使用";
+"help_enableFiltering_title" = "启用过滤";
+"help_enableFiltering_caption" = "需要先在 iOS“设置”中启用，才能过滤未知短信。";
+"help_enableReporting_title" = "启用报告扩展";
+"help_enableReporting_caption" = "可选功能。从“信息”中的对话报告信息，帮助改进 AI 过滤。";
+"faq_question_1" = "信息过滤如何工作？";
+"faq_answer_1" = "当你收到来自“通讯录”中没有的号码的信息时，Simply Filter SMS 会按以下顺序检查：\n\n• **允许的文本**始终会正常送达。\n• **屏蔽的文本**、屏蔽的语言、智能过滤器、受信任的国家和 **AI 过滤**可以将信息发送到“垃圾短信”“交易信息”或“推广信息”。\n• 如果没有匹配项，信息会正常送达。\n\niMessage 和来自“通讯录”中联系人的信息不会发送给 App。";
+"faq_question_2" = "开发者会看到我的信息吗？";
+"faq_answer_2" = "不会。Simply Filter SMS 不会收集任何信息，所有信息处理都在你的设备上本地完成，也不会记录日志。";
+"faq_question_3" = "iMessage 和来自联系人的信息呢？";
+"faq_answer_3" = "Apple 不会向任何开发者开放这些信息，它们始终是完全私密的。";
+"faq_question_4" = "被过滤的信息在哪里？";
+"faq_answer_4" = "被标记为垃圾短信的信息仍可在“信息”App 的“垃圾短信”列表中查看。";
+"faq_question_5" = "垃圾短信、交易信息和推广信息列表有什么区别？";
+"faq_answer_5" = "区别不大，你可以将任意词语过滤到任意列表。这些列表无法自定义。只有被过滤到“垃圾短信”列表的信息会静默送达。";
+"help_automaticFiltering_question" = "AI 过滤如何工作？";
+"help_automaticFiltering" = "AI 过滤使用 AI 生成的关键词列表来识别垃圾信息，并将其送到“垃圾短信”列表。列表会定期更新。启用 AI 过滤后，你的常规过滤器仍然会生效。";
+"faq_question_notFiltering" = "为什么我的信息没有被过滤？";
+"faq_answer_notFiltering" = "通常是以下原因之一：\n\n• Simply Filter SMS 没有在 iOS“设置”中选为过滤 App。\n• 该对话是 **iMessage**（蓝色气泡），而不是短信。Apple 不允许任何 App 过滤 iMessage。\n• 发件人在**通讯录**中。iOS 不会过滤这些联系人。\n\n在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**测试过滤器**，再粘贴发件人和信息。即使关闭了过滤，App 内的测试仍会运行，因此测试结果可能显示已过滤，而“信息”仍会正常送达。如果 Simply Filter SMS 已在 iOS“设置”中启用，但测试仍显示应该被过滤，请给我发邮件。";
+"faq_question_smartFilters" = "什么是智能过滤器？";
+"faq_answer_smartFilters" = "主屏幕上的**智能过滤器**可以拦截常见垃圾信息：链接、邮件、Emoji、短发件人、仅含数字的发件人或所有未知发件人。它们会与你自己的过滤器一起工作。**屏蔽所有未知发件人**的力度最强，启用后会关闭其他智能过滤器。";
+"faq_question_trustedCountries" = "什么是受信任的国家？";
+"faq_answer_trustedCountries" = "**按国家允许**可以放行来自你选择的国家/地区代码的号码，例如 +1 或 +972。来自其他国家/地区的发件人会被过滤。没有国家/地区代码的号码不会被检查。";
+"faq_question_testFilters" = "如何测试我的过滤器？";
+"faq_answer_testFilters" = "在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**测试过滤器**。输入发件人和信息，结果会随输入更新。将发件人留空即可只测试信息正文。";
+"faq_question_shareFilters" = "可以分享我的过滤器吗？";
+"faq_answer_shareFilters" = "在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**导出过滤器**，再发送文件。在另一台设备上使用 **导入过滤器** 添加它们。已存在的过滤器会被跳过，不会覆盖或删除任何内容。";
+"faq_question_report" = "如何帮助改进 AI 过滤？";
+"faq_answer_report" = "在主屏幕上，轻点右上角的 ••• 按钮，然后轻点 **过滤工具**。**报告信息**会从此 App 发送信息。**改进 AI 过滤**会启用从“信息”对话中报告信息的功能。报告会用于训练 AI 列表。你的设备上的过滤仍然在本地完成。";
+"help_deny" = "添加会使信息被标记为垃圾短信的文本，也可以选择要存储信息的具体列表。";
+"help_allow" = "添加会使信息被标记为有效的文本。建议在这里添加姓名等独特的识别文本。此列表中的文本在过滤信息时具有最高优先级。";
+
+//MARK: Automatic Filtering
+"autoFilter_title" = "AI 过滤";
+"autoFilter_lastUpdated" = "更新于 %@";
+"autoFilter_forceUpdate" = "强制更新";
+"autoFilter_neverUpdated" = "从未更新";
+"autoFilter_ON" = "开";
+"autoFilter_OFF" = "关";
+"autoFilter_allUnknown" = "屏蔽所有未知发件人";
+"autoFilter_links" = "屏蔽链接";
+"autoFilter_numbersOnly" = "仅允许数字";
+"autoFilter_shortSender" = "屏蔽短发件人";
+"autoFilter_shortSender_desc" = "至少 %ld 个字符";
+"autoFilter_shortSender_change" = "轻点以更改";
+"autoFilter_shortSender_action" = "选择新限制";
+"autoFilter_allUnknown_shortTitle" = "所有未知发件人（允许的文本除外）";
+"autoFilter_links_shortTitle" = "链接";
+"autoFilter_numbersOnly_shortTitle" = "仅数字";
+"autoFilter_shortSender_shortTitle" = "短发件人";
+"autoFilter_smartFilters" = "智能过滤器";
+"autoFilter_yourFilters" = "你的过滤器";
+"autoFilter_email_shortTitle" = "邮件";
+"autoFilter_email" = "屏蔽邮件发件人";
+"autoFilter_empty" = "请在 App 打开期间至少联网一次，以下载 AI 过滤列表。";
+"autoFilter_error" = "下载 AI 过滤列表时似乎出现问题。请稍后重试。";
+"autoFilter_emojis" = "屏蔽 Emoji";
+"autoFilter_emojis_shortTitle" = "Emoji";
+"autoFilter_countryAllowlist" = "按国家/地区允许";
+"autoFilter_countryAllowlist_shortTitle" = "国家/地区允许列表";
+"autoFilter_countryAllowlist_empty" = "未选择国家/地区";
+"autoFilter_countryAllowlist_explanation" = "添加你希望允许其信息的国家/地区。不在此列表中的国家/地区注册的电话号码发送的信息会被过滤。只有包含完整国际区号（例如 +1、+972）的发件人会被检查 - 没有国际区号的发件人不受影响。";
+"autoFilter_reportSpam" = "报告垃圾短信";
+"autoFilter_improveAIFiltering" = "改进 AI 过滤";
+"general_search" = "搜索";
+"general_more" = "更多";
+"general_selected" = "已选择";
+"general_all" = "所有国家/地区";
+"general_noResults" = "无结果";
+
+// MARK: Test Filters
+"testFilters_title" = "测试过滤器";
+"testFilters_messageTitle" = "信息";
+"testFilters_senderTitle" = "发件人（可选）";
+"testFilters_resultAllowed" = "允许";
+"testFilters_resultJunk" = "垃圾短信";
+"testFilters_resultPromotion" = "推广信息";
+"testFilters_resultTransaction" = "交易信息";
+"testFilters_resultReason_noMatch" = "不匹配";
+"testFilters_resultReason_unknownSender" = "未知发件人";
+"testFilters_resultMatchedFilter" = "过滤器：";
+"testFilters_resultMatchedSmartFilter" = "智能过滤器：";
+"testFilters_resultMatchedAutomaticFilter" = "AI 过滤：";
+"testFilters_footer" = "输入发件人和信息，查看它们会如何被过滤。发件人是可选的，留空即可只测试信息正文。";
+
+"notification_offline_title" = "iCloud 同步已暂停";
+"notification_offline_subtitle" = "你的设备没有网络连接";
+"notification_sync_title" = "iCloud 同步已开启";
+"notification_sync_subtitle" = "设备上的本地数据已更新";
+"notification_hide" = "隐藏";
+"notification_automatic_title" = "AI 过滤";
+"notification_automatic_subtitle" = "过滤器已更新";
+"notification_clipboard_subtitle" = "已复制到剪贴板";
+"notification_tipPromotion_title" = "喜欢这款 App 吗？";
+"notification_tipPromotion_subtitle" = "轻点以留下小费";
+"notification_reportingExtension_title" = "改进 AI 过滤";
+"notification_reportingExtension_subtitle" = "报告垃圾短信";
+"notification_reportingExtension_button" = "加入";
+
+// MARK: Report Message
+"reportMessage_senderTitle" = "发件人";
+"reportMessage_title" = "报告信息";
+"reportMessage_junk" = "垃圾短信";
+"reportMessage_notJunk" = "不是垃圾短信";
+"reportMessage_junkAndBlockSender" = "标记为垃圾短信并屏蔽发件人";
+"reportMessage_report" = "报告";
+"reportMessage_thankYou" = "感谢你的报告！";
+"reportingExtension_message" = "信息";
+"reportingExtension_messageIndex" = "信息 %ld";
+"reportingExtension_selectedCall" = "已选择的通话";
+"reportingExtension_footer" = "你的报告会训练 AI 过滤器，帮助世界各地的 Simply Filter SMS 用户保持收件箱整洁。感谢你的贡献。";
+
+//MARK: What's New
+"whatsNew_title" = "新内容";
+"whatsNew_continue" = "继续";
+"whatsNew_menuItem" = "新内容";
+"whatsNew_aiFiltering_title" = "AI 过滤";
+"whatsNew_aiFiltering_desc" = "自动过滤现已由 **AI 驱动** - 更智能、更快速、更准确，并支持包括西班牙语、法语、德语、阿拉伯语等在内的 **10 种语言**。";
+"whatsNew_newLanguages_title" = "新增 8 种语言";
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** App 现已支持 **8 种新语言**，全部在 **AI** 的帮助下完成本地化。";
+"whatsNew_trustedCountries_title" = "受信任的国家/地区";
+"whatsNew_trustedCountries_desc" = "根据电话号码前缀自动允许来自**特定国家/地区**的信息。添加受信任的国家/地区，过滤其余信息。";
+"whatsNew_accessibility_title" = "辅助功能支持";
+"whatsNew_accessibility_desc" = "完全支持 **旁白** 和 **语音控制**。文本会随 **动态字体** 缩放。动画会遵循你的 **减弱动态效果** 设置。";
+"whatsNew_tipJar_title" = "支持开发者";
+"whatsNew_tipJar_desc" = "新增 **小费罐**，你可以用它支持 App 开发。Simply Filter SMS 永远免费 - 小费只是表达感谢的一种方式！**轻点此处留下小费！**";
+"whatsNew_regexFilters_title" = "正则表达式过滤器";
+"whatsNew_regexFilters_desc" = "面向高级用户 - 使用**正则表达式**精确控制要屏蔽或允许的内容。一个模式可以替代几十个过滤器。";
+
+//MARK: Tip Jar
+"tipJar_title" = "小费罐";
+"tipJar_menuItem" = "小费罐";
+"tipJar_aboutRow" = "小费罐";
+"tipJar_header" = "喜欢这款 App 吗？";
+"tipJar_subheader" = "Simply Filter SMS 免费，并且永远免费。如果你觉得它有用，一点小费就意义非凡！";
+"tipJar_footer" = "小费不会解锁任何功能。感谢你的支持！";
+"tipJar_unavailable" = "目前无法提供小费。请稍后重试。";
+"tipJar_tier_small" = "咖啡";
+"tipJar_tier_medium" = "披萨";
+"tipJar_tier_large" = "鸡尾酒";
+"tipJar_toast_title" = "非常感谢！";
+"tipJar_toast_subtitle" = "你的支持对我们意义重大！";
+"tipJar_tier_small_desc" = "感谢你请我喝咖啡";
+"tipJar_tier_medium_desc" = "一片爱意";
+"tipJar_tier_large_desc" = "摇匀，不要搅拌";
+"tipJar_chooseATip" = "选择小费";
+
+//MARK: iPad Detail Placeholder
+"placeholder_choose_title" = "选择类别";
+"placeholder_choose_detail" = "从边栏选择一个类别以查看其详细信息。";
+"placeholder_choose_sub_detail1" = "如果它已隐藏，请按顶部的";
+"placeholder_choose_sub_detail2" = "按钮。";
+
+//MARK: Accessibility
+"a11y_home_menuButton" = "更多选项";
+"a11y_addFilter_expandHint" = "轻点两下以切换高级选项";
+"a11y_reportMessage_submitHint" = "轻点两下以报告此信息";
+"a11y_enableExtension_ctaHint" = "轻点两下以打开“设置”";
+"a11y_filterRow_targetLabel" = "过滤目标：%@";
+"a11y_filterRow_matchLabel" = "匹配类型：%@";
+"a11y_filterRow_caseLabel" = "大小写：%@";
+"a11y_filterRow_folderLabel" = "文件夹：%@";
+"a11y_home_shortSenderHint" = "当前为 %ld 个字符。使用操作更改字符限制";
+"a11y_home_shortSenderAction" = "更改字符限制";
+"a11y_footer_hint" = "轻点两下以查看 App 信息";
+"a11y_filterRow_editHint" = "轻点两下以编辑";
+"a11y_about_versionHint" = "轻点两下以复制版本";
+"a11y_about_versionCopied" = "版本";
+"a11y_enableExtension_stepLabel" = "步骤 %ld：%@。%@";
+"a11y_help_enableFilteringHint" = "轻点两下以打开过滤设置";
+"a11y_help_enableReportingHint" = "轻点两下以打开报告设置";
+"a11y_help_faqHint" = "轻点两下以显示或隐藏答案";
+"a11y_help_emailHint" = "轻点两下以发送邮件。如果未设置邮件 App，则复制地址";
+"a11y_accentColor_resetHint" = "轻点两下以恢复默认颜色";
+
+//MARK: Filter Import / Export
+"menu_exportFilters" = "导出过滤器";
+"menu_importFilters" = "导入过滤器";
+"importFilters_title" = "导入过滤器";
+"importFilters_sectionTitle" = "要导入的过滤器";
+"importFilters_subtitle" = "轻点列表以查看文件中的过滤器，并选择要添加的过滤器。此设备上已存在的过滤器会被跳过，不会覆盖或删除任何内容。";
+"importFilters_willClear" = "所有现有过滤器都将被删除";
+"importFilters_duplicates" = "已存在";
+"importFilters_invalid" = "已跳过";
+"importFilters_confirm" = "导入";
+"importFilters_nothingToAdd" = "没有新的过滤器可导入。";
+"importFilters_selectAll" = "全选";
+"importFilters_selectNone" = "全不选";
+"exportFilters_title" = "导出过滤器";
+"exportFilters_sectionTitle" = "你的过滤器";
+"exportFilters_subtitle" = "轻点列表以选择要包含的过滤器。只有选中的过滤器会写入文件。";
+"exportFilters_confirm" = "导出";
+"notification_import_title" = "过滤器已导入";
+"notification_import_subtitle" = "已添加 %ld 个，已跳过 %ld 个";
+"notification_importFailed_title" = "导入失败";
+"notification_importFailed_subtitle" = "此文件不是有效的过滤器导出文件。";
+"notification_exportFailed_title" = "导出失败";
+"notification_exportFailed_subtitle" = "无法创建导出文件。";
+"whatsNew_filterTransfer_title" = "导出和导入过滤器";
+"whatsNew_filterTransfer_desc" = "与朋友分享你的过滤器 - 从菜单的**过滤工具**中导出文件并发送。";
+"whatsNew_appearanceTouchup_title" = "外观微调";
+"whatsNew_appearanceTouchup_desc" = "**帮助**和**测试过滤器**焕然一新。你还可以从菜单中选择**强调色** - 按钮和图标会使用该颜色。";
+
+// Country calling code groups
+"callingCode_+1" = "北美";
+"callingCode_+7" = "俄罗斯和哈萨克斯坦";
+"callingCode_+47" = "挪威";
+"callingCode_+262" = "留尼汪和马约特";
+"callingCode_+590" = "瓜德罗普";
+"callingCode_+599" = "荷属安的列斯";
