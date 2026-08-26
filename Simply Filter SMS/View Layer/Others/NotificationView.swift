@@ -11,8 +11,13 @@ import Foundation
 
 struct NotificationView: View {
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.needsStackedLayout) private var needsStackedLayout
     @ObservedObject var model: ViewModel
+    @State private var offset: CGFloat = -200
+
+    private let kHideOffset: CGFloat = -200
+    private let kShowOffset: CGFloat = 25
 
     var body: some View {
         Group {
@@ -26,6 +31,9 @@ struct NotificationView: View {
         .accessibilityElement(children: .combine)
         .modifier(NotificationGlassBackground())
         .gesture(dismissDragGesture)
+        .offset(y: self.offset)
+        .accessibilityHidden(offset != kShowOffset)
+        .animation(reduceMotion ? nil : .interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
         .onTapGesture {
             if let onTap = self.model.onTap {
                 onTap()
@@ -33,20 +41,29 @@ struct NotificationView: View {
                 self.model.onButtonTap?()
             }
         }
-        .onChange(of: model.show) { show in
-            if show {
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
-                if UIAccessibility.isVoiceOverRunning {
-                    UIAccessibility.post(
-                        notification: .announcement,
-                        argument: "\(self.model.title). \(self.model.subtitle)"
-                    )
-                }
-            } else {
-                let callback = self.model.onHide
-                self.model.onHide = nil
-                callback?()
+        .onReceive(model.$show) { show in
+            withAnimation {
+                self.setShow(show)
             }
+        }
+    }
+
+    private func setShow(_ show: Bool) {
+        if show && self.offset == kHideOffset {
+            self.offset = kShowOffset
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            if UIAccessibility.isVoiceOverRunning {
+                UIAccessibility.post(
+                    notification: .announcement,
+                    argument: "\(self.model.title). \(self.model.subtitle)"
+                )
+            }
+        }
+        else if !show && self.offset == kShowOffset {
+            self.offset = kHideOffset
+            let callback = self.model.onHide
+            self.model.onHide = nil
+            callback?()
         }
     }
 
