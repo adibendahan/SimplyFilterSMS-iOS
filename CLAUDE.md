@@ -22,7 +22,7 @@ Open `Simply Filter SMS.xcodeproj` in Xcode. No package managers (SPM/CocoaPods)
 **Command-line build/test:**
 ```bash
 xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Simply Filter SMS" -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
-xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Simply Filter SMS" -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
+xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Tests" -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
 ```
 
 **Localization:** BartyCrouch normalizes `.strings` files (English + Hebrew). Config in `.bartycrouch.toml`.
