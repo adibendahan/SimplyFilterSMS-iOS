@@ -92,6 +92,7 @@ struct ReportMessageView: View {
                     } footer: {
                         Text("reportingExtension_footer"~)
                             .multilineTextAlignment(.center)
+                            .limitedDynamicTypeSize()
                     }
                 }
                 .onAppear {

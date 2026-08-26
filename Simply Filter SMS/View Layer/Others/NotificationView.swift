@@ -11,66 +11,21 @@ import Foundation
 
 struct NotificationView: View {
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.needsStackedLayout) private var needsStackedLayout
     @ObservedObject var model: ViewModel
-    @State private var offset: CGFloat = -200
-
-    private let kHideOffset: CGFloat = -200
-    private let kShowOffset: CGFloat = 25
 
     var body: some View {
-        HStack (alignment: .center, spacing: 8) {
-            Image(systemName: self.model.icon)
-                .font(.body)
-                .padding(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 0))
-                .foregroundStyle(self.model.iconColor)
-
-            VStack (alignment: .leading, spacing: 0) {
-                Text(self.model.title)
-                    .font(.caption.bold())
-                    .foregroundColor(.primary)
-
-                Text(self.model.subtitle)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+        Group {
+            if needsStackedLayout {
+                accessibilityLayout
+            } else {
+                compactLayout
             }
-            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 4))
-
-            Button {
-                self.model.onButtonTap?()
-            } label: {
-                Text(self.model.buttonTitle)
-                    .font(.caption.bold())
-                    .foregroundColor(.primary)
-                    .padding(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
-                    .modifier(NotificationActionChipBackground())
-            }
-            .modifier(NotificationActionButtonStyle())
-            .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
         }
+        .limitedDynamicTypeSize(.accessibility1)
         .accessibilityElement(children: .combine)
         .modifier(NotificationGlassBackground())
-        .gesture(
-            DragGesture(minimumDistance: 20, coordinateSpace: .global)
-                .onChanged({ value in
-                    let horizontalAmount = value.translation.width as CGFloat
-                    let verticalAmount = value.translation.height as CGFloat
-
-                    if abs(horizontalAmount) < abs(verticalAmount) && verticalAmount < -20  {
-                        self.model.onButtonTap?()
-                    }
-                })
-                .onEnded { value in
-                    let horizontalAmount = value.translation.width as CGFloat
-                    let verticalAmount = value.translation.height as CGFloat
-
-                    if abs(horizontalAmount) < abs(verticalAmount) && verticalAmount < 0  {
-                        self.model.onButtonTap?()
-                    }
-                })
-        .offset(y: self.offset)
-        .accessibilityHidden(offset != kShowOffset)
-        .animation(reduceMotion ? nil : .interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
+        .gesture(dismissDragGesture)
         .onTapGesture {
             if let onTap = self.model.onTap {
                 onTap()
@@ -78,30 +33,99 @@ struct NotificationView: View {
                 self.model.onButtonTap?()
             }
         }
-        .onReceive(model.$show) { show in
-            withAnimation {
-                self.setShow(show)
+        .onChange(of: model.show) { show in
+            if show {
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                if UIAccessibility.isVoiceOverRunning {
+                    UIAccessibility.post(
+                        notification: .announcement,
+                        argument: "\(self.model.title). \(self.model.subtitle)"
+                    )
+                }
+            } else {
+                let callback = self.model.onHide
+                self.model.onHide = nil
+                callback?()
             }
         }
     }
 
-    private func setShow(_ show: Bool) {
-        if show && self.offset == kHideOffset {
-            self.offset = kShowOffset
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-            if UIAccessibility.isVoiceOverRunning {
-                UIAccessibility.post(
-                    notification: .announcement,
-                    argument: "\(self.model.title). \(self.model.subtitle)"
-                )
+    private var compactLayout: some View {
+        HStack(alignment: .center, spacing: 8) {
+            notificationIcon
+            textColumn
+            actionButton
+        }
+    }
+
+    private var accessibilityLayout: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top, spacing: 8) {
+                notificationIcon
+                textColumn
             }
+            actionButton
+                .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        else if !show && self.offset == kShowOffset {
-            self.offset = kHideOffset
-            let callback = self.model.onHide
-            self.model.onHide = nil
-            callback?()
+    }
+
+    private var notificationIcon: some View {
+        Image(systemName: self.model.icon)
+            .font(.body)
+            .padding(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 0))
+            .foregroundStyle(self.model.iconColor)
+    }
+
+    private var textColumn: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(self.model.title)
+                .font(.caption.bold())
+                .foregroundColor(.primary)
+
+            Text(self.model.subtitle)
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
+        .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 4))
+        .if(needsStackedLayout) { content in
+            content
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private var actionButton: some View {
+        Button {
+            self.model.onButtonTap?()
+        } label: {
+            Text(self.model.buttonTitle)
+                .font(.caption.bold())
+                .foregroundColor(.primary)
+                .padding(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
+                .modifier(NotificationActionChipBackground())
+        }
+        .modifier(NotificationActionButtonStyle())
+        .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+    }
+
+    private var dismissDragGesture: some Gesture {
+        DragGesture(minimumDistance: 20, coordinateSpace: .global)
+            .onChanged { value in
+                let horizontalAmount = value.translation.width
+                let verticalAmount = value.translation.height
+
+                if abs(horizontalAmount) < abs(verticalAmount) && verticalAmount < -20 {
+                    self.model.onButtonTap?()
+                }
+            }
+            .onEnded { value in
+                let horizontalAmount = value.translation.width
+                let verticalAmount = value.translation.height
+
+                if abs(horizontalAmount) < abs(verticalAmount) && verticalAmount < 0 {
+                    self.model.onButtonTap?()
+                }
+            }
     }
 
     class ViewModel: ObservableObject {

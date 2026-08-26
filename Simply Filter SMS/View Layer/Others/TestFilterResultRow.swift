@@ -18,16 +18,17 @@ struct TestFilterResultRow: View {
     @ScaledMetric(relativeTo: .body) private var titleSize: CGFloat = 16
 
     var body: some View {
-        HStack(alignment: .center, spacing: 0) {
+        AdaptiveRow {
             Image(systemName: style.icon)
                 .foregroundColor(style.color)
                 .frame(width: iconSize, alignment: .center)
                 .accessibilityHidden(true)
-
+        } content: {
             VStack(alignment: .leading, spacing: 2) {
                 Text(style.title)
                     .font(.system(size: titleSize, weight: .heavy))
                     .foregroundColor(style.color)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 if let caption = Self.caption(for: result.match) {
                     caption
@@ -35,9 +36,6 @@ struct TestFilterResultRow: View {
                         .foregroundColor(.secondary)
                 }
             }
-            .padding(.leading, 8)
-
-            Spacer(minLength: 0)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Self.accessibilityText(for: result))
@@ -99,9 +97,11 @@ private struct TestResultStyle {
 #Preview("Junk") {
     TestFilterResultRow(result: MessageEvaluationResult(action: .junk, match: .userFilter("amazon")))
         .padding()
+        .adaptiveLayoutEnvironment()
 }
 
 #Preview("Allowed") {
     TestFilterResultRow(result: MessageEvaluationResult(action: .allow, match: .noMatch))
         .padding()
+        .adaptiveLayoutEnvironment()
 }

@@ -31,18 +31,19 @@ struct AboutView: View {
             List {
                 // Identity
                 Section {
-                    HStack(spacing: 14) {
+                    AdaptiveRow(compactSpacing: 14) {
                         Image("logo")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: cardLogoSize, height: cardLogoSize)
                             .clipShape(RoundedRectangle(cornerRadius: cardLogoSize * 0.225, style: .continuous))
                             .accessibilityHidden(true)
-
+                    } content: {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Simply Filter SMS")
                                 .font(.title2.bold())
                                 .foregroundColor(.primary)
+                                .fixedSize(horizontal: false, vertical: true)
 
                             Button {
                                 model.setClipboard(content: "v\(appVersion) (\(appBuild))", displayName: "a11y_about_versionCopied"~)

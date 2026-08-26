@@ -39,21 +39,22 @@ struct CustomPlaceholderView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                 
-                HStack {
+                AdaptiveStack(spacing: 5) {
                     Text("placeholder_choose_sub_detail1"~)
                         .font(.body)
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.center)
-                    
+
                     Image(systemName: symbol)
                         .font(.body)
                         .foregroundStyle(.tint)
-                    
+
                     Text("placeholder_choose_sub_detail2"~)
                         .font(.body)
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.center)
                 }
+                .frame(maxWidth: .infinity)
 
             }
             

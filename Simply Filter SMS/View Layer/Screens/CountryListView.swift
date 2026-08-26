@@ -87,11 +87,12 @@ struct CountryListView: View {
         Button {
             model.toggleSelection(entry)
         } label: {
-            HStack {
+            AdaptiveRow(stackedTrailingAlignment: .trailing, compactAlignment: .top) {
                 Text(entry.flagEmoji)
                     .font(.title2)
                     .accessibilityHidden(true)
-
+                    .adaptiveIconColumn(width: 36)
+            } content: {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.displayName)
                         .foregroundColor(.primary)
@@ -99,9 +100,7 @@ struct CountryListView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-
-                Spacer()
-
+            } trailing: {
                 if model.isSelected(entry) {
                     Image(systemName: "checkmark")
                         .foregroundStyle(.tint)

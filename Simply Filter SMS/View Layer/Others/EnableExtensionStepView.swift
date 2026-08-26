@@ -14,6 +14,7 @@ struct EnableExtensionStepView: View {
     let isActive: Bool
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.needsStackedLayout) private var needsStackedLayout
     @State private var toggleOn = false
 
     var body: some View {
@@ -42,7 +43,9 @@ struct EnableExtensionStepView: View {
             }
 
             // Right: title + description, toggle at trailing
-            HStack(alignment: .top, spacing: 12) {
+            AdaptiveRow(stackedTrailingAlignment: .trailing, compactAlignment: .top) {
+                EmptyView()
+            } content: {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
                         if step.showsAppIcon {
@@ -56,19 +59,24 @@ struct EnableExtensionStepView: View {
                         }
                         Text(step.title)
                             .font(.headline)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     Text(step.description)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.7)
-                        .frame(height: 40, alignment: .topLeading)
+                        .if(needsStackedLayout) { content in
+                            content.fixedSize(horizontal: false, vertical: true)
+                        }
+                        .if(!needsStackedLayout) { content in
+                            content
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.7)
+                                .frame(height: 40, alignment: .topLeading)
+                        }
                 }
                 .opacity(isActive ? 1.0 : 0.35)
                 .animation(.easeInOut(duration: 0.3), value: isActive)
-
-                Spacer()
-
+            } trailing: {
                 if step.isToggle {
                     Toggle("", isOn: $toggleOn)
                         .labelsHidden()

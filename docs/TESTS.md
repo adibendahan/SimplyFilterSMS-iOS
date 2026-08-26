@@ -270,7 +270,7 @@ postfix func ~ (lang: NLLanguage) -> String {
 ```bash
 # Unit tests
 xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Simply Filter SMS" \
-  -destination 'platform=iOS Simulator,name=iPhone 16' test
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
 
 # App Store screenshots (via Fastlane — configured in fastlane/Fastfile)
 fastlane iphone_screenshots        # iPhone only
