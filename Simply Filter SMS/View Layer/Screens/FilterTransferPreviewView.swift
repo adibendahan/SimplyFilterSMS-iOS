@@ -180,7 +180,7 @@ struct FilterTransferCandidateListView: View {
                 .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
         } trailing: {
-            HStack(spacing: 4) {
+            HStack {
                 if candidate.type.supportsAdvancedOptions {
                     FilterRowOptionChip(systemName: candidate.filterTarget.icon,
                                         isActive: candidate.filterTarget != .all)

@@ -35,7 +35,7 @@ struct FilterListRowView: View {
 
     @ViewBuilder
     private var filterTextColumn: some View {
-        HStack(alignment: .center, spacing: 0) {
+        HStack(alignment: .center) {
             Circle()
                 .fill(.tint)
                 .frame(width: 8, height: 8)
@@ -65,7 +65,6 @@ struct FilterListRowView: View {
                 if blockedLanguage != .undetermined,
                    let localizedName = blockedLanguage.localizedName {
                     Text(localizedName)
-                        .padding(.leading, 8)
                 }
             }
             else {
@@ -108,7 +107,7 @@ struct FilterListRowView: View {
 
     @ViewBuilder
     private var optionButtons: some View {
-        HStack(spacing: 4) {
+        HStack {
             if self.model.filter.filterType.supportsAdvancedOptions {
                 targetMenu
                 if self.model.filter.filterMatching != .regex {

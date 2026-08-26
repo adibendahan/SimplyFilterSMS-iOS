@@ -87,7 +87,7 @@ struct CountryListView: View {
         Button {
             model.toggleSelection(entry)
         } label: {
-            AdaptiveRow(stackedTrailingAlignment: .trailing, compactAlignment: .top) {
+            AdaptiveRow(stackedTrailingAlignment: .trailing) {
                 Text(entry.flagEmoji)
                     .font(.title2)
                     .accessibilityHidden(true)

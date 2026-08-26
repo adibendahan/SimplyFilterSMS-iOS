@@ -155,13 +155,14 @@ struct FilterRowOptionChip: View {
     let isActive: Bool
 
     private let iconSize: CGFloat = 15
-    private let buttonSize: CGFloat = 29
 
     var body: some View {
         Image(systemName: systemName)
-            .font(.system(size: iconSize))
+            .resizable()
+            .aspectRatio(contentMode: .fit)
             .foregroundStyle(isActive ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
-            .frame(width: buttonSize, height: buttonSize)
+            .frame(width: iconSize, height: iconSize)
+            .padding(7)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)

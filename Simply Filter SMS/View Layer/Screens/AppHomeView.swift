@@ -42,7 +42,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 Section {
                     let screen: Screen = .automaticBlocking
                     
-                    AdaptiveRow(compactAlignment: .top) {
+                    AdaptiveRow {
                         Group {
                             if #available(iOS 17, *) {
                                 if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
