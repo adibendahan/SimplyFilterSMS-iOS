@@ -50,25 +50,14 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                 .deleteDisabled(self.model.editMode.isEditing)
             } header: {
                 if self.model.regularFilters.count > 0 {
-                    HStack {
-                        Text(self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~)
-
-                        Spacer()
-
-                        Text(self.model.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~)
-                            .padding(.trailing, 8)
-                    }
+                    AdaptiveColumnHeader(
+                        leading: self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~,
+                        trailing: self.model.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~,
+                        trailingSecondary: false)
                 }
             } footer: {
                 if self.model.regexFilters.isEmpty {
-                    VStack {
-                        Text(.init(self.model.footer))
-
-                        Spacer()
-
-                        AddFilterButton()
-                            .padding(.top, self.model.filters.count > 0 ? 0 : 120)
-                    }
+                    listFooter
                 }
             }
 
@@ -90,14 +79,7 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                 } header: {
                     Text("addFilter_match_regex"~)
                 } footer: {
-                    VStack {
-                        Text(.init(self.model.footer))
-
-                        Spacer()
-
-                        AddFilterButton()
-                            .padding(.top, self.model.filters.count > 0 ? 0 : 120)
-                    }
+                    listFooter
                 }
             }
         } // List
@@ -146,6 +128,16 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
         }
         } // ScrollViewReader
         .modifier(persistentStoreReload)
+    }
+
+    @ViewBuilder
+    private var listFooter: some View {
+        VStack(spacing: 16) {
+            Text(.init(self.model.footer))
+
+            AddFilterButton()
+        }
+        .padding(.top, self.model.filters.count == 0 ? 40 : 0)
     }
     
     @ViewBuilder
@@ -239,9 +231,9 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                     Spacer()
                 }
                 .contentShape(Rectangle())
-                .frame(minWidth: 1, maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity)
                 .padding(.top, 1)
-                .padding(.bottom, 40)
+                .padding(.bottom, 16)
             }
             .highPriorityGesture(TapGesture()
                 .onEnded({ _ in

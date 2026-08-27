@@ -20,11 +20,22 @@ struct FilterListRowView: View {
     @State private var showInvalidRegexError = false
     @State private var dotOpacity: Double = 0
 
-    @ScaledMetric(relativeTo: .body) private var optionIconSize: CGFloat = 15
-
     var body: some View {
-        HStack (alignment: .center) {
+        AdaptiveRow {
+            EmptyView()
+        } content: {
+            filterTextColumn
+        } trailing: {
+            if !self.isEditingText {
+                optionButtons
+            }
+        }
+        .accessibilityElement(children: .contain)
+    }
 
+    @ViewBuilder
+    private var filterTextColumn: some View {
+        HStack(alignment: .center) {
             Circle()
                 .fill(.tint)
                 .frame(width: 8, height: 8)
@@ -82,6 +93,8 @@ struct FilterListRowView: View {
                         self.showInvalidRegexError = self.model.isLiveInvalidRegex(text: text)
                     })
                     .font(self.model.filter.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .layoutPriority(1)
 
                 if self.isEditingText && self.showDuplicateError {
                     FilterBadge(text: "addFilter_duplicate"~, color: .red, systemImage: "xmark.circle.fill")
@@ -89,104 +102,108 @@ struct FilterListRowView: View {
                     FilterBadge(text: "addFilter_invalidRegex"~, color: .red, systemImage: "xmark.circle.fill")
                 }
             }
-            
-            Spacer()
-            
-            if !self.isEditingText && self.model.filter.filterType.supportsAdvancedOptions {
-                Menu {
-                    Picker(selection: Binding(
-                        get: { self.model.filter.filterTarget },
-                        set: { self.model.updateFilter(filterTarget: $0) }
-                    )) {
-                        ForEach(FilterTarget.allCases) { filterTarget in
-                            Label(filterTarget.name, systemImage: filterTarget.icon)
-                                .tag(filterTarget)
-                        }
-                    } label: {
-                        EmptyView()
-                    }
-                } label: {
-                    OptionButton(image: Image(systemName: self.model.filter.filterTarget.icon),
-                                 isActive: self.model.filter.filterTarget != .all)
-                }
-                .accessibilityLabel(self.model.filter.filterMatching == .regex
-                    ? String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name) + ", " + String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name)
-                    : String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
-
-                if self.model.filter.filterMatching != .regex {
-                    Menu {
-                        Picker(selection: Binding(
-                            get: { self.model.filter.filterMatching },
-                            set: { self.model.updateFilter(filterMatching: $0) }
-                        )) {
-                            ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
-                                Label(filterMatching.name, systemImage: filterMatching.icon)
-                                    .tag(filterMatching)
-                            }
-                        } label: {
-                            EmptyView()
-                        }
-                    } label: {
-                        OptionButton(image: Image(systemName: self.model.filter.filterMatching.icon),
-                                     isActive: self.model.filter.filterMatching == .exact)
-                    }
-                    .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filter.filterMatching.name))
-
-                    Menu {
-                        Picker(selection: Binding(
-                            get: { self.model.filter.filterCase },
-                            set: { self.model.updateFilter(filterCase: $0) }
-                        )) {
-                            ForEach(FilterCase.allCases) { filterCase in
-                                Label(filterCase.name, systemImage: filterCase.icon)
-                                    .tag(filterCase)
-                            }
-                        } label: {
-                            EmptyView()
-                        }
-                    } label: {
-                        OptionButton(image: Image(systemName: self.model.filter.filterCase.icon),
-                                     isActive: self.model.filter.filterCase == .caseSensitive)
-                    }
-                    .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
-                }
-            }
-
-            if !self.isEditingText && self.model.filter.filterType.supportsFolders {
-                Menu {
-                    Picker(selection: Binding(
-                        get: { self.model.filter.denyFolderType },
-                        set: { self.model.updateFilter(denyFolder: $0) }
-                    )) {
-                        ForEach(DenyFolderType.allCases) { folder in
-                            Label(folder.name, systemImage: folder.iconName)
-                                .tag(folder)
-                        }
-                    } label: {
-                        EmptyView()
-                    }
-                } label: {
-                    OptionButton(image: Image(systemName: self.model.filter.denyFolderType.iconName), isActive: true)
-                }
-                .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.denyFolderType.name))
-            }
-        }  // HStack
-        .accessibilityElement(children: .contain)
+        }
     }
 
     @ViewBuilder
-    private func OptionButton(image: Image, isActive: Bool) -> some View {
-        image
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .foregroundStyle(isActive ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
-            .frame(width: optionIconSize, height: optionIconSize)
-            .padding(7)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(Color.primary.opacity(0.12), lineWidth: 0.5)
-            )
+    private var optionButtons: some View {
+        HStack {
+            if self.model.filter.filterType.supportsAdvancedOptions {
+                targetMenu
+                if self.model.filter.filterMatching != .regex {
+                    matchingMenu
+                    caseMenu
+                }
+            }
+            if self.model.filter.filterType.supportsFolders {
+                folderMenu
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var targetMenu: some View {
+        Menu {
+            Picker(selection: Binding(
+                get: { self.model.filter.filterTarget },
+                set: { self.model.updateFilter(filterTarget: $0) }
+            )) {
+                ForEach(FilterTarget.allCases) { filterTarget in
+                    Label(filterTarget.name, systemImage: filterTarget.icon)
+                        .tag(filterTarget)
+                }
+            } label: {
+                EmptyView()
+            }
+        } label: {
+            FilterRowOptionChip(systemName: self.model.filter.filterTarget.icon,
+                                isActive: self.model.filter.filterTarget != .all)
+        }
+        .accessibilityLabel(self.model.filter.filterMatching == .regex
+            ? String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name) + ", " + String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name)
+            : String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
+    }
+
+    @ViewBuilder
+    private var matchingMenu: some View {
+        Menu {
+            Picker(selection: Binding(
+                get: { self.model.filter.filterMatching },
+                set: { self.model.updateFilter(filterMatching: $0) }
+            )) {
+                ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
+                    Label(filterMatching.name, systemImage: filterMatching.icon)
+                        .tag(filterMatching)
+                }
+            } label: {
+                EmptyView()
+            }
+        } label: {
+            FilterRowOptionChip(systemName: self.model.filter.filterMatching.icon,
+                                isActive: self.model.filter.filterMatching == .exact)
+        }
+        .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filter.filterMatching.name))
+    }
+
+    @ViewBuilder
+    private var caseMenu: some View {
+        Menu {
+            Picker(selection: Binding(
+                get: { self.model.filter.filterCase },
+                set: { self.model.updateFilter(filterCase: $0) }
+            )) {
+                ForEach(FilterCase.allCases) { filterCase in
+                    Label(filterCase.name, systemImage: filterCase.icon)
+                        .tag(filterCase)
+                }
+            } label: {
+                EmptyView()
+            }
+        } label: {
+            FilterRowOptionChip(systemName: self.model.filter.filterCase.icon,
+                                isActive: self.model.filter.filterCase == .caseSensitive)
+        }
+        .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
+    }
+
+    @ViewBuilder
+    private var folderMenu: some View {
+        Menu {
+            Picker(selection: Binding(
+                get: { self.model.filter.denyFolderType },
+                set: { self.model.updateFilter(denyFolder: $0) }
+            )) {
+                ForEach(DenyFolderType.allCases) { folder in
+                    Label(folder.name, systemImage: folder.iconName)
+                        .tag(folder)
+                }
+            } label: {
+                EmptyView()
+            }
+        } label: {
+            FilterRowOptionChip(systemName: self.model.filter.denyFolderType.iconName, isActive: true)
+        }
+        .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.denyFolderType.name))
     }
 }
 

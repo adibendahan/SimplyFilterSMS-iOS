@@ -54,7 +54,9 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
                             }
                             
                         case .automaticBlocking:
-                            Toggle(localizedName, isOn: $model.languages[index].state)
+                            AdaptiveToggle(isOn: $model.languages[index].state) {
+                                Text(localizedName)
+                            }
                         }
                     }
                 }
@@ -63,21 +65,20 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
                     self.model.languages.count == 0 {
                     
                     if !self.model.isLoading {
-                        HStack (spacing: 12) {
+                        AdaptiveRow {
                             Image(systemName: "wifi.exclamationmark")
                                 .font(.system(size: errorIconSize))
                                 .foregroundColor(.red)
                                 .accessibilityHidden(true)
-
+                                .adaptiveIconColumn()
+                        } content: {
                             if self.model.isOnline {
                                 Text(.init("autoFilter_error"~))
-                                    .padding(.vertical, 16)
-                            }
-                            else {
+                            } else {
                                 Text(.init("autoFilter_empty"~))
-                                    .padding(.vertical, 16)
                             }
                         }
+                        .padding(.vertical, 16)
                     }
                     else {
                         ProgressView()

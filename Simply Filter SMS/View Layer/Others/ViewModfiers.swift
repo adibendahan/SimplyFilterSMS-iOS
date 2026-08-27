@@ -11,16 +11,33 @@ import SwiftUI
 struct EmbeddedFooterView: ViewModifier {
     var isHidden: Bool = false
     var onTap: (() ->())? = nil
-    
+
+    @Environment(\.needsStackedLayout) private var needsStackedLayout
+
     func body(content: Content) -> some View {
-        ZStack (alignment: .bottom) {
-            content
-                .accessibilitySortPriority(1)
-            if !isHidden {
-                FooterView(onTap: onTap)
-                    .ignoresSafeArea(.keyboard, edges: .all)
-                    .allowsHitTesting(!ProcessInfo.processInfo.isInTestingMode)
+        Group {
+            if needsStackedLayout {
+                content
+                    .accessibilitySortPriority(1)
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        footerContent
+                    }
+            } else {
+                ZStack(alignment: .bottom) {
+                    content
+                        .accessibilitySortPriority(1)
+                    footerContent
+                }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var footerContent: some View {
+        if !isHidden {
+            FooterView(onTap: onTap)
+                .ignoresSafeArea(.keyboard, edges: .all)
+                .allowsHitTesting(!ProcessInfo.processInfo.isInTestingMode)
         }
     }
 }
@@ -51,9 +68,9 @@ struct EmbeddedCloseButton: ViewModifier {
 
 struct EmbeddedNotificationView: ViewModifier {
     var model: NotificationView.ViewModel
-    
+
     func body(content: Content) -> some View {
-        ZStack (alignment: .top) {
+        ZStack(alignment: .top) {
             content
             NotificationView(model: model)
         }

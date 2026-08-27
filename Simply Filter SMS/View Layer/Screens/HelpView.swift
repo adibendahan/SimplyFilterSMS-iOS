@@ -20,7 +20,6 @@ struct HelpView: View {
     private var reduceMotion
 
     @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 22
-    @ScaledMetric(relativeTo: .body) private var rowIconSize: CGFloat = 20
 
     @StateObject var model: ViewModel
 
@@ -36,12 +35,13 @@ struct HelpView: View {
                         model.onRequestScreen?(.enableExtension)
                         dismiss()
                     } label: {
-                        HStack {
+                        AdaptiveRow {
                             Image(systemName: "switch.2")
                                 .foregroundStyle(.tint)
-                                .frame(maxWidth: rowIconSize, maxHeight: .infinity, alignment: .center)
                                 .font(.body)
+                                .adaptiveIconColumn(width: 22)
                                 .accessibilityHidden(true)
+                        } content: {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("help_enableFiltering_title"~)
                                     .font(.body.weight(.semibold))
@@ -50,7 +50,6 @@ struct HelpView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
-                            .padding(.leading, 8)
                         }
                     }
                     .accessibilityElement(children: .combine)
@@ -60,12 +59,13 @@ struct HelpView: View {
                         model.onRequestScreen?(.enableReportingExtension)
                         dismiss()
                     } label: {
-                        HStack {
+                        AdaptiveRow {
                             Image(systemName: "wand.and.stars")
                                 .foregroundStyle(.tint)
-                                .frame(maxWidth: rowIconSize, maxHeight: .infinity, alignment: .center)
                                 .font(.body)
+                                .adaptiveIconColumn(width: 22)
                                 .accessibilityHidden(true)
+                        } content: {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("help_enableReporting_title"~)
                                     .font(.body.weight(.semibold))
@@ -74,7 +74,6 @@ struct HelpView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
-                            .padding(.leading, 8)
                         }
                     }
                     .accessibilityElement(children: .combine)

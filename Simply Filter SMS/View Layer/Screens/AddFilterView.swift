@@ -28,8 +28,10 @@ struct AddFilterView: View {
                     Spacer()
 
                     HStack (alignment: .center) {
-
-                        ZStack(alignment: .leading) {
+                        AdaptiveRow {
+                            EmptyView()
+                        } content: {
+                            ZStack(alignment: .leading) {
                             if self.model.selectedFilterMatching == .regex {
                                 if self.model.filterText.isEmpty {
                                     Text("[A-Za-z0-9]+".highlightedAsRegex)
@@ -55,11 +57,12 @@ struct AddFilterView: View {
                                 .foregroundColor(self.model.selectedFilterMatching == .regex ? .clear : .primary)
                         }
                         .animation(.easeInOut(duration: 0.25), value: self.model.selectedFilterMatching)
-
-                        if self.model.isDuplicateFilter {
-                            FilterBadge(text: "addFilter_duplicate"~, color: .red, systemImage: "xmark.circle.fill")
-                        } else if self.model.isInvalidRegex {
-                            FilterBadge(text: "addFilter_invalidRegex"~, color: .red, systemImage: "xmark.circle.fill")
+                        } trailing: {
+                            if self.model.isDuplicateFilter {
+                                FilterBadge(text: "addFilter_duplicate"~, color: .red, systemImage: "xmark.circle.fill")
+                            } else if self.model.isInvalidRegex {
+                                FilterBadge(text: "addFilter_invalidRegex"~, color: .red, systemImage: "xmark.circle.fill")
+                            }
                         }
                     }
 
@@ -131,7 +134,9 @@ struct AddFilterView: View {
                                     .italic()
                                     .bold()
 
-                                HStack {
+                                AdaptiveRow {
+                                    EmptyView()
+                                } content: {
                                     TextField("addFilter_regexTestPlaceholder"~, text: $model.regexTestText)
                                         .focused($focusedField, equals: .regexTest)
                                         .onSubmit {
@@ -144,7 +149,7 @@ struct AddFilterView: View {
                                                 break
                                             }
                                         }
-
+                                } trailing: {
                                     switch self.model.regexTestResult {
                                     case .match:
                                         FilterBadge(text: "addFilter_regexMatch"~, color: .green, systemImage: "checkmark.circle.fill")

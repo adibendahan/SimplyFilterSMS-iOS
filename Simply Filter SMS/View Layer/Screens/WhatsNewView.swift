@@ -14,8 +14,6 @@ struct WhatsNewView: View {
     @Environment(\.dismiss)
     var dismiss
 
-    @ScaledMetric(relativeTo: .title2) private var entryIconSize: CGFloat = 44
-
     @ObservedObject var model: ViewModel
 
     var body: some View {
@@ -23,15 +21,15 @@ struct WhatsNewView: View {
             VStack(spacing: 0) {
                 List {
                     ForEach(model.entries, id: \.self) { entry in
-                        let row = HStack(alignment: .top, spacing: 16) {
+                        let row = AdaptiveRow(compactAlignment: .top, compactSpacing: 16) {
                             Image(systemName: entry.imageName)
                                 .font(.title2)
                                 .foregroundColor(entry.color)
-                                .frame(width: entryIconSize, height: entryIconSize)
+                                .frame(width: 44, height: 44)
                                 .background(entry.color.opacity(0.1))
                                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                                 .accessibilityHidden(true)
-
+                        } content: {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(entry.title)
                                     .font(.body.bold())
@@ -47,6 +45,7 @@ struct WhatsNewView: View {
                                         .foregroundColor(.secondary)
                                 }
                             }
+                            .fixedSize(horizontal: false, vertical: true)
                         }
                         .listRowSeparator(.hidden)
 

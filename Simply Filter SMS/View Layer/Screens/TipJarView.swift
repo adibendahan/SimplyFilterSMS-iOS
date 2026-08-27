@@ -106,7 +106,7 @@ struct TipJarView: View {
                     .multilineTextAlignment(.center)
                     .padding(.vertical, 20)
             } else {
-                HStack(spacing: 10) {
+                AdaptiveStack(spacing: 10) {
                     ForEach(model.products, id: \.id) { product in
                         if let tier = TipTier(rawValue: product.id) {
                             TipCardView(tier: tier, displayPrice: product.displayPrice, isDisabled: model.isPurchasing, isPurchasing: model.isPurchasing(tier: tier), isCompact: isCompact) {
@@ -127,6 +127,7 @@ struct TipJarView: View {
             .foregroundColor(.secondary)
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
+            .limitedDynamicTypeSize()
             .frame(maxWidth: .infinity)
             .padding(.bottom, 16)
     }

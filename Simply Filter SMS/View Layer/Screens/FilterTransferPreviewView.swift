@@ -16,7 +16,6 @@ struct FilterTransferPreviewView: View {
     var dismiss
 
     @StateObject var model: ViewModel
-    @ScaledMetric(relativeTo: .body) private var typeIconSize: CGFloat = 20
 
     init(model: ViewModel) {
         _model = StateObject(wrappedValue: model)
@@ -32,30 +31,7 @@ struct FilterTransferPreviewView: View {
                         NavigationLink {
                             FilterTransferCandidateListView(model: self.model, filterType: filterType)
                         } label: {
-                            HStack {
-                                Image(systemName: filterType.iconName)
-                                    .foregroundColor(filterType.iconColor)
-                                    .frame(maxWidth: typeIconSize, maxHeight: .infinity, alignment: .center)
-
-                                VStack(alignment: .leading, spacing: 0) {
-                                    Text(filterType.name)
-                                        .padding(.leading, 8)
-
-                                    if self.model.willForceClear(filterType) {
-                                        Text("\(Image(systemName: "exclamationmark.triangle.fill")) \("importFilters_willClear"~)")
-                                            .font(.caption2)
-                                            .foregroundColor(.red)
-                                            .padding(.leading, 8)
-                                    }
-                                }
-
-                                Spacer()
-
-                                Text(String.localizedStringWithFormat("general_active_count"~, self.model.selectedCount(for: filterType)))
-                                    .textCase(.uppercase)
-                                    .foregroundColor(.secondary)
-                                    .font(Font.caption2)
-                            }
+                            filterTypeRow(filterType)
                         }
                         .accentColor(Color.primary.opacity(0.35))
                         .disabled(self.model.candidates(for: filterType).isEmpty)
@@ -109,6 +85,36 @@ struct FilterTransferPreviewView: View {
             ShareSheet(items: [file.url])
         }
     }
+
+    @ViewBuilder
+    private func filterTypeRow(_ filterType: FilterType) -> some View {
+        let activeCount = String.localizedStringWithFormat("general_active_count"~, self.model.selectedCount(for: filterType))
+
+        AdaptiveRow {
+            Image(systemName: filterType.iconName)
+                .foregroundColor(filterType.iconColor)
+                .adaptiveIconColumn()
+        } content: {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(filterType.name)
+                    .padding(.leading, 8)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if self.model.willForceClear(filterType) {
+                    Text("\(Image(systemName: "exclamationmark.triangle.fill")) \("importFilters_willClear"~)")
+                        .font(.caption2)
+                        .foregroundColor(.red)
+                        .padding(.leading, 8)
+                }
+            }
+        } trailing: {
+            Text(activeCount)
+                .textCase(.uppercase)
+                .foregroundColor(.secondary)
+                .font(Font.caption2)
+                .limitedDynamicTypeSize()
+        }
+    }
 }
 
 
@@ -118,8 +124,6 @@ struct FilterTransferCandidateListView: View {
     @ObservedObject var model: FilterTransferPreviewView.ViewModel
     let filterType: FilterType
 
-    @ScaledMetric(relativeTo: .body) private var optionIconSize: CGFloat = 15
-
     var body: some View {
         List(selection: self.$model.selectedIDs) {
             Section {
@@ -128,16 +132,11 @@ struct FilterTransferCandidateListView: View {
                 }
             } header: {
                 if self.model.regularCandidates(for: self.filterType).count > 0 {
-                    HStack {
+                    AdaptiveColumnHeader(leadingAccessory: {
                         self.sectionSelectAll(self.model.regularCandidates(for: self.filterType))
-
-                        Text(self.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~)
-
-                        Spacer()
-
-                        Text(self.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~)
-                            .padding(.trailing, 8)
-                    }
+                    }, primary: self.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~,
+                       secondary: self.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~,
+                       secondaryIsMuted: false)
                 }
             }
 
@@ -147,10 +146,9 @@ struct FilterTransferCandidateListView: View {
                         self.candidateRow(candidate)
                     }
                 } header: {
-                    HStack {
+                    AdaptiveColumnHeader(leadingAccessory: {
                         self.sectionSelectAll(self.model.regexCandidates(for: self.filterType))
-                        Text("addFilter_match_regex"~)
-                    }
+                    }, primary: "addFilter_match_regex"~, secondary: "", secondaryIsMuted: false)
                 }
             }
         }
@@ -174,29 +172,32 @@ struct FilterTransferCandidateListView: View {
 
     @ViewBuilder
     private func candidateRow(_ candidate: FilterTransferCandidate) -> some View {
-        HStack(alignment: .center) {
+        AdaptiveRow {
+            EmptyView()
+        } content: {
             Text(self.model.displayName(for: candidate))
                 .font(candidate.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
                 .foregroundColor(.primary)
+                .fixedSize(horizontal: false, vertical: true)
+        } trailing: {
+            HStack {
+                if candidate.type.supportsAdvancedOptions {
+                    FilterRowOptionChip(systemName: candidate.filterTarget.icon,
+                                        isActive: candidate.filterTarget != .all)
 
-            Spacer()
+                    if candidate.filterMatching != .regex {
+                        FilterRowOptionChip(systemName: candidate.filterMatching.icon,
+                                            isActive: candidate.filterMatching == .exact)
+                        FilterRowOptionChip(systemName: candidate.filterCase.icon,
+                                            isActive: candidate.filterCase == .caseSensitive)
+                    }
+                }
 
-            if candidate.type.supportsAdvancedOptions {
-                self.optionIcon(systemName: candidate.filterTarget.icon,
-                                isActive: candidate.filterTarget != .all)
-
-                if candidate.filterMatching != .regex {
-                    self.optionIcon(systemName: candidate.filterMatching.icon,
-                                    isActive: candidate.filterMatching == .exact)
-
-                    self.optionIcon(systemName: candidate.filterCase.icon,
-                                    isActive: candidate.filterCase == .caseSensitive)
+                if candidate.type.supportsFolders {
+                    FilterRowOptionChip(systemName: candidate.denyFolder.iconName, isActive: true)
                 }
             }
-
-            if candidate.type.supportsFolders {
-                self.optionIcon(systemName: candidate.denyFolder.iconName, isActive: true)
-            }
+            .accessibilityHidden(true)
         }
         .tag(candidate.id)
         .accessibilityElement(children: .combine)
@@ -216,21 +217,6 @@ struct FilterTransferCandidateListView: View {
             parts.append(String(format: "a11y_filterRow_folderLabel"~, candidate.denyFolder.name))
         }
         return parts.joined(separator: ", ")
-    }
-
-    private func optionIcon(systemName: String, isActive: Bool) -> some View {
-        Image(systemName: systemName)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .foregroundStyle(isActive ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
-            .frame(width: self.optionIconSize, height: self.optionIconSize)
-            .padding(7)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(Color.primary.opacity(0.12), lineWidth: 0.5)
-            )
-            .accessibilityHidden(true)
     }
 }
 

@@ -42,60 +42,33 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 Section {
                     let screen: Screen = .automaticBlocking
                     
-                    HStack {
-                                Group {
-                                    if #available(iOS 17, *) {
-                                        if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
-                                            ShieldGlintIcon()
-                                        } else {
-                                            Image(systemName: "bolt.shield.fill")
-                                                .symbolRenderingMode(.palette)
-                                                .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
-                                        }
-                                    } else {
-                                        Image(systemName: "bolt.shield.fill")
-                                            .foregroundColor(.indigo)
-                                    }
+                    AdaptiveRow {
+                        Group {
+                            if #available(iOS 17, *) {
+                                if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
+                                    ShieldGlintIcon()
+                                } else {
+                                    Image(systemName: "bolt.shield.fill")
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
                                 }
-                                .font(.system(size: shieldIconSize))
-                                .padding(.trailing, 1)
-                                .accessibilityHidden(true)
-
-                                VStack (alignment: .leading) {
-                                    Text("autoFilter_title"~)
-                                        .font(.system(size: autoFilterTitleSize, weight: .bold, design: .rounded))
-
-                                    if !self.model.subtitle.isEmpty {
-                                        Text(self.model.subtitle)
-                                            .font(.caption2)
-                                            .lineLimit(2)
-                                    }
-                                }
-
-                                Spacer()
-
-                                if self.model.isAutomaticFilteringOn {
-                                    let onColor = model.customAccent ?? Color.green
-                                    Text("autoFilter_ON"~)
-                                        .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-                                        .background(onColor.opacity(0.1))
-                                        .foregroundColor(onColor)
-                                        .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                                        .font(.system(size: badgeFontSize, weight: .heavy, design: .default))
-                                }
-                                else {
-                                    Text("autoFilter_OFF"~)
-                                        .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-                                        .background(Color.red.opacity(0.1))
-                                        .foregroundColor(.red)
-                                        .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                                        .font(.system(size: badgeFontSize, weight: .heavy, design: .default))
-                                }
+                            } else {
+                                Image(systemName: "bolt.shield.fill")
+                                    .foregroundColor(.indigo)
                             }
-                            .padding(.vertical, 12)
-                            .sidebarNavigationRow(screen: screen, isRegular: horizontalSizeClass == .regular) {
-                                model.navigationScreen = screen
-                            }
+                        }
+                        .font(.system(size: shieldIconSize))
+                        .frame(width: shieldIconSize + 4, alignment: .center)
+                        .accessibilityHidden(true)
+                    } content: {
+                        automaticFilterTextColumn
+                    } trailing: {
+                        automaticFilterStatusBadge
+                    }
+                    .padding(.vertical, 12)
+                    .sidebarNavigationRow(screen: screen, isRegular: horizontalSizeClass == .regular) {
+                        model.navigationScreen = screen
+                    }
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
                         .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
                         .accessibility(identifier: TestIdentifier.automaticFilterLink.rawValue)
@@ -112,84 +85,8 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     ForEach($model.rules.indices, id: \.self) { index in
                         let rule = model.rules[index].item
                         let isDisabled = self.model.isAllUnknownFilteringOn && rule != .allUnknown
-                        
-                        Toggle(isOn: $model.rules[index].state) {
-                            HStack {
-                                if rule.isTextIcon {
-                                    let ruleKey: String = rule.title
-                                    let baseEmoji = rule.icon
-                                    let currentEmoji = dynamicEmojis[ruleKey] ?? baseEmoji
-                                    Button {
-                                        dynamicEmojis[ruleKey] = EmojiGenerator.randomEmoji()
-                                    } label: {
-                                        Text(currentEmoji)
-                                            .opacity(isDisabled ? 0.5 : 1)
-                                            .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-                                            .font(.system(size: emojiIconSize))
-                                    }
-                                    .buttonStyle(.plain)
-                                    .disabled(isDisabled)
-                                }
-                                else {
-                                    Image(systemName: rule.icon)
-                                        .foregroundColor(rule.iconColor.opacity(isDisabled ? 0.5 : 1))
-                                        .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-                                        .font(rule.isDestructive ? Font.body.bold() : .body)
-                                }
-                                
-                                VStack (alignment: .leading, spacing: 0) {
-                                    let color = rule.isDestructive && model.rules[index].state ? Color.red : .primary
-                                    Text(rule.title)
-                                        .foregroundColor(color.opacity(isDisabled ? 0.5 : 1))
-                                    
-                                    if let subtitle = rule.subtitle,
-                                       let action = rule.action,
-                                       let actionTitle = rule.actionTitle {
 
-                                        HStack (alignment: .center, spacing: 4) {
-                                            Text(String(format: subtitle, self.model.shortSenderChoice))
-                                                .font(.caption2)
-                                                .foregroundColor(.secondary)
-
-                                            Menu {
-                                                Text(actionTitle)
-
-                                                Divider()
-
-                                                ForEach(3...6, id: \.self) { index in
-                                                    Button {
-                                                        self.model.setSelectedChoice(for: rule, choice: index)
-                                                    } label: {
-                                                        Text("\(index)")
-                                                    }
-                                                }
-                                            } label: {
-                                                Text(action)
-                                                    .font(.caption2)
-                                            }
-                                        }
-                                    } else if rule == .countryAllowlist && model.rules[index].state {
-                                        HStack (alignment: .center, spacing: 4) {
-                                            Text(self.model.selectedCountriesSummary)
-                                                .font(.caption2)
-                                                .foregroundColor(.secondary)
-                                                .lineLimit(1)
-
-                                            Button {
-                                                self.model.requestSheet(.countryList)
-                                            } label: {
-                                                Text("autoFilter_shortSender_change"~)
-                                                    .font(.caption2)
-                                                    .foregroundStyle(.tint)
-                                            }
-                                            .buttonStyle(.plain)
-                                            .accessibilityIdentifier(TestIdentifier.countryAllowlistButton.rawValue)
-                                        }
-                                    }
-                                }
-                                .padding(.leading, 8)
-                            }
-                        } // Toggle
+                        smartFilterToggle(index: index, rule: rule, isDisabled: isDisabled)
                         .if(rule.isDestructive) { $0.tint(.red) }
                         .disabled(isDisabled)
                         .listRowBackground(Color(UIColor.secondarySystemGroupedBackground))
@@ -211,21 +108,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 //MARK: User Filters
                 Section {
                     ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
-                        HStack {
-                            Image(systemName: filterType.iconName)
-                                .foregroundColor(filterType.iconColor)
-                                .frame(maxWidth: 20, maxHeight: .infinity, alignment: .center)
-
-                            Text(filterType.name)
-                                .padding(.leading, 8)
-
-                            Spacer()
-
-                            Text(String.localizedStringWithFormat("general_active_count"~, self.model.activeCount(for: filterType)))
-                                .textCase(.uppercase)
-                                .foregroundColor(.secondary)
-                                .font(Font.caption2)
-                        }
+                        userFilterRow(filterType: filterType)
                         .sidebarNavigationRow(screen: filterType.screen, isRegular: horizontalSizeClass == .regular) {
                             model.navigationScreen = filterType.screen
                         }
@@ -336,7 +219,173 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         }
         .optionalTint(model.customAccent)
     }
+
+    @ViewBuilder
+    private var automaticFilterTextColumn: some View {
+        VStack(alignment: .leading) {
+            Text("autoFilter_title"~)
+                .font(.system(size: autoFilterTitleSize, weight: .bold, design: .rounded))
+                .fixedSize(horizontal: false, vertical: true)
+
+            if !self.model.subtitle.isEmpty {
+                Text(self.model.subtitle)
+                    .font(.caption2)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var automaticFilterStatusBadge: some View {
+        if self.model.isAutomaticFilteringOn {
+            let onColor = model.customAccent ?? Color.green
+            Text("autoFilter_ON"~)
+                .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+                .background(onColor.opacity(0.1))
+                .foregroundColor(onColor)
+                .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                .font(.system(size: badgeFontSize, weight: .heavy, design: .default))
+                .limitedDynamicTypeSize()
+        } else {
+            Text("autoFilter_OFF"~)
+                .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+                .background(Color.red.opacity(0.1))
+                .foregroundColor(.red)
+                .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                .font(.system(size: badgeFontSize, weight: .heavy, design: .default))
+                .limitedDynamicTypeSize()
+        }
+    }
     
+    @ViewBuilder
+    private func smartFilterToggle(index: Int, rule: RuleType, isDisabled: Bool) -> some View {
+        AdaptiveToggle(isOn: $model.rules[index].state) {
+            smartFilterLabel(index: index, rule: rule, isDisabled: isDisabled)
+        }
+    }
+
+    @ViewBuilder
+    private func smartFilterLabel(index: Int, rule: RuleType, isDisabled: Bool) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            smartFilterIcon(index: index, rule: rule, isDisabled: isDisabled)
+
+            smartFilterTextColumn(index: index, rule: rule, isDisabled: isDisabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    @ViewBuilder
+    private func smartFilterIcon(index: Int, rule: RuleType, isDisabled: Bool) -> some View {
+        if rule.isTextIcon {
+            let ruleKey: String = rule.title
+            let baseEmoji = rule.icon
+            let currentEmoji = dynamicEmojis[ruleKey] ?? baseEmoji
+            Button {
+                dynamicEmojis[ruleKey] = EmojiGenerator.randomEmoji()
+            } label: {
+                Text(currentEmoji)
+                    .opacity(isDisabled ? 0.5 : 1)
+                    .font(.system(size: emojiIconSize))
+            }
+            .buttonStyle(.plain)
+            .disabled(isDisabled)
+            .adaptiveIconColumn()
+        } else {
+            Image(systemName: rule.icon)
+                .foregroundColor(rule.iconColor.opacity(isDisabled ? 0.5 : 1))
+                .font(rule.isDestructive ? Font.body.bold() : .body)
+                .adaptiveIconColumn()
+        }
+    }
+
+    @ViewBuilder
+    private func smartFilterTextColumn(index: Int, rule: RuleType, isDisabled: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            let color = rule.isDestructive && model.rules[index].state ? Color.red : .primary
+            Text(rule.title)
+                .foregroundColor(color.opacity(isDisabled ? 0.5 : 1))
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let subtitle = rule.subtitle,
+               let action = rule.action,
+               let actionTitle = rule.actionTitle {
+                smartFilterShortSenderControls(
+                    subtitle: String(format: subtitle, self.model.shortSenderChoice),
+                    action: action,
+                    actionTitle: actionTitle,
+                    rule: rule)
+            } else if rule == .countryAllowlist && model.rules[index].state {
+                countryAllowlistControls
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func smartFilterShortSenderControls(subtitle: String, action: String, actionTitle: String, rule: RuleType) -> some View {
+        AdaptiveFlowRow {
+            Text(subtitle)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Menu {
+                Text(actionTitle)
+                Divider()
+                ForEach(3...6, id: \.self) { choice in
+                    Button {
+                        self.model.setSelectedChoice(for: rule, choice: choice)
+                    } label: {
+                        Text("\(choice)")
+                    }
+                }
+            } label: {
+                Text(action)
+                    .font(.caption2)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var countryAllowlistControls: some View {
+        AdaptiveFlowRow {
+            Text(self.model.selectedCountriesSummary)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                self.model.requestSheet(.countryList)
+            } label: {
+                Text("autoFilter_shortSender_change"~)
+                    .font(.caption2)
+                    .foregroundStyle(.tint)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(TestIdentifier.countryAllowlistButton.rawValue)
+        }
+    }
+
+    @ViewBuilder
+    private func userFilterRow(filterType: FilterType) -> some View {
+        let activeCount = String.localizedStringWithFormat("general_active_count"~, self.model.activeCount(for: filterType))
+
+        AdaptiveRow {
+            Image(systemName: filterType.iconName)
+                .foregroundColor(filterType.iconColor)
+                .adaptiveIconColumn()
+        } content: {
+            Text(filterType.name)
+                .fixedSize(horizontal: false, vertical: true)
+        } trailing: {
+            Text(activeCount)
+                .textCase(.uppercase)
+                .foregroundColor(.secondary)
+                .font(.caption2)
+                .limitedDynamicTypeSize()
+        }
+    }
+
     @ViewBuilder
     private func NavigationBarTrailingItem() -> some View {
         Menu {

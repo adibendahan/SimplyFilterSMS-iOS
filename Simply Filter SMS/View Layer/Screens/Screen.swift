@@ -17,86 +17,89 @@ enum Screen: Int, Identifiable, Hashable {
          chooseAccentColor, filterExport
 
     @ViewBuilder func build() -> some View {
-        switch self {
-        case .appHome:
-            AppHomeView(model: AppHomeView.ViewModel())
+        Group {
+            switch self {
+            case .appHome:
+                AppHomeView(model: AppHomeView.ViewModel())
 
-        case .onboarding, .enableExtension:
-            EnableExtensionView(model: EnableExtensionView.ViewModel(
-                steps: Array(EnableExtensionStep.allCases),
-                isInteractiveDismissDisabled: true,
-                onDismiss: {
-                    var defaultsManager = AppManager.shared.defaultsManager
-                    defaultsManager.isAppFirstRun = false
-                },
-                onCTA: {
-                    var defaultsManager = AppManager.shared.defaultsManager
-                    defaultsManager.isAppFirstRun = false
-                    UIApplication.shared.openSettings()
-                }
-            ))
+            case .onboarding, .enableExtension:
+                EnableExtensionView(model: EnableExtensionView.ViewModel(
+                    steps: Array(EnableExtensionStep.allCases),
+                    isInteractiveDismissDisabled: true,
+                    onDismiss: {
+                        var defaultsManager = AppManager.shared.defaultsManager
+                        defaultsManager.isAppFirstRun = false
+                    },
+                    onCTA: {
+                        var defaultsManager = AppManager.shared.defaultsManager
+                        defaultsManager.isAppFirstRun = false
+                        UIApplication.shared.openSettings()
+                    }
+                ))
 
-        case .help:
-            HelpView(model: HelpView.ViewModel())
+            case .help:
+                HelpView(model: HelpView.ViewModel())
 
-        case .about:
-            AboutView(model: AboutView.ViewModel())
+            case .about:
+                AboutView(model: AboutView.ViewModel())
 
-        case .testFilters:
-            TestFiltersView(model: TestFiltersView.ViewModel())
+            case .testFilters:
+                TestFiltersView(model: TestFiltersView.ViewModel())
 
-        case .addLanguageFilter:
-            LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage))
+            case .addLanguageFilter:
+                LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage))
 
-        case .addAllowFilter:
-            AddFilterView(model: AddFilterView.ViewModel(filterType: .allow))
+            case .addAllowFilter:
+                AddFilterView(model: AddFilterView.ViewModel(filterType: .allow))
 
-        case .addDenyFilter:
-            AddFilterView(model: AddFilterView.ViewModel(filterType: .deny))
+            case .addDenyFilter:
+                AddFilterView(model: AddFilterView.ViewModel(filterType: .deny))
 
-        case .automaticBlocking:
-            LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking))
+            case .automaticBlocking:
+                LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking))
 
-        case .denyFilterList:
-            FilterListView(model: FilterListView.ViewModel(filterType: .deny))
+            case .denyFilterList:
+                FilterListView(model: FilterListView.ViewModel(filterType: .deny))
 
-        case .allowFilterList:
-            FilterListView(model: FilterListView.ViewModel(filterType: .allow))
+            case .allowFilterList:
+                FilterListView(model: FilterListView.ViewModel(filterType: .allow))
 
-        case .denyLanguageFilterList:
-            FilterListView(model: FilterListView.ViewModel(filterType: .denyLanguage))
+            case .denyLanguageFilterList:
+                FilterListView(model: FilterListView.ViewModel(filterType: .denyLanguage))
 
-        case .reportMessage:
-            ReportMessageView(model: ReportMessageView.ViewModel())
+            case .reportMessage:
+                ReportMessageView(model: ReportMessageView.ViewModel())
 
-        case .whatsNew:
-            WhatsNewView(model: WhatsNewView.ViewModel())
+            case .whatsNew:
+                WhatsNewView(model: WhatsNewView.ViewModel())
 
-        case .tipJar:
-            TipJarView(model: TipJarView.ViewModel())
+            case .tipJar:
+                TipJarView(model: TipJarView.ViewModel())
 
-        case .countryList:
-            CountryListView(model: CountryListView.ViewModel())
+            case .countryList:
+                CountryListView(model: CountryListView.ViewModel())
 
-        case .enableReportingExtension:
-            EnableExtensionView(model: EnableExtensionView.ViewModel(
-                steps: Array(EnableReportingExtensionStep.allCases),
-                title: "autoFilter_improveAIFiltering"~,
-                description: "enableReportingExtension_desc"~,
-                isInteractiveDismissDisabled: false,
-                onDismiss: {},
-                onCTA: UIApplication.shared.openSettings
-            ))
+            case .enableReportingExtension:
+                EnableExtensionView(model: EnableExtensionView.ViewModel(
+                    steps: Array(EnableReportingExtensionStep.allCases),
+                    title: "autoFilter_improveAIFiltering"~,
+                    description: "enableReportingExtension_desc"~,
+                    isInteractiveDismissDisabled: false,
+                    onDismiss: {},
+                    onCTA: UIApplication.shared.openSettings
+                ))
 
-        case .filterImport:
-            FilterTransferPreviewView(model: FilterTransferPreviewView.ViewModel())
+            case .filterImport:
+                FilterTransferPreviewView(model: FilterTransferPreviewView.ViewModel())
 
-        case .chooseAccentColor:
-            ChooseAccentColorView(model: ChooseAccentColorView.ViewModel())
+            case .chooseAccentColor:
+                ChooseAccentColorView(model: ChooseAccentColorView.ViewModel())
 
-        case .filterExport:
-            FilterTransferPreviewView(model: FilterTransferPreviewView.ViewModel())
+            case .filterExport:
+                FilterTransferPreviewView(model: FilterTransferPreviewView.ViewModel())
+            }
         }
+        .adaptiveLayoutEnvironment()
     }
 
     var tag: String {
