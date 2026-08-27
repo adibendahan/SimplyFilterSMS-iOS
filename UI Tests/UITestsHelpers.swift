@@ -13,13 +13,43 @@ import NaturalLanguage
 postfix operator ~
 postfix func ~ (string: String) -> String {
     let bundle = Bundle(for: SnapshotsTestCase.self)
+    var candidates: [String] = []
+
     let localeId = Locale.current.identifier.replacingOccurrences(of: "_", with: "-")
-    let langCode = Locale.current.language.languageCode?.identifier ?? "en"
-    let path = bundle.path(forResource: localeId, ofType: "lproj")
-            ?? bundle.path(forResource: langCode, ofType: "lproj")
-    guard let path = path,
-          let localizationBundle = Bundle(path: path) else { return "?" }
-    return NSLocalizedString(string, tableName: nil, bundle: localizationBundle, value: "", comment: "")
+    candidates.append(localeId)
+
+    let language = Locale.current.language
+    if let langCode = language.languageCode?.identifier {
+        candidates.append(langCode)
+        if let script = language.script?.identifier {
+            candidates.append("\(langCode)-\(script)")
+        }
+    }
+
+    for preferred in Locale.preferredLanguages {
+        let normalized = preferred.replacingOccurrences(of: "_", with: "-")
+        candidates.append(normalized)
+        let parts = normalized.split(separator: "-").map(String.init)
+        if parts.count >= 2 {
+            candidates.append("\(parts[0])-\(parts[1])")
+        }
+        if let first = parts.first {
+            candidates.append(first)
+        }
+    }
+
+    if let fastlaneLanguage = ProcessInfo.processInfo.environment["FASTLANE_LANGUAGE"] {
+        candidates.append(fastlaneLanguage.replacingOccurrences(of: "_", with: "-"))
+    }
+
+    var seen = Set<String>()
+    for candidate in candidates where seen.insert(candidate).inserted {
+        if let path = bundle.path(forResource: candidate, ofType: "lproj"),
+           let localizationBundle = Bundle(path: path) {
+            return NSLocalizedString(string, tableName: nil, bundle: localizationBundle, value: "", comment: "")
+        }
+    }
+    return "?"
 }
 
 postfix func ~ (lang: NLLanguage) -> String {

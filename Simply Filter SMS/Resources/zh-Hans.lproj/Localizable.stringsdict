@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>autoFilter_countryAllowlist_section_allowed</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@countries@</string>
+        <key>countries</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>允许的国家/地区</string>
+            <key>other</key>
+            <string>允许的国家/地区</string>
+        </dict>
+    </dict>
+    <key>autoFilter_countryAllowlist_section_blocked</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@countries@</string>
+        <key>countries</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>已屏蔽的国家/地区</string>
+            <key>other</key>
+            <string>已屏蔽的国家/地区</string>
+        </dict>
+    </dict>
+    <key>general_active_count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@filters@</string>
+        <key>filters</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>没有过滤器</string>
+            <key>one</key>
+            <string>1 个过滤器</string>
+            <key>other</key>
+            <string>%ld 个过滤器</string>
+        </dict>
+    </dict>
+    <key>reportingExtension_selectedMessage</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@count@</string>
+        <key>count</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>已选择 1 条消息</string>
+            <key>other</key>
+            <string>已选择 %ld 条消息</string>
+        </dict>
+    </dict>
+    <key>reportingExtension_classify</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@count@</string>
+        <key>count</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>你想如何给它分类？</string>
+            <key>other</key>
+            <string>你想如何给它们分类？</string>
+        </dict>
+    </dict>
+</dict>
+</plist>

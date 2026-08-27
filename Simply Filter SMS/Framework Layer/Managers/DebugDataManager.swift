@@ -71,10 +71,16 @@ class DebugDataManager: DebugDataManagerProtocol {
             automaticFilterManager.setAutomaticRuleState(for: rule, value: true)
         }
 
+        // Prefer the full BCP-47 tag (zh-Hans), then the language code. Script-only
+        // locales like Simplified Chinese are not in the AI filter lists — fall back
+        // to English so Load Debug Data still turns AI Filtering ON for screenshots.
         let normalizedCode = String(langCode.split(separator: "-").first ?? Substring(langCode))
-        let language = NLLanguage(normalizedCode)
-        if language != .undetermined {
-            automaticFilterManager.setLanguageAutomaticState(for: language, value: true)
+        let supported = Set(automaticFilterManager.languages(for: .automaticBlocking))
+        let preferred = [NLLanguage(langCode), NLLanguage(normalizedCode)].first { $0 != .undetermined }
+        if let preferred, supported.contains(preferred) {
+            automaticFilterManager.setLanguageAutomaticState(for: preferred, value: true)
+        } else {
+            automaticFilterManager.setLanguageAutomaticState(for: .english, value: true)
         }
     }
 
@@ -564,6 +570,48 @@ class DebugDataManager: DebugDataManagerProtocol {
                             filterCase: .caseInsensitive),
             ],
             allowedCountryCodes: ["+82"],
+            denyLanguages: [.arabic]
+        ),
+        "zh": LanguageData(
+            filters: [
+                FilterEntry(text: "张伟",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "Apple",
+                            type: .allow,
+                            denyFolder: .junk,
+                            filterTarget: .sender,
+                            filterMatching: .exact,
+                            filterCase: .caseSensitive),
+                FilterEntry(text: "贷款",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "中奖",
+                            type: .deny,
+                            denyFolder: .junk,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "免费",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+                FilterEntry(text: "优惠",
+                            type: .deny,
+                            denyFolder: .promotion,
+                            filterTarget: .body,
+                            filterMatching: .contains,
+                            filterCase: .caseInsensitive),
+            ],
+            allowedCountryCodes: ["+86"],
             denyLanguages: [.arabic]
         ),
     ]

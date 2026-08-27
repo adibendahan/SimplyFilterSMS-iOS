@@ -14,7 +14,7 @@ platform :ios do
   lane :iphone_screenshots do
     capture_screenshots(
       devices: ["iPhone 17 Pro Max (26.1)"],
-      languages: ["he-IL", "ar", "de", "es", "pt-BR", "fr", "it", "ja", "ko", "en-US"],
+      languages: ["he-IL", "ar", "de", "es", "pt-BR", "fr", "it", "ja", "ko", "zh-Hans", "en-US"],
       scheme: "UI Tests",
       project: "Simply Filter SMS.xcodeproj",
       output_directory: ".screenshots",
@@ -31,7 +31,7 @@ platform :ios do
   lane :ipad_screenshots do
     capture_screenshots(
       devices: ["iPad Pro 13-inch (M5) (26.1)"],
-      languages: ["he-IL", "ar", "de", "es", "pt-BR", "fr", "it", "ja", "ko", "en-US"],
+      languages: ["he-IL", "ar", "de", "es", "pt-BR", "fr", "it", "ja", "ko", "zh-Hans", "en-US"],
       scheme: "UI Tests",
       project: "Simply Filter SMS.xcodeproj",
       output_directory: ".screenshots",
@@ -50,6 +50,23 @@ platform :ios do
     ipad_screenshots
   end
 
+  desc "Take Simplified Chinese screenshots only (iPhone + iPad)"
+  lane :zh_hans_screenshots do
+    capture_screenshots(
+      devices: ["iPhone 17 Pro Max", "iPad Pro 13-inch (M5)"],
+      languages: ["zh-Hans"],
+      scheme: "UI Tests",
+      project: "Simply Filter SMS.xcodeproj",
+      output_directory: ".screenshots",
+      clear_previous_screenshots: false,
+      override_status_bar: true,
+      localize_simulator: true,
+      number_of_retries: 0,
+      stop_after_first_error: true,
+      concurrent_simulators: true
+    )
+  end
+
   desc "Upload screenshots to App Store Connect"
   lane :upload_screenshots do
     # Rename locale folders to App Store Connect locale codes
@@ -59,7 +76,8 @@ platform :ios do
       "en" => "en-US",
       "es" => "es-ES",
       "fr" => "fr-FR",
-      "pt" => "pt-BR"
+      "pt" => "pt-BR",
+      "zh" => "zh-Hans"
     }.each do |from, to|
       src = File.join(Dir.pwd, "..", ".screenshots", from)
       dst = File.join(Dir.pwd, "..", ".screenshots", to)
