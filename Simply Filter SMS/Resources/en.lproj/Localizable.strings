@@ -265,8 +265,8 @@
 "whatsNew_menuItem" = "What's New";
 "whatsNew_aiFiltering_title" = "AI Filtering";
 "whatsNew_aiFiltering_desc" = "Automatic filtering is now **AI-powered** - smarter, faster, and more accurate, with support for **10 languages** including Spanish, French, German, Arabic, and more.";
-"whatsNew_newLanguages_title" = "8 New Languages";
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** The app is now available in **8 new languages**, all localized with the help of **AI**.";
+"whatsNew_newLanguages_title" = "9 New Languages";
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** The app is now available in **9 new languages**, all localized with the help of **AI**.";
 "whatsNew_trustedCountries_title" = "Trusted Countries";
 "whatsNew_trustedCountries_desc" = "Automatically allow messages from **specific countries** by phone prefix. Add your trusted countries and filter out the rest.";
 "whatsNew_accessibility_title" = "Accessibility Support";

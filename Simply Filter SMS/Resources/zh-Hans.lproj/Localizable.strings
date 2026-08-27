@@ -147,7 +147,7 @@
 "faq_question_smartFilters" = "什么是智能过滤器？";
 "faq_answer_smartFilters" = "主屏幕上的**智能过滤器**可以拦截常见垃圾信息：链接、邮件、Emoji、短发件人、仅含数字的发件人或所有未知发件人。它们会与你自己的过滤器一起工作。**屏蔽所有未知发件人**的力度最强，启用后会关闭其他智能过滤器。";
 "faq_question_trustedCountries" = "什么是受信任的国家？";
-"faq_answer_trustedCountries" = "**按国家允许**可以放行来自你选择的国家/地区代码的号码，例如 +1 或 +972。来自其他国家/地区的发件人会被过滤。没有国家/地区代码的号码不会被检查。";
+"faq_answer_trustedCountries" = "**按国家允许**可以放行来自你选择的国家/地区代码的号码，例如 +1 或 +86。来自其他国家/地区的发件人会被过滤。没有国家/地区代码的号码不会被检查。";
 "faq_question_testFilters" = "如何测试我的过滤器？";
 "faq_answer_testFilters" = "在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**测试过滤器**。输入发件人和信息，结果会随输入更新。将发件人留空即可只测试信息正文。";
 "faq_question_shareFilters" = "可以分享我的过滤器吗？";
@@ -186,7 +186,7 @@
 "autoFilter_countryAllowlist" = "按国家/地区允许";
 "autoFilter_countryAllowlist_shortTitle" = "国家/地区允许列表";
 "autoFilter_countryAllowlist_empty" = "未选择国家/地区";
-"autoFilter_countryAllowlist_explanation" = "添加你希望允许其信息的国家/地区。不在此列表中的国家/地区注册的电话号码发送的信息会被过滤。只有包含完整国际区号（例如 +1、+972）的发件人会被检查 - 没有国际区号的发件人不受影响。";
+"autoFilter_countryAllowlist_explanation" = "添加你希望允许其信息的国家/地区。不在此列表中的国家/地区注册的电话号码发送的信息会被过滤。只有包含完整国际区号（例如 +1、+86）的发件人会被检查 - 没有国际区号的发件人不受影响。";
 "autoFilter_reportSpam" = "报告垃圾短信";
 "autoFilter_improveAIFiltering" = "改进 AI 过滤";
 "general_search" = "搜索";
@@ -243,8 +243,8 @@
 "whatsNew_menuItem" = "新内容";
 "whatsNew_aiFiltering_title" = "AI 过滤";
 "whatsNew_aiFiltering_desc" = "自动过滤现已由 **AI 驱动** - 更智能、更快速、更准确，并支持包括西班牙语、法语、德语、阿拉伯语等在内的 **10 种语言**。";
-"whatsNew_newLanguages_title" = "新增 8 种语言";
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요.** App 现已支持 **8 种新语言**，全部在 **AI** 的帮助下完成本地化。";
+"whatsNew_newLanguages_title" = "新增 9 种语言";
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** App 现已支持 **9 种新语言**，全部在 **AI** 的帮助下完成本地化。";
 "whatsNew_trustedCountries_title" = "受信任的国家/地区";
 "whatsNew_trustedCountries_desc" = "根据电话号码前缀自动允许来自**特定国家/地区**的信息。添加受信任的国家/地区，过滤其余信息。";
 "whatsNew_accessibility_title" = "辅助功能支持";
