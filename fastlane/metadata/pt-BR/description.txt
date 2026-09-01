@@ -3,14 +3,17 @@ Retome o controle da sua caixa de entrada.
 Simply Filter SMS é um filtro de mensagens de texto open-source e focado em privacidade para iPhone e iPad. Crie regras de palavras-chave e filtros inteligentes para mover automaticamente mensagens indesejadas de remetentes desconhecidos para Lixo Eletrônico, Promoções ou Transações - completamente no dispositivo.
 
 O que há de novo nesta versão:
+• Exportar e importar filtros - compartilhe seus filtros com um amigo. Exporte um arquivo em Ferramentas de filtro no menu e envie.
+• Testar Seus Filtros - redesenhado com resultados ao vivo.
+• Ajuda - redesenhado com perguntas frequentes e primeiros passos.
+• Cor de destaque - escolha uma cor no menu. Botões e ícones a seguem.
+
+Caso tenha perdido, veja o que foi atualizado recentemente:
 • Filtros Regex - Crie filtros poderosos de correspondência de padrões usando expressões regulares para controle preciso.
 • Filtragem com IA - A filtragem automática agora é impulsionada por IA, mais inteligente e precisa, com suporte para 10 idiomas incluindo espanhol, francês, alemão, árabe e mais.
 • Países confiáveis - Permita automaticamente mensagens de países específicos por prefixo telefônico.
-• 8 novos idiomas - O app agora está disponível em espanhol, árabe, francês, alemão, português, japonês, coreano e italiano.
-
-Caso tenha perdido, veja o que foi atualizado recentemente:
+• 11 idiomas - O app está disponível em inglês, hebraico, espanhol, árabe, francês, alemão, português, japonês, coreano, italiano e chinês simplificado.
 • Suporte de acessibilidade - Totalmente utilizável com VoiceOver, Controle por Voz, Tipo Dinâmico e Reduzir Movimento.
-• Novo visual - Redesenhado com o mais recente estilo visual do iOS para uma experiência mais limpa e moderna.
 • Suporte nativo para iPad - Experiência completa no iPad com navegação em barra lateral e layouts otimizados.
 • Gorjeta - Apoie o desenvolvimento do app com uma gorjeta opcional. Simply Filter SMS é gratuito para sempre.
 • Múltiplas correções de bugs e melhorias de desempenho.
