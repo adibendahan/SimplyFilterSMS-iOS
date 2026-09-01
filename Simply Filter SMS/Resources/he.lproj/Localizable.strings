@@ -262,6 +262,8 @@
 "addFilter_match_contains" = "מכיל";
 
 "filterList_options" = "אפשרויות";
+"filterList_menu_collapseOptions" = "צמצום אפשרויות";
+"filterList_menu_expandOptions" = "הרחבת אפשרויות";
 
 "addFilter_target_all_multiline" = "הכל";
 

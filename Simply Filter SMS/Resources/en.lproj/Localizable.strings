@@ -46,6 +46,8 @@
 "filterList_folder" = "Folder";
 "filterList_text" = "Text";
 "filterList_options" = "Options";
+"filterList_menu_collapseOptions" = "Collapse options";
+"filterList_menu_expandOptions" = "Expand options";
 
 //MARK: Add Filter View
 "addFilter_add" = "Add";

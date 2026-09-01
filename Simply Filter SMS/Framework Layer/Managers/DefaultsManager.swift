@@ -17,6 +17,9 @@ class DefaultsManager: DefaultsManagerProtocol {
 
     @StoredDefault("isExpandedAddFilter", defaultValue: false)
     var isExpandedAddFilter: Bool
+
+    @StoredDefault("isFilterOptionsCollapsed", defaultValue: false)
+    var isFilterOptionsCollapsed: Bool
     
     @StoredDefault("sessionCounter", defaultValue: 0)
     var sessionCounter: Int
@@ -58,7 +61,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge", "accentColorRGB"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge", "accentColorRGB"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)

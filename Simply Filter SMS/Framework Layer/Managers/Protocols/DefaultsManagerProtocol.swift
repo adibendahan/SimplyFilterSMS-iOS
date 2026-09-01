@@ -12,6 +12,7 @@ protocol DefaultsManagerProtocol {
     // Stored:
     var isAppFirstRun: Bool { get set }
     var isExpandedAddFilter: Bool { get set }
+    var isFilterOptionsCollapsed: Bool { get set }
     var sessionCounter: Int { get set }
     var didPromptForReview: Bool { get set }
     var didTip: Bool { get set }

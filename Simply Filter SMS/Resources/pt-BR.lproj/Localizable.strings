@@ -48,6 +48,8 @@
 "filterList_text" = "Texto";
 
 "filterList_options" = "Opções";
+"filterList_menu_collapseOptions" = "Recolher opções";
+"filterList_menu_expandOptions" = "Expandir opções";
 
 "addFilter_add" = "Adicionar";
 

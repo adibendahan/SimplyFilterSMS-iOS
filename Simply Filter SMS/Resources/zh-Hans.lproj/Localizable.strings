@@ -41,6 +41,8 @@
 "filterList_folder" = "文件夹";
 "filterList_text" = "文本";
 "filterList_options" = "选项";
+"filterList_menu_collapseOptions" = "收起选项";
+"filterList_menu_expandOptions" = "展开选项";
 
 //MARK: Add Filter View
 "addFilter_add" = "添加";

@@ -48,6 +48,8 @@
 "filterList_text" = "النص";
 
 "filterList_options" = "خيارات";
+"filterList_menu_collapseOptions" = "طي الخيارات";
+"filterList_menu_expandOptions" = "توسيع الخيارات";
 
 "addFilter_add" = "إضافة";
 

@@ -103,18 +103,15 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
                             self.model.sheetScreen = .enableReportingExtension
                         } label: {
                             HStack {
-                                Spacer()
                                 Image(systemName: "wand.and.stars")
                                     .imageScale(.large)
                                     .font(.system(size: 20, weight: .bold))
                                 Text("autoFilter_improveAIFiltering"~)
                                     .font(.body)
-                                Spacer()
                             }
-                            .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(.tint)
+                        .buttonStyle(AccessibleTextButtonStyle())
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.top, 20)
                         .padding(.bottom, 40)
                     }
