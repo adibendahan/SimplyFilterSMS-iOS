@@ -3,14 +3,17 @@ Take back control of your inbox.
 Simply Filter SMS is a privacy-first, open-source text message filter for iPhone and iPad. Create keyword rules and smart filters to automatically move unwanted messages from unknown senders to Junk, Promotions, or Transactions - completely on-device.
 
 What's new in this version:
-• Regex Filters - Create powerful pattern-matching filters using regular expressions for precise control.
-• AI Filtering - Automatic filtering is now AI-powered, smarter and more accurate, with support for 10 languages including Spanish, French, German, Arabic, and more.
-• Trusted Countries - Automatically allow messages from specific countries by phone prefix.
-• 8 New Languages - The app is now available in Spanish, Arabic, French, German, Portuguese, Japanese, Korean, and Italian.
+• Export & Import Filters - Share your filter setup with a friend. Export from Filter Tools in the menu and send the file.
+• Test Your Filters - Redesigned with live results so you can see matches instantly.
+• Help - Redesigned with FAQs and a Get Started guide.
+• Accent Color - Pick an accent from the menu; buttons and icons follow it across the app.
 
 In case you missed, here's what was updated recently:
-• Accessibility Support - Fully usable with VoiceOver, Voice Control, Dynamic Type and Reduce Motion.
-• Fresh New Look - Redesigned with the latest iOS visual style for a cleaner, modern experience.
+• Regex Filters - Create powerful pattern-matching filters using regular expressions for precise control.
+• AI Filtering - Automatic filtering is AI-powered, smarter and more accurate, with support for 10 languages including English, Hebrew, Spanish, French, German, Arabic, and more.
+• Trusted Countries - Automatically allow messages from specific countries by phone prefix.
+• 11 Languages - The app is available in English, Hebrew, Spanish, French, German, Arabic, Portuguese, Japanese, Korean, Italian, and Simplified Chinese.
+• Accessibility Support - Fully usable with VoiceOver, Voice Control, Dynamic Type, and Reduce Motion.
 • Native iPad Support - Full iPad experience with sidebar navigation and optimized layouts for larger screens.
 • Tip Jar - Support the app's development with an optional tip. Simply Filter SMS is free forever.
 • Multiple bug fixes and performance improvements.

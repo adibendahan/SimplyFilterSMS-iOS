@@ -15,6 +15,7 @@ struct FilterListRowView: View {
     var dotFilterID: UUID?
     var focusedFilterID: FocusState<UUID?>.Binding
     @ObservedObject var model: ViewModel
+    var isOptionsCollapsed: Bool = false
     @State private var isEditingText = false
     @State private var showDuplicateError = false
     @State private var showInvalidRegexError = false
@@ -107,38 +108,60 @@ struct FilterListRowView: View {
 
     @ViewBuilder
     private var optionButtons: some View {
-        HStack {
-            if self.model.filter.filterType.supportsAdvancedOptions {
-                targetMenu
-                if self.model.filter.filterMatching != .regex {
-                    matchingMenu
-                    caseMenu
-                }
+        if isOptionsCollapsed {
+            if self.model.filter.filterType.supportsAdvancedOptions ||
+                self.model.filter.filterType.supportsFolders {
+                collapsedOptionsMenu
             }
-            if self.model.filter.filterType.supportsFolders {
-                folderMenu
+        } else {
+            HStack(spacing: 8) {
+                if self.model.filter.filterType.supportsAdvancedOptions {
+                    targetMenu
+                    if self.model.filter.filterMatching != .regex {
+                        matchingMenu
+                        caseMenu
+                    }
+                }
+                if self.model.filter.filterType.supportsFolders {
+                    folderMenu
+                }
             }
         }
     }
 
     @ViewBuilder
+    private var collapsedOptionsMenu: some View {
+        Menu {
+            if self.model.filter.filterType.supportsAdvancedOptions {
+                targetPicker
+
+                if self.model.filter.filterMatching != .regex {
+                    Divider()
+                    matchingPicker
+                    Divider()
+                    casePicker
+                }
+            }
+            if self.model.filter.filterType.supportsFolders {
+                Divider()
+                folderPicker
+            }
+        } label: {
+            FilterRowOptionChip(systemName: "slider.horizontal.3", isActive: true)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("filterList_options"~)
+    }
+
+    @ViewBuilder
     private var targetMenu: some View {
         Menu {
-            Picker(selection: Binding(
-                get: { self.model.filter.filterTarget },
-                set: { self.model.updateFilter(filterTarget: $0) }
-            )) {
-                ForEach(FilterTarget.allCases) { filterTarget in
-                    Label(filterTarget.name, systemImage: filterTarget.icon)
-                        .tag(filterTarget)
-                }
-            } label: {
-                EmptyView()
-            }
+            targetPicker
         } label: {
             FilterRowOptionChip(systemName: self.model.filter.filterTarget.icon,
                                 isActive: self.model.filter.filterTarget != .all)
         }
+        .buttonStyle(.plain)
         .accessibilityLabel(self.model.filter.filterMatching == .regex
             ? String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name) + ", " + String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name)
             : String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
@@ -147,63 +170,92 @@ struct FilterListRowView: View {
     @ViewBuilder
     private var matchingMenu: some View {
         Menu {
-            Picker(selection: Binding(
-                get: { self.model.filter.filterMatching },
-                set: { self.model.updateFilter(filterMatching: $0) }
-            )) {
-                ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
-                    Label(filterMatching.name, systemImage: filterMatching.icon)
-                        .tag(filterMatching)
-                }
-            } label: {
-                EmptyView()
-            }
+            matchingPicker
         } label: {
             FilterRowOptionChip(systemName: self.model.filter.filterMatching.icon,
                                 isActive: self.model.filter.filterMatching == .exact)
         }
+        .buttonStyle(.plain)
         .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filter.filterMatching.name))
     }
 
     @ViewBuilder
     private var caseMenu: some View {
         Menu {
-            Picker(selection: Binding(
-                get: { self.model.filter.filterCase },
-                set: { self.model.updateFilter(filterCase: $0) }
-            )) {
-                ForEach(FilterCase.allCases) { filterCase in
-                    Label(filterCase.name, systemImage: filterCase.icon)
-                        .tag(filterCase)
-                }
-            } label: {
-                EmptyView()
-            }
+            casePicker
         } label: {
             FilterRowOptionChip(systemName: self.model.filter.filterCase.icon,
                                 isActive: self.model.filter.filterCase == .caseSensitive)
         }
+        .buttonStyle(.plain)
         .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
     }
 
     @ViewBuilder
     private var folderMenu: some View {
         Menu {
-            Picker(selection: Binding(
-                get: { self.model.filter.denyFolderType },
-                set: { self.model.updateFilter(denyFolder: $0) }
-            )) {
-                ForEach(DenyFolderType.allCases) { folder in
-                    Label(folder.name, systemImage: folder.iconName)
-                        .tag(folder)
-                }
-            } label: {
-                EmptyView()
-            }
+            folderPicker
         } label: {
             FilterRowOptionChip(systemName: self.model.filter.denyFolderType.iconName, isActive: true)
         }
+        .buttonStyle(.plain)
         .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.denyFolderType.name))
+    }
+
+    private var targetPicker: some View {
+        Picker(selection: Binding(
+            get: { self.model.filter.filterTarget },
+            set: { self.model.updateFilter(filterTarget: $0) }
+        )) {
+            ForEach(FilterTarget.allCases) { filterTarget in
+                Label(filterTarget.name, systemImage: filterTarget.icon)
+                    .tag(filterTarget)
+            }
+        } label: {
+            EmptyView()
+        }
+    }
+
+    private var matchingPicker: some View {
+        Picker(selection: Binding(
+            get: { self.model.filter.filterMatching },
+            set: { self.model.updateFilter(filterMatching: $0) }
+        )) {
+            ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
+                Label(filterMatching.name, systemImage: filterMatching.icon)
+                    .tag(filterMatching)
+            }
+        } label: {
+            EmptyView()
+        }
+    }
+
+    private var casePicker: some View {
+        Picker(selection: Binding(
+            get: { self.model.filter.filterCase },
+            set: { self.model.updateFilter(filterCase: $0) }
+        )) {
+            ForEach(FilterCase.allCases) { filterCase in
+                Label(filterCase.name, systemImage: filterCase.icon)
+                    .tag(filterCase)
+            }
+        } label: {
+            EmptyView()
+        }
+    }
+
+    private var folderPicker: some View {
+        Picker(selection: Binding(
+            get: { self.model.filter.denyFolderType },
+            set: { self.model.updateFilter(denyFolder: $0) }
+        )) {
+            ForEach(DenyFolderType.allCases) { folder in
+                Label(folder.name, systemImage: folder.iconName)
+                    .tag(folder)
+            }
+        } label: {
+            EmptyView()
+        }
     }
 }
 

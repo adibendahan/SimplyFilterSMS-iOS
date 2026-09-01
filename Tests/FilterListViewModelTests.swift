@@ -65,6 +65,15 @@ class FilterListViewModelTests: XCTestCase {
         XCTAssertEqual(self.testSubject.canBlockAnotherLanguage, true)
     }
 
+    func test_setFilterOptionsCollapsed_persistsPreference() {
+        // Act
+        self.testSubject.setFilterOptionsCollapsed(true)
+
+        // Verify
+        XCTAssertTrue(self.testSubject.isFilterOptionsCollapsed)
+        XCTAssertEqual(self.defaultsManager.isFilterOptionsCollapsedSetCounter, 1)
+    }
+
     func test_deleteFiltersOffsets() {
         // Prepare
         let filter = self.makeFilter()

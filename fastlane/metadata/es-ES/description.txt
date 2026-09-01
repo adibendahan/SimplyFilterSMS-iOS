@@ -3,14 +3,17 @@ Recupera el control de tu buzón de entrada.
 Simply Filter SMS es un filtro de mensajes de texto de código abierto y privacidad primero para iPhone e iPad. Crea reglas de palabras clave y filtros inteligentes para mover automáticamente los mensajes no deseados de remitentes desconocidos a No deseado, Promociones o Transacciones, completamente en el dispositivo.
 
 Novedades de esta versión:
+• Exportar e importar filtros - comparte tus filtros con un amigo. Exporta un archivo desde Herramientas de filtro en el menú y envíalo.
+• Prueba tus filtros - rediseñado con resultados en vivo.
+• Ayuda - rediseñado con preguntas frecuentes y primeros pasos.
+• Color de acento - elige un color en el menú. Botones e iconos lo siguen.
+
+Por si te lo perdiste, esto es lo que se actualizó recientemente:
 • Filtros Regex - Crea potentes filtros de coincidencia de patrones usando expresiones regulares para un control preciso.
 • Filtrado con IA - El filtrado automático ahora es impulsado por IA, más inteligente y preciso, con soporte para 10 idiomas incluyendo español, francés, alemán, árabe y más.
 • Países de confianza - Permite automáticamente mensajes de países específicos por prefijo telefónico.
-• 8 nuevos idiomas - La app ya está disponible en español, árabe, francés, alemán, portugués, japonés, coreano e italiano.
-
-Por si te lo perdiste, esto es lo que se actualizó recientemente:
+• 11 idiomas - La app está disponible en inglés, hebreo, español, árabe, francés, alemán, portugués, japonés, coreano, italiano y chino simplificado.
 • Soporte de accesibilidad - Totalmente usable con VoiceOver, Control por voz, Tipo de texto dinámico y Reducir movimiento.
-• Nuevo aspecto - Rediseñado con el último estilo visual de iOS para una experiencia más limpia y moderna.
 • Soporte nativo para iPad - Experiencia completa de iPad con navegación en barra lateral y diseños optimizados.
 • Propinas - Apoya el desarrollo de la app con una propina opcional. Simply Filter SMS es gratis para siempre.
 • Múltiples correcciones de errores y mejoras de rendimiento.

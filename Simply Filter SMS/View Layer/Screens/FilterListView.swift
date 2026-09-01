@@ -39,7 +39,8 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                     FilterListRowView(
                         dotFilterID: dotFilterID,
                         focusedFilterID: $focusedFilterID,
-                        model: rowModel)
+                        model: rowModel,
+                        isOptionsCollapsed: model.isFilterOptionsCollapsed)
                     .environment(\.editMode, $model.editMode)
                     .id(rowModel.id)
                     .tag(rowModel.filter)
@@ -67,7 +68,8 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                         FilterListRowView(
                             dotFilterID: dotFilterID,
                             focusedFilterID: $focusedFilterID,
-                            model: rowModel)
+                            model: rowModel,
+                            isOptionsCollapsed: model.isFilterOptionsCollapsed)
                         .environment(\.editMode, $model.editMode)
                         .id(rowModel.id)
                         .tag(rowModel.filter)
@@ -176,6 +178,16 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                         Label("general_edit"~, systemImage: "pencil")
                     }
 
+                    Button {
+                        self.model.setFilterOptionsCollapsed(!self.model.isFilterOptionsCollapsed)
+                    } label: {
+                        Label(
+                            self.model.isFilterOptionsCollapsed
+                                ? "filterList_menu_expandOptions"~
+                                : "filterList_menu_collapseOptions"~,
+                            systemImage: "slider.horizontal.3")
+                    }
+
                     Button(action: {
                         self.model.showAddFilter()
                     }) {
@@ -208,8 +220,6 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                 self.model.showAddFilter()
             }) {
                 HStack {
-                    Spacer()
-                    
                     switch self.model.filterType {
                     case .deny, .allow:
                         Image(systemName: "plus.message")
@@ -227,14 +237,12 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
                         Text("addFilter_addLanguage"~)
                             .font(.body)
                     }
-                    
-                    Spacer()
                 }
-                .contentShape(Rectangle())
-                .frame(maxWidth: .infinity)
-                .padding(.top, 1)
-                .padding(.bottom, 16)
             }
+            .buttonStyle(AccessibleTextButtonStyle())
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.top, 1)
+            .padding(.bottom, 16)
             .highPriorityGesture(TapGesture()
                 .onEnded({ _ in
                 self.model.showAddFilter()
@@ -260,6 +268,7 @@ extension FilterListView {
         @Published private(set) var footer: String
         @Published var selectedFilters: Set<Filter> = Set()
         @Published var editMode: EditMode = .inactive
+        @Published private(set) var isFilterOptionsCollapsed: Bool
         @Published var sheetScreen: Screen? = nil
         @Published var addFilterViewModel: AddFilterView.ViewModel? = nil
         @Published var addLanguageViewModel: LanguageListView.ViewModel? = nil
@@ -278,6 +287,7 @@ extension FilterListView {
              appManager: AppManagerProtocol = AppManager.shared) {
             
             self.filterType = filterType
+            self.isFilterOptionsCollapsed = appManager.defaultsManager.isFilterOptionsCollapsed
             
             self.isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
             self.canBlockAnotherLanguage = !appManager.automaticFilterManager.languages(for: .blockLanguage).isEmpty
@@ -296,6 +306,12 @@ extension FilterListView {
             
             super.init(appManager: appManager)
             self.updateRowViewModels()
+        }
+
+        func setFilterOptionsCollapsed(_ isCollapsed: Bool) {
+            guard self.isFilterOptionsCollapsed != isCollapsed else { return }
+            self.isFilterOptionsCollapsed = isCollapsed
+            self.appManager.defaultsManager.isFilterOptionsCollapsed = isCollapsed
         }
         
         func refresh() {

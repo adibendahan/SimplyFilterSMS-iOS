@@ -16,6 +16,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var isAppFirstRunSetCounter = 0
     var isExpandedAddFilterGetCounter = 0
     var isExpandedAddFilterSetCounter = 0
+    var isFilterOptionsCollapsedGetCounter = 0
+    var isFilterOptionsCollapsedSetCounter = 0
     var lastOfflineNotificationDismissGetCounter = 0
     var lastOfflineNotificationDismissSetCounter = 0
     var sessionAgeGetCounter = 0
@@ -35,6 +37,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
 
     var isAppFirstRunClosure: (() -> (Bool))?
     var isExpandedAddFilterClosure: (() -> (Bool))?
+    var isFilterOptionsCollapsedClosure: (() -> (Bool))?
     var lastOfflineNotificationDismissClosure: (() -> (Date?))?
     var sessionAgeClosure: (() -> (Date?))?
     var sessionCounterClosure: (() -> (Int))?
@@ -61,6 +64,16 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
         set {
             self.isExpandedAddFilterSetCounter += 1
+        }
+    }
+
+    var isFilterOptionsCollapsed: Bool {
+        get {
+            self.isFilterOptionsCollapsedGetCounter += 1
+            return self.isFilterOptionsCollapsedClosure?() ?? false
+        }
+        set {
+            self.isFilterOptionsCollapsedSetCounter += 1
         }
     }
     
@@ -151,6 +164,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         self.isAppFirstRunSetCounter = 0
         self.isExpandedAddFilterGetCounter = 0
         self.isExpandedAddFilterSetCounter = 0
+        self.isFilterOptionsCollapsedGetCounter = 0
+        self.isFilterOptionsCollapsedSetCounter = 0
     }
     
     func reset() { }

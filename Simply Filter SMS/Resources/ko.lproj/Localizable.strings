@@ -48,6 +48,8 @@
 "filterList_text" = "텍스트";
 
 "filterList_options" = "옵션";
+"filterList_menu_collapseOptions" = "옵션 접기";
+"filterList_menu_expandOptions" = "옵션 펼치기";
 
 "addFilter_add" = "추가";
 

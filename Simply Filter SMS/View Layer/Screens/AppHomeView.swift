@@ -339,11 +339,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         Text("\(choice)")
                     }
                 }
-            } label: {
-                Text(action)
-                    .font(.caption2)
-            }
+        } label: {
+            Text(action)
+                .font(.caption2)
         }
+        .buttonStyle(AccessibleTextButtonStyle(compact: true))
+    }
     }
 
     @ViewBuilder
@@ -359,9 +360,8 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             } label: {
                 Text("autoFilter_shortSender_change"~)
                     .font(.caption2)
-                    .foregroundStyle(.tint)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(AccessibleTextButtonStyle(compact: true))
             .accessibilityIdentifier(TestIdentifier.countryAllowlistButton.rawValue)
         }
     }

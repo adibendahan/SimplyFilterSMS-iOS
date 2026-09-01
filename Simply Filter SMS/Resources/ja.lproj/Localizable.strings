@@ -48,6 +48,8 @@
 "filterList_text" = "テキスト";
 
 "filterList_options" = "オプション";
+"filterList_menu_collapseOptions" = "オプションを折りたたむ";
+"filterList_menu_expandOptions" = "オプションを展開する";
 
 "addFilter_add" = "追加";
 
