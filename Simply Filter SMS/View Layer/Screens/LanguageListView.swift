@@ -113,7 +113,7 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
                         .buttonStyle(AccessibleTextButtonStyle())
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.top, 20)
-                        .padding(.bottom, 40)
+                        .padding(.bottom, 48)
                     }
                 }
             } // Section
