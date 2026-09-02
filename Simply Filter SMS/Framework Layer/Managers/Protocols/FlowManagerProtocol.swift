@@ -11,6 +11,7 @@ protocol FlowManagerProtocol {
     func recordLaunch(_ screen: Screen) -> Bool
     func request(_ screen: Screen)
     func enableWhatsNew()
+    func enableNotificationPermissionExplainer()
     func next() -> Screen?
     func complete(_ screen: Screen)
     func resetSession()

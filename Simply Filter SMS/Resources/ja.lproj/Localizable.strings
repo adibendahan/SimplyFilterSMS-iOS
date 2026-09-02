@@ -33,8 +33,11 @@
 "filterList_menu_about" = "このアプリについて";
 
 "accentColor_menuItem" = "アクセントカラー";
+
 "accentColor_title" = "アクセントカラー";
+
 "accentColor_picker" = "カラー";
+
 "accentColor_reset" = "デフォルトに戻す";
 
 "filterList_menu_debug" = "デバッグデータを読み込む";
@@ -48,7 +51,9 @@
 "filterList_text" = "テキスト";
 
 "filterList_options" = "オプション";
+
 "filterList_menu_collapseOptions" = "オプションを折りたたむ";
+
 "filterList_menu_expandOptions" = "オプションを展開する";
 
 "addFilter_add" = "追加";
@@ -304,8 +309,11 @@
 "testFilters_resultReason_unknownSender" = "不明な送信者";
 
 "testFilters_resultMatchedFilter" = "フィルター:";
+
 "testFilters_resultMatchedSmartFilter" = "スマートフィルター:";
+
 "testFilters_resultMatchedAutomaticFilter" = "AIフィルタリング:";
+
 "testFilters_footer" = "送信者とメッセージを入力すると、どのようにフィルタリングされるか確認できます。送信者は任意です。空欄のままにすると本文のみをテストします。";
 
 "notification_offline_title" = "iCloud同期が一時停止中";
@@ -424,7 +432,6 @@
 
 "a11y_enableExtension_stepLabel" = "ステップ%ld: %@。%@";
 
-
 "a11y_help_enableFilteringHint" = "ダブルタップでフィルタ設定を開く";
 
 "a11y_help_enableReportingHint" = "ダブルタップで報告設定を開く";
@@ -432,6 +439,7 @@
 "a11y_help_faqHint" = "ダブルタップで回答を表示または非表示";
 
 "a11y_help_emailHint" = "ダブルタップでメールを送信。Mailが未設定の場合はアドレスをコピー";
+
 "a11y_accentColor_resetHint" = "ダブルタップでデフォルトの色に戻す";
 
 "callingCode_+1" = "北米";
@@ -514,6 +522,18 @@
 
 "autoFilter_improveAIFiltering" = "AIフィルタリングを改善";
 
+"autoFilter_notificationExplainer_title" = "AIフィルタリングを維持";
+
+"autoFilter_notificationExplainer_message" = "アプリを開くようお知らせできるよう、通知を許可してください。長く開かないとAIフィルタが古くなり、iOSがアプリを削除することがあり、戻るまでフィルタが止まる場合があります。";
+
+"autoFilter_notificationExplainer_continue" = "続ける";
+
+"autoFilter_notificationExplainer_notNow" = "今はしない";
+
+"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+
+"autoFilter_inactivityNotification_body" = "AIフィルタが古い可能性があります。アプリを開いて更新してください。";
+
 "menu_filters" = "フィルタ";
 
 "menu_filterTools" = "フィルタツール";
@@ -539,28 +559,53 @@
 "whatsNew_regexFilters_desc" = "上級ユーザー向け - **正規表現**でフィルタリングし、ブロックまたは許可する内容を完全に制御。1つのパターンで数十のフィルタを置き換えられます。";
 
 "menu_exportFilters" = "フィルタを書き出す";
+
 "menu_importFilters" = "フィルタを読み込む";
+
 "importFilters_title" = "フィルタを読み込む";
+
 "importFilters_sectionTitle" = "読み込むフィルタ";
+
 "importFilters_subtitle" = "リストをタップして、このファイルのフィルタを確認し、追加するものを選べます。このデバイスにすでに存在するフィルタはスキップされます。上書きや削除は行われません。";
+
 "importFilters_willClear" = "既存のフィルタはすべて削除されます";
+
 "importFilters_duplicates" = "既存";
+
 "importFilters_invalid" = "スキップ";
+
 "importFilters_confirm" = "読み込む";
+
 "importFilters_nothingToAdd" = "読み込む新しいフィルタはありません。";
+
 "importFilters_selectAll" = "すべて選択";
+
 "importFilters_selectNone" = "選択を解除";
+
 "exportFilters_title" = "フィルタを書き出す";
+
 "exportFilters_sectionTitle" = "あなたのフィルタ";
+
 "exportFilters_subtitle" = "リストをタップして、ファイルに含めるフィルタを選べます。選択したフィルタだけがファイルに入ります。";
+
 "exportFilters_confirm" = "書き出す";
+
 "notification_import_title" = "フィルタを読み込みました";
+
 "notification_import_subtitle" = "%ld 件追加、%ld 件スキップ";
+
 "notification_importFailed_title" = "読み込みに失敗";
+
 "notification_importFailed_subtitle" = "このファイルは有効なフィルタ書き出しではありません。";
+
 "notification_exportFailed_title" = "書き出しに失敗";
+
 "notification_exportFailed_subtitle" = "書き出しファイルを作成できませんでした。";
+
 "whatsNew_filterTransfer_title" = "フィルタの書き出しと読み込み";
+
 "whatsNew_filterTransfer_desc" = "友だちとフィルタを共有 - メニューの**フィルタツール**からファイルを書き出して送信できます。";
+
 "whatsNew_appearanceTouchup_title" = "外観の仕上げ";
+
 "whatsNew_appearanceTouchup_desc" = "**ヘルプ**と**フィルターをテスト**のデザインを一新。メニューから**アクセントカラー**を選ぶと、ボタンとアイコンに反映されます。";

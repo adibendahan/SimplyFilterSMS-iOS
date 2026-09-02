@@ -134,7 +134,7 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         self.setSelectedCountriesClosure?(countries, rule)
     }
 
-    func updateAutomaticFiltersIfNeeded() {
+    func updateAutomaticFiltersIfNeeded() async {
         self.updateAutomaticFiltersIfNeededCounter += 1
         self.updateAutomaticFiltersIfNeededClosure?()
     }

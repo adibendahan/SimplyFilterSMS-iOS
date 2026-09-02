@@ -29,8 +29,11 @@
 "filterList_menu_about" = "אודות";
 
 "accentColor_menuItem" = "צבע הדגשה";
+
 "accentColor_title" = "צבע הדגשה";
+
 "accentColor_picker" = "צבע";
+
 "accentColor_reset" = "איפוס לברירת מחדל";
 
 "filterList_menu_debug" = "טעינת נתוני דיבאג";
@@ -262,7 +265,9 @@
 "addFilter_match_contains" = "מכיל";
 
 "filterList_options" = "אפשרויות";
+
 "filterList_menu_collapseOptions" = "צמצום אפשרויות";
+
 "filterList_menu_expandOptions" = "הרחבת אפשרויות";
 
 "addFilter_target_all_multiline" = "הכל";
@@ -294,8 +299,11 @@
 "testFilters_resultReason_unknownSender" = "שולח לא מוכר";
 
 "testFilters_resultMatchedFilter" = "פילטר:";
+
 "testFilters_resultMatchedSmartFilter" = "פילטר חכם:";
+
 "testFilters_resultMatchedAutomaticFilter" = "סינון AI:";
+
 "testFilters_footer" = "הקלידו שולח והודעה כדי לראות איך ההודעה תסונן. השולח אופציונאלי, השאירו אותו ריק כדי לבחון את גוף ההודעה בלבד.";
 
 "autoFilter_emojis" = "חסום אימוג'ים";
@@ -434,7 +442,6 @@
 
 "a11y_enableExtension_stepLabel" = "שלב %ld: %@. %@";
 
-
 "a11y_help_enableFilteringHint" = "הקשה כפולה לפתיחת הגדרת הסינון";
 
 "a11y_help_enableReportingHint" = "הקשה כפולה לפתיחת הגדרת הדיווח";
@@ -442,6 +449,7 @@
 "a11y_help_faqHint" = "הקשה כפולה להצגה או הסתרה של התשובה";
 
 "a11y_help_emailHint" = "הקשה כפולה לשליחת אימייל. הכתובת מועתקת אם אין חשבון דואר";
+
 "a11y_accentColor_resetHint" = "הקשה כפולה לאיפוס לצבע ברירת המחדל";
 
 "callingCode_+1" = "צפון אמריקה";
@@ -514,6 +522,18 @@
 
 "autoFilter_improveAIFiltering" = "שפר סינון AI";
 
+"autoFilter_notificationExplainer_title" = "שמור על סינון AI פעיל";
+
+"autoFilter_notificationExplainer_message" = "אפשר התראות כדי שנוכל להזכיר לך לפתוח את האפליקציה. אם לא תפתח אותה לאורך זמן, רשימות סינון AI עלולות להתיישן ו־iOS עלול לפרוק את האפליקציה - ואז הסינון ייעצר עד שתשוב.";
+
+"autoFilter_notificationExplainer_continue" = "המשך";
+
+"autoFilter_notificationExplainer_notNow" = "לא עכשיו";
+
+"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+
+"autoFilter_inactivityNotification_body" = "רשימות סינון AI עלולות להיות לא מעודכנות - פתח את האפליקציה לרענון.";
+
 "menu_filters" = "פילטרים";
 
 "menu_filterTools" = "כלי פילטור";
@@ -539,28 +559,53 @@
 "whatsNew_regexFilters_desc" = "למשתמשים מתקדמים - סנן עם **ביטויים רגולריים** לשליטה מלאה על מה שנחסם או מותר. תבנית אחת יכולה להחליף עשרות פילטרים.";
 
 "menu_exportFilters" = "ייצוא פילטרים";
+
 "menu_importFilters" = "ייבוא פילטרים";
+
 "importFilters_title" = "ייבוא פילטרים";
+
 "importFilters_sectionTitle" = "פילטרים לייבוא";
+
 "importFilters_subtitle" = "הקישו על רשימה כדי לעיין בפילטרים שבקובץ ולבחור מה להוסיף. פילטרים שכבר קיימים במכשיר הזה מדולגים. שום דבר לא יוחלף ולא יימחק.";
+
 "importFilters_willClear" = "כל הפילטרים הקיימים יימחקו";
+
 "importFilters_duplicates" = "כבר קיימים";
+
 "importFilters_invalid" = "לא תקינים";
+
 "importFilters_confirm" = "ייבוא";
+
 "importFilters_nothingToAdd" = "אין מה לייבא.";
+
 "importFilters_selectAll" = "בחר הכל";
+
 "importFilters_selectNone" = "בטל בחירה";
+
 "exportFilters_title" = "ייצוא פילטרים";
+
 "exportFilters_sectionTitle" = "הפילטרים שלך";
+
 "exportFilters_subtitle" = "הקישו על רשימה כדי לבחור אילו פילטרים לכלול. רק הפילטרים שנבחרו ייכנסו לקובץ.";
+
 "exportFilters_confirm" = "ייצוא";
+
 "notification_import_title" = "הפילטרים יובאו";
+
 "notification_import_subtitle" = "%ld נוספו, %ld לא יובאו";
+
 "notification_importFailed_title" = "הייבוא נכשל";
+
 "notification_importFailed_subtitle" = "הקובץ אינו ייצוא פילטרים תקין.";
+
 "notification_exportFailed_title" = "הייצוא נכשל";
+
 "notification_exportFailed_subtitle" = "לא ניתן ליצור את קובץ הייצוא.";
+
 "whatsNew_filterTransfer_title" = "ייצוא וייבוא פילטרים";
+
 "whatsNew_filterTransfer_desc" = "שתפו את הפילטרים שלכם עם חברים - ייצאו קובץ מ**כלי פילטור** בתפריט ושלחו אותו.";
+
 "whatsNew_appearanceTouchup_title" = "ליטוש מראה";
+
 "whatsNew_appearanceTouchup_desc" = "ל**עזרה** ול**בחנו את הפילטרים שלכם** יש מראה חדש. אפשר גם לבחור **צבע הדגשה** מהתפריט - כפתורים וסמלים יתאימו אליו.";

@@ -132,4 +132,30 @@ class FlowManagerTests: XCTestCase {
         self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
         XCTAssertTrue(self.testSubject.recordLaunch(.tipJar))
     }
+
+    func test_notificationPermission_afterWhatsNew_beforeUserRequest() {
+        self.isFirstRun = false
+        self.lastSeenWhatsNewVersion = currentWhatsNewVersion
+        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject.enableNotificationPermissionExplainer()
+        self.testSubject.request(.about)
+
+        XCTAssertEqual(self.testSubject.next(), .notificationPermission)
+        XCTAssertNil(self.testSubject.next())
+
+        self.testSubject.complete(.notificationPermission)
+        XCTAssertEqual(self.testSubject.next(), .about)
+    }
+
+    func test_notificationPermission_waitsBehindWhatsNew() {
+        self.isFirstRun = false
+        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject.enableWhatsNew()
+        self.testSubject.enableNotificationPermissionExplainer()
+
+        XCTAssertEqual(self.testSubject.next(), .whatsNew)
+        self.testSubject.complete(.whatsNew)
+        self.lastSeenWhatsNewVersion = currentWhatsNewVersion
+        XCTAssertEqual(self.testSubject.next(), .notificationPermission)
+    }
 }

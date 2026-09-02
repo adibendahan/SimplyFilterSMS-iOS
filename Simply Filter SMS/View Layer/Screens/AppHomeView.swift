@@ -23,6 +23,9 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 
     @Environment(\.accessibilityReduceMotion)
     private var reduceMotion
+
+    @Environment(\.scenePhase)
+    private var scenePhase
     
     @ObservedObject var model: ViewModel
 
@@ -149,7 +152,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         self.model.refresh()
 
                         if !isPreview {
-                            self.model.presentNextFlow()
+                            self.model.handleReturnedToHome()
                         }
                     }
                 }
@@ -203,6 +206,21 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Button("general_close"~, role: .cancel) { }
         } message: {
             Text("importFilters_nothingToAdd"~)
+        }
+        .alert("autoFilter_notificationExplainer_title"~, isPresented: self.$model.showNotificationPermissionAlert) {
+            Button("autoFilter_notificationExplainer_continue"~) {
+                self.model.continueNotificationPermissionExplainer()
+            }
+            Button("autoFilter_notificationExplainer_notNow"~, role: .cancel) {
+                self.model.dismissNotificationPermissionExplainer()
+            }
+        } message: {
+            Text("autoFilter_notificationExplainer_message"~)
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                self.model.handleSceneBecameActive()
+            }
         }
         .background {
             Color.clear
@@ -554,6 +572,13 @@ extension AppHomeView {
                 }
             }
         }
+        @Published var showNotificationPermissionAlert = false {
+            didSet {
+                if oldValue && !self.showNotificationPermissionAlert {
+                    self.showPendingNotification()
+                }
+            }
+        }
         @Published var isImportingFile = false
         @Published var fileImporterID = UUID()
         @Published var customAccent: Color? = nil
@@ -707,6 +732,10 @@ extension AppHomeView {
                 self.showPendingNotification()
                 return
             }
+            if screen == .notificationPermission {
+                self.showNotificationPermissionAlert = true
+                return
+            }
             if screen == .filterImport,
                self.appManager.filterTransferManager.pendingPreview.count == 0 {
                 _ = self.appManager.filterTransferManager.clearPendingImport()
@@ -722,6 +751,59 @@ extension AppHomeView {
             self.presentNextFlow()
         }
 
+        func handleSceneBecameActive() {
+            self.appManager.syncInactivityReminder()
+            self.considerNotificationPermissionExplainer()
+        }
+
+        func handleReturnedToHome() {
+            self.considerNotificationPermissionExplainer()
+            self.presentNextFlow()
+        }
+
+        func continueNotificationPermissionExplainer() {
+            var defaultsManager = self.appManager.defaultsManager
+            defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
+            self.showNotificationPermissionAlert = false
+            self.appManager.flowManager.complete(.notificationPermission)
+            self.appManager.requestNotificationAuthorizationFromExplainer { [weak self] _ in
+                self?.presentNextFlow()
+            }
+        }
+
+        func dismissNotificationPermissionExplainer() {
+            var defaultsManager = self.appManager.defaultsManager
+            defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
+            self.showNotificationPermissionAlert = false
+            self.appManager.flowManager.complete(.notificationPermission)
+            self.presentNextFlow()
+        }
+
+        private func considerNotificationPermissionExplainer() {
+            #if DEBUG
+            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+                return
+            }
+            #endif
+            guard self.navigationScreen == nil else { return }
+            guard !self.appManager.defaultsManager.isAppFirstRun else { return }
+            guard self.appManager.automaticFilterManager.isAutomaticFilteringOn else { return }
+            guard !self.appManager.defaultsManager.didShowAutomaticFiltersNotificationExplainer else { return }
+
+            self.appManager.userNotificationScheduling.authorizationStatus { [weak self] status in
+                guard let self else { return }
+                guard self.navigationScreen == nil else { return }
+                if status.allowsAlerts {
+                    var defaultsManager = self.appManager.defaultsManager
+                    defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
+                    self.appManager.syncInactivityReminder()
+                    return
+                }
+                self.appManager.flowManager.enableNotificationPermissionExplainer()
+                self.presentNextFlow()
+            }
+        }
+
         private func runLaunchFlowIfNeeded() {
             #if DEBUG
             if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
@@ -730,6 +812,7 @@ extension AppHomeView {
             #endif
             self.startMonitoring()
             self.enableWhatsNewAndPresent()
+            self.considerNotificationPermissionExplainer()
             self.tryShowTipPromotion()
             self.tryShowReportingExtensionNudge()
         }
@@ -780,7 +863,7 @@ extension AppHomeView {
         private var isHomeUnobstructed: Bool {
             return self.sheetScreen == nil
                 && self.pendingScreenAfterDismiss == nil
-                && !self.isFilterTransferPresenting
+                && !self.isBlockingHomeAlertPresented
                 && !self.isReplacingSheetForLaunch
         }
 
@@ -869,8 +952,12 @@ extension AppHomeView {
                 }
 
                 NotificationCenter.default.addObserver(forName: .filtersStateChanged, object: nil, queue: .main) { _ in
+                    let wasAutomaticFilteringOn = self.isAutomaticFilteringOn
                     withAnimation {
                         self.refresh()
+                    }
+                    if wasAutomaticFilteringOn && !self.isAutomaticFilteringOn {
+                        self.appManager.cancelInactivityReminder()
                     }
                 }
 
@@ -945,8 +1032,8 @@ extension AppHomeView {
         private var didShowNotificationThisSession = false
         private var pendingNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
-        private var isFilterTransferPresenting: Bool {
-            return self.showNothingToImportAlert
+        private var isBlockingHomeAlertPresented: Bool {
+            return self.showNothingToImportAlert || self.showNotificationPermissionAlert
         }
         private var userIgnoresNetworkStatus: Bool {
             guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }

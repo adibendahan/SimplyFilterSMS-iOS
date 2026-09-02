@@ -10,9 +10,11 @@ import NaturalLanguage
 import Network
 import OSLog
 import UIKit
+import BackgroundTasks
+import UserNotifications
 
 class AppManager: AppManagerProtocol {
-    static let shared: AppManagerProtocol = AppManager()
+    static let shared = AppManager()
     static let logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
     
     var persistanceManager: PersistanceManagerProtocol
@@ -25,6 +27,7 @@ class AppManager: AppManagerProtocol {
     var tipJarManager: TipJarManagerProtocol
     var filterTransferManager: FilterTransferManagerProtocol
     var flowManager: FlowManagerProtocol
+    var userNotificationScheduling: UserNotificationSchedulingProtocol
     var debugDataManager: DebugDataManagerProtocol
 
     init(inMemory: Bool = false) {
@@ -49,6 +52,7 @@ class AppManager: AppManagerProtocol {
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
         self.filterTransferManager = FilterTransferManager(persistanceManager: persistanceManager)
         self.flowManager = FlowManager(defaultsManager: defaultsManager)
+        self.userNotificationScheduling = UserNotificationCenterScheduler()
         self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
                                                  defaultsManager: defaultsManager,
                                                  automaticFilterManager: automaticFilterManager)
@@ -71,6 +75,7 @@ class AppManager: AppManagerProtocol {
     func onAppLaunch() {
         let _ = self.defaultsManager.appAge // make sure it's initialized
         AppManager.logger.debug("onAppLaunch — session #\(self.defaultsManager.sessionCounter, privacy: .public), installDate: \(self.defaultsManager.appAge, privacy: .public)")
+        self.scheduleAutomaticFiltersProcessing()
         if let sessionAge = self.defaultsManager.sessionAge {
             if sessionAge.daysBetween(date: Date()) != 0 {
                 AppManager.logger.debug("onAppLaunch — new day detected, starting new session")
@@ -95,14 +100,73 @@ class AppManager: AppManagerProtocol {
             AppManager.logger.debug("onNewUserSession — network: \(self.networkSyncManager.networkStatus.name, privacy: .public)")
             if self.networkSyncManager.networkStatus == .online {
                 AppManager.logger.debug("onNewUserSession — online, triggering automatic filter update check")
-                self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                Task {
+                    await self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                }
             }
             else {
                 AppManager.logger.debug("onNewUserSession — offline, skipping automatic filter update")
             }
         }
     }
-    
+
+    func scheduleAutomaticFiltersProcessing() {
+        let request = BGProcessingTaskRequest(identifier: kAutomaticFiltersProcessingTaskIdentifier)
+        request.requiresNetworkConnectivity = true
+        request.earliestBeginDate = Self.nextAutomaticFiltersProcessingDate()
+        do {
+            try BGTaskScheduler.shared.submit(request)
+            AppManager.logger.debug("scheduleAutomaticFiltersProcessing — submitted for \(request.earliestBeginDate?.description ?? "nil", privacy: .public)")
+        } catch {
+            AppManager.logger.error("scheduleAutomaticFiltersProcessing — failed: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    func handleAutomaticFiltersProcessing(task: BGProcessingTask) {
+        AppManager.logger.debug("handleAutomaticFiltersProcessing — started")
+        let work = Task {
+            await self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+        }
+        task.expirationHandler = {
+            work.cancel()
+        }
+        Task {
+            let success: Bool
+            switch await work.result {
+            case .success:
+                success = true
+            case .failure:
+                success = false
+            }
+            task.setTaskCompleted(success: success)
+            self.scheduleAutomaticFiltersProcessing()
+        }
+    }
+
+    func syncInactivityReminder() {
+        self.cancelInactivityReminder()
+        guard self.automaticFilterManager.isAutomaticFilteringOn else { return }
+        self.userNotificationScheduling.authorizationStatus { [weak self] status in
+            guard let self else { return }
+            guard self.automaticFilterManager.isAutomaticFilteringOn, status.allowsAlerts else { return }
+            self.scheduleInactivityReminder()
+        }
+    }
+
+    func cancelInactivityReminder() {
+        self.userNotificationScheduling.removePendingNotificationRequests(
+            withIdentifiers: [kAutomaticFiltersInactivityNotificationId])
+    }
+
+    func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void) {
+        self.userNotificationScheduling.requestAlertAuthorization { [weak self] granted in
+            if granted {
+                self?.syncInactivityReminder()
+            }
+            completion(granted)
+        }
+    }
+
     #if DEBUG
     func loadDebugData() {
         debugDataManager.load()
@@ -114,8 +178,33 @@ class AppManager: AppManagerProtocol {
         _ = self.filterTransferManager.clearPendingImport()
         self.filterTransferManager.clearPendingExport()
         self.flowManager.resetSession()
+        self.cancelInactivityReminder()
     }
     #endif // DEBUG
+
+    //MARK: - Private -
+    private func scheduleInactivityReminder() {
+        let content = UNMutableNotificationContent()
+        content.title = "autoFilter_inactivityNotification_title"~
+        content.body = "autoFilter_inactivityNotification_body"~
+        guard let trigger = self.monthlyRepeatingTrigger() else { return }
+        let request = UNNotificationRequest(identifier: kAutomaticFiltersInactivityNotificationId,
+                                            content: content,
+                                            trigger: trigger)
+        self.userNotificationScheduling.add(request) { error in
+            if let error {
+                AppManager.logger.error("scheduleInactivityReminder — failed: \(error.localizedDescription, privacy: .public)")
+            }
+        }
+    }
+
+    private func monthlyRepeatingTrigger() -> UNCalendarNotificationTrigger? {
+        guard let fireDate = Calendar.current.date(byAdding: .month, value: 1, to: Date()) else { return nil }
+        var components = Calendar.current.dateComponents([.day], from: fireDate)
+        components.hour = 19
+        components.minute = 0
+        return UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+    }
 
     //MARK: - Previews -
     static private var inMemoryManager = AppManager(inMemory: true)

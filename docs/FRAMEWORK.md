@@ -25,8 +25,13 @@ protocol AppManagerProtocol {
     var tipJarManager: TipJarManagerProtocol { get }
     var filterTransferManager: FilterTransferManagerProtocol { get }
     var flowManager: FlowManagerProtocol { get }
+    var userNotificationScheduling: UserNotificationSchedulingProtocol { get set }
     func onAppLaunch()
     func onNewUserSession()
+    func scheduleAutomaticFiltersProcessing()
+    func syncInactivityReminder()
+    func cancelInactivityReminder()
+    func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void)
 }
 ```
 
@@ -42,14 +47,18 @@ protocol AppManagerProtocol {
 8. `TipJarManager`
 9. `FilterTransferManager` (receives persistance manager)
 10. `FlowManager` (receives defaults manager)
-11. Logger wired to MessageEvaluationManager
+11. `UserNotificationCenterScheduler`
+12. Logger wired to MessageEvaluationManager
 
 In `#if DEBUG` + testing mode (`-Testing` launch argument): resets DefaultsManager and PersistanceManager.
 
 ### Lifecycle
 
-- `onAppLaunch()` — Initializes app age, detects new session (day boundary), triggers auto-filter update if online.
+- `onAppLaunch()` — Initializes app age, schedules `BGProcessingTask` for automatic filters, detects new session (day boundary), triggers auto-filter update if online.
 - `onNewUserSession()` — Increments session counter, updates session timestamp, fetches latest automatic filters.
+- `scheduleAutomaticFiltersProcessing()` / `handleAutomaticFiltersProcessing(task:)` — Idle/overnight background fetch of AI lists (handler is concrete `AppManager`, registered from `AppDelegate`).
+- `syncInactivityReminder()` — Startup-only: cancel then reschedule the monthly local reminder when AI Filtering is on and alerts are allowed.
+- `cancelInactivityReminder()` — Drop the pending reminder (AI Filtering turned off).
 - `AppManager.previews` — Static in-memory instance with debug data loaded, used by SwiftUI previews.
 
 ### Logger

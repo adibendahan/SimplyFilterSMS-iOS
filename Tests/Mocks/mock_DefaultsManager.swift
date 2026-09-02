@@ -34,6 +34,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var lastSeenWhatsNewVersionSetCounter = 0
     var didDismissReportingExtensionNudgeGetCounter = 0
     var didDismissReportingExtensionNudgeSetCounter = 0
+    var didShowAutomaticFiltersNotificationExplainerGetCounter = 0
+    var didShowAutomaticFiltersNotificationExplainerSetCounter = 0
 
     var isAppFirstRunClosure: (() -> (Bool))?
     var isExpandedAddFilterClosure: (() -> (Bool))?
@@ -46,6 +48,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var appAgeClosure: (() -> (Date))?
     var lastSeenWhatsNewVersionClosure: (() -> (Int))?
     var didDismissReportingExtensionNudgeClosure: (() -> (Bool))?
+    var didShowAutomaticFiltersNotificationExplainerClosure: (() -> (Bool))?
+    private var didShowAutomaticFiltersNotificationExplainerValue = false
 
     var isAppFirstRun: Bool {
         get {
@@ -157,6 +161,17 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
     }
 
+    var didShowAutomaticFiltersNotificationExplainer: Bool {
+        get {
+            self.didShowAutomaticFiltersNotificationExplainerGetCounter += 1
+            return self.didShowAutomaticFiltersNotificationExplainerClosure?() ?? self.didShowAutomaticFiltersNotificationExplainerValue
+        }
+        set {
+            self.didShowAutomaticFiltersNotificationExplainerSetCounter += 1
+            self.didShowAutomaticFiltersNotificationExplainerValue = newValue
+        }
+    }
+
     var accentColorRGB: [String: Double] = kNoColorDict
 
     func resetCounters() {
@@ -166,6 +181,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         self.isExpandedAddFilterSetCounter = 0
         self.isFilterOptionsCollapsedGetCounter = 0
         self.isFilterOptionsCollapsedSetCounter = 0
+        self.didShowAutomaticFiltersNotificationExplainerGetCounter = 0
+        self.didShowAutomaticFiltersNotificationExplainerSetCounter = 0
     }
     
     func reset() { }

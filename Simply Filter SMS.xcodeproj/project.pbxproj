@@ -101,6 +101,11 @@
 		69F4096F27B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4096E27B948D800749552 /* AutomaticFilterListsResponse.swift */; };
 		69F4097027B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4096E27B948D800749552 /* AutomaticFilterListsResponse.swift */; };
 		69F4097327B9499500749552 /* AutomaticFilterListsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4097227B9499500749552 /* AutomaticFilterListsRequest.swift */; };
+		69F765453048C6F900CF046E /* mock_UserNotificationScheduling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F765443048C6F900CF046E /* mock_UserNotificationScheduling.swift */; };
+		69F765473048C77E00CF046E /* AutomaticFiltersBackgroundTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F765463048C77E00CF046E /* AutomaticFiltersBackgroundTests.swift */; };
+		69F76549304AF3D100CF046E /* UserNotificationSchedulingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76548304AF3D100CF046E /* UserNotificationSchedulingProtocol.swift */; };
+		69F7654B304AF3D100CF046E /* UserNotificationCenterScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F7654A304AF3D100CF046E /* UserNotificationCenterScheduler.swift */; };
+		69F7654D304AF43E00CF046E /* AppHomeViewAutomaticFiltersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F7654C304AF43E00CF046E /* AppHomeViewAutomaticFiltersTests.swift */; };
 		69FAA7AA2F4FB4E90022C033 /* TipCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FAA7A92F4FB4E90022C033 /* TipCardView.swift */; };
 		69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FF9C8727933CE9007FA2DB /* FooterView.swift */; };
 		6F4B6E1734DF2400D47D01A0 /* ReportingExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0B53FCE983DFBEFBCE70F7 /* ReportingExtensionViewController.swift */; };
@@ -314,6 +319,11 @@
 		69F4097227B9499500749552 /* AutomaticFilterListsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFilterListsRequest.swift; sourceTree = "<group>"; };
 		69F4097427B94A2D00749552 /* HTTPService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPService.swift; sourceTree = "<group>"; };
 		69F4097627B94A9100749552 /* URLRequestProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestProtocol.swift; sourceTree = "<group>"; };
+		69F765443048C6F900CF046E /* mock_UserNotificationScheduling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_UserNotificationScheduling.swift; sourceTree = "<group>"; };
+		69F765463048C77E00CF046E /* AutomaticFiltersBackgroundTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFiltersBackgroundTests.swift; sourceTree = "<group>"; };
+		69F76548304AF3D100CF046E /* UserNotificationSchedulingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationSchedulingProtocol.swift; sourceTree = "<group>"; };
+		69F7654A304AF3D100CF046E /* UserNotificationCenterScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterScheduler.swift; sourceTree = "<group>"; };
+		69F7654C304AF43E00CF046E /* AppHomeViewAutomaticFiltersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHomeViewAutomaticFiltersTests.swift; sourceTree = "<group>"; };
 		69FAA7A92F4FB4E90022C033 /* TipCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipCardView.swift; sourceTree = "<group>"; };
 		69FF9C8727933CE9007FA2DB /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 		6C2217AE047F148D8D0D9052 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -435,6 +445,7 @@
 				A1B2C3D4E5F60718293A0005 /* mock_FilterTransferManager.swift */,
 				A1B2C3D4E5F60718293A0012 /* mock_FlowManager.swift */,
 				DDFBDEA463B84374A61E16E73070A6E4 /* mock_DebugDataManager.swift */,
+				69F765443048C6F900CF046E /* mock_UserNotificationScheduling.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -467,6 +478,8 @@
 				A1B2C3D4E5F60718293A0013 /* FlowManagerTests.swift */,
 				A11CE47C01000000C0100003 /* DefaultsManagerTests.swift */,
 				690F09CA27AC33E900BA481F /* Mocks */,
+				69F765463048C77E00CF046E /* AutomaticFiltersBackgroundTests.swift */,
+				69F7654C304AF43E00CF046E /* AppHomeViewAutomaticFiltersTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -527,6 +540,7 @@
 				986FCD84F7D2AE7EDB341A2D /* TipJarManagerProtocol.swift */,
 				A1B2C3D4E5F60718293A0002 /* FilterTransferManagerProtocol.swift */,
 				A1B2C3D4E5F60718293A0011 /* FlowManagerProtocol.swift */,
+				69F76548304AF3D100CF046E /* UserNotificationSchedulingProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -545,6 +559,7 @@
 				64956935AAF96BFE1AD24A37 /* TipJarManager.swift */,
 				A1B2C3D4E5F60718293A0001 /* FilterTransferManager.swift */,
 				A1B2C3D4E5F60718293A0010 /* FlowManager.swift */,
+				69F7654A304AF3D100CF046E /* UserNotificationCenterScheduler.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -948,12 +963,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				694E53E627A42EEB009A7E0E /* mock_DefaultsManager.swift in Sources */,
+				69F765473048C77E00CF046E /* AutomaticFiltersBackgroundTests.swift in Sources */,
 				69ECF14E286777ED000380A2 /* mock_ReportMessageService.swift in Sources */,
 				6931BAEA27BB270E00636439 /* AmazonS3ServiceTests.swift in Sources */,
 				691D57CA27BB2E0500DDA267 /* mock_HTTPService.swift in Sources */,
+				69F7654D304AF43E00CF046E /* AppHomeViewAutomaticFiltersTests.swift in Sources */,
 				694E53E827A4300E009A7E0E /* PersistanceManagerTests.swift in Sources */,
 				690F09C727AC308600BA481F /* mock_AppManager.swift in Sources */,
 				69189C1327A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift in Sources */,
+				69F765453048C6F900CF046E /* mock_UserNotificationScheduling.swift in Sources */,
 				AA7BCED7D8924F6E9A3B5C07 /* CallingCodesTests.swift in Sources */,
 				6987D7FF27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift in Sources */,
 				694E53EC27A4A68F009A7E0E /* FilterListViewModelTests.swift in Sources */,
@@ -1017,6 +1035,7 @@
 				AA4BCED7D8924F6E9A3B5C04 /* CallingCodes.swift in Sources */,
 				69CD70CA2770D4D100F91A2F /* Simply_Filter_SMSApp.swift in Sources */,
 				69B2A9A9279CD89E000DFAFC /* AppManager.swift in Sources */,
+				69F76549304AF3D100CF046E /* UserNotificationSchedulingProtocol.swift in Sources */,
 				E35862B339E54B54A79D65A2AF0C8C10 /* DebugDataManager.swift in Sources */,
 				EABCA17395164EA18CE84A83BA8BAF39 /* DebugDataManagerProtocol.swift in Sources */,
 				69D87E442877445E00266D86 /* ReportMessageView.swift in Sources */,
@@ -1033,6 +1052,7 @@
 				6982FE8927A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift in Sources */,
 				696B011127A822BE0061FE15 /* AppHomeView.swift in Sources */,
 				69FAA7AA2F4FB4E90022C033 /* TipCardView.swift in Sources */,
+				69F7654B304AF3D100CF046E /* UserNotificationCenterScheduler.swift in Sources */,
 				691C370E27B400A500B3D061 /* NetworkSyncManager.swift in Sources */,
 				BA05827BCDAD8210282FD0B0 /* TipJarManager.swift in Sources */,
 				A1B2C3D4E5F60718293A1001 /* FilterTransferManager.swift in Sources */,

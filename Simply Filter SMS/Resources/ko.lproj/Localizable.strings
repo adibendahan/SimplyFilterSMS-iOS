@@ -33,8 +33,11 @@
 "filterList_menu_about" = "정보";
 
 "accentColor_menuItem" = "강조 색상";
+
 "accentColor_title" = "강조 색상";
+
 "accentColor_picker" = "색상";
+
 "accentColor_reset" = "기본값으로 재설정";
 
 "filterList_menu_debug" = "디버그 데이터 로드";
@@ -48,7 +51,9 @@
 "filterList_text" = "텍스트";
 
 "filterList_options" = "옵션";
+
 "filterList_menu_collapseOptions" = "옵션 접기";
+
 "filterList_menu_expandOptions" = "옵션 펼치기";
 
 "addFilter_add" = "추가";
@@ -304,8 +309,11 @@
 "testFilters_resultReason_unknownSender" = "알 수 없는 발신자";
 
 "testFilters_resultMatchedFilter" = "필터:";
+
 "testFilters_resultMatchedSmartFilter" = "스마트 필터:";
+
 "testFilters_resultMatchedAutomaticFilter" = "AI 필터링:";
+
 "testFilters_footer" = "발신자와 메시지를 입력하면 어떻게 필터링되는지 확인할 수 있습니다. 발신자는 선택 사항입니다. 비워 두면 본문만 테스트합니다.";
 
 "notification_offline_title" = "iCloud 동기화 일시 중지됨";
@@ -424,7 +432,6 @@
 
 "a11y_enableExtension_stepLabel" = "%ld단계: %@. %@";
 
-
 "a11y_help_enableFilteringHint" = "이중 탭하여 필터 설정을 엽니다";
 
 "a11y_help_enableReportingHint" = "이중 탭하여 신고 설정을 엽니다";
@@ -432,6 +439,7 @@
 "a11y_help_faqHint" = "이중 탭하여 답변을 표시하거나 숨깁니다";
 
 "a11y_help_emailHint" = "이중 탭하여 이메일을 보냅니다. Mail이 설정되지 않으면 주소를 복사합니다";
+
 "a11y_accentColor_resetHint" = "이중 탭하여 기본 색상으로 되돌립니다";
 
 "callingCode_+1" = "북미";
@@ -514,6 +522,18 @@
 
 "autoFilter_improveAIFiltering" = "AI 필터링 개선";
 
+"autoFilter_notificationExplainer_title" = "AI 필터링 유지하기";
+
+"autoFilter_notificationExplainer_message" = "앱을 열도록 알려 드릴 수 있게 알림을 허용해 주세요. 오랫동안 열지 않으면 AI 필터가 오래되고 iOS가 앱을 내릴 수 있어, 돌아올 때까지 필터링이 멈출 수 있습니다.";
+
+"autoFilter_notificationExplainer_continue" = "계속";
+
+"autoFilter_notificationExplainer_notNow" = "나중에";
+
+"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+
+"autoFilter_inactivityNotification_body" = "AI 필터가 오래되었을 수 있습니다. 앱을 열어 새로고침하세요.";
+
 "menu_filters" = "필터";
 
 "menu_filterTools" = "필터 도구";
@@ -539,28 +559,53 @@
 "whatsNew_regexFilters_desc" = "고급 사용자를 위한 기능 - **정규 표현식**으로 차단하거나 허용할 내용을 완전히 제어하세요. 하나의 패턴으로 수십 개의 필터를 대체할 수 있습니다.";
 
 "menu_exportFilters" = "필터 내보내기";
+
 "menu_importFilters" = "필터 가져오기";
+
 "importFilters_title" = "필터 가져오기";
+
 "importFilters_sectionTitle" = "가져올 필터";
+
 "importFilters_subtitle" = "목록을 탭하여 이 파일의 필터를 확인하고 추가할 항목을 고르세요. 이 기기에 이미 있는 필터는 건너뜁니다. 덮어쓰거나 삭제되지 않습니다.";
+
 "importFilters_willClear" = "기존 필터가 모두 삭제됩니다";
+
 "importFilters_duplicates" = "이미 있음";
+
 "importFilters_invalid" = "건너뜀";
+
 "importFilters_confirm" = "가져오기";
+
 "importFilters_nothingToAdd" = "가져올 새 필터가 없습니다.";
+
 "importFilters_selectAll" = "모두 선택";
+
 "importFilters_selectNone" = "선택 해제";
+
 "exportFilters_title" = "필터 내보내기";
+
 "exportFilters_sectionTitle" = "내 필터";
+
 "exportFilters_subtitle" = "목록을 탭하여 포함할 필터를 고르세요. 선택한 필터만 파일에 들어갑니다.";
+
 "exportFilters_confirm" = "내보내기";
+
 "notification_import_title" = "필터를 가져왔습니다";
+
 "notification_import_subtitle" = "%ld개 추가, %ld개 건너뜀";
+
 "notification_importFailed_title" = "가져오기 실패";
+
 "notification_importFailed_subtitle" = "이 파일은 올바른 필터 내보내기 파일이 아닙니다.";
+
 "notification_exportFailed_title" = "내보내기 실패";
+
 "notification_exportFailed_subtitle" = "내보내기 파일을 만들 수 없습니다.";
+
 "whatsNew_filterTransfer_title" = "필터 내보내기 및 가져오기";
+
 "whatsNew_filterTransfer_desc" = "친구와 필터를 공유하세요 - 메뉴의 **필터 도구**에서 파일을 내보낸 뒤 보내세요.";
+
 "whatsNew_appearanceTouchup_title" = "모양 다듬기";
+
 "whatsNew_appearanceTouchup_desc" = "**도움말**과 **필터 테스트**가 새 모습입니다. 메뉴에서 **강조 색상**을 고르면 버튼과 아이콘에 적용됩니다.";

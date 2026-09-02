@@ -39,6 +39,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | `enableReportingExtension` | EnableExtensionView (reporting steps) | Sheet |
 | `filterImport` | FilterTransferPreviewView | Sheet |
 | `filterExport` | FilterTransferPreviewView | Sheet |
+| `notificationPermission` | *(fake — Home `.alert` only)* | Flow token |
 
 ## Manager Dependency Graph
 
@@ -57,6 +58,7 @@ AppManager (Singleton)
 │   └── depends on: PersistanceManager
 ├── FlowManager ────────────── Launch-order queue
 │   └── depends on: DefaultsManager
+├── UserNotificationCenterScheduler ── Local notifications (protocol)
 ├── AmazonS3Service ────────── HTTP → S3
 │   └── depends on: NetworkSyncManager
 └── ReportMessageService ───── HTTP → Lambda

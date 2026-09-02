@@ -1,12 +1,12 @@
 ## ADDED Requirements
 
-### Requirement: Remind after 30 days without opening when AI Filtering is on
-When AI Filtering is on and the user has allowed alerts, the system SHALL keep a single repeating local notification that first fires 30 days after the last time the user opened the app, then every 30 days until they open the app or turn AI Filtering off.
+### Requirement: Remind monthly without opening when AI Filtering is on
+When AI Filtering is on and the user has allowed alerts, the system SHALL keep a single repeating local notification that first fires one calendar month after the last startup, then monthly until they open the app or turn AI Filtering off.
 
 #### Scenario: User opens the app with AI Filtering on
 - **WHEN** the app becomes active and AI Filtering is on and alert permission is granted
 - **THEN** the system SHALL cancel any pending inactivity notification
-- **AND** the system SHALL schedule a repeating notification 30 days from that moment
+- **AND** the system SHALL schedule a repeating monthly notification starting one month from that moment
 
 #### Scenario: User opens the app with AI Filtering off
 - **WHEN** the app becomes active and AI Filtering is off
@@ -14,27 +14,27 @@ When AI Filtering is on and the user has allowed alerts, the system SHALL keep a
 - **AND** the system SHALL NOT schedule a new one
 
 #### Scenario: User ignores the banner
-- **WHEN** 30 days pass without the app becoming active
+- **WHEN** a month passes without the app becoming active
 - **THEN** the system SHALL show the inactivity notification
-- **AND** if another 30 days pass without the app becoming active, the system SHALL show it again
+- **AND** if another month passes without the app becoming active, the system SHALL show it again
 
-#### Scenario: Background refresh runs
-- **WHEN** a background automatic-filter refresh completes
+#### Scenario: Background processing runs
+- **WHEN** a background automatic-filter processing task completes
 - **THEN** the inactivity notification schedule SHALL NOT be cancelled or moved
 
 ### Requirement: Turning AI Filtering off stops reminders
-The system SHALL cancel the inactivity notification when AI Filtering changes from on to off, and SHALL schedule it when AI Filtering changes from off to on and alerts are allowed.
+The system SHALL cancel the inactivity notification when AI Filtering changes from on to off. Turning AI Filtering on mid-session SHALL NOT restart the monthly clock; the next app startup schedules the reminder if AI Filtering is still on and alerts are allowed.
 
 #### Scenario: Last language turned off
 - **WHEN** the user turns off the last active automatic-filter language
 - **THEN** the system SHALL cancel the inactivity notification
 
-#### Scenario: AI Filtering turned on
-- **WHEN** the user turns on automatic filtering for a language so that AI Filtering becomes on, and alert permission is granted
-- **THEN** the system SHALL schedule the 30-day repeating inactivity notification
+#### Scenario: AI Filtering turned on mid-session
+- **WHEN** the user turns on automatic filtering for a language so that AI Filtering becomes on
+- **THEN** the system SHALL NOT schedule or reschedule the inactivity notification until the next app startup (or until Continue grants alerts from the explainer)
 
 ### Requirement: Explain before the system notification prompt
-The system SHALL NOT call the iOS notification authorization prompt unless the user has continued from an in-app alert (not a full screen) that states AI filters may go stale if the app is never opened, and that iOS may offload the app if it is never opened.
+The system SHALL NOT call the iOS notification authorization prompt unless the user has continued from an in-app alert (not a full screen) that asks for notification permission so the app can remind them to open it, and that states AI filters may go stale if the app is never opened, and that iOS may offload the app if it is never opened.
 
 #### Scenario: Existing user opens this version with AI Filtering on
 - **WHEN** App Home is shown, AI Filtering is on, the explainer has never been shown, and alert permission is not already granted
@@ -84,7 +84,7 @@ The system SHALL NOT call the iOS notification authorization prompt unless the u
 - **THEN** the system SHALL NOT schedule the inactivity notification
 - **AND** background refresh scheduling SHALL still be attempted
 
-### Requirement: 30-day banner matches the explainer
+### Requirement: Monthly banner matches the explainer
 The inactivity notification SHALL say that AI filters may be out of date and that the user can open the app to refresh. Tapping it SHALL open the app to the normal Home launch.
 
 #### Scenario: Notification is delivered

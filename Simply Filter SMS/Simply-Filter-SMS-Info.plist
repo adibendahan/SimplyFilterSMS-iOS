@@ -60,7 +60,12 @@
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>processing</string>
 		<string>remote-notification</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.grizz.apps.dev.simply-filter-sms.process-automatic-filters</string>
 	</array>
 	<key>UILaunchScreen</key>
 	<dict/>

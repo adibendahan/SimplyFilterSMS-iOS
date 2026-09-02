@@ -33,8 +33,11 @@
 "filterList_menu_about" = "حول";
 
 "accentColor_menuItem" = "لون التمييز";
+
 "accentColor_title" = "لون التمييز";
+
 "accentColor_picker" = "اللون";
+
 "accentColor_reset" = "إعادة التعيين إلى الافتراضي";
 
 "filterList_menu_debug" = "تحميل بيانات اختبار";
@@ -48,7 +51,9 @@
 "filterList_text" = "النص";
 
 "filterList_options" = "خيارات";
+
 "filterList_menu_collapseOptions" = "طي الخيارات";
+
 "filterList_menu_expandOptions" = "توسيع الخيارات";
 
 "addFilter_add" = "إضافة";
@@ -286,8 +291,11 @@
 "testFilters_resultReason_unknownSender" = "مُرسِل مجهول";
 
 "testFilters_resultMatchedFilter" = "مرشّح:";
+
 "testFilters_resultMatchedSmartFilter" = "مرشّح ذكي:";
+
 "testFilters_resultMatchedAutomaticFilter" = "تصفية AI:";
+
 "testFilters_footer" = "اكتب مُرسِلاً ورسالة لترى كيف ستُصفّى. المُرسِل اختياري، اتركه فارغاً لاختبار النص فقط.";
 
 "notification_offline_title" = "مزامنة iCloud متوقفة";
@@ -406,7 +414,6 @@
 
 "a11y_enableExtension_stepLabel" = "الخطوة %ld: %@. %@";
 
-
 "a11y_help_enableFilteringHint" = "اضغط مرتين لفتح إعداد التصفية";
 
 "a11y_help_enableReportingHint" = "اضغط مرتين لفتح إعداد الإبلاغ";
@@ -414,6 +421,7 @@
 "a11y_help_faqHint" = "اضغط مرتين لإظهار الإجابة أو إخفائها";
 
 "a11y_help_emailHint" = "اضغط مرتين لإرسال بريد. تُنسخ العنوان إذا لم يكن البريد مضبوطًا";
+
 "a11y_accentColor_resetHint" = "اضغط مرتين لاستعادة اللون الافتراضي";
 
 "autoFilter_countryAllowlist" = "السماح حسب البلد";
@@ -514,6 +522,18 @@
 
 "autoFilter_improveAIFiltering" = "تحسين تصفية الذكاء الاصطناعي";
 
+"autoFilter_notificationExplainer_title" = "حافظ على عمل تصفية AI";
+
+"autoFilter_notificationExplainer_message" = "اسمح بالإشعارات حتى نتمكن من تذكيرك بفتح التطبيق. إذا لم تفتحه لفترة طويلة، قد تصبح فلاتر AI قديمة وقد يفرّغ iOS التطبيق - ثم تتوقف التصفية حتى تعود.";
+
+"autoFilter_notificationExplainer_continue" = "متابعة";
+
+"autoFilter_notificationExplainer_notNow" = "ليس الآن";
+
+"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+
+"autoFilter_inactivityNotification_body" = "قد تكون فلاتر AI غير محدّثة - افتح التطبيق للتحديث.";
+
 "menu_filters" = "المرشحات";
 
 "menu_filterTools" = "أدوات المرشحات";
@@ -539,28 +559,53 @@
 "whatsNew_regexFilters_desc" = "للمستخدمين المتقدمين - صفِّ بـ**التعبيرات النمطية** للتحكم الكامل فيما يُحجب أو يُسمح به. نمط واحد يمكن أن يحل محل عشرات الفلاتر.";
 
 "menu_exportFilters" = "تصدير الفلاتر";
+
 "menu_importFilters" = "استيراد الفلاتر";
+
 "importFilters_title" = "استيراد الفلاتر";
+
 "importFilters_sectionTitle" = "فلاتر للاستيراد";
+
 "importFilters_subtitle" = "اضغط على قائمة لمراجعة الفلاتر في هذا الملف واختيار ما تريد إضافته. الفلاتر الموجودة مسبقًا على هذا الجهاز تُتخطى. لا يُستبدل شيء ولا يُحذف.";
+
 "importFilters_willClear" = "ستُحذف كل الفلاتر الموجودة";
+
 "importFilters_duplicates" = "موجودة مسبقًا";
+
 "importFilters_invalid" = "تم التخطي";
+
 "importFilters_confirm" = "استيراد";
+
 "importFilters_nothingToAdd" = "لا يوجد شيء جديد للاستيراد.";
+
 "importFilters_selectAll" = "تحديد الكل";
+
 "importFilters_selectNone" = "إلغاء التحديد";
+
 "exportFilters_title" = "تصدير الفلاتر";
+
 "exportFilters_sectionTitle" = "فلاترك";
+
 "exportFilters_subtitle" = "اضغط على قائمة لاختيار الفلاتر المراد تضمينها. الفلاتر المحددة فقط تُدرج في الملف.";
+
 "exportFilters_confirm" = "تصدير";
+
 "notification_import_title" = "تم استيراد الفلاتر";
+
 "notification_import_subtitle" = "أُضيف %ld، وتُخطي %ld";
+
 "notification_importFailed_title" = "فشل الاستيراد";
+
 "notification_importFailed_subtitle" = "هذا الملف ليس تصدير فلاتر صالحًا.";
+
 "notification_exportFailed_title" = "فشل التصدير";
+
 "notification_exportFailed_subtitle" = "تعذّر إنشاء ملف التصدير.";
+
 "whatsNew_filterTransfer_title" = "تصدير واستيراد الفلاتر";
+
 "whatsNew_filterTransfer_desc" = "شارك فلاترك مع صديق - صدّر ملفًا من **أدوات المرشحات** في القائمة وأرسله.";
+
 "whatsNew_appearanceTouchup_title" = "لمسة على المظهر";
+
 "whatsNew_appearanceTouchup_desc" = "**مساعدة** و**اختبر مرشّحاتك** بمظهر جديد. يمكنك أيضاً اختيار **لون التمييز** من القائمة - تتبعه الأزرار والأيقونات.";

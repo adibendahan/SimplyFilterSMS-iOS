@@ -13,6 +13,7 @@ class mock_FlowManager: FlowManagerProtocol {
     var recordLaunchCounter = 0
     var requestCounter = 0
     var enableWhatsNewCounter = 0
+    var enableNotificationPermissionExplainerCounter = 0
     var nextCounter = 0
     var completeCounter = 0
     var resetSessionCounter = 0
@@ -35,6 +36,10 @@ class mock_FlowManager: FlowManagerProtocol {
 
     func enableWhatsNew() {
         self.enableWhatsNewCounter += 1
+    }
+
+    func enableNotificationPermissionExplainer() {
+        self.enableNotificationPermissionExplainerCounter += 1
     }
 
     func next() -> Screen? {
