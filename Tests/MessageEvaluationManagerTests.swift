@@ -600,3 +600,170 @@ class MessageEvaluationManagerTests: XCTestCase {
         try? self.testSubject.context.save()
     }
 }
+
+/// Independent SQLite containers exercise the same read-only path as the extension.
+final class SavedRulesReaderTests: XCTestCase {
+    private var directory: URL!
+    private var writers: [NSPersistentContainer] = []
+    private var url: URL { directory.appendingPathComponent("rules.sqlite") }
+
+    override func setUpWithError() throws {
+        directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    }
+
+    override func tearDownWithError() throws {
+        for writer in writers {
+            writer.viewContext.performAndWait { writer.viewContext.reset() }
+            for store in writer.persistentStoreCoordinator.persistentStores {
+                try writer.persistentStoreCoordinator.remove(store)
+            }
+        }
+        writers.removeAll()
+        try FileManager.default.removeItem(at: directory)
+    }
+
+    private func writer() throws -> NSPersistentContainer {
+        let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
+        let description = NSPersistentStoreDescription(url: url)
+        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        container.persistentStoreDescriptions = [description]
+        var failure: Error?
+        container.loadPersistentStores { _, error in failure = error }
+        if let failure { throw failure }
+        writers.append(container)
+        return container
+    }
+
+    private func add(_ context: NSManagedObjectContext, text: String, type: FilterType, target: FilterTarget) -> Filter {
+        let filter = Filter(context: context)
+        filter.uuid = UUID()
+        filter.text = text
+        filter.filterType = type
+        filter.filterTarget = target
+        filter.filterMatching = .contains
+        filter.filterCase = .caseInsensitive
+        filter.denyFolderType = .junk
+        return filter
+    }
+
+    func testCommittedParityPriorityAndFreshness() throws {
+        let writer = try writer()
+        let reader = MessageEvaluationManager(storeURL: url)
+        let secondReader = MessageEvaluationManager(storeURL: url)
+        try writer.viewContext.performAndWait {
+            let deny = add(writer.viewContext, text: "capital", type: .deny, target: .body)
+            let allow = add(writer.viewContext, text: "+15551111111", type: .allow, target: .sender)
+            try writer.viewContext.save()
+            XCTAssertEqual(reader.evaluateMessage(body: "capital", sender: "+15551111111").action, .allow)
+            let blocked = reader.evaluateMessage(body: "capital", sender: "+15552222222")
+            XCTAssertEqual(blocked.action, .junk)
+            XCTAssertEqual(blocked.status, .success)
+            XCTAssertEqual(blocked, secondReader.evaluateMessage(body: "capital", sender: "+15552222222"))
+            deny.text = "updated"
+            // An unsaved live edit must not affect the saved-rule reader.
+            XCTAssertEqual(reader.evaluateMessage(body: "capital", sender: "+15552222222").action, .junk)
+            deny.denyFolderType = .promotion
+            try writer.viewContext.save()
+            XCTAssertEqual(reader.evaluateMessage(body: "capital", sender: "+15552222222").match, .noMatch)
+            XCTAssertEqual(reader.evaluateMessage(body: "updated", sender: "+15552222222").action, .promotion)
+            deny.filterMatching = .regex
+            deny.text = "^updated$"
+            try writer.viewContext.save()
+            XCTAssertEqual(reader.evaluateMessage(body: "updated extra", sender: "+15552222222").action, .allow)
+            XCTAssertEqual(reader.evaluateMessage(body: "updated", sender: "+15552222222").action, .promotion)
+            writer.viewContext.delete(deny)
+            writer.viewContext.delete(allow)
+            try writer.viewContext.save()
+            XCTAssertEqual(reader.evaluateMessage(body: "updated", sender: "+15552222222").match, .noMatch)
+        }
+    }
+
+    func testMissingStoreRecoversAndConcurrentRequestsCompleteOnce() throws {
+        let reader = MessageEvaluationManager(storeURL: url)
+        let unavailable = reader.evaluateMessage(body: "capital", sender: "123456789")
+        XCTAssertEqual(unavailable.status, .storeUnavailable)
+        XCTAssertEqual(unavailable.action, .allow)
+        let writer = try writer()
+        try writer.viewContext.performAndWait {
+            _ = add(writer.viewContext, text: "capital", type: .deny, target: .body)
+            try writer.viewContext.save()
+        }
+        let completions = (0..<6).map { expectation(description: "query \($0)") }
+        for completion in completions {
+            completion.assertForOverFulfill = true
+            reader.evaluateMessage(body: "capital", sender: "123456789") { result in
+                XCTAssertEqual(result.action, .junk)
+                XCTAssertEqual(result.status, .success)
+                completion.fulfill()
+            }
+        }
+        wait(for: completions, timeout: 10)
+    }
+
+    func testMalformedCacheIsFailureRatherThanNoMatch() throws {
+        let writer = try writer()
+        try writer.viewContext.performAndWait {
+            let cache = AutomaticFiltersCache(context: writer.viewContext)
+            cache.filtersData = "not a valid cache"
+            try writer.viewContext.save()
+        }
+        let result = MessageEvaluationManager(storeURL: url).evaluateMessage(body: "hello", sender: "123456789")
+        XCTAssertEqual(result.status, .readFailed)
+        XCTAssertEqual(result.action, .allow)
+        XCTAssertNotEqual(result.match, .noMatch)
+        XCTAssertTrue(TestFilterResultRow.accessibilityText(for: result).contains("could not be evaluated"))
+    }
+
+    func testBlankSenderDoesNotProduceClassification() {
+        let model = TestFiltersView.ViewModel(appManager: mock_AppManager())
+        model.text = "capital"
+        XCTAssertNil(model.result)
+    }
+}
+
+private final class UnreadableRulesStore: NSIncrementalStore {
+    override func loadMetadata() throws {
+        metadata = [NSStoreTypeKey: NSStringFromClass(UnreadableRulesStore.self), NSStoreUUIDKey: UUID().uuidString]
+    }
+    override func execute(_ request: NSPersistentStoreRequest, with context: NSManagedObjectContext?) throws -> Any {
+        throw NSError(domain: "InjectedFetchFailure", code: 7)
+    }
+}
+
+extension SavedRulesReaderTests {
+    func testFetchFailureAndResponseMapping() throws {
+        NSPersistentStoreCoordinator.registerStoreClass(UnreadableRulesStore.self, forStoreType: NSStringFromClass(UnreadableRulesStore.self))
+        let model = AppPersistentCloudKitContainer(name: kAppWorkingDirectory).managedObjectModel
+        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+        try coordinator.addPersistentStore(ofType: NSStringFromClass(UnreadableRulesStore.self), configurationName: nil, at: url)
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.performAndWait { context.persistentStoreCoordinator = coordinator }
+        let result = MessageEvaluationManager(context: context).evaluateMessage(body: "hello", sender: "123456789")
+        XCTAssertEqual(result.status, .readFailed)
+        XCTAssertEqual(result.makeResponse().action, .allow)
+        XCTAssertEqual(MessageEvaluationResult(action: .junk).makeResponse().action, .junk)
+        XCTAssertEqual(MessageEvaluationResult(action: .allow).makeResponse().action, .allow)
+    }
+}
+
+extension SavedRulesReaderTests {
+    func testImportAndFailedSaveRemainConsistentWithReader() throws {
+        let manager = PersistanceManager(storeURL: url)
+        writers.append(manager.container)
+        let reader = MessageEvaluationManager(storeURL: url)
+        let importer = FilterTransferManager(persistanceManager: manager)
+        let result = importer.importFilters([
+            FilterTransferCandidate(text: "capital", type: .deny, denyFolder: .junk,
+                                    filterTarget: .body, filterMatching: .contains, filterCase: .caseInsensitive)
+        ])
+        XCTAssertEqual(result.added, 1)
+        XCTAssertEqual(reader.evaluateMessage(body: "capital", sender: "123456789").action, .junk)
+        let rule = try XCTUnwrap(manager.fetchFilterRecords().first)
+        manager.saveContext = { _ in throw NSError(domain: "InjectedSaveFailure", code: 2) }
+        manager.updateFilter(rule, filterText: "different")
+        XCTAssertEqual(rule.text, "capital")
+        XCTAssertEqual(reader.evaluateMessage(body: "capital", sender: "123456789").action, .junk)
+        XCTAssertEqual(reader.evaluateMessage(body: "different", sender: "123456789").match, .noMatch)
+    }
+}

@@ -331,7 +331,6 @@ extension FilterListRowView {
         @discardableResult
         func updateFilter(filterText: String) -> Bool {
             let current = self.filter.text ?? ""
-            AppManager.logger.debug("FilterListRow.updateFilter(text) — proposed: '\(filterText, privacy: .public)', current: '\(current, privacy: .public)'")
 
             guard filterText != current else {
                 AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, unchanged")
@@ -356,6 +355,10 @@ extension FilterListRowView {
 
             AppManager.logger.debug("FilterListRow.updateFilter(text) — saving")
             self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
+            if self.filter.text != filterText {
+                self.text = self.filter.text ?? current
+                return true
+            }
             self.onUpdate?(false)
             return false
         }

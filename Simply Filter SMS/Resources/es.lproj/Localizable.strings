@@ -564,3 +564,14 @@
 "whatsNew_filterTransfer_desc" = "Comparte tus filtros con un amigo - exporta un archivo desde **Herramientas de filtro** en el menú y envíalo.";
 "whatsNew_appearanceTouchup_title" = "Retoque de apariencia";
 "whatsNew_appearanceTouchup_desc" = "**Ayuda** y **Prueba tus filtros** tienen un aspecto nuevo. También puedes elegir un **Color de acento** en el menú - botones e iconos lo siguen.";
+
+// Saved-rule diagnostics: English fallback pending translation.
+"testFilters_savedTitle" = "Saved Rules Test";
+"testFilters_savedFooter" = "Tests saved rules using an independent reader. Enter the exact sender and message. This does not verify extension invocation, sender eligibility, or where iOS places a message, and does not reclassify old messages.";
+"testFilters_senderRequired" = "Enter the actual sender to test sender-dependent rules.";
+"testFilters_unavailable" = "Saved rules could not be evaluated. No classification is available.";
+"rules_saveFailedTitle" = "Rules could not be saved";
+"rules_saveFailedMessage" = "The latest changes were rolled back and are not active. Please try the edit again. Previously saved rules are unchanged.";
+
+"rules_loadFailedTitle" = "Saved rules are unavailable";
+"rules_loadFailedMessage" = "The shared rules store could not be opened. Filtering cannot be verified. Try reopening the app; if this continues, check the app installation and contact support.";

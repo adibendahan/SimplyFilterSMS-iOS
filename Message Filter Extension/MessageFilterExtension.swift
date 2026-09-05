@@ -17,14 +17,12 @@ final class MessageFilterExtension: ILMessageFilterExtension {
 
     override init() {
         super.init()
+        extensionManager.setLogger(logger)
         logger.debug("Extension loaded")
     }
 
-    lazy var extensionManager: MessageEvaluationManagerProtocol = {
-        let messageEvaluationManager = MessageEvaluationManager()
-        messageEvaluationManager.setLogger(self.logger)
-        return messageEvaluationManager
-    }()
+    let extensionManager = MessageEvaluationManager()
+
 }
 
 @available(iOS 16.0, *)
@@ -40,18 +38,15 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
     func handle(_ queryRequest: ILMessageFilterQueryRequest,
                 context: ILMessageFilterExtensionContext,
                 completion: @escaping (ILMessageFilterQueryResponse) -> Void) {
-        let offlineAction = self.offlineAction(for: queryRequest)
-        let response = ILMessageFilterQueryResponse()
-        response.action = offlineAction
-        completion(response)
-    }
-
-    private func offlineAction(for queryRequest: ILMessageFilterQueryRequest) -> ILMessageFilterAction {
-        let body = queryRequest.messageBody ?? ""
-        let sender = queryRequest.sender ?? ""
-        logger.debug("▶▶▶ Query received | sender: '\(sender, privacy: .public)' | body: '\(body, privacy: .public)'")
-        let result = self.extensionManager.evaluateMessage(body: body, sender: sender)
-        logger.debug("◀◀◀ Extension response: \(result.action.logName, privacy: .public) | reason: '\(result.reason ?? "none", privacy: .public)'")
-        return result.action
+        let queryID = UUID().uuidString
+        let started = Date()
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "unknown"
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
+        logger.info("Query received: id=\(queryID, privacy: .public) version=\(version, privacy: .public) build=\(build, privacy: .public)")
+        extensionManager.evaluateMessage(body: queryRequest.messageBody ?? "", sender: queryRequest.sender ?? "") { result in
+            let response = result.makeResponse()
+            self.logger.info("Query completed: id=\(queryID, privacy: .public) match=\(result.match.logKind, privacy: .public) status=\(result.status.rawValue, privacy: .public) action=\(result.action.logName, privacy: .public) elapsed=\(Date().timeIntervalSince(started), privacy: .public)")
+            completion(response)
+        }
     }
 }

@@ -395,3 +395,24 @@ class PersistanceManagerTests: XCTestCase {
         self.saveNotificationCompleteHandler?(notification)
     }
 }
+
+extension PersistanceManagerTests {
+    func testFailedSaveRollsBackAndPublishesFailure() throws {
+        let manager = PersistanceManager(inMemory: true)
+        let failed = expectation(description: "visible save failure")
+        RulesSaveState.shared.failed = false
+        try manager.context.performAndWait {
+            let filter = Filter(context: manager.context)
+            filter.text = "draft"
+            manager.saveContext = { _ in throw NSError(domain: "InjectedSaveFailure", code: 1) }
+            XCTAssertFalse(manager.commitContext())
+            XCTAssertFalse(manager.context.hasChanges)
+        }
+        DispatchQueue.main.async {
+            XCTAssertTrue(RulesSaveState.shared.failed)
+            RulesSaveState.shared.failed = false
+            failed.fulfill()
+        }
+        wait(for: [failed], timeout: 3)
+    }
+}

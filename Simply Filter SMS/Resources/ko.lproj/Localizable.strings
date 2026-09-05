@@ -564,3 +564,14 @@
 "whatsNew_filterTransfer_desc" = "친구와 필터를 공유하세요 - 메뉴의 **필터 도구**에서 파일을 내보낸 뒤 보내세요.";
 "whatsNew_appearanceTouchup_title" = "모양 다듬기";
 "whatsNew_appearanceTouchup_desc" = "**도움말**과 **필터 테스트**가 새 모습입니다. 메뉴에서 **강조 색상**을 고르면 버튼과 아이콘에 적용됩니다.";
+
+// Saved-rule diagnostics: English fallback pending translation.
+"testFilters_savedTitle" = "Saved Rules Test";
+"testFilters_savedFooter" = "Tests saved rules using an independent reader. Enter the exact sender and message. This does not verify extension invocation, sender eligibility, or where iOS places a message, and does not reclassify old messages.";
+"testFilters_senderRequired" = "Enter the actual sender to test sender-dependent rules.";
+"testFilters_unavailable" = "Saved rules could not be evaluated. No classification is available.";
+"rules_saveFailedTitle" = "Rules could not be saved";
+"rules_saveFailedMessage" = "The latest changes were rolled back and are not active. Please try the edit again. Previously saved rules are unchanged.";
+
+"rules_loadFailedTitle" = "Saved rules are unavailable";
+"rules_loadFailedMessage" = "The shared rules store could not be opened. Filtering cannot be verified. Try reopening the app; if this continues, check the app installation and contact support.";

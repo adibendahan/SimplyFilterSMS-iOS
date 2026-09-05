@@ -70,7 +70,11 @@ struct TestFiltersView: View {
                         .padding(.top, 15)
 
                         ZStack(alignment: .topLeading) {
-                            if let result = self.model.result {
+                            if self.model.sender.isEmpty && !self.model.text.isEmpty {
+                                Text("testFilters_senderRequired"~)
+                                    .font(.footnote)
+                                    .padding(20)
+                            } else if let result = self.model.result {
                                 TestFilterResultRow(result: result)
                                     .padding(.horizontal, 20)
                                     .padding(.top, 16)
@@ -85,7 +89,7 @@ struct TestFiltersView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 20)
 
-                    Text("testFilters_footer"~)
+                    Text("testFilters_savedFooter"~)
                         .font(.footnote)
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -106,7 +110,7 @@ struct TestFiltersView: View {
                     focusedField = .text
                 }
             }
-            .navigationTitle("testFilters_title"~)
+            .navigationTitle("testFilters_savedTitle"~)
             .toolbar {
                 ToolbarItem {
                     Button {
@@ -141,28 +145,27 @@ extension TestFiltersView {
         }
         @Published var result: MessageEvaluationResult?
         
-        private lazy var bodyOnlySender: String = {
-            let evaluator = self.appManager.messageEvaluationManager
-            let candidates = (0...9).map { String(repeating: String($0), count: 12) }
-            return candidates.first(where: { evaluator.evaluateMessage(body: "", sender: $0).action == .allow })
-                ?? candidates[0]
-        }()
-        
-        func updateResult() {
-            guard !self.text.isEmpty || !self.sender.isEmpty else {
-                if self.result != nil {
-                    self.result = nil
-                }
-                return
-            }
+        private let savedReader: MessageEvaluationManager
+        private var generation = 0
 
-            let next = self.appManager.messageEvaluationManager.evaluateMessage(
-                body: self.text,
-                sender: self.sender.isEmpty ? self.bodyOnlySender : self.sender
-            )
-            guard next != self.result else { return }
-            self.result = next
+        override init(appManager: AppManagerProtocol = AppManager.shared) {
+            savedReader = MessageEvaluationManager()
+            super.init(appManager: appManager)
         }
+
+        func updateResult() {
+            generation += 1
+            let requestGeneration = generation
+            result = nil
+            guard !sender.isEmpty else { return }
+            savedReader.evaluateMessage(body: text, sender: sender) { [weak self] next in
+                DispatchQueue.main.async {
+                    guard let self, self.generation == requestGeneration else { return }
+                    self.result = next
+                }
+            }
+        }
+
     }
 }
 

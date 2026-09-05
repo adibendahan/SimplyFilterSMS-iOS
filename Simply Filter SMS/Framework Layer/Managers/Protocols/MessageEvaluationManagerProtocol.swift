@@ -18,6 +18,17 @@ enum MessageEvaluationMatch: Equatable {
     case smartFilter(String)
     case automaticFilter(String)
 
+    var logKind: String {
+        switch self {
+        case .none: return "none"
+        case .noMatch: return "noMatch"
+        case .storeUnavailable: return "unavailable"
+        case .userFilter: return "userFilter"
+        case .smartFilter: return "smartFilter"
+        case .automaticFilter: return "automaticFilter"
+        }
+    }
+
     var label: String? {
         switch self {
         case .none, .storeUnavailable:
@@ -58,9 +69,21 @@ enum MessageEvaluationMatch: Equatable {
     }
 }
 
+enum MessageEvaluationStatus: String, Equatable {
+    case success, storeUnavailable, readFailed
+}
+
 struct MessageEvaluationResult: Equatable {
     var action: ILMessageFilterAction
     var match: MessageEvaluationMatch = .none
+
+    var status: MessageEvaluationStatus = .success
+
+    func makeResponse() -> ILMessageFilterQueryResponse {
+        let response = ILMessageFilterQueryResponse()
+        response.action = action
+        return response
+    }
 
     var reason: String? { match.caption }
 }

@@ -19,7 +19,6 @@ let kSupportEmail = "grizz.apps.dev@gmail.com"
 let kUpdateAutomaticFiltersMinDays = 3
 let kMinimumFilterLength = 1
 let kHideiClouldStatusMemory = 60
-let kOwnedStoreLoadTimeout: TimeInterval = 3.0
 let kFilterExportFileExtension = "sfsfilters"
 let kFilterExportTypeIdentifier = "com.grizz.apps.dev.simply-filter-sms.filters"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"

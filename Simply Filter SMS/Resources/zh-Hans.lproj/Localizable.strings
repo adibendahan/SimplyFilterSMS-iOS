@@ -337,3 +337,14 @@
 "callingCode_+262" = "留尼汪和马约特";
 "callingCode_+590" = "瓜德罗普";
 "callingCode_+599" = "荷属安的列斯";
+
+// Saved-rule diagnostics: English fallback pending translation.
+"testFilters_savedTitle" = "Saved Rules Test";
+"testFilters_savedFooter" = "Tests saved rules using an independent reader. Enter the exact sender and message. This does not verify extension invocation, sender eligibility, or where iOS places a message, and does not reclassify old messages.";
+"testFilters_senderRequired" = "Enter the actual sender to test sender-dependent rules.";
+"testFilters_unavailable" = "Saved rules could not be evaluated. No classification is available.";
+"rules_saveFailedTitle" = "Rules could not be saved";
+"rules_saveFailedMessage" = "The latest changes were rolled back and are not active. Please try the edit again. Previously saved rules are unchanged.";
+
+"rules_loadFailedTitle" = "Saved rules are unavailable";
+"rules_loadFailedMessage" = "The shared rules store could not be opened. Filtering cannot be verified. Try reopening the app; if this continues, check the app installation and contact support.";

@@ -12,6 +12,8 @@ struct Simply_Filter_SMSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var homeModel = AppHomeView.ViewModel(appManager: AppManager.shared)
 
+    @StateObject private var saveState = RulesSaveState.shared
+
     init() {
         UIScrollView.appearance().delaysContentTouches = false
     }
@@ -20,6 +22,11 @@ struct Simply_Filter_SMSApp: App {
         WindowGroup {
             AppHomeView(model: homeModel)
                 .adaptiveLayoutEnvironment()
+                .alert(saveState.titleKey~, isPresented: $saveState.failed) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text(saveState.messageKey~)
+                }
         }
     }
 }
