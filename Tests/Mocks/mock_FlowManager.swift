@@ -58,4 +58,14 @@ class mock_FlowManager: FlowManagerProtocol {
     func resetSession() {
         self.resetSessionCounter += 1
     }
+
+    func resetCounters() {
+        self.recordLaunchCounter = 0
+        self.requestCounter = 0
+        self.enableWhatsNewCounter = 0
+        self.enableInactivityNotificationCounter = 0
+        self.nextCounter = 0
+        self.completeCounter = 0
+        self.resetSessionCounter = 0
+    }
 }

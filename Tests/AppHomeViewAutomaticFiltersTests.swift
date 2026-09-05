@@ -56,7 +56,7 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
         await Task.yield()
         await Task.yield()
         self.appManager.resetCounters()
-        self.flowManager.enableInactivityNotificationCounter = 0
+        self.flowManager.resetCounters()
         self.schedulingManager.resetCounters()
         return model
     }
@@ -79,7 +79,7 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
         self.isAutomaticFilteringOn = true
         let model = await self.makeModel()
         self.schedulingManager.shouldShowInactivityNotificationValue = true
-        self.flowManager.enableInactivityNotificationCounter = 0
+        self.flowManager.resetCounters()
 
         await model.presentInactivityNotificationIfNeeded()
 

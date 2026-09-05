@@ -46,7 +46,6 @@ class mock_AppManager: AppManagerProtocol {
     func resetCounters() {
         self.onAppLaunchCounter = 0
         self.onNewUserSessionCounter = 0
-        (self.schedulingManager as? mock_SchedulingManager)?.resetCounters()
     }
 
     func loadDebugData() { }

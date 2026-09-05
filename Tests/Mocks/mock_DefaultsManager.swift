@@ -52,6 +52,9 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var appAgeClosure: (() -> (Date))?
     var lastSeenWhatsNewVersionClosure: (() -> (Int))?
     var didDismissReportingExtensionNudgeClosure: (() -> (Bool))?
+    var inactivityNotificationAskCountClosure: (() -> (Int))?
+    var inactivityNotificationDeclinedSessionClosure: (() -> (Int))?
+    var inactivityNotificationWasGrantedClosure: (() -> (Bool))?
     private var sessionCounterValue = 0
     private var inactivityNotificationAskCountValue = 0
     private var inactivityNotificationDeclinedSessionValue = 0
@@ -171,7 +174,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var inactivityNotificationAskCount: Int {
         get {
             self.inactivityNotificationAskCountGetCounter += 1
-            return self.inactivityNotificationAskCountValue
+            return self.inactivityNotificationAskCountClosure?() ?? self.inactivityNotificationAskCountValue
         }
         set {
             self.inactivityNotificationAskCountSetCounter += 1
@@ -182,7 +185,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var inactivityNotificationDeclinedSession: Int {
         get {
             self.inactivityNotificationDeclinedSessionGetCounter += 1
-            return self.inactivityNotificationDeclinedSessionValue
+            return self.inactivityNotificationDeclinedSessionClosure?() ?? self.inactivityNotificationDeclinedSessionValue
         }
         set {
             self.inactivityNotificationDeclinedSessionSetCounter += 1
@@ -193,7 +196,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var inactivityNotificationWasGranted: Bool {
         get {
             self.inactivityNotificationWasGrantedGetCounter += 1
-            return self.inactivityNotificationWasGrantedValue
+            return self.inactivityNotificationWasGrantedClosure?() ?? self.inactivityNotificationWasGrantedValue
         }
         set {
             self.inactivityNotificationWasGrantedSetCounter += 1
@@ -210,6 +213,22 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         self.isExpandedAddFilterSetCounter = 0
         self.isFilterOptionsCollapsedGetCounter = 0
         self.isFilterOptionsCollapsedSetCounter = 0
+        self.lastOfflineNotificationDismissGetCounter = 0
+        self.lastOfflineNotificationDismissSetCounter = 0
+        self.sessionAgeGetCounter = 0
+        self.sessionAgeSetCounter = 0
+        self.sessionCounterGetCounter = 0
+        self.sessionCounterSetCounter = 0
+        self.didPromptForReviewGetCounter = 0
+        self.didPromptForReviewSetCounter = 0
+        self.didTipGetCounter = 0
+        self.didTipSetCounter = 0
+        self.appAgeGetCounter = 0
+        self.appAgeSetCounter = 0
+        self.lastSeenWhatsNewVersionGetCounter = 0
+        self.lastSeenWhatsNewVersionSetCounter = 0
+        self.didDismissReportingExtensionNudgeGetCounter = 0
+        self.didDismissReportingExtensionNudgeSetCounter = 0
         self.inactivityNotificationAskCountGetCounter = 0
         self.inactivityNotificationAskCountSetCounter = 0
         self.inactivityNotificationDeclinedSessionGetCounter = 0
