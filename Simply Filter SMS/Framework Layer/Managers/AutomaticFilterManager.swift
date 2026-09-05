@@ -136,7 +136,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         AppManager.logger.debug("setLanguageAutomaticState — '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(value, privacy: .public)")
         let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         automaticFiltersLanguage.isActive = value
-        persistanceManager.commitContext()
+        guard persistanceManager.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
     
@@ -154,7 +154,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         if automaticFiltersRule.ruleType == .shortSender && automaticFiltersRule.selectedChoice < 3 {
             automaticFiltersRule.selectedChoice = 6
         }
-        persistanceManager.commitContext()
+        guard persistanceManager.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
@@ -169,7 +169,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
               let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
         AppManager.logger.debug("setSelectedChoice — '\(rule.title, privacy: .public)' → \(choice, privacy: .public)")
         automaticFiltersRule.selectedChoice = Int64(choice)
-        persistanceManager.commitContext()
+        guard persistanceManager.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
@@ -251,7 +251,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         AppManager.logger.debug("updateCacheIfNeeded — isCacheStale: \(isCacheStale, privacy: .public), force: \(force, privacy: .public)")
         if force || isCacheStale {
             AppManager.logger.debug("updateCacheIfNeeded — saving new filter cache")
-            persistanceManager.saveCache(with: newFilterList)
+            guard persistanceManager.saveCache(with: newFilterList) else { return }
         }
         if isCacheStale {
             AppManager.logger.debug("updateCacheIfNeeded — posting automaticFiltersUpdated notification")

@@ -15,106 +15,121 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
 
     //MARK: - Initialization -
 
-    /// Extension/tests — owns a read-only App Group store (in-memory when `inMemory` is true).
-    init(inMemory: Bool = false) {
-        let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: !inMemory)
+    /// Production readers open a fresh read-only store for each query. A failed open
+    /// is retried on the next query, and no live app context participates.
+    init(inMemory: Bool = false, storeURL: URL? = nil) {
         if inMemory {
+            let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+            container.loadPersistentStores { _, _ in }
+            contextSource = .owned(container)
+        } else {
+            contextSource = .saved(storeURL)
         }
-
-        var loadError: Error?
-        let loaded = DispatchSemaphore(value: 0)
-        container.loadPersistentStores { (_, error) in
-            loadError = error
-            loaded.signal()
-        }
-        if loaded.wait(timeout: .now() + kOwnedStoreLoadTimeout) == .success, loadError == nil {
-            container.viewContext.stalenessInterval = 0
-            container.viewContext.automaticallyMergesChangesFromParent = true
-        }
-        else {
-            // Logger may not be set yet (extension calls setLogger after init).
-            let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "evaluation")
-            if let loadError {
-                logger.error("Owned store load failed: \(loadError.localizedDescription, privacy: .public)")
-            }
-            else {
-                logger.error("Owned store load timed out after \(kOwnedStoreLoadTimeout, privacy: .public)s")
-            }
-        }
-
-        self.contextSource = .owned(container)
     }
 
-    /// App — always reads the live `PersistanceManager` context.
     init(persistanceManager: PersistanceManagerProtocol) {
-        self.contextSource = .persistance(persistanceManager)
+        contextSource = .persistance(persistanceManager)
     }
 
-    //MARK: - Public API (MessageEvaluationManagerProtocol) -
+    init(context: NSManagedObjectContext) {
+        contextSource = .query(context)
+    }
+
+    private let evaluationQueue = DispatchQueue(label: "com.simplyfiltersms.saved-evaluation")
+
+    func evaluateMessage(body: String, sender: String, completion: @escaping (MessageEvaluationResult) -> Void) {
+        evaluationQueue.async {
+            completion(self.evaluateMessage(body: body, sender: sender))
+        }
+    }
 
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult {
-        if case .owned(let container) = self.contextSource,
-           container.persistentStoreCoordinator.persistentStores.isEmpty {
-            self.logger?.error("Owned store unavailable — skipping evaluation (allow)")
-            return MessageEvaluationResult(action: .allow, match: .storeUnavailable)
+        if case .saved(let overrideURL) = contextSource {
+            do {
+                let url = try overrideURL ?? AppPersistentCloudKitContainer.sharedStoreURL()
+                guard FileManager.default.fileExists(atPath: url.path) else {
+                    throw NSError(domain: "SavedRulesStore", code: 1)
+                }
+                let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: true)
+                container.persistentStoreDescriptions.first!.url = url
+                // Deliberately synchronous on the caller's worker queue. No invented
+                // timeout, semaphore race, or retained failed container.
+                container.persistentStoreDescriptions.first!.shouldAddStoreAsynchronously = false
+                var loadError: Error?
+                container.loadPersistentStores { _, error in loadError = error }
+                if let loadError { throw loadError }
+                guard !container.persistentStoreCoordinator.persistentStores.isEmpty else {
+                    throw NSError(domain: "SavedRulesStore", code: 2)
+                }
+                let context = container.newBackgroundContext()
+                defer {
+                    context.performAndWait { context.reset() }
+                    for store in container.persistentStoreCoordinator.persistentStores {
+                        try? container.persistentStoreCoordinator.remove(store)
+                    }
+                }
+                return context.performAndWait {
+                    do {
+                        try context.setQueryGenerationFrom(.current)
+                        let evaluator = MessageEvaluationManager(context: context)
+                        return try evaluator.evaluateRules(body: body, sender: sender)
+                    } catch {
+                        return self.failure(error, status: .readFailed)
+                    }
+                }
+            } catch {
+                return failure(error, status: .storeUnavailable)
+            }
         }
+        return context.performAndWait {
+            do { return try self.evaluateRules(body: body, sender: sender) }
+            catch { return self.failure(error, status: .readFailed) }
+        }
+    }
 
-        logger?.debug("━━━━ Evaluating message | sender: '\(sender, privacy: .public)' | body: '\(body, privacy: .public)' ━━━━")
+    private func failure(_ error: Error, status: MessageEvaluationStatus) -> MessageEvaluationResult {
+        let error = error as NSError
+        logger?.error("Rules evaluation failed: status=\(status.rawValue, privacy: .public) domain=\(error.domain, privacy: .public) code=\(error.code, privacy: .public)")
+        return MessageEvaluationResult(action: .allow, match: .storeUnavailable, status: status)
+    }
+
+    private func evaluateRules(body: String, sender: String) throws -> MessageEvaluationResult {
         var result = MessageEvaluationResult(action: .none)
-        defer {
-            logger?.debug("━━━━ Final decision: action=\(result.action.logName, privacy: .public), reason='\(result.reason ?? "", privacy: .public)' ━━━━")
-        }
         // Priority #1 - Allow Filters
-        result = self.runUserFilters(type: .allow, body: body, sender: sender)
+        result = try self.runUserFilters(type: .allow, body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #1 (Allow Filters) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
-        logger?.debug("Priority #1 (Allow Filters) → no match, continuing")
         // Priority #2 - allUnknown (absolute gate, overrides everything)
-        result = self.runAllUnknownRule()
+        result = try self.runAllUnknownRule()
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #2 (allUnknown) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
-        logger?.debug("Priority #2 (allUnknown) → not active, continuing")
         // Priority #3 - Automatic Filters (allow)
-        result = self.runAutomaticFiltersAllow(body: body, sender: sender)
+        result = try self.runAutomaticFiltersAllow(body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #3 (Automatic Filters Allow) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
-        logger?.debug("Priority #3 (Automatic Filters Allow) → no match, continuing")
         // Priority #4 - Filter Rules
-        result = self.runFilterRules(body: body, sender: sender)
+        result = try self.runFilterRules(body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #4 (Filter Rules) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
-        logger?.debug("Priority #4 (Filter Rules) → no match, continuing")
         // Priority #5 - Deny Filters
-        result = self.runUserFilters(type: .deny, body: body, sender: sender)
+        result = try self.runUserFilters(type: .deny, body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #5 (Deny Filters) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
-        logger?.debug("Priority #5 (Deny Filters) → no match, continuing")
         // Priority #6 - Deny Language Filters
-        result = self.runUserFilters(type: .denyLanguage, body: body, sender: sender)
+        result = try self.runUserFilters(type: .denyLanguage, body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #6 (Deny Language Filters) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
-        logger?.debug("Priority #6 (Deny Language Filters) → no match, continuing")
         // Priority #7 - Automatic Filters (deny)
-        result = self.runAutomaticFiltersDeny(body: body, sender: sender)
+        result = try self.runAutomaticFiltersDeny(body: body, sender: sender)
         if !result.action.isFiltered {
             result = MessageEvaluationResult(action: .allow, match: .noMatch)
-            logger?.debug("Priority #7 (Automatic Filters Deny) → no match → fallthrough ALLOW")
-        }
-        else {
-            logger?.debug("Priority #7 (Automatic Filters Deny) → DECISION: \(result.action.logName, privacy: .public)")
         }
         return result
     }
@@ -129,6 +144,10 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             return persistanceManager.context
         case .owned(let container):
             return container.viewContext
+        case .query(let context):
+            return context
+        case .saved:
+            preconditionFailure("Saved readers do not expose a managed object context")
         }
     }
 
@@ -137,91 +156,79 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     private enum ContextSource {
         case persistance(PersistanceManagerProtocol)
         case owned(NSPersistentCloudKitContainer)
+        case saved(URL?)
+        case query(NSManagedObjectContext)
     }
 
     private var logger: Logger?
     private let contextSource: ContextSource
 
-    private func runAllUnknownRule() -> MessageEvaluationResult {
+    private func runAllUnknownRule() throws -> MessageEvaluationResult {
         let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
         ruleRequest.predicate = NSPredicate(format: "ruleId == %ld AND isActive == %@",
                                             RuleType.allUnknown.rawValue,
                                             NSNumber(value: true))
-        guard (try? self.context.fetch(ruleRequest))?.isEmpty == false else {
+        guard try !self.context.fetch(ruleRequest).isEmpty else {
             return MessageEvaluationResult(action: .none)
         }
-        logger?.debug("[allUnknown] rule is active")
         return MessageEvaluationResult(action: .junk, match: .smartFilter("testFilters_resultReason_unknownSender"~))
     }
 
-    private func runUserFilters(type: FilterType, body: String, sender: String) -> MessageEvaluationResult {
+    private func runUserFilters(type: FilterType, body: String, sender: String) throws -> MessageEvaluationResult {
         var result = MessageEvaluationResult(action: .none)
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Filter")
         fetchRequest.predicate = NSPredicate(format: "type == %ld", type.rawValue)
-        guard let filters = try? self.context.fetch(fetchRequest) else {
-            self.logger?.error("ERROR! While loading filters on MessageEvaluationManager.runUserFilters")
-            return result
-        }
-        logger?.debug("[\(type.logDescription, privacy: .public)] Loaded \(filters.count, privacy: .public) filter(s)")
+        let filters = try self.context.fetch(fetchRequest)
         switch type {
         case .allow:
             for filter in filters {
                 guard let filter = filter as? Filter else { continue }
                 let matched = self.isMatching(filter: filter, body: body, sender: sender)
-                logger?.debug("  Checking allow filter '\(filter.text ?? "?", privacy: .public)' [target: \(filter.filterTarget.logDescription, privacy: .public), matching: \(filter.filterMatching.logDescription, privacy: .public), case: \(filter.filterCase.logDescription, privacy: .public)] → \(matched ? "MATCH" : "no match", privacy: .public)")
                 guard matched else { continue }
                 result = MessageEvaluationResult(action: .allow, match: .userFilter(filter.text ?? ""))
-                logger?.debug("  → Returning ALLOW")
                 break
             }
         case .deny:
             for filter in filters {
                 guard let filter = filter as? Filter else { continue }
                 let matched = self.isMatching(filter: filter, body: body, sender: sender)
-                logger?.debug("  Checking deny filter '\(filter.text ?? "?", privacy: .public)' [target: \(filter.filterTarget.logDescription, privacy: .public), matching: \(filter.filterMatching.logDescription, privacy: .public), case: \(filter.filterCase.logDescription, privacy: .public), folder: \(filter.denyFolderType.logDescription, privacy: .public)] → \(matched ? "MATCH" : "no match", privacy: .public)")
                 guard matched else { continue }
                 result = MessageEvaluationResult(action: filter.denyFolderType.action, match: .userFilter(filter.text ?? ""))
-                logger?.debug("  → Returning \(result.action.logName, privacy: .public) (folder: \(filter.denyFolderType.logDescription, privacy: .public))")
                 break
             }
         case .denyLanguage:
             let detectedLanguage = NLLanguage.dominantLanguage(for: body)
-            logger?.debug("  Detected message language: '\(detectedLanguage?.rawValue ?? "undetermined", privacy: .public)'")
             for filter in filters {
                 guard let filter = filter as? Filter else { continue }
                 let language = NLLanguage(filterText: filter.text ?? "")
                 let matched = language != .undetermined && detectedLanguage == language
-                logger?.debug("  Checking language filter '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(matched ? "MATCH" : "no match", privacy: .public)")
                 guard matched else { continue }
                 result = MessageEvaluationResult(action: filter.denyFolderType.action, match: .userFilter(language.localizedName ?? language.rawValue))
-                logger?.debug("  → Returning \(result.action.logName, privacy: .public) for language '\(language.localizedName ?? language.rawValue, privacy: .public)'")
                 break
             }
         }
         return result
     }
 
-    private func loadAutomaticFilterCache() -> ([AutomaticFiltersLanguage], AutomaticFilterListsResponse)? {
+    private func loadAutomaticFilterCache() throws -> ([AutomaticFiltersLanguage], AutomaticFilterListsResponse)? {
         let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
         let cacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
-        guard let languageRecords = try? self.context.fetch(languageRequest),
-              let cacheRow = try? self.context.fetch(cacheRequest).first,
-              let filtersData = cacheRow.filtersData,
+        let languageRecords = try self.context.fetch(languageRequest)
+        guard let cacheRow = try self.context.fetch(cacheRequest).first else { return nil }
+        guard let filtersData = cacheRow.filtersData,
               let filterList = AutomaticFilterListsResponse(base64String: filtersData) else {
-            return nil
+            throw NSError(domain: "SavedRulesCache", code: 1)
         }
         return (languageRecords, filterList)
     }
 
-    private func runAutomaticFiltersAllow(body: String, sender: String) -> MessageEvaluationResult {
+    private func runAutomaticFiltersAllow(body: String, sender: String) throws -> MessageEvaluationResult {
         var result = MessageEvaluationResult(action: .none)
         let lowercasedBody = body.lowercased()
         let lowercasedSender = sender.lowercased()
-        guard let (languageRecords, filterList) = self.loadAutomaticFilterCache() else {
-            logger?.debug("[Automatic Filters Allow] no cache, skipping")
+        guard let (languageRecords, filterList) = try self.loadAutomaticFilterCache() else {
             return result
         }
-        logger?.debug("[Automatic Filters Allow] \(languageRecords.count, privacy: .public) language record(s)")
         for record in languageRecords {
             guard result.action == .none,
                   record.isActive,
@@ -231,7 +238,6 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             for allowedSender in languageResponse.allowSenders {
                 if lowercasedSender == allowedSender.lowercased() {
                     result = MessageEvaluationResult(action: .allow, match: .automaticFilter(lang.localizedName ?? langRawValue))
-                    logger?.debug("  → ALLOW: matched allow sender '\(allowedSender, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
             }
@@ -239,7 +245,6 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             for allowedBody in languageResponse.allowBody {
                 if lowercasedBody.contains(allowedBody.lowercased()) {
                     result = MessageEvaluationResult(action: .allow, match: .automaticFilter(lang.localizedName ?? langRawValue))
-                    logger?.debug("  → ALLOW: matched allow body phrase '\(allowedBody, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
             }
@@ -247,26 +252,22 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         return result
     }
 
-    private func runAutomaticFiltersDeny(body: String, sender: String) -> MessageEvaluationResult {
+    private func runAutomaticFiltersDeny(body: String, sender: String) throws -> MessageEvaluationResult {
         var result = MessageEvaluationResult(action: .none)
         let lowercasedBody = body.lowercased()
         let lowercasedSender = sender.lowercased()
-        guard let (languageRecords, filterList) = self.loadAutomaticFilterCache() else {
-            logger?.debug("[Automatic Filters Deny] no cache, skipping")
+        guard let (languageRecords, filterList) = try self.loadAutomaticFilterCache() else {
             return result
         }
-        logger?.debug("[Automatic Filters Deny] \(languageRecords.count, privacy: .public) language record(s)")
         for record in languageRecords {
             guard result.action == .none,
                   record.isActive,
                   let langRawValue = record.lang,
                   let languageResponse = filterList.filterLists[langRawValue] else { continue }
             let lang = NLLanguage(rawValue: langRawValue)
-            logger?.debug("  Checking language '\(lang.localizedName ?? langRawValue, privacy: .public)' — denySenders: \(languageResponse.denySender.count, privacy: .public), denyBody: \(languageResponse.denyBody.count, privacy: .public)")
             for deniedSender in languageResponse.denySender {
                 if lowercasedSender == deniedSender.lowercased() {
                     result = MessageEvaluationResult(action: .junk, match: .automaticFilter(lang.localizedName ?? langRawValue))
-                    logger?.debug("  → JUNK: matched deny sender '\(deniedSender, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
             }
@@ -274,7 +275,6 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             for deniedBody in languageResponse.denyBody {
                 if lowercasedBody.contains(deniedBody.lowercased()) {
                     result = MessageEvaluationResult(action: .junk, match: .automaticFilter(lang.localizedName ?? langRawValue))
-                    logger?.debug("  → JUNK: matched deny body phrase '\(deniedBody, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
                     break
                 }
             }
@@ -282,79 +282,48 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         return result
     }
 
-    private func runFilterRules(body: String, sender: String) -> MessageEvaluationResult {
+    private func runFilterRules(body: String, sender: String) throws -> MessageEvaluationResult {
         var result = MessageEvaluationResult(action: .none)
         let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
         ruleRequest.predicate = NSPredicate(format: "isActive == %@", NSNumber(value: true))
-        guard let activeRules = try? self.context.fetch(ruleRequest) else {
-            self.logger?.error("ERROR! While loading rules on MessageEvaluationManager.runFilterRules")
-            return result
-        }
-        logger?.debug("[Filter Rules] \(activeRules.count, privacy: .public) active rule(s)")
+        let activeRules = try self.context.fetch(ruleRequest)
         for activeRule in activeRules {
             guard let ruleType = activeRule.ruleType else { continue }
-            logger?.debug("  Checking rule: \(ruleType.logDescription, privacy: .public)")
             switch ruleType {
             case .allUnknown:
                 break
             case .links:
                 if body.containsLink {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
-                    logger?.debug("  → JUNK: links — body contains a link")
-                }
-                else {
-                    logger?.debug("  → no link detected in body")
                 }
             case .numbersOnly:
                 if sender.rangeOfCharacter(from: .letters) != nil {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
-                    logger?.debug("  → JUNK: numbersOnly — sender '\(sender, privacy: .public)' triggered rule")
-                }
-                else {
-                    logger?.debug("  → sender '\(sender, privacy: .public)' did not trigger numbersOnly rule")
                 }
             case .shortSender:
                 if sender.count <= Int(activeRule.selectedChoice) {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
-                    logger?.debug("  → JUNK: shortSender — sender length \(sender.count, privacy: .public) ≤ threshold \(Int(activeRule.selectedChoice), privacy: .public)")
-                }
-                else {
-                    logger?.debug("  → sender length \(sender.count, privacy: .public) > threshold \(Int(activeRule.selectedChoice), privacy: .public), not short")
                 }
             case .email:
                 if sender.containsEmail {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
-                    logger?.debug("  → JUNK: email — sender '\(sender, privacy: .public)' looks like an email address")
-                }
-                else {
-                    logger?.debug("  → sender '\(sender, privacy: .public)' is not an email address")
                 }
             case .emojis:
                 if body.containsEmoji {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
-                    logger?.debug("  → JUNK: emojis — body contains emoji(s)")
-                }
-                else {
-                    logger?.debug("  → body contains no emojis")
                 }
             case .countryAllowlist:
                 guard let json = activeRule.selectedCountries,
                       let data = json.data(using: .utf8),
                       let allowedCodes = try? JSONDecoder().decode([String].self, from: data),
                       !allowedCodes.isEmpty else {
-                    logger?.debug("  → countryAllowlist: no allowed codes configured, skipping")
                     break
                 }
                 guard let entry = CallingCodes.callingCode(for: sender) else {
-                    logger?.debug("  → countryAllowlist: could not determine country for sender '\(sender, privacy: .public)', skipping")
                     break
                 }
                 if !allowedCodes.contains(entry.callingCode) {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(ruleType.shortTitle))
-                    logger?.debug("  → JUNK: countryAllowlist — sender country '\(entry.callingCode, privacy: .public)' not in allowed list \(allowedCodes, privacy: .public)")
-                }
-                else {
-                    logger?.debug("  → countryAllowlist: sender country '\(entry.callingCode, privacy: .public)' is allowed")
                 }
             }
             if result.action.isFiltered { break }

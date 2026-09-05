@@ -9,19 +9,38 @@ import Foundation
 import CoreData
 import NaturalLanguage
 import UIKit
+import Combine
+
+final class RulesSaveState: ObservableObject {
+    static let shared = RulesSaveState()
+    @Published var failed = false
+    var titleKey = "rules_saveFailedTitle"
+    var messageKey = "rules_saveFailedMessage"
+
+    func reportFailure(loading: Bool = false) {
+        DispatchQueue.main.async {
+            self.titleKey = loading ? "rules_loadFailedTitle" : "rules_saveFailedTitle"
+            self.messageKey = loading ? "rules_loadFailedMessage" : "rules_saveFailedMessage"
+            self.failed = true
+        }
+    }
+}
+
 
 class PersistanceManager: PersistanceManagerProtocol {
 
     
     //MARK: - Initialization -
-    required init(inMemory: Bool = false) {
+    required init(inMemory: Bool = false, storeURL: URL? = nil) {
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
         self.container = container
+        if let storeURL { container.persistentStoreDescriptions.first!.url = storeURL }
 
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
         else if let storeURL = self.container.persistentStoreDescriptions.first?.url?.deletingLastPathComponent(),
+                !storeURL.path.hasPrefix("/unavailable-app-group"),
                 !FileManager.default.directoryExistsAtPath(storeURL.path) {
 
             try? FileManager.default.createDirectory(at: storeURL,
@@ -34,7 +53,9 @@ class PersistanceManager: PersistanceManagerProtocol {
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
+                AppManager.logger.error("Store load failed: domain=\(error.domain, privacy: .public) code=\(error.code, privacy: .public)")
+                RulesSaveState.shared.reportFailure(loading: true)
+                return
             }
 
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
@@ -60,26 +81,33 @@ class PersistanceManager: PersistanceManagerProtocol {
         return fingerprint
     }
     
-    func commitContext() {
-        guard self.context.hasChanges else {
-            AppManager.logger.debug("commitContext — skipped, no changes")
-            return
-        }
-        
-        do {
-            try self.context.save()
-            AppManager.logger.debug("commitContext — save succeeded")
-        } catch {
-            let nsError = error as NSError
-            AppManager.logger.error("ERROR! While commiting context: \(nsError), \(nsError.userInfo)")
+    var saveContext: (NSManagedObjectContext) throws -> Void = { try $0.save() }
+
+    /// Failed edits are rolled back so the UI cannot present them as active rules.
+    @discardableResult
+    func commitContext() -> Bool {
+        context.performAndWait {
+            do {
+                guard !container.persistentStoreCoordinator.persistentStores.isEmpty else {
+                    throw NSError(domain: "RulesStoreUnavailable", code: 1)
+                }
+                if context.hasChanges { try saveContext(context) }
+                return true
+            } catch {
+                let error = error as NSError
+                AppManager.logger.error("Rules save failed: domain=\(error.domain, privacy: .public) code=\(error.code, privacy: .public)")
+                context.rollback()
+                RulesSaveState.shared.reportFailure()
+                return false
+            }
         }
     }
-    
+
     func reloadContainer() {
         guard let storeURL = self.container.persistentStoreDescriptions.first?.url, storeURL != URL(fileURLWithPath: "/dev/null") else { return }
         AppManager.logger.debug("reloadContainer — reloading persistent store")
         if let loadedStore = self.container.persistentStoreCoordinator.persistentStore(for: storeURL) {
-            self.commitContext()
+            guard self.commitContext() else { return }
             self.container.viewContext.reset()
             try? self.container.persistentStoreCoordinator.remove(loadedStore)
         }
@@ -92,7 +120,9 @@ class PersistanceManager: PersistanceManagerProtocol {
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
+                AppManager.logger.error("Store load failed: domain=\(error.domain, privacy: .public) code=\(error.code, privacy: .public)")
+                RulesSaveState.shared.reportFailure(loading: true)
+                return
             }
 
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
@@ -253,7 +283,6 @@ class PersistanceManager: PersistanceManagerProtocol {
                                       filterTarget: filterTarget,
                                       filterMatching: filterMatching,
                                       filterCase: filterCase) else {
-            AppManager.logger.debug("addFilter — skipped duplicate: '\(text, privacy: .public)'")
             return nil
         }
 
@@ -265,31 +294,27 @@ class PersistanceManager: PersistanceManagerProtocol {
         newFilter.filterTarget = filterTarget
         newFilter.filterCase = filterCase
         newFilter.text = text
-        AppManager.logger.debug("addFilter — '\(text, privacy: .public)' | type: \(type.logDescription, privacy: .public) | folder: \(denyFolder.logDescription, privacy: .public) | target: \(filterTarget.logDescription, privacy: .public) | matching: \(filterMatching.logDescription, privacy: .public) | case: \(filterCase.logDescription, privacy: .public)")
-        self.commitContext()
+        guard self.commitContext() else { return nil }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
         return newFilter
     }
 
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
         let toDelete = offsets.map({ filters[$0] })
-        AppManager.logger.debug("deleteFilters — \(toDelete.count, privacy: .public) filter(s): \(toDelete.compactMap({ $0.text }).joined(separator: ", "), privacy: .public)")
         toDelete.forEach({ self.context.delete($0) })
-        self.commitContext()
+        guard self.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
     func deleteFilters(_ filters: Set<Filter>) {
-        AppManager.logger.debug("deleteFilters — \(filters.count, privacy: .public) filter(s): \(filters.compactMap({ $0.text }).joined(separator: ", "), privacy: .public)")
         filters.forEach({ self.context.delete($0) })
-        self.commitContext()
+        guard self.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' denyFolder → \(denyFolder.logDescription, privacy: .public)")
         filter.denyFolderType = denyFolder
-        self.commitContext()
+        guard self.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
@@ -298,12 +323,10 @@ class PersistanceManager: PersistanceManagerProtocol {
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filterMatching,
                                       filterCase: filter.filterCase) else {
-            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' filterMatching → \(filterMatching.logDescription, privacy: .public)")
             return
         }
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterMatching → \(filterMatching.logDescription, privacy: .public)")
         filter.filterMatching = filterMatching
-        self.commitContext()
+        guard self.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
@@ -312,12 +335,10 @@ class PersistanceManager: PersistanceManagerProtocol {
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filter.filterMatching,
                                       filterCase: filterCase) else {
-            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' filterCase → \(filterCase.logDescription, privacy: .public)")
             return
         }
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterCase → \(filterCase.logDescription, privacy: .public)")
         filter.filterCase = filterCase
-        self.commitContext()
+        guard self.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
@@ -326,12 +347,10 @@ class PersistanceManager: PersistanceManagerProtocol {
                                       filterTarget: filterTarget,
                                       filterMatching: filter.filterMatching,
                                       filterCase: filter.filterCase) else {
-            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' filterTarget → \(filterTarget.logDescription, privacy: .public)")
             return
         }
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterTarget → \(filterTarget.logDescription, privacy: .public)")
         filter.filterTarget = filterTarget
-        self.commitContext()
+        guard self.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
@@ -340,13 +359,10 @@ class PersistanceManager: PersistanceManagerProtocol {
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filter.filterMatching,
                                       filterCase: filter.filterCase) else {
-            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)'")
             return
         }
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)', hasChangesBefore: \(self.context.hasChanges, privacy: .public)")
         filter.text = filterText
-        AppManager.logger.debug("updateFilter — after set text, hasChanges: \(self.context.hasChanges, privacy: .public)")
-        self.commitContext()
+        guard self.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
     
@@ -364,11 +380,12 @@ class PersistanceManager: PersistanceManagerProtocol {
            let json = String(data: data, encoding: .utf8) {
             record.selectedCountries = json
         }
-        self.commitContext()
+        guard self.commitContext() else { return }
         NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
     }
 
-    func saveCache(with filterList: AutomaticFilterListsResponse) {
+    @discardableResult
+    func saveCache(with filterList: AutomaticFilterListsResponse) -> Bool {
         AppManager.logger.debug("saveCache — saving new automatic filters cache")
         self.deleteExistingCaches()
         let newCache = AutomaticFiltersCache(context: self.context)
@@ -376,7 +393,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         newCache.hashed = filterList.hashed
         newCache.filtersData = filterList.encoded
         newCache.age = Date()
-        self.commitContext()
+        return self.commitContext()
     }
 
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {

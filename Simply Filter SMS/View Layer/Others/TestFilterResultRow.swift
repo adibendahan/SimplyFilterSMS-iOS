@@ -41,10 +41,10 @@ struct TestFilterResultRow: View {
         .accessibilityLabel(Self.accessibilityText(for: result))
     }
 
-    private var style: TestResultStyle { TestResultStyle(action: result.action) }
+    private var style: TestResultStyle { TestResultStyle(action: result.action, status: result.status) }
 
     static func accessibilityText(for result: MessageEvaluationResult) -> String {
-        let title = TestResultStyle(action: result.action).title
+        let title = TestResultStyle(action: result.action, status: result.status).title
         if let caption = result.match.caption {
             return "\(title). \(caption)"
         }
@@ -66,7 +66,13 @@ private struct TestResultStyle {
     let color: Color
     let icon: String
 
-    init(action: ILMessageFilterAction) {
+    init(action: ILMessageFilterAction, status: MessageEvaluationStatus) {
+        guard status == .success else {
+            self.title = "testFilters_unavailable"~
+            self.color = .secondary
+            self.icon = "exclamationmark.triangle"
+            return
+        }
         switch action {
         case .none, .allow:
             self.title = "testFilters_resultAllowed"~

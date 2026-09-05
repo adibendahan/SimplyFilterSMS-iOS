@@ -10,8 +10,12 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldUseLaunchSchemeArgsEnv = "NO"
       codeCoverageEnabled = "YES">
+      <CommandLineArguments>
+         <CommandLineArgument argument = "-com.apple.CoreData.ConcurrencyDebug" isEnabled = "YES"/>
+         <CommandLineArgument argument = "1" isEnabled = "YES"/>
+      </CommandLineArguments>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -47,7 +51,7 @@
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
-      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldUseLaunchSchemeArgsEnv = "NO"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">

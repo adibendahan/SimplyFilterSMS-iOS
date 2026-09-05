@@ -18,10 +18,10 @@ class ReportMessageService: HTTPServiceBase, ReportMessageServiceProtocol {
     @discardableResult
     func reportMessage(reportMessageRequestBody: ReportMessageRequestBody) async -> Bool {
         guard self.networkSyncManager?.networkStatus == .online else {
-            AppManager.logger.debug("reportMessage — skipped (offline) | type: \(reportMessageRequestBody.type, privacy: .public) | sender: '\(reportMessageRequestBody.sender, privacy: .public)'")
+            AppManager.logger.debug("reportMessage — skipped (offline) | type: \(reportMessageRequestBody.type, privacy: .public)")
             return false
         }
-        AppManager.logger.debug("reportMessage — sending | type: \(reportMessageRequestBody.type, privacy: .public) | sender: '\(reportMessageRequestBody.sender, privacy: .public)'")
+        AppManager.logger.debug("reportMessage — sending | type: \(reportMessageRequestBody.type, privacy: .public)")
         do {
             let response = try await self.httpService.execute(type: ReportMessageResponse.self,
                                                               baseURL: .reportMessageURL,
@@ -30,7 +30,7 @@ class ReportMessageService: HTTPServiceBase, ReportMessageServiceProtocol {
             return response.statusCode == 200
         } catch (let error) {
             let nsError = error as NSError
-            AppManager.logger.error("ERROR! While reporting message: \(nsError), \(nsError.userInfo)")
+            AppManager.logger.error("ERROR! While reporting message: \(nsError.domain, privacy: .public) code=\(nsError.code, privacy: .public)")
         }
         return false
     }

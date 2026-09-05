@@ -15,7 +15,8 @@ protocol PersistanceManagerProtocol: AnyObject {
     var context: NSManagedObjectContext { get }
     var fingerprint: String { get }
     
-    func commitContext()
+    @discardableResult
+    func commitContext() -> Bool
     func reloadContainer()
     
     //MARK: - Fetching -
@@ -51,7 +52,8 @@ protocol PersistanceManagerProtocol: AnyObject {
     func updateFilter(_ filter: Filter, filterCase: FilterCase)
     func updateFilter(_ filter: Filter, filterTarget: FilterTarget)
     func updateFilter(_ filter: Filter, filterText: String)
-    func saveCache(with filterList: AutomaticFilterListsResponse)
+    @discardableResult
+    func saveCache(with filterList: AutomaticFilterListsResponse) -> Bool
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool
     func selectedCountries(for rule: RuleType) -> [String]
     func setSelectedCountries(_ countries: [String], for rule: RuleType)
