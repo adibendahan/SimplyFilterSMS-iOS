@@ -23,6 +23,6 @@ protocol AutomaticFilterManagerProtocol {
     func setSelectedChoice(for rule: RuleType, choice: Int)
     func selectedCountries(for rule: RuleType) -> [String]
     func setSelectedCountries(_ countries: [String], for rule: RuleType)
-    func updateAutomaticFiltersIfNeeded()
+    func updateAutomaticFiltersIfNeeded() async
     func forceUpdateAutomaticFilters() async
 }

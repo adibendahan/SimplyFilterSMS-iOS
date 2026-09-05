@@ -23,6 +23,9 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 
     @Environment(\.accessibilityReduceMotion)
     private var reduceMotion
+
+    @Environment(\.scenePhase)
+    private var scenePhase
     
     @ObservedObject var model: ViewModel
 
@@ -149,7 +152,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         self.model.refresh()
 
                         if !isPreview {
-                            self.model.presentNextFlow()
+                            self.model.handleReturnedToHome()
                         }
                     }
                 }
@@ -203,6 +206,21 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Button("general_close"~, role: .cancel) { }
         } message: {
             Text("importFilters_nothingToAdd"~)
+        }
+        .alert("inactivityNotification_title"~, isPresented: self.$model.showInactivityNotificationAlert) {
+            Button("inactivityNotification_continue"~) {
+                self.model.continueInactivityNotification()
+            }
+            Button(self.model.appManager.schedulingManager.inactivityNotificationDismissTitle, role: .cancel) {
+                self.model.dismissInactivityNotification()
+            }
+        } message: {
+            Text("inactivityNotification_message"~)
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active, !isPreview {
+                self.model.handleSceneBecameActive()
+            }
         }
         .background {
             Color.clear
@@ -554,6 +572,13 @@ extension AppHomeView {
                 }
             }
         }
+        @Published var showInactivityNotificationAlert = false {
+            didSet {
+                if oldValue && !self.showInactivityNotificationAlert {
+                    self.showPendingNotification()
+                }
+            }
+        }
         @Published var isImportingFile = false
         @Published var fileImporterID = UUID()
         @Published var customAccent: Color? = nil
@@ -707,6 +732,10 @@ extension AppHomeView {
                 self.showPendingNotification()
                 return
             }
+            if screen == .inactivityNotification {
+                self.showInactivityNotificationAlert = true
+                return
+            }
             if screen == .filterImport,
                self.appManager.filterTransferManager.pendingPreview.count == 0 {
                 _ = self.appManager.filterTransferManager.clearPendingImport()
@@ -722,14 +751,52 @@ extension AppHomeView {
             self.presentNextFlow()
         }
 
-        private func runLaunchFlowIfNeeded() {
-            #if DEBUG
-            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
-                return
+        func handleSceneBecameActive() {
+            self.appManager.schedulingManager.syncInactivityReminder()
+            self.considerInactivityNotification()
+        }
+
+        func handleReturnedToHome() {
+            self.considerInactivityNotification()
+            self.presentNextFlow()
+        }
+
+        func continueInactivityNotification() {
+            self.showInactivityNotificationAlert = false
+            self.appManager.flowManager.complete(.inactivityNotification)
+            self.appManager.schedulingManager.requestInactivityNotificationAuthorization { [weak self] _ in
+                self?.presentNextFlow()
             }
-            #endif
+        }
+
+        func dismissInactivityNotification() {
+            self.appManager.schedulingManager.recordInactivityNotificationDecline()
+            self.showInactivityNotificationAlert = false
+            self.appManager.flowManager.complete(.inactivityNotification)
+            self.presentNextFlow()
+        }
+
+        private func considerInactivityNotification() {
+            guard self.navigationScreen == nil,
+                  !self.appManager.defaultsManager.isAppFirstRun else { return }
+
+            Task { @MainActor [weak self] in
+                await self?.presentInactivityNotificationIfNeeded()
+            }
+        }
+
+        @MainActor
+        func presentInactivityNotificationIfNeeded() async {
+            guard await self.appManager.schedulingManager.shouldShowInactivityNotification(),
+                  self.navigationScreen == nil else { return }
+            self.appManager.flowManager.enableInactivityNotification()
+            self.presentNextFlow()
+        }
+
+        private func runLaunchFlowIfNeeded() {
             self.startMonitoring()
             self.enableWhatsNewAndPresent()
+            self.considerInactivityNotification()
             self.tryShowTipPromotion()
             self.tryShowReportingExtensionNudge()
         }
@@ -780,7 +847,7 @@ extension AppHomeView {
         private var isHomeUnobstructed: Bool {
             return self.sheetScreen == nil
                 && self.pendingScreenAfterDismiss == nil
-                && !self.isFilterTransferPresenting
+                && !self.isBlockingHomeAlertPresented
                 && !self.isReplacingSheetForLaunch
         }
 
@@ -945,8 +1012,8 @@ extension AppHomeView {
         private var didShowNotificationThisSession = false
         private var pendingNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
-        private var isFilterTransferPresenting: Bool {
-            return self.showNothingToImportAlert
+        private var isBlockingHomeAlertPresented: Bool {
+            return self.showNothingToImportAlert || self.showInactivityNotificationAlert
         }
         private var userIgnoresNetworkStatus: Bool {
             guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }

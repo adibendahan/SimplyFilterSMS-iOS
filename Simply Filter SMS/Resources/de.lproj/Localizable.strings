@@ -33,8 +33,11 @@
 "filterList_menu_about" = "Über";
 
 "accentColor_menuItem" = "Akzentfarbe";
+
 "accentColor_title" = "Akzentfarbe";
+
 "accentColor_picker" = "Farbe";
+
 "accentColor_reset" = "Auf Standard zurücksetzen";
 
 "filterList_menu_debug" = "Debugdaten laden";
@@ -48,7 +51,9 @@
 "filterList_text" = "Text";
 
 "filterList_options" = "Optionen";
+
 "filterList_menu_collapseOptions" = "Optionen reduzieren";
+
 "filterList_menu_expandOptions" = "Optionen erweitern";
 
 "addFilter_add" = "Hinzufügen";
@@ -286,8 +291,11 @@
 "testFilters_resultReason_unknownSender" = "Unbekannter Absender";
 
 "testFilters_resultMatchedFilter" = "Filter:";
+
 "testFilters_resultMatchedSmartFilter" = "Smarter Filter:";
+
 "testFilters_resultMatchedAutomaticFilter" = "KI-Filterung:";
+
 "testFilters_footer" = "Gib einen Absender und eine Nachricht ein, um zu sehen, wie sie gefiltert würden. Der Absender ist optional. Lass das Feld leer, um nur den Nachrichtentext zu testen.";
 
 "notification_offline_title" = "iCloud-Synchronisierung pausiert";
@@ -406,7 +414,6 @@
 
 "a11y_enableExtension_stepLabel" = "Schritt %ld: %@. %@";
 
-
 "a11y_help_enableFilteringHint" = "Doppeltippen, um die Filter-Einrichtung zu öffnen";
 
 "a11y_help_enableReportingHint" = "Doppeltippen, um die Melde-Einrichtung zu öffnen";
@@ -414,6 +421,7 @@
 "a11y_help_faqHint" = "Doppeltippen, um die Antwort ein- oder auszublenden";
 
 "a11y_help_emailHint" = "Doppeltippen, um eine E-Mail zu senden. Kopiert die Adresse, wenn Mail nicht eingerichtet ist";
+
 "a11y_accentColor_resetHint" = "Doppeltippen, um die Standardfarbe wiederherzustellen";
 
 "autoFilter_countryAllowlist" = "Nach Land erlauben";
@@ -514,6 +522,20 @@
 
 "autoFilter_improveAIFiltering" = "KI-Filterung verbessern";
 
+"inactivityNotification_title" = "KI-Filterung aktiv halten";
+
+"inactivityNotification_message" = "Erlaube Mitteilungen, damit wir dich daran erinnern können, die App zu öffnen. Wenn du sie lange nicht öffnest, können KI-Filter veralten und iOS die App auslagern - dann stoppt die Filterung, bis du zurückkommst.";
+
+"inactivityNotification_continue" = "Weiter";
+
+"inactivityNotification_notNow" = "Nicht jetzt";
+
+"inactivityNotification_stopAsking" = "Nicht mehr fragen";
+
+"inactivityNotification_reminder_title" = "Simply Filter SMS";
+
+"inactivityNotification_reminder_body" = "KI-Filter sind möglicherweise veraltet - öffne die App zum Aktualisieren.";
+
 "menu_filters" = "Filter";
 
 "menu_filterTools" = "Filter-Tools";
@@ -539,28 +561,53 @@
 "whatsNew_regexFilters_desc" = "Für fortgeschrittene Nutzer - filtere mit **regulären Ausdrücken** für volle Kontrolle über was blockiert oder erlaubt wird. Ein Muster kann Dutzende von Filtern ersetzen.";
 
 "menu_exportFilters" = "Filter exportieren";
+
 "menu_importFilters" = "Filter importieren";
+
 "importFilters_title" = "Filter importieren";
+
 "importFilters_sectionTitle" = "Zu importierende Filter";
+
 "importFilters_subtitle" = "Tippe auf eine Liste, um die Filter in dieser Datei zu prüfen und auszuwählen, welche hinzugefügt werden. Filter, die auf diesem Gerät bereits vorhanden sind, werden übersprungen. Nichts wird überschrieben oder gelöscht.";
+
 "importFilters_willClear" = "Alle vorhandenen Filter werden gelöscht";
+
 "importFilters_duplicates" = "Bereits vorhanden";
+
 "importFilters_invalid" = "Übersprungen";
+
 "importFilters_confirm" = "Importieren";
+
 "importFilters_nothingToAdd" = "Nichts Neues zum Importieren.";
+
 "importFilters_selectAll" = "Alle auswählen";
+
 "importFilters_selectNone" = "Keine auswählen";
+
 "exportFilters_title" = "Filter exportieren";
+
 "exportFilters_sectionTitle" = "Deine Filter";
+
 "exportFilters_subtitle" = "Tippe auf eine Liste, um auszuwählen, welche Filter enthalten sein sollen. Nur ausgewählte Filter kommen in die Datei.";
+
 "exportFilters_confirm" = "Exportieren";
+
 "notification_import_title" = "Filter importiert";
+
 "notification_import_subtitle" = "%ld hinzugefügt, %ld übersprungen";
+
 "notification_importFailed_title" = "Import fehlgeschlagen";
+
 "notification_importFailed_subtitle" = "Diese Datei ist kein gültiger Filter-Export.";
+
 "notification_exportFailed_title" = "Export fehlgeschlagen";
+
 "notification_exportFailed_subtitle" = "Die Exportdatei konnte nicht erstellt werden.";
+
 "whatsNew_filterTransfer_title" = "Filter exportieren & importieren";
+
 "whatsNew_filterTransfer_desc" = "Teile deine Filter mit einem Freund - exportiere eine Datei aus **Filter-Tools** im Menü und sende sie.";
+
 "whatsNew_appearanceTouchup_title" = "Optik-Feinschliff";
+
 "whatsNew_appearanceTouchup_desc" = "**Hilfe** und **Filter testen** haben ein neues Aussehen. Du kannst auch eine **Akzentfarbe** im Menü wählen - Schaltflächen und Symbole folgen ihr.";

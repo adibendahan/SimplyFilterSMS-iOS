@@ -21,6 +21,7 @@ protocol AppManagerProtocol {
     var tipJarManager: TipJarManagerProtocol { get }
     var filterTransferManager: FilterTransferManagerProtocol { get }
     var flowManager: FlowManagerProtocol { get }
+    var schedulingManager: SchedulingManagerProtocol { get set }
 
     func onAppLaunch()
     func onNewUserSession()

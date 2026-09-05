@@ -18,6 +18,9 @@ protocol DefaultsManagerProtocol {
     var didTip: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
     var didDismissReportingExtensionNudge: Bool { get set }
+    var inactivityNotificationAskCount: Int { get set }
+    var inactivityNotificationDeclinedSession: Int { get set }
+    var inactivityNotificationWasGranted: Bool { get set }
     var accentColorRGB: [String: Double] { get set }
     var appAge: Date { get }
     

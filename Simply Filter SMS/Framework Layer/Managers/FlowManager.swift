@@ -35,6 +35,10 @@ class FlowManager: FlowManagerProtocol {
         self.whatsNewEnabled = true
     }
 
+    func enableInactivityNotification() {
+        self.inactivityNotificationEnabled = true
+    }
+
     func next() -> Screen? {
         if self.activeScreen != nil {
             return nil
@@ -53,6 +57,11 @@ class FlowManager: FlowManagerProtocol {
         if self.whatsNewEnabled && self.shouldShowWhatsNew {
             self.activeScreen = .whatsNew
             return .whatsNew
+        }
+
+        if self.inactivityNotificationEnabled {
+            self.activeScreen = .inactivityNotification
+            return .inactivityNotification
         }
 
         if let screen = self.pendingUserRequest {
@@ -75,6 +84,10 @@ class FlowManager: FlowManagerProtocol {
         if self.pendingUserRequest == screen {
             self.pendingUserRequest = nil
         }
+
+        if screen == .inactivityNotification {
+            self.inactivityNotificationEnabled = false
+        }
     }
 
     func resetSession() {
@@ -83,6 +96,7 @@ class FlowManager: FlowManagerProtocol {
         self.activeScreen = nil
         self.launchActionClaimedSession = false
         self.whatsNewEnabled = false
+        self.inactivityNotificationEnabled = false
         self.startedAsFirstRun = self.defaultsManager.isAppFirstRun
     }
 
@@ -92,6 +106,7 @@ class FlowManager: FlowManagerProtocol {
     private var startedAsFirstRun: Bool
     private var launchActionClaimedSession = false
     private var whatsNewEnabled = false
+    private var inactivityNotificationEnabled = false
     private var activeScreen: Screen?
     private var pendingLaunchScreen: Screen?
     private var pendingUserRequest: Screen?

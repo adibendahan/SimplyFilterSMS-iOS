@@ -24,14 +24,15 @@ class mock_AppManager: AppManagerProtocol {
     var tipJarManager: TipJarManagerProtocol = mock_TipJarManager()
     var filterTransferManager: FilterTransferManagerProtocol = mock_FilterTransferManager()
     var flowManager: FlowManagerProtocol = mock_FlowManager()
+    var schedulingManager: SchedulingManagerProtocol = mock_SchedulingManager()
     var debugDataManager: DebugDataManagerProtocol = mock_DebugDataManager()
 
     var onAppLaunchCounter = 0
     var onNewUserSessionCounter = 0
-    
+
     var onAppLaunchClosuer: (() -> ())?
     var onNewUserSessionClosuer: (() -> ())?
-    
+
     func onAppLaunch() {
         self.onAppLaunchCounter += 1
         self.onAppLaunchClosuer?()

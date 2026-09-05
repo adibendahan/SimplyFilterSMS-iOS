@@ -39,6 +39,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | `enableReportingExtension` | EnableExtensionView (reporting steps) | Sheet |
 | `filterImport` | FilterTransferPreviewView | Sheet |
 | `filterExport` | FilterTransferPreviewView | Sheet |
+| `inactivityNotification` | *(fake — Home `.alert` only)* | Flow token |
 
 ## Manager Dependency Graph
 
@@ -52,6 +53,8 @@ AppManager (Singleton)
 │   └── app: PersistanceManager (live context) / extension: owned App Group store
 ├── AutomaticFilterManager ─── Community filter lists
 │   └── depends on: PersistanceManager, AmazonS3Service
+├── SchedulingManager ─────── BG processing + inactivity reminder
+│   └── depends on: AutomaticFilterManager, UserNotificationCenterService
 ├── TipJarManager ─────────── StoreKit 2 IAP
 ├── FilterTransferManager ── Merge-only import/export
 │   └── depends on: PersistanceManager
@@ -59,8 +62,9 @@ AppManager (Singleton)
 │   └── depends on: DefaultsManager
 ├── AmazonS3Service ────────── HTTP → S3
 │   └── depends on: NetworkSyncManager
-└── ReportMessageService ───── HTTP → Lambda
-    └── depends on: NetworkSyncManager
+├── ReportMessageService ───── HTTP → Lambda
+│   └── depends on: NetworkSyncManager
+└── UserNotificationCenterService ── UNUserNotificationCenter gateway
 ```
 
 ## Message Evaluation Pipeline

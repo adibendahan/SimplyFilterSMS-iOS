@@ -34,6 +34,12 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var lastSeenWhatsNewVersionSetCounter = 0
     var didDismissReportingExtensionNudgeGetCounter = 0
     var didDismissReportingExtensionNudgeSetCounter = 0
+    var inactivityNotificationAskCountGetCounter = 0
+    var inactivityNotificationAskCountSetCounter = 0
+    var inactivityNotificationDeclinedSessionGetCounter = 0
+    var inactivityNotificationDeclinedSessionSetCounter = 0
+    var inactivityNotificationWasGrantedGetCounter = 0
+    var inactivityNotificationWasGrantedSetCounter = 0
 
     var isAppFirstRunClosure: (() -> (Bool))?
     var isExpandedAddFilterClosure: (() -> (Bool))?
@@ -46,6 +52,13 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var appAgeClosure: (() -> (Date))?
     var lastSeenWhatsNewVersionClosure: (() -> (Int))?
     var didDismissReportingExtensionNudgeClosure: (() -> (Bool))?
+    var inactivityNotificationAskCountClosure: (() -> (Int))?
+    var inactivityNotificationDeclinedSessionClosure: (() -> (Int))?
+    var inactivityNotificationWasGrantedClosure: (() -> (Bool))?
+    private var sessionCounterValue = 0
+    private var inactivityNotificationAskCountValue = 0
+    private var inactivityNotificationDeclinedSessionValue = 0
+    private var inactivityNotificationWasGrantedValue = false
 
     var isAppFirstRun: Bool {
         get {
@@ -100,10 +113,11 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var sessionCounter: Int {
         get {
             self.sessionCounterGetCounter += 1
-            return self.sessionCounterClosure?() ?? 0
+            return self.sessionCounterClosure?() ?? self.sessionCounterValue
         }
         set {
             self.sessionCounterSetCounter += 1
+            self.sessionCounterValue = newValue
         }
     }
     
@@ -157,6 +171,39 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
     }
 
+    var inactivityNotificationAskCount: Int {
+        get {
+            self.inactivityNotificationAskCountGetCounter += 1
+            return self.inactivityNotificationAskCountClosure?() ?? self.inactivityNotificationAskCountValue
+        }
+        set {
+            self.inactivityNotificationAskCountSetCounter += 1
+            self.inactivityNotificationAskCountValue = newValue
+        }
+    }
+
+    var inactivityNotificationDeclinedSession: Int {
+        get {
+            self.inactivityNotificationDeclinedSessionGetCounter += 1
+            return self.inactivityNotificationDeclinedSessionClosure?() ?? self.inactivityNotificationDeclinedSessionValue
+        }
+        set {
+            self.inactivityNotificationDeclinedSessionSetCounter += 1
+            self.inactivityNotificationDeclinedSessionValue = newValue
+        }
+    }
+
+    var inactivityNotificationWasGranted: Bool {
+        get {
+            self.inactivityNotificationWasGrantedGetCounter += 1
+            return self.inactivityNotificationWasGrantedClosure?() ?? self.inactivityNotificationWasGrantedValue
+        }
+        set {
+            self.inactivityNotificationWasGrantedSetCounter += 1
+            self.inactivityNotificationWasGrantedValue = newValue
+        }
+    }
+
     var accentColorRGB: [String: Double] = kNoColorDict
 
     func resetCounters() {
@@ -166,6 +213,28 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         self.isExpandedAddFilterSetCounter = 0
         self.isFilterOptionsCollapsedGetCounter = 0
         self.isFilterOptionsCollapsedSetCounter = 0
+        self.lastOfflineNotificationDismissGetCounter = 0
+        self.lastOfflineNotificationDismissSetCounter = 0
+        self.sessionAgeGetCounter = 0
+        self.sessionAgeSetCounter = 0
+        self.sessionCounterGetCounter = 0
+        self.sessionCounterSetCounter = 0
+        self.didPromptForReviewGetCounter = 0
+        self.didPromptForReviewSetCounter = 0
+        self.didTipGetCounter = 0
+        self.didTipSetCounter = 0
+        self.appAgeGetCounter = 0
+        self.appAgeSetCounter = 0
+        self.lastSeenWhatsNewVersionGetCounter = 0
+        self.lastSeenWhatsNewVersionSetCounter = 0
+        self.didDismissReportingExtensionNudgeGetCounter = 0
+        self.didDismissReportingExtensionNudgeSetCounter = 0
+        self.inactivityNotificationAskCountGetCounter = 0
+        self.inactivityNotificationAskCountSetCounter = 0
+        self.inactivityNotificationDeclinedSessionGetCounter = 0
+        self.inactivityNotificationDeclinedSessionSetCounter = 0
+        self.inactivityNotificationWasGrantedGetCounter = 0
+        self.inactivityNotificationWasGrantedSetCounter = 0
     }
     
     func reset() { }

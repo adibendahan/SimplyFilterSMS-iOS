@@ -246,7 +246,9 @@ extension LanguageListView {
                     guard let networkStatus = notification.object as? NetworkStatus else { return }
 
                     if networkStatus == .online {
-                        self?.appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                        Task {
+                            await self?.appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                        }
                         self?.isLoading = true
                     }
                     else {

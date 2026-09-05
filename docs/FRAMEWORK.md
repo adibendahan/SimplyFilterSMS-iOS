@@ -25,6 +25,7 @@ protocol AppManagerProtocol {
     var tipJarManager: TipJarManagerProtocol { get }
     var filterTransferManager: FilterTransferManagerProtocol { get }
     var flowManager: FlowManagerProtocol { get }
+    var schedulingManager: SchedulingManagerProtocol { get set }
     func onAppLaunch()
     func onNewUserSession()
 }
@@ -42,13 +43,14 @@ protocol AppManagerProtocol {
 8. `TipJarManager`
 9. `FilterTransferManager` (receives persistance manager)
 10. `FlowManager` (receives defaults manager)
-11. Logger wired to MessageEvaluationManager
+11. `SchedulingManager` (receives automatic filter manager + defaults manager; owns `UserNotificationCenterService`)
+12. Logger wired to MessageEvaluationManager
 
 In `#if DEBUG` + testing mode (`-Testing` launch argument): resets DefaultsManager and PersistanceManager.
 
 ### Lifecycle
 
-- `onAppLaunch()` — Initializes app age, detects new session (day boundary), triggers auto-filter update if online.
+- `onAppLaunch()` — Initializes app age, asks `schedulingManager` to schedule `BGProcessingTask` for automatic filters, detects new session (day boundary), triggers auto-filter update if online.
 - `onNewUserSession()` — Increments session counter, updates session timestamp, fetches latest automatic filters.
 - `AppManager.previews` — Static in-memory instance with debug data loaded, used by SwiftUI previews.
 
@@ -57,6 +59,43 @@ In `#if DEBUG` + testing mode (`-Testing` launch argument): resets DefaultsManag
 ```swift
 static let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
 ```
+
+---
+
+## SchedulingManager
+
+**Files:** `Framework Layer/Managers/SchedulingManager.swift`, `Protocols/SchedulingManagerProtocol.swift`
+
+Owns background processing, the monthly inactivity reminder, and inactivity-notification ask cadence for AI Filtering. AppManager composes it; Home and AppDelegate call through `schedulingManager`.
+
+### Protocol
+
+```swift
+protocol SchedulingManagerProtocol {
+    func scheduleAutomaticFiltersProcessing()
+    func handleAutomaticFiltersProcessing(task: BGProcessingTask)
+    func syncInactivityReminder()
+    func cancelInactivityReminder()
+    var inactivityNotificationDismissTitle: String { get }
+    func scheduleAutomaticFiltersProcessing()
+    func handleAutomaticFiltersProcessing(task: BGProcessingTask)
+    func syncInactivityReminder()
+    func cancelInactivityReminder()
+    func shouldShowInactivityNotification() async -> Bool
+    func recordInactivityNotificationDecline()
+    func requestInactivityNotificationAuthorization(completion: @escaping (Bool) -> Void)
+}
+```
+
+### Key Behaviors
+
+- `scheduleAutomaticFiltersProcessing()` / `handleAutomaticFiltersProcessing(task:)` — Idle/overnight `BGProcessingTask` fetch of AI lists (`requiresNetworkConnectivity`, `earliestBeginDate` = now + `kUpdateAutomaticFiltersMinDays`). Handler registered from `AppDelegate`; reschedules after completion.
+- `syncInactivityReminder()` — Startup-only: cancel then reschedule the monthly local reminder when AI Filtering is on and alerts are allowed.
+- `cancelInactivityReminder()` — Drop the pending reminder. Also runs when `.filtersStateChanged` fires while AI Filtering is off.
+- `shouldShowInactivityNotification()` — Up to 3 asks; ≥3 `sessionCounter` gap after declines; marks grant / resets on revoke.
+- `inactivityNotificationDismissTitle` — Localized Not Now / Stop Asking from current ask count.
+- `recordInactivityNotificationDecline` / `requestInactivityNotificationAuthorization` — Not Now / Stop Asking / system deny update ask state; grant marks permission and syncs reminder.
+- Collaborator: `UserNotificationCenterServiceProtocol` / `UserNotificationCenterService` (authorize / add / remove pending only).
 
 ---
 
@@ -273,6 +312,9 @@ protocol DefaultsManagerProtocol {
     var didPromptForReview: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
     var didDismissReportingExtensionNudge: Bool { get set }
+    var inactivityNotificationAskCount: Int { get set }
+    var inactivityNotificationDeclinedSession: Int { get set }
+    var inactivityNotificationWasGranted: Bool { get set }
     var accentColorRGB: [String: Double] { get set }
     var appAge: Date { get }
     #if DEBUG
@@ -285,11 +327,12 @@ protocol DefaultsManagerProtocol {
 
 - `isAppFirstRun` — Controls onboarding display. Set to `false` after first dismiss.
 - `isExpandedAddFilter` — Persists the expand/collapse state of AddFilterView's advanced options.
-- `sessionCounter` / `sessionAge` — Track user sessions for review prompt logic.
+- `sessionCounter` / `sessionAge` — Track user sessions for review prompt logic and inactivity-notification re-ask gaps.
 - `appAge` — First launch date. Initialized once, never changes.
 - `didPromptForReview` — Ensures App Store review prompt is shown only once.
 - `lastOfflineNotificationDismiss` — Suppresses offline notification for `kHideiClouldStatusMemory` (60) minutes after dismiss.
 - `lastSeenWhatsNewVersion` — Tracks the last What's New version the user has seen. Compared against `currentWhatsNewVersion` to decide whether to show the What's New sheet.
+- `inactivityNotificationAskCount` / `inactivityNotificationDeclinedSession` / `inactivityNotificationWasGranted` — Ask cadence owned by `SchedulingManager` (max 3 asks, ≥3 sessions between declines, revoke resets).
 - `accentColorRGB` — `@StoredDefault` dictionary (`kNoColorDict` = system accent). `Color(accentRGB:)` / `Color.accentRGB` convert. Debug `reset()` clears the key.
 
 ---
@@ -495,6 +538,23 @@ protocol ReportMessageServiceProtocol: AnyObject {
 - Posts to `POST /report` (`https://api.ben-dahan.com/report`, public, no auth)
 - Body: `{ classification: { sender, bodies, type } }`
 - Returns `true` on HTTP 200
+
+### UserNotificationCenterService
+
+**File:** `Services Layer/UserNotificationCenterService.swift`
+
+Thin `UNUserNotificationCenter` gateway used by `SchedulingManager`. No product policy (reminder clock / BG scheduling live on `SchedulingManager`).
+
+```swift
+protocol UserNotificationCenterServiceProtocol {
+    func authorizationStatus(completion: @escaping (NotificationAuthorizationStatus) -> Void)
+    func requestAlertAuthorization(completion: @escaping (Bool) -> Void)
+    func add(_ request: UNNotificationRequest, completion: ((Error?) -> Void)?)
+    func removePendingNotificationRequests(withIdentifiers identifiers: [String])
+}
+```
+
+- Authorize alerts only, add pending requests, remove by id, read authorization status
 
 ### Request/Response DTOs
 

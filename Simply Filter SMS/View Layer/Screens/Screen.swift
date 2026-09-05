@@ -14,7 +14,7 @@ enum Screen: Int, Identifiable, Hashable {
          addLanguageFilter, addAllowFilter, addDenyFilter, automaticBlocking,
          denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
          whatsNew, tipJar, countryList, enableReportingExtension, filterImport,
-         chooseAccentColor, filterExport
+         chooseAccentColor, filterExport, inactivityNotification
 
     @ViewBuilder func build() -> some View {
         Group {
@@ -97,6 +97,9 @@ enum Screen: Int, Identifiable, Hashable {
 
             case .filterExport:
                 FilterTransferPreviewView(model: FilterTransferPreviewView.ViewModel())
+
+            case .inactivityNotification:
+                EmptyView()
             }
         }
         .adaptiveLayoutEnvironment()
@@ -146,6 +149,8 @@ enum Screen: Int, Identifiable, Hashable {
             return "chooseAccentColor"
         case .filterExport:
             return "filterExport"
+        case .inactivityNotification:
+            return "inactivityNotification"
         }
     }
 }

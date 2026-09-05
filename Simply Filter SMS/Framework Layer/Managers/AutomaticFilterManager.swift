@@ -182,17 +182,15 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         self.persistanceManager?.setSelectedCountries(countries, for: rule)
     }
 
-    func updateAutomaticFiltersIfNeeded() {
+    func updateAutomaticFiltersIfNeeded() async {
         guard self.shouldFetchFilters else {
             AppManager.logger.debug("updateAutomaticFiltersIfNeeded — cache is fresh, skipping fetch")
             return
         }
         AppManager.logger.debug("updateAutomaticFiltersIfNeeded — cache is stale, fetching from S3")
-        Task(priority: .background) {
-            guard let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() else { return }
-            await MainActor.run {
-                self.updateCacheIfNeeded(newFilterList: automaticFilterList)
-            }
+        guard let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() else { return }
+        await MainActor.run {
+            self.updateCacheIfNeeded(newFilterList: automaticFilterList)
         }
     }
 
