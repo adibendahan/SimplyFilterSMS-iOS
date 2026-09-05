@@ -21,25 +21,14 @@ protocol AppManagerProtocol {
     var tipJarManager: TipJarManagerProtocol { get }
     var filterTransferManager: FilterTransferManagerProtocol { get }
     var flowManager: FlowManagerProtocol { get }
-    var userNotificationScheduling: UserNotificationSchedulingProtocol { get set }
+    var schedulingManager: SchedulingManagerProtocol { get set }
 
     func onAppLaunch()
     func onNewUserSession()
-    func scheduleAutomaticFiltersProcessing()
-    func syncInactivityReminder()
-    func cancelInactivityReminder()
-    func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void)
 
     #if DEBUG
     var debugDataManager: DebugDataManagerProtocol { get }
     func loadDebugData()
     func reset()
     #endif // DEBUG
-}
-
-extension AppManagerProtocol {
-    static func nextAutomaticFiltersProcessingDate(from date: Date = Date()) -> Date {
-        Calendar.current.date(byAdding: .day, value: kUpdateAutomaticFiltersMinDays, to: date)
-            ?? date.addingTimeInterval(TimeInterval(kUpdateAutomaticFiltersMinDays * 24 * 60 * 60))
-    }
 }

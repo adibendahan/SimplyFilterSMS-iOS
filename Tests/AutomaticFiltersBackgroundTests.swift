@@ -10,32 +10,27 @@ import UserNotifications
 
 class AutomaticFiltersBackgroundTests: XCTestCase {
 
-    private var defaultsManager: mock_DefaultsManager!
     private var automaticFilterManager: mock_AutomaticFilterManager!
-    private var notifications: mock_UserNotificationScheduling!
+    private var notifications: mock_UserNotificationCenterService!
     private var isAutomaticFilteringOn = false
-    private var testSubject: AppManager!
+    private var testSubject: SchedulingManager!
 
     override func setUp() {
         super.setUp()
         self.isAutomaticFilteringOn = false
-        self.defaultsManager = mock_DefaultsManager()
         self.automaticFilterManager = mock_AutomaticFilterManager()
-        self.notifications = mock_UserNotificationScheduling()
+        self.notifications = mock_UserNotificationCenterService()
         self.automaticFilterManager.isAutomaticFilteringOnClosure = { [unowned self] in
             return self.isAutomaticFilteringOn
         }
-        self.testSubject = AppManager(inMemory: true)
-        self.testSubject.defaultsManager = self.defaultsManager
-        self.testSubject.automaticFilterManager = self.automaticFilterManager
-        self.testSubject.userNotificationScheduling = self.notifications
+        self.testSubject = SchedulingManager(automaticFilterManager: self.automaticFilterManager,
+                                             userNotificationCenterService: self.notifications)
     }
 
     override func tearDown() {
         self.testSubject = nil
         self.notifications = nil
         self.automaticFilterManager = nil
-        self.defaultsManager = nil
         super.tearDown()
     }
 
@@ -137,12 +132,5 @@ class AutomaticFiltersBackgroundTests: XCTestCase {
         XCTAssertEqual(self.automaticFilterManager.updateAutomaticFiltersIfNeededCounter, 1)
         XCTAssertEqual(self.notifications.removePendingCounter, 0)
         XCTAssertEqual(self.notifications.addCounter, 0)
-    }
-
-    func test_nextAutomaticFiltersProcessingDate_usesMinDays() {
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let next = AppManager.nextAutomaticFiltersProcessingDate(from: now)
-        let expected = Calendar.current.date(byAdding: .day, value: kUpdateAutomaticFiltersMinDays, to: now)
-        XCTAssertEqual(next, expected)
     }
 }

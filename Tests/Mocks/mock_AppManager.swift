@@ -24,19 +24,14 @@ class mock_AppManager: AppManagerProtocol {
     var tipJarManager: TipJarManagerProtocol = mock_TipJarManager()
     var filterTransferManager: FilterTransferManagerProtocol = mock_FilterTransferManager()
     var flowManager: FlowManagerProtocol = mock_FlowManager()
-    var userNotificationScheduling: UserNotificationSchedulingProtocol = mock_UserNotificationScheduling()
+    var schedulingManager: SchedulingManagerProtocol = mock_SchedulingManager()
     var debugDataManager: DebugDataManagerProtocol = mock_DebugDataManager()
 
     var onAppLaunchCounter = 0
     var onNewUserSessionCounter = 0
-    var scheduleAutomaticFiltersProcessingCounter = 0
-    var syncInactivityReminderCounter = 0
-    var cancelInactivityReminderCounter = 0
-    var requestNotificationAuthorizationFromExplainerCounter = 0
 
     var onAppLaunchClosuer: (() -> ())?
     var onNewUserSessionClosuer: (() -> ())?
-    var requestNotificationAuthorizationFromExplainerGranted = false
 
     func onAppLaunch() {
         self.onAppLaunchCounter += 1
@@ -47,31 +42,11 @@ class mock_AppManager: AppManagerProtocol {
         self.onNewUserSessionCounter += 1
         self.onNewUserSessionClosuer?()
     }
-
-    func scheduleAutomaticFiltersProcessing() {
-        self.scheduleAutomaticFiltersProcessingCounter += 1
-    }
-
-    func syncInactivityReminder() {
-        self.syncInactivityReminderCounter += 1
-    }
-
-    func cancelInactivityReminder() {
-        self.cancelInactivityReminderCounter += 1
-    }
-
-    func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void) {
-        self.requestNotificationAuthorizationFromExplainerCounter += 1
-        completion(self.requestNotificationAuthorizationFromExplainerGranted)
-    }
     
     func resetCounters() {
         self.onAppLaunchCounter = 0
         self.onNewUserSessionCounter = 0
-        self.scheduleAutomaticFiltersProcessingCounter = 0
-        self.syncInactivityReminderCounter = 0
-        self.cancelInactivityReminderCounter = 0
-        self.requestNotificationAuthorizationFromExplainerCounter = 0
+        (self.schedulingManager as? mock_SchedulingManager)?.resetCounters()
     }
 
     func loadDebugData() { }

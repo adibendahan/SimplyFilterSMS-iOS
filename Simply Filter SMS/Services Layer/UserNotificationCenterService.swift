@@ -1,12 +1,36 @@
 //
-//  UserNotificationCenterScheduler.swift
+//  UserNotificationCenterService.swift
 //  Simply Filter SMS
 //
 
 import Foundation
 import UserNotifications
 
-final class UserNotificationCenterScheduler: UserNotificationSchedulingProtocol {
+enum NotificationAuthorizationStatus {
+    case notDetermined
+    case denied
+    case authorized
+    case provisional
+    case ephemeral
+
+    var allowsAlerts: Bool {
+        switch self {
+        case .authorized, .provisional, .ephemeral:
+            return true
+        case .notDetermined, .denied:
+            return false
+        }
+    }
+}
+
+protocol UserNotificationCenterServiceProtocol {
+    func authorizationStatus(completion: @escaping (NotificationAuthorizationStatus) -> Void)
+    func requestAlertAuthorization(completion: @escaping (Bool) -> Void)
+    func add(_ request: UNNotificationRequest, completion: ((Error?) -> Void)?)
+    func removePendingNotificationRequests(withIdentifiers identifiers: [String])
+}
+
+final class UserNotificationCenterService: UserNotificationCenterServiceProtocol {
     private let center: UNUserNotificationCenter
 
     init(center: UNUserNotificationCenter = .current()) {

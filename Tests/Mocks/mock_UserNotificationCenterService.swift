@@ -1,5 +1,5 @@
 //
-//  mock_UserNotificationScheduling.swift
+//  mock_UserNotificationCenterService.swift
 //  Tests
 //
 
@@ -7,7 +7,7 @@ import Foundation
 import UserNotifications
 @testable import Simply_Filter_SMS
 
-class mock_UserNotificationScheduling: UserNotificationSchedulingProtocol {
+class mock_UserNotificationCenterService: UserNotificationCenterServiceProtocol {
 
     var authorizationStatusValue: NotificationAuthorizationStatus = .notDetermined
     var requestAlertAuthorizationGranted = false

@@ -752,7 +752,7 @@ extension AppHomeView {
         }
 
         func handleSceneBecameActive() {
-            self.appManager.syncInactivityReminder()
+            self.appManager.schedulingManager.syncInactivityReminder()
             self.considerNotificationPermissionExplainer()
         }
 
@@ -766,7 +766,7 @@ extension AppHomeView {
             defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
             self.showNotificationPermissionAlert = false
             self.appManager.flowManager.complete(.notificationPermission)
-            self.appManager.requestNotificationAuthorizationFromExplainer { [weak self] _ in
+            self.appManager.schedulingManager.requestNotificationAuthorizationFromExplainer { [weak self] _ in
                 self?.presentNextFlow()
             }
         }
@@ -790,13 +790,13 @@ extension AppHomeView {
             guard self.appManager.automaticFilterManager.isAutomaticFilteringOn else { return }
             guard !self.appManager.defaultsManager.didShowAutomaticFiltersNotificationExplainer else { return }
 
-            self.appManager.userNotificationScheduling.authorizationStatus { [weak self] status in
+            self.appManager.schedulingManager.authorizationStatus { [weak self] status in
                 guard let self else { return }
                 guard self.navigationScreen == nil else { return }
                 if status.allowsAlerts {
                     var defaultsManager = self.appManager.defaultsManager
                     defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
-                    self.appManager.syncInactivityReminder()
+                    self.appManager.schedulingManager.syncInactivityReminder()
                     return
                 }
                 self.appManager.flowManager.enableNotificationPermissionExplainer()
@@ -957,7 +957,7 @@ extension AppHomeView {
                         self.refresh()
                     }
                     if wasAutomaticFilteringOn && !self.isAutomaticFilteringOn {
-                        self.appManager.cancelInactivityReminder()
+                        self.appManager.schedulingManager.cancelInactivityReminder()
                     }
                 }
 

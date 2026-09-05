@@ -25,13 +25,9 @@ protocol AppManagerProtocol {
     var tipJarManager: TipJarManagerProtocol { get }
     var filterTransferManager: FilterTransferManagerProtocol { get }
     var flowManager: FlowManagerProtocol { get }
-    var userNotificationScheduling: UserNotificationSchedulingProtocol { get set }
+    var schedulingManager: SchedulingManagerProtocol { get set }
     func onAppLaunch()
     func onNewUserSession()
-    func scheduleAutomaticFiltersProcessing()
-    func syncInactivityReminder()
-    func cancelInactivityReminder()
-    func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void)
 }
 ```
 
@@ -47,18 +43,15 @@ protocol AppManagerProtocol {
 8. `TipJarManager`
 9. `FilterTransferManager` (receives persistance manager)
 10. `FlowManager` (receives defaults manager)
-11. `UserNotificationCenterScheduler`
+11. `SchedulingManager` (receives automatic filter manager; owns `UserNotificationCenterService`)
 12. Logger wired to MessageEvaluationManager
 
 In `#if DEBUG` + testing mode (`-Testing` launch argument): resets DefaultsManager and PersistanceManager.
 
 ### Lifecycle
 
-- `onAppLaunch()` — Initializes app age, schedules `BGProcessingTask` for automatic filters, detects new session (day boundary), triggers auto-filter update if online.
+- `onAppLaunch()` — Initializes app age, asks `schedulingManager` to schedule `BGProcessingTask` for automatic filters, detects new session (day boundary), triggers auto-filter update if online.
 - `onNewUserSession()` — Increments session counter, updates session timestamp, fetches latest automatic filters.
-- `scheduleAutomaticFiltersProcessing()` / `handleAutomaticFiltersProcessing(task:)` — Idle/overnight background fetch of AI lists (handler is concrete `AppManager`, registered from `AppDelegate`).
-- `syncInactivityReminder()` — Startup-only: cancel then reschedule the monthly local reminder when AI Filtering is on and alerts are allowed.
-- `cancelInactivityReminder()` — Drop the pending reminder (AI Filtering turned off).
 - `AppManager.previews` — Static in-memory instance with debug data loaded, used by SwiftUI previews.
 
 ### Logger
@@ -66,6 +59,35 @@ In `#if DEBUG` + testing mode (`-Testing` launch argument): resets DefaultsManag
 ```swift
 static let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
 ```
+
+---
+
+## SchedulingManager
+
+**Files:** `Framework Layer/Managers/SchedulingManager.swift`, `Protocols/SchedulingManagerProtocol.swift`
+
+Owns background processing and the monthly inactivity reminder for AI Filtering. AppManager composes it; Home and AppDelegate call through `schedulingManager`.
+
+### Protocol
+
+```swift
+protocol SchedulingManagerProtocol {
+    func authorizationStatus(completion: @escaping (NotificationAuthorizationStatus) -> Void)
+    func scheduleAutomaticFiltersProcessing()
+    func handleAutomaticFiltersProcessing(task: BGProcessingTask)
+    func syncInactivityReminder()
+    func cancelInactivityReminder()
+    func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void)
+}
+```
+
+### Key Behaviors
+
+- `scheduleAutomaticFiltersProcessing()` / `handleAutomaticFiltersProcessing(task:)` — Idle/overnight `BGProcessingTask` fetch of AI lists (`requiresNetworkConnectivity`, `earliestBeginDate` = now + `kUpdateAutomaticFiltersMinDays`). Handler registered from `AppDelegate`; reschedules after completion.
+- `syncInactivityReminder()` — Startup-only: cancel then reschedule the monthly local reminder when AI Filtering is on and alerts are allowed.
+- `cancelInactivityReminder()` — Drop the pending reminder (AI Filtering turned off).
+- `requestNotificationAuthorizationFromExplainer` — After Home Continue: request `.alert`, then sync reminder if granted.
+- Collaborator: `UserNotificationCenterServiceProtocol` / `UserNotificationCenterService` (authorize / add / remove pending only).
 
 ---
 
@@ -504,6 +526,23 @@ protocol ReportMessageServiceProtocol: AnyObject {
 - Posts to `POST /report` (`https://api.ben-dahan.com/report`, public, no auth)
 - Body: `{ classification: { sender, bodies, type } }`
 - Returns `true` on HTTP 200
+
+### UserNotificationCenterService
+
+**File:** `Services Layer/UserNotificationCenterService.swift`
+
+Thin `UNUserNotificationCenter` gateway used by `SchedulingManager`. No product policy (reminder clock / BG scheduling live on `SchedulingManager`).
+
+```swift
+protocol UserNotificationCenterServiceProtocol {
+    func authorizationStatus(completion: @escaping (NotificationAuthorizationStatus) -> Void)
+    func requestAlertAuthorization(completion: @escaping (Bool) -> Void)
+    func add(_ request: UNNotificationRequest, completion: ((Error?) -> Void)?)
+    func removePendingNotificationRequests(withIdentifiers identifiers: [String])
+}
+```
+
+- Authorize alerts only, add pending requests, remove by id, read authorization status
 
 ### Request/Response DTOs
 

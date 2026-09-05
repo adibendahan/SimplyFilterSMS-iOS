@@ -91,11 +91,13 @@ Reason 1 is an intentional stretch. Say it anyway.
 
 If they deny the system dialog, stay quiet. Refresh can still run.
 
-### 6. Thin wrappers, not a new coordinator
+### 6. `SchedulingManager` owns BG + reminder policy; notifications stay a dumb pipe
 
-Keep work on `AppManager` + `AutomaticFilterManager`. Add `UserNotificationSchedulingProtocol` + `UserNotificationCenterScheduler` (mock in tests) for authorize / pending / add / remove. Do not add a second “maintenance manager.”
+`SchedulingManager` (+ protocol + mock) owns: schedule/handle `BGProcessingTask`, sync/cancel the monthly inactivity reminder, and explainer → request alerts → sync reminder. It holds `AutomaticFilterManager` for the fetch path and `UserNotificationCenterServiceProtocol` / `UserNotificationCenterService` (Services Layer) as an injectable UN collaborator (authorize / pending / add / remove only).
 
-**Why:** Matches existing manager + protocol + `mock_*` layout. BackgroundTasks itself is awkward to unit-test; test the decision helpers (should show explainer, should schedule reminder, next `earliestBeginDate`).
+`AppManager` composes `schedulingManager` and calls `scheduleAutomaticFiltersProcessing()` from `onAppLaunch()`. `AppDelegate` registers the handler and forwards to `AppManager.shared.schedulingManager.handleAutomaticFiltersProcessing`. `FlowManager` stays queue-only (explainer token). `AutomaticFilterManager` stays S3/cache fetch.
+
+**Why:** Scheduling policy is not AppManager’s job and not a forever-thin notification adapter. Matches existing manager + protocol + `mock_*` layout. BackgroundTasks itself is awkward to unit-test; test reminder decisions and next `earliestBeginDate` on `SchedulingManager`.
 
 ### 7. monthly banner matches the explainer
 

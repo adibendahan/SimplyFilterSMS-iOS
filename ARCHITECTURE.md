@@ -53,16 +53,18 @@ AppManager (Singleton)
 │   └── app: PersistanceManager (live context) / extension: owned App Group store
 ├── AutomaticFilterManager ─── Community filter lists
 │   └── depends on: PersistanceManager, AmazonS3Service
+├── SchedulingManager ─────── BG processing + inactivity reminder
+│   └── depends on: AutomaticFilterManager, UserNotificationCenterService
 ├── TipJarManager ─────────── StoreKit 2 IAP
 ├── FilterTransferManager ── Merge-only import/export
 │   └── depends on: PersistanceManager
 ├── FlowManager ────────────── Launch-order queue
 │   └── depends on: DefaultsManager
-├── UserNotificationCenterScheduler ── Local notifications (protocol)
 ├── AmazonS3Service ────────── HTTP → S3
 │   └── depends on: NetworkSyncManager
-└── ReportMessageService ───── HTTP → Lambda
-    └── depends on: NetworkSyncManager
+├── ReportMessageService ───── HTTP → Lambda
+│   └── depends on: NetworkSyncManager
+└── UserNotificationCenterService ── UNUserNotificationCenter gateway
 ```
 
 ## Message Evaluation Pipeline

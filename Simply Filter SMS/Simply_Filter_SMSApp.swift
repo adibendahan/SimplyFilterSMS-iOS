@@ -36,7 +36,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 task.setTaskCompleted(success: false)
                 return
             }
-            AppManager.shared.handleAutomaticFiltersProcessing(task: processingTask)
+            AppManager.shared.schedulingManager.handleAutomaticFiltersProcessing(task: processingTask)
         }
         
         if !self.didRegisterForRemoteNotifications {

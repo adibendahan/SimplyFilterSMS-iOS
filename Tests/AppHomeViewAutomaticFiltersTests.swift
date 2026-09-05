@@ -12,7 +12,7 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
     private var appManager: mock_AppManager!
     private var defaultsManager: mock_DefaultsManager!
     private var automaticFilterManager: mock_AutomaticFilterManager!
-    private var notifications: mock_UserNotificationScheduling!
+    private var schedulingManager: mock_SchedulingManager!
     private var flowManager: mock_FlowManager!
     private var isAutomaticFilteringOn = false
 
@@ -22,7 +22,7 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
         self.appManager = mock_AppManager()
         self.defaultsManager = mock_DefaultsManager()
         self.automaticFilterManager = mock_AutomaticFilterManager()
-        self.notifications = mock_UserNotificationScheduling()
+        self.schedulingManager = mock_SchedulingManager()
         self.flowManager = mock_FlowManager()
 
         self.defaultsManager.isAppFirstRunClosure = { false }
@@ -36,13 +36,13 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
 
         self.appManager.defaultsManager = self.defaultsManager
         self.appManager.automaticFilterManager = self.automaticFilterManager
-        self.appManager.userNotificationScheduling = self.notifications
+        self.appManager.schedulingManager = self.schedulingManager
         self.appManager.flowManager = self.flowManager
     }
 
     override func tearDown() {
         self.flowManager = nil
-        self.notifications = nil
+        self.schedulingManager = nil
         self.automaticFilterManager = nil
         self.defaultsManager = nil
         self.appManager = nil
@@ -51,7 +51,7 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
 
     func test_alreadyAuthorized_setsExplainerFlagAndSyncsWithoutAlert() {
         self.isAutomaticFilteringOn = true
-        self.notifications.authorizationStatusValue = .authorized
+        self.schedulingManager.authorizationStatusValue = .authorized
 
         let model = AppHomeView.ViewModel(appManager: self.appManager)
         self.appManager.resetCounters()
@@ -59,25 +59,25 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
 
         XCTAssertTrue(self.defaultsManager.didShowAutomaticFiltersNotificationExplainer)
         XCTAssertFalse(model.showNotificationPermissionAlert)
-        XCTAssertGreaterThan(self.appManager.syncInactivityReminderCounter, 0)
-        XCTAssertEqual(self.appManager.requestNotificationAuthorizationFromExplainerCounter, 0)
+        XCTAssertGreaterThan(self.schedulingManager.syncInactivityReminderCounter, 0)
+        XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 0)
     }
 
     func test_explainerAlreadyShown_skipsAlert() {
         self.isAutomaticFilteringOn = true
-        self.notifications.authorizationStatusValue = .notDetermined
+        self.schedulingManager.authorizationStatusValue = .notDetermined
         self.defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
 
         let model = AppHomeView.ViewModel(appManager: self.appManager)
         model.handleSceneBecameActive()
 
         XCTAssertFalse(model.showNotificationPermissionAlert)
-        XCTAssertEqual(self.appManager.requestNotificationAuthorizationFromExplainerCounter, 0)
+        XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 0)
     }
 
     func test_notNow_doesNotRequestAuthorization() {
         self.isAutomaticFilteringOn = true
-        self.notifications.authorizationStatusValue = .notDetermined
+        self.schedulingManager.authorizationStatusValue = .notDetermined
 
         let model = AppHomeView.ViewModel(appManager: self.appManager)
         model.showNotificationPermissionAlert = true
@@ -85,6 +85,6 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
 
         XCTAssertFalse(model.showNotificationPermissionAlert)
         XCTAssertTrue(self.defaultsManager.didShowAutomaticFiltersNotificationExplainer)
-        XCTAssertEqual(self.appManager.requestNotificationAuthorizationFromExplainerCounter, 0)
+        XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 0)
     }
 }

@@ -36,17 +36,19 @@ Three-layer clean architecture with protocol-based dependency injection:
 - **MessageEvaluationManager** — Core filtering engine. App uses `init(persistanceManager:)` (live context across `reloadContainer()`). Extension/tests use `init(inMemory:)` with a synchronously loaded owned App Group store (`kOwnedStoreLoadTimeout`).
 - **PersistanceManager** — CoreData CRUD operations for `Filter`, `AutomaticFiltersRule`, `AutomaticFiltersLanguage` entities.
 - **AutomaticFilterManager** — Fetches community filter lists from S3, applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown, country allowlist). S3 fetch completions hop to the MainActor before Core Data cache writes.
+- **SchedulingManager** — Background `BGProcessingTask` for AI list refresh, monthly inactivity reminder, and notification permission after the Home explainer. Uses `UserNotificationCenterService` as a dumb UN pipe.
 - **DefaultsManager** — UserDefaults wrapper for app settings. Custom accent is `@StoredDefault("accentColorRGB", defaultValue: kNoColorDict)`.
 - **NetworkSyncManager** — NWPathMonitor + CloudKit sync status tracking (setup retries; pending retry cancelled if network recovery reloads first). `reloadContainer()` posts `.persistentStoreReloaded`; screens use `.modifier(persistentStoreReload)`.
 - **TipJarManager** — StoreKit 2 in-app purchase manager for consumable tip jar products.
 - **FilterTransferManager** — Merge-only filter import/export (`.sfsfilters`). Holds one in-flight picker (`pendingPreview` / `pendingKind`); Home presents `.filterImport` or `.filterExport`. Writes/deletes export files in the temp directory.
-- **FlowManager** — Launch-order queue (not a navigator). Occupancy: `next()` sets `activeScreen`; further `next()` is nil until `complete`. Order: first run → launch (file/deep link) → automatic What's New → user `request`.
+- **FlowManager** — Launch-order queue (not a navigator). Occupancy: `next()` sets `activeScreen`; further `next()` is nil until `complete`. Order: first run → launch (file/deep link) → automatic What's New → notification permission explainer → user `request`.
 
 Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testability.
 
 ### Services Layer (`Simply Filter SMS/Services Layer/`)
 - **AmazonS3Service** — Fetches automatic filter lists from AWS S3.
 - **ReportMessageService** — Reports spam/ham to `https://api.ben-dahan.com/report` (public endpoint, no auth). Used by the in-app reporting UI. The Reporting Extension uses the same endpoint via iOS system delivery (`ILClassificationExtensionNetworkReportDestination`).
+- **UserNotificationCenterService** — Thin `UNUserNotificationCenter` gateway (auth status, request alerts, add/remove pending). Used by `SchedulingManager`.
 - **HTTPService** — Base class for HTTP requests with `URLRequestProtocol`.
 
 ### View Layer (`Simply Filter SMS/View Layer/`)

@@ -8,8 +8,8 @@
 
 - [x] 2.1 Append `Screen.notificationPermission` (fake screen: `EmptyView` `build()`, no deep link) and `FlowManager.enableNotificationPermissionExplainer()`; `next()` returns that case after What’s New and before user `request`
 - [x] 2.2 English source strings for title, message (stale filters + offload), Continue, Not Now — then localize
-- [x] 2.3 Add `UserNotificationSchedulingProtocol` + `UserNotificationCenterScheduler` (authorize alerts only, add, remove pending by id, read authorization status)
-- [x] 2.4 Add `mock_UserNotificationScheduling` for tests
+- [x] 2.3 Add `UserNotificationCenterServiceProtocol` + `UserNotificationCenterService` in Services Layer (authorize alerts only, add, remove pending by id, read authorization status)
+- [x] 2.4 Add `mock_UserNotificationCenterService` for tests
 - [x] 2.5 Continue → system alert prompt; Not Now → no system prompt; set `didShowAutomaticFiltersNotificationExplainer` so the alert never returns; never call `requestAuthorization` from launch or from a toggle
 - [x] 2.6 When App Home is shown, if AI Filtering is on, the explainer has not been shown, and alerts are not already allowed, call `enableNotificationPermissionExplainer()` then `presentNextFlow()`; if `next()` is the token, show the Home `.alert` (not `sheetScreen`). If alerts are already allowed, set the shown flag and skip — including after AI Filtering is turned off and on again.
 - [x] 2.7 On Continue / Not Now, `complete` the token and `presentNextFlow()`; do not present from the language toggle or `LanguageListView`
@@ -26,7 +26,7 @@
 - [x] 4.1 Register the `BGProcessingTask` handler in `AppDelegate.application(_:didFinishLaunchingWithOptions:)`
 - [x] 4.2 Submit one processing request with `requiresNetworkConnectivity` and `earliestBeginDate` = now + `kUpdateAutomaticFiltersMinDays` from `onAppLaunch` and again after the handler finishes
 - [x] 4.3 Handler calls `updateAutomaticFiltersIfNeeded()`, then `setTaskCompleted`, then reschedules; no second fetch pipeline
-- [x] 4.4 Expose scheduling / reminder hooks on `AppManagerProtocol`; keep `handleAutomaticFiltersProcessing` on concrete `AppManager` only
+- [x] 4.4 Add `SchedulingManager` (+ protocol + mock); AppManager composes it; AppDelegate handler forwards to `schedulingManager`
 
 ## 5. Tests
 
