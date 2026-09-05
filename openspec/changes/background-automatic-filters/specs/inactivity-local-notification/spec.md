@@ -31,82 +31,82 @@ The system SHALL cancel the inactivity notification when AI Filtering changes fr
 
 #### Scenario: AI Filtering turned on mid-session
 - **WHEN** the user turns on automatic filtering for a language so that AI Filtering becomes on
-- **THEN** the system SHALL NOT schedule or reschedule the inactivity notification until the next app startup (or until Continue grants alerts from the explainer)
+- **THEN** the system SHALL NOT schedule or reschedule the inactivity notification until the next app startup (or until Continue grants alerts from the inactivity notification)
 
 ### Requirement: Explain before the system notification prompt
 The system SHALL NOT call the iOS notification authorization prompt unless the user has continued from an in-app alert (not a full screen) that asks for notification permission so the app can remind them to open it, and that states AI filters may go stale if the app is never opened, and that iOS may offload the app if it is never opened.
 
 #### Scenario: Existing user opens this version with AI Filtering on
-- **WHEN** App Home is shown, AI Filtering is on, the explainer may still be asked, and alert permission is not already granted
-- **THEN** the system SHALL enable the explainer in `FlowManager`
-- **AND** the explainer SHALL wait behind first-run, launch, and What’s New
-- **AND** when `FlowManager.next()` returns `.notificationPermission`, App Home SHALL show the explainer alert (not a sheet)
+- **WHEN** App Home is shown, AI Filtering is on, the inactivity notification may still be asked, and alert permission is not already granted
+- **THEN** the system SHALL enable the inactivity notification in `FlowManager`
+- **AND** the inactivity notification SHALL wait behind first-run, launch, and What’s New
+- **AND** when `FlowManager.next()` returns `.inactivityNotification`, App Home SHALL show the inactivity notification alert (not a sheet)
 - **AND** the system SHALL NOT show the iOS notification prompt until they tap Continue
 
 #### Scenario: User turns AI Filtering on then returns to Home
 - **WHEN** the user turns AI Filtering on from the language list, asks remain available, and alert permission is not already granted
-- **THEN** the system SHALL NOT present the explainer on that screen
+- **THEN** the system SHALL NOT present the inactivity notification on that screen
 - **AND WHEN** App Home is shown after that (same session pop, or a later launch)
-- **THEN** the system SHALL enable the explainer in `FlowManager` and present it when the queue is free
+- **THEN** the system SHALL enable the inactivity notification in `FlowManager` and present it when the queue is free
 - **AND** the system SHALL NOT show the iOS notification prompt until they tap Continue
 
 #### Scenario: Alert permission already granted
 - **WHEN** App Home is shown, AI Filtering is on, and notification alert permission is already granted
-- **THEN** the system SHALL NOT enable the explainer
-- **AND** the system SHALL NOT show the explainer alert or the iOS notification prompt
+- **THEN** the system SHALL NOT enable the inactivity notification
+- **AND** the system SHALL NOT show the inactivity notification alert or the iOS notification prompt
 - **AND** the system SHALL record that permission was granted so it does not appear later while still allowed
 
 #### Scenario: AI Filtering turned off then on after permission already granted
 - **WHEN** the user turns AI Filtering off and then on again, and notification alert permission is already granted
-- **THEN** the system SHALL NOT show the explainer alert or the iOS notification prompt
+- **THEN** the system SHALL NOT show the inactivity notification alert or the iOS notification prompt
 
 #### Scenario: Another Home sheet is already up
-- **WHEN** the explainer is enabled while a first-run, launch, or What’s New sheet is active
+- **WHEN** the inactivity notification is enabled while a first-run, launch, or What’s New sheet is active
 - **THEN** `FlowManager.next()` SHALL return nil until that sheet is completed
-- **AND** the explainer SHALL show after `complete` of the earlier screen
+- **AND** the inactivity notification SHALL show after `complete` of the earlier screen
 
 #### Scenario: Continue
-- **WHEN** the user taps Continue on the explainer
+- **WHEN** the user taps Continue on the inactivity notification
 - **THEN** the system SHALL request notification authorization with alerts (no badge, no sound)
 - **AND WHEN** the system grants alerts
-- **THEN** the system SHALL remember permission was granted and SHALL NOT show the explainer again while alerts remain allowed
+- **THEN** the system SHALL remember permission was granted and SHALL NOT show the inactivity notification again while alerts remain allowed
 - **AND WHEN** the system denies alerts
 - **THEN** the system SHALL record a decline for that ask (same as Not Now / Stop Asking)
 
 #### Scenario: Not Now on ask 1 or 2
-- **WHEN** the user taps Not Now on explainer ask 1 or 2
+- **WHEN** the user taps Not Now on ask 1 or 2
 - **THEN** the system SHALL NOT request notification authorization
 - **AND** the system SHALL increment the ask count and store the current `sessionCounter`
-- **AND** the system SHALL NOT show the explainer again until `sessionCounter` has advanced by at least 3
+- **AND** the system SHALL NOT show the inactivity notification again until `sessionCounter` has advanced by at least 3
 
 #### Scenario: Stop Asking on ask 3
-- **WHEN** the user is on explainer ask 3
+- **WHEN** the user is on ask 3
 - **THEN** the dismiss button SHALL be Stop Asking (not Not Now)
 - **AND WHEN** the user taps Stop Asking
 - **THEN** the system SHALL NOT request notification authorization
-- **AND** the system SHALL NOT show the explainer again unless notification permission is later revoked after having been granted
+- **AND** the system SHALL NOT show the inactivity notification again unless notification permission is later revoked after having been granted
 
 #### Scenario: Max asks reached
-- **WHEN** the explainer has been declined 3 times
+- **WHEN** the inactivity notification has been declined 3 times
 - **THEN** the system SHALL NOT present it again
 - **AND** the system SHALL NOT call the iOS notification prompt from launch or from an AI Filtering toggle
 
 #### Scenario: Alerts already allowed
-- **WHEN** App Home evaluates the explainer and alert permission is already granted
-- **THEN** the system SHALL remember permission was granted, sync the inactivity reminder, and SHALL NOT show the explainer
+- **WHEN** App Home evaluates the inactivity notification and alert permission is already granted
+- **THEN** the system SHALL remember permission was granted, sync the inactivity reminder, and SHALL NOT show the inactivity notification
 
 #### Scenario: Permission revoked after grant
 - **WHEN** the system previously recorded that alerts were granted
 - **AND** alert permission is no longer allowed
 - **THEN** the system SHALL reset the ask count and last-declined session
-- **AND** the system MAY show the explainer again from ask 1
+- **AND** the system MAY show the inactivity notification again from ask 1
 
 #### Scenario: User denied alerts with no further asks
 - **WHEN** the user has denied notification permission and asks are exhausted (or Stop Asking)
 - **THEN** the system SHALL NOT schedule the inactivity notification
 - **AND** background refresh scheduling SHALL still be attempted
 
-### Requirement: Monthly banner matches the explainer
+### Requirement: Monthly banner matches the inactivity notification alert
 The inactivity notification SHALL say that AI filters may be out of date and that the user can open the app to refresh. Tapping it SHALL open the app to the normal Home launch.
 
 #### Scenario: Notification is delivered

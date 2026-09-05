@@ -35,15 +35,15 @@ class SchedulingManager: SchedulingManagerProtocol {
         }
     }
 
-    private var isFinalNotificationExplainerAsk: Bool {
-        self.defaultsManager.automaticFiltersNotificationExplainerAskCount
-            == kAutomaticFiltersNotificationExplainerMaxAsks - 1
+    private var isFinalInactivityNotificationAsk: Bool {
+        self.defaultsManager.inactivityNotificationAskCount
+            == kInactivityNotificationMaxAsks - 1
     }
 
-    var notificationExplainerDismissTitle: String {
-        self.isFinalNotificationExplainerAsk
-            ? "autoFilter_notificationExplainer_stopAsking"~
-            : "autoFilter_notificationExplainer_notNow"~
+    var inactivityNotificationDismissTitle: String {
+        self.isFinalInactivityNotificationAsk
+            ? "inactivityNotification_stopAsking"~
+            : "inactivityNotification_notNow"~
     }
 
     func scheduleAutomaticFiltersProcessing() {
@@ -95,59 +95,59 @@ class SchedulingManager: SchedulingManagerProtocol {
             withIdentifiers: [kAutomaticFiltersInactivityNotificationId])
     }
 
-    func shouldShowNotificationPermissionExplainer() async -> Bool {
+    func shouldShowInactivityNotification() async -> Bool {
         let status = await self.notificationAuthorizationStatus()
         guard self.automaticFilterManager.isAutomaticFilteringOn else { return false }
         if status.allowsAlerts {
-            self.markNotificationPermissionGranted()
+            self.markInactivityNotificationGranted()
             return false
         }
-        if self.defaultsManager.automaticFiltersNotificationPermissionWasGranted {
-            self.resetNotificationExplainerAsks()
+        if self.defaultsManager.inactivityNotificationWasGranted {
+            self.resetInactivityNotificationAsks()
         }
-        let askCount = self.defaultsManager.automaticFiltersNotificationExplainerAskCount
+        let askCount = self.defaultsManager.inactivityNotificationAskCount
         let sessionsSinceDecline = self.defaultsManager.sessionCounter
-            - self.defaultsManager.automaticFiltersNotificationExplainerLastDeclinedSession
-        guard askCount < kAutomaticFiltersNotificationExplainerMaxAsks,
-              askCount == 0 || sessionsSinceDecline >= kAutomaticFiltersNotificationExplainerMinSessionsBetweenAsks else {
+            - self.defaultsManager.inactivityNotificationDeclinedSession
+        guard askCount < kInactivityNotificationMaxAsks,
+              askCount == 0 || sessionsSinceDecline >= kInactivityNotificationMinSessionsBetweenAsks else {
             return false
         }
         return true
     }
 
-    func recordNotificationExplainerDecline() {
-        if self.isFinalNotificationExplainerAsk {
-            self.defaultsManager.automaticFiltersNotificationExplainerAskCount = kAutomaticFiltersNotificationExplainerMaxAsks
+    func recordInactivityNotificationDecline() {
+        if self.isFinalInactivityNotificationAsk {
+            self.defaultsManager.inactivityNotificationAskCount = kInactivityNotificationMaxAsks
         } else {
-            self.defaultsManager.automaticFiltersNotificationExplainerAskCount += 1
-            self.defaultsManager.automaticFiltersNotificationExplainerLastDeclinedSession = self.defaultsManager.sessionCounter
+            self.defaultsManager.inactivityNotificationAskCount += 1
+            self.defaultsManager.inactivityNotificationDeclinedSession = self.defaultsManager.sessionCounter
         }
     }
 
-    func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void) {
+    func requestInactivityNotificationAuthorization(completion: @escaping (Bool) -> Void) {
         self.userNotificationCenterService.requestAlertAuthorization { [weak self] granted in
             guard let self else {
                 completion(granted)
                 return
             }
             if granted {
-                self.markNotificationPermissionGranted()
+                self.markInactivityNotificationGranted()
             } else {
-                self.recordNotificationExplainerDecline()
+                self.recordInactivityNotificationDecline()
             }
             completion(granted)
         }
     }
 
-    private func markNotificationPermissionGranted() {
-        self.defaultsManager.automaticFiltersNotificationPermissionWasGranted = true
+    private func markInactivityNotificationGranted() {
+        self.defaultsManager.inactivityNotificationWasGranted = true
         self.syncInactivityReminder()
     }
 
-    private func resetNotificationExplainerAsks() {
-        self.defaultsManager.automaticFiltersNotificationPermissionWasGranted = false
-        self.defaultsManager.automaticFiltersNotificationExplainerAskCount = 0
-        self.defaultsManager.automaticFiltersNotificationExplainerLastDeclinedSession = 0
+    private func resetInactivityNotificationAsks() {
+        self.defaultsManager.inactivityNotificationWasGranted = false
+        self.defaultsManager.inactivityNotificationAskCount = 0
+        self.defaultsManager.inactivityNotificationDeclinedSession = 0
     }
 
     private func notificationAuthorizationStatus() async -> NotificationAuthorizationStatus {
@@ -160,8 +160,8 @@ class SchedulingManager: SchedulingManagerProtocol {
 
     private func scheduleInactivityReminder() {
         let content = UNMutableNotificationContent()
-        content.title = "autoFilter_inactivityNotification_title"~
-        content.body = "autoFilter_inactivityNotification_body"~
+        content.title = "inactivityNotification_reminder_title"~
+        content.body = "inactivityNotification_reminder_body"~
         guard let trigger = self.monthlyRepeatingTrigger() else { return }
         let request = UNNotificationRequest(identifier: kAutomaticFiltersInactivityNotificationId,
                                             content: content,

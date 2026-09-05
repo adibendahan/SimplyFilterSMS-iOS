@@ -207,15 +207,15 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         } message: {
             Text("importFilters_nothingToAdd"~)
         }
-        .alert("autoFilter_notificationExplainer_title"~, isPresented: self.$model.showNotificationPermissionAlert) {
-            Button("autoFilter_notificationExplainer_continue"~) {
-                self.model.continueNotificationPermissionExplainer()
+        .alert("inactivityNotification_title"~, isPresented: self.$model.showInactivityNotificationAlert) {
+            Button("inactivityNotification_continue"~) {
+                self.model.continueInactivityNotification()
             }
-            Button(self.model.appManager.schedulingManager.notificationExplainerDismissTitle, role: .cancel) {
-                self.model.dismissNotificationPermissionExplainer()
+            Button(self.model.appManager.schedulingManager.inactivityNotificationDismissTitle, role: .cancel) {
+                self.model.dismissInactivityNotification()
             }
         } message: {
-            Text("autoFilter_notificationExplainer_message"~)
+            Text("inactivityNotification_message"~)
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active, !isPreview {
@@ -572,9 +572,9 @@ extension AppHomeView {
                 }
             }
         }
-        @Published var showNotificationPermissionAlert = false {
+        @Published var showInactivityNotificationAlert = false {
             didSet {
-                if oldValue && !self.showNotificationPermissionAlert {
+                if oldValue && !self.showInactivityNotificationAlert {
                     self.showPendingNotification()
                 }
             }
@@ -732,8 +732,8 @@ extension AppHomeView {
                 self.showPendingNotification()
                 return
             }
-            if screen == .notificationPermission {
-                self.showNotificationPermissionAlert = true
+            if screen == .inactivityNotification {
+                self.showInactivityNotificationAlert = true
                 return
             }
             if screen == .filterImport,
@@ -753,50 +753,50 @@ extension AppHomeView {
 
         func handleSceneBecameActive() {
             self.appManager.schedulingManager.syncInactivityReminder()
-            self.considerNotificationPermissionExplainer()
+            self.considerInactivityNotification()
         }
 
         func handleReturnedToHome() {
-            self.considerNotificationPermissionExplainer()
+            self.considerInactivityNotification()
             self.presentNextFlow()
         }
 
-        func continueNotificationPermissionExplainer() {
-            self.showNotificationPermissionAlert = false
-            self.appManager.flowManager.complete(.notificationPermission)
-            self.appManager.schedulingManager.requestNotificationAuthorizationFromExplainer { [weak self] _ in
+        func continueInactivityNotification() {
+            self.showInactivityNotificationAlert = false
+            self.appManager.flowManager.complete(.inactivityNotification)
+            self.appManager.schedulingManager.requestInactivityNotificationAuthorization { [weak self] _ in
                 self?.presentNextFlow()
             }
         }
 
-        func dismissNotificationPermissionExplainer() {
-            self.appManager.schedulingManager.recordNotificationExplainerDecline()
-            self.showNotificationPermissionAlert = false
-            self.appManager.flowManager.complete(.notificationPermission)
+        func dismissInactivityNotification() {
+            self.appManager.schedulingManager.recordInactivityNotificationDecline()
+            self.showInactivityNotificationAlert = false
+            self.appManager.flowManager.complete(.inactivityNotification)
             self.presentNextFlow()
         }
 
-        private func considerNotificationPermissionExplainer() {
+        private func considerInactivityNotification() {
             guard self.navigationScreen == nil,
                   !self.appManager.defaultsManager.isAppFirstRun else { return }
 
             Task { @MainActor [weak self] in
-                await self?.presentNotificationPermissionExplainerIfNeeded()
+                await self?.presentInactivityNotificationIfNeeded()
             }
         }
 
         @MainActor
-        func presentNotificationPermissionExplainerIfNeeded() async {
-            guard await self.appManager.schedulingManager.shouldShowNotificationPermissionExplainer(),
+        func presentInactivityNotificationIfNeeded() async {
+            guard await self.appManager.schedulingManager.shouldShowInactivityNotification(),
                   self.navigationScreen == nil else { return }
-            self.appManager.flowManager.enableNotificationPermissionExplainer()
+            self.appManager.flowManager.enableInactivityNotification()
             self.presentNextFlow()
         }
 
         private func runLaunchFlowIfNeeded() {
             self.startMonitoring()
             self.enableWhatsNewAndPresent()
-            self.considerNotificationPermissionExplainer()
+            self.considerInactivityNotification()
             self.tryShowTipPromotion()
             self.tryShowReportingExtensionNudge()
         }
@@ -1013,7 +1013,7 @@ extension AppHomeView {
         private var pendingNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
         private var isBlockingHomeAlertPresented: Bool {
-            return self.showNothingToImportAlert || self.showNotificationPermissionAlert
+            return self.showNothingToImportAlert || self.showInactivityNotificationAlert
         }
         private var userIgnoresNetworkStatus: Bool {
             guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }

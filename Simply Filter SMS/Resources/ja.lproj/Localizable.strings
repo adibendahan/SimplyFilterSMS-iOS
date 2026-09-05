@@ -522,19 +522,19 @@
 
 "autoFilter_improveAIFiltering" = "AIフィルタリングを改善";
 
-"autoFilter_notificationExplainer_title" = "AIフィルタリングを維持";
+"inactivityNotification_title" = "AIフィルタリングを維持";
 
-"autoFilter_notificationExplainer_message" = "アプリを開くようお知らせできるよう、通知を許可してください。長く開かないとAIフィルタが古くなり、iOSがアプリを削除することがあり、戻るまでフィルタが止まる場合があります。";
+"inactivityNotification_message" = "アプリを開くようお知らせできるよう、通知を許可してください。長く開かないとAIフィルタが古くなり、iOSがアプリを削除することがあり、戻るまでフィルタが止まる場合があります。";
 
-"autoFilter_notificationExplainer_continue" = "続ける";
+"inactivityNotification_continue" = "続ける";
 
-"autoFilter_notificationExplainer_notNow" = "今はしない";
+"inactivityNotification_notNow" = "今はしない";
 
-"autoFilter_notificationExplainer_stopAsking" = "今後聞かない";
+"inactivityNotification_stopAsking" = "今後聞かない";
 
-"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+"inactivityNotification_reminder_title" = "Simply Filter SMS";
 
-"autoFilter_inactivityNotification_body" = "AIフィルタが古い可能性があります。アプリを開いて更新してください。";
+"inactivityNotification_reminder_body" = "AIフィルタが古い可能性があります。アプリを開いて更新してください。";
 
 "menu_filters" = "フィルタ";
 

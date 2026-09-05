@@ -522,19 +522,19 @@
 
 "autoFilter_improveAIFiltering" = "Mejorar filtrado de IA";
 
-"autoFilter_notificationExplainer_title" = "Mantén el filtrado con IA funcionando";
+"inactivityNotification_title" = "Mantén el filtrado con IA funcionando";
 
-"autoFilter_notificationExplainer_message" = "Permite las notificaciones para que podamos recordarte abrir la app. Si nunca la abres, los filtros de IA pueden quedar desactualizados y iOS puede descargar la app; entonces el filtrado se detiene hasta que vuelvas.";
+"inactivityNotification_message" = "Permite las notificaciones para que podamos recordarte abrir la app. Si nunca la abres, los filtros de IA pueden quedar desactualizados y iOS puede descargar la app; entonces el filtrado se detiene hasta que vuelvas.";
 
-"autoFilter_notificationExplainer_continue" = "Continuar";
+"inactivityNotification_continue" = "Continuar";
 
-"autoFilter_notificationExplainer_notNow" = "Ahora no";
+"inactivityNotification_notNow" = "Ahora no";
 
-"autoFilter_notificationExplainer_stopAsking" = "Dejar de preguntar";
+"inactivityNotification_stopAsking" = "Dejar de preguntar";
 
-"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+"inactivityNotification_reminder_title" = "Simply Filter SMS";
 
-"autoFilter_inactivityNotification_body" = "Los filtros de IA pueden estar desactualizados: abre la app para actualizarlos.";
+"inactivityNotification_reminder_body" = "Los filtros de IA pueden estar desactualizados: abre la app para actualizarlos.";
 
 "menu_filters" = "Filtros";
 

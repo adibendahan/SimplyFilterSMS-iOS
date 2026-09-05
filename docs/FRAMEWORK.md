@@ -66,7 +66,7 @@ static let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", ca
 
 **Files:** `Framework Layer/Managers/SchedulingManager.swift`, `Protocols/SchedulingManagerProtocol.swift`
 
-Owns background processing, the monthly inactivity reminder, and notification-explainer cadence for AI Filtering. AppManager composes it; Home and AppDelegate call through `schedulingManager`.
+Owns background processing, the monthly inactivity reminder, and inactivity-notification ask cadence for AI Filtering. AppManager composes it; Home and AppDelegate call through `schedulingManager`.
 
 ### Protocol
 
@@ -76,14 +76,14 @@ protocol SchedulingManagerProtocol {
     func handleAutomaticFiltersProcessing(task: BGProcessingTask)
     func syncInactivityReminder()
     func cancelInactivityReminder()
-    var notificationExplainerDismissTitle: String { get }
+    var inactivityNotificationDismissTitle: String { get }
     func scheduleAutomaticFiltersProcessing()
     func handleAutomaticFiltersProcessing(task: BGProcessingTask)
     func syncInactivityReminder()
     func cancelInactivityReminder()
-    func shouldShowNotificationPermissionExplainer() async -> Bool
-    func recordNotificationExplainerDecline()
-    func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void)
+    func shouldShowInactivityNotification() async -> Bool
+    func recordInactivityNotificationDecline()
+    func requestInactivityNotificationAuthorization(completion: @escaping (Bool) -> Void)
 }
 ```
 
@@ -92,9 +92,9 @@ protocol SchedulingManagerProtocol {
 - `scheduleAutomaticFiltersProcessing()` / `handleAutomaticFiltersProcessing(task:)` — Idle/overnight `BGProcessingTask` fetch of AI lists (`requiresNetworkConnectivity`, `earliestBeginDate` = now + `kUpdateAutomaticFiltersMinDays`). Handler registered from `AppDelegate`; reschedules after completion.
 - `syncInactivityReminder()` — Startup-only: cancel then reschedule the monthly local reminder when AI Filtering is on and alerts are allowed.
 - `cancelInactivityReminder()` — Drop the pending reminder. Also runs when `.filtersStateChanged` fires while AI Filtering is off.
-- `shouldShowNotificationPermissionExplainer()` — Up to 3 asks; ≥3 `sessionCounter` gap after declines; marks grant / resets on revoke.
-- `notificationExplainerDismissTitle` — Localized Not Now / Stop Asking from current ask count.
-- `recordNotificationExplainerDecline` / `requestNotificationAuthorizationFromExplainer` — Not Now / Stop Asking / system deny update ask state; grant marks permission and syncs reminder.
+- `shouldShowInactivityNotification()` — Up to 3 asks; ≥3 `sessionCounter` gap after declines; marks grant / resets on revoke.
+- `inactivityNotificationDismissTitle` — Localized Not Now / Stop Asking from current ask count.
+- `recordInactivityNotificationDecline` / `requestInactivityNotificationAuthorization` — Not Now / Stop Asking / system deny update ask state; grant marks permission and syncs reminder.
 - Collaborator: `UserNotificationCenterServiceProtocol` / `UserNotificationCenterService` (authorize / add / remove pending only).
 
 ---
@@ -312,9 +312,9 @@ protocol DefaultsManagerProtocol {
     var didPromptForReview: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
     var didDismissReportingExtensionNudge: Bool { get set }
-    var automaticFiltersNotificationExplainerAskCount: Int { get set }
-    var automaticFiltersNotificationExplainerLastDeclinedSession: Int { get set }
-    var automaticFiltersNotificationPermissionWasGranted: Bool { get set }
+    var inactivityNotificationAskCount: Int { get set }
+    var inactivityNotificationDeclinedSession: Int { get set }
+    var inactivityNotificationWasGranted: Bool { get set }
     var accentColorRGB: [String: Double] { get set }
     var appAge: Date { get }
     #if DEBUG
@@ -327,12 +327,12 @@ protocol DefaultsManagerProtocol {
 
 - `isAppFirstRun` — Controls onboarding display. Set to `false` after first dismiss.
 - `isExpandedAddFilter` — Persists the expand/collapse state of AddFilterView's advanced options.
-- `sessionCounter` / `sessionAge` — Track user sessions for review prompt logic and notification-explainer re-ask gaps.
+- `sessionCounter` / `sessionAge` — Track user sessions for review prompt logic and inactivity-notification re-ask gaps.
 - `appAge` — First launch date. Initialized once, never changes.
 - `didPromptForReview` — Ensures App Store review prompt is shown only once.
 - `lastOfflineNotificationDismiss` — Suppresses offline notification for `kHideiClouldStatusMemory` (60) minutes after dismiss.
 - `lastSeenWhatsNewVersion` — Tracks the last What's New version the user has seen. Compared against `currentWhatsNewVersion` to decide whether to show the What's New sheet.
-- `automaticFiltersNotificationExplainerAskCount` / `…LastDeclinedSession` / `…PermissionWasGranted` — Explainer cadence owned by `SchedulingManager` (max 3 asks, ≥3 sessions between declines, revoke resets).
+- `inactivityNotificationAskCount` / `inactivityNotificationDeclinedSession` / `inactivityNotificationWasGranted` — Ask cadence owned by `SchedulingManager` (max 3 asks, ≥3 sessions between declines, revoke resets).
 - `accentColorRGB` — `@StoredDefault` dictionary (`kNoColorDict` = system accent). `Color(accentRGB:)` / `Color.accentRGB` convert. Debug `reset()` clears the key.
 
 ---

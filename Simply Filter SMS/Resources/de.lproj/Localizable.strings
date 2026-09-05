@@ -522,19 +522,19 @@
 
 "autoFilter_improveAIFiltering" = "KI-Filterung verbessern";
 
-"autoFilter_notificationExplainer_title" = "KI-Filterung aktiv halten";
+"inactivityNotification_title" = "KI-Filterung aktiv halten";
 
-"autoFilter_notificationExplainer_message" = "Erlaube Mitteilungen, damit wir dich daran erinnern können, die App zu öffnen. Wenn du sie lange nicht öffnest, können KI-Filter veralten und iOS die App auslagern - dann stoppt die Filterung, bis du zurückkommst.";
+"inactivityNotification_message" = "Erlaube Mitteilungen, damit wir dich daran erinnern können, die App zu öffnen. Wenn du sie lange nicht öffnest, können KI-Filter veralten und iOS die App auslagern - dann stoppt die Filterung, bis du zurückkommst.";
 
-"autoFilter_notificationExplainer_continue" = "Weiter";
+"inactivityNotification_continue" = "Weiter";
 
-"autoFilter_notificationExplainer_notNow" = "Nicht jetzt";
+"inactivityNotification_notNow" = "Nicht jetzt";
 
-"autoFilter_notificationExplainer_stopAsking" = "Nicht mehr fragen";
+"inactivityNotification_stopAsking" = "Nicht mehr fragen";
 
-"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+"inactivityNotification_reminder_title" = "Simply Filter SMS";
 
-"autoFilter_inactivityNotification_body" = "KI-Filter sind möglicherweise veraltet - öffne die App zum Aktualisieren.";
+"inactivityNotification_reminder_body" = "KI-Filter sind möglicherweise veraltet - öffne die App zum Aktualisieren.";
 
 "menu_filters" = "Filter";
 

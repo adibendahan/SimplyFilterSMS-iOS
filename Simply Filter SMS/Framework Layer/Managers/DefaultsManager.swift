@@ -36,14 +36,14 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("didDismissReportingExtensionNudge", defaultValue: false)
     var didDismissReportingExtensionNudge: Bool
 
-    @StoredDefault("automaticFiltersNotificationExplainerAskCount", defaultValue: 0)
-    var automaticFiltersNotificationExplainerAskCount: Int
+    @StoredDefault("inactivityNotificationAskCount", defaultValue: 0)
+    var inactivityNotificationAskCount: Int
 
-    @StoredDefault("automaticFiltersNotificationExplainerLastDeclinedSession", defaultValue: 0)
-    var automaticFiltersNotificationExplainerLastDeclinedSession: Int
+    @StoredDefault("inactivityNotificationDeclinedSession", defaultValue: 0)
+    var inactivityNotificationDeclinedSession: Int
 
-    @StoredDefault("automaticFiltersNotificationPermissionWasGranted", defaultValue: false)
-    var automaticFiltersNotificationPermissionWasGranted: Bool
+    @StoredDefault("inactivityNotificationWasGranted", defaultValue: false)
+    var inactivityNotificationWasGranted: Bool
 
     @StoredDefault("accentColorRGB", defaultValue: kNoColorDict)
     var accentColorRGB: [String: Double]
@@ -70,7 +70,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge", "automaticFiltersNotificationExplainerAskCount", "automaticFiltersNotificationExplainerLastDeclinedSession", "automaticFiltersNotificationPermissionWasGranted", "accentColorRGB"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge", "inactivityNotificationAskCount", "inactivityNotificationDeclinedSession", "inactivityNotificationWasGranted", "accentColorRGB"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)

@@ -340,19 +340,19 @@
 
 "autoFilter_improveAIFiltering" = "改进 AI 过滤";
 
-"autoFilter_notificationExplainer_title" = "保持 AI 过滤正常运行";
+"inactivityNotification_title" = "保持 AI 过滤正常运行";
 
-"autoFilter_notificationExplainer_message" = "请允许通知，以便我们提醒你打开 App。如果长时间不打开，AI 过滤可能会过期，iOS 也可能卸载 App，过滤会停止，直到你回来。";
+"inactivityNotification_message" = "请允许通知，以便我们提醒你打开 App。如果长时间不打开，AI 过滤可能会过期，iOS 也可能卸载 App，过滤会停止，直到你回来。";
 
-"autoFilter_notificationExplainer_continue" = "继续";
+"inactivityNotification_continue" = "继续";
 
-"autoFilter_notificationExplainer_notNow" = "暂时不要";
+"inactivityNotification_notNow" = "暂时不要";
 
-"autoFilter_notificationExplainer_stopAsking" = "不再询问";
+"inactivityNotification_stopAsking" = "不再询问";
 
-"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+"inactivityNotification_reminder_title" = "Simply Filter SMS";
 
-"autoFilter_inactivityNotification_body" = "AI 过滤可能已过期 - 打开 App 以刷新。";
+"inactivityNotification_reminder_body" = "AI 过滤可能已过期 - 打开 App 以刷新。";
 
 "general_search" = "搜索";
 

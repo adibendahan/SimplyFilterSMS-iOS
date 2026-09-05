@@ -12,7 +12,7 @@ import OSLog
 import UIKit
 
 class AppManager: AppManagerProtocol {
-    static let shared = AppManager()
+    static let shared: AppManagerProtocol = AppManager()
     static let logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
     
     var persistanceManager: PersistanceManagerProtocol

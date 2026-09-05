@@ -34,12 +34,12 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var lastSeenWhatsNewVersionSetCounter = 0
     var didDismissReportingExtensionNudgeGetCounter = 0
     var didDismissReportingExtensionNudgeSetCounter = 0
-    var automaticFiltersNotificationExplainerAskCountGetCounter = 0
-    var automaticFiltersNotificationExplainerAskCountSetCounter = 0
-    var automaticFiltersNotificationExplainerLastDeclinedSessionGetCounter = 0
-    var automaticFiltersNotificationExplainerLastDeclinedSessionSetCounter = 0
-    var automaticFiltersNotificationPermissionWasGrantedGetCounter = 0
-    var automaticFiltersNotificationPermissionWasGrantedSetCounter = 0
+    var inactivityNotificationAskCountGetCounter = 0
+    var inactivityNotificationAskCountSetCounter = 0
+    var inactivityNotificationDeclinedSessionGetCounter = 0
+    var inactivityNotificationDeclinedSessionSetCounter = 0
+    var inactivityNotificationWasGrantedGetCounter = 0
+    var inactivityNotificationWasGrantedSetCounter = 0
 
     var isAppFirstRunClosure: (() -> (Bool))?
     var isExpandedAddFilterClosure: (() -> (Bool))?
@@ -53,9 +53,9 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var lastSeenWhatsNewVersionClosure: (() -> (Int))?
     var didDismissReportingExtensionNudgeClosure: (() -> (Bool))?
     private var sessionCounterValue = 0
-    private var automaticFiltersNotificationExplainerAskCountValue = 0
-    private var automaticFiltersNotificationExplainerLastDeclinedSessionValue = 0
-    private var automaticFiltersNotificationPermissionWasGrantedValue = false
+    private var inactivityNotificationAskCountValue = 0
+    private var inactivityNotificationDeclinedSessionValue = 0
+    private var inactivityNotificationWasGrantedValue = false
 
     var isAppFirstRun: Bool {
         get {
@@ -168,36 +168,36 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
     }
 
-    var automaticFiltersNotificationExplainerAskCount: Int {
+    var inactivityNotificationAskCount: Int {
         get {
-            self.automaticFiltersNotificationExplainerAskCountGetCounter += 1
-            return self.automaticFiltersNotificationExplainerAskCountValue
+            self.inactivityNotificationAskCountGetCounter += 1
+            return self.inactivityNotificationAskCountValue
         }
         set {
-            self.automaticFiltersNotificationExplainerAskCountSetCounter += 1
-            self.automaticFiltersNotificationExplainerAskCountValue = newValue
+            self.inactivityNotificationAskCountSetCounter += 1
+            self.inactivityNotificationAskCountValue = newValue
         }
     }
 
-    var automaticFiltersNotificationExplainerLastDeclinedSession: Int {
+    var inactivityNotificationDeclinedSession: Int {
         get {
-            self.automaticFiltersNotificationExplainerLastDeclinedSessionGetCounter += 1
-            return self.automaticFiltersNotificationExplainerLastDeclinedSessionValue
+            self.inactivityNotificationDeclinedSessionGetCounter += 1
+            return self.inactivityNotificationDeclinedSessionValue
         }
         set {
-            self.automaticFiltersNotificationExplainerLastDeclinedSessionSetCounter += 1
-            self.automaticFiltersNotificationExplainerLastDeclinedSessionValue = newValue
+            self.inactivityNotificationDeclinedSessionSetCounter += 1
+            self.inactivityNotificationDeclinedSessionValue = newValue
         }
     }
 
-    var automaticFiltersNotificationPermissionWasGranted: Bool {
+    var inactivityNotificationWasGranted: Bool {
         get {
-            self.automaticFiltersNotificationPermissionWasGrantedGetCounter += 1
-            return self.automaticFiltersNotificationPermissionWasGrantedValue
+            self.inactivityNotificationWasGrantedGetCounter += 1
+            return self.inactivityNotificationWasGrantedValue
         }
         set {
-            self.automaticFiltersNotificationPermissionWasGrantedSetCounter += 1
-            self.automaticFiltersNotificationPermissionWasGrantedValue = newValue
+            self.inactivityNotificationWasGrantedSetCounter += 1
+            self.inactivityNotificationWasGrantedValue = newValue
         }
     }
 
@@ -210,12 +210,12 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         self.isExpandedAddFilterSetCounter = 0
         self.isFilterOptionsCollapsedGetCounter = 0
         self.isFilterOptionsCollapsedSetCounter = 0
-        self.automaticFiltersNotificationExplainerAskCountGetCounter = 0
-        self.automaticFiltersNotificationExplainerAskCountSetCounter = 0
-        self.automaticFiltersNotificationExplainerLastDeclinedSessionGetCounter = 0
-        self.automaticFiltersNotificationExplainerLastDeclinedSessionSetCounter = 0
-        self.automaticFiltersNotificationPermissionWasGrantedGetCounter = 0
-        self.automaticFiltersNotificationPermissionWasGrantedSetCounter = 0
+        self.inactivityNotificationAskCountGetCounter = 0
+        self.inactivityNotificationAskCountSetCounter = 0
+        self.inactivityNotificationDeclinedSessionGetCounter = 0
+        self.inactivityNotificationDeclinedSessionSetCounter = 0
+        self.inactivityNotificationWasGrantedGetCounter = 0
+        self.inactivityNotificationWasGrantedSetCounter = 0
     }
     
     func reset() { }

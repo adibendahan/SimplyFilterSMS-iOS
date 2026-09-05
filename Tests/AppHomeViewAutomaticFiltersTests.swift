@@ -51,60 +51,60 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
 
     @MainActor
     private func makeModel() async -> AppHomeView.ViewModel {
-        self.schedulingManager.shouldShowNotificationPermissionExplainerValue = false
+        self.schedulingManager.shouldShowInactivityNotificationValue = false
         let model = AppHomeView.ViewModel(appManager: self.appManager)
         await Task.yield()
         await Task.yield()
         self.appManager.resetCounters()
-        self.flowManager.enableNotificationPermissionExplainerCounter = 0
+        self.flowManager.enableInactivityNotificationCounter = 0
         self.schedulingManager.resetCounters()
         return model
     }
 
     @MainActor
-    func test_shouldShowFalse_doesNotEnableExplainer() async {
+    func test_shouldShowFalse_doesNotEnableInactivityNotification() async {
         self.isAutomaticFilteringOn = true
         let model = await self.makeModel()
-        self.schedulingManager.shouldShowNotificationPermissionExplainerValue = false
+        self.schedulingManager.shouldShowInactivityNotificationValue = false
 
-        await model.presentNotificationPermissionExplainerIfNeeded()
+        await model.presentInactivityNotificationIfNeeded()
 
-        XCTAssertFalse(model.showNotificationPermissionAlert)
-        XCTAssertEqual(self.flowManager.enableNotificationPermissionExplainerCounter, 0)
-        XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 0)
+        XCTAssertFalse(model.showInactivityNotificationAlert)
+        XCTAssertEqual(self.flowManager.enableInactivityNotificationCounter, 0)
+        XCTAssertEqual(self.schedulingManager.requestInactivityNotificationAuthorizationCounter, 0)
     }
 
     @MainActor
-    func test_shouldShowTrue_enablesExplainer() async {
+    func test_shouldShowTrue_enablesInactivityNotification() async {
         self.isAutomaticFilteringOn = true
         let model = await self.makeModel()
-        self.schedulingManager.shouldShowNotificationPermissionExplainerValue = true
-        self.flowManager.enableNotificationPermissionExplainerCounter = 0
+        self.schedulingManager.shouldShowInactivityNotificationValue = true
+        self.flowManager.enableInactivityNotificationCounter = 0
 
-        await model.presentNotificationPermissionExplainerIfNeeded()
+        await model.presentInactivityNotificationIfNeeded()
 
-        XCTAssertGreaterThanOrEqual(self.flowManager.enableNotificationPermissionExplainerCounter, 1)
+        XCTAssertGreaterThanOrEqual(self.flowManager.enableInactivityNotificationCounter, 1)
     }
 
     @MainActor
     func test_dismiss_recordsDecline() async {
         self.isAutomaticFilteringOn = true
         let model = await self.makeModel()
-        model.showNotificationPermissionAlert = true
-        model.dismissNotificationPermissionExplainer()
+        model.showInactivityNotificationAlert = true
+        model.dismissInactivityNotification()
 
-        XCTAssertFalse(model.showNotificationPermissionAlert)
-        XCTAssertEqual(self.schedulingManager.recordNotificationExplainerDeclineCounter, 1)
-        XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 0)
+        XCTAssertFalse(model.showInactivityNotificationAlert)
+        XCTAssertEqual(self.schedulingManager.recordInactivityNotificationDeclineCounter, 1)
+        XCTAssertEqual(self.schedulingManager.requestInactivityNotificationAuthorizationCounter, 0)
     }
 
     @MainActor
     func test_continue_requestsAuthorization() async {
         let model = await self.makeModel()
-        model.showNotificationPermissionAlert = true
-        model.continueNotificationPermissionExplainer()
+        model.showInactivityNotificationAlert = true
+        model.continueInactivityNotification()
 
-        XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 1)
-        XCTAssertEqual(self.schedulingManager.recordNotificationExplainerDeclineCounter, 0)
+        XCTAssertEqual(self.schedulingManager.requestInactivityNotificationAuthorizationCounter, 1)
+        XCTAssertEqual(self.schedulingManager.recordInactivityNotificationDeclineCounter, 0)
     }
 }

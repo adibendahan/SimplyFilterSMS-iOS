@@ -35,8 +35,8 @@ class FlowManager: FlowManagerProtocol {
         self.whatsNewEnabled = true
     }
 
-    func enableNotificationPermissionExplainer() {
-        self.notificationPermissionExplainerEnabled = true
+    func enableInactivityNotification() {
+        self.inactivityNotificationEnabled = true
     }
 
     func next() -> Screen? {
@@ -59,9 +59,9 @@ class FlowManager: FlowManagerProtocol {
             return .whatsNew
         }
 
-        if self.notificationPermissionExplainerEnabled {
-            self.activeScreen = .notificationPermission
-            return .notificationPermission
+        if self.inactivityNotificationEnabled {
+            self.activeScreen = .inactivityNotification
+            return .inactivityNotification
         }
 
         if let screen = self.pendingUserRequest {
@@ -85,8 +85,8 @@ class FlowManager: FlowManagerProtocol {
             self.pendingUserRequest = nil
         }
 
-        if screen == .notificationPermission {
-            self.notificationPermissionExplainerEnabled = false
+        if screen == .inactivityNotification {
+            self.inactivityNotificationEnabled = false
         }
     }
 
@@ -96,7 +96,7 @@ class FlowManager: FlowManagerProtocol {
         self.activeScreen = nil
         self.launchActionClaimedSession = false
         self.whatsNewEnabled = false
-        self.notificationPermissionExplainerEnabled = false
+        self.inactivityNotificationEnabled = false
         self.startedAsFirstRun = self.defaultsManager.isAppFirstRun
     }
 
@@ -106,7 +106,7 @@ class FlowManager: FlowManagerProtocol {
     private var startedAsFirstRun: Bool
     private var launchActionClaimedSession = false
     private var whatsNewEnabled = false
-    private var notificationPermissionExplainerEnabled = false
+    private var inactivityNotificationEnabled = false
     private var activeScreen: Screen?
     private var pendingLaunchScreen: Screen?
     private var pendingUserRequest: Screen?

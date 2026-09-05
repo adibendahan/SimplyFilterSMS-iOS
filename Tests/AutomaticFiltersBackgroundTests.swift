@@ -114,11 +114,11 @@ class AutomaticFiltersBackgroundTests: XCTestCase {
         XCTAssertEqual(self.notifications.removePendingCounter, 0)
     }
 
-    func test_requestAuthorizationFromExplainer_denied_recordsDecline() {
+    func test_requestInactivityNotificationAuthorization_denied_recordsDecline() {
         self.notifications.requestAlertAuthorizationGranted = false
         let expectation = self.expectation(description: "auth")
 
-        self.testSubject.requestNotificationAuthorizationFromExplainer { granted in
+        self.testSubject.requestInactivityNotificationAuthorization { granted in
             XCTAssertFalse(granted)
             expectation.fulfill()
         }
@@ -126,17 +126,17 @@ class AutomaticFiltersBackgroundTests: XCTestCase {
         waitForExpectations(timeout: 1)
         XCTAssertEqual(self.notifications.requestAlertAuthorizationCounter, 1)
         XCTAssertEqual(self.notifications.addCounter, 0)
-        XCTAssertEqual(self.defaultsManager.automaticFiltersNotificationExplainerAskCount, 1)
-        XCTAssertEqual(self.defaultsManager.automaticFiltersNotificationExplainerLastDeclinedSession, 1)
+        XCTAssertEqual(self.defaultsManager.inactivityNotificationAskCount, 1)
+        XCTAssertEqual(self.defaultsManager.inactivityNotificationDeclinedSession, 1)
     }
 
-    func test_requestAuthorizationFromExplainer_granted_marksGrantedAndSchedules() {
+    func test_requestInactivityNotificationAuthorization_granted_marksGrantedAndSchedules() {
         self.isAutomaticFilteringOn = true
         self.notifications.authorizationStatusValue = .notDetermined
         self.notifications.requestAlertAuthorizationGranted = true
         let expectation = self.expectation(description: "auth")
 
-        self.testSubject.requestNotificationAuthorizationFromExplainer { granted in
+        self.testSubject.requestInactivityNotificationAuthorization { granted in
             XCTAssertTrue(granted)
             expectation.fulfill()
         }
@@ -144,7 +144,7 @@ class AutomaticFiltersBackgroundTests: XCTestCase {
         waitForExpectations(timeout: 1)
         XCTAssertEqual(self.notifications.requestAlertAuthorizationCounter, 1)
         XCTAssertEqual(self.notifications.addCounter, 1)
-        XCTAssertTrue(self.defaultsManager.automaticFiltersNotificationPermissionWasGranted)
+        XCTAssertTrue(self.defaultsManager.inactivityNotificationWasGranted)
     }
 
     func test_updateAutomaticFilters_doesNotTouchReminder() async {
@@ -164,17 +164,17 @@ class AutomaticFiltersBackgroundTests: XCTestCase {
         self.isAutomaticFilteringOn = true
         self.notifications.authorizationStatusValue = .notDetermined
 
-        let shouldShow = await self.testSubject.shouldShowNotificationPermissionExplainer()
+        let shouldShow = await self.testSubject.shouldShowInactivityNotification()
 
         XCTAssertTrue(shouldShow)
-        XCTAssertEqual(self.testSubject.notificationExplainerDismissTitle, "autoFilter_notificationExplainer_notNow"~)
+        XCTAssertEqual(self.testSubject.inactivityNotificationDismissTitle, "inactivityNotification_notNow"~)
     }
 
     func test_shouldShow_aiOff_false() async {
         self.isAutomaticFilteringOn = false
         self.notifications.authorizationStatusValue = .notDetermined
 
-        let shouldShow = await self.testSubject.shouldShowNotificationPermissionExplainer()
+        let shouldShow = await self.testSubject.shouldShowInactivityNotification()
 
         XCTAssertFalse(shouldShow)
     }
@@ -183,77 +183,77 @@ class AutomaticFiltersBackgroundTests: XCTestCase {
         self.isAutomaticFilteringOn = true
         self.notifications.authorizationStatusValue = .authorized
 
-        let shouldShow = await self.testSubject.shouldShowNotificationPermissionExplainer()
+        let shouldShow = await self.testSubject.shouldShowInactivityNotification()
 
         XCTAssertFalse(shouldShow)
-        XCTAssertTrue(self.defaultsManager.automaticFiltersNotificationPermissionWasGranted)
+        XCTAssertTrue(self.defaultsManager.inactivityNotificationWasGranted)
         XCTAssertEqual(self.notifications.addCounter, 1)
     }
 
     func test_shouldShow_gapBlocksUntilThreeSessions() async {
         self.isAutomaticFilteringOn = true
         self.notifications.authorizationStatusValue = .notDetermined
-        self.defaultsManager.automaticFiltersNotificationExplainerAskCount = 1
-        self.defaultsManager.automaticFiltersNotificationExplainerLastDeclinedSession = 1
+        self.defaultsManager.inactivityNotificationAskCount = 1
+        self.defaultsManager.inactivityNotificationDeclinedSession = 1
         self.defaultsManager.sessionCounter = 3
 
-        let blocked = await self.testSubject.shouldShowNotificationPermissionExplainer()
+        let blocked = await self.testSubject.shouldShowInactivityNotification()
         XCTAssertFalse(blocked)
 
         self.defaultsManager.sessionCounter = 4
-        let shouldShow = await self.testSubject.shouldShowNotificationPermissionExplainer()
+        let shouldShow = await self.testSubject.shouldShowInactivityNotification()
         XCTAssertTrue(shouldShow)
-        XCTAssertEqual(self.testSubject.notificationExplainerDismissTitle, "autoFilter_notificationExplainer_notNow"~)
+        XCTAssertEqual(self.testSubject.inactivityNotificationDismissTitle, "inactivityNotification_notNow"~)
     }
 
     func test_shouldShow_thirdAsk_stopAskingTitle() async {
         self.isAutomaticFilteringOn = true
         self.notifications.authorizationStatusValue = .notDetermined
-        self.defaultsManager.automaticFiltersNotificationExplainerAskCount = 2
-        self.defaultsManager.automaticFiltersNotificationExplainerLastDeclinedSession = 1
+        self.defaultsManager.inactivityNotificationAskCount = 2
+        self.defaultsManager.inactivityNotificationDeclinedSession = 1
         self.defaultsManager.sessionCounter = 10
 
-        let shouldShow = await self.testSubject.shouldShowNotificationPermissionExplainer()
+        let shouldShow = await self.testSubject.shouldShowInactivityNotification()
         XCTAssertTrue(shouldShow)
-        XCTAssertEqual(self.testSubject.notificationExplainerDismissTitle, "autoFilter_notificationExplainer_stopAsking"~)
+        XCTAssertEqual(self.testSubject.inactivityNotificationDismissTitle, "inactivityNotification_stopAsking"~)
     }
 
     func test_shouldShow_afterMaxAsks_false() async {
         self.isAutomaticFilteringOn = true
         self.notifications.authorizationStatusValue = .notDetermined
-        self.defaultsManager.automaticFiltersNotificationExplainerAskCount = 3
+        self.defaultsManager.inactivityNotificationAskCount = 3
         self.defaultsManager.sessionCounter = 20
 
-        let shouldShow = await self.testSubject.shouldShowNotificationPermissionExplainer()
+        let shouldShow = await self.testSubject.shouldShowInactivityNotification()
         XCTAssertFalse(shouldShow)
     }
 
     func test_recordDecline_notFinal_incrementsAndStoresSession() {
         self.defaultsManager.sessionCounter = 5
-        self.testSubject.recordNotificationExplainerDecline()
-        XCTAssertEqual(self.defaultsManager.automaticFiltersNotificationExplainerAskCount, 1)
-        XCTAssertEqual(self.defaultsManager.automaticFiltersNotificationExplainerLastDeclinedSession, 5)
+        self.testSubject.recordInactivityNotificationDecline()
+        XCTAssertEqual(self.defaultsManager.inactivityNotificationAskCount, 1)
+        XCTAssertEqual(self.defaultsManager.inactivityNotificationDeclinedSession, 5)
     }
 
     func test_recordDecline_final_setsMaxAsks() {
-        self.defaultsManager.automaticFiltersNotificationExplainerAskCount = 2
-        self.testSubject.recordNotificationExplainerDecline()
-        XCTAssertEqual(self.defaultsManager.automaticFiltersNotificationExplainerAskCount, 3)
+        self.defaultsManager.inactivityNotificationAskCount = 2
+        self.testSubject.recordInactivityNotificationDecline()
+        XCTAssertEqual(self.defaultsManager.inactivityNotificationAskCount, 3)
     }
 
     func test_shouldShow_revoke_resetsAndShowsFirstAsk() async {
         self.isAutomaticFilteringOn = true
         self.notifications.authorizationStatusValue = .denied
-        self.defaultsManager.automaticFiltersNotificationPermissionWasGranted = true
-        self.defaultsManager.automaticFiltersNotificationExplainerAskCount = 3
-        self.defaultsManager.automaticFiltersNotificationExplainerLastDeclinedSession = 2
+        self.defaultsManager.inactivityNotificationWasGranted = true
+        self.defaultsManager.inactivityNotificationAskCount = 3
+        self.defaultsManager.inactivityNotificationDeclinedSession = 2
         self.defaultsManager.sessionCounter = 9
 
-        let shouldShow = await self.testSubject.shouldShowNotificationPermissionExplainer()
+        let shouldShow = await self.testSubject.shouldShowInactivityNotification()
         XCTAssertTrue(shouldShow)
-        XCTAssertEqual(self.testSubject.notificationExplainerDismissTitle, "autoFilter_notificationExplainer_notNow"~)
-        XCTAssertFalse(self.defaultsManager.automaticFiltersNotificationPermissionWasGranted)
-        XCTAssertEqual(self.defaultsManager.automaticFiltersNotificationExplainerAskCount, 0)
-        XCTAssertEqual(self.defaultsManager.automaticFiltersNotificationExplainerLastDeclinedSession, 0)
+        XCTAssertEqual(self.testSubject.inactivityNotificationDismissTitle, "inactivityNotification_notNow"~)
+        XCTAssertFalse(self.defaultsManager.inactivityNotificationWasGranted)
+        XCTAssertEqual(self.defaultsManager.inactivityNotificationAskCount, 0)
+        XCTAssertEqual(self.defaultsManager.inactivityNotificationDeclinedSession, 0)
     }
 }

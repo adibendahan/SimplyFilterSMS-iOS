@@ -9,17 +9,17 @@ import BackgroundTasks
 
 class mock_SchedulingManager: SchedulingManagerProtocol {
 
-    var notificationExplainerDismissTitle = "autoFilter_notificationExplainer_notNow"~
-    var requestNotificationAuthorizationFromExplainerGranted = false
-    var shouldShowNotificationPermissionExplainerValue = false
+    var inactivityNotificationDismissTitle = "inactivityNotification_notNow"~
+    var requestInactivityNotificationAuthorizationGranted = false
+    var shouldShowInactivityNotificationValue = false
 
     var scheduleAutomaticFiltersProcessingCounter = 0
     var handleAutomaticFiltersProcessingCounter = 0
     var syncInactivityReminderCounter = 0
     var cancelInactivityReminderCounter = 0
-    var shouldShowNotificationPermissionExplainerCounter = 0
-    var recordNotificationExplainerDeclineCounter = 0
-    var requestNotificationAuthorizationFromExplainerCounter = 0
+    var shouldShowInactivityNotificationCounter = 0
+    var recordInactivityNotificationDeclineCounter = 0
+    var requestInactivityNotificationAuthorizationCounter = 0
 
     func scheduleAutomaticFiltersProcessing() {
         self.scheduleAutomaticFiltersProcessingCounter += 1
@@ -38,18 +38,18 @@ class mock_SchedulingManager: SchedulingManagerProtocol {
         self.cancelInactivityReminderCounter += 1
     }
 
-    func shouldShowNotificationPermissionExplainer() async -> Bool {
-        self.shouldShowNotificationPermissionExplainerCounter += 1
-        return self.shouldShowNotificationPermissionExplainerValue
+    func shouldShowInactivityNotification() async -> Bool {
+        self.shouldShowInactivityNotificationCounter += 1
+        return self.shouldShowInactivityNotificationValue
     }
 
-    func recordNotificationExplainerDecline() {
-        self.recordNotificationExplainerDeclineCounter += 1
+    func recordInactivityNotificationDecline() {
+        self.recordInactivityNotificationDeclineCounter += 1
     }
 
-    func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void) {
-        self.requestNotificationAuthorizationFromExplainerCounter += 1
-        completion(self.requestNotificationAuthorizationFromExplainerGranted)
+    func requestInactivityNotificationAuthorization(completion: @escaping (Bool) -> Void) {
+        self.requestInactivityNotificationAuthorizationCounter += 1
+        completion(self.requestInactivityNotificationAuthorizationGranted)
     }
 
     func resetCounters() {
@@ -57,8 +57,8 @@ class mock_SchedulingManager: SchedulingManagerProtocol {
         self.handleAutomaticFiltersProcessingCounter = 0
         self.syncInactivityReminderCounter = 0
         self.cancelInactivityReminderCounter = 0
-        self.shouldShowNotificationPermissionExplainerCounter = 0
-        self.recordNotificationExplainerDeclineCounter = 0
-        self.requestNotificationAuthorizationFromExplainerCounter = 0
+        self.shouldShowInactivityNotificationCounter = 0
+        self.recordInactivityNotificationDeclineCounter = 0
+        self.requestInactivityNotificationAuthorizationCounter = 0
     }
 }

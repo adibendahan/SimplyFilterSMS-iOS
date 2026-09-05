@@ -522,19 +522,19 @@
 
 "autoFilter_improveAIFiltering" = "تحسين تصفية الذكاء الاصطناعي";
 
-"autoFilter_notificationExplainer_title" = "حافظ على عمل تصفية AI";
+"inactivityNotification_title" = "حافظ على عمل تصفية AI";
 
-"autoFilter_notificationExplainer_message" = "اسمح بالإشعارات حتى نتمكن من تذكيرك بفتح التطبيق. إذا لم تفتحه لفترة طويلة، قد تصبح فلاتر AI قديمة وقد يفرّغ iOS التطبيق - ثم تتوقف التصفية حتى تعود.";
+"inactivityNotification_message" = "اسمح بالإشعارات حتى نتمكن من تذكيرك بفتح التطبيق. إذا لم تفتحه لفترة طويلة، قد تصبح فلاتر AI قديمة وقد يفرّغ iOS التطبيق - ثم تتوقف التصفية حتى تعود.";
 
-"autoFilter_notificationExplainer_continue" = "متابعة";
+"inactivityNotification_continue" = "متابعة";
 
-"autoFilter_notificationExplainer_notNow" = "ليس الآن";
+"inactivityNotification_notNow" = "ليس الآن";
 
-"autoFilter_notificationExplainer_stopAsking" = "توقف عن السؤال";
+"inactivityNotification_stopAsking" = "توقف عن السؤال";
 
-"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+"inactivityNotification_reminder_title" = "Simply Filter SMS";
 
-"autoFilter_inactivityNotification_body" = "قد تكون فلاتر AI غير محدّثة - افتح التطبيق للتحديث.";
+"inactivityNotification_reminder_body" = "قد تكون فلاتر AI غير محدّثة - افتح التطبيق للتحديث.";
 
 "menu_filters" = "المرشحات";
 

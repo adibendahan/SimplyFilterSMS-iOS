@@ -21,7 +21,7 @@ The app already calls `registerForRemoteNotifications()` for CloudKit. That is s
 - Resetting the monthly reminder clock because a silent refresh ran
 - Badges or sounds
 - Changing how cache hash / stale comparison works
-- A full explainer screen or What’s New entry (too much chrome for two sentences)
+- A full inactivity notification flow token or What’s New entry (too much chrome for two sentences)
 
 ## Decisions
 
@@ -55,7 +55,7 @@ One `UNNotificationRequest` with a monthly `UNCalendarNotificationTrigger` (`rep
 
 - **Startup** (scene becoming `.active`): cancel, then if AI Filtering is on and alerts are allowed, schedule again one calendar month from now.
 - **AI Filtering turns off:** cancel and do not reschedule (in-session).
-- **AI Filtering turns on:** do not present the explainer on the toggle. Do not restart the monthly clock mid-session; next startup schedules if needed. Schedule immediately only after the Home explainer Continue grants alerts.
+- **AI Filtering turns on:** do not present the inactivity notification on the toggle. Do not restart the monthly clock mid-session; next startup schedules if needed. Schedule immediately only after the Home inactivity notification Continue grants alerts.
 - **Background processing / filter edits / return to Home:** do not cancel or reschedule the reminder.
 
 **Why:** “Did not open the app” is the rule. Startup is the open. In-session navigation and edits must not push the banner out. A calendar month matches “once a month” better than a fixed day count.
@@ -64,16 +64,16 @@ One `UNNotificationRequest` with a monthly `UNCalendarNotificationTrigger` (`rep
 
 A raw `requestAuthorization` gets declined. Two reasons do not need a full screen. They do go through `FlowManager`, same occupancy rules as everything else on Home.
 
-`SchedulingManager` owns when to show the explainer (ask count, session gap, grant/revoke). Defaults store ask count, last declined `sessionCounter`, and whether alerts were previously granted.
+`SchedulingManager` owns when to show the inactivity notification (ask count, session gap, grant/revoke). Defaults store ask count, last declined `sessionCounter`, and whether alerts were previously granted.
 
 **Queue (mirror What’s New, not `request`):**
-- `FlowManager.enableNotificationPermissionExplainer()` — session flag, like `enableWhatsNew()`.
-- `next()` order stays: first run → launch → What’s New → **explainer** → user `request`. A dedicated slot so a later `request(.help)` does not overwrite the explainer.
-- Add `Screen.notificationPermission` at the **end** of the enum so existing `Int` raw values do not shift. `next()` / `complete()` keep returning `Screen?`. This case is a fake screen: no deep link, and `build()` is `EmptyView` (never shown).
-- `presentNextFlow()`: if `next()` is `.notificationPermission`, set the Home alert flag and **do not** assign `sheetScreen`. On Continue / dismiss: `complete(.notificationPermission)`, `presentNextFlow()` again.
+- `FlowManager.enableInactivityNotification()` — session flag, like `enableWhatsNew()`.
+- `next()` order stays: first run → launch → What’s New → **inactivity notification** → user `request`. A dedicated slot so a later `request(.help)` does not overwrite the inactivity notification.
+- Add `Screen.inactivityNotification` at the **end** of the enum so existing `Int` raw values do not shift. `next()` / `complete()` keep returning `Screen?`. This case is a fake screen: no deep link, and `build()` is `EmptyView` (never shown).
+- `presentNextFlow()`: if `next()` is `.inactivityNotification`, set the Home alert flag and **do not** assign `sheetScreen`. On Continue / dismiss: `complete(.inactivityNotification)`, `presentNextFlow()` again.
 
 **When Home enables the slot, App Home only:**
-- Home asks `SchedulingManager.evaluateNotificationPermissionExplainer`. On `.show`, enable FlowManager + present. Dismiss / Continue go back to the manager.
+- Home asks `SchedulingManager.shouldShowInactivityNotification`. On `.show`, enable FlowManager + present. Dismiss / Continue go back to the manager.
 - Ask up to 3 times; after a decline wait until `sessionCounter` advanced by ≥ 3. Asks 1–2 dismiss with Not Now; ask 3 with Stop Asking.
 - If alerts are already allowed: mark granted, sync reminder, no explainer. If later revoked: reset ask state and may ask again from #1.
 - `next()` still waits if a sheet is already up.
@@ -91,15 +91,15 @@ Reason 1 is an intentional stretch. Say it anyway.
 
 Refresh can still run when alerts are denied.
 
-### 6. `SchedulingManager` owns BG + reminder + explainer cadence; notifications stay a dumb pipe
+### 6. `SchedulingManager` owns BG + reminder + inactivity-notification ask cadence; notifications stay a dumb pipe
 
-`SchedulingManager` (+ protocol + mock) owns: schedule/handle `BGProcessingTask`, sync/cancel the monthly inactivity reminder, explainer evaluate / decline / request alerts, and grant/revoke tracking. It holds `AutomaticFilterManager`, `DefaultsManager`, and `UserNotificationCenterService` (authorize / pending / add / remove only).
+`SchedulingManager` (+ protocol + mock) owns: schedule/handle `BGProcessingTask`, sync/cancel the monthly inactivity reminder, inactivity notification evaluate / decline / request alerts, and grant/revoke tracking. It holds `AutomaticFilterManager`, `DefaultsManager`, and `UserNotificationCenterService` (authorize / pending / add / remove only).
 
 `AppManager` composes `schedulingManager` and calls `scheduleAutomaticFiltersProcessing()` from `onAppLaunch()`. `AppDelegate` registers the handler and forwards to `AppManager.shared.schedulingManager.handleAutomaticFiltersProcessing`. `FlowManager` stays queue-only (explainer token). `AutomaticFilterManager` stays S3/cache fetch.
 
 **Why:** Scheduling policy is not AppManager’s job and not a forever-thin notification adapter. Matches existing manager + protocol + `mock_*` layout. BackgroundTasks itself is awkward to unit-test; test reminder decisions and next `earliestBeginDate` on `SchedulingManager`.
 
-### 7. monthly banner matches the explainer
+### 7. monthly banner matches the inactivity notification alert
 
 English source: AI filters may be out of date — open the app to refresh. Tap opens Home (default launch). No deep link.
 
@@ -109,18 +109,18 @@ English source: AI filters may be out of date — open the app to refresh. Tap o
 
 - **iOS never runs the refresh** → Expected for people who never open the app. Mitigation: monthly banner (if they allowed alerts).
 - **User denies notifications** → No banner. Mitigation: refresh still tries; opening the app still fetches.
-- **Repeating engagement banner** → App Review may dislike “come back” mail. Mitigation: only if AI Filtering is on; explainer + banner talk about filters and offload, not “we miss you”; no sound/badge.
+- **Repeating engagement banner** → App Review may dislike “come back” mail. Mitigation: only if AI Filtering is on; alert + banner talk about filters and offload, not “we miss you”; no sound/badge.
 - **Naked system prompt** → High decline rate. Mitigation: sheet always first; system dialog only on Continue.
 - **Handler registered too late** → Refresh never runs. Mitigation: register in `didFinishLaunching` before any async work.
 - **User leaves Background App Refresh off** → Same as iOS never waking. Banner still applies.
 
 ## Migration Plan
 
-- Existing installs: next time Home is shown with AI Filtering on, show the explainer alert once (after What’s New if that also shows). Continue → system prompt → schedule reminder if allowed. Not Now → flag set, no system prompt, no nag.
+- Existing installs: next time Home is shown with AI Filtering on, show the inactivity notification alert once (after What’s New if that also shows). Continue → system prompt → schedule reminder if allowed. Not Now → flag set, no system prompt, no nag.
 - New enable: they turn AI on, stay on the language list with no alert; first time they see Home after that, same alert.
 - No data migration. Cache format unchanged.
-- Rollback: remove `processing` mode, task identifier, reminder scheduling, explainer screen; fetch-on-open remains.
+- Rollback: remove `processing` mode, task identifier, reminder scheduling, inactivity notification flow token; fetch-on-open remains.
 
 ## Open Questions
 
-None. 3-day hint, monthly repeating banner, explainer-then-prompt, existing AI-on users on first open of this version.
+None. 3-day hint, monthly repeating banner, alert-then-system-permission, existing AI-on users on first open of this version.

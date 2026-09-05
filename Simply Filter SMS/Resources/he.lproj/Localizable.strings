@@ -522,19 +522,19 @@
 
 "autoFilter_improveAIFiltering" = "שפר סינון AI";
 
-"autoFilter_notificationExplainer_title" = "שמור על סינון AI פעיל";
+"inactivityNotification_title" = "שמור על סינון AI פעיל";
 
-"autoFilter_notificationExplainer_message" = "אפשר התראות כדי שנוכל להזכיר לך לפתוח את האפליקציה. אם לא תפתח אותה לאורך זמן, רשימות סינון AI עלולות להתיישן ו־iOS עלול לפרוק את האפליקציה - ואז הסינון ייעצר עד שתשוב.";
+"inactivityNotification_message" = "אפשר התראות כדי שנוכל להזכיר לך לפתוח את האפליקציה. אם לא תפתח אותה לאורך זמן, רשימות סינון AI עלולות להתיישן ו־iOS עלול לפרוק את האפליקציה - ואז הסינון ייעצר עד שתשוב.";
 
-"autoFilter_notificationExplainer_continue" = "המשך";
+"inactivityNotification_continue" = "המשך";
 
-"autoFilter_notificationExplainer_notNow" = "לא עכשיו";
+"inactivityNotification_notNow" = "לא עכשיו";
 
-"autoFilter_notificationExplainer_stopAsking" = "הפסק לשאול";
+"inactivityNotification_stopAsking" = "הפסק לשאול";
 
-"autoFilter_inactivityNotification_title" = "Simply Filter SMS";
+"inactivityNotification_reminder_title" = "Simply Filter SMS";
 
-"autoFilter_inactivityNotification_body" = "רשימות סינון AI עלולות להיות לא מעודכנות - פתח את האפליקציה לרענון.";
+"inactivityNotification_reminder_body" = "רשימות סינון AI עלולות להיות לא מעודכנות - פתח את האפליקציה לרענון.";
 
 "menu_filters" = "פילטרים";
 

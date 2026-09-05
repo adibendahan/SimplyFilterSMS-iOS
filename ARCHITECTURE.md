@@ -39,7 +39,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | `enableReportingExtension` | EnableExtensionView (reporting steps) | Sheet |
 | `filterImport` | FilterTransferPreviewView | Sheet |
 | `filterExport` | FilterTransferPreviewView | Sheet |
-| `notificationPermission` | *(fake — Home `.alert` only)* | Flow token |
+| `inactivityNotification` | *(fake — Home `.alert` only)* | Flow token |
 
 ## Manager Dependency Graph
 
