@@ -50,7 +50,8 @@ class AppManager: AppManagerProtocol {
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
         self.filterTransferManager = FilterTransferManager(persistanceManager: persistanceManager)
         self.flowManager = FlowManager(defaultsManager: defaultsManager)
-        self.schedulingManager = SchedulingManager(automaticFilterManager: automaticFilterManager)
+        self.schedulingManager = SchedulingManager(automaticFilterManager: automaticFilterManager,
+                                                   defaultsManager: defaultsManager)
         self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
                                                  defaultsManager: defaultsManager,
                                                  automaticFilterManager: automaticFilterManager)

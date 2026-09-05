@@ -36,8 +36,14 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("didDismissReportingExtensionNudge", defaultValue: false)
     var didDismissReportingExtensionNudge: Bool
 
-    @StoredDefault("didShowAutomaticFiltersNotificationExplainer", defaultValue: false)
-    var didShowAutomaticFiltersNotificationExplainer: Bool
+    @StoredDefault("automaticFiltersNotificationExplainerAskCount", defaultValue: 0)
+    var automaticFiltersNotificationExplainerAskCount: Int
+
+    @StoredDefault("automaticFiltersNotificationExplainerLastDeclinedSession", defaultValue: 0)
+    var automaticFiltersNotificationExplainerLastDeclinedSession: Int
+
+    @StoredDefault("automaticFiltersNotificationPermissionWasGranted", defaultValue: false)
+    var automaticFiltersNotificationPermissionWasGranted: Bool
 
     @StoredDefault("accentColorRGB", defaultValue: kNoColorDict)
     var accentColorRGB: [String: Double]
@@ -64,7 +70,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge", "didShowAutomaticFiltersNotificationExplainer", "accentColorRGB"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge", "automaticFiltersNotificationExplainerAskCount", "automaticFiltersNotificationExplainerLastDeclinedSession", "automaticFiltersNotificationPermissionWasGranted", "accentColorRGB"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)

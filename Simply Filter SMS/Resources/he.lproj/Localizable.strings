@@ -530,6 +530,8 @@
 
 "autoFilter_notificationExplainer_notNow" = "לא עכשיו";
 
+"autoFilter_notificationExplainer_stopAsking" = "הפסק לשאול";
+
 "autoFilter_inactivityNotification_title" = "Simply Filter SMS";
 
 "autoFilter_inactivityNotification_body" = "רשימות סינון AI עלולות להיות לא מעודכנות - פתח את האפליקציה לרענון.";

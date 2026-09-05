@@ -18,7 +18,9 @@ protocol DefaultsManagerProtocol {
     var didTip: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
     var didDismissReportingExtensionNudge: Bool { get set }
-    var didShowAutomaticFiltersNotificationExplainer: Bool { get set }
+    var automaticFiltersNotificationExplainerAskCount: Int { get set }
+    var automaticFiltersNotificationExplainerLastDeclinedSession: Int { get set }
+    var automaticFiltersNotificationPermissionWasGranted: Bool { get set }
     var accentColorRGB: [String: Double] { get set }
     var appAge: Date { get }
     

@@ -49,42 +49,62 @@ class AppHomeViewAutomaticFiltersTests: XCTestCase {
         super.tearDown()
     }
 
-    func test_alreadyAuthorized_setsExplainerFlagAndSyncsWithoutAlert() {
-        self.isAutomaticFilteringOn = true
-        self.schedulingManager.authorizationStatusValue = .authorized
-
+    @MainActor
+    private func makeModel() async -> AppHomeView.ViewModel {
+        self.schedulingManager.shouldShowNotificationPermissionExplainerValue = false
         let model = AppHomeView.ViewModel(appManager: self.appManager)
+        await Task.yield()
+        await Task.yield()
         self.appManager.resetCounters()
-        model.handleSceneBecameActive()
+        self.flowManager.enableNotificationPermissionExplainerCounter = 0
+        self.schedulingManager.resetCounters()
+        return model
+    }
 
-        XCTAssertTrue(self.defaultsManager.didShowAutomaticFiltersNotificationExplainer)
+    @MainActor
+    func test_shouldShowFalse_doesNotEnableExplainer() async {
+        self.isAutomaticFilteringOn = true
+        let model = await self.makeModel()
+        self.schedulingManager.shouldShowNotificationPermissionExplainerValue = false
+
+        await model.presentNotificationPermissionExplainerIfNeeded()
+
         XCTAssertFalse(model.showNotificationPermissionAlert)
-        XCTAssertGreaterThan(self.schedulingManager.syncInactivityReminderCounter, 0)
+        XCTAssertEqual(self.flowManager.enableNotificationPermissionExplainerCounter, 0)
         XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 0)
     }
 
-    func test_explainerAlreadyShown_skipsAlert() {
+    @MainActor
+    func test_shouldShowTrue_enablesExplainer() async {
         self.isAutomaticFilteringOn = true
-        self.schedulingManager.authorizationStatusValue = .notDetermined
-        self.defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
+        let model = await self.makeModel()
+        self.schedulingManager.shouldShowNotificationPermissionExplainerValue = true
+        self.flowManager.enableNotificationPermissionExplainerCounter = 0
 
-        let model = AppHomeView.ViewModel(appManager: self.appManager)
-        model.handleSceneBecameActive()
+        await model.presentNotificationPermissionExplainerIfNeeded()
 
-        XCTAssertFalse(model.showNotificationPermissionAlert)
-        XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 0)
+        XCTAssertGreaterThanOrEqual(self.flowManager.enableNotificationPermissionExplainerCounter, 1)
     }
 
-    func test_notNow_doesNotRequestAuthorization() {
+    @MainActor
+    func test_dismiss_recordsDecline() async {
         self.isAutomaticFilteringOn = true
-        self.schedulingManager.authorizationStatusValue = .notDetermined
-
-        let model = AppHomeView.ViewModel(appManager: self.appManager)
+        let model = await self.makeModel()
         model.showNotificationPermissionAlert = true
         model.dismissNotificationPermissionExplainer()
 
         XCTAssertFalse(model.showNotificationPermissionAlert)
-        XCTAssertTrue(self.defaultsManager.didShowAutomaticFiltersNotificationExplainer)
+        XCTAssertEqual(self.schedulingManager.recordNotificationExplainerDeclineCounter, 1)
         XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 0)
+    }
+
+    @MainActor
+    func test_continue_requestsAuthorization() async {
+        let model = await self.makeModel()
+        model.showNotificationPermissionAlert = true
+        model.continueNotificationPermissionExplainer()
+
+        XCTAssertEqual(self.schedulingManager.requestNotificationAuthorizationFromExplainerCounter, 1)
+        XCTAssertEqual(self.schedulingManager.recordNotificationExplainerDeclineCounter, 0)
     }
 }

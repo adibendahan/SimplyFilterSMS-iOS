@@ -530,6 +530,8 @@
 
 "autoFilter_notificationExplainer_notNow" = "今はしない";
 
+"autoFilter_notificationExplainer_stopAsking" = "今後聞かない";
+
 "autoFilter_inactivityNotification_title" = "Simply Filter SMS";
 
 "autoFilter_inactivityNotification_body" = "AIフィルタが古い可能性があります。アプリを開いて更新してください。";

@@ -64,36 +64,36 @@ One `UNNotificationRequest` with a monthly `UNCalendarNotificationTrigger` (`rep
 
 A raw `requestAuthorization` gets declined. Two reasons do not need a full screen. They do go through `FlowManager`, same occupancy rules as everything else on Home.
 
-Store `didShowAutomaticFiltersNotificationExplainer` in `DefaultsManager` (alert was shown, including Not Now — or skipped because alerts were already allowed).
+`SchedulingManager` owns when to show the explainer (ask count, session gap, grant/revoke). Defaults store ask count, last declined `sessionCounter`, and whether alerts were previously granted.
 
 **Queue (mirror What’s New, not `request`):**
 - `FlowManager.enableNotificationPermissionExplainer()` — session flag, like `enableWhatsNew()`.
 - `next()` order stays: first run → launch → What’s New → **explainer** → user `request`. A dedicated slot so a later `request(.help)` does not overwrite the explainer.
 - Add `Screen.notificationPermission` at the **end** of the enum so existing `Int` raw values do not shift. `next()` / `complete()` keep returning `Screen?`. This case is a fake screen: no deep link, and `build()` is `EmptyView` (never shown).
-- `presentNextFlow()`: if `next()` is `.notificationPermission`, set the Home alert flag and **do not** assign `sheetScreen`. On Continue / Not Now: set the defaults flag, `complete(.notificationPermission)`, `presentNextFlow()` again.
+- `presentNextFlow()`: if `next()` is `.notificationPermission`, set the Home alert flag and **do not** assign `sheetScreen`. On Continue / dismiss: `complete(.notificationPermission)`, `presentNextFlow()` again.
 
-**When Home enables the slot (once), App Home only:**
-- Home is shown, AI Filtering is on, explainer flag is false, **and** alert permission is not already granted → `enableNotificationPermissionExplainer()` then `presentNextFlow()`.
-- If alert permission is already granted: do not enable the slot, set `didShowAutomaticFiltersNotificationExplainer` so we never ask later, and still schedule the monthly reminder. Turning AI Filtering off and on again does not bring the explainer back.
-- That includes first open of this version if AI is already on, and the first return to Home after they turn AI on from the language list.
+**When Home enables the slot, App Home only:**
+- Home asks `SchedulingManager.evaluateNotificationPermissionExplainer`. On `.show`, enable FlowManager + present. Dismiss / Continue go back to the manager.
+- Ask up to 3 times; after a decline wait until `sessionCounter` advanced by ≥ 3. Asks 1–2 dismiss with Not Now; ask 3 with Stop Asking.
+- If alerts are already allowed: mark granted, sync reminder, no explainer. If later revoked: reset ask state and may ask again from #1.
 - `next()` still waits if a sheet is already up.
 
 **Never:** show the alert on `LanguageListView` or from the language toggle. Never call `requestAuthorization` from launch or from the toggle. Do not use `request()` for this — that slot is one pending user sheet and gets overwritten.
 
-**Continue** → then `requestAuthorization` for `.alert` only. **Not Now** → no system prompt. Set the flag when the alert is dismissed either way so it does not return.
+**Continue** → then `requestAuthorization` for `.alert` only. **Not Now** / **Stop Asking** → no system prompt. System deny after Continue counts as a decline for that ask.
 
 **English source (do not translate in the draft):**
 - Title: Keep AI Filtering working
 - Message: Allow notifications so we can remind you to open the app. If you never open it, AI filters may go stale and iOS may offload the app - then filtering can stop until you come back.
-- Continue / Not Now
+- Continue / Not Now / Stop Asking (ask 3 only)
 
 Reason 1 is an intentional stretch. Say it anyway.
 
-If they deny the system dialog, stay quiet. Refresh can still run.
+Refresh can still run when alerts are denied.
 
-### 6. `SchedulingManager` owns BG + reminder policy; notifications stay a dumb pipe
+### 6. `SchedulingManager` owns BG + reminder + explainer cadence; notifications stay a dumb pipe
 
-`SchedulingManager` (+ protocol + mock) owns: schedule/handle `BGProcessingTask`, sync/cancel the monthly inactivity reminder, and explainer → request alerts → sync reminder. It holds `AutomaticFilterManager` for the fetch path and `UserNotificationCenterServiceProtocol` / `UserNotificationCenterService` (Services Layer) as an injectable UN collaborator (authorize / pending / add / remove only).
+`SchedulingManager` (+ protocol + mock) owns: schedule/handle `BGProcessingTask`, sync/cancel the monthly inactivity reminder, explainer evaluate / decline / request alerts, and grant/revoke tracking. It holds `AutomaticFilterManager`, `DefaultsManager`, and `UserNotificationCenterService` (authorize / pending / add / remove only).
 
 `AppManager` composes `schedulingManager` and calls `scheduleAutomaticFiltersProcessing()` from `onAppLaunch()`. `AppDelegate` registers the handler and forwards to `AppManager.shared.schedulingManager.handleAutomaticFiltersProcessing`. `FlowManager` stays queue-only (explainer token). `AutomaticFilterManager` stays S3/cache fetch.
 

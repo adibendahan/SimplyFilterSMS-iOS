@@ -348,6 +348,8 @@
 
 "autoFilter_notificationExplainer_notNow" = "暂时不要";
 
+"autoFilter_notificationExplainer_stopAsking" = "不再询问";
+
 "autoFilter_inactivityNotification_title" = "Simply Filter SMS";
 
 "autoFilter_inactivityNotification_body" = "AI 过滤可能已过期 - 打开 App 以刷新。";

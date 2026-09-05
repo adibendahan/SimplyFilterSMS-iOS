@@ -9,20 +9,17 @@ import BackgroundTasks
 
 class mock_SchedulingManager: SchedulingManagerProtocol {
 
-    var authorizationStatusValue: NotificationAuthorizationStatus = .notDetermined
+    var notificationExplainerDismissTitle = "autoFilter_notificationExplainer_notNow"~
     var requestNotificationAuthorizationFromExplainerGranted = false
+    var shouldShowNotificationPermissionExplainerValue = false
 
-    var authorizationStatusCounter = 0
     var scheduleAutomaticFiltersProcessingCounter = 0
     var handleAutomaticFiltersProcessingCounter = 0
     var syncInactivityReminderCounter = 0
     var cancelInactivityReminderCounter = 0
+    var shouldShowNotificationPermissionExplainerCounter = 0
+    var recordNotificationExplainerDeclineCounter = 0
     var requestNotificationAuthorizationFromExplainerCounter = 0
-
-    func authorizationStatus(completion: @escaping (NotificationAuthorizationStatus) -> Void) {
-        self.authorizationStatusCounter += 1
-        completion(self.authorizationStatusValue)
-    }
 
     func scheduleAutomaticFiltersProcessing() {
         self.scheduleAutomaticFiltersProcessingCounter += 1
@@ -41,17 +38,27 @@ class mock_SchedulingManager: SchedulingManagerProtocol {
         self.cancelInactivityReminderCounter += 1
     }
 
+    func shouldShowNotificationPermissionExplainer() async -> Bool {
+        self.shouldShowNotificationPermissionExplainerCounter += 1
+        return self.shouldShowNotificationPermissionExplainerValue
+    }
+
+    func recordNotificationExplainerDecline() {
+        self.recordNotificationExplainerDeclineCounter += 1
+    }
+
     func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void) {
         self.requestNotificationAuthorizationFromExplainerCounter += 1
         completion(self.requestNotificationAuthorizationFromExplainerGranted)
     }
 
     func resetCounters() {
-        self.authorizationStatusCounter = 0
         self.scheduleAutomaticFiltersProcessingCounter = 0
         self.handleAutomaticFiltersProcessingCounter = 0
         self.syncInactivityReminderCounter = 0
         self.cancelInactivityReminderCounter = 0
+        self.shouldShowNotificationPermissionExplainerCounter = 0
+        self.recordNotificationExplainerDeclineCounter = 0
         self.requestNotificationAuthorizationFromExplainerCounter = 0
     }
 }

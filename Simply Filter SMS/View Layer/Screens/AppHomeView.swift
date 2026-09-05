@@ -211,14 +211,14 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Button("autoFilter_notificationExplainer_continue"~) {
                 self.model.continueNotificationPermissionExplainer()
             }
-            Button("autoFilter_notificationExplainer_notNow"~, role: .cancel) {
+            Button(self.model.appManager.schedulingManager.notificationExplainerDismissTitle, role: .cancel) {
                 self.model.dismissNotificationPermissionExplainer()
             }
         } message: {
             Text("autoFilter_notificationExplainer_message"~)
         }
         .onChange(of: scenePhase) { newPhase in
-            if newPhase == .active {
+            if newPhase == .active, !isPreview {
                 self.model.handleSceneBecameActive()
             }
         }
@@ -762,8 +762,6 @@ extension AppHomeView {
         }
 
         func continueNotificationPermissionExplainer() {
-            var defaultsManager = self.appManager.defaultsManager
-            defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
             self.showNotificationPermissionAlert = false
             self.appManager.flowManager.complete(.notificationPermission)
             self.appManager.schedulingManager.requestNotificationAuthorizationFromExplainer { [weak self] _ in
@@ -772,44 +770,30 @@ extension AppHomeView {
         }
 
         func dismissNotificationPermissionExplainer() {
-            var defaultsManager = self.appManager.defaultsManager
-            defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
+            self.appManager.schedulingManager.recordNotificationExplainerDecline()
             self.showNotificationPermissionAlert = false
             self.appManager.flowManager.complete(.notificationPermission)
             self.presentNextFlow()
         }
 
         private func considerNotificationPermissionExplainer() {
-            #if DEBUG
-            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
-                return
-            }
-            #endif
-            guard self.navigationScreen == nil else { return }
-            guard !self.appManager.defaultsManager.isAppFirstRun else { return }
-            guard self.appManager.automaticFilterManager.isAutomaticFilteringOn else { return }
-            guard !self.appManager.defaultsManager.didShowAutomaticFiltersNotificationExplainer else { return }
+            guard self.navigationScreen == nil,
+                  !self.appManager.defaultsManager.isAppFirstRun else { return }
 
-            self.appManager.schedulingManager.authorizationStatus { [weak self] status in
-                guard let self else { return }
-                guard self.navigationScreen == nil else { return }
-                if status.allowsAlerts {
-                    var defaultsManager = self.appManager.defaultsManager
-                    defaultsManager.didShowAutomaticFiltersNotificationExplainer = true
-                    self.appManager.schedulingManager.syncInactivityReminder()
-                    return
-                }
-                self.appManager.flowManager.enableNotificationPermissionExplainer()
-                self.presentNextFlow()
+            Task { @MainActor [weak self] in
+                await self?.presentNotificationPermissionExplainerIfNeeded()
             }
         }
 
+        @MainActor
+        func presentNotificationPermissionExplainerIfNeeded() async {
+            guard await self.appManager.schedulingManager.shouldShowNotificationPermissionExplainer(),
+                  self.navigationScreen == nil else { return }
+            self.appManager.flowManager.enableNotificationPermissionExplainer()
+            self.presentNextFlow()
+        }
+
         private func runLaunchFlowIfNeeded() {
-            #if DEBUG
-            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
-                return
-            }
-            #endif
             self.startMonitoring()
             self.enableWhatsNewAndPresent()
             self.considerNotificationPermissionExplainer()
@@ -952,12 +936,8 @@ extension AppHomeView {
                 }
 
                 NotificationCenter.default.addObserver(forName: .filtersStateChanged, object: nil, queue: .main) { _ in
-                    let wasAutomaticFilteringOn = self.isAutomaticFilteringOn
                     withAnimation {
                         self.refresh()
-                    }
-                    if wasAutomaticFilteringOn && !self.isAutomaticFilteringOn {
-                        self.appManager.schedulingManager.cancelInactivityReminder()
                     }
                 }
 

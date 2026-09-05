@@ -530,6 +530,8 @@
 
 "autoFilter_notificationExplainer_notNow" = "Nicht jetzt";
 
+"autoFilter_notificationExplainer_stopAsking" = "Nicht mehr fragen";
+
 "autoFilter_inactivityNotification_title" = "Simply Filter SMS";
 
 "autoFilter_inactivityNotification_body" = "KI-Filter sind möglicherweise veraltet - öffne die App zum Aktualisieren.";

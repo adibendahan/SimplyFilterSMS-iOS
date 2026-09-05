@@ -530,6 +530,8 @@
 
 "autoFilter_notificationExplainer_notNow" = "ليس الآن";
 
+"autoFilter_notificationExplainer_stopAsking" = "توقف عن السؤال";
+
 "autoFilter_inactivityNotification_title" = "Simply Filter SMS";
 
 "autoFilter_inactivityNotification_body" = "قد تكون فلاتر AI غير محدّثة - افتح التطبيق للتحديث.";

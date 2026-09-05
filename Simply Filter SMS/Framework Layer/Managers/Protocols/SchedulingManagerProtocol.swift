@@ -7,10 +7,13 @@ import Foundation
 import BackgroundTasks
 
 protocol SchedulingManagerProtocol {
-    func authorizationStatus(completion: @escaping (NotificationAuthorizationStatus) -> Void)
+    var notificationExplainerDismissTitle: String { get }
+
     func scheduleAutomaticFiltersProcessing()
     func handleAutomaticFiltersProcessing(task: BGProcessingTask)
     func syncInactivityReminder()
     func cancelInactivityReminder()
+    func shouldShowNotificationPermissionExplainer() async -> Bool
+    func recordNotificationExplainerDecline()
     func requestNotificationAuthorizationFromExplainer(completion: @escaping (Bool) -> Void)
 }

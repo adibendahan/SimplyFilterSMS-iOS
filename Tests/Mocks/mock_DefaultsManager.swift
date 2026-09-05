@@ -34,8 +34,12 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var lastSeenWhatsNewVersionSetCounter = 0
     var didDismissReportingExtensionNudgeGetCounter = 0
     var didDismissReportingExtensionNudgeSetCounter = 0
-    var didShowAutomaticFiltersNotificationExplainerGetCounter = 0
-    var didShowAutomaticFiltersNotificationExplainerSetCounter = 0
+    var automaticFiltersNotificationExplainerAskCountGetCounter = 0
+    var automaticFiltersNotificationExplainerAskCountSetCounter = 0
+    var automaticFiltersNotificationExplainerLastDeclinedSessionGetCounter = 0
+    var automaticFiltersNotificationExplainerLastDeclinedSessionSetCounter = 0
+    var automaticFiltersNotificationPermissionWasGrantedGetCounter = 0
+    var automaticFiltersNotificationPermissionWasGrantedSetCounter = 0
 
     var isAppFirstRunClosure: (() -> (Bool))?
     var isExpandedAddFilterClosure: (() -> (Bool))?
@@ -48,8 +52,10 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var appAgeClosure: (() -> (Date))?
     var lastSeenWhatsNewVersionClosure: (() -> (Int))?
     var didDismissReportingExtensionNudgeClosure: (() -> (Bool))?
-    var didShowAutomaticFiltersNotificationExplainerClosure: (() -> (Bool))?
-    private var didShowAutomaticFiltersNotificationExplainerValue = false
+    private var sessionCounterValue = 0
+    private var automaticFiltersNotificationExplainerAskCountValue = 0
+    private var automaticFiltersNotificationExplainerLastDeclinedSessionValue = 0
+    private var automaticFiltersNotificationPermissionWasGrantedValue = false
 
     var isAppFirstRun: Bool {
         get {
@@ -104,10 +110,11 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var sessionCounter: Int {
         get {
             self.sessionCounterGetCounter += 1
-            return self.sessionCounterClosure?() ?? 0
+            return self.sessionCounterClosure?() ?? self.sessionCounterValue
         }
         set {
             self.sessionCounterSetCounter += 1
+            self.sessionCounterValue = newValue
         }
     }
     
@@ -161,14 +168,36 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
     }
 
-    var didShowAutomaticFiltersNotificationExplainer: Bool {
+    var automaticFiltersNotificationExplainerAskCount: Int {
         get {
-            self.didShowAutomaticFiltersNotificationExplainerGetCounter += 1
-            return self.didShowAutomaticFiltersNotificationExplainerClosure?() ?? self.didShowAutomaticFiltersNotificationExplainerValue
+            self.automaticFiltersNotificationExplainerAskCountGetCounter += 1
+            return self.automaticFiltersNotificationExplainerAskCountValue
         }
         set {
-            self.didShowAutomaticFiltersNotificationExplainerSetCounter += 1
-            self.didShowAutomaticFiltersNotificationExplainerValue = newValue
+            self.automaticFiltersNotificationExplainerAskCountSetCounter += 1
+            self.automaticFiltersNotificationExplainerAskCountValue = newValue
+        }
+    }
+
+    var automaticFiltersNotificationExplainerLastDeclinedSession: Int {
+        get {
+            self.automaticFiltersNotificationExplainerLastDeclinedSessionGetCounter += 1
+            return self.automaticFiltersNotificationExplainerLastDeclinedSessionValue
+        }
+        set {
+            self.automaticFiltersNotificationExplainerLastDeclinedSessionSetCounter += 1
+            self.automaticFiltersNotificationExplainerLastDeclinedSessionValue = newValue
+        }
+    }
+
+    var automaticFiltersNotificationPermissionWasGranted: Bool {
+        get {
+            self.automaticFiltersNotificationPermissionWasGrantedGetCounter += 1
+            return self.automaticFiltersNotificationPermissionWasGrantedValue
+        }
+        set {
+            self.automaticFiltersNotificationPermissionWasGrantedSetCounter += 1
+            self.automaticFiltersNotificationPermissionWasGrantedValue = newValue
         }
     }
 
@@ -181,8 +210,12 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         self.isExpandedAddFilterSetCounter = 0
         self.isFilterOptionsCollapsedGetCounter = 0
         self.isFilterOptionsCollapsedSetCounter = 0
-        self.didShowAutomaticFiltersNotificationExplainerGetCounter = 0
-        self.didShowAutomaticFiltersNotificationExplainerSetCounter = 0
+        self.automaticFiltersNotificationExplainerAskCountGetCounter = 0
+        self.automaticFiltersNotificationExplainerAskCountSetCounter = 0
+        self.automaticFiltersNotificationExplainerLastDeclinedSessionGetCounter = 0
+        self.automaticFiltersNotificationExplainerLastDeclinedSessionSetCounter = 0
+        self.automaticFiltersNotificationPermissionWasGrantedGetCounter = 0
+        self.automaticFiltersNotificationPermissionWasGrantedSetCounter = 0
     }
     
     func reset() { }

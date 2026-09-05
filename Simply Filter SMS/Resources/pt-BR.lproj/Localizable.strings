@@ -530,6 +530,8 @@
 
 "autoFilter_notificationExplainer_notNow" = "Agora não";
 
+"autoFilter_notificationExplainer_stopAsking" = "Parar de perguntar";
+
 "autoFilter_inactivityNotification_title" = "Simply Filter SMS";
 
 "autoFilter_inactivityNotification_body" = "Os filtros de IA podem estar desatualizados - abra o app para atualizar.";

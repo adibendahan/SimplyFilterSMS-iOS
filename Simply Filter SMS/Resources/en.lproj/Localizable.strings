@@ -214,6 +214,7 @@
 "autoFilter_notificationExplainer_message" = "Allow notifications so we can remind you to open the app. If you never open it, AI filters may go stale and iOS may offload the app - then filtering can stop until you come back.";
 "autoFilter_notificationExplainer_continue" = "Continue";
 "autoFilter_notificationExplainer_notNow" = "Not Now";
+"autoFilter_notificationExplainer_stopAsking" = "Stop Asking";
 "autoFilter_inactivityNotification_title" = "Simply Filter SMS";
 "autoFilter_inactivityNotification_body" = "AI filters may be out of date - open the app to refresh.";
 "general_search" = "Search";

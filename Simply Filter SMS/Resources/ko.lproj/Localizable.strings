@@ -530,6 +530,8 @@
 
 "autoFilter_notificationExplainer_notNow" = "나중에";
 
+"autoFilter_notificationExplainer_stopAsking" = "다시 묻지 않기";
+
 "autoFilter_inactivityNotification_title" = "Simply Filter SMS";
 
 "autoFilter_inactivityNotification_body" = "AI 필터가 오래되었을 수 있습니다. 앱을 열어 새로고침하세요.";
