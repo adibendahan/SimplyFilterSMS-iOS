@@ -204,6 +204,16 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         } message: {
             Text("importFilters_nothingToAdd"~)
         }
+        .alert("inactivityNotification_title"~, isPresented: self.$model.showInactivityNotificationAlert) {
+            Button("inactivityNotification_continue"~) {
+                self.model.allowInactivityNotification()
+            }
+            Button(self.model.inactivityNotificationDismissTitle, role: .cancel) {
+                self.model.declineInactivityNotification()
+            }
+        } message: {
+            Text("inactivityNotification_message"~)
+        }
         .background {
             Color.clear
                 .frame(width: 0, height: 0)
@@ -554,6 +564,13 @@ extension AppHomeView {
                 }
             }
         }
+        @Published var showInactivityNotificationAlert = false {
+            didSet {
+                if oldValue && !self.showInactivityNotificationAlert {
+                    self.showPendingNotification()
+                }
+            }
+        }
         @Published var isImportingFile = false
         @Published var fileImporterID = UUID()
         @Published var customAccent: Color? = nil
@@ -705,6 +722,7 @@ extension AppHomeView {
             guard !self.isReplacingSheetForLaunch else { return }
             guard let screen = self.appManager.flowManager.next() else {
                 self.showPendingNotification()
+                self.tryShowInactivityNotification()
                 return
             }
             if screen == .filterImport,
@@ -780,7 +798,7 @@ extension AppHomeView {
         private var isHomeUnobstructed: Bool {
             return self.sheetScreen == nil
                 && self.pendingScreenAfterDismiss == nil
-                && !self.isFilterTransferPresenting
+                && !self.isAlertPresented
                 && !self.isReplacingSheetForLaunch
         }
 
@@ -908,6 +926,34 @@ extension AppHomeView {
             self.showNotification(.enableReportingExtension)
         }
 
+        var inactivityNotificationDismissTitle: String {
+            return self.appManager.schedulingManager.isFinalInactivityNotificationAsk
+                ? "inactivityNotification_stopAsking"~
+                : "inactivityNotification_notNow"~
+        }
+
+        /// Asked only once Home has nothing else to show, so the explanation never lands
+        /// on top of first run, a launch action or What's New.
+        func tryShowInactivityNotification() {
+            Task { @MainActor [weak self] in
+                guard let self,
+                      await self.appManager.schedulingManager.shouldShowInactivityNotificationAlert(),
+                      self.isHomeUnobstructed else { return }
+
+                self.showInactivityNotificationAlert = true
+            }
+        }
+
+        func allowInactivityNotification() {
+            Task { [weak self] in
+                await self?.appManager.schedulingManager.requestInactivityNotificationPermission()
+            }
+        }
+
+        func declineInactivityNotification() {
+            self.appManager.schedulingManager.recordInactivityNotificationDecline()
+        }
+
         func tryShowTipPromotion() {
             let defaultsManager = self.appManager.defaultsManager
             guard defaultsManager.sessionCounter % 5 == 0,
@@ -950,8 +996,8 @@ extension AppHomeView {
         private var didShowNotificationThisSession = false
         private var pendingNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
-        private var isFilterTransferPresenting: Bool {
-            return self.showNothingToImportAlert
+        private var isAlertPresented: Bool {
+            return self.showNothingToImportAlert || self.showInactivityNotificationAlert
         }
         private var userIgnoresNetworkStatus: Bool {
             guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }

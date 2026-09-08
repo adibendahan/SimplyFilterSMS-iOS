@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Processing is requested after the app becomes alive
-The system SHALL submit one `BGProcessingTask` request with `requiresNetworkConnectivity` and whose `earliestBeginDate` is at least `kUpdateAutomaticFiltersMinDays` after the request is submitted. The system SHALL register the processing handler during app launch. Scheduling and handling SHALL live on `SchedulingManager` (not `AppManager` method bodies).
+The system SHALL submit one `BGProcessingTask` request with `requiresNetworkConnectivity` and whose `earliestBeginDate` is at least `kUpdateAutomaticFiltersMinDays` after the request is submitted. The system SHALL register the processing handler during app launch. Scheduling and handling SHALL live on `SchedulingManager`.
 
 #### Scenario: Open the app
 - **WHEN** the app finishes launching

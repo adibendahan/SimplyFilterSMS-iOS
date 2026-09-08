@@ -601,3 +601,16 @@
 "notification_saveFailed_title" = "حدث خطأ";
 
 "notification_saveFailed_subtitle" = "لم يتم حفظ التغييرات، يُرجى المحاولة مرة أخرى.";
+"inactivityNotification_title" = "حافظ على عمل تصفية AI";
+
+"inactivityNotification_message" = "اسمح بالإشعارات لنتمكن من تذكيرك بفتح التطبيق. إذا لم تفتحه أبدًا، فقد تصبح فلاتر AI قديمة وقد يزيل iOS التطبيق مؤقتًا - وعندها قد تتوقف التصفية حتى تعود.";
+
+"inactivityNotification_continue" = "متابعة";
+
+"inactivityNotification_notNow" = "ليس الآن";
+
+"inactivityNotification_stopAsking" = "لا تسأل مجددًا";
+
+"inactivityNotification_reminder_title" = "قد تكون فلاتر AI لديك قديمة";
+
+"inactivityNotification_reminder_body" = "افتح Simply Filter SMS لتحديثها ومواصلة تصفية المرسلين غير المعروفين.";

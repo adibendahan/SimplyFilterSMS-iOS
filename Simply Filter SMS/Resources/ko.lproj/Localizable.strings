@@ -601,3 +601,16 @@
 "notification_saveFailed_title" = "오류가 발생했습니다";
 
 "notification_saveFailed_subtitle" = "변경사항이 저장되지 않았습니다. 다시 시도해 주세요.";
+"inactivityNotification_title" = "AI 필터링 유지하기";
+
+"inactivityNotification_message" = "알림을 허용하면 앱을 열도록 알려드릴 수 있습니다. 앱을 한 번도 열지 않으면 AI 필터가 오래되고 iOS가 앱을 정리할 수 있습니다 - 그러면 다시 돌아올 때까지 필터링이 중단될 수 있습니다.";
+
+"inactivityNotification_continue" = "계속";
+
+"inactivityNotification_notNow" = "나중에";
+
+"inactivityNotification_stopAsking" = "다시 묻지 않기";
+
+"inactivityNotification_reminder_title" = "AI 필터가 오래되었을 수 있습니다";
+
+"inactivityNotification_reminder_body" = "Simply Filter SMS를 열어 업데이트하고 알 수 없는 발신자 필터링을 계속하세요.";

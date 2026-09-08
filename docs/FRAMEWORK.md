@@ -447,6 +447,72 @@ protocol FlowManagerProtocol {
 - Automatic What's New is skipped if the session started as first run or a launch claimed the session.
 - Debug `AppManager.reset()` clears the pending import and `resetSession()`.
 
+The inactivity notification alert does **not** go through FlowManager. It is a Home alert like
+`showNothingToImportAlert`, attempted from `presentNextFlow()`'s empty branch — so it can only
+appear once the queue has nothing left to show.
+
+---
+
+## SchedulingManager
+
+**Files:** `Framework Layer/Managers/SchedulingManager.swift`, `Protocols/SchedulingManagerProtocol.swift`
+
+Keeps automatic filtering useful for people who never open the app. Two jobs: a background task
+that refreshes the filter lists when iOS is willing to run us, and a monthly banner that asks
+them to come back when it is not.
+
+### Protocol
+
+```swift
+protocol SchedulingManagerProtocol: AnyObject {
+    var isFinalInactivityNotificationAsk: Bool { get }
+
+    func scheduleAutomaticFiltersProcessing()
+    func handleAutomaticFiltersProcessing(task: BGProcessingTask)
+    func refreshInactivityReminder()
+    func shouldShowInactivityNotificationAlert() async -> Bool
+    func requestInactivityNotificationPermission() async
+    func recordInactivityNotificationDecline()
+
+    #if DEBUG
+    func reset()
+    #endif // DEBUG
+}
+```
+
+### Background Refresh
+
+- One `BGProcessingTask` (`kAutomaticFiltersProcessingTaskIdentifier`), `requiresNetworkConnectivity`,
+  `earliestBeginDate` = now + `kUpdateAutomaticFiltersMinDays`. Processing (not app refresh) targets
+  idle/overnight windows, which suits an app that is rarely opened.
+- Registered in `AppDelegate.didFinishLaunching` (iOS requires it before launch returns); submitted
+  from `AppManager.onAppLaunch()` and again at the top of every handled wake.
+- The handler calls the existing `updateAutomaticFiltersIfNeeded()`, so the stale check, S3 client
+  and App Group cache write are unchanged. The Message Filter Extension still never fetches.
+- Info.plist carries `processing` in `UIBackgroundModes` and the identifier in
+  `BGTaskSchedulerPermittedIdentifiers`.
+
+### Inactivity Reminder
+
+- A single repeating notification (`kInactivityReminderNotificationIdentifier`), first firing a month
+  out at `kInactivityReminderHour`, then monthly. A `UNCalendarNotificationTrigger` cannot express
+  this: matching today's day of month would fire again the same evening, so an interval is used.
+- **Only** scene `.active` refreshes the clock (`Simply_Filter_SMSApp`). iOS also runs
+  `didFinishLaunching` for background task wakes, so nothing on the launch path may touch it.
+- Cancelled when AI Filtering goes off, via `.filtersStateChanged` observed inside the manager.
+- No sound, no badge.
+
+### Ask Cadence
+
+- Shown only when AI Filtering is on, alerts are not already allowed, fewer than
+  `kInactivityNotificationMaxAsks` declines are on record, and at least
+  `kInactivityNotificationMinSessionsBetweenAsks` sessions have passed since the last decline.
+- `shouldShowInactivityNotificationAlert()` is read-only. Permission bookkeeping happens in
+  `refreshInactivityReminder()`, which is already asking iOS for the authorization status.
+- Remembering a grant (`inactivityNotificationWasGranted`) is what lets a later revoke in Settings
+  be noticed; when it is, the decline history is wiped and the conversation may start over.
+- A denial from the system prompt after Continue counts as a decline.
+
 ---
 
 ## Services Layer
@@ -466,6 +532,23 @@ protocol HTTPServiceProtocol {
 **URLRequestProtocol** defines: `path`, `method` (GET/POST/PUT/DELETE/PATCH), `task` (plain or with parameters), `errorDomain`.
 
 **HTTPServiceBase** — Common base for services. Holds `httpService: HTTPServiceProtocol` and a weak `networkSyncManager` reference.
+
+### UserNotificationCenterService
+
+**File:** `Services Layer/UserNotificationCenterService.swift`
+
+```swift
+protocol UserNotificationCenterServiceProtocol: AnyObject {
+    func authorizationStatus() async -> UNAuthorizationStatus
+    func requestAlertAuthorization() async -> Bool
+    func schedule(_ request: UNNotificationRequest) async
+    func cancelPendingNotification(withIdentifier identifier: String)
+}
+```
+
+A pipe to `UNUserNotificationCenter` and nothing more — all policy lives in `SchedulingManager`.
+`UNAuthorizationStatus.allowsAlerts` (extension in the same file) maps the platform enum, the same
+way `NWPath.Status.networkStatus` does.
 
 ### AmazonS3Service
 

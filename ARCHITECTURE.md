@@ -57,10 +57,13 @@ AppManager (Singleton)
 │   └── depends on: PersistanceManager
 ├── FlowManager ────────────── Launch-order queue
 │   └── depends on: DefaultsManager
+├── SchedulingManager ─────── Background refresh + inactivity reminder
+│   └── depends on: AutomaticFilterManager, DefaultsManager, UserNotificationCenterService
 ├── AmazonS3Service ────────── HTTP → S3
 │   └── depends on: NetworkSyncManager
-└── ReportMessageService ───── HTTP → Lambda
-    └── depends on: NetworkSyncManager
+├── ReportMessageService ───── HTTP → Lambda
+│   └── depends on: NetworkSyncManager
+└── UserNotificationCenterService ── UNUserNotificationCenter gateway
 ```
 
 ## Message Evaluation Pipeline

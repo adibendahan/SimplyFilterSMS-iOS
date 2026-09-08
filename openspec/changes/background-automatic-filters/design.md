@@ -190,3 +190,53 @@ Same product reason as the alert. Do not surprise them with a different “we mi
 ## Open Questions
 
 None. 3-day processing hint, monthly repeating banner, alert-then-system-permission, re-ask cadence, `SchedulingManager` event surface above.
+
+## Implementation notes — where the build departs from the decisions above
+
+The decisions above were written against a discarded WIP. Building it out surfaced four places
+where the chosen mechanism was wrong on its own terms. The *behavior* they were reaching for is
+unchanged; the mechanism is not.
+
+### The monthly reminder cannot be a calendar trigger (fixes a bug in §4)
+
+`UNCalendarNotificationTrigger(dateMatching:)` fires at the **next** date matching the components.
+Seeded with today's day of month plus an hour, "one month out" is not what happens — open the app
+on the 9th at 10:00 and the banner arrives the same day at 19:00. (Days 29-31 also skip the short
+months.) A `UNTimeIntervalNotificationTrigger` computed to next month at `kInactivityReminderHour`,
+repeating, is the only trigger that expresses "a month after they last opened, then monthly".
+
+### Nothing on the launch path may touch the reminder clock (fixes a bug in §3/§4)
+
+iOS runs `application(_:didFinishLaunchingWithOptions:)` for **background** task wakes too. Anything
+hung off launch — including `AppManager.onAppLaunch()` — would push the monthly banner out on every
+silent refresh, which the spec explicitly forbids. The refresh lives only in the scene `.active`
+handler in `Simply_Filter_SMSApp`.
+
+### No fake `Screen` case, no `FlowManager` slot (replaces §5's queue mechanics)
+
+`Screen` routes views; a case whose `build()` returns `EmptyView` is a lie in the router, and it
+drags a `tag`, a deep-link exclusion and a raw-value ordering constraint along with it. Home already
+has this exact pattern: `showNothingToImportAlert` is a `@Published Bool` on the ViewModel, not a
+`Screen`. The ask follows it, and is raised from `presentNextFlow()`'s "queue is empty" branch —
+which *is* the moment "Home has nothing else to say", and covers launch, sheet dismissal and
+navigating back to Home in one place. Ordering behind first run / launch / What's New is preserved
+by `isHomeUnobstructed`, which already existed.
+
+A side effect worth keeping: an explicit user action (tapping Help) now beats a pending nag, instead
+of the nag pre-empting it.
+
+### One question, not two ordered calls (replaces §8's `syncInactivityNotificationPermission`)
+
+Two public methods where the second returns the wrong answer if you skip the first is a trap, not a
+separation of concerns. `refreshInactivityReminder()` already asks iOS for the authorization status
+on every open, so the grant/revoke bookkeeping rides along there.
+`shouldShowInactivityNotificationAlert()` is then genuinely read-only, with a test asserting it.
+
+Also: the manager exposes `isFinalInactivityNotificationAsk`, not a localized button title. Button
+copy belongs to the View layer, not to a Framework-layer manager.
+
+### Test-mode seeding
+
+The snapshot UI test turns AI Filtering on and then drives Home, so the alert would have appeared
+mid-run. The decline count is maxed out in the `isInTestingMode` block of `AppManager.init` that
+already seeds test state — rather than special-casing tests inside product code paths.

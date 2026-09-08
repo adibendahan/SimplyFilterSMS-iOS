@@ -601,3 +601,16 @@
 "notification_saveFailed_title" = "אירעה שגיאה";
 
 "notification_saveFailed_subtitle" = "השינויים לא נשמרו, נסו שוב.";
+"inactivityNotification_title" = "שמור על סינון AI פעיל";
+
+"inactivityNotification_message" = "אפשר התראות כדי שנוכל להזכיר לך לפתוח את האפליקציה. אם לא תפתח אותה אף פעם, סינון ה-AI עלול להתיישן ו-iOS עלול לפרוק את האפליקציה - ואז הסינון עלול להיפסק עד שתחזור.";
+
+"inactivityNotification_continue" = "המשך";
+
+"inactivityNotification_notNow" = "לא עכשיו";
+
+"inactivityNotification_stopAsking" = "אל תשאל שוב";
+
+"inactivityNotification_reminder_title" = "סינון ה-AI שלך עלול להיות מיושן";
+
+"inactivityNotification_reminder_body" = "פתח את Simply Filter SMS כדי לרענן אותו ולהמשיך לסנן שולחים לא מוכרים.";

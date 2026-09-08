@@ -101,6 +101,12 @@
 		69F4096F27B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4096E27B948D800749552 /* AutomaticFilterListsResponse.swift */; };
 		69F4097027B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4096E27B948D800749552 /* AutomaticFilterListsResponse.swift */; };
 		69F4097327B9499500749552 /* AutomaticFilterListsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4097227B9499500749552 /* AutomaticFilterListsRequest.swift */; };
+		69F7654F304AFF7800CF046E /* SchedulingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F7654E304AFF7800CF046E /* SchedulingManagerProtocol.swift */; };
+		69F76551304AFF7E00CF046E /* SchedulingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76550304AFF7E00CF046E /* SchedulingManager.swift */; };
+		69F76553304AFF7E00CF046E /* mock_SchedulingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76552304AFF7E00CF046E /* mock_SchedulingManager.swift */; };
+		69F76555304C499300CF046E /* UserNotificationCenterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76554304C499300CF046E /* UserNotificationCenterService.swift */; };
+		69F76557304C499300CF046E /* mock_UserNotificationCenterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76556304C499300CF046E /* mock_UserNotificationCenterService.swift */; };
+		69F76559304C499300CF046E /* SchedulingManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76558304C499300CF046E /* SchedulingManagerTests.swift */; };
 		69FAA7AA2F4FB4E90022C033 /* TipCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FAA7A92F4FB4E90022C033 /* TipCardView.swift */; };
 		69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FF9C8727933CE9007FA2DB /* FooterView.swift */; };
 		6F4B6E1734DF2400D47D01A0 /* ReportingExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0B53FCE983DFBEFBCE70F7 /* ReportingExtensionViewController.swift */; };
@@ -314,6 +320,12 @@
 		69F4097227B9499500749552 /* AutomaticFilterListsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFilterListsRequest.swift; sourceTree = "<group>"; };
 		69F4097427B94A2D00749552 /* HTTPService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPService.swift; sourceTree = "<group>"; };
 		69F4097627B94A9100749552 /* URLRequestProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestProtocol.swift; sourceTree = "<group>"; };
+		69F7654E304AFF7800CF046E /* SchedulingManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingManagerProtocol.swift; sourceTree = "<group>"; };
+		69F76550304AFF7E00CF046E /* SchedulingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingManager.swift; sourceTree = "<group>"; };
+		69F76552304AFF7E00CF046E /* mock_SchedulingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_SchedulingManager.swift; sourceTree = "<group>"; };
+		69F76554304C499300CF046E /* UserNotificationCenterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterService.swift; sourceTree = "<group>"; };
+		69F76556304C499300CF046E /* mock_UserNotificationCenterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_UserNotificationCenterService.swift; sourceTree = "<group>"; };
+		69F76558304C499300CF046E /* SchedulingManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingManagerTests.swift; sourceTree = "<group>"; };
 		69FAA7A92F4FB4E90022C033 /* TipCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipCardView.swift; sourceTree = "<group>"; };
 		69FF9C8727933CE9007FA2DB /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 		6C2217AE047F148D8D0D9052 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -415,6 +427,7 @@
 				69F4096D27B948B300749552 /* Responses */,
 				69F3D32727B97FA600D7DDA7 /* AmazonS3Service.swift */,
 				69ECF147286763F4000380A2 /* ReportMessageService.swift */,
+				69F76554304C499300CF046E /* UserNotificationCenterService.swift */,
 			);
 			path = "Services Layer";
 			sourceTree = "<group>";
@@ -435,6 +448,8 @@
 				A1B2C3D4E5F60718293A0005 /* mock_FilterTransferManager.swift */,
 				A1B2C3D4E5F60718293A0012 /* mock_FlowManager.swift */,
 				DDFBDEA463B84374A61E16E73070A6E4 /* mock_DebugDataManager.swift */,
+				69F76552304AFF7E00CF046E /* mock_SchedulingManager.swift */,
+				69F76556304C499300CF046E /* mock_UserNotificationCenterService.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -467,6 +482,7 @@
 				A1B2C3D4E5F60718293A0013 /* FlowManagerTests.swift */,
 				A11CE47C01000000C0100003 /* DefaultsManagerTests.swift */,
 				690F09CA27AC33E900BA481F /* Mocks */,
+				69F76558304C499300CF046E /* SchedulingManagerTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -527,6 +543,7 @@
 				986FCD84F7D2AE7EDB341A2D /* TipJarManagerProtocol.swift */,
 				A1B2C3D4E5F60718293A0002 /* FilterTransferManagerProtocol.swift */,
 				A1B2C3D4E5F60718293A0011 /* FlowManagerProtocol.swift */,
+				69F7654E304AFF7800CF046E /* SchedulingManagerProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -545,6 +562,7 @@
 				64956935AAF96BFE1AD24A37 /* TipJarManager.swift */,
 				A1B2C3D4E5F60718293A0001 /* FilterTransferManager.swift */,
 				A1B2C3D4E5F60718293A0010 /* FlowManager.swift */,
+				69F76550304AFF7E00CF046E /* SchedulingManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -967,6 +985,9 @@
 				A1B2C3D4E5F60718293A1004 /* FilterTransferManagerTests.swift in Sources */,
 				A1B2C3D4E5F60718293A1012 /* mock_FlowManager.swift in Sources */,
 				A1B2C3D4E5F60718293A1013 /* FlowManagerTests.swift in Sources */,
+				69F76559304C499300CF046E /* SchedulingManagerTests.swift in Sources */,
+				69F76553304AFF7E00CF046E /* mock_SchedulingManager.swift in Sources */,
+				69F76557304C499300CF046E /* mock_UserNotificationCenterService.swift in Sources */,
 				A11CE47C01000000C0100004 /* DefaultsManagerTests.swift in Sources */,
 				C05FA5740F8443179A8D3FCD817FB3FE /* mock_DebugDataManager.swift in Sources */,
 				69F3D32427B961E800D7DDA7 /* AutomaticFilterManagerTests.swift in Sources */,
@@ -998,6 +1019,9 @@
 				AD52D9D8E84445009A675029 /* GlassPicker.swift in Sources */,
 				690F054E278200B60036553B /* ButtonStyles.swift in Sources */,
 				69ECF148286763F4000380A2 /* ReportMessageService.swift in Sources */,
+				69F76551304AFF7E00CF046E /* SchedulingManager.swift in Sources */,
+				69F7654F304AFF7800CF046E /* SchedulingManagerProtocol.swift in Sources */,
+				69F76555304C499300CF046E /* UserNotificationCenterService.swift in Sources */,
 				69AA2C59279D793600CEABE5 /* DefaultsManager.swift in Sources */,
 				69F4097327B9499500749552 /* AutomaticFilterListsRequest.swift in Sources */,
 				69218EC52EC8A261000D547B /* EnableExtensionView.swift in Sources */,

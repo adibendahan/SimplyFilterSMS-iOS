@@ -36,6 +36,7 @@ Three-layer clean architecture with protocol-based dependency injection:
 - **MessageEvaluationManager** — Core filtering engine. App uses `init(persistanceManager:)` (live context across `reloadContainer()`). Extension/tests use `init(inMemory:)` with a synchronously loaded owned App Group store (`shouldAddStoreAsynchronously = false`).
 - **PersistanceManager** — CoreData CRUD operations for `Filter`, `AutomaticFiltersRule`, `AutomaticFiltersLanguage` entities.
 - **AutomaticFilterManager** — Fetches community filter lists from S3, applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown, country allowlist). S3 fetch completions hop to the MainActor before Core Data cache writes.
+- **SchedulingManager** — `BGProcessingTask` that refreshes AI filter lists without a foreground open, plus the monthly inactivity reminder and its ask cadence. Only scene `.active` moves the reminder clock — `didFinishLaunching` also runs for background wakes.
 - **DefaultsManager** — UserDefaults wrapper for app settings. Custom accent is `@StoredDefault("accentColorRGB", defaultValue: kNoColorDict)`.
 - **NetworkSyncManager** — NWPathMonitor + CloudKit sync status tracking (setup retries; pending retry cancelled if network recovery reloads first). `reloadContainer()` posts `.persistentStoreReloaded`; screens use `.modifier(persistentStoreReload)`.
 - **TipJarManager** — StoreKit 2 in-app purchase manager for consumable tip jar products.
@@ -47,6 +48,7 @@ Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testa
 ### Services Layer (`Simply Filter SMS/Services Layer/`)
 - **AmazonS3Service** — Fetches automatic filter lists from AWS S3.
 - **ReportMessageService** — Reports spam/ham to `https://api.ben-dahan.com/report` (public endpoint, no auth). Used by the in-app reporting UI. The Reporting Extension uses the same endpoint via iOS system delivery (`ILClassificationExtensionNetworkReportDestination`).
+- **UserNotificationCenterService** — Thin `UNUserNotificationCenter` gateway (status, request alerts, schedule/cancel). All policy stays in `SchedulingManager`.
 - **HTTPService** — Base class for HTTP requests with `URLRequestProtocol`.
 
 ### View Layer (`Simply Filter SMS/View Layer/`)
@@ -72,6 +74,7 @@ Every screen follows the same structure:
 - **Screen enum router:** `Screen.swift` defines all screens as enum cases with a `build()` factory method that instantiates the View+ViewModel pair. Used for both navigation and sheet presentation.
 - **Navigation via published optionals:** ViewModels expose `@Published var navigationScreen: Screen?` (push) and `sheetScreen: Screen?` (sheet) to drive navigation declaratively. Home sheets go through `FlowManager` (`request` / `recordLaunch` / `next` / `complete`).
 - **StatefulItem<T>:** Generic wrapper (`View Layer/Others/StatefulItem.swift`) that bridges getter/setter closures to a `Bool state` property with `didSet`. Used for Toggle bindings backed by manager calls.
+- **Home alerts are not `Screen`s:** A Home alert is a `@Published var showFooAlert: Bool` on `AppHomeView.ViewModel` plus `.alert(isPresented:)` — see `showNothingToImportAlert` and `showInactivityNotificationAlert`. Never add a `Screen` case whose `build()` returns `EmptyView` just to route one through `FlowManager`. To make an alert wait behind first run / launch / What's New, raise it from `presentNextFlow()`'s "queue is empty" branch and guard on `isHomeUnobstructed`.
 - **Overlay modifiers:** `EmbeddedFooterView` (app version footer) and `EmbeddedNotificationView` (toast banner) are applied via `.modifier()` in ZStack overlays. Defined in `ViewModfiers.swift`. **Important:** `EmbeddedNotificationView` must be applied **outside** `NavigationView`, not inside — otherwise the toast appears too low (below the nav bar). On iOS 26 the toast and its action chip use `.glassEffect(.clear.interactive())`; older iOS uses `.ultraThinMaterial`.
 - **NotificationView auto-hide:** Each `NotificationView.Notification` case defines a `timeout`. The `ViewModel` auto-hides when `show` is set to `true` — no manual `DispatchQueue` timer needed at call sites.
 - **Previews:** Always use `AppManager.previews` (in-memory store with debug data).

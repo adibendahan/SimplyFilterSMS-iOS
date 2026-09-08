@@ -157,6 +157,10 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
     }
 
+    var inactivityNotificationDeclineCount = 0
+    var inactivityNotificationLastDeclineSession = 0
+    var inactivityNotificationWasGranted = false
+
     var accentColorRGB: [String: Double] = kNoColorDict
 
     func resetCounters() {

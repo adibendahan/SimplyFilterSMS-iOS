@@ -601,3 +601,16 @@
 "notification_saveFailed_title" = "Fehler aufgetreten";
 
 "notification_saveFailed_subtitle" = "Änderungen nicht gespeichert, bitte erneut versuchen.";
+"inactivityNotification_title" = "KI-Filterung am Laufen halten";
+
+"inactivityNotification_message" = "Erlaube Mitteilungen, damit wir dich daran erinnern können, die App zu öffnen. Wenn du sie nie öffnest, können die KI-Filter veralten und iOS lagert die App womöglich aus - dann kann die Filterung stoppen, bis du zurückkommst.";
+
+"inactivityNotification_continue" = "Weiter";
+
+"inactivityNotification_notNow" = "Jetzt nicht";
+
+"inactivityNotification_stopAsking" = "Nicht mehr fragen";
+
+"inactivityNotification_reminder_title" = "Deine KI-Filter sind womöglich veraltet";
+
+"inactivityNotification_reminder_body" = "Öffne Simply Filter SMS, um sie zu aktualisieren und unbekannte Absender weiter zu filtern.";
