@@ -356,6 +356,13 @@ extension FilterListRowView {
 
             AppManager.logger.debug("FilterListRow.updateFilter(text) — saving")
             self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
+
+            guard self.filter.text == filterText else {
+                AppManager.logger.debug("FilterListRow.updateFilter(text) — save failed, reverted")
+                self.text = self.filter.text ?? current
+                return true
+            }
+
             self.onUpdate?(false)
             return false
         }

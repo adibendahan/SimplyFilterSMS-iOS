@@ -60,26 +60,35 @@ class PersistanceManager: PersistanceManagerProtocol {
         return fingerprint
     }
     
-    func commitContext() {
+    func commitContext() -> Bool {
         guard self.context.hasChanges else {
             AppManager.logger.debug("commitContext — skipped, no changes")
-            return
+            return true
         }
         
         do {
             try self.context.save()
             AppManager.logger.debug("commitContext — save succeeded")
+            return true
         } catch {
             let nsError = error as NSError
             AppManager.logger.error("ERROR! While commiting context: \(nsError), \(nsError.userInfo)")
+            self.context.rollback()
+            return false
         }
+    }
+    
+    func commitAndAnnounce() -> Bool {
+        let saved = self.commitContext()
+        NotificationCenter.default.post(name: saved ? .filtersStateChanged : .filtersSaveFailed, object: nil)
+        return saved
     }
     
     func reloadContainer() {
         guard let storeURL = self.container.persistentStoreDescriptions.first?.url, storeURL != URL(fileURLWithPath: "/dev/null") else { return }
         AppManager.logger.debug("reloadContainer — reloading persistent store")
         if let loadedStore = self.container.persistentStoreCoordinator.persistentStore(for: storeURL) {
-            self.commitContext()
+            _ = self.commitContext()
             self.container.viewContext.reset()
             try? self.container.persistentStoreCoordinator.remove(loadedStore)
         }
@@ -216,7 +225,6 @@ class PersistanceManager: PersistanceManagerProtocol {
             let newLanguage = AutomaticFiltersLanguage(context: self.context)
             newLanguage.lang = language.rawValue
             newLanguage.isActive = isActive
-            self.commitContext()
             return newLanguage
         }
         
@@ -266,8 +274,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         newFilter.filterCase = filterCase
         newFilter.text = text
         AppManager.logger.debug("addFilter — '\(text, privacy: .public)' | type: \(type.logDescription, privacy: .public) | folder: \(denyFolder.logDescription, privacy: .public) | target: \(filterTarget.logDescription, privacy: .public) | matching: \(filterMatching.logDescription, privacy: .public) | case: \(filterCase.logDescription, privacy: .public)")
-        self.commitContext()
-        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        guard self.commitAndAnnounce() else { return nil }
         return newFilter
     }
 
@@ -275,22 +282,19 @@ class PersistanceManager: PersistanceManagerProtocol {
         let toDelete = offsets.map({ filters[$0] })
         AppManager.logger.debug("deleteFilters — \(toDelete.count, privacy: .public) filter(s): \(toDelete.compactMap({ $0.text }).joined(separator: ", "), privacy: .public)")
         toDelete.forEach({ self.context.delete($0) })
-        self.commitContext()
-        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        guard self.commitAndAnnounce() else { return }
     }
 
     func deleteFilters(_ filters: Set<Filter>) {
         AppManager.logger.debug("deleteFilters — \(filters.count, privacy: .public) filter(s): \(filters.compactMap({ $0.text }).joined(separator: ", "), privacy: .public)")
         filters.forEach({ self.context.delete($0) })
-        self.commitContext()
-        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        guard self.commitAndAnnounce() else { return }
     }
 
     func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
         AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' denyFolder → \(denyFolder.logDescription, privacy: .public)")
         filter.denyFolderType = denyFolder
-        self.commitContext()
-        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        guard self.commitAndAnnounce() else { return }
     }
 
     func updateFilter(_ filter: Filter, filterMatching: FilterMatching) {
@@ -303,8 +307,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         }
         AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterMatching → \(filterMatching.logDescription, privacy: .public)")
         filter.filterMatching = filterMatching
-        self.commitContext()
-        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        guard self.commitAndAnnounce() else { return }
     }
 
     func updateFilter(_ filter: Filter, filterCase: FilterCase) {
@@ -317,8 +320,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         }
         AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterCase → \(filterCase.logDescription, privacy: .public)")
         filter.filterCase = filterCase
-        self.commitContext()
-        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        guard self.commitAndAnnounce() else { return }
     }
 
     func updateFilter(_ filter: Filter, filterTarget: FilterTarget) {
@@ -331,8 +333,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         }
         AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterTarget → \(filterTarget.logDescription, privacy: .public)")
         filter.filterTarget = filterTarget
-        self.commitContext()
-        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        guard self.commitAndAnnounce() else { return }
     }
 
     func updateFilter(_ filter: Filter, filterText: String) {
@@ -346,8 +347,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)', hasChangesBefore: \(self.context.hasChanges, privacy: .public)")
         filter.text = filterText
         AppManager.logger.debug("updateFilter — after set text, hasChanges: \(self.context.hasChanges, privacy: .public)")
-        self.commitContext()
-        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        guard self.commitAndAnnounce() else { return }
     }
     
     func selectedCountries(for rule: RuleType) -> [String] {
@@ -364,11 +364,10 @@ class PersistanceManager: PersistanceManagerProtocol {
            let json = String(data: data, encoding: .utf8) {
             record.selectedCountries = json
         }
-        self.commitContext()
-        NotificationCenter.default.post(name: .filtersStateChanged, object: nil)
+        guard self.commitAndAnnounce() else { return }
     }
 
-    func saveCache(with filterList: AutomaticFilterListsResponse) {
+    func saveCache(with filterList: AutomaticFilterListsResponse) -> Bool {
         AppManager.logger.debug("saveCache — saving new automatic filters cache")
         self.deleteExistingCaches()
         let newCache = AutomaticFiltersCache(context: self.context)
@@ -376,7 +375,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         newCache.hashed = filterList.hashed
         newCache.filtersData = filterList.encoded
         newCache.age = Date()
-        self.commitContext()
+        return self.commitContext()
     }
 
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
@@ -389,7 +388,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         AppManager.logger.debug("isCacheStale — \(isStale ? "stale" : "fresh", privacy: .public)")
         if !isStale {
             automaticFiltersCache.age = Date()
-            self.commitContext()
+            _ = self.commitContext()
         }
         return isStale
     }
@@ -405,7 +404,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         for rule in fetchAutomaticFiltersRuleRecords() {
             self.context.delete(rule)
         }
-        commitContext()
+        _ = commitContext()
     }
 
     func resetContainer() {

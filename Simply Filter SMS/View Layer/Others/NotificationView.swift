@@ -215,7 +215,7 @@ struct NotificationView: View {
     }
 
     enum Notification {
-        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed
+        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
 
         var icon: String {
             switch self {
@@ -235,7 +235,7 @@ struct NotificationView: View {
                 return "exclamationmark.message.fill"
             case .filtersImported:
                 return "square.and.arrow.down.fill"
-            case .filterImportFailed, .filterExportFailed:
+            case .filterImportFailed, .filterExportFailed, .saveFailed:
                 return "exclamationmark.triangle.fill"
             }
         }
@@ -258,7 +258,7 @@ struct NotificationView: View {
                 return .green.opacity(0.8)
             case .filtersImported:
                 return .green.opacity(0.6)
-            case .filterImportFailed, .filterExportFailed:
+            case .filterImportFailed, .filterExportFailed, .saveFailed:
                 return .red.opacity(0.6)
             }
         }
@@ -286,6 +286,8 @@ struct NotificationView: View {
                 return "notification_importFailed_title"~
             case .filterExportFailed:
                 return "notification_exportFailed_title"~
+            case .saveFailed:
+                return "notification_saveFailed_title"~
             }
         }
 
@@ -311,6 +313,8 @@ struct NotificationView: View {
                 return "notification_importFailed_subtitle"~
             case .filterExportFailed:
                 return "notification_exportFailed_subtitle"~
+            case .saveFailed:
+                return "notification_saveFailed_subtitle"~
             }
         }
 
@@ -337,7 +341,7 @@ struct NotificationView: View {
                 return 10
             case .enableReportingExtension:
                 return 10
-            case .filtersImported, .filterImportFailed, .filterExportFailed:
+            case .filtersImported, .filterImportFailed, .filterExportFailed, .saveFailed:
                 return 6
             }
         }

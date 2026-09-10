@@ -856,6 +856,11 @@ extension AppHomeView {
                     self.showNotification(.cloudSyncOperationComplete)
                 }
 
+                NotificationCenter.default.addObserver(forName: .filtersSaveFailed, object: nil, queue: .main) { _ in
+                    self.refresh()
+                    self.showNotification(.saveFailed)
+                }
+
                 NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { notification in
                     guard let networkStatus = notification.object as? NetworkStatus else { return }
                     if networkStatus == .online {
