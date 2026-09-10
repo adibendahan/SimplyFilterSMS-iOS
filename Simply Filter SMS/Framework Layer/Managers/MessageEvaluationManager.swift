@@ -55,6 +55,12 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             return MessageEvaluationResult(action: .allow, match: .storeUnavailable)
         }
 
+        return self.context.performAndWait {
+            self.evaluateRules(body: body, sender: sender)
+        }
+    }
+
+    private func evaluateRules(body: String, sender: String) -> MessageEvaluationResult {
         logger?.debug("━━━━ Evaluating message | sender: '\(sender, privacy: .public)' | body: '\(body, privacy: .public)' ━━━━")
         var result = MessageEvaluationResult(action: .none)
         defer {
