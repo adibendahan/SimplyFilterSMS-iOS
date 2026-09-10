@@ -128,7 +128,7 @@ For each user filter, matching depends on three settings:
 
 **App:** `init(persistanceManager:)` — `ContextSource.persistance`; `context` always reads `PersistanceManager.context` (survives `reloadContainer()`).
 
-**Extension / tests:** `init(inMemory:)` — `ContextSource.owned`; owns an `AppPersistentCloudKitContainer` (`isReadOnly: true` unless in-memory). Loads the store synchronously in init (waits up to `kOwnedStoreLoadTimeout`). On failure/timeout, logs and leaves an empty store; evaluate then allows without running filters. Successful load sets `stalenessInterval = 0`.
+**Extension / tests:** `init(inMemory:)` — `ContextSource.owned`; owns an `AppPersistentCloudKitContainer` (`isReadOnly: true` unless in-memory). Loads the store synchronously in init (`shouldAddStoreAsynchronously = false`). On failure, logs and leaves an empty store; evaluate then allows without running filters. Successful load sets `stalenessInterval = 0`.
 ---
 
 ## PersistanceManager
