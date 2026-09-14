@@ -96,3 +96,10 @@ automatic_filters.json
 .claude/skills/review-reports/.review-state.json
 .claude/skills/review-reports/.venv/
 data/reported_messages_archive*.json
+
+# Xcode Cloud
+#
+# Xcode writes this on open to link the project to an Xcode Cloud product in
+# App Store Connect. We archive locally, so it's noise.
+
+*.xcodeproj/xcshareddata/xcodecloud/
