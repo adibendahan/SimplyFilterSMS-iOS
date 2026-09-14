@@ -118,7 +118,7 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
             focusedFilterID = nil
             hideKeyboard()
         }
-        .onChange(of: model.newlyAddedFilter) { newFilter in
+        .onChange(of: model.newlyAddedFilter) { _, newFilter in
             guard let filter = newFilter, let id = filter.uuid else { return }
             dotFilterID = id
             withAnimation {

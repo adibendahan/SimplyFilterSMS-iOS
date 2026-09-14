@@ -131,7 +131,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             .listStyle(.insetGrouped)
             .navigationBarItems(trailing: NavigationBarTrailingItem())
             .navigationSplitViewColumnWidth(min: 340, ideal: 380)
-            .onChange(of: selectedScreen) { newScreen in
+            .onChange(of: selectedScreen) { _, newScreen in
                 if let screen = newScreen {
                     model.navigationScreen = screen
                     if horizontalSizeClass == .regular {

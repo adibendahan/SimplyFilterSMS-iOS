@@ -55,7 +55,7 @@ struct TipJarView: View {
                     .contentShape(Rectangle())
                 }
             }
-            .onChange(of: model.shouldDismiss) { shouldDismiss in
+            .onChange(of: model.shouldDismiss) { _, shouldDismiss in
                 if shouldDismiss { dismiss() }
             }
         }

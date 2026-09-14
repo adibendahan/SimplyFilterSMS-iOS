@@ -50,7 +50,7 @@ struct FilterListRowView: View {
                         }
                     }
                 }
-                .onChange(of: dotFilterID) { newID in
+                .onChange(of: dotFilterID) { _, newID in
                     guard newID == model.id, dotOpacity == 0 else { return }
                     dotOpacity = 1.0
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {

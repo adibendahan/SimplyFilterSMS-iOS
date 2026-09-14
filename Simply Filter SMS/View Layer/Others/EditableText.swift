@@ -101,7 +101,7 @@ struct EditableText: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .focused(focusedID, equals: focusID)
             .accessibilityLabel(self.text)
-            .onChange(of: newValue) { value in
+            .onChange(of: newValue) { _, value in
                 self.onTextChange?(value)
             }
         }
@@ -110,7 +110,7 @@ struct EditableText: View {
         .onTapGesture(count: 1, perform: {
             self.beginEditing()
         })
-        .onChange(of: focusedID.wrappedValue) { newFocus in
+        .onChange(of: focusedID.wrappedValue) { _, newFocus in
             if newFocus == focusID {
                 if !sessionActive {
                     beginEditing()

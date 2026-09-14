@@ -131,7 +131,7 @@ struct ReportMessageView: View {
                         }
                     }
             }
-            .onChange(of: self.model.state) { newState in
+            .onChange(of: self.model.state) { _, newState in
                 if case .result(let text) = newState {
                     UIAccessibility.post(notification: .announcement, argument: text)
                     let delay: TimeInterval = voiceOverEnabled ? 3 : 2.5
