@@ -86,6 +86,7 @@ class SchedulingManager: SchedulingManagerProtocol {
     
     func shouldShowInactivityNotificationAlert() async -> Bool {
         guard self.automaticFilterManager.isAutomaticFilteringOn,
+              self.defaultsManager.sessionCounter > 1,
               self.hasAsksLeft,
               self.hasWaitedSinceLastDecline else { return false }
         
@@ -124,11 +125,16 @@ class SchedulingManager: SchedulingManagerProtocol {
     }
 
     func scheduleAutomaticFiltersProcessingSoon() {
-        BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: kAutomaticFiltersProcessingTaskIdentifier)
         let request = BGProcessingTaskRequest(identifier: kAutomaticFiltersProcessingTaskIdentifier)
         request.requiresNetworkConnectivity = true
         request.earliestBeginDate = Date().addingTimeInterval(60)
-        try? BGTaskScheduler.shared.submit(request)
+        do {
+            try BGTaskScheduler.shared.submit(request)
+            AppManager.logger.debug("scheduleAutomaticFiltersProcessingSoon — queued, not before \(request.earliestBeginDate?.description ?? "now", privacy: .public)")
+        }
+        catch {
+            AppManager.logger.error("scheduleAutomaticFiltersProcessingSoon — submit failed: \(error.localizedDescription, privacy: .public)")
+        }
     }
     #endif // DEBUG
     

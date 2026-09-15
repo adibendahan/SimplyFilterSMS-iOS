@@ -23,7 +23,7 @@ class SchedulingManagerTests: XCTestCase {
         super.setUp()
         self.isAutomaticFilteringOn = true
         self.authorizationStatus = .notDetermined
-        self.sessionCounter = 0
+        self.sessionCounter = 2
 
         self.automaticFilterManager = mock_AutomaticFilterManager()
         self.automaticFilterManager.isAutomaticFilteringOnClosure = { [unowned self] in
@@ -55,6 +55,14 @@ class SchedulingManagerTests: XCTestCase {
 
 
     //MARK: - Asking -
+    func test_neverAsksInTheFirstSession() async {
+        self.sessionCounter = 1
+
+        let shouldShow = await self.testSubject.shouldShowInactivityNotificationAlert()
+
+        XCTAssertFalse(shouldShow)
+    }
+
     func test_asksWhenFilteringIsOnAndAlertsAreNotAllowed() async {
         let shouldShow = await self.testSubject.shouldShowInactivityNotificationAlert()
 
@@ -92,11 +100,11 @@ class SchedulingManagerTests: XCTestCase {
         var shouldShow = await self.testSubject.shouldShowInactivityNotificationAlert()
         XCTAssertFalse(shouldShow)
 
-        self.sessionCounter = kInactivityNotificationMinSessionsBetweenAsks - 1
+        self.sessionCounter += kInactivityNotificationMinSessionsBetweenAsks - 1
         shouldShow = await self.testSubject.shouldShowInactivityNotificationAlert()
         XCTAssertFalse(shouldShow)
 
-        self.sessionCounter = kInactivityNotificationMinSessionsBetweenAsks
+        self.sessionCounter += 1
         shouldShow = await self.testSubject.shouldShowInactivityNotificationAlert()
         XCTAssertTrue(shouldShow)
     }

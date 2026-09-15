@@ -551,7 +551,9 @@ extension AppHomeView {
             didSet {
                 if oldValue != nil,
                    self.navigationScreen == nil {
-                    self.tryRequestReview()
+                    if !self.tryRequestReview() {
+                        self.tryShowInactivityNotification()
+                    }
                 }
             }
         }
@@ -729,7 +731,6 @@ extension AppHomeView {
             guard !self.isReplacingSheetForLaunch else { return }
             guard let screen = self.appManager.flowManager.next() else {
                 self.showPendingNotification()
-                self.tryShowInactivityNotification()
                 return
             }
             if screen == .filterImport,
@@ -971,16 +972,18 @@ extension AppHomeView {
             self.showNotification(.tipPromotion)
         }
 
-        func tryRequestReview() {
+        func tryRequestReview() -> Bool {
             var defaultsManager = self.appManager.defaultsManager
-            if !defaultsManager.didPromptForReview,
-               defaultsManager.appAge.daysBetween(date: Date()) > 7,
-               defaultsManager.sessionCounter > 5,
-               let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-                
-                SKStoreReviewController.requestReview(in: scene)
-                defaultsManager.didPromptForReview = true
+            guard !defaultsManager.didPromptForReview,
+                  defaultsManager.appAge.daysBetween(date: Date()) > 7,
+                  defaultsManager.sessionCounter > 5,
+                  let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else {
+                return false
             }
+
+            SKStoreReviewController.requestReview(in: scene)
+            defaultsManager.didPromptForReview = true
+            return true
         }
         
         #if DEBUG
