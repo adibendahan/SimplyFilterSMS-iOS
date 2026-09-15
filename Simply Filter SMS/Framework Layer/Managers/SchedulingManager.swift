@@ -35,8 +35,10 @@ class SchedulingManager: SchedulingManagerProtocol {
     
     
     //MARK: - Public API (SchedulingManagerProtocol) -
+    var isFinalInactivityNotificationAsk: Bool {
+        return self.defaultsManager.inactivityNotificationDeclineCount + 1 == kInactivityNotificationMaxAsks
+    }
     
-    //MARK: Background refresh
     func scheduleAutomaticFiltersProcessing() {
         let request = BGProcessingTaskRequest(identifier: kAutomaticFiltersProcessingTaskIdentifier)
         request.requiresNetworkConnectivity = true
@@ -68,7 +70,6 @@ class SchedulingManager: SchedulingManagerProtocol {
         }
     }
     
-    //MARK: Inactivity reminder
     func refreshInactivityReminder() {
         self.cancelInactivityReminder()
         
@@ -81,11 +82,6 @@ class SchedulingManager: SchedulingManagerProtocol {
             
             await self.userNotificationCenterService.schedule(self.inactivityReminderRequest)
         }
-    }
-    
-    //MARK: Inactivity notification
-    var isFinalInactivityNotificationAsk: Bool {
-        return self.defaultsManager.inactivityNotificationDeclineCount + 1 == kInactivityNotificationMaxAsks
     }
     
     func shouldShowInactivityNotificationAlert() async -> Bool {

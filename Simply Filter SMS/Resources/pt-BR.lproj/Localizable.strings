@@ -601,9 +601,9 @@
 "notification_saveFailed_title" = "Ocorreu um erro";
 
 "notification_saveFailed_subtitle" = "As alterações não foram salvas, tente novamente.";
-"inactivityNotification_title" = "Mantenha o filtro de IA funcionando";
+"inactivityNotification_title" = "Para o filtro de IA continuar funcionando";
 
-"inactivityNotification_message" = "Permita notificações para que possamos lembrar você de abrir o app. Se você nunca abrir, os filtros de IA podem ficar desatualizados e o iOS pode remover o app - então a filtragem pode parar até você voltar.";
+"inactivityNotification_message" = "Permita notificações e lembraremos você de abrir o app de vez em quando. Se não abrir, as listas de filtros de IA não serão atualizadas, e o iOS pode remover o app para liberar espaço - aí a filtragem para até você voltar.";
 
 "inactivityNotification_continue" = "Continuar";
 
@@ -611,6 +611,6 @@
 
 "inactivityNotification_stopAsking" = "Não perguntar mais";
 
-"inactivityNotification_reminder_title" = "Seus filtros de IA podem estar desatualizados";
+"inactivityNotification_reminder_title" = "Suas listas de filtros de IA estão desatualizadas";
 
-"inactivityNotification_reminder_body" = "Abra o Simply Filter SMS para atualizá-los e continuar filtrando remetentes desconhecidos.";
+"inactivityNotification_reminder_body" = "Abra o Simply Filter SMS para atualizá-las e continuar filtrando mensagens de remetentes desconhecidos.";

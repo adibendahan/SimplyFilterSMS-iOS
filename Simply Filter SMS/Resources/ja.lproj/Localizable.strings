@@ -601,9 +601,9 @@
 "notification_saveFailed_title" = "エラーが発生しました";
 
 "notification_saveFailed_subtitle" = "変更は保存されませんでした。もう一度お試しください。";
-"inactivityNotification_title" = "AIフィルタリングを維持";
+"inactivityNotification_title" = "AIフィルタリングを止めないために";
 
-"inactivityNotification_message" = "通知を許可すると、アプリを開くようリマインドできます。一度も開かないとAIフィルタが古くなり、iOSがAppを取り除くことがあります - その場合、戻ってくるまでフィルタリングが停止することがあります。";
+"inactivityNotification_message" = "通知を許可すると、アプリを開くようときどきお知らせします。開かないままだとAIフィルタのリストが更新されず、iOSが空き容量のためにAppを取り除くことがあります - その場合、戻るまでフィルタリングは止まります。";
 
 "inactivityNotification_continue" = "続ける";
 
@@ -611,6 +611,6 @@
 
 "inactivityNotification_stopAsking" = "今後表示しない";
 
-"inactivityNotification_reminder_title" = "AIフィルタが古くなっている可能性があります";
+"inactivityNotification_reminder_title" = "AIフィルタのリストが更新されていません";
 
-"inactivityNotification_reminder_body" = "Simply Filter SMSを開いて更新し、不明な送信者のフィルタリングを続けましょう。";
+"inactivityNotification_reminder_body" = "Simply Filter SMSを開いてリストを更新し、不明な送信者からのメッセージをフィルタリングし続けましょう。";
