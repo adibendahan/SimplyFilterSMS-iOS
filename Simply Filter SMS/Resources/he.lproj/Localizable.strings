@@ -601,9 +601,10 @@
 "notification_saveFailed_title" = "אירעה שגיאה";
 
 "notification_saveFailed_subtitle" = "השינויים לא נשמרו, נסו שוב.";
-"inactivityNotification_title" = "כדי שסינון AI ימשיך לעבוד";
 
-"inactivityNotification_message" = "אשרו התראות ונזכיר לכם לפתוח את האפליקציה מדי פעם. אם לא תפתחו אותה, רשימות הסינון של AI לא יתעדכנו, ו-iOS עלול להסיר אותה מהמכשיר כדי לפנות מקום - ואז הסינון ייפסק עד שתחזרו.";
+"inactivityNotification_title" = "שמרו על סינון AI מעודכן";
+
+"inactivityNotification_message" = "אפשרו התראות ונזכיר לכם לפתוח את האפליקציה מדי פעם. כשלא פותחים, רשימות הסינון מפסיקות להתעדכן ו-iOS עלול להסיר את האפליקציה כדי לפנות מקום - ואז הסינון נעצר עד שתפתחו שוב.";
 
 "inactivityNotification_continue" = "המשך";
 
@@ -611,6 +612,6 @@
 
 "inactivityNotification_stopAsking" = "אל תשאל שוב";
 
-"inactivityNotification_reminder_title" = "רשימות הסינון של AI לא מעודכנות";
+"inactivityNotification_reminder_title" = "רשימות הסינון מבוססות AI לא התעדכנו";
 
 "inactivityNotification_reminder_body" = "פתחו את Simply Filter SMS כדי לעדכן אותן ולהמשיך לסנן הודעות ממספרים לא מוכרים.";

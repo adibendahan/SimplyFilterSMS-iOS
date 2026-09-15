@@ -601,9 +601,10 @@
 "notification_saveFailed_title" = "发生错误";
 
 "notification_saveFailed_subtitle" = "更改未保存，请重试。";
-"inactivityNotification_title" = "让 AI 过滤持续有效";
 
-"inactivityNotification_message" = "允许通知，我们会不时提醒你打开 App。如果一直不打开，AI 过滤规则将无法更新，iOS 也可能为释放空间而卸载 App - 过滤会因此停止，直到你回来。";
+"inactivityNotification_title" = "保持 AI 过滤为最新";
+
+"inactivityNotification_message" = "允许通知，我们会不时提醒你打开 App。如果一直不打开，过滤规则将停止更新，iOS 也可能为释放空间而卸载 App - 过滤会因此停止，直到你再次打开。";
 
 "inactivityNotification_continue" = "继续";
 
@@ -611,6 +612,6 @@
 
 "inactivityNotification_stopAsking" = "不再询问";
 
-"inactivityNotification_reminder_title" = "AI 过滤规则已过时";
+"inactivityNotification_reminder_title" = "基于 AI 的过滤规则尚未更新";
 
 "inactivityNotification_reminder_body" = "打开 Simply Filter SMS 更新规则，继续过滤未知发件人的短信。";

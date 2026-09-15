@@ -601,9 +601,10 @@
 "notification_saveFailed_title" = "Fehler aufgetreten";
 
 "notification_saveFailed_subtitle" = "Änderungen nicht gespeichert, bitte erneut versuchen.";
-"inactivityNotification_title" = "Damit die KI-Filterung weiterläuft";
 
-"inactivityNotification_message" = "Erlaube Mitteilungen und wir erinnern dich ab und zu daran, die App zu öffnen. Sonst werden die KI-Filterlisten nicht mehr aktualisiert, und iOS lagert die App womöglich aus, um Platz zu schaffen - dann stoppt die Filterung, bis du zurückkommst.";
+"inactivityNotification_title" = "Halte die KI-Filterung aktuell";
+
+"inactivityNotification_message" = "Erlaube Mitteilungen und wir erinnern dich ab und zu daran, die App zu öffnen. Sonst werden die Filterlisten nicht mehr aktualisiert, und iOS lagert die App womöglich aus, um Platz zu schaffen - dann stoppt die Filterung, bis du sie wieder öffnest.";
 
 "inactivityNotification_continue" = "Weiter";
 
@@ -611,6 +612,6 @@
 
 "inactivityNotification_stopAsking" = "Nicht mehr fragen";
 
-"inactivityNotification_reminder_title" = "Deine KI-Filterlisten sind nicht mehr aktuell";
+"inactivityNotification_reminder_title" = "Deine KI-basierten Filterlisten wurden nicht aktualisiert";
 
 "inactivityNotification_reminder_body" = "Öffne Simply Filter SMS, um sie zu aktualisieren und Nachrichten unbekannter Absender weiter zu filtern.";
