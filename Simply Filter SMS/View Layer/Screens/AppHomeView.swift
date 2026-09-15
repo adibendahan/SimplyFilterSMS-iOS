@@ -409,6 +409,18 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 }
                 .accessibilityIdentifier(TestIdentifier.loadDebugDataMenuButton.rawValue)
 
+                Button {
+                    self.model.fireInactivityReminder()
+                } label: {
+                    Label("Reminder in 30s", systemImage: "bell.badge")
+                }
+
+                Button {
+                    self.model.refreshAutomaticFiltersSoon()
+                } label: {
+                    Label("AI Refresh in 1m", systemImage: "arrow.clockwise")
+                }
+
                 Button(role: .destructive) {
                     self.model.reset()
                 } label: {
@@ -986,6 +998,15 @@ extension AppHomeView {
             self.appManager.reset()
             self.refresh()
             self.presentNextFlow()
+        }
+
+        func fireInactivityReminder() {
+            self.appManager.schedulingManager.scheduleInactivityReminderSoon()
+        }
+
+        func refreshAutomaticFiltersSoon() {
+            self.appManager.debugDataManager.expireAutomaticFiltersCache()
+            self.appManager.schedulingManager.scheduleAutomaticFiltersProcessingSoon()
         }
         #endif // DEBUG
         

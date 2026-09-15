@@ -53,6 +53,9 @@ class mock_SchedulingManager: SchedulingManagerProtocol {
         self.resetCounter += 1
     }
 
+    func scheduleInactivityReminderSoon() { }
+    func scheduleAutomaticFiltersProcessingSoon() { }
+
     func resetCounters() {
         self.scheduleAutomaticFiltersProcessingCounter = 0
         self.handleAutomaticFiltersProcessingCounter = 0

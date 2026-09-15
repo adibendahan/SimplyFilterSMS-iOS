@@ -10,4 +10,8 @@ import Foundation
 protocol DebugDataManagerProtocol: AnyObject {
     func load()
     func load(for langCode: String)
+
+    #if DEBUG
+    func expireAutomaticFiltersCache()
+    #endif // DEBUG
 }

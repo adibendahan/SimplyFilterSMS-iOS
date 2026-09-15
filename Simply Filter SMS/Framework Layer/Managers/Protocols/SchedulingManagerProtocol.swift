@@ -18,5 +18,7 @@ protocol SchedulingManagerProtocol: AnyObject {
 
     #if DEBUG
     func reset()
+    func scheduleInactivityReminderSoon()
+    func scheduleAutomaticFiltersProcessingSoon()
     #endif // DEBUG
 }

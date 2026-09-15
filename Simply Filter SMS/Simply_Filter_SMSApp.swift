@@ -13,9 +13,6 @@ struct Simply_Filter_SMSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var homeModel = AppHomeView.ViewModel(appManager: AppManager.shared)
 
-    @Environment(\.scenePhase)
-    private var scenePhase
-
     init() {
         UIScrollView.appearance().delaysContentTouches = false
     }
@@ -24,10 +21,6 @@ struct Simply_Filter_SMSApp: App {
         WindowGroup {
             AppHomeView(model: homeModel)
                 .adaptiveLayoutEnvironment()
-        }
-        .onChange(of: scenePhase) { phase in
-            guard phase == .active else { return }
-            AppManager.shared.schedulingManager.refreshInactivityReminder()
         }
     }
 }
@@ -54,5 +47,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         AppManager.shared.onAppLaunch()
         return true
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        AppManager.shared.schedulingManager.refreshInactivityReminder()
     }
 }

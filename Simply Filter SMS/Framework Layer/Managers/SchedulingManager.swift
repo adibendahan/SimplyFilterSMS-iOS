@@ -112,6 +112,24 @@ class SchedulingManager: SchedulingManagerProtocol {
     func reset() {
         self.cancelInactivityReminder()
     }
+
+    func scheduleInactivityReminderSoon() {
+        let reminder = self.inactivityReminderRequest
+        let soon = UNNotificationRequest(identifier: reminder.identifier,
+                                         content: reminder.content,
+                                         trigger: UNTimeIntervalNotificationTrigger(timeInterval: 30, repeats: false))
+        Task {
+            await self.userNotificationCenterService.schedule(soon)
+        }
+    }
+
+    func scheduleAutomaticFiltersProcessingSoon() {
+        BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: kAutomaticFiltersProcessingTaskIdentifier)
+        let request = BGProcessingTaskRequest(identifier: kAutomaticFiltersProcessingTaskIdentifier)
+        request.requiresNetworkConnectivity = true
+        request.earliestBeginDate = Date().addingTimeInterval(60)
+        try? BGTaskScheduler.shared.submit(request)
+    }
     #endif // DEBUG
     
     
