@@ -63,7 +63,7 @@ class AppManager: AppManagerProtocol {
                 "es": emptyList, "fr": emptyList, "pt": emptyList,
                 "de": emptyList, "ja": emptyList, "ko": emptyList, "it": emptyList
             ])
-            persistanceManager.saveCache(with: seedCache)
+            _ = persistanceManager.saveCache(with: seedCache)
         }
         #endif // DEBUG
     }

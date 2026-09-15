@@ -131,7 +131,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             .listStyle(.insetGrouped)
             .navigationBarItems(trailing: NavigationBarTrailingItem())
             .navigationSplitViewColumnWidth(min: 340, ideal: 380)
-            .onChange(of: selectedScreen) { newScreen in
+            .onChange(of: selectedScreen) { _, newScreen in
                 if let screen = newScreen {
                     model.navigationScreen = screen
                     if horizontalSizeClass == .regular {
@@ -854,6 +854,11 @@ extension AppHomeView {
                 NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { _ in
                     self.refresh()
                     self.showNotification(.cloudSyncOperationComplete)
+                }
+
+                NotificationCenter.default.addObserver(forName: .filtersSaveFailed, object: nil, queue: .main) { _ in
+                    self.refresh()
+                    self.showNotification(.saveFailed)
                 }
 
                 NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { notification in

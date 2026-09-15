@@ -151,9 +151,10 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.fetchFilterRecordsForTypeClosure?(filterType) ?? []
     }
     
-    func saveCache(with filterList: AutomaticFilterListsResponse) {
+    func saveCache(with filterList: AutomaticFilterListsResponse) -> Bool {
         self.saveCacheCounter += 1
         self.saveCacheClosure?(filterList)
+        return true
     }
 
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
@@ -161,9 +162,16 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.isCacheStaleClosure?(newFilterList) ?? false
     }
     
-    func commitContext() {
+    func commitContext() -> Bool {
         self.commitContextCounter += 1
         self.commitContextClosure?()
+        return true
+    }
+    
+    func commitAndAnnounce() -> Bool {
+        let saved = self.commitContext()
+        NotificationCenter.default.post(name: saved ? .filtersStateChanged : .filtersSaveFailed, object: nil)
+        return saved
     }
     
     func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage] {

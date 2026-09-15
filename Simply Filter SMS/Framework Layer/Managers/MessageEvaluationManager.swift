@@ -22,25 +22,20 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
 
+        container.persistentStoreDescriptions.first!.shouldAddStoreAsynchronously = false
+
         var loadError: Error?
-        let loaded = DispatchSemaphore(value: 0)
         container.loadPersistentStores { (_, error) in
             loadError = error
-            loaded.signal()
         }
-        if loaded.wait(timeout: .now() + kOwnedStoreLoadTimeout) == .success, loadError == nil {
-            container.viewContext.stalenessInterval = 0
-            container.viewContext.automaticallyMergesChangesFromParent = true
-        }
-        else {
+        if let loadError {
             // Logger may not be set yet (extension calls setLogger after init).
             let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "evaluation")
-            if let loadError {
-                logger.error("Owned store load failed: \(loadError.localizedDescription, privacy: .public)")
-            }
-            else {
-                logger.error("Owned store load timed out after \(kOwnedStoreLoadTimeout, privacy: .public)s")
-            }
+            logger.error("Owned store load failed: \(loadError.localizedDescription, privacy: .public)")
+        }
+        else {
+            container.viewContext.stalenessInterval = 0
+            container.viewContext.automaticallyMergesChangesFromParent = true
         }
 
         self.contextSource = .owned(container)
@@ -60,6 +55,12 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             return MessageEvaluationResult(action: .allow, match: .storeUnavailable)
         }
 
+        return self.context.performAndWait {
+            self.evaluateRules(body: body, sender: sender)
+        }
+    }
+
+    private func evaluateRules(body: String, sender: String) -> MessageEvaluationResult {
         logger?.debug("━━━━ Evaluating message | sender: '\(sender, privacy: .public)' | body: '\(body, privacy: .public)' ━━━━")
         var result = MessageEvaluationResult(action: .none)
         defer {

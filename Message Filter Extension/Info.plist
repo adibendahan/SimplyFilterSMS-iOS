@@ -4,13 +4,6 @@
 <dict>
 	<key>NSExtension</key>
 	<dict>
-		<key>NSExtensionAttributes</key>
-		<dict>
-			<key>ILMessageFilterExtensionNetworkURL</key>
-			<string>https://www.example-sms-filter-application.com/api</string>
-			<key>RequestOpenAccess</key>
-			<true/>
-		</dict>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.identitylookup.message-filter</string>
 		<key>NSExtensionPrincipalClass</key>

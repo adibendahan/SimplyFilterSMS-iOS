@@ -176,10 +176,9 @@ extension CountryListView {
         // MARK: - Private
 
         /// Returns ISO region codes where `languageCode` is the primary language,
-        /// using CLDR likely-subtags via `Locale.Language.maximalIdentifier` (iOS 16+).
+        /// using CLDR likely-subtags via `Locale.Language.maximalIdentifier`.
         private static func primaryRegions(for languageCode: String) -> Set<String> {
             guard !languageCode.isEmpty else { return [] }
-            guard #available(iOS 16, *) else { return [] }
             return Set(Locale.Region.isoRegions.compactMap { region -> String? in
                 let regionCode = region.identifier
                 let maximal = Locale.Language(identifier: "und-\(regionCode)").maximalIdentifier

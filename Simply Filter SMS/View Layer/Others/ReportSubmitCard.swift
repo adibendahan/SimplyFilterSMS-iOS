@@ -39,7 +39,7 @@ struct ReportSubmitCard: View {
         .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 8)
         .transition(.scale(scale: 0.88).combined(with: .opacity))
         .animation(.spring(response: 0.45, dampingFraction: 0.8), value: isDone)
-        .onChange(of: isDone) { done in
+        .onChange(of: isDone) { _, done in
             guard done else { return }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 withAnimation {
@@ -125,7 +125,7 @@ private struct ReportSubmitAnimationView: View {
             isSpinning = true
             animate()
         }
-        .onChange(of: isDone) { done in
+        .onChange(of: isDone) { _, done in
             guard done else { return }
             transitionToSuccess()
         }

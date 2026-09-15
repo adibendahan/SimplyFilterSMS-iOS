@@ -96,7 +96,7 @@ struct TestFiltersView: View {
                 .animation(self.reduceMotion ? nil : .easeInOut(duration: 0.28), value: self.model.result?.action.rawValue)
             }
             .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
-            .onChange(of: self.model.result) { result in
+            .onChange(of: self.model.result) { _, result in
                 guard UIAccessibility.isVoiceOverRunning, let result else { return }
                 UIAccessibility.post(notification: .announcement, argument: TestFilterResultRow.accessibilityText(for: result))
             }

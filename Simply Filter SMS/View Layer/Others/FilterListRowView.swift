@@ -50,7 +50,7 @@ struct FilterListRowView: View {
                         }
                     }
                 }
-                .onChange(of: dotFilterID) { newID in
+                .onChange(of: dotFilterID) { _, newID in
                     guard newID == model.id, dotOpacity == 0 else { return }
                     dotOpacity = 1.0
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
@@ -356,6 +356,13 @@ extension FilterListRowView {
 
             AppManager.logger.debug("FilterListRow.updateFilter(text) — saving")
             self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
+
+            guard self.filter.text == filterText else {
+                AppManager.logger.debug("FilterListRow.updateFilter(text) — save failed, reverted")
+                self.text = self.filter.text ?? current
+                return true
+            }
+
             self.onUpdate?(false)
             return false
         }

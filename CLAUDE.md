@@ -21,8 +21,8 @@ Open `Simply Filter SMS.xcodeproj` in Xcode. No package managers (SPM/CocoaPods)
 
 **Command-line build/test:**
 ```bash
-xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Simply Filter SMS" -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
-xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Tests" -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
+xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Simply Filter SMS" -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build
+xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Tests" -destination 'platform=iOS Simulator,name=iPhone 18 Pro' test
 ```
 
 **Localization:** BartyCrouch normalizes `.strings` files (English + Hebrew). Config in `.bartycrouch.toml`.
@@ -33,7 +33,7 @@ Three-layer clean architecture with protocol-based dependency injection:
 
 ### Framework Layer (`Simply Filter SMS/Framework Layer/`)
 - **AppManager** — Singleton service locator (`AppManager.shared`). Creates and holds all managers/services. Use `AppManager(inMemory: true)` for previews/tests.
-- **MessageEvaluationManager** — Core filtering engine. App uses `init(persistanceManager:)` (live context across `reloadContainer()`). Extension/tests use `init(inMemory:)` with a synchronously loaded owned App Group store (`kOwnedStoreLoadTimeout`).
+- **MessageEvaluationManager** — Core filtering engine. App uses `init(persistanceManager:)` (live context across `reloadContainer()`). Extension/tests use `init(inMemory:)` with a synchronously loaded owned App Group store (`shouldAddStoreAsynchronously = false`).
 - **PersistanceManager** — CoreData CRUD operations for `Filter`, `AutomaticFiltersRule`, `AutomaticFiltersLanguage` entities.
 - **AutomaticFilterManager** — Fetches community filter lists from S3, applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown, country allowlist). S3 fetch completions hop to the MainActor before Core Data cache writes.
 - **DefaultsManager** — UserDefaults wrapper for app settings. Custom accent is `@StoredDefault("accentColorRGB", defaultValue: kNoColorDict)`.

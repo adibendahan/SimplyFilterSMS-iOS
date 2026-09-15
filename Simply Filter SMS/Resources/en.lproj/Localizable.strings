@@ -349,6 +349,8 @@
 "notification_importFailed_subtitle" = "This file isn’t a valid filter export.";
 "notification_exportFailed_title" = "Export Failed";
 "notification_exportFailed_subtitle" = "Couldn’t create the export file.";
+"notification_saveFailed_title" = "Error occurred";
+"notification_saveFailed_subtitle" = "Changes not saved, please try again.";
 "whatsNew_filterTransfer_title" = "Export & Import Filters";
 "whatsNew_filterTransfer_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
 "whatsNew_appearanceTouchup_title" = "Appearance Touch-up";

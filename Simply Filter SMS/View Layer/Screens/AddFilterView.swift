@@ -233,7 +233,7 @@ struct AddFilterView: View {
                 focusedField = .text
             }
         }
-        .onChange(of: model.isExpanded) { expanded in
+        .onChange(of: model.isExpanded) { _, expanded in
             if expanded {
                 if model.selectedFilterMatching == .regex {
                     casePickerVisible = false
@@ -250,7 +250,7 @@ struct AddFilterView: View {
                 }
             }
         }
-        .onChange(of: model.selectedFilterMatching) { matching in
+        .onChange(of: model.selectedFilterMatching) { _, matching in
             DispatchQueue.main.asyncAfter(deadline: .now() + layoutAnimationDelay) {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     regexTestVisible = matching == .regex

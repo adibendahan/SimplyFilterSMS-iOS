@@ -285,7 +285,7 @@ class PersistanceManagerTests: XCTestCase {
         self.expectingSaveContext()
         
         // Act
-        self.testSubject.saveCache(with: newerfiltersList)
+        _ = self.testSubject.saveCache(with: newerfiltersList)
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
