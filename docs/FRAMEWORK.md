@@ -337,7 +337,11 @@ On **successful import**: posts `.cloudSyncOperationComplete` (toast + refresh) 
 
 ### Recovery Logic
 
-When network comes online after a failed sync, or setup fails while online, reloads the CloudKit container. Failed setup schedules up to two delayed retries (5s, then 10s); a pending retry is cancelled if network recovery reloads first or setup succeeds. Retries run unless the network is known offline (`.unknown` is allowed — path monitor may not have reported yet).
+Reloads the CloudKit container on a genuine reconnection — `NetworkStatus.isReconnection(from:)`, which is `.offline` → `.online` and nothing else. Failed setup also schedules up to two delayed reloads (5s, then 10s); a pending retry is cancelled if a reconnection reloads first or setup succeeds.
+
+**`.unknown` is not a network state.** It means the path monitor has not reported yet, so leaving it is a first report, never a reconnection. Treating it as one called `reloadContainer()` during CloudKit setup on a fresh install, tearing down the store and aborting the initial import — no filters for the whole first session, and duplicates after relaunch. Present from 2022-02-09 until `dc22149`; pinned by `NetworkStatusTests`.
+
+**TODO — remove `scheduleSetupRetryIfNeeded`.** It was added (2026-08-13, `0ac0579`) as an attempted fix for the bug above and was not the cause. Its "retry" is `reloadContainer()`, which destroys the `NSCloudKitMirroringDelegate` already running Core Data's own backoff recovery, and `setupRetryCount` resets **only** on setup success — so after two failures sync is dead for the session with no path back on stable Wi-Fi. Core Data retries setup itself; record `syncStatus = .failed` for the UI and do not intervene. Left in place only until the `dc22149` fix is confirmed on device.
 
 `PersistanceManager.reloadContainer()` resets the view context (invalidating all managed objects), loads a new container, then posts `.persistentStoreReloaded` on the main queue. Screens that cache Core Data objects conform to `ViewWithPersistentStoreReload` and apply `.modifier(persistentStoreReload)` (`PersistentStoreReload.swift`).
 ---
