@@ -452,8 +452,8 @@ protocol FlowManagerProtocol {
 - Debug `AppManager.reset()` clears the pending import and `resetSession()`.
 
 The inactivity notification alert does **not** go through FlowManager. It is a Home alert like
-`showNothingToImportAlert`, attempted from `presentNextFlow()`'s empty branch — so it can only
-appear once the queue has nothing left to show.
+`showNothingToImportAlert`, raised from `navigationScreen`'s `didSet` when navigation returns to
+Home.
 
 ---
 
@@ -501,16 +501,21 @@ protocol SchedulingManagerProtocol: AnyObject {
 - A single repeating notification (`kInactivityReminderNotificationIdentifier`), first firing a month
   out at `kInactivityReminderHour`, then monthly. A `UNCalendarNotificationTrigger` cannot express
   this: matching today's day of month would fire again the same evening, so an interval is used.
-- **Only** scene `.active` refreshes the clock (`Simply_Filter_SMSApp`). iOS also runs
-  `didFinishLaunching` for background task wakes, so nothing on the launch path may touch it.
+- **Only** `AppDelegate.applicationDidBecomeActive` refreshes the clock. iOS also runs
+  `didFinishLaunching` for background task wakes, so nothing on the launch path may touch it —
+  that callback fires only on a real foreground entry, which is the guarantee this relies on.
 - Cancelled when AI Filtering goes off, via `.filtersStateChanged` observed inside the manager.
 - No sound, no badge.
 
 ### Ask Cadence
 
-- Shown only when AI Filtering is on, alerts are not already allowed, fewer than
-  `kInactivityNotificationMaxAsks` declines are on record, and at least
+- Shown only when AI Filtering is on, this is not the first session, alerts are not already
+  allowed, fewer than `kInactivityNotificationMaxAsks` declines are on record, and at least
   `kInactivityNotificationMinSessionsBetweenAsks` sessions have passed since the last decline.
+- Raised from `AppHomeView.ViewModel.navigationScreen`'s `didSet`, so it appears only on the way
+  back to Home from a pushed screen — never on app open and never after a launch sheet, since
+  dismissing a sheet does not touch `navigationScreen`. It shares that hook with
+  `tryRequestReview()`, which returns whether it prompted so the two never stack.
 - `shouldShowInactivityNotificationAlert()` is read-only. Permission bookkeeping happens in
   `refreshInactivityReminder()`, which is already asking iOS for the authorization status.
 - Remembering a grant (`inactivityNotificationWasGranted`) is what lets a later revoke in Settings

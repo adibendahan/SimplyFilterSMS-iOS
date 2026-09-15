@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Remind monthly without opening when AI Filtering is on
-When AI Filtering is on and the user has allowed alerts, the system SHALL keep a single repeating local notification that first fires about a month after the app last came to the front, then monthly until they open it or turn AI Filtering off. Only the scene becoming active SHALL move that clock.
+When AI Filtering is on and the user has allowed alerts, the system SHALL keep a single repeating local notification that first fires about a month after the app last came to the front, then monthly until they open it or turn AI Filtering off. Only the app entering the foreground SHALL move that clock.
 
 #### Scenario: User opens the app with AI Filtering on
 - **WHEN** the app's scene becomes active and AI Filtering is on and alert permission is granted
@@ -39,10 +39,26 @@ The system SHALL NOT call the iOS notification authorization prompt unless the u
 
 Deciding whether to show that alert SHALL NOT change any stored state.
 
-#### Scenario: Existing user opens this version with AI Filtering on
-- **WHEN** App Home has nothing else to present, AI Filtering is on, asks remain available, and alert permission is not already granted
+#### Scenario: Existing user returns to Home with AI Filtering on
+- **WHEN** navigation returns to App Home from another screen, this is not the first session, AI Filtering is on, asks remain available, and alert permission is not already granted
 - **THEN** App Home SHALL show the inactivity notification alert
 - **AND** the system SHALL NOT show the iOS notification prompt until they tap Continue
+
+#### Scenario: First session
+- **WHEN** this is the user's first session
+- **THEN** the system SHALL NOT show the inactivity notification alert, whatever else is true
+
+#### Scenario: The app is merely opened
+- **WHEN** the user opens the app and does not navigate away from Home
+- **THEN** the system SHALL NOT show the inactivity notification alert
+
+#### Scenario: A launch sheet was dismissed
+- **WHEN** onboarding, a launch action or What's New is dismissed
+- **THEN** the system SHALL NOT show the inactivity notification alert on that dismissal
+
+#### Scenario: A review prompt is due on the same return to Home
+- **WHEN** navigation returns to Home and the App Store review prompt is shown
+- **THEN** the system SHALL NOT also show the inactivity notification alert
 
 #### Scenario: User turns AI Filtering on then returns to Home
 - **WHEN** the user turns AI Filtering on from the language list, asks remain available, and alert permission is not already granted
@@ -51,9 +67,8 @@ Deciding whether to show that alert SHALL NOT change any stored state.
 - **THEN** the system SHALL present the alert
 
 #### Scenario: Something else owns the screen
-- **WHEN** first run, a launch action or What's New is presenting
+- **WHEN** a sheet is presenting
 - **THEN** the system SHALL NOT show the inactivity notification alert
-- **AND** the system SHALL show it once that presentation is dismissed and nothing else is queued
 
 #### Scenario: Alert permission already granted
 - **WHEN** alert permission is already granted

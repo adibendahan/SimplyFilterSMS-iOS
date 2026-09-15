@@ -26,9 +26,17 @@
 ## 4. Home and app lifecycle
 
 - [x] 4.1 `showInactivityNotificationAlert` + `.alert` on `AppHomeView`, following `showNothingToImportAlert`. No `Screen` case, no `FlowManager` change.
-- [x] 4.2 `tryShowInactivityNotification()` raised from `presentNextFlow()`'s empty branch; `isHomeUnobstructed` covers both Home alerts.
-- [x] 4.3 Register the BG handler in `AppDelegate.didFinishLaunching`; refresh the reminder on scene `.active` only.
+- [x] 4.2 `tryShowInactivityNotification()` raised from `navigationScreen`'s `didSet`, so it only appears on the way back to Home; `isHomeUnobstructed` covers both Home alerts.
+- [x] 4.3 Register the BG handler in `AppDelegate.didFinishLaunching`; refresh the reminder from `applicationDidBecomeActive` only.
 - [x] 4.4 Max out the decline count under `isInTestingMode` so UI snapshots are not interrupted.
+- [x] 4.5 Never ask in the first session, and never alongside the App Store review prompt.
+
+## 8. Testing affordances and fixes found while testing
+
+- [x] 8.1 Debug Tools: "Reminder in 30s" and "AI Refresh in 1m", both through `SchedulingManager`'s real path, all behind `#if DEBUG`.
+- [x] 8.2 `NetworkStatus.isReconnection(from:)` — stop treating the path monitor's first report as a reconnection, which tore down the CloudKit stack mid-import on a fresh install.
+- [x] 8.3 Drop the now-dead `#available(iOS 17)` branches (deployment target is 17.0).
+- [x] 8.4 Verified on device: background window granted, cache staleness honoured, S3 fetched and the shared store written.
 
 ## 5. Localization
 

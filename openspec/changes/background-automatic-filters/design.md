@@ -240,3 +240,20 @@ copy belongs to the View layer, not to a Framework-layer manager.
 The snapshot UI test turns AI Filtering on and then drives Home, so the alert would have appeared
 mid-run. The decline count is maxed out in the `isInTestingMode` block of `AppManager.init` that
 already seeds test state — rather than special-casing tests inside product code paths.
+
+### Where the ask is raised (supersedes the note above)
+
+Device testing moved it again. Raising it from `presentNextFlow()`'s empty branch meant it landed
+the moment a launch sheet was dismissed — on a fresh install it appeared immediately after
+onboarding, because `isAppFirstRun` is already false by then and nothing else gated it.
+
+It now comes from `AppHomeView.ViewModel.navigationScreen`'s `didSet`, when `oldValue != nil` and
+the screen is back to `nil`. That is "the user went somewhere and came back", which cannot coincide
+with a launch flow: sheets live on `sheetScreen` and never touch `navigationScreen`. Two further
+guards: `sessionCounter > 1`, so it is impossible in the first session, and mutual exclusion with
+`tryRequestReview()` — which now returns whether it prompted — so a return to Home never produces
+both the App Store prompt and this alert.
+
+The reminder clock moved for the same class of reason: `applicationDidBecomeActive` replaced the
+`scenePhase` observation. It carries the guarantee explicitly (it only fires on a real foreground
+entry, never on a background task wake), and it avoids the `onChange(of:perform:)` deprecation.
