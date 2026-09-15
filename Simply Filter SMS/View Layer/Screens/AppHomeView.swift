@@ -44,17 +44,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     
                     AdaptiveRow {
                         Group {
-                            if #available(iOS 17, *) {
-                                if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
-                                    ShieldGlintIcon()
-                                } else {
-                                    Image(systemName: "bolt.shield.fill")
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
-                                }
+                            if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
+                                ShieldGlintIcon()
                             } else {
                                 Image(systemName: "bolt.shield.fill")
-                                    .foregroundColor(.indigo)
+                                    .symbolRenderingMode(.palette)
+                                    .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
                             }
                         }
                         .font(.system(size: shieldIconSize))
