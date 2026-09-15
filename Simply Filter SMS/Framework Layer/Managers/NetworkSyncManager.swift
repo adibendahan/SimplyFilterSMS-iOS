@@ -132,8 +132,8 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
         DispatchQueue.main.async {
             guard self.networkStatus != newStatus else { return }
             AppManager.logger.debug("Network status changed — \(self.networkStatus.name, privacy: .public) → \(newStatus.name, privacy: .public)")
-            if newStatus == .online && self.syncStatus == .failed {
-                AppManager.logger.debug("Network back online with failed sync — reloading CloudKit container")
+            if newStatus.isReconnection(from: self.networkStatus), self.syncStatus == .failed {
+                AppManager.logger.debug("Network reconnected with failed sync — reloading CloudKit container")
                 self.pendingSetupRetry = nil
                 self.persistanceManager?.reloadContainer()
             }

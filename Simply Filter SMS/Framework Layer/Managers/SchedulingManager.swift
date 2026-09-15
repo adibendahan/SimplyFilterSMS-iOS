@@ -7,9 +7,6 @@ import Foundation
 import BackgroundTasks
 import UserNotifications
 
-/// Keeps automatic filtering worth having for people who never open the app: a background
-/// task refreshes the filter lists whenever iOS is willing to run us, and a monthly banner
-/// asks them to come back when it is not.
 class SchedulingManager: SchedulingManagerProtocol {
     
     //MARK: - Initialization -
@@ -58,7 +55,6 @@ class SchedulingManager: SchedulingManagerProtocol {
     func handleAutomaticFiltersProcessing(task: BGProcessingTask) {
         AppManager.logger.debug("handleAutomaticFiltersProcessing — iOS granted a background window")
         
-        // Claim the next window first: a slow fetch below must not drop us out of the queue.
         self.scheduleAutomaticFiltersProcessing()
         
         let refresh = Task {
@@ -100,7 +96,6 @@ class SchedulingManager: SchedulingManagerProtocol {
         return await self.alertsAreAllowed == false
     }
     
-    /// The user tapped Continue. A denial from iOS is still a "no", so it counts as a decline.
     func requestInactivityNotificationPermission() async {
         guard await self.userNotificationCenterService.requestAlertAuthorization() else {
             AppManager.logger.debug("requestInactivityNotificationPermission — iOS denied alerts, counting it as a decline")
@@ -140,8 +135,6 @@ class SchedulingManager: SchedulingManagerProtocol {
         return self.defaultsManager.inactivityNotificationDeclineCount < kInactivityNotificationMaxAsks
     }
     
-    /// The first ask waits for nothing; every later one sits out a few sessions, so that
-    /// answering "Not Now" is not met with the same question tomorrow.
     private var hasWaitedSinceLastDecline: Bool {
         guard self.defaultsManager.inactivityNotificationDeclineCount > 0 else { return true }
         
@@ -159,10 +152,6 @@ class SchedulingManager: SchedulingManagerProtocol {
                                      trigger: Self.monthlyTrigger)
     }
     
-    /// A month from now at an hour nobody minds, and every month after that.
-    ///
-    /// A calendar trigger cannot say "skip this month", so one matching today's day of month
-    /// would fire again this evening rather than in a month. An interval keeps the promise.
     private static var monthlyTrigger: UNNotificationTrigger {
         let calendar = Calendar.current
         let nextMonth = calendar.date(byAdding: .month, value: 1, to: Date()) ?? Date()
@@ -171,8 +160,6 @@ class SchedulingManager: SchedulingManagerProtocol {
         return UNTimeIntervalNotificationTrigger(timeInterval: fireDate.timeIntervalSinceNow, repeats: true)
     }
     
-    /// Remembering a grant is what lets us notice a revoke in Settings later — and when we do,
-    /// the decline history goes with it, so the conversation may start over.
     private func recordAlertPermission(_ alertsAreAllowed: Bool) {
         guard alertsAreAllowed else {
             if self.defaultsManager.inactivityNotificationWasGranted {

@@ -107,6 +107,7 @@
 		69F76555304C499300CF046E /* UserNotificationCenterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76554304C499300CF046E /* UserNotificationCenterService.swift */; };
 		69F76557304C499300CF046E /* mock_UserNotificationCenterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76556304C499300CF046E /* mock_UserNotificationCenterService.swift */; };
 		69F76559304C499300CF046E /* SchedulingManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76558304C499300CF046E /* SchedulingManagerTests.swift */; };
+		69F7655B304C499300CF046E /* NetworkStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F7655A304C499300CF046E /* NetworkStatusTests.swift */; };
 		69FAA7AA2F4FB4E90022C033 /* TipCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FAA7A92F4FB4E90022C033 /* TipCardView.swift */; };
 		69FF9C8827933CE9007FA2DB /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FF9C8727933CE9007FA2DB /* FooterView.swift */; };
 		6F4B6E1734DF2400D47D01A0 /* ReportingExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0B53FCE983DFBEFBCE70F7 /* ReportingExtensionViewController.swift */; };
@@ -326,6 +327,7 @@
 		69F76554304C499300CF046E /* UserNotificationCenterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterService.swift; sourceTree = "<group>"; };
 		69F76556304C499300CF046E /* mock_UserNotificationCenterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_UserNotificationCenterService.swift; sourceTree = "<group>"; };
 		69F76558304C499300CF046E /* SchedulingManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingManagerTests.swift; sourceTree = "<group>"; };
+		69F7655A304C499300CF046E /* NetworkStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStatusTests.swift; sourceTree = "<group>"; };
 		69FAA7A92F4FB4E90022C033 /* TipCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipCardView.swift; sourceTree = "<group>"; };
 		69FF9C8727933CE9007FA2DB /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 		6C2217AE047F148D8D0D9052 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -483,6 +485,7 @@
 				A11CE47C01000000C0100003 /* DefaultsManagerTests.swift */,
 				690F09CA27AC33E900BA481F /* Mocks */,
 				69F76558304C499300CF046E /* SchedulingManagerTests.swift */,
+				69F7655A304C499300CF046E /* NetworkStatusTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -986,6 +989,7 @@
 				A1B2C3D4E5F60718293A1012 /* mock_FlowManager.swift in Sources */,
 				A1B2C3D4E5F60718293A1013 /* FlowManagerTests.swift in Sources */,
 				69F76559304C499300CF046E /* SchedulingManagerTests.swift in Sources */,
+				69F7655B304C499300CF046E /* NetworkStatusTests.swift in Sources */,
 				69F76553304AFF7E00CF046E /* mock_SchedulingManager.swift in Sources */,
 				69F76557304C499300CF046E /* mock_UserNotificationCenterService.swift in Sources */,
 				A11CE47C01000000C0100004 /* DefaultsManagerTests.swift in Sources */,

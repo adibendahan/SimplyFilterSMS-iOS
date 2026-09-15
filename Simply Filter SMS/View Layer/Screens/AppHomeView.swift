@@ -932,8 +932,6 @@ extension AppHomeView {
                 : "inactivityNotification_notNow"~
         }
 
-        /// Asked only once Home has nothing else to show, so the explanation never lands
-        /// on top of first run, a launch action or What's New.
         func tryShowInactivityNotification() {
             Task { @MainActor [weak self] in
                 guard let self,

@@ -26,9 +26,6 @@ struct Simply_Filter_SMSApp: App {
                 .adaptiveLayoutEnvironment()
         }
         .onChange(of: scenePhase) { phase in
-            // Coming to the front is the only thing that counts as opening the app, so it is the
-            // only thing that pushes the reminder out another month. iOS also runs
-            // didFinishLaunching for background task wakes, which must not move that clock.
             guard phase == .active else { return }
             AppManager.shared.schedulingManager.refreshInactivityReminder()
         }
@@ -41,7 +38,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
-        // iOS only accepts background task handlers registered before launch returns.
         BGTaskScheduler.shared.register(forTaskWithIdentifier: kAutomaticFiltersProcessingTaskIdentifier,
                                         using: nil) { task in
             guard let processingTask = task as? BGProcessingTask else {

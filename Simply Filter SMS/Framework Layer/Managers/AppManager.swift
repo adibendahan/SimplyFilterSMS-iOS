@@ -67,8 +67,6 @@ class AppManager: AppManagerProtocol {
                 "de": emptyList, "ja": emptyList, "ko": emptyList, "it": emptyList
             ])
             _ = persistanceManager.saveCache(with: seedCache)
-            // UI tests turn AI Filtering on and drive Home for the rest of the run; they must
-            // not be interrupted by the inactivity notification alert.
             defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
         }
         #endif // DEBUG

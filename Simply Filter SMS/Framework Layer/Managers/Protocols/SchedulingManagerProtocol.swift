@@ -7,7 +7,6 @@ import Foundation
 import BackgroundTasks
 
 protocol SchedulingManagerProtocol: AnyObject {
-    /// Whether the ask on screen is the last one we are allowed to make.
     var isFinalInactivityNotificationAsk: Bool { get }
 
     func scheduleAutomaticFiltersProcessing()

@@ -13,8 +13,6 @@ protocol UserNotificationCenterServiceProtocol: AnyObject {
     func cancelPendingNotification(withIdentifier identifier: String)
 }
 
-/// A pipe to `UNUserNotificationCenter`, and nothing more. When to ask, what to say and
-/// how often to say it are `SchedulingManager`'s business.
 class UserNotificationCenterService: UserNotificationCenterServiceProtocol {
     
     //MARK: - Initialization -
@@ -59,7 +57,6 @@ class UserNotificationCenterService: UserNotificationCenterServiceProtocol {
 
 
 extension UNAuthorizationStatus {
-    /// Whether iOS would actually put a banner on screen for us.
     var allowsAlerts: Bool {
         switch self {
         case .authorized, .provisional, .ephemeral:
