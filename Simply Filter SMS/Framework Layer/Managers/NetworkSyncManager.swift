@@ -94,7 +94,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
     private var disposables = Set<AnyCancellable>()
     private var firstStatusHandlers: [() -> Void] = []
     private var setupRetryCount = 0
-    private let maxSetupRetries = 2
+    private let maxSetupRetries = 0
     private var pendingSetupRetry: DispatchWorkItem? {
         didSet { oldValue?.cancel() }
     }
@@ -110,7 +110,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
 
     private func scheduleSetupRetryIfNeeded() {
         guard self.setupRetryCount < self.maxSetupRetries else {
-            AppManager.logger.debug("CloudKit setup retry — exhausted (\(self.maxSetupRetries, privacy: .public) attempts)")
+            AppManager.logger.debug("CloudKit setup retry — no attempts left (max \(self.maxSetupRetries, privacy: .public)), leaving recovery to Core Data")
             return
         }
         self.setupRetryCount += 1

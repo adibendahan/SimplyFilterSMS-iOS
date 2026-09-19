@@ -337,11 +337,11 @@ On **successful import**: posts `.cloudSyncOperationComplete` (toast + refresh) 
 
 ### Recovery Logic
 
-Reloads the CloudKit container on a genuine reconnection — `NetworkStatus.isReconnection(from:)`, which is `.offline` → `.online` and nothing else. Failed setup also schedules up to two delayed reloads (5s, then 10s); a pending retry is cancelled if a reconnection reloads first or setup succeeds.
+Reloads the CloudKit container on a genuine reconnection — `NetworkStatus.isReconnection(from:)`, which is `.offline` → `.online` and nothing else. A failed setup is recorded as `syncStatus = .failed` for the UI and otherwise left alone.
 
 **`.unknown` is not a network state.** It means the path monitor has not reported yet, so leaving it is a first report, never a reconnection. Treating it as one called `reloadContainer()` during CloudKit setup on a fresh install, tearing down the store and aborting the initial import — no filters for the whole first session, and duplicates after relaunch. Present from 2022-02-09 until `dc22149`; pinned by `NetworkStatusTests`.
 
-**TODO — remove `scheduleSetupRetryIfNeeded`.** It was added (2026-08-13, `0ac0579`) as an attempted fix for the bug above and was not the cause. Its "retry" is `reloadContainer()`, which destroys the `NSCloudKitMirroringDelegate` already running Core Data's own backoff recovery, and `setupRetryCount` resets **only** on setup success — so after two failures sync is dead for the session with no path back on stable Wi-Fi. Core Data retries setup itself; record `syncStatus = .failed` for the UI and do not intervene. Left in place only until the `dc22149` fix is confirmed on device.
+**`maxSetupRetries` is `0`, and must stay there.** `scheduleSetupRetryIfNeeded` was added (2026-08-13, `0ac0579`) as an attempted fix for the bug above and was not the cause. Its "retry" is `reloadContainer()`, which destroys the `NSCloudKitMirroringDelegate` already running Core Data's own backoff recovery — **one** teardown is enough to lose the initial import on a fresh install, so `1` would not be safer than `2`. Worse, `setupRetryCount` resets only on setup success, so once the attempts are spent sync is dead for the session with no path back on stable Wi-Fi. Core Data retries setup itself. The dead machinery should be deleted outright; the constant is at `0` as the smallest safe change before release.
 
 `PersistanceManager.reloadContainer()` resets the view context (invalidating all managed objects), loads a new container, then posts `.persistentStoreReloaded` on the main queue. Screens that cache Core Data objects conform to `ViewWithPersistentStoreReload` and apply `.modifier(persistentStoreReload)` (`PersistentStoreReload.swift`).
 ---
