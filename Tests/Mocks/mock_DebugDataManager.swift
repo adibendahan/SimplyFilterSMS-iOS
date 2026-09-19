@@ -20,4 +20,6 @@ class mock_DebugDataManager: DebugDataManagerProtocol {
         loadCallCount += 1
         loadLangCode = langCode
     }
+
+    func expireAutomaticFiltersCache() { }
 }

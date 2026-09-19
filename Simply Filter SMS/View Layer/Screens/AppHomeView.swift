@@ -44,17 +44,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     
                     AdaptiveRow {
                         Group {
-                            if #available(iOS 17, *) {
-                                if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
-                                    ShieldGlintIcon()
-                                } else {
-                                    Image(systemName: "bolt.shield.fill")
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
-                                }
+                            if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
+                                ShieldGlintIcon()
                             } else {
                                 Image(systemName: "bolt.shield.fill")
-                                    .foregroundColor(.indigo)
+                                    .symbolRenderingMode(.palette)
+                                    .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
                             }
                         }
                         .font(.system(size: shieldIconSize))
@@ -203,6 +198,16 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Button("general_close"~, role: .cancel) { }
         } message: {
             Text("importFilters_nothingToAdd"~)
+        }
+        .alert("inactivityNotification_title"~, isPresented: self.$model.showInactivityNotificationAlert) {
+            Button("inactivityNotification_continue"~) {
+                self.model.allowInactivityNotification()
+            }
+            Button(self.model.inactivityNotificationDismissTitle, role: .cancel) {
+                self.model.declineInactivityNotification()
+            }
+        } message: {
+            Text("inactivityNotification_message"~)
         }
         .background {
             Color.clear
@@ -399,6 +404,18 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 }
                 .accessibilityIdentifier(TestIdentifier.loadDebugDataMenuButton.rawValue)
 
+                Button {
+                    self.model.fireInactivityReminder()
+                } label: {
+                    Label("Reminder in 30s", systemImage: "bell.badge")
+                }
+
+                Button {
+                    self.model.refreshAutomaticFiltersSoon()
+                } label: {
+                    Label("AI Refresh in 1m", systemImage: "arrow.clockwise")
+                }
+
                 Button(role: .destructive) {
                     self.model.reset()
                 } label: {
@@ -534,7 +551,9 @@ extension AppHomeView {
             didSet {
                 if oldValue != nil,
                    self.navigationScreen == nil {
-                    self.tryRequestReview()
+                    if !self.tryRequestReview() {
+                        self.tryShowInactivityNotification()
+                    }
                 }
             }
         }
@@ -550,6 +569,13 @@ extension AppHomeView {
         @Published var showNothingToImportAlert = false {
             didSet {
                 if oldValue && !self.showNothingToImportAlert {
+                    self.showPendingNotification()
+                }
+            }
+        }
+        @Published var showInactivityNotificationAlert = false {
+            didSet {
+                if oldValue && !self.showInactivityNotificationAlert {
                     self.showPendingNotification()
                 }
             }
@@ -780,7 +806,7 @@ extension AppHomeView {
         private var isHomeUnobstructed: Bool {
             return self.sheetScreen == nil
                 && self.pendingScreenAfterDismiss == nil
-                && !self.isFilterTransferPresenting
+                && !self.isAlertPresented
                 && !self.isReplacingSheetForLaunch
         }
 
@@ -908,6 +934,32 @@ extension AppHomeView {
             self.showNotification(.enableReportingExtension)
         }
 
+        var inactivityNotificationDismissTitle: String {
+            return self.appManager.schedulingManager.isFinalInactivityNotificationAsk
+                ? "inactivityNotification_stopAsking"~
+                : "inactivityNotification_notNow"~
+        }
+
+        func tryShowInactivityNotification() {
+            Task { @MainActor [weak self] in
+                guard let self,
+                      await self.appManager.schedulingManager.shouldShowInactivityNotificationAlert(),
+                      self.isHomeUnobstructed else { return }
+
+                self.showInactivityNotificationAlert = true
+            }
+        }
+
+        func allowInactivityNotification() {
+            Task { [weak self] in
+                await self?.appManager.schedulingManager.requestInactivityNotificationPermission()
+            }
+        }
+
+        func declineInactivityNotification() {
+            self.appManager.schedulingManager.recordInactivityNotificationDecline()
+        }
+
         func tryShowTipPromotion() {
             let defaultsManager = self.appManager.defaultsManager
             guard defaultsManager.sessionCounter % 5 == 0,
@@ -920,16 +972,18 @@ extension AppHomeView {
             self.showNotification(.tipPromotion)
         }
 
-        func tryRequestReview() {
+        func tryRequestReview() -> Bool {
             var defaultsManager = self.appManager.defaultsManager
-            if !defaultsManager.didPromptForReview,
-               defaultsManager.appAge.daysBetween(date: Date()) > 7,
-               defaultsManager.sessionCounter > 5,
-               let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-                
-                SKStoreReviewController.requestReview(in: scene)
-                defaultsManager.didPromptForReview = true
+            guard !defaultsManager.didPromptForReview,
+                  defaultsManager.appAge.daysBetween(date: Date()) > 7,
+                  defaultsManager.sessionCounter > 5,
+                  let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else {
+                return false
             }
+
+            SKStoreReviewController.requestReview(in: scene)
+            defaultsManager.didPromptForReview = true
+            return true
         }
         
         #if DEBUG
@@ -943,6 +997,15 @@ extension AppHomeView {
             self.refresh()
             self.presentNextFlow()
         }
+
+        func fireInactivityReminder() {
+            self.appManager.schedulingManager.scheduleInactivityReminderSoon()
+        }
+
+        func refreshAutomaticFiltersSoon() {
+            self.appManager.debugDataManager.expireAutomaticFiltersCache()
+            self.appManager.schedulingManager.scheduleAutomaticFiltersProcessingSoon()
+        }
         #endif // DEBUG
         
         private var lastUIFingerprint: String = ""
@@ -950,8 +1013,8 @@ extension AppHomeView {
         private var didShowNotificationThisSession = false
         private var pendingNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
-        private var isFilterTransferPresenting: Bool {
-            return self.showNothingToImportAlert
+        private var isAlertPresented: Bool {
+            return self.showNothingToImportAlert || self.showInactivityNotificationAlert
         }
         private var userIgnoresNetworkStatus: Bool {
             guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }

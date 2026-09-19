@@ -134,12 +134,7 @@ extension ChooseAccentColorView {
             self.onAccentChanged = onAccentChanged
 
             if let color = Color(accentRGB: defaults.accentColorRGB) {
-                if #available(iOS 17.0, *) {
-                    self.pickerColor = UIColor(color)
-                } else {
-                    let rgb = defaults.accentColorRGB
-                    self.pickerColor = UIColor(red: rgb["red"] ?? 0, green: rgb["green"] ?? 0, blue: rgb["blue"] ?? 0, alpha: 1)
-                }
+                self.pickerColor = UIColor(color)
                 self.hasCustomColor = true
             } else {
                 self.pickerColor = .systemBlue

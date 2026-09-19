@@ -337,7 +337,11 @@ On **successful import**: posts `.cloudSyncOperationComplete` (toast + refresh) 
 
 ### Recovery Logic
 
-When network comes online after a failed sync, or setup fails while online, reloads the CloudKit container. Failed setup schedules up to two delayed retries (5s, then 10s); a pending retry is cancelled if network recovery reloads first or setup succeeds. Retries run unless the network is known offline (`.unknown` is allowed — path monitor may not have reported yet).
+Reloads the CloudKit container on a genuine reconnection — `NetworkStatus.isReconnection(from:)`, which is `.offline` → `.online` and nothing else. A failed setup is recorded as `syncStatus = .failed` for the UI and otherwise left alone.
+
+**`.unknown` is not a network state.** It means the path monitor has not reported yet, so leaving it is a first report, never a reconnection. Treating it as one called `reloadContainer()` during CloudKit setup on a fresh install, tearing down the store and aborting the initial import — no filters for the whole first session, and duplicates after relaunch. Present from 2022-02-09 until `dc22149`; pinned by `NetworkStatusTests`.
+
+**`maxSetupRetries` is `0`, and must stay there.** `scheduleSetupRetryIfNeeded` was added (2026-08-13, `0ac0579`) as an attempted fix for the bug above and was not the cause. Its "retry" is `reloadContainer()`, which destroys the `NSCloudKitMirroringDelegate` already running Core Data's own backoff recovery — **one** teardown is enough to lose the initial import on a fresh install, so `1` would not be safer than `2`. Worse, `setupRetryCount` resets only on setup success, so once the attempts are spent sync is dead for the session with no path back on stable Wi-Fi. Core Data retries setup itself. The dead machinery should be deleted outright; the constant is at `0` as the smallest safe change before release.
 
 `PersistanceManager.reloadContainer()` resets the view context (invalidating all managed objects), loads a new container, then posts `.persistentStoreReloaded` on the main queue. Screens that cache Core Data objects conform to `ViewWithPersistentStoreReload` and apply `.modifier(persistentStoreReload)` (`PersistentStoreReload.swift`).
 ---
@@ -447,6 +451,77 @@ protocol FlowManagerProtocol {
 - Automatic What's New is skipped if the session started as first run or a launch claimed the session.
 - Debug `AppManager.reset()` clears the pending import and `resetSession()`.
 
+The inactivity notification alert does **not** go through FlowManager. It is a Home alert like
+`showNothingToImportAlert`, raised from `navigationScreen`'s `didSet` when navigation returns to
+Home.
+
+---
+
+## SchedulingManager
+
+**Files:** `Framework Layer/Managers/SchedulingManager.swift`, `Protocols/SchedulingManagerProtocol.swift`
+
+Keeps automatic filtering useful for people who never open the app. Two jobs: a background task
+that refreshes the filter lists when iOS is willing to run us, and a monthly banner that asks
+them to come back when it is not.
+
+### Protocol
+
+```swift
+protocol SchedulingManagerProtocol: AnyObject {
+    var isFinalInactivityNotificationAsk: Bool { get }
+
+    func scheduleAutomaticFiltersProcessing()
+    func handleAutomaticFiltersProcessing(task: BGProcessingTask)
+    func refreshInactivityReminder()
+    func shouldShowInactivityNotificationAlert() async -> Bool
+    func requestInactivityNotificationPermission() async
+    func recordInactivityNotificationDecline()
+
+    #if DEBUG
+    func reset()
+    #endif // DEBUG
+}
+```
+
+### Background Refresh
+
+- One `BGProcessingTask` (`kAutomaticFiltersProcessingTaskIdentifier`), `requiresNetworkConnectivity`,
+  `earliestBeginDate` = now + `kUpdateAutomaticFiltersMinDays`. Processing (not app refresh) targets
+  idle/overnight windows, which suits an app that is rarely opened.
+- Registered in `AppDelegate.didFinishLaunching` (iOS requires it before launch returns); submitted
+  from `AppManager.onAppLaunch()` and again at the top of every handled wake.
+- The handler calls the existing `updateAutomaticFiltersIfNeeded()`, so the stale check, S3 client
+  and App Group cache write are unchanged. The Message Filter Extension still never fetches.
+- Info.plist carries `processing` in `UIBackgroundModes` and the identifier in
+  `BGTaskSchedulerPermittedIdentifiers`.
+
+### Inactivity Reminder
+
+- A single repeating notification (`kInactivityReminderNotificationIdentifier`), first firing a month
+  out at `kInactivityReminderHour`, then monthly. A `UNCalendarNotificationTrigger` cannot express
+  this: matching today's day of month would fire again the same evening, so an interval is used.
+- **Only** `AppDelegate.applicationDidBecomeActive` refreshes the clock. iOS also runs
+  `didFinishLaunching` for background task wakes, so nothing on the launch path may touch it —
+  that callback fires only on a real foreground entry, which is the guarantee this relies on.
+- Cancelled when AI Filtering goes off, via `.filtersStateChanged` observed inside the manager.
+- No sound, no badge.
+
+### Ask Cadence
+
+- Shown only when AI Filtering is on, this is not the first session, alerts are not already
+  allowed, fewer than `kInactivityNotificationMaxAsks` declines are on record, and at least
+  `kInactivityNotificationMinSessionsBetweenAsks` sessions have passed since the last decline.
+- Raised from `AppHomeView.ViewModel.navigationScreen`'s `didSet`, so it appears only on the way
+  back to Home from a pushed screen — never on app open and never after a launch sheet, since
+  dismissing a sheet does not touch `navigationScreen`. It shares that hook with
+  `tryRequestReview()`, which returns whether it prompted so the two never stack.
+- `shouldShowInactivityNotificationAlert()` is read-only. Permission bookkeeping happens in
+  `refreshInactivityReminder()`, which is already asking iOS for the authorization status.
+- Remembering a grant (`inactivityNotificationWasGranted`) is what lets a later revoke in Settings
+  be noticed; when it is, the decline history is wiped and the conversation may start over.
+- A denial from the system prompt after Continue counts as a decline.
+
 ---
 
 ## Services Layer
@@ -466,6 +541,23 @@ protocol HTTPServiceProtocol {
 **URLRequestProtocol** defines: `path`, `method` (GET/POST/PUT/DELETE/PATCH), `task` (plain or with parameters), `errorDomain`.
 
 **HTTPServiceBase** — Common base for services. Holds `httpService: HTTPServiceProtocol` and a weak `networkSyncManager` reference.
+
+### UserNotificationCenterService
+
+**File:** `Services Layer/UserNotificationCenterService.swift`
+
+```swift
+protocol UserNotificationCenterServiceProtocol: AnyObject {
+    func authorizationStatus() async -> UNAuthorizationStatus
+    func requestAlertAuthorization() async -> Bool
+    func schedule(_ request: UNNotificationRequest) async
+    func cancelPendingNotification(withIdentifier identifier: String)
+}
+```
+
+A pipe to `UNUserNotificationCenter` and nothing more — all policy lives in `SchedulingManager`.
+`UNAuthorizationStatus.allowsAlerts` (extension in the same file) maps the platform enum, the same
+way `NWPath.Status.networkStatus` does.
 
 ### AmazonS3Service
 

@@ -94,7 +94,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
     private var disposables = Set<AnyCancellable>()
     private var firstStatusHandlers: [() -> Void] = []
     private var setupRetryCount = 0
-    private let maxSetupRetries = 2
+    private let maxSetupRetries = 0
     private var pendingSetupRetry: DispatchWorkItem? {
         didSet { oldValue?.cancel() }
     }
@@ -110,7 +110,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
 
     private func scheduleSetupRetryIfNeeded() {
         guard self.setupRetryCount < self.maxSetupRetries else {
-            AppManager.logger.debug("CloudKit setup retry — exhausted (\(self.maxSetupRetries, privacy: .public) attempts)")
+            AppManager.logger.debug("CloudKit setup retry — no attempts left (max \(self.maxSetupRetries, privacy: .public)), leaving recovery to Core Data")
             return
         }
         self.setupRetryCount += 1
@@ -132,8 +132,8 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
         DispatchQueue.main.async {
             guard self.networkStatus != newStatus else { return }
             AppManager.logger.debug("Network status changed — \(self.networkStatus.name, privacy: .public) → \(newStatus.name, privacy: .public)")
-            if newStatus == .online && self.syncStatus == .failed {
-                AppManager.logger.debug("Network back online with failed sync — reloading CloudKit container")
+            if newStatus.isReconnection(from: self.networkStatus), self.syncStatus == .failed {
+                AppManager.logger.debug("Network reconnected with failed sync — reloading CloudKit container")
                 self.pendingSetupRetry = nil
                 self.persistanceManager?.reloadContainer()
             }

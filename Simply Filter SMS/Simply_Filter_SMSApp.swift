@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import BackgroundTasks
 
 @main
 struct Simply_Filter_SMSApp: App {
@@ -29,7 +30,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        
+
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: kAutomaticFiltersProcessingTaskIdentifier,
+                                        using: nil) { task in
+            guard let processingTask = task as? BGProcessingTask else {
+                task.setTaskCompleted(success: false)
+                return
+            }
+            AppManager.shared.schedulingManager.handleAutomaticFiltersProcessing(task: processingTask)
+        }
+
         if !self.didRegisterForRemoteNotifications {
             application.registerForRemoteNotifications()
             self.didRegisterForRemoteNotifications = true
@@ -37,5 +47,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         AppManager.shared.onAppLaunch()
         return true
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        AppManager.shared.schedulingManager.refreshInactivityReminder()
     }
 }

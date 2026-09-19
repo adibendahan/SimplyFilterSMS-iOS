@@ -210,6 +210,13 @@
 "autoFilter_countryAllowlist_explanation" = "Add the countries you want to allow messages from. Messages sent from phone numbers registered in countries not on this list will be filtered. Only senders with a full international calling code (e.g. +1, +972) are checked - senders without one are not affected.";
 "autoFilter_reportSpam" = "Report Spam";
 "autoFilter_improveAIFiltering" = "Improve AI Filtering";
+"inactivityNotification_title" = "Keep AI Filtering working";
+"inactivityNotification_message" = "Allow notifications and we'll remind you to open the app now and then. If you don't, the AI filter lists stop updating, and iOS may remove the app to free up space - then filtering stops until you open it again.";
+"inactivityNotification_continue" = "Continue";
+"inactivityNotification_notNow" = "Not Now";
+"inactivityNotification_stopAsking" = "Stop Asking";
+"inactivityNotification_reminder_title" = "Your AI filter lists haven't updated";
+"inactivityNotification_reminder_body" = "Open Simply Filter SMS to update them and keep filtering messages from unknown senders.";
 "general_search" = "Search";
 "general_more" = "more";
 "general_selected" = "Selected";

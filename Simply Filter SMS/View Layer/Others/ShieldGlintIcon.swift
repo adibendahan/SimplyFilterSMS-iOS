@@ -8,7 +8,6 @@ import SwiftUI
 
 // Isolated in its own view so its internal timer never triggers a re-render
 // of the parent view (e.g. AppHomeView), which would cause open Menus to flicker.
-@available(iOS 17, *)
 struct ShieldGlintIcon: View {
     @StateObject private var glintModel = GlintModel()
 

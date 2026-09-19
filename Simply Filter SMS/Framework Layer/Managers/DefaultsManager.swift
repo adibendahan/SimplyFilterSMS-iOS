@@ -36,6 +36,15 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("didDismissReportingExtensionNudge", defaultValue: false)
     var didDismissReportingExtensionNudge: Bool
 
+    @StoredDefault("inactivityNotificationDeclineCount", defaultValue: 0)
+    var inactivityNotificationDeclineCount: Int
+
+    @StoredDefault("inactivityNotificationLastDeclineSession", defaultValue: 0)
+    var inactivityNotificationLastDeclineSession: Int
+
+    @StoredDefault("inactivityNotificationWasGranted", defaultValue: false)
+    var inactivityNotificationWasGranted: Bool
+
     @StoredDefault("accentColorRGB", defaultValue: kNoColorDict)
     var accentColorRGB: [String: Double]
 
@@ -61,7 +70,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge", "accentColorRGB"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isExpandedAddFilter", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "appAge", "didDismissReportingExtensionNudge", "inactivityNotificationDeclineCount", "inactivityNotificationLastDeclineSession", "inactivityNotificationWasGranted", "accentColorRGB"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)

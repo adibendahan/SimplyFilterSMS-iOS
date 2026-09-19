@@ -25,6 +25,7 @@ class AppManager: AppManagerProtocol {
     var tipJarManager: TipJarManagerProtocol
     var filterTransferManager: FilterTransferManagerProtocol
     var flowManager: FlowManagerProtocol
+    var schedulingManager: SchedulingManagerProtocol
     var debugDataManager: DebugDataManagerProtocol
 
     init(inMemory: Bool = false) {
@@ -49,6 +50,8 @@ class AppManager: AppManagerProtocol {
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
         self.filterTransferManager = FilterTransferManager(persistanceManager: persistanceManager)
         self.flowManager = FlowManager(defaultsManager: defaultsManager)
+        self.schedulingManager = SchedulingManager(automaticFilterManager: automaticFilterManager,
+                                                   defaultsManager: defaultsManager)
         self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
                                                  defaultsManager: defaultsManager,
                                                  automaticFilterManager: automaticFilterManager)
@@ -64,6 +67,7 @@ class AppManager: AppManagerProtocol {
                 "de": emptyList, "ja": emptyList, "ko": emptyList, "it": emptyList
             ])
             _ = persistanceManager.saveCache(with: seedCache)
+            defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
         }
         #endif // DEBUG
     }
@@ -71,6 +75,7 @@ class AppManager: AppManagerProtocol {
     func onAppLaunch() {
         let _ = self.defaultsManager.appAge // make sure it's initialized
         AppManager.logger.debug("onAppLaunch — session #\(self.defaultsManager.sessionCounter, privacy: .public), installDate: \(self.defaultsManager.appAge, privacy: .public)")
+        self.schedulingManager.scheduleAutomaticFiltersProcessing()
         if let sessionAge = self.defaultsManager.sessionAge {
             if sessionAge.daysBetween(date: Date()) != 0 {
                 AppManager.logger.debug("onAppLaunch — new day detected, starting new session")
@@ -95,7 +100,9 @@ class AppManager: AppManagerProtocol {
             AppManager.logger.debug("onNewUserSession — network: \(self.networkSyncManager.networkStatus.name, privacy: .public)")
             if self.networkSyncManager.networkStatus == .online {
                 AppManager.logger.debug("onNewUserSession — online, triggering automatic filter update check")
-                self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                Task(priority: .background) {
+                    await self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                }
             }
             else {
                 AppManager.logger.debug("onNewUserSession — offline, skipping automatic filter update")
@@ -114,6 +121,7 @@ class AppManager: AppManagerProtocol {
         _ = self.filterTransferManager.clearPendingImport()
         self.filterTransferManager.clearPendingExport()
         self.flowManager.resetSession()
+        self.schedulingManager.reset()
     }
     #endif // DEBUG
 

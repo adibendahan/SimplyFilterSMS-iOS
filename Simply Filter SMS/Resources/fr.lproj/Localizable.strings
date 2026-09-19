@@ -601,3 +601,17 @@
 "notification_saveFailed_title" = "Une erreur s'est produite";
 
 "notification_saveFailed_subtitle" = "Modifications non enregistrées, veuillez réessayer.";
+
+"inactivityNotification_title" = "Gardez le filtrage IA à jour";
+
+"inactivityNotification_message" = "Autorisez les notifications et nous vous rappellerons d'ouvrir l'app de temps en temps. Sinon, les listes de filtres cessent de se mettre à jour, et iOS peut désinstaller l'app pour libérer de l'espace - le filtrage s'arrête alors jusqu'à ce que vous la rouvriez.";
+
+"inactivityNotification_continue" = "Continuer";
+
+"inactivityNotification_notNow" = "Pas maintenant";
+
+"inactivityNotification_stopAsking" = "Ne plus demander";
+
+"inactivityNotification_reminder_title" = "Vos listes de filtres basées sur l'IA ne se sont pas mises à jour";
+
+"inactivityNotification_reminder_body" = "Ouvrez Simply Filter SMS pour les mettre à jour et continuer à filtrer les messages d'expéditeurs inconnus.";

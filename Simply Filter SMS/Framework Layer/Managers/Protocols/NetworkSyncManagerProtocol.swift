@@ -30,7 +30,11 @@ extension NSNotification.Name {
 
 enum NetworkStatus {
     case unknown, online, offline
-    
+
+    func isReconnection(from previous: NetworkStatus) -> Bool {
+        return previous == .offline && self == .online
+    }
+
     var name: String {
         switch self {
         case .unknown:
