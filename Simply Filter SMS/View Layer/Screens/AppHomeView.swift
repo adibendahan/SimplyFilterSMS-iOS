@@ -124,7 +124,17 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             .background(horizontalSizeClass == .regular ? InstantTouchDisabler(delaysContentTouches: true) : nil)
             .navigationTitle(self.model.title)
             .listStyle(.insetGrouped)
-            .navigationBarItems(trailing: NavigationBarTrailingItem())
+            .toolbar {
+                if #available(iOS 27.0, *) {
+                    ToolbarItem(placement: .topBarPinnedTrailing) {
+                        NavigationBarTrailingItem()
+                    }
+                } else {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationBarTrailingItem()
+                    }
+                }
+            }
             .navigationSplitViewColumnWidth(min: 340, ideal: 380)
             .onChange(of: selectedScreen) { _, newScreen in
                 if let screen = newScreen {
