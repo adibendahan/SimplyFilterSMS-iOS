@@ -38,19 +38,25 @@ struct FooterView: View {
 private struct FooterBackground: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
 
+    /// Home indicator + Duo vertical-bar gutters. Background only; text stays inset.
+    private var backgroundEdges: Edge.Set { [.bottom, .leading, .trailing] }
+
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
                 .background {
                     Color.clear
                         .glassEffect(.regular, in: .rect(cornerRadius: 0))
-                        .ignoresSafeArea(.container, edges: .bottom)
+                        .ignoresSafeArea(.container, edges: backgroundEdges)
                         .id(colorScheme)
                 }
         } else {
             content
-                .background(.ultraThinMaterial)
-                .ignoresSafeArea(.container, edges: .bottom)
+                .background {
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .ignoresSafeArea(.container, edges: backgroundEdges)
+                }
                 .id(colorScheme)
         }
     }

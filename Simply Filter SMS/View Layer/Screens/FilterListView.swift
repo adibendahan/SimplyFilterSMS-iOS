@@ -86,7 +86,20 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
             }
         } // List
         .listStyle(InsetGroupedListStyle())
-        .navigationBarItems(trailing: NavigationBarMenu())
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationBarTrailingItem()
+            }
+            if #available(iOS 27.0, *) {
+                ToolbarItem(placement: .topBarPinnedTrailing) {
+                    filterListTrailingMenu
+                }
+            } else {
+                ToolbarItem(placement: .topBarTrailing) {
+                    filterListTrailingMenu
+                }
+            }
+        }
         .navigationTitle(self.model.filterType.name)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $model.sheetScreen) { } content: { sheetScreen in
@@ -160,52 +173,48 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
             .tint(.red)
         }
     }
-    
+
     @ViewBuilder
-    private func NavigationBarMenu() -> some View {
-        HStack(spacing: 8) {
-            NavigationBarTrailingItem()
-
-            if self.model.editMode.isEditing {
-                EditButton()
-            } else {
-                Menu {
-                    Button(action: {
-                        withAnimation {
-                            self.model.editMode = .active
-                        }
-                    }) {
-                        Label("general_edit"~, systemImage: "pencil")
+    private var filterListTrailingMenu: some View {
+        if self.model.editMode.isEditing {
+            EditButton()
+        } else {
+            Menu {
+                Button(action: {
+                    withAnimation {
+                        self.model.editMode = .active
                     }
-
-                    Button {
-                        self.model.setFilterOptionsCollapsed(!self.model.isFilterOptionsCollapsed)
-                    } label: {
-                        Label(
-                            self.model.isFilterOptionsCollapsed
-                                ? "filterList_menu_expandOptions"~
-                                : "filterList_menu_collapseOptions"~,
-                            systemImage: "slider.horizontal.3")
-                    }
-
-                    Button(action: {
-                        self.model.showAddFilter()
-                    }) {
-                        Label({
-                            switch self.model.filterType {
-                            case .deny, .allow:
-                                return self.model.filterType == .deny ? ("addFilter_addFilter_deny"~) : ("addFilter_addFilter_allow"~)
-                            case .denyLanguage:
-                                return ("addFilter_addLanguage"~)
-                            }
-                        }(), systemImage: self.model.filterType == .denyLanguage ? "globe" : "plus.message")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
+                }) {
+                    Label("general_edit"~, systemImage: "pencil")
                 }
-                .tint(.primary)
-                .accessibilityLabel("a11y_home_menuButton"~)
+
+                Button {
+                    self.model.setFilterOptionsCollapsed(!self.model.isFilterOptionsCollapsed)
+                } label: {
+                    Label(
+                        self.model.isFilterOptionsCollapsed
+                            ? "filterList_menu_expandOptions"~
+                            : "filterList_menu_collapseOptions"~,
+                        systemImage: "slider.horizontal.3")
+                }
+
+                Button(action: {
+                    self.model.showAddFilter()
+                }) {
+                    Label({
+                        switch self.model.filterType {
+                        case .deny, .allow:
+                            return self.model.filterType == .deny ? ("addFilter_addFilter_deny"~) : ("addFilter_addFilter_allow"~)
+                        case .denyLanguage:
+                            return ("addFilter_addLanguage"~)
+                        }
+                    }(), systemImage: self.model.filterType == .denyLanguage ? "globe" : "plus.message")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
             }
+            .tint(.primary)
+            .accessibilityLabel("a11y_home_menuButton"~)
         }
     }
     
