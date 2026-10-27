@@ -20,6 +20,7 @@ class PersistanceManager: PersistanceManagerProtocol {
 
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+            container.persistentStoreDescriptions.first!.cloudKitContainerOptions = nil
         }
         else if let storeURL = self.container.persistentStoreDescriptions.first?.url?.deletingLastPathComponent(),
                 !FileManager.default.directoryExistsAtPath(storeURL.path) {

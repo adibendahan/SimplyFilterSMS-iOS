@@ -264,6 +264,18 @@ extension DenyFolderType {
             return nil
         }
     }
+
+    func exportKey(for type: FilterType) -> String? {
+        return type.supportsFolders ? self.exportKey : nil
+    }
+
+    init?(exportKey: String?, for type: FilterType) {
+        guard type.supportsFolders else {
+            self = .junk
+            return
+        }
+        self.init(exportKey: exportKey)
+    }
 }
 
 extension FilterTarget {

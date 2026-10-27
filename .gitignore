@@ -93,7 +93,7 @@ iOSInjectionProject/
 *.xcconfig
 .DS_Store
 automatic_filters.json
-ai_filters.json
+/ai/
 .claude/skills/review-reports/.review-state.json
 .claude/skills/review-reports/.venv/
 data/reported_messages_archive*.json

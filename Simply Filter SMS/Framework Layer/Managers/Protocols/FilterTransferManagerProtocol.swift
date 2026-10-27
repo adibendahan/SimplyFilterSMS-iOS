@@ -22,8 +22,31 @@ struct FilterExportPayload: Codable, Equatable {
     let version: Int
     let exportedAt: Date
     let appVersion: String
+    let revision: Int?
     let filters: [FilterExportRecord]
     let forceClearBeforeImport: [String]?
+}
+
+extension FilterExportPayload {
+    init(data: Data) throws {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        do {
+            let payload = try decoder.decode(Self.self, from: data)
+            guard payload.format == Self.formatIdentifier, payload.version >= 1 else {
+                throw FilterTransferError.invalidFile
+            }
+            guard payload.version <= Self.currentVersion else {
+                throw FilterTransferError.unsupportedVersion
+            }
+            self = payload
+        } catch let error as FilterTransferError {
+            throw error
+        } catch {
+            throw FilterTransferError.invalidFile
+        }
+    }
 }
 
 struct FilterExportRecord: Codable, Equatable {
@@ -74,7 +97,7 @@ struct FilterTransferCandidate: Equatable, Identifiable {
         guard let text = record.text?.trimmingCharacters(in: .whitespacesAndNewlines),
               text.count >= kMinimumFilterLength,
               let type = FilterType(exportKey: record.type),
-              let folder = DenyFolderType(exportKey: record.folder),
+              let folder = DenyFolderType(exportKey: record.folder, for: type),
               let target = FilterTarget(exportKey: record.target),
               let matching = FilterMatching(exportKey: record.matching),
               let filterCase = FilterCase(exportKey: record.caseSensitivity, for: matching) else {

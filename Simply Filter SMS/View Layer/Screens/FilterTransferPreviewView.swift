@@ -340,6 +340,7 @@ struct FilterTransferPreviewView_Previews: PreviewProvider {
             version: FilterExportPayload.currentVersion,
             exportedAt: Date(),
             appVersion: appVersion,
+            revision: nil,
             filters: [
                 FilterExportRecord(text: "promo",
                                    type: FilterType.deny.exportKey,

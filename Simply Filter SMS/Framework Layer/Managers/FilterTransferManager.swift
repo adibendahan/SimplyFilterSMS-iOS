@@ -84,7 +84,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     func previewImport(data: Data) throws -> FilterTransferPreview {
-        let payload = try self.decodePayload(data)
+        let payload = try FilterExportPayload(data: data)
         let typesToClear = Self.forceClearTypes(from: payload)
         var accepted: [FilterTransferCandidate] = []
         var duplicateCount = 0
@@ -174,6 +174,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                           version: FilterExportPayload.currentVersion,
                                           exportedAt: Date(),
                                           appVersion: appVersion,
+                                          revision: nil,
                                           filters: records,
                                           forceClearBeforeImport: nil)
         let encoder = JSONEncoder()
@@ -202,7 +203,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     private func record(from candidate: FilterTransferCandidate) -> FilterExportRecord {
         return FilterExportRecord(text: candidate.text,
                                   type: candidate.type.exportKey,
-                                  folder: candidate.denyFolder.exportKey,
+                                  folder: candidate.denyFolder.exportKey(for: candidate.type),
                                   target: candidate.filterTarget.exportKey,
                                   matching: candidate.filterMatching.exportKey,
                                   caseSensitivity: candidate.filterCase.exportKey(for: candidate.filterMatching))
@@ -212,29 +213,6 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         if let url = self.pendingExportURL {
             self.deleteExportFile(at: url)
             self.pendingExportURL = nil
-        }
-    }
-
-    private func decodePayload(_ data: Data) throws -> FilterExportPayload {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-
-        do {
-            let payload = try decoder.decode(FilterExportPayload.self, from: data)
-            guard payload.format == FilterExportPayload.formatIdentifier else {
-                throw FilterTransferError.invalidFile
-            }
-            guard payload.version >= 1 else {
-                throw FilterTransferError.invalidFile
-            }
-            guard payload.version <= FilterExportPayload.currentVersion else {
-                throw FilterTransferError.unsupportedVersion
-            }
-            return payload
-        } catch let error as FilterTransferError {
-            throw error
-        } catch {
-            throw FilterTransferError.invalidFile
         }
     }
 
