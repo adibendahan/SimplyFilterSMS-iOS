@@ -41,6 +41,9 @@
 		69218ED02EC8A261000D547B /* EnableExtensionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69218ED12EC8A261000D547B /* EnableExtensionStepView.swift */; };
 		69218ED22EC8A261000D547B /* EnableExtensionStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69218ED32EC8A261000D547B /* EnableExtensionStep.swift */; };
 		69300B8627A9C4A700DF7982 /* TestFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69300B8527A9C4A700DF7982 /* TestFiltersView.swift */; };
+		69315B61309157F900D52285 /* AIFilterListsResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69315B60309157F900D52285 /* AIFilterListsResponseTests.swift */; };
+		69315B633091592000D52285 /* AIFilterListsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69315B623091592000D52285 /* AIFilterListsResponse.swift */; };
+		69315B643091592000D52285 /* AIFilterListsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69315B623091592000D52285 /* AIFilterListsResponse.swift */; };
 		6931BAEA27BB270E00636439 /* AmazonS3ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */; };
 		69398EBC27B0A613003C5123 /* FilterListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69398EBB27B0A613003C5123 /* FilterListRowView.swift */; };
 		6941FE13277DE78B00B99539 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6941FE15277DE78B00B99539 /* Localizable.strings */; };
@@ -62,6 +65,7 @@
 		696B011127A822BE0061FE15 /* AppHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B011027A822BE0061FE15 /* AppHomeView.swift */; };
 		6973D01D278B537300A173CD /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6973D01C278B537300A173CD /* CloudKit.framework */; };
 		697979A9302E68E5000260F0 /* PersistanceManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C51279D755200CEABE5 /* PersistanceManagerProtocol.swift */; };
+		697E0D3130915B5B008BC5C5 /* FilterTransferManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0002 /* FilterTransferManagerProtocol.swift */; };
 		6982FE8927A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6982FE8827A6FAFD00BF6AA4 /* AutomaticFilterManagerProtocol.swift */; };
 		6982FE8B27A6FBA000BF6AA4 /* AutomaticFilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6982FE8A27A6FBA000BF6AA4 /* AutomaticFilterManager.swift */; };
 		698322832F50AD35008FFD1D /* XCUIElementExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698322822F50AD2C008FFD1D /* XCUIElementExtensions.swift */; };
@@ -241,6 +245,8 @@
 		69218ED12EC8A261000D547B /* EnableExtensionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionStepView.swift; sourceTree = "<group>"; };
 		69218ED32EC8A261000D547B /* EnableExtensionStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionStep.swift; sourceTree = "<group>"; };
 		69300B8527A9C4A700DF7982 /* TestFiltersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFiltersView.swift; sourceTree = "<group>"; };
+		69315B60309157F900D52285 /* AIFilterListsResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIFilterListsResponseTests.swift; sourceTree = "<group>"; };
+		69315B623091592000D52285 /* AIFilterListsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIFilterListsResponse.swift; sourceTree = "<group>"; };
 		6931BAE927BB270E00636439 /* AmazonS3ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonS3ServiceTests.swift; sourceTree = "<group>"; };
 		69398EBB27B0A613003C5123 /* FilterListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListRowView.swift; sourceTree = "<group>"; };
 		6941FE14277DE78B00B99539 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -486,6 +492,7 @@
 				690F09CA27AC33E900BA481F /* Mocks */,
 				69F76558304C499300CF046E /* SchedulingManagerTests.swift */,
 				69F7655A304C499300CF046E /* NetworkStatusTests.swift */,
+				69315B60309157F900D52285 /* AIFilterListsResponseTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -675,6 +682,7 @@
 			children = (
 				69F4096E27B948D800749552 /* AutomaticFilterListsResponse.swift */,
 				69ECF14B28677505000380A2 /* ReportMessageResponse.swift */,
+				69315B623091592000D52285 /* AIFilterListsResponse.swift */,
 			);
 			path = Responses;
 			sourceTree = "<group>";
@@ -994,6 +1002,7 @@
 				69F76557304C499300CF046E /* mock_UserNotificationCenterService.swift in Sources */,
 				A11CE47C01000000C0100004 /* DefaultsManagerTests.swift in Sources */,
 				C05FA5740F8443179A8D3FCD817FB3FE /* mock_DebugDataManager.swift in Sources */,
+				69315B61309157F900D52285 /* AIFilterListsResponseTests.swift in Sources */,
 				69F3D32427B961E800D7DDA7 /* AutomaticFilterManagerTests.swift in Sources */,
 				32E703F6EE6DCF1AE4C4C0F9 /* ReportMessageViewTests.swift in Sources */,
 			);
@@ -1055,6 +1064,7 @@
 				A24PSR0FILE0001B0000001 /* PersistentStoreReload.swift in Sources */,
 				698FBAFE27B44A0700435699 /* NetworkSyncManagerProtocol.swift in Sources */,
 				69CD70D62770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld in Sources */,
+				69315B643091592000D52285 /* AIFilterListsResponse.swift in Sources */,
 				690D709C27B31DC0001880DA /* NotificationView.swift in Sources */,
 				694E1E8B27AEE16D00264524 /* Screen.swift in Sources */,
 				690F055327822DFA0036553B /* AppExtensions.swift in Sources */,
@@ -1094,9 +1104,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA5BCED7D8924F6E9A3B5C05 /* CallingCodes.swift in Sources */,
+				697E0D3130915B5B008BC5C5 /* FilterTransferManagerProtocol.swift in Sources */,
 				691D57CB27BBE63300DDA267 /* MessageEvaluationManager.swift in Sources */,
 				69F4097027B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */,
 				697979A9302E68E5000260F0 /* PersistanceManagerProtocol.swift in Sources */,
+				69315B633091592000D52285 /* AIFilterListsResponse.swift in Sources */,
 				69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */,
 				69DB7018277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */,
 				694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */,

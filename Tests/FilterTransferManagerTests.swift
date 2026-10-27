@@ -187,6 +187,41 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertEqual(preview.candidates.first?.text, "ok")
     }
 
+    func test_import_regexIgnoresCase_othersRequireIt() throws {
+        let data = try self.payload(filters: [
+            record(text: #"\d{5}"#, type: "deny", matching: "regex", filterCase: nil),
+            record(text: "(?i)^Apple$", type: "allow", matching: "regex", filterCase: "sensitive"),
+            record(text: "promo", type: "deny", filterCase: nil)
+        ])
+
+        let preview = try self.testSubject.previewImport(data: data)
+
+        XCTAssertEqual(preview.count, 2)
+        XCTAssertEqual(preview.invalidCount, 1)
+        XCTAssertTrue(preview.candidates.allSatisfy({ $0.filterMatching == .regex && $0.filterCase == .caseInsensitive }))
+    }
+
+    func test_export_omitsCaseForRegexOnly() throws {
+        self.persistanceManager.addFilter(text: #"\d{5}"#,
+                                          type: .deny,
+                                          denyFolder: .junk,
+                                          filterTarget: .all,
+                                          filterMatching: .regex,
+                                          filterCase: .caseSensitive)
+        self.persistanceManager.addFilter(text: "promo",
+                                          type: .deny,
+                                          denyFolder: .junk,
+                                          filterTarget: .body,
+                                          filterMatching: .contains,
+                                          filterCase: .caseSensitive)
+
+        let object = try JSONSerialization.jsonObject(with: self.testSubject.exportPayload()) as? [String: Any]
+        let filters = try XCTUnwrap(object?["filters"] as? [[String: Any]])
+
+        XCTAssertNil(filters.first(where: { $0["matching"] as? String == "regex" })?["case"])
+        XCTAssertEqual(filters.first(where: { $0["matching"] as? String == "contains" })?["case"] as? String, "sensitive")
+    }
+
     func test_importFilters_selectedSubsetOnly() throws {
         let data = try self.payload(filters: [
             record(text: "one", type: "deny"),
@@ -305,15 +340,16 @@ class FilterTransferManagerTests: XCTestCase {
                         folder: String = "junk",
                         target: String = "all",
                         matching: String = "contains",
-                        filterCase: String = "insensitive") -> [String: String] {
-        return [
+                        filterCase: String? = "insensitive") -> [String: String] {
+        var record = [
             "text": text,
             "type": type,
             "folder": folder,
             "target": target,
-            "matching": matching,
-            "case": filterCase
+            "matching": matching
         ]
+        record["case"] = filterCase
+        return record
     }
 
     private func payload(format: String = FilterExportPayload.formatIdentifier,

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import NaturalLanguage
 
 class FilterTransferManager: FilterTransferManagerProtocol {
 
@@ -93,7 +92,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         var seenKeys = Set<String>()
 
         for record in payload.filters {
-            guard let candidate = Self.candidate(from: record) else {
+            guard let candidate = FilterTransferCandidate(record: record) else {
                 invalidCount += 1
                 continue
             }
@@ -206,7 +205,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                   folder: candidate.denyFolder.exportKey,
                                   target: candidate.filterTarget.exportKey,
                                   matching: candidate.filterMatching.exportKey,
-                                  caseSensitivity: candidate.filterCase.exportKey)
+                                  caseSensitivity: candidate.filterCase.exportKey(for: candidate.filterMatching))
     }
 
     private func clearPendingExportFile() {
@@ -241,33 +240,5 @@ class FilterTransferManager: FilterTransferManagerProtocol {
 
     private static func forceClearTypes(from payload: FilterExportPayload) -> Set<FilterType> {
         Set((payload.forceClearBeforeImport ?? []).compactMap({ FilterType(exportKey: $0) }))
-    }
-
-    private static func candidate(from record: FilterExportRecord) -> FilterTransferCandidate? {
-        guard let text = record.text?.trimmingCharacters(in: .whitespacesAndNewlines),
-              text.count >= kMinimumFilterLength,
-              let type = FilterType(exportKey: record.type),
-              let folder = DenyFolderType(exportKey: record.folder),
-              let target = FilterTarget(exportKey: record.target),
-              let matching = FilterMatching(exportKey: record.matching),
-              let filterCase = FilterCase(exportKey: record.caseSensitivity) else {
-            return nil
-        }
-
-        if type == .denyLanguage {
-            let language = NLLanguage(filterText: text)
-            guard language != .undetermined else { return nil }
-        }
-
-        if matching == .regex {
-            guard (try? Regex(text)) != nil else { return nil }
-        }
-
-        return FilterTransferCandidate(text: text,
-                                     type: type,
-                                     denyFolder: folder,
-                                     filterTarget: target,
-                                     filterMatching: matching,
-                                     filterCase: filterCase)
     }
 }

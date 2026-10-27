@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NaturalLanguage
 
 
 enum FilterTransferError: Error, Equatable {
@@ -69,6 +70,34 @@ struct FilterTransferCandidate: Equatable, Identifiable {
         self.filterCase = filterCase
     }
 
+    init?(record: FilterExportRecord) {
+        guard let text = record.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              text.count >= kMinimumFilterLength,
+              let type = FilterType(exportKey: record.type),
+              let folder = DenyFolderType(exportKey: record.folder),
+              let target = FilterTarget(exportKey: record.target),
+              let matching = FilterMatching(exportKey: record.matching),
+              let filterCase = FilterCase(exportKey: record.caseSensitivity, for: matching) else {
+            return nil
+        }
+
+        if type == .denyLanguage {
+            let language = NLLanguage(filterText: text)
+            guard language != .undetermined else { return nil }
+        }
+
+        if matching == .regex {
+            guard (try? Regex(text)) != nil else { return nil }
+        }
+
+        self.init(text: text,
+                  type: type,
+                  denyFolder: folder,
+                  filterTarget: target,
+                  filterMatching: matching,
+                  filterCase: filterCase)
+    }
+
     var duplicateKey: String {
         return "\(self.text)|\(self.filterTarget.rawValue)|\(self.filterMatching.rawValue)|\(self.filterCase.rawValue)"
     }
@@ -114,131 +143,4 @@ protocol FilterTransferManagerProtocol {
     func queueImport(data: Data) throws -> FilterTransferPreview
     func clearPendingImport() -> FilterTransferResult?
     func importFilters(_ candidates: [FilterTransferCandidate]) -> FilterTransferResult
-}
-
-
-extension FilterType {
-    var exportKey: String {
-        switch self {
-        case .deny:
-            return "deny"
-        case .allow:
-            return "allow"
-        case .denyLanguage:
-            return "denyLanguage"
-        }
-    }
-
-    init?(exportKey: String?) {
-        switch exportKey {
-        case "deny":
-            self = .deny
-        case "allow":
-            self = .allow
-        case "denyLanguage":
-            self = .denyLanguage
-        default:
-            return nil
-        }
-    }
-}
-
-extension DenyFolderType {
-    var exportKey: String {
-        switch self {
-        case .junk:
-            return "junk"
-        case .transaction:
-            return "transaction"
-        case .promotion:
-            return "promotion"
-        }
-    }
-
-    init?(exportKey: String?) {
-        switch exportKey {
-        case "junk":
-            self = .junk
-        case "transaction":
-            self = .transaction
-        case "promotion":
-            self = .promotion
-        default:
-            return nil
-        }
-    }
-}
-
-extension FilterTarget {
-    var exportKey: String {
-        switch self {
-        case .all:
-            return "all"
-        case .sender:
-            return "sender"
-        case .body:
-            return "body"
-        }
-    }
-
-    init?(exportKey: String?) {
-        switch exportKey {
-        case "all":
-            self = .all
-        case "sender":
-            self = .sender
-        case "body":
-            self = .body
-        default:
-            return nil
-        }
-    }
-}
-
-extension FilterMatching {
-    var exportKey: String {
-        switch self {
-        case .contains:
-            return "contains"
-        case .exact:
-            return "exact"
-        case .regex:
-            return "regex"
-        }
-    }
-
-    init?(exportKey: String?) {
-        switch exportKey {
-        case "contains":
-            self = .contains
-        case "exact":
-            self = .exact
-        case "regex":
-            self = .regex
-        default:
-            return nil
-        }
-    }
-}
-
-extension FilterCase {
-    var exportKey: String {
-        switch self {
-        case .caseInsensitive:
-            return "insensitive"
-        case .caseSensitive:
-            return "sensitive"
-        }
-    }
-
-    init?(exportKey: String?) {
-        switch exportKey {
-        case "insensitive":
-            self = .caseInsensitive
-        case "sensitive":
-            self = .caseSensitive
-        default:
-            return nil
-        }
-    }
 }

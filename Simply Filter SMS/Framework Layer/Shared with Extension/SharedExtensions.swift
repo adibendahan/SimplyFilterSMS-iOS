@@ -214,6 +214,145 @@ extension Character {
     var isEmoji: Bool { self.isSimpleEmoji || self.isCombinedIntoEmoji }
 }
 
+extension FilterType {
+    var exportKey: String {
+        switch self {
+        case .deny:
+            return "deny"
+        case .allow:
+            return "allow"
+        case .denyLanguage:
+            return "denyLanguage"
+        }
+    }
+
+    init?(exportKey: String?) {
+        switch exportKey {
+        case "deny":
+            self = .deny
+        case "allow":
+            self = .allow
+        case "denyLanguage":
+            self = .denyLanguage
+        default:
+            return nil
+        }
+    }
+}
+
+extension DenyFolderType {
+    var exportKey: String {
+        switch self {
+        case .junk:
+            return "junk"
+        case .transaction:
+            return "transaction"
+        case .promotion:
+            return "promotion"
+        }
+    }
+
+    init?(exportKey: String?) {
+        switch exportKey {
+        case "junk":
+            self = .junk
+        case "transaction":
+            self = .transaction
+        case "promotion":
+            self = .promotion
+        default:
+            return nil
+        }
+    }
+}
+
+extension FilterTarget {
+    var exportKey: String {
+        switch self {
+        case .all:
+            return "all"
+        case .sender:
+            return "sender"
+        case .body:
+            return "body"
+        }
+    }
+
+    init?(exportKey: String?) {
+        switch exportKey {
+        case "all":
+            self = .all
+        case "sender":
+            self = .sender
+        case "body":
+            self = .body
+        default:
+            return nil
+        }
+    }
+}
+
+extension FilterMatching {
+    var exportKey: String {
+        switch self {
+        case .contains:
+            return "contains"
+        case .exact:
+            return "exact"
+        case .regex:
+            return "regex"
+        }
+    }
+
+    init?(exportKey: String?) {
+        switch exportKey {
+        case "contains":
+            self = .contains
+        case "exact":
+            self = .exact
+        case "regex":
+            self = .regex
+        default:
+            return nil
+        }
+    }
+}
+
+extension FilterCase {
+    var exportKey: String {
+        switch self {
+        case .caseInsensitive:
+            return "insensitive"
+        case .caseSensitive:
+            return "sensitive"
+        }
+    }
+
+    init?(exportKey: String?) {
+        switch exportKey {
+        case "insensitive":
+            self = .caseInsensitive
+        case "sensitive":
+            self = .caseSensitive
+        default:
+            return nil
+        }
+    }
+
+    func exportKey(for matching: FilterMatching) -> String? {
+        return matching.definesOwnCase ? nil : self.exportKey
+    }
+
+    init?(exportKey: String?, for matching: FilterMatching) {
+        guard !matching.definesOwnCase else {
+            self = .caseInsensitive
+            return
+        }
+        self.init(exportKey: exportKey)
+    }
+}
+
+
 postfix operator ~
 postfix func ~ (string: String) -> String {
     return NSLocalizedString(string, comment: "")
