@@ -12,7 +12,8 @@ Tests/
 ├── AutomaticFilterManagerTests.swift     # Cloud filter management
 ├── PersistanceManagerTests.swift         # CoreData operations
 ├── FilterListViewModelTests.swift        # ViewModel integration
-├── FilterTransferManagerTests.swift      # Merge-only import/export picker
+├── FilterTransferManagerTests.swift      # Merge-only import/export picker, .sfsfilters schema rules
+├── FilterListCatalogResponseTests.swift  # AI Filtering list catalog decoding
 ├── FlowManagerTests.swift                # Launch-order queue
 ├── DefaultsManagerTests.swift            # Accent RGB storage / Color round-trip
 ├── AmazonS3ServiceTests.swift            # HTTP service

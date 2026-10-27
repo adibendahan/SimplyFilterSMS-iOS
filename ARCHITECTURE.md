@@ -14,7 +14,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | [docs/TESTS.md](docs/TESTS.md) | Testing patterns, unit tests, UI tests, mocks, and test infrastructure |
 | [docs/DESIGN.md](docs/DESIGN.md) | Visual design system — colors, typography, spacing, components, and guidelines for new features |
 | [docs/AWS_SETUP.md](docs/AWS_SETUP.md) | AWS backend for message reporting — API Gateway, Lambda, DynamoDB |
-| [docs/AI_FILTERS_3_3.md](docs/AI_FILTERS_3_3.md) | Plan: AI Filtering lists as `.sfsfilters`-style records, revision + ETag refresh, per-entry conversion of existing lists |
+| [docs/AI_FILTERS_3_3.md](docs/AI_FILTERS_3_3.md) | Plan: AI Filtering lists as `.sfsfilters` files with a catalog, a per-list cache and ETag refresh, plus the per-entry conversion of the existing lists |
 | [docs/localization/](docs/localization/) | Per-language translation guides (grammar strategy, canonical terms) used by `/add-language` |
 
 ## Screen Map

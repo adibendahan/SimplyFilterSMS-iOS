@@ -11,6 +11,7 @@ import XCTest
 
 class FilterListCatalogResponseTests: XCTestCase {
 
+    //MARK: Tests
     func test_initData_valid() throws {
         let response = try XCTUnwrap(FilterListCatalogResponse(data: self.json()))
 
@@ -35,7 +36,7 @@ class FilterListCatalogResponseTests: XCTestCase {
     }
 
 
-    //MARK: Helpers
+    //MARK: - Private -
     private func json(format: String = FilterListCatalogResponse.formatIdentifier,
                       version: Int = 1) -> Data {
         let object: [String: Any] = [
