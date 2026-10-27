@@ -30,20 +30,9 @@ These are the two references. English is the source of truth for keys and meanin
 
 ---
 
-## Step 3 — Create the change directory
+## Step 3 — Build the translation guide
 
-Create:
-```
-openspec/changes/<code>-localization/
-```
-
-Where `<code>` is the BCP-47 code (e.g. `es-localization`, `fr-localization`).
-
----
-
-## Step 4 — Build the translation guide
-
-Create `openspec/changes/<code>-localization/translation-guide.md`.
+Create `docs/localization/<code>.md`.
 
 The guide must contain **four sections**:
 
@@ -149,7 +138,7 @@ Define the tone to match the app's character:
 
 ---
 
-## Step 5 — Create the `.stringsdict` plural file
+## Step 4 — Create the `.stringsdict` plural file
 
 Every locale in this project has a `Localizable.stringsdict` file. Always create one automatically — do not ask.
 
@@ -172,7 +161,7 @@ Create `Simply Filter SMS/Resources/<code>.lproj/Localizable.stringsdict` with a
 
 ---
 
-## Step 6 — Create the strings file and populate keys via BartyCrouch
+## Step 5 — Create the strings file and populate keys via BartyCrouch
 
 **Do NOT manually copy or translate keys from English at this step.**
 
@@ -202,7 +191,7 @@ After translating, verify key count matches English by counting `=` occurrences 
 
 ---
 
-## Step 6b — Review strings longer than 2× English
+## Step 5b — Review strings longer than 2× English
 
 After writing the strings file, compute every string where `len(translation) / len(english_source) > 2.0` (ignoring format specifiers like `%ld` and `%@` in the ratio).
 
@@ -244,7 +233,7 @@ After any edits, re-verify key count matches English. Also scan for any em dash 
 
 ---
 
-## Step 6c — Quality pass (do before moving on)
+## Step 5c — Quality pass (do before moving on)
 
 After the length review, do one final read-through checking for these three issues:
 
@@ -256,7 +245,7 @@ After the length review, do one final read-through checking for these three issu
 
 ---
 
-## Step 7 — Register the locale in Xcode
+## Step 6 — Register the locale in Xcode
 
 **Do NOT use `xcodeproj add-file` for `.lproj/` files.** The CLI has no concept of PBXVariantGroup or localized variants — it produces an incorrect plain `PBXFileReference` with the wrong name/path, adds a spurious build file entry, and does not update `knownRegions`. Always edit `project.pbxproj` directly for this step.
 
@@ -277,7 +266,7 @@ Edit `Simply Filter SMS.xcodeproj/project.pbxproj` to add the new locale:
 
 ---
 
-## Step 8 — Verify key parity
+## Step 7 — Verify key parity
 
 Do a final key-parity check:
 - Read `en.lproj/Localizable.strings` and list all keys
@@ -288,7 +277,7 @@ If all keys are present: confirm and move to the next step.
 
 ---
 
-## Step 9 — Update snapshot tests
+## Step 8 — Update snapshot tests
 
 ### 9a. SnapshotsTestCase.swift
 
@@ -308,7 +297,7 @@ Edit `fastlane/Fastfile`. Both the `iphone_screenshots` and `ipad_screenshots` l
 
 ---
 
-## Step 10 — Layout stress test instructions
+## Step 9 — Layout stress test instructions
 
 Provide the user with a ready-to-use Xcode scheme launch argument for testing:
 
@@ -324,7 +313,7 @@ For RTL languages (Arabic, Persian, Hebrew — though Hebrew already exists): co
 
 ---
 
-## Step 11 — App Store metadata reminder
+## Step 10 — App Store metadata reminder
 
 Remind the user that the in-app translation is now complete, but the **App Store listing** is managed separately in **App Store Connect** and is not touched by this change. To fully support the new language on the App Store, the following need to be localized there:
 
@@ -343,7 +332,7 @@ These are edited at [appstoreconnect.apple.com](https://appstoreconnect.apple.co
 
 At the end, report:
 - Language added and locale code
-- Translation guide location: `openspec/changes/<code>-localization/translation-guide.md`
+- Translation guide location: `docs/localization/<code>.md`
 - Strings file: `Simply Filter SMS/Resources/<code>.lproj/Localizable.strings`
 - Plural `.stringsdict`: created (3 entries: `general_active_count`, `autoFilter_countryAllowlist_section_allowed`, `autoFilter_countryAllowlist_section_blocked`)
 - Key count (must match English)
