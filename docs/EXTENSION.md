@@ -154,4 +154,4 @@ The Reporting Extension compiles these files from the main app (not shared via f
 - **Lambda:** `ClassificationReport` (Python 3.13) — source at `Classification Report Lambda/lambda_function.py`
 - **Database:** DynamoDB `reported_messages` table — one record per body per report
 
-See `openspec/changes/archive/2026-03-19-add-reporting-extension/aws-setup.md` for full AWS details.
+See [AWS_SETUP.md](AWS_SETUP.md) for full AWS details.
