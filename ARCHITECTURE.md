@@ -13,6 +13,8 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 | [docs/EXTENSION.md](docs/EXTENSION.md) | Message Filter Extension (automatic filtering) and Reporting Extension (user-initiated junk/not-junk reporting from iOS Messages) |
 | [docs/TESTS.md](docs/TESTS.md) | Testing patterns, unit tests, UI tests, mocks, and test infrastructure |
 | [docs/DESIGN.md](docs/DESIGN.md) | Visual design system — colors, typography, spacing, components, and guidelines for new features |
+| [docs/AWS_SETUP.md](docs/AWS_SETUP.md) | AWS backend for message reporting — API Gateway, Lambda, DynamoDB |
+| [docs/localization/](docs/localization/) | Per-language translation guides (grammar strategy, canonical terms) used by `/add-language` |
 
 ## Screen Map
 
