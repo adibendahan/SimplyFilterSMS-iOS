@@ -257,6 +257,17 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertEqual(filters.first(where: { $0["type"] as? String == "deny" })?["folder"] as? String, "promotion")
     }
 
+    func test_name_decodedWhenPresent_omittedFromExports() throws {
+        let named = try FilterExportPayload(data: self.payload(name: "Community", filters: []))
+        let unnamed = try FilterExportPayload(data: self.payload(filters: []))
+        let exported = try JSONSerialization.jsonObject(with: self.testSubject.exportPayload()) as? [String: Any]
+
+        XCTAssertEqual(named.name, "Community")
+        XCTAssertNil(unnamed.name)
+        XCTAssertNotNil(exported)
+        XCTAssertNil(exported?["name"])
+    }
+
     func test_revision_decodedWhenPresent_omittedFromExports() throws {
         let managed = try FilterExportPayload(data: self.payload(revision: 3, filters: []))
         let plain = try FilterExportPayload(data: self.payload(filters: []))
@@ -400,6 +411,7 @@ class FilterTransferManagerTests: XCTestCase {
 
     private func payload(format: String = FilterExportPayload.formatIdentifier,
                          version: Int = FilterExportPayload.currentVersion,
+                         name: String? = nil,
                          revision: Int? = nil,
                          filters: [[String: String]],
                          forceClearBeforeImport: [String]? = nil) throws -> Data {
@@ -410,6 +422,7 @@ class FilterTransferManagerTests: XCTestCase {
             "appVersion": "1.0",
             "filters": filters
         ]
+        object["name"] = name
         object["revision"] = revision
         object["forceClearBeforeImport"] = forceClearBeforeImport
         return try JSONSerialization.data(withJSONObject: object)

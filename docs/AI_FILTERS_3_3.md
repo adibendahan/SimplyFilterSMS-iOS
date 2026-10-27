@@ -5,8 +5,8 @@
 | Step | State |
 |---|---|
 | 1 Shared records | Done in `39eac8a`. |
-| 1 Rework | Done, not committed: `revision`, allow records without `folder`, the shared `.sfsfilters` decoder, the index response, and the in-memory-store iCloud fix. |
-| 1 Catalog change (this revision of the doc) | Pending. |
+| 1 Rework | Done in `4fe2625`: `revision`, allow records without `folder`, shared `.sfsfilters` decoder, in-memory-store iCloud fix. |
+| 1 Catalog + `name` | Done, not committed: `FilterListCatalogResponse`, `name` on `FilterExportPayload` (no default on exports), local `ai/catalog.json`. |
 | 2–7 | Not started. |
 
 
@@ -40,7 +40,7 @@ Today the AI Filtering lists are `automatic_filters.json` at S3 `3.0.0`.
 
 **On S3:**
 ```
-simply-filter-sms/3.3.0/ai/catalog.json   → [{ id: "ai-he", name: "Hebrew", url: "ai/he.sfsfilters" }, …]
+simply-filter-sms/3.3.0/ai/catalog.json   → [{ id: "ai-he", name: "Hebrew", url: "he.sfsfilters" }, …]
 simply-filter-sms/3.3.0/ai/he.sfsfilters
 simply-filter-sms/3.3.0/ai/en.sfsfilters  …
 ```
@@ -75,15 +75,15 @@ The extension reads exactly as it does today: Core Data, read-only, one row. No 
 - **Regex records leave out `case`:** `FilterMatching.definesOwnCase` plus `FilterCase.exportKey(for:)` / `init?(exportKey:for:)`. They store `.caseInsensitive` internally.
 - **Allow records leave out `folder`:** the existing `FilterType.supportsFolders` plus `DenyFolderType.exportKey(for:)` / `init?(exportKey:for:)`. They store `.junk` internally.
 
-**To change (catalog):**
-- **Add `name` to `FilterExportPayload`:** the list's display name.
-  - **Always written by 3.3:** AI lists, published lists and exports.
-  - **Exports** get a default name the user can edit on the export screen. That's a UI change, so its design gets approved before it's built.
+**Catalog and name (done):**
+- **`name` on `FilterExportPayload`:** the list's display name.
+  - **Written by AI lists and published lists.**
+  - **Exports never write `name`,** and there's no UI for it. Regular users don't need one. List creators who publish a list add `name` to the file by hand.
   - **Reading is tolerant:** a file without `name` (older exports, ooqua today) still loads, and the file name is shown instead. So it's `String?` in code, and 3.2 stays compatible.
-- **Replace `AIFilterIndexResponse`** with **`FilterListCatalogResponse`** (`Services Layer/Responses/`):
+- **`FilterListCatalogResponse`** (`Services Layer/Responses/`) replaced `AIFilterIndexResponse`:
   ```
   { "format": "simply-filter-sms-catalog", "version": 1,
-    "lists": [ { "id": "ai-he", "name": "Hebrew", "url": "ai/he.sfsfilters", "language": "he" } ] }
+    "lists": [ { "id": "ai-he", "name": "Hebrew", "url": "he.sfsfilters", "language": "he" } ] }
   ```
   - A `url` can be relative to the catalog or absolute.
   - `language` ties an AI list to its `AutomaticFiltersLanguage` switch.
@@ -144,7 +144,6 @@ The extension reads exactly as it does today: Core Data, read-only, one row. No 
 - **Sender lists** → `sender` / regex `(?i)^<escaped>$`, which reproduces today's equality.
 
 Checked with 4.3M old-vs-new comparisons over the report archive: zero differences, and every regex compiles. The local files live in `ai/` (gitignored).
-- **Next:** `index.json` becomes `catalog.json`.
 - **Known gap:** `en` `"Extract email "` has a trailing space that validation trims.
 
 **Before release:** all 2,448 entries (en 832, he 399, de 198, ar 177, it 167, es 144, ja 139, pt 135, fr 130, ko 127) are reviewed one by one, one language at a time, starting with `he`, then `en`.
@@ -186,7 +185,7 @@ Checked with 4.3M old-vs-new comparisons over the report archive: zero differenc
 ## 7. Tests
 - **Schema:**
   - `revision` round-trips and is left out of exports.
-  - `name` is always written, and a file without it still loads with the fallback.
+  - `name` round-trips, exports leave it out, and a file without it still loads with the fallback.
   - Allow without `folder` and regex without `case` import.
   - A 3.2-shaped file still imports.
   - The catalog decodes; a wrong format or version is rejected.
@@ -214,7 +213,7 @@ Checked with 4.3M old-vs-new comparisons over the report archive: zero differenc
 **What a list needs, to be subscribable:**
 1. **A public HTTPS link that returns the file itself.** A GitHub raw link works and answers 304 correctly. A "latest release" link also works through its redirects.
 2. **A valid `.sfsfilters`,** the same file the app exports, so anyone can build a list in the app, export it and publish it. Bad entries are skipped one by one.
-3. **Should have:** `name`, shown in the app (otherwise the file name is used), and `revision`, to tell real changes apart.
+3. **Should have, added by hand in the file:** `name`, shown in the app (otherwise the file name is used), and `revision`, to tell real changes apart.
 
 **How updates are found:**
 - The same refresh as AI lists, on the same schedule.

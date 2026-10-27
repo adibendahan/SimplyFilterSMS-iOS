@@ -174,6 +174,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                           version: FilterExportPayload.currentVersion,
                                           exportedAt: Date(),
                                           appVersion: appVersion,
+                                          name: nil,
                                           revision: nil,
                                           filters: records,
                                           forceClearBeforeImport: nil)

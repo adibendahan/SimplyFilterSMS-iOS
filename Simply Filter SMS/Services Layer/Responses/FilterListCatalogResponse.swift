@@ -1,5 +1,5 @@
 //
-//  AIFilterIndexResponse.swift
+//  FilterListCatalogResponse.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 28/10/2026.
@@ -8,16 +8,23 @@
 import Foundation
 
 
-struct AIFilterIndexResponse: Codable, Equatable {
-    static let formatIdentifier = "simply-filter-sms-ai-index"
+struct FilterListCatalogResponse: Codable, Equatable {
+    static let formatIdentifier = "simply-filter-sms-catalog"
     static let currentVersion = 1
 
     let format: String
     let version: Int
-    let lists: [String]
+    let lists: [FilterListCatalogEntry]
 }
 
-extension AIFilterIndexResponse {
+struct FilterListCatalogEntry: Codable, Equatable {
+    let id: String
+    let name: String
+    let url: String
+    let language: String?
+}
+
+extension FilterListCatalogResponse {
     init?(data: Data) {
         guard let response = try? JSONDecoder().decode(Self.self, from: data),
               response.format == Self.formatIdentifier,
