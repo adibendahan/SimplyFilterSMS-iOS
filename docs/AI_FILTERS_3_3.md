@@ -1,4 +1,4 @@
-# Automatic Filter Lists v4 — Plan
+# AI Filter Lists 3.3 — Plan
 
 **Status:** Planned, not implemented (branch `feature/automatic-filter-records`, 2026-10-27).
 
@@ -25,9 +25,9 @@ Decisions made:
   - `FilterTransferCandidate`
 
   Turn `FilterTransferManager.candidate(from:)` into `FilterTransferCandidate.init?(record:)` and use it from both places, so imports and automatic lists share one validation path. Import behavior is unchanged.
-- Add `AutomaticFilterListsPayload: Codable, Equatable`:
+- Add `AIFilterListsPayload: Codable, Equatable`:
   ```
-  format: "simply-filter-sms-automatic-filters"
+  format: "simply-filter-sms-ai-filters"
   version: 1          // schema; decoder rejects > current (same rule as .sfsfilters)
   revision: Int       // content edition; bumped by tooling on every list change
   updatedAt: Date
@@ -38,13 +38,13 @@ Decisions made:
 - Delete `AutomaticFilterListsResponse` / `LanguageFilterListResponse`.
 
 ## 2. Cache (Core Data, same entity, no model change)
-- `AutomaticFiltersCache.filtersData` now holds plain JSON (no base64) of a `AutomaticFiltersCacheEnvelope { etag: String?, payload: AutomaticFilterListsPayload }`.
+- `AutomaticFiltersCache.filtersData` now holds plain JSON (no base64) of a `AIFiltersCacheEnvelope { etag: String?, payload: AIFilterListsPayload }`.
   - Keeping the ETag inside the envelope means no model v5 and no CloudKit schema deploy.
   - The ETag always travels with the content it describes, including when the row syncs to another device.
-- Legacy rows (base64 v3) fail to decode, so they're treated as "no cache". The next fetch is a full `200` and overwrites them.
+- Legacy rows (base64, 3.0 format) fail to decode, so they're treated as "no cache". The next fetch is a full `200` and overwrites them.
 - `PersistanceManager`:
-  - `saveCache(with: AutomaticFiltersCacheEnvelope) -> Bool`
-  - `cachedAutomaticFilters() -> AutomaticFiltersCacheEnvelope?` (fetch + decode in one place, replaces callers decoding `filtersData` themselves)
+  - `saveCache(with: AIFiltersCacheEnvelope) -> Bool`
+  - `cachedAutomaticFilters() -> AIFiltersCacheEnvelope?` (fetch + decode in one place, replaces callers decoding `filtersData` themselves)
   - `touchCache()` (bumps `age`)
   - Drop `isCacheStale`. `fetchAutomaticFiltersCacheRecords` stays only if something still needs the raw row; otherwise remove it.
 - The `hashed` attribute stays unused.
@@ -54,7 +54,7 @@ Decisions made:
   - Sends `If-None-Match` only when an `etag` is passed.
   - Uses `cachePolicy = .reloadIgnoringLocalCacheData`, so `URLCache` can't turn a 304 into a silent cached 200.
   - Maps HTTP 304 to `.notModified`, and 2xx to decode plus the response `ETag` header.
-- `AmazonS3Service.fetchAutomaticFilters(etag:) async -> ConditionalResponse<AutomaticFilterListsPayload>?` (nil on offline or error, as today). New path: `/simply-filter-sms/4.0.0/automatic_filters.json`. `3.0.0` stays live for old app versions.
+- `AmazonS3Service.fetchAutomaticFilters(etag:) async -> ConditionalResponse<AIFilterListsPayload>?` (nil on offline or error, as today). New path: `/simply-filter-sms/3.3.0/ai_filters.json`. `3.0.0` stays live for old app versions.
 - `AutomaticFilterManager.updateCacheIfNeeded`:
   - Sends an ETag only when a decodable cache exists. A missing or corrupt cache always gets a full fetch, so a stale ETag can never leave a device with no lists.
   - `.notModified` → `touchCache()`.
@@ -73,6 +73,13 @@ Decisions made:
 - Seed the preview cache in `AppManager` (`AppManager.swift:64`) with an envelope. `DebugDataManager.expireAutomaticFiltersCache` is unchanged (it backdates `age`).
 
 ## 5. Converting the existing list: per-entry review, not a script
+
+**Interim (done 2026-10-28):** to unblock development, `ai_filters.json` was first generated mechanically with **no behavior change**:
+- body lists become `body` / `contains` / insensitive / junk
+- sender lists become `sender` / regex `(?i)^<escaped>$` / junk, which reproduces today's full-sender equality
+
+Checked with 4.3M old-vs-new comparisons over the report archive plus probes: zero differences, and every regex compiles. The per-entry review below replaces this placeholder before release. Known gap: `en` `"Extract email "` has a trailing space that record validation trims.
+
 There are 2,448 entries across 10 languages (en 832, he 399, de 198, ar 177, it 167, es 144, ja 139, pt 135, fr 130, ko 127). I read every entry and decide its full record. No mapping is applied blindly. Scripts are only used for bookkeeping: collecting rows, measuring against the corpus, and writing the approved results.
 
 **Inputs for each decision**
@@ -102,22 +109,22 @@ There are 2,448 entries across 10 languages (en 832, he 399, de 198, ar 177, it 
 **Process: one language at a time, starting with `he`, then `en`, then the rest**
 1. Build a review table for the language. Each row has: original entry, list, proposed record, corpus hits now vs proposed, and a one-line rationale for any non-default choice.
 2. Show you a summary first: counts by decision type, then every **non-default** row (changed matching, folder moves, merges, drops, regexes). Plain carry-overs (body phrase → body/contains/insensitive/junk) are collapsed into a count, and the full table is available if you want it.
-3. You approve or adjust, and I apply only the approved rows to the v4 file under that language.
+3. You approve or adjust, and I apply only the approved rows to `ai_filters.json` under that language.
 4. After each language, run a corpus regression: total recall and every message whose verdict flipped, both directions, listed.
 
-Done when all 10 languages are approved. Then the v4 file is decoded by the app test fixture with **zero dropped records**, overall corpus recall is ≥ today's 81.7%, and every allow-labelled corpus message is still allowed. Any recall drop has to be explained and accepted by you.
+Done when all 10 languages are approved. Then `ai_filters.json` is decoded by the app test fixture with **zero dropped records**, overall corpus recall is ≥ today's 81.7%, and every allow-labelled corpus message is still allowed. Any recall drop has to be explained and accepted by you.
 
-**v3 compatibility.** Keep the original as `automatic_filters.v3.json`. Add `scripts/automatic_filters_v3.py`, which down-converts v4 back into v3 so `3.0.0` keeps getting updates:
+**3.0 compatibility.** `automatic_filters.json` (3.0 format) stays as is. Add `scripts/ai_filters_to_3_0.py`, which down-converts `ai_filters.json` into it so `3.0.0` keeps getting updates:
 - `contains` body → `*_body`
 - sender `exact` → `*_sender` (equality)
 - anything regex, sensitive-case or non-junk is skipped, with a printed list
 
 ## 6. Skills & docs
 - `review-reports` and `add-filter-language` skills:
-  - edit v4 records
+  - edit `ai_filters.json` records
   - **auto-increment `revision`**
   - run the down-convert
-  - upload `4.0.0/` and `3.0.0/` only when asked
+  - upload `3.3.0/ai_filters.json` and `3.0.0/automatic_filters.json` only when asked
 - Docs: `CLAUDE.md`, `docs/FRAMEWORK.md`, `docs/EXTENSION.md`, `docs/TESTS.md`. Remove the `test_saveCache` known-failure entry from memory.
 - Add the new files to `project.pbxproj` by hand. `FilterRecord.swift` goes in both the app and Message Filter Extension targets.
 
