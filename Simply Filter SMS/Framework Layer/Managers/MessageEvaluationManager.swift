@@ -20,6 +20,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: !inMemory)
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+            container.persistentStoreDescriptions.first!.cloudKitContainerOptions = nil
         }
 
         container.persistentStoreDescriptions.first!.shouldAddStoreAsynchronously = false

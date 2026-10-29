@@ -422,6 +422,29 @@ protocol FilterTransferManagerProtocol {
 - **`isExportFile`** is `.sfsfilters` only. **`deleteExportFile`** only removes a `.sfsfilters` file inside the temp directory.
 - Custom UTI / document type: `kFilterExportTypeIdentifier` in `Constants.swift`.
 
+### File format (`.sfsfilters`)
+
+One format for exports, AI Filtering lists and (later) subscribed lists.
+
+```json
+{
+  "format": "simply-filter-sms-filters", "version": 1,
+  "exportedAt": "2026-10-28T00:00:00Z", "appVersion": "3.3.0",
+  "name": "Optional list name", "revision": 4,
+  "filters": [
+    { "text": "promo", "type": "deny", "folder": "promotion", "target": "body", "matching": "contains", "case": "insensitive" },
+    { "text": "(?i)^Apple$", "type": "allow", "target": "sender", "matching": "regex" }
+  ],
+  "forceClearBeforeImport": ["deny"]
+}
+```
+
+- **Decoding:** `FilterExportPayload(data:)` throws `.invalidFile` (bad JSON, wrong `format`, `version` < 1) or `.unsupportedVersion` (newer than `currentVersion`).
+- **Validation:** `FilterTransferCandidate.init?(record:)` is the only validation path. It drops one record at a time (blank text, unknown keys, a regex that doesn't compile, an unknown language).
+- **Omitted fields:** regex records have no `case` (the pattern decides) and allow records have no `folder`. On import they get `.caseInsensitive` / `.junk` internally. Older files that still carry these fields import fine.
+- **Optional fields:** `name` and `revision` are for published lists. Exports never write them; list creators add them by hand.
+- **Compatibility:** changes are additive and optional only, so `version` stays `1` and app 3.2 can still read new files.
+
 ---
 
 ## FlowManager

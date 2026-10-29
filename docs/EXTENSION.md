@@ -56,8 +56,15 @@ The extension and main app share code via the `Shared with Extension` folder:
 | File | Purpose |
 |------|---------|
 | `AppPersistentCloudKitContainer.swift` | CoreData container using App Group for shared database access |
-| `SharedExtensions.swift` | Extensions on `Filter`, `NLLanguage`, `ILMessageFilterAction`, `String` + the `~` localization operator |
+| `SharedExtensions.swift` | Extensions on `Filter`, `NLLanguage`, `ILMessageFilterAction`, `String`, the `.sfsfilters` `exportKey` mappings + the `~` localization operator |
 | `Constants.swift` | All enums (`FilterType`, `DenyFolderType`, etc.) and global constants |
+
+Also compiled into the extension from outside that folder:
+
+| File | Purpose |
+|------|---------|
+| `Managers/Protocols/FilterTransferManagerProtocol.swift` | `.sfsfilters` types (`FilterExportPayload`, `FilterExportRecord`) and the single record validation path, `FilterTransferCandidate.init?(record:)` |
+| `Services Layer/Responses/FilterListCatalogResponse.swift` | The AI Filtering list catalog (`id`, `name`, `url`, `language`) |
 
 ## Database Access
 

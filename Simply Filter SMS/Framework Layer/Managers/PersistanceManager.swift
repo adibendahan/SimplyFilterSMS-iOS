@@ -20,6 +20,7 @@ class PersistanceManager: PersistanceManagerProtocol {
 
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+            container.persistentStoreDescriptions.first!.cloudKitContainerOptions = nil
         }
         else if let storeURL = self.container.persistentStoreDescriptions.first?.url?.deletingLastPathComponent(),
                 !FileManager.default.directoryExistsAtPath(storeURL.path) {
@@ -376,6 +377,31 @@ class PersistanceManager: PersistanceManagerProtocol {
         newCache.filtersData = filterList.encoded
         newCache.age = Date()
         return self.commitContext()
+    }
+
+    func cachedFilterLists() -> FilterListsCache? {
+        guard let filtersData = self.fetchAutomaticFiltersCacheRecords().first?.filtersData else { return nil }
+        return FilterListsCache(encoded: filtersData)
+    }
+
+    func saveCache(_ cache: FilterListsCache) -> Bool {
+        guard let filtersData = cache.validated.encoded else { return false }
+        AppManager.logger.debug("saveCache — saving \(cache.lists.count, privacy: .public) filter lists")
+        let records = self.fetchAutomaticFiltersCacheRecords()
+        records.dropFirst().forEach { self.context.delete($0) }
+        let cacheRecord = records.first ?? AutomaticFiltersCache(context: self.context)
+        if cacheRecord.uuid == nil {
+            cacheRecord.uuid = UUID()
+        }
+        cacheRecord.filtersData = filtersData
+        cacheRecord.age = Date()
+        return self.commitContext()
+    }
+
+    func touchCache() {
+        guard let cacheRecord = self.fetchAutomaticFiltersCacheRecords().first else { return }
+        cacheRecord.age = Date()
+        _ = self.commitContext()
     }
 
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
