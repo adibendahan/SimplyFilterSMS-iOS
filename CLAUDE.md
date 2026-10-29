@@ -84,7 +84,14 @@ Every screen follows the same structure:
 - **NotificationView auto-hide:** Each `NotificationView.Notification` case defines a `timeout`. The `ViewModel` auto-hides when `show` is set to `true` — no manual `DispatchQueue` timer needed at call sites.
 - **Previews:** Always use `AppManager.previews` (in-memory store with debug data).
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for the full documentation index, dependency graph, and links to detailed docs on [screens](docs/SCREENS.md), [framework/services](docs/FRAMEWORK.md), [extension](docs/EXTENSION.md), [tests](docs/TESTS.md), and [design system](docs/DESIGN.md).
+**Docs** (only what the code doesn't say):
+- [docs/FRAMEWORK.md](docs/FRAMEWORK.md) — evaluation order, refresh and sync rules, `.sfsfilters` compatibility, scheduling
+- [docs/SCREENS.md](docs/SCREENS.md) — one sentence per screen, plus its traps
+- [docs/EXTENSION.md](docs/EXTENSION.md) — Message Filter and Reporting extension constraints
+- [docs/TESTS.md](docs/TESTS.md) — running tests, mock conventions, the screenshot target
+- [docs/DESIGN.md](docs/DESIGN.md) — design principles and the accent-color rules
+- [docs/AWS_SETUP.md](docs/AWS_SETUP.md) — the reporting backend and S3 hosting of the AI Filtering lists
+- [docs/localization/](docs/localization/) — per-language translation guides used by `/add-language`
 
 ## Key Conventions
 
