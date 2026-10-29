@@ -219,6 +219,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     private weak var persistanceManager: PersistanceManagerProtocol?
     private var refreshTask: Task<Void, Never>?
     private var shouldFetchFilters: Bool {
+        guard self.persistanceManager?.cachedFilterLists() != nil else { return true }
         var shouldFetchFilters = true
         
         if let cacheAge = self.automaticFiltersCacheAge,
