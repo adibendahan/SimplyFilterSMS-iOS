@@ -17,7 +17,9 @@ Open `Simply Filter SMS.xcodeproj` in Xcode. No package managers (SPM/CocoaPods)
 - `Message Filter Extension` — ILMessageFilterExtension (`.appex`)
 - `Reporting Extension` — ILClassificationUIExtensionViewController (`.appex`) — user-initiated message reporting from iOS Messages
 - `Tests` — Unit tests
-- `UI Tests` — Snapshot tests via Fastlane
+- `UI Tests` — App Store screenshot generator for Fastlane (`testCreateSnapshots`, disabled in the test plan). Don't run it as part of testing.
+
+**Zero flaky or broken tests.** Every unit test passes on every run. A test that fails intermittently or for an environmental reason is fixed or deleted the day it's found, never documented as "known" or left disabled.
 
 **Command-line build/test:**
 ```bash
