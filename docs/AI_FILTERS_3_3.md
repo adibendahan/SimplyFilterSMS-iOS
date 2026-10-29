@@ -11,7 +11,8 @@
 | 3 Refresh | Done in `8d690c9`: conditional GET per list, request types own their URL, `FilterListService`. |
 | 4 Consumers | Done: the extension reads the new cache; `AutomaticFilterListsResponse` deleted. |
 | 7 Tests | Done: `HTTPServiceTests` (stubbed `URLProtocol`), a 3.2-exported file still imports. The rest of the list was covered in steps 2–4. |
-| 5–6 | Not started. |
+| 6 Tooling | Done: `review-reports` and `add-filter-language` edit `ai/*.sfsfilters` and `ai/catalog.json`. No 3.0 converter: the 3.0 file is frozen. |
+| 5 Review | Done locally: all 10 lists at revision 2, not uploaded. Hebrew and English reviewed with the owner; the other 8 by the same rules. |
 
 
 ## Context
@@ -118,7 +119,7 @@ The extension reads exactly as it does today: Core Data, read-only, one row. No 
 - **`HTTPService.fetchIfModified(request:)`** returns `.notModified` or `.modified(Data, etag:)`.
   - Sends `If-None-Match` only when an ETag is passed.
   - Uses `.reloadIgnoringLocalCacheData`, so iOS's own cache can't hide a 304.
-- **`FilterListService`** (was `AmazonS3Service`) fetches the catalog and the lists. Fetching by full URL is ready for user lists later. `3.0.0/automatic_filters.json` stays live for older apps.
+- **`FilterListService`** (was `AmazonS3Service`) fetches the catalog and the lists. Fetching by full URL is ready for user lists later. `3.0.0/automatic_filters.json` stays live, frozen, for older apps.
 - **`AutomaticFilterManager.updateAutomaticFiltersIfNeeded` steps:**
   1. Fetch the catalog, sending its fingerprint only if the cache decodes.
      - A 304 means the cached catalog is used.
@@ -189,18 +190,24 @@ Checked with 4.3M old-vs-new comparisons over the report archive: zero differenc
   - Corpus recall is at least today's 81.7%.
   - Every allow-labelled message is still allowed.
 
-**3.0 compatibility.** `scripts/ai_filters_to_3_0.py` rebuilds `automatic_filters.json` from `ai/*.sfsfilters`:
-- body `contains` becomes `*_body`
-- sender `exact` becomes `*_sender`
-- anything else is skipped, and listed
+- **Done differently:**
+  - "Contains" stays the default and broad words stay: a message from an unknown sender that isn't allow-listed and talks about payment, price or a blessing is most likely spam. Hebrew, Arabic, Japanese and Korean entries are all left as "contains" (prefixes attach in Hebrew and Arabic; there are no spaces in Japanese and Korean).
+  - Only Latin-script entries that sit inside a *different* word are narrowed: whole word (`Now`, `Get`, `Bet`, `AfD`, `Lula`, …) or a word-start regex (`Action` in "transaction", `Win` in "following", `Form` in "information", `#1` in "#12345"). Swift and the review script agree on all of them.
+  - Names stay as they are.
+  - Exact-equality senders that could never match (`.com`, `rewat.jp`, …) became "sender contains". The French allow phrase `Free` let through any message with "free" and was dropped (the `Free` sender stays allowed); `KSP` (Hebrew allow) became whole-word, case-sensitive for the same reason.
+  - Shopping words (sale, discount, offer, deal, coupon, price) go to `promotion`; politics and the rest stay `junk`. Promotion records are last in each file, since the first matching record wins.
+  - US companies send from short codes, so Xfinity, AT&T and Chase short codes are allowed senders in `en`.
+  - Entries already covered by a shorter "contains" entry with the same folder are dropped.
+  - Corpus recall is measured per list on its own language, not with every list on.
+
+**3.0 compatibility: none.** `3.0.0/automatic_filters.json` is frozen as it is today. Apps 3.0–3.2 keep blocking with it but get no list updates; there is no down-convert script.
 
 ## 6. Tooling, skills & docs
 - **Local files:** `ai/catalog.json` and `ai/<lang>.sfsfilters` (gitignored).
 - **`review-reports` / `add-filter-language` skills:**
   - Edit the right `.sfsfilters` and bump its `revision`.
   - `add-filter-language` also adds the language to `catalog.json`.
-  - Run the 3.0 down-convert.
-  - Upload `3.3.0/ai/*` and `3.0.0/automatic_filters.json` **only when asked**.
+  - Upload `3.3.0/ai/*` **only when asked**. Never touch `3.0.0/automatic_filters.json`.
 - **Project files:** new files go through Xcode's MCP. Target membership for existing files is set by hand in Xcode.
 - **Docs:** `CLAUDE.md`, `docs/FRAMEWORK.md`, `docs/EXTENSION.md`, `docs/TESTS.md`.
 
