@@ -10,6 +10,7 @@ Testing patterns, unit tests, UI tests, mocks, and test infrastructure.
 Tests/
 ├── MessageEvaluationManagerTests.swift   # Core filtering logic
 ├── AutomaticFilterManagerTests.swift     # Cloud filter management
+├── AutomaticFiltersFlowTests.swift       # AI Filtering end to end: refresh → save → evaluate
 ├── PersistanceManagerTests.swift         # CoreData operations
 ├── FilterListViewModelTests.swift        # ViewModel integration
 ├── FilterTransferManagerTests.swift      # Merge-only import/export picker, .sfsfilters schema rules
@@ -83,6 +84,14 @@ fastlane/
 - Refresh: no cache, nothing changed (touch), one list changed, list failure, catalog failure, list dropped from the catalog, same revision (no notification), force (no ETags), concurrent calls share one refresh
 
 **Verifies call counts** on mocks to ensure correct manager interactions.
+
+### AutomaticFiltersFlowTests
+
+**Tests:** the whole AI Filtering path with real pieces: `AutomaticFilterManager` refresh → real `PersistanceManager(inMemory:)` save → `MessageEvaluationManager(persistanceManager:)` on the same store.
+
+**Setup:** Only the download is faked (`mock_FilterListService`): a catalog with a relative Hebrew list and an absolute English list.
+
+**Verifies:** nothing is blocked before the refresh; after it, a Hebrew allowed sender beats the links rule, a Hebrew phrase blocks with the reason "Hebrew", the English list doesn't block while English is off and blocks to its record's folder once it's on. This catches the refresh and the extension disagreeing on how lists are stored (e.g. URL keys).
 
 ### PersistanceManagerTests
 

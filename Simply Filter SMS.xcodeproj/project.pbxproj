@@ -96,6 +96,7 @@
 		69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70FE2770D65D00F91A2F /* MessageFilterExtension.swift */; };
 		69CD71032770D65D00F91A2F /* Message Filter Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 69CD70FC2770D65D00F91A2F /* Message Filter Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		69D4127630938AE10035E3F5 /* HTTPServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D4127530938AE10035E3F5 /* HTTPServiceTests.swift */; };
+		69D4127830938C130035E3F5 /* AutomaticFiltersFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D4127730938C130035E3F5 /* AutomaticFiltersFlowTests.swift */; };
 		69D4D1802ED23D7700275627 /* EmojiGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */; };
 		69D87E442877445E00266D86 /* ReportMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D87E432877445E00266D86 /* ReportMessageView.swift */; };
 		69DB7017277A1F2100245DBA /* AppPersistentCloudKitContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */; };
@@ -317,6 +318,7 @@
 		69CD71082770D74300F91A2F /* Simply Filter SMS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Simply Filter SMS.entitlements"; sourceTree = "<group>"; };
 		69CD71092770D7AD00F91A2F /* Simply Filter SMS Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Simply Filter SMS Extension.entitlements"; sourceTree = "<group>"; };
 		69D4127530938AE10035E3F5 /* HTTPServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPServiceTests.swift; sourceTree = "<group>"; };
+		69D4127730938C130035E3F5 /* AutomaticFiltersFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFiltersFlowTests.swift; sourceTree = "<group>"; };
 		69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiGenerator.swift; sourceTree = "<group>"; };
 		69D87E432877445E00266D86 /* ReportMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMessageView.swift; sourceTree = "<group>"; };
 		69DB7013277A1F0200245DBA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -501,6 +503,7 @@
 				69315B60309157F900D52285 /* FilterListCatalogResponseTests.swift */,
 				69AB29A2309370D1006D815A /* URLRequestTests.swift */,
 				69D4127530938AE10035E3F5 /* HTTPServiceTests.swift */,
+				69D4127730938C130035E3F5 /* AutomaticFiltersFlowTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -990,6 +993,7 @@
 				6931BAEA27BB270E00636439 /* FilterListServiceTests.swift in Sources */,
 				69D4127630938AE10035E3F5 /* HTTPServiceTests.swift in Sources */,
 				691D57CA27BB2E0500DDA267 /* mock_HTTPService.swift in Sources */,
+				69D4127830938C130035E3F5 /* AutomaticFiltersFlowTests.swift in Sources */,
 				694E53E827A4300E009A7E0E /* PersistanceManagerTests.swift in Sources */,
 				690F09C727AC308600BA481F /* mock_AppManager.swift in Sources */,
 				69189C1327A9771A00C8FFA5 /* MessageEvaluationManagerTests.swift in Sources */,
