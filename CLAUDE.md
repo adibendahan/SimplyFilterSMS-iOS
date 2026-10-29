@@ -1,88 +1,15 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code in this repository. Only what the code doesn't say; for the rest, read the code.
 
-## Project Overview
+## Project
 
-Simply Filter SMS is an iOS app (Swift/SwiftUI, iOS 17+) that filters unknown SMS messages using Apple's IdentityLookup framework. It includes a Message Filter Extension that classifies incoming messages as junk, transaction, or promotion, and a Reporting Extension that lets users report messages directly from iOS Messages. Data syncs across devices via CoreData + CloudKit (NSPersistentCloudKitContainer).
+Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with Apple's IdentityLookup. Targets: the app, a Message Filter Extension (allow / junk / transaction / promotion), a Reporting Extension (report from iOS Messages), `Tests`, and `UI Tests`. Data syncs through Core Data + CloudKit, shared with the extension through the App Group `group.com.grizz.apps.dev.simply-filter-sms`. No package managers.
 
-App Store: https://apps.apple.com/us/app/simply-filter-sms/id1603222959
-
-## Build & Test
-
-Open `Simply Filter SMS.xcodeproj` in Xcode. No package managers (SPM/CocoaPods) are used.
-
-**Targets:**
-- `Simply Filter SMS` — Main app
-- `Message Filter Extension` — ILMessageFilterExtension (`.appex`)
-- `Reporting Extension` — ILClassificationUIExtensionViewController (`.appex`) — user-initiated message reporting from iOS Messages
-- `Tests` — Unit tests
-- `UI Tests` — App Store screenshot generator for Fastlane (`testCreateSnapshots`, disabled in the test plan). Don't run it as part of testing.
-
-**Zero flaky or broken tests.** Every unit test passes on every run. A test that fails intermittently or for an environmental reason is fixed or deleted the day it's found, never documented as "known" or left disabled.
-
-**Command-line build/test:**
-```bash
-xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Simply Filter SMS" -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build
-xcodebuild -project "Simply Filter SMS.xcodeproj" -scheme "Tests" -destination 'platform=iOS Simulator,name=iPhone 18 Pro' test
-```
-
-**Localization:** BartyCrouch normalizes `.strings` files (English + Hebrew). Config in `.bartycrouch.toml`.
-
-## Architecture
-
-Three-layer clean architecture with protocol-based dependency injection:
-
-### Framework Layer (`Simply Filter SMS/Framework Layer/`)
-- **AppManager** — Singleton service locator (`AppManager.shared`). Creates and holds all managers/services. Use `AppManager(inMemory: true)` for previews/tests.
-- **MessageEvaluationManager** — Core filtering engine. App uses `init(persistanceManager:)` (live context across `reloadContainer()`). Extension/tests use `init(inMemory:)` with a synchronously loaded owned App Group store (`shouldAddStoreAsynchronously = false`).
-- **PersistanceManager** — CoreData CRUD operations for `Filter`, `AutomaticFiltersRule`, `AutomaticFiltersLanguage` entities.
-- **AutomaticFilterManager** — Refreshes the AI Filtering lists (through `FilterListService`), applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown, country allowlist). The refresh runs on the main actor, and a concurrent caller joins the running refresh (`refreshTask`).
-- **SchedulingManager** — `BGProcessingTask` that refreshes AI filter lists without a foreground open, plus the monthly inactivity reminder and its ask cadence. Only `AppDelegate.applicationDidBecomeActive` moves the reminder clock — never anything on the launch path, since `didFinishLaunching` also runs for background wakes.
-- **DefaultsManager** — UserDefaults wrapper for app settings. Custom accent is `@StoredDefault("accentColorRGB", defaultValue: kNoColorDict)`.
-- **NetworkSyncManager** — NWPathMonitor + CloudKit sync status tracking. `reloadContainer()` only on a genuine offline→online reconnection (`NetworkStatus.isReconnection(from:)`) — `.unknown` is not a network state, and rebuilding the stack on the monitor's first report aborted the initial import. A failed setup is recorded for the UI and left to Core Data's own recovery; never retry it with `reloadContainer()`. `reloadContainer()` posts `.persistentStoreReloaded`; screens use `.modifier(persistentStoreReload)`.
-- **TipJarManager** — StoreKit 2 in-app purchase manager for consumable tip jar products.
-- **FilterTransferManager** — Merge-only filter import/export (`.sfsfilters`). Holds one in-flight picker (`pendingPreview` / `pendingKind`); Home presents `.filterImport` or `.filterExport`. Writes/deletes export files in the temp directory.
-- **FlowManager** — Launch-order queue (not a navigator). Occupancy: `next()` sets `activeScreen`; further `next()` is nil until `complete`. Order: first run → launch (file/deep link) → automatic What's New → user `request`.
-
-Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testability.
-
-### Services Layer (`Simply Filter SMS/Services Layer/`)
-- **FilterListService** — Fetches the AI Filtering catalog and lists by URL (`fetchIfModified`), wherever they are hosted. A thin gateway: what to fetch and keep is decided in `AutomaticFilterManager`.
-- **ReportMessageService** — Reports spam/ham to `https://api.ben-dahan.com/report` (public endpoint, no auth). Used by the in-app reporting UI. The Reporting Extension uses the same endpoint via iOS system delivery (`ILClassificationExtensionNetworkReportDestination`).
-- **UserNotificationCenterService** — Thin `UNUserNotificationCenter` gateway (status, request alerts, schedule/cancel). All policy stays in `SchedulingManager`.
-- **HTTPService** — Base class for HTTP requests with `URLRequestProtocol`. Every request is a type in `Requests/` that owns its full `url` (and `headers`); services never pass a base URL. `fetchIfModified(request:)` is the conditional GET (`FetchResult`).
-
-### View Layer (`Simply Filter SMS/View Layer/`)
-- **Screens/** — one SwiftUI screen per file; what each is for is in [docs/SCREENS.md](docs/SCREENS.md).
-- **Others/** — `BaseViewModel` (base class for all ViewModels), reusable components, button styles, view modifiers.
-
-### Shared with Extension (`Framework Layer/Shared with Extension/`)
-Code compiled into both the app and the Message Filter Extension:
-- `Constants.swift` — All enums (`FilterType`, `DenyFolderType`, `FilterTarget`, `FilterMatching`, `FilterCase`, `RuleType`, `ReportType`) and global constants.
-- `SharedExtensions.swift` — Extensions on `Filter` (CoreData), `NLLanguage`, `ILMessageFilterAction`, `String`, the `.sfsfilters` `exportKey` mappings on the filter enums, plus the `~` postfix operator.
-- `AppPersistentCloudKitContainer.swift` — CoreData/CloudKit container setup with App Group (`group.com.grizz.apps.dev.simply-filter-sms`).
-- `FilterListsCache.swift` — what `AutomaticFiltersCache.filtersData` holds: plain JSON, one section per filter list keyed by URL (`{ url, etag, payload }`) plus the catalog. Lists are stored as downloaded; the extension skips records it can't use when reading them. A legacy base64 row decodes as no cache. `ActiveFilterLists` is the extension's reader: once per message, it decodes only the lists whose language is on.
-
-Also compiled into the extension from outside this folder: `Protocols/FilterTransferManagerProtocol.swift` (`.sfsfilters` types and `FilterTransferCandidate.init?(record:)` validation), `MessageEvaluationManager(Protocol).swift`, and `Services Layer/Responses/FilterListCatalogResponse.swift`. Changing an existing file's target membership has no Xcode MCP tool, so it's done by hand in Xcode.
-
-### Message Filter Extension (`Message Filter Extension/`)
-- `MessageFilterExtension.swift` — Entry point implementing `ILMessageFilterQueryHandling`. Instantiates `MessageEvaluationManager()` (owned sync-loaded store) and evaluates offline (no network deferral).
-
-## MVVM Pattern
-
-Every screen follows the same structure:
-
-- **Nested ViewModel:** Declared as `class ViewModel: BaseViewModel, ObservableObject` inside `extension SomeView { }`. Always accessed as `SomeView.ViewModel`.
-- **BaseViewModel:** Holds a single `appManager: AppManagerProtocol` property (defaults to `AppManager.shared`). All ViewModels subclass it for DI access.
-- **View owns ViewModel:** Most views use `@ObservedObject var model: ViewModel`. However, screens presented as sheets or that experienced re-rendering bugs use `@StateObject` with the `init(model:) { _model = StateObject(wrappedValue: model) }` pattern — this prevents SwiftUI from recreating the ViewModel on parent re-renders. Current `@StateObject` screens: `AboutView`, `ChooseAccentColorView`, `CountryListView`, `FilterTransferPreviewView`, `FilterListView`, `HelpView`, `ReportMessageView`, `TestFiltersView`, `TipJarView`. **Exception — Home:** `Simply_Filter_SMSApp` holds `AppHomeView.ViewModel` as `@StateObject` and injects it; Home stays `@ObservedObject`. Launch (`runLaunchFlowIfNeeded()`) runs from that ViewModel’s `init`, not Home `.onAppear`. Views never access managers directly.
-- **Screen enum router:** `Screen.swift` defines all screens as enum cases with a `build()` factory method that instantiates the View+ViewModel pair. Used for both navigation and sheet presentation.
-- **Navigation via published optionals:** ViewModels expose `@Published var navigationScreen: Screen?` (push) and `sheetScreen: Screen?` (sheet) to drive navigation declaratively. Home sheets go through `FlowManager` (`request` / `recordLaunch` / `next` / `complete`).
-- **StatefulItem<T>:** Generic wrapper (`View Layer/Others/StatefulItem.swift`) that bridges getter/setter closures to a `Bool state` property with `didSet`. Used for Toggle bindings backed by manager calls.
-- **Home alerts are not `Screen`s:** A Home alert is a `@Published var showFooAlert: Bool` on `AppHomeView.ViewModel` plus `.alert(isPresented:)` — see `showNothingToImportAlert` and `showInactivityNotificationAlert`. Never add a `Screen` case whose `build()` returns `EmptyView` just to route one through `FlowManager`. To make an alert wait behind first run / launch / What's New, raise it from `navigationScreen`'s `didSet` (`oldValue != nil && navigationScreen == nil`) and guard on `isHomeUnobstructed` — a sheet dismissal never touches `navigationScreen`, so the alert cannot land on top of a launch flow. Nudges that share that hook must be mutually exclusive: `tryRequestReview()` returns whether it prompted, and the inactivity ask only runs when it did not.
-- **Overlay modifiers:** `EmbeddedFooterView` (app version footer) and `EmbeddedNotificationView` (toast banner) are applied via `.modifier()` in ZStack overlays. Defined in `ViewModfiers.swift`. **Important:** `EmbeddedNotificationView` must be applied **outside** `NavigationView`, not inside — otherwise the toast appears too low (below the nav bar). On iOS 26 the toast and its action chip use `.glassEffect(.clear.interactive())`; older iOS uses `.ultraThinMaterial`.
-- **NotificationView auto-hide:** Each `NotificationView.Notification` case defines a `timeout`. The `ViewModel` auto-hides when `show` is set to `true` — no manual `DispatchQueue` timer needed at call sites.
-- **Previews:** Always use `AppManager.previews` (in-memory store with debug data).
+- **Build and test through Xcode.** New files are added with Xcode's MCP so they join their targets; an existing file's target membership has no MCP tool and is changed by hand in Xcode. Running tests: [docs/TESTS.md](docs/TESTS.md).
+- **`UI Tests` is the App Store screenshot generator** for Fastlane (`testCreateSnapshots`, disabled in the test plan). Don't run it as testing.
+- **Zero flaky or broken tests.** Every unit test passes on every run. A test that fails intermittently or for an environmental reason is fixed or deleted the day it's found, never documented as "known" or left disabled.
+- **Localization:** BartyCrouch normalizes the `.strings` files (`.bartycrouch.toml`).
 
 **Docs** (only what the code doesn't say):
 - [docs/FRAMEWORK.md](docs/FRAMEWORK.md) — evaluation order, refresh and sync rules, `.sfsfilters` compatibility, scheduling
@@ -93,24 +20,41 @@ Every screen follows the same structure:
 - [docs/AWS_SETUP.md](docs/AWS_SETUP.md) — the reporting backend and S3 hosting of the AI Filtering lists
 - [docs/localization/](docs/localization/) — per-language translation guides used by `/add-language`
 
-## Key Conventions
+## Architecture
 
-- **Localization operator:** Postfix `~` operator converts string keys to localized strings: `"key"~` equals `NSLocalizedString("key", comment: "")`.
-- **Enums over structs for constant data:** When defining a fixed set of entries with computed properties (display names, icons, colors, etc.), prefer `CaseIterable` enums with computed properties over structs with separate arrays. See `FilterType`, `RuleType`, `WhatsNewEntry` in `Constants.swift` for examples.
-- **Extensions over scattered conditionals:** When a conditional pattern repeats across a file (e.g., `if (!isPad) { element.tap() }`), extract it into a type extension (e.g., `element.conditionalTap(!isPad)`) rather than duplicating the conditional at every call site.
-- **Naming:** `*Protocol` for interfaces, `mock_*` prefix for test mocks, `*Manager` for services, `*View` for SwiftUI views.
-- **Logging:** `AppManager.logger` (OSLog `Logger`) used throughout. Extension has its own logger instance.
-- **CoreData model:** Versioned at `Resources/Simply-Filter-SMS.xcdatamodeld` (v4). Entities use Int64 raw values mapped to Swift enums via computed properties in `SharedExtensions.swift`. **After any model change, deploy the CloudKit schema to production** (CloudKit Console → Schema → Deploy to Production) before release: development auto-evolves, production doesn't, and a missing field silently stops syncing in TestFlight/App Store only. Check the diff first: a record type deployed to production can never be removed.
-- **Test mocks:** Located in `Tests/Mocks/` — one mock per protocol.
-- **App Group:** Shared container `group.com.grizz.apps.dev.simply-filter-sms` allows CoreData access from both app and extension.
-- **Dark mode colors:** Avoid `Color(.systemGray6)` for card/surface backgrounds — it blends into the system background in dark mode. Use `.gray.opacity(...)` for visible contrast in both appearances.
-- **Avoid `.task` for one-time loads:** SwiftUI `.task` re-fires when the view tree identity changes (e.g., conditional overlays). For one-time async work, use `Task { }` in the ViewModel's `init` instead.
-- **What's New entries:** When adding a new `WhatsNewEntry` case, bump `currentWhatsNewVersion` in `Constants.swift` **unless that What's New version has not shipped yet** (this branch added `.appearanceTouchup` without bumping `6`). The sheet only shows when this version exceeds the user's last-seen version in defaults. Entries can be **actionable** by returning `true` from `isActionable` — the presenting screen handles navigation via the `onActionableEntryTapped` closure (e.g., opening Tip Jar via `pendingScreenAfterDismiss`).
-- **`listRowBackground` does not animate:** SwiftUI's `listRowBackground` content is not part of the normal animation hierarchy. Applying `.animation(_:value:)` or `withAnimation` to it has no effect. For animated row decorations (highlights, indicators), use `.overlay` or regular view modifiers on the row content itself.
-- **New-item indicators in Lists:** The reliable iOS pattern is a small filled `Circle()` dot (accent color, ~8pt) driven by local `@State var dotOpacity: Double` + `.onAppear`/`.onChange(of:)`. Background-flash via `listRowBackground` is not reliably achievable in SwiftUI Lists.
-- **`.onAppear` + `.onChange` together for state-dependent row animations:** Use both modifiers. `.onAppear` handles rows that enter the hierarchy with the flag already `true`; `.onChange(of:)` handles rows already in the hierarchy when the flag becomes `true`. Guard with the current state to prevent double-triggering.
-- **Filter / list identity:** Prefer `Filter.uuid` (`UUID`) for `ForEach` ids, `scrollTo`, new-item dots, and `@FocusState` — not `NSManagedObjectID`. Cache row ViewModels on the parent keyed by that UUID; do not construct them inside `ForEach`.
-- **Timer identity guards:** When scheduling a delayed clear of a `@Published` property, guard by value identity to prevent an earlier timer from clobbering a later update: `if self?.newlyAddedFilter == filter { self?.newlyAddedFilter = nil }` (or compare the same `UUID` used for the UI indicator).
-- **`.sfsfilters` is the one filter-list format:** exports, AI lists and (later) subscribed lists share `FilterExportPayload` / `FilterExportRecord`. Changes must be additive and optional, so `version` stays `1` and 3.2 can still read new files. A field a record doesn't use is omitted, never filled with a placeholder: regex records omit `case` (`FilterMatching.definesOwnCase`) and allow records omit `folder` (`FilterType.supportsFolders`), both applied through `exportKey(for:)` / `init?(exportKey:for:)`. Exports never write `name`; list creators add it by hand.
-- **In-memory stores never sync:** `PersistanceManager(inMemory:)` and `MessageEvaluationManager(inMemory:)` set `cloudKitContainerOptions = nil`. With mirroring on, a save in an isolated test run throws `No eligible connection available`.
-- **Sheet callbacks — don't touch `Screen`:** Never add associated values to `Screen` cases to pass closures — it breaks `Int` raw value conformance and ripples across the entire routing system. Instead, have the presenting ViewModel own the presented ViewModel directly, inject the closure at creation time, and present via a dedicated `@Published var fooViewModel: FooView.ViewModel?` + `.sheet(item:)`. The presented ViewModel must conform to `Identifiable` (add `let id = UUID()`). Example: `FilterListView.ViewModel` owns `addFilterViewModel: AddFilterView.ViewModel?`, creates it with `onAdded: { [weak self] filter in ... }` in `showAddFilter()`, and presents it via `.sheet(item: $model.addFilterViewModel)`. Filter import does not need that pattern: `.filterImport` / `.filterExport` are normal `Screen` cases, and `FilterTransferPreviewView.ViewModel` reads `pendingPreview` and `pendingKind` from the manager.
+- **Layers:** `Framework Layer/` (managers), `Services Layer/` (thin network gateways), `View Layer/` (screens and components). `AppManager.shared` creates and holds every manager and service; `AppManager(inMemory: true)` for tests and `AppManager.previews` for previews. Every manager has a `*Protocol` in `Managers/Protocols/`.
+- **Managers own policy; services are gateways.** `FilterListService`, `ReportMessageService` and `UserNotificationCenterService` only fetch, post or schedule; what to do with the result is decided in a manager.
+- **Every request is a type** in `Services Layer/Requests/` that owns its full `url` and `headers`; services never pass a base URL.
+- **`Shared with Extension/`** is compiled into the app and the Message Filter Extension. Also compiled into the extension from elsewhere: `FilterTransferManagerProtocol.swift` (the `.sfsfilters` types and their only validation path), `MessageEvaluationManager(Protocol).swift` and `FilterListCatalogResponse.swift`.
+- **`MessageEvaluationManager` has two initializers:** the app's `init(persistanceManager:)` follows the live context across `reloadContainer()`; the extension's and tests' `init(inMemory:)` owns a store loaded synchronously.
+- **AI Filtering refresh** runs on the main actor; a concurrent caller joins the running refresh (`refreshTask`).
+- **CloudKit recovery:** `reloadContainer()` runs only on a genuine offline→online reconnection (`NetworkStatus.isReconnection(from:)`). `.unknown` is not a network state: rebuilding the stack on the monitor's first report aborted the initial import. A failed setup is left to Core Data's own recovery; never retry it with `reloadContainer()`. After a reload, screens holding Core Data objects refresh through `.modifier(persistentStoreReload)`.
+- **Inactivity reminder clock:** only `AppDelegate.applicationDidBecomeActive` moves it. Nothing on the launch path may, because `didFinishLaunching` also runs for background wakes.
+- **FlowManager is a launch-order queue, not a navigator.** Order: first run → launch (file / deep link) → automatic What's New → user `request`. `next()` occupies it until `complete`.
+
+## MVVM
+
+- **ViewModel:** `class ViewModel: BaseViewModel, ObservableObject` inside `extension SomeView { }`, used as `SomeView.ViewModel`. `BaseViewModel` holds `appManager`. Views never touch managers.
+- **`@StateObject` vs `@ObservedObject`:** sheets and screens that were recreated on parent re-renders use `@StateObject` with `init(model:) { _model = StateObject(wrappedValue: model) }`. **Home is the exception:** the `App` holds `AppHomeView.ViewModel` as `@StateObject` and Home is `@ObservedObject`; launch work runs from that ViewModel's `init`, not `.onAppear`.
+- **Navigation:** `Screen.build()` makes each View + ViewModel. ViewModels publish `navigationScreen` (push) and `sheetScreen` (sheet); Home's sheets go through `FlowManager`.
+- **Sheet callbacks — don't touch `Screen`.** Associated values break its `Int` raw values and the whole router. The presenting ViewModel owns the presented one (`@Published var fooViewModel: FooView.ViewModel?`, `Identifiable` via `let id = UUID()`), injects the closure when creating it, and presents with `.sheet(item:)`. Example: `FilterListView.ViewModel.addFilterViewModel`.
+- **Home alerts aren't `Screen`s:** a `@Published var showFooAlert: Bool` plus `.alert(isPresented:)`. Never add a `Screen` that builds `EmptyView` to route one. To wait behind first run / launch / What's New, raise it from `navigationScreen`'s `didSet` (`oldValue != nil && navigationScreen == nil`) and guard on `isHomeUnobstructed`. Nudges sharing that hook are mutually exclusive: `tryRequestReview()` returns whether it prompted, and the inactivity ask runs only when it didn't.
+- **`EmbeddedNotificationView` goes outside `NavigationView`,** or the toast appears below the navigation bar. Each `NotificationView.Notification` has a `timeout` and hides itself; no timers at call sites.
+- **`StatefulItem<T>`** bridges getter/setter closures to a `Bool` for toggles backed by manager calls.
+
+## Conventions
+
+- **`"key"~`** is `NSLocalizedString("key", comment: "")`.
+- **Enums over structs for constant data:** `CaseIterable` enums with computed properties (see `FilterType`, `RuleType`, `WhatsNewEntry`).
+- **Extensions over repeated conditionals:** e.g. `element.conditionalTap(!isPad)` instead of `if !isPad { element.tap() }` at every call site.
+- **Naming:** `*Protocol`, `mock_*` (one per protocol in `Tests/Mocks/`), `*Manager`, `*View`.
+- **Logging:** `AppManager.logger`; the extension has its own.
+- **Core Data model:** `Resources/Simply-Filter-SMS.xcdatamodeld`; Int64 raw values mapped to enums in `SharedExtensions.swift`. **After any model change, deploy the CloudKit schema to production** (CloudKit Console → Schema → Deploy to Production) before release: development auto-evolves, production doesn't, and a missing field silently stops syncing in TestFlight/App Store only. Check the diff first: a record type deployed to production can never be removed.
+- **In-memory stores never sync** (`cloudKitContainerOptions = nil`). With mirroring on, a save in an isolated test run throws `No eligible connection available`.
+- **`.sfsfilters` is the one filter-list format** for exports, AI lists and (later) subscribed lists. Changes are additive and optional so `version` stays `1` and 3.2 can still read new files. A field a record doesn't use is omitted, never a placeholder: regex records omit `case`, allow records omit `folder` (`exportKey(for:)` / `init?(exportKey:for:)`). Exports never write `name`.
+- **What's New:** a new `WhatsNewEntry` bumps `currentWhatsNewVersion` **unless that version hasn't shipped yet.** An entry can be actionable (`isActionable`); the presenting screen handles it in `onActionableEntryTapped`.
+- **Dark mode surfaces:** `.gray.opacity(…)`, not `Color(.systemGray6)`, which disappears in dark mode.
+- **Don't use `.task` for one-time loads:** it re-fires when view identity changes. Use `Task { }` in the ViewModel's `init`.
+- **Identity:** use `Filter.uuid` for `ForEach` ids, `scrollTo`, new-item dots and `@FocusState`, not `NSManagedObjectID`. Cache row ViewModels on the parent by that UUID; never build them inside `ForEach`.
+- **Delayed clears check identity:** `if self?.newlyAddedFilter == filter { self?.newlyAddedFilter = nil }`, so an earlier timer can't clear a later value.
+- **List row animation:** `listRowBackground` doesn't animate; use `.overlay` or modifiers on the row content. For a new-item marker, use a small accent `Circle()` driven by local `@State` opacity, with both `.onAppear` (rows that appear with the flag set) and `.onChange(of:)` (rows already there), guarded against double-firing.
