@@ -333,6 +333,49 @@ class AutomaticFilterManagerTests: XCTestCase {
         XCTAssertEqual(self.automaticFiltersUpdatedCount, 1)
     }
 
+    func test_update_freshLegacyCache_downloadsEverything() async {
+        // Prepare
+        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
+            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+            cacheRecord.uuid = UUID()
+            cacheRecord.age = Date()
+
+            return [cacheRecord]
+        }
+        self.filterListService.fetchFilterListCatalogClosure = { _ in
+            return .modified(self.catalog(["he"]), etag: "catalog-1")
+        }
+        self.filterListService.fetchFilterListClosure = { url, _ in
+            return .modified(self.payload(text: url.lastPathComponent), etag: "\(url.lastPathComponent)-1")
+        }
+
+        // Act
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
+
+        // Verify
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
+        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
+    }
+
+    func test_update_freshCache_skipsFetch() async {
+        // Prepare
+        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he"]) }
+        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
+            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+            cacheRecord.uuid = UUID()
+            cacheRecord.age = Date()
+
+            return [cacheRecord]
+        }
+
+        // Act
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
+
+        // Verify
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 0)
+        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
+    }
+
     func test_update_nothingChanged_touchesCache() async {
         // Prepare
         let cache = self.cache(["he", "en"])
