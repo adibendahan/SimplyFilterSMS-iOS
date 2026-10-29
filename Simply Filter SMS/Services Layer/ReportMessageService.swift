@@ -24,7 +24,6 @@ class ReportMessageService: HTTPServiceBase, ReportMessageServiceProtocol {
         AppManager.logger.debug("reportMessage — sending | type: \(reportMessageRequestBody.type, privacy: .public) | sender: '\(reportMessageRequestBody.sender, privacy: .public)'")
         do {
             let response = try await self.httpService.execute(type: ReportMessageResponse.self,
-                                                              baseURL: .reportMessageURL,
                                                               request: ReportMessageRequest(body: reportMessageRequestBody))
             AppManager.logger.debug("reportMessage — response statusCode: \(response.statusCode ?? -1, privacy: .public)")
             return response.statusCode == 200

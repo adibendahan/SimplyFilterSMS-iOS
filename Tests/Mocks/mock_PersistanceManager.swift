@@ -24,11 +24,9 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var updateFilterMatchingCounter = 0
     var updateFilterTextCounter = 0
     var fetchFilterRecordsCounter = 0
-    var saveLegacyCacheCounter = 0
     var saveCacheCounter = 0
     var cachedFilterListsCounter = 0
     var touchCacheCounter = 0
-    var isCacheStaleCounter = 0
     var commitContextCounter = 0
     var fetchFilterRecordsForTypeCounter = 0
     var fetchAutomaticFiltersLanguageRecordsCounter = 0
@@ -55,11 +53,9 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var updateFilterMatchingClosure: ((Filter, FilterMatching) -> ())?
     var updateFilterTextClosure: ((Filter, String) -> ())?
     var fetchFilterRecordsClosure: (() -> ([Filter]))?
-    var saveLegacyCacheClosure: ((AutomaticFilterListsResponse) -> ())?
     var saveCacheClosure: ((FilterListsCache) -> ())?
     var cachedFilterListsClosure: (() -> (FilterListsCache?))?
     var touchCacheClosure: (() -> ())?
-    var isCacheStaleClosure: ((AutomaticFilterListsResponse) -> (Bool))?
     var commitContextClosure: (() -> ())?
     var fetchFilterRecordsForTypeClosure: ((FilterType) -> ([Filter]))?
     var fetchAutomaticFiltersLanguageRecordsClosure: (() -> ([AutomaticFiltersLanguage]))?
@@ -157,12 +153,6 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.fetchFilterRecordsForTypeClosure?(filterType) ?? []
     }
     
-    func saveCache(with filterList: AutomaticFilterListsResponse) -> Bool {
-        self.saveLegacyCacheCounter += 1
-        self.saveLegacyCacheClosure?(filterList)
-        return true
-    }
-
     func cachedFilterLists() -> FilterListsCache? {
         self.cachedFilterListsCounter += 1
         return self.cachedFilterListsClosure?() ?? nil
@@ -177,11 +167,6 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     func touchCache() {
         self.touchCacheCounter += 1
         self.touchCacheClosure?()
-    }
-
-    func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
-        self.isCacheStaleCounter += 1
-        return self.isCacheStaleClosure?(newFilterList) ?? false
     }
     
     func commitContext() -> Bool {
@@ -267,11 +252,9 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.updateFilterMatchingCounter = 0
         self.updateFilterTargetCounter = 0
         self.fetchFilterRecordsCounter = 0
-        self.saveLegacyCacheCounter = 0
         self.saveCacheCounter = 0
         self.cachedFilterListsCounter = 0
         self.touchCacheCounter = 0
-        self.isCacheStaleCounter = 0
         self.commitContextCounter = 0
         self.fetchFilterRecordsForTypeCounter = 0
         self.fetchAutomaticFiltersLanguageRecordsCounter = 0

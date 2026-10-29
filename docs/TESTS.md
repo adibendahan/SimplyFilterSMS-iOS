@@ -16,7 +16,7 @@ Tests/
 ├── FilterListCatalogResponseTests.swift  # AI Filtering list catalog decoding
 ├── FlowManagerTests.swift                # Launch-order queue
 ├── DefaultsManagerTests.swift            # Accent RGB storage / Color round-trip
-├── AmazonS3ServiceTests.swift            # HTTP service
+├── FilterListServiceTests.swift          # Filter list fetch (ETag, decode, offline)
 └── Mocks/
     ├── mock_AppManager.swift
     ├── mock_PersistanceManager.swift
@@ -24,7 +24,7 @@ Tests/
     ├── mock_AutomaticFilterManager.swift
     ├── mock_DefaultsManager.swift
     ├── mock_NetworkSyncManager.swift
-    ├── mock_AmazonS3Service.swift
+    ├── mock_FilterListService.swift
     ├── mock_HTTPService.swift
     ├── mock_ReportMessageService.swift
     ├── mock_FilterTransferManager.swift
@@ -67,7 +67,7 @@ fastlane/
 
 **Tests:** `AutomaticFilterManager` — cloud filter management.
 
-**Setup:** Mock dependencies (`mock_PersistanceManager`, `mock_AmazonS3Service`). Configures closures on mocks to return specific data for each test.
+**Setup:** Mock dependencies (`mock_PersistanceManager`, `mock_FilterListService`). Configures closures on mocks to return specific data for each test.
 
 **Coverage areas:**
 - `isAutomaticFilteringOn` — on/off states based on cache + language records
@@ -77,7 +77,7 @@ fastlane/
 - Language state get/set with context commits
 - Rule state get/set with `ensureAutomaticFiltersRuleRecord`
 - `selectedChoice` get/set for configurable rules
-- `forceUpdateAutomaticFilters` — async fetch + save cache flow
+- Refresh: no cache, nothing changed (touch), one list changed, list failure, catalog failure, list dropped from the catalog, same revision (no notification), force (no ETags), concurrent calls share one refresh
 
 **Verifies call counts** on mocks to ensure correct manager interactions.
 
@@ -95,8 +95,9 @@ fastlane/
 - Add filter (deny and allow) — verifies notification fires
 - Delete filters by IndexSet and by Set
 - Update filter properties (folder, matching, case, target, text)
-- Save/update cache — hash, data, age verification
-- `isCacheStale` — same data = false, different data = true
+- `saveCache(_:)` — one row left, age updated, stored as downloaded
+- `cachedFilterLists()` — no cache and legacy base64 row both return `nil`
+- `touchCache()` — age updated, content unchanged
 
 **Notification testing pattern:**
 ```swift
@@ -126,13 +127,13 @@ func expectingSaveContext() {
 - Empty `accentColorRGB` means no custom color (`Color(accentRGB:)` is nil)
 - Writing RGB round-trips through `Color.accentRGB` / `Color(accentRGB:)`
 
-### AmazonS3ServiceTests
+### FilterListServiceTests
 
-**Tests:** `AmazonS3Service` — HTTP request construction.
+**Tests:** `FilterListService` — conditional fetch of the catalog and lists.
 
 **Setup:** Mock HTTP service (`mock_HTTPService`).
 
-**Verifies:** Correct URL, path, HTTP method, response type, and request task type for the S3 fetch.
+**Verifies:** The request URL and `If-None-Match`, `.notModified` / `.modified` mapping, and `nil` on bad data, a failed request, or offline.
 
 ---
 

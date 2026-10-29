@@ -7,8 +7,9 @@
 | 1 Shared records | Done in `39eac8a`. |
 | 1 Rework | Done in `4fe2625`: `revision`, allow records without `folder`, shared `.sfsfilters` decoder, in-memory-store iCloud fix. |
 | 1 Catalog + `name` | Done in `a423168`: `FilterListCatalogResponse`, `name` on `FilterExportPayload` (no default on exports), local `ai/catalog.json`. |
-| 2 Cache | Done, not committed: `FilterListsCache`, `cachedFilterLists()`, `saveCache(_:)`, `touchCache()`. |
-| 3–7 | Not started. |
+| 2 Cache | Done in `4e1dd33`: `FilterListsCache`, `cachedFilterLists()`, `saveCache(_:)`, `touchCache()`. |
+| 3 Refresh | Done. **Gap until step 4:** the extension and `languages(for: .automaticBlocking)` still read the old base64 row, so AI Filtering blocks nothing and shows no languages. |
+| 4–7 | Not started. |
 
 
 ## Context
@@ -95,11 +96,11 @@ The extension reads exactly as it does today: Core Data, read-only, one row. No 
   ```
   FilterListsCache {
     catalogETag: String?
-    catalog: FilterListCatalogResponse?
+    catalog: FilterListCatalogResponse
     lists: [ { url: String, etag: String?, payload: FilterExportPayload } ]
   }
   ```
-- **Validated on save.** Records are checked once, when saved in the app. The extension never re-validates.
+- **Stored as downloaded.** The app saves each list exactly as the server sent it. The extension skips any record it can't use when it reads it (§4), so a newer app version can use records an older one couldn't, with no re-download.
 - **Legacy rows.** A row in the old base64 format doesn't decode, so it counts as "no cache" and the next refresh does a full download.
 - **`PersistanceManager`:**
   - `cachedFilterLists() -> FilterListsCache?`
@@ -108,14 +109,14 @@ The extension reads exactly as it does today: Core Data, read-only, one row. No 
   - Drop `isCacheStale` and the "wipe all rows first" save.
     - **Done differently:** the old `saveCache(with:)` and `isCacheStale` stay until step 3 moves the fetch over, so every commit builds and the old refresh keeps working. In the mock, the old hooks are renamed `saveLegacyCache*`.
     - `saveCache(_:)` updates the newest row in place and deletes any extra rows, e.g. two devices that each created one before syncing.
-- **Where it lives:** `Framework Layer/Shared with Extension/FilterListsCache.swift` (app + extension). `init?(encoded:)` / `encoded` use ISO 8601 dates, like `.sfsfilters`. `validated` drops records that `FilterTransferCandidate.init?(record:)` rejects.
+- **Where it lives:** `Framework Layer/Shared with Extension/FilterListsCache.swift` (app + extension). `init?(encoded:)` / `encoded` use ISO 8601 dates, like `.sfsfilters`.
 - **Sync:** as today (one row, newest wins). The `hashed` and `uuid` attributes stay unused.
 
 ## 3. Refresh (conditional GET, per list)
-- **`HTTPService.executeConditional(baseURL:request:etag:)`** returns `.notModified` or `.modified(Data, etag:)`.
+- **`HTTPService.fetchIfModified(request:)`** returns `.notModified` or `.modified(Data, etag:)`.
   - Sends `If-None-Match` only when an ETag is passed.
   - Uses `.reloadIgnoringLocalCacheData`, so iOS's own cache can't hide a 304.
-- **`AmazonS3Service`** fetches the catalog and the lists. Fetching by full URL is ready for user lists later. `3.0.0/automatic_filters.json` stays live for older apps.
+- **`FilterListService`** (was `AmazonS3Service`) fetches the catalog and the lists. Fetching by full URL is ready for user lists later. `3.0.0/automatic_filters.json` stays live for older apps.
 - **`AutomaticFilterManager.updateAutomaticFiltersIfNeeded` steps:**
   1. Fetch the catalog, sending its fingerprint only if the cache decodes.
      - A 304 means the cached catalog is used.
@@ -129,12 +130,20 @@ The extension reads exactly as it does today: Core Data, read-only, one row. No 
   5. Post `.automaticFiltersUpdated` when a list was added or removed, or its content changed: a higher `revision`, or different filters when there's no `revision`.
 - **`forceUpdateAutomaticFilters`** sends no fingerprints.
 - **Out of scope:** `kUpdateAutomaticFiltersMinDays` stays as it is.
+- **Done differently:**
+  - `fetchIfModified(request:)` (planned as `executeConditional(baseURL:request:etag:)`). `URLRequestProtocol` now has a full `url` and `headers` instead of `path`, so no service passes a base URL; `execute(type:request:)` changed the same way. The requests are `FilterListCatalogRequest(etag:)` and `FilterListRequest(url:etag:)`, which set `If-None-Match`. It returns `FetchResult<Data>`; `FilterListService` decodes it into `FetchResult<FilterListCatalogResponse>` / `<FilterExportPayload>`, and `nil` means the fetch failed.
+  - The catalog URL is `URL.filterListCatalogURL`. A catalog `url` resolves against it, and duplicate URLs are fetched once.
+  - The refresh runs on the main actor, so its Core Data reads and writes are on `viewContext`'s thread. A second caller during a refresh joins it (`refreshTask`) instead of returning early, so pull-to-refresh waits for the real result. This replaces the old `AmazonS3Service.isFetching`, which wasn't thread-safe.
+  - `AmazonS3Service` was renamed `FilterListService`: nothing in it is S3-specific, and lists can be hosted anywhere (e.g. GitHub raw links).
+  - `touchCache()` is skipped when any list failed, so the next launch retries instead of waiting `kUpdateAutomaticFiltersMinDays`.
+  - Deleted: `AutomaticFilterListsRequest`, `fetchAutomaticFilters()`, `saveCache(with:)`, `isCacheStale`. The UI-test seed in `AppManager` now writes a `FilterListsCache`.
 
 ## 4. Consumers
 - **`MessageEvaluationManager`**
   - Extract `isMatching(filter:)` into `isMatching(text:target:matching:case:body:sender:)`.
-  - Decode the row once per evaluation.
-  - Use the sections whose catalog `language` has an active `AutomaticFiltersLanguage`.
+  - Read the row **once per message**, shared by the allow and block steps (today it's decoded twice).
+  - **Decode only the sections that are on:** those whose catalog `language` has an active `AutomaticFiltersLanguage`. Sections that are off are skipped during decoding.
+  - **Check records as they're used:** convert each record's settings with `init?(exportKey:)`; skip the record if any is unknown. A regex that doesn't compile doesn't match. No separate validation pass, and the regex isn't compiled twice.
   - Allow step (#3), then block step (#7); the priority order is unchanged. A block uses the record's folder.
   - The match reason shows the list's `name` ("AI Filtering · Hebrew").
 - **`AutomaticFilterManager`**

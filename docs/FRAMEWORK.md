@@ -20,7 +20,7 @@ protocol AppManagerProtocol {
     var automaticFilterManager: AutomaticFilterManagerProtocol { get }
     var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
     var networkSyncManager: NetworkSyncManagerProtocol { get }
-    var amazonS3Service: AmazonS3ServiceProtocol { get }
+    var filterListService: FilterListServiceProtocol { get }
     var reportMessageService: ReportMessageServiceProtocol { get }
     var tipJarManager: TipJarManagerProtocol { get }
     var filterTransferManager: FilterTransferManagerProtocol { get }
@@ -36,9 +36,9 @@ protocol AppManagerProtocol {
 2. `DefaultsManager`
 3. `MessageEvaluationManager` (app: receives persistance manager; follows live context across `reloadContainer()`)
 4. `NetworkSyncManager` (receives persistance manager)
-5. `AmazonS3Service` (receives network sync manager)
+5. `FilterListService` (receives network sync manager)
 6. `ReportMessageService` (receives network sync manager)
-7. `AutomaticFilterManager` (receives persistance manager + S3 service)
+7. `AutomaticFilterManager` (receives persistance manager + filter list service)
 8. `TipJarManager`
 9. `FilterTransferManager` (receives persistance manager)
 10. `FlowManager` (receives defaults manager)
@@ -164,8 +164,9 @@ protocol PersistanceManagerProtocol {
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage?
     func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule?
     func ensureAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule
-    func saveCache(_ filterList: AutomaticFilterListsResponse)
-    func isCacheStale(_ filterList: AutomaticFilterListsResponse) -> Bool
+    func cachedFilterLists() -> FilterListsCache?
+    func saveCache(_ cache: FilterListsCache) -> Bool
+    func touchCache()
 
     // Lifecycle
     func commitContext()
@@ -204,8 +205,9 @@ A computed string of filter UUIDs + automatic rule states (`ruleId` / `isActive`
 
 ### Cache Management
 
-- `saveCache()` — Encodes `AutomaticFilterListsResponse` to base64, stores in CoreData with hash and timestamp. Deletes old cache records first.
-- `isCacheStale()` — Compares encoded base64 strings of new vs cached filter lists.
+- `cachedFilterLists()` — Decodes the newest `AutomaticFiltersCache` row as a `FilterListsCache` (plain JSON: the catalog plus one section per list, keyed by URL). A legacy base64 row decodes as `nil`.
+- `saveCache(_:)` — Stores the cache as downloaded in the newest row (created if missing), sets `age`, and deletes any extra rows.
+- `touchCache()` — Resets `age` without changing the content.
 
 ### Debug Support
 
@@ -218,7 +220,7 @@ A computed string of filter UUIDs + automatic rule states (`ruleId` / `isActive`
 
 **Files:** `Framework Layer/Managers/AutomaticFilterManager.swift`, `Protocols/AutomaticFilterManagerProtocol.swift`
 
-Manages community-sourced filter lists fetched from AWS S3, plus smart rule states and language blocking states.
+Manages the AI Filtering lists (fetched through `FilterListService`), plus smart rule states and language blocking states.
 
 ### Protocol (key members)
 
@@ -248,9 +250,10 @@ protocol AutomaticFilterManagerProtocol {
 - `languages(for:)` — Returns different lists per mode:
   - `.automaticBlocking` — Languages available in the cached filter lists
   - `.blockLanguage` — All supported `NLLanguage` cases minus already-blocked ones
-- `updateAutomaticFiltersIfNeeded()` — Checks if cache is older than `kUpdateAutomaticFiltersMinDays` (3 days). If so, fetches from S3 in a background `Task`.
-- `forceUpdateAutomaticFilters()` — Async. Always fetches regardless of cache age. Used by pull-to-refresh.
-- After an S3 fetch, cache writes (`updateCacheIfNeeded`) run on the **MainActor** so Core Data view-context work stays on the main thread.
+- `updateAutomaticFiltersIfNeeded()` — Refreshes when the cache is older than `kUpdateAutomaticFiltersMinDays`. Fetches the catalog, then each list with its stored ETag: a `304` keeps the section, a `200` replaces it, a failure keeps the old one. Lists no longer in the catalog are dropped. Saves once if anything changed, otherwise `touchCache()` (skipped when a list failed, so the next launch retries).
+- `forceUpdateAutomaticFilters()` — Same refresh regardless of cache age, sending no ETags. Used by pull-to-refresh.
+- The refresh runs on the **MainActor** (Core Data view context). A call during a refresh joins it (`refreshTask`) instead of starting a second one.
+- Posts `.automaticFiltersUpdated` when a list was added or removed, or its filters changed (a higher `revision`, or different filters when there's no `revision`).
 - Rule/language state changes persist immediately via `PersistanceManager.commitContext()`.
 
 ---
@@ -557,11 +560,14 @@ Generic HTTP client with protocol-based request definitions.
 
 ```swift
 protocol HTTPServiceProtocol {
-    func execute<T: Decodable>(type: T.Type, baseURL: URL, request: URLRequestProtocol) async throws -> T
+    func execute<T: Decodable>(type: T.Type, request: URLRequestProtocol) async throws -> T
+    func fetchIfModified(request: URLRequestProtocol) async throws -> FetchResult<Data>
 }
 ```
 
-**URLRequestProtocol** defines: `path`, `method` (GET/POST/PUT/DELETE/PATCH), `task` (plain or with parameters), `errorDomain`.
+**URLRequestProtocol** defines: `url` (the full address, owned by the request type), `method` (GET/POST/PUT/DELETE/PATCH), `task` (plain or with parameters), `headers` (defaults to empty), `errorDomain`. Every request is a type in `Services Layer/Requests/`: `ReportMessageRequest`, `FilterListCatalogRequest(etag:)`, `FilterListRequest(url:etag:)`.
+
+**`fetchIfModified(request:)`** — GET that ignores the local URL cache. The request carries `If-None-Match` when it has an ETag. Returns `.notModified` for a `304`, `.modified(Data, etag:)` for a `2xx`, and throws otherwise.
 
 **HTTPServiceBase** — Common base for services. Holds `httpService: HTTPServiceProtocol` and a weak `networkSyncManager` reference.
 
@@ -582,19 +588,20 @@ A pipe to `UNUserNotificationCenter` and nothing more — all policy lives in `S
 `UNAuthorizationStatus.allowsAlerts` (extension in the same file) maps the platform enum, the same
 way `NWPath.Status.networkStatus` does.
 
-### AmazonS3Service
+### FilterListService
 
-**File:** `Services Layer/AmazonS3Service.swift`
+**File:** `Services Layer/FilterListService.swift`
 
 ```swift
-protocol AmazonS3ServiceProtocol: AnyObject {
-    func fetchAutomaticFilters() async -> AutomaticFilterListsResponse?
+protocol FilterListServiceProtocol: AnyObject {
+    func fetchFilterListCatalog(etag: String?) async -> FetchResult<FilterListCatalogResponse>?
+    func fetchFilterList(at url: URL, etag: String?) async -> FetchResult<FilterExportPayload>?
 }
 ```
 
-- Fetches `GET /simply-filter-sms/1.0.0/automatic_filters.json` from S3
-- Guards against duplicate concurrent requests via `isFetching` flag
-- Returns `nil` when offline or already fetching
+- Catalog: `URL.filterListCatalogURL` (`simply-filter-sms/3.3.0/ai/catalog.json`). A catalog entry's `url` is relative to it, or absolute.
+- Returns `nil` when offline, when the request fails, or when the body doesn't decode.
+- `3.0.0/automatic_filters.json` stays on S3 for older app versions; this app no longer fetches it.
 
 ### ReportMessageService
 
