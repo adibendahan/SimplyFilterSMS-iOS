@@ -179,6 +179,8 @@ For each proposed record, the suggestions table shows the record, the archive hi
 - whole-word `exact` on body costs recall and breaks CJK and Hebrew
 - a sender name needs an exact, case-insensitive match (a regex or `exact`), not `contains`
 
+- **Order matters:** the app stops at the first matching record. Keep `promotion` / `transaction` records after all `junk` records, so a message that also matches a junk entry still goes to junk. Add new junk records before them.
+
 Never write placeholder fields. Write with `json.dump(payload, f, ensure_ascii=False, indent=2, sort_keys=True)` (no trailing newline), so diffs stay small. Bump `revision` once per session per changed file (see **End of session**).
 
 ## Guardrails

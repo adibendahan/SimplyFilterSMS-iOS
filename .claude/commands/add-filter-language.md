@@ -180,6 +180,8 @@ Write `ai/<code>.sfsfilters` with the approved records in `filters`:
 
 Never write placeholder fields.
 
+- **Order matters:** the app stops at the first matching record. Keep `promotion` / `transaction` records after all `junk` records, so a message that also matches a junk entry still goes to junk. Add new junk records before them.
+
 Add the entry to `ai/catalog.json`, keeping `lists` sorted by `id`:
 
 ```json
