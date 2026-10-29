@@ -91,7 +91,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full documentation index, depende
 - **Extensions over scattered conditionals:** When a conditional pattern repeats across a file (e.g., `if (!isPad) { element.tap() }`), extract it into a type extension (e.g., `element.conditionalTap(!isPad)`) rather than duplicating the conditional at every call site.
 - **Naming:** `*Protocol` for interfaces, `mock_*` prefix for test mocks, `*Manager` for services, `*View` for SwiftUI views.
 - **Logging:** `AppManager.logger` (OSLog `Logger`) used throughout. Extension has its own logger instance.
-- **CoreData model:** Versioned at `Resources/Simply-Filter-SMS.xcdatamodeld` (v4). Entities use Int64 raw values mapped to Swift enums via computed properties in `SharedExtensions.swift`.
+- **CoreData model:** Versioned at `Resources/Simply-Filter-SMS.xcdatamodeld` (v4). Entities use Int64 raw values mapped to Swift enums via computed properties in `SharedExtensions.swift`. **After any model change, deploy the CloudKit schema to production** (CloudKit Console → Schema → Deploy to Production) before release: development auto-evolves, production doesn't, and a missing field silently stops syncing in TestFlight/App Store only. Check the diff first: a record type deployed to production can never be removed.
 - **Test mocks:** Located in `Tests/Mocks/` — one mock per protocol.
 - **App Group:** Shared container `group.com.grizz.apps.dev.simply-filter-sms` allows CoreData access from both app and extension.
 - **Dark mode colors:** Avoid `Color(.systemGray6)` for card/surface backgrounds — it blends into the system background in dark mode. Use `.gray.opacity(...)` for visible contrast in both appearances.
