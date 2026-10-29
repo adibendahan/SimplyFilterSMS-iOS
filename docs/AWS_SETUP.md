@@ -1,4 +1,4 @@
-# AWS Setup — Reporting Extension
+# AWS Setup
 
 ## Domain
 
@@ -130,3 +130,11 @@ iOS wraps userInfo under `classification` key: `{"classification": {"sender":...
 8. Records are reviewed via `/review-reports` skill and used to improve the AI Filtering lists (`ai/<lang>.sfsfilters`)
 
 **Verified end-to-end:** Network reporting pipeline confirmed working on TestFlight build (2026-03-19).
+
+---
+
+## S3 — AI Filtering lists
+
+- **Bucket:** `grizz-apps-dev` (`us-east-2`). **World-readable:** never upload user data or report archives.
+- **Lists:** `simply-filter-sms/3.3.0/ai/` — `catalog.json` plus `<lang>.sfsfilters`. Local copies are in `ai/` (gitignored). Upload a list before the catalog that points to it, and only when asked.
+- **`simply-filter-sms/3.0.0/automatic_filters.json`** is frozen for apps 3.0–3.2. Never edit or upload it.
