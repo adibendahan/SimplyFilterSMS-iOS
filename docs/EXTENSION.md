@@ -1,166 +1,29 @@
-# Message Filter Extension
+# Extensions
 
-How iOS delivers SMS messages to the extension and how they are evaluated.
-
----
-
-## Overview
-
-The Message Filter Extension is an iOS app extension (`.appex`) that implements Apple's IdentityLookup framework. When an SMS arrives from an unknown sender (not in Contacts), iOS invokes the extension to classify the message.
-
-**File:** `Message Filter Extension/MessageFilterExtension.swift`
-
-## How It Works
-
-```
-Unknown SMS arrives
-    |
-    v
-iOS Messages app
-    |
-    v
-ILMessageFilterExtension.handle(_:context:completion:)
-    |
-    v
-MessageFilterExtension.offlineAction(for:)
-    |
-    v
-MessageEvaluationManager.evaluateMessage(body:sender:)
-    |
-    v
-Returns ILMessageFilterAction (.allow / .junk / .transaction / .promotion)
-    |
-    v
-iOS sorts message into appropriate folder
-```
-
-## Implementation
-
-```swift
-final class MessageFilterExtension: ILMessageFilterExtension {
-    lazy var logger: Logger  // subsystem: extension category
-    lazy var extensionManager: MessageEvaluationManagerProtocol  // MessageEvaluationManager()
-}
-```
-
-The extension:
-1. Creates its own `MessageEvaluationManager` instance (not via `AppManager` — the extension doesn't use the app's singleton)
-2. Sets up its own `Logger` with category `"extension"` (vs `"main"` in the app)
-3. Implements `ILMessageFilterQueryHandling` to handle incoming queries
-4. All evaluation is **offline only** — no network deferral via `ILNetworkResponse`
-
-## Shared Code
-
-The extension and main app share code via the `Shared with Extension` folder:
-
-| File | Purpose |
-|------|---------|
-| `AppPersistentCloudKitContainer.swift` | CoreData container using App Group for shared database access |
-| `SharedExtensions.swift` | Extensions on `Filter`, `NLLanguage`, `ILMessageFilterAction`, `String`, the `.sfsfilters` `exportKey` mappings + the `~` localization operator |
-| `Constants.swift` | All enums (`FilterType`, `DenyFolderType`, etc.) and global constants |
-
-Also compiled into the extension from outside that folder:
-
-| File | Purpose |
-|------|---------|
-| `Managers/Protocols/FilterTransferManagerProtocol.swift` | `.sfsfilters` types (`FilterExportPayload`, `FilterExportRecord`) and the single record validation path, `FilterTransferCandidate.init?(record:)` |
-| `Services Layer/Responses/FilterListCatalogResponse.swift` | The AI Filtering list catalog (`id`, `name`, `url`, `language`), `resolvedURL`, `displayName` |
-
-`Shared with Extension/FilterListsCache.swift` also holds `ActiveFilterLists`, the extension's reader for the cache row: it decodes only the lists whose language is on, once per message.
-
-## Database Access
-
-The extension reads the same CoreData database as the main app via:
-- **App Group:** `group.com.grizz.apps.dev.simply-filter-sms`
-- **Container:** `AppPersistentCloudKitContainer` overrides `defaultDirectoryURL()` to point to the shared container
-- **Read-only:** Extension opens the App Group store with `isReadOnly: true` via `MessageEvaluationManager(inMemory: false)` → `ContextSource.owned`
-- **Sync load:** Store load completes in that init (`shouldAddStoreAsynchronously = false`, so `loadPersistentStores` runs on the calling thread). Failure is logged; `evaluateMessage` then allows without running filters (avoids treating an empty store as “no match”)
-- **Shared protocol:** Extension target also compiles `PersistanceManagerProtocol` so the shared `MessageEvaluationManager` app initializer type-checks (extension only uses the owned-store path)
-
-## Key Constraints
-
-- **No UI** — Extensions cannot present any interface
-- **No network** — This extension only does offline evaluation (no `defer` to network)
-- **Limited memory** — Extensions have stricter memory limits than apps
-- **Shared database** — Must handle concurrent access with the main app gracefully
-- **No AppManager** — The extension instantiates `MessageEvaluationManager` directly, bypassing the app's DI container
+The constraints and traps of the two app extensions. Which files each target compiles is in `CLAUDE.md`; changing an existing file's target membership is done by hand in Xcode.
 
 ---
 
-# Reporting Extension
+## Message Filter Extension
 
-How users report messages from iOS Messages and how reports reach the backend.
+iOS calls it for every SMS from a sender not in Contacts; it returns allow, junk, transaction or promotion.
+
+- **Offline only.** It never defers to the network (`ILNetworkResponse`); all data comes from the shared store. Lists are downloaded by the app.
+- **No `AppManager`.** It builds its own `MessageEvaluationManager()`, with its own logger (category `extension`).
+- **Read-only, synchronous store.** It opens the App Group store read-only and loads it synchronously in `init`. If the load fails, every message is allowed (`storeUnavailable`) rather than evaluated against an empty store.
+- **Memory is tight.** The AI Filtering cache row is read once per message, and only the lists whose language is on are decoded (`ActiveFilterLists`).
+- The extension target also compiles `PersistanceManagerProtocol` so the shared `MessageEvaluationManager` type-checks; it only ever uses the owned-store path.
 
 ---
 
-## Overview
+## Reporting Extension
 
-The Reporting Extension is an iOS app extension (`.appex`) that implements `ILClassificationUIExtensionViewController`. When a user long-presses one or more messages in iOS Messages and taps "Report Messages", iOS invokes this extension to present a confirmation UI and collect the user's classification choice. It does **not** read `accentColorRGB` — chrome stays the system tint.
+The "Report Messages" sheet in iOS Messages (long-press → Report): it shows the sender and bodies and offers Junk, Junk & Block Sender, or Not Junk. Enabled in Settings > Phone > SMS/Call Reporting.
 
-**Files:**
-- `Reporting Extension/ReportingExtensionViewController.swift` — principal class
-- `Reporting Extension/ReportingConfirmationView.swift` — SwiftUI confirmation UI
+- **It can't make network calls.** The sandbox blocks them. It returns the choice in `userInfo` (`sender`, `bodies`, `type`), and iOS itself POSTs it to `https://api.ben-dahan.com/report`.
+- **iOS only sends that POST from TestFlight and App Store builds,** never from a local development install. Test reporting on TestFlight.
+- **Only one reporting extension can be on per device,** and a carrier app may already hold the slot.
+- **A report can hold several messages** from the same sender; all bodies are sent as one array.
+- **No Core Data.** Shared code that touches Core Data is wrapped in `#if !REPORTING_EXTENSION`.
 
-**Bundle ID:** `com.grizz.apps.dev.Simply-Filter-SMS.Simply-Filter-SMS-Report-Extension`
-
-**Enable:** Settings > Phone > SMS/Call Reporting > Simply Filter SMS
-
-## How It Works
-
-```
-User long-presses message(s) in iOS Messages → "Report Messages"
-    |
-    v
-ReportingExtensionViewController.prepare(for:)
-  - reads all messageCommunications (sender + all bodies)
-  - populates ReportingConfirmationView.ViewModel
-    |
-    v
-ReportingConfirmationView (SwiftUI)
-  - shows sender + all message bodies with dividers
-  - offers: Junk / Junk & Block Sender / Not Junk
-    |
-    v
-User selects action → taps Done
-    |
-    v
-ReportingExtensionViewController.classificationResponse(for:)
-  - maps ReportType → ILClassificationAction
-  - sets response.userInfo = {sender, bodies: [String], type}
-    |
-    v
-iOS system (outside sandbox) POSTs to https://api.ben-dahan.com/report
-  - wraps as: {"classification": {sender, bodies, type}, "app": {...}, "_version": 1}
-    |
-    v
-API Gateway j476b01zf3 → Velocity template → ClassificationReport Lambda
-  - writes one DynamoDB record per body to reported_messages table
-```
-
-## Shared Code
-
-The Reporting Extension compiles these files from the main app (not shared via framework):
-
-| File | Purpose |
-|------|---------|
-| `Constants.swift` | `ReportType` enum (junk / notJunk / junkAndBlockSender), `reportMessageURL` |
-| `SharedExtensions.swift` | `~` localization operator; CoreData extensions guarded with `#if !REPORTING_EXTENSION` |
-| `HTTPService.swift` + `URLRequestProtocol.swift` | Base networking (not used directly — iOS delivers report via system) |
-| `ReportMessageRequest.swift` + `ReportMessageResponse.swift` | Request/response types (compiled in for completeness) |
-
-## Key Constraints
-
-- **No AppManager / CoreData** — Extension runs in a separate process with no access to the shared database
-- **No direct networking** — Extension sandbox blocks all outbound network calls; reports are delivered by iOS via `ILClassificationExtensionNetworkReportDestination`
-- **TestFlight/App Store only** — iOS only fires the system POST in production distribution builds, not local dev installs
-- **One extension per device** — iOS allows only one SMS/Call Reporting extension enabled at a time (carrier apps may occupy this slot)
-- **Multi-message** — `ILMessageClassificationRequest.messageCommunications` can contain multiple messages (same sender); all bodies are collected and sent as an array
-
-## AWS Backend
-
-- **Endpoint:** `https://api.ben-dahan.com/report` (public, no auth)
-- **API Gateway:** `j476b01zf3` (region: `us-east-1`)
-- **Lambda:** `ClassificationReport` (Python 3.13) — source at `Classification Report Lambda/lambda_function.py`
-- **Database:** DynamoDB `reported_messages` table — one record per body per report
-
-See [AWS_SETUP.md](AWS_SETUP.md) for full AWS details.
+The backend (API Gateway, Lambda, DynamoDB) is in [AWS_SETUP.md](AWS_SETUP.md).

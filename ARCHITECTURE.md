@@ -10,7 +10,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 |----------|-------------|
 | [docs/SCREENS.md](docs/SCREENS.md) | One sentence per screen, plus the traps the code doesn't show |
 | [docs/FRAMEWORK.md](docs/FRAMEWORK.md) | Framework and Services layer — all managers, protocols, data flow, and the message evaluation pipeline |
-| [docs/EXTENSION.md](docs/EXTENSION.md) | Message Filter Extension (automatic filtering) and Reporting Extension (user-initiated junk/not-junk reporting from iOS Messages) |
+| [docs/EXTENSION.md](docs/EXTENSION.md) | Constraints and traps of the Message Filter and Reporting extensions |
 | [docs/TESTS.md](docs/TESTS.md) | How tests are run and written, mock conventions, and the screenshot target |
 | [docs/DESIGN.md](docs/DESIGN.md) | Visual design system — colors, typography, spacing, components, and guidelines for new features |
 | [docs/AWS_SETUP.md](docs/AWS_SETUP.md) | AWS backend for message reporting — API Gateway, Lambda, DynamoDB |
