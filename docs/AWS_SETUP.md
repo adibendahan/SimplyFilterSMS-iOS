@@ -127,6 +127,6 @@ iOS wraps userInfo under `classification` key: `{"classification": {"sender":...
 5. iOS system (outside sandbox) POSTs `{"classification": {sender, bodies, type}, ...}` to `https://api.ben-dahan.com/report`
 6. API Gateway Velocity template extracts `sender`, `bodies`, `type` → passes to `ClassificationReport` Lambda
 7. Lambda writes one DynamoDB record per body to `reported_messages` table
-8. Records are reviewed via `/review-reports` skill and used to improve `automatic_filters.json`
+8. Records are reviewed via `/review-reports` skill and used to improve the AI Filtering lists (`ai/<lang>.sfsfilters`)
 
 **Verified end-to-end:** Network reporting pipeline confirmed working on TestFlight build (2026-03-19).
