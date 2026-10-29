@@ -105,14 +105,14 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             supportedLanguages.append(contentsOf: remainingSupportedLanguages)
             
         case .automaticBlocking:
-            if let persistanceManager = self.persistanceManager,
-               let cache = persistanceManager.fetchAutomaticFiltersCacheRecords().first?.filtersData,
-               let automaticFilters = AutomaticFilterListsResponse(base64String: cache) {
+            if let cache = persistanceManager.cachedFilterLists() {
                 
-                for langRawValue in automaticFilters.filterLists.keys {
+                for entry in cache.catalog.lists {
+                    guard let langRawValue = entry.language else { continue }
                     let language = NLLanguage(langRawValue)
                     
-                    if language != .undetermined {
+                    if language != .undetermined,
+                       !supportedLanguages.contains(language) {
                         supportedLanguages.append(language)
                     }
                 }
@@ -276,7 +276,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         var hasFailures = false
 
         for entry in catalog.lists {
-            guard let url = URL(string: entry.url, relativeTo: .filterListCatalogURL)?.absoluteURL,
+            guard let url = entry.resolvedURL,
                   !fetchedURLs.contains(url) else { continue }
             fetchedURLs.insert(url)
 

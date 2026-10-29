@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NaturalLanguage
 
 
 struct FilterListCatalogResponse: Codable, Equatable {
@@ -31,5 +32,17 @@ extension FilterListCatalogResponse {
               (1...Self.currentVersion).contains(response.version) else { return nil }
 
         self = response
+    }
+}
+
+extension FilterListCatalogEntry {
+    var resolvedURL: URL? {
+        return URL(string: self.url, relativeTo: .filterListCatalogURL)?.absoluteURL
+    }
+
+    var displayName: String {
+        guard let language = self.language else { return self.name }
+        let nlLanguage = NLLanguage(rawValue: language)
+        return nlLanguage.localizedName ?? self.name
     }
 }

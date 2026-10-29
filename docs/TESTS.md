@@ -56,7 +56,8 @@ fastlane/
 **Coverage areas:**
 - Allow/deny filter matching with various target/matching/case combinations
 - Language detection and blocking (Hebrew, English, Arabic)
-- Automatic filter lists (allow senders, deny body, etc.)
+- AI Filtering lists (`.sfsfilters` records in a `FilterListsCache` row): only languages that are on apply, deny uses the record's folder, unusable records are skipped, a legacy row blocks nothing, `ActiveFilterLists` decodes only active languages
+- `test_automaticFilters_performance` — time and memory per message with 10 lists on (2,450 records, 480 regex)
 - Smart rules (links, numbers-only senders, short senders, emails, emojis, all-unknown, country allowlist)
 - Priority ordering (allow takes precedence over deny)
 - Edge cases (empty body/sender, combined targets)
@@ -70,7 +71,7 @@ fastlane/
 **Setup:** Mock dependencies (`mock_PersistanceManager`, `mock_FilterListService`). Configures closures on mocks to return specific data for each test.
 
 **Coverage areas:**
-- `isAutomaticFilteringOn` — on/off states based on cache + language records
+- `isAutomaticFilteringOn` — on/off states based on the cached catalog + language records
 - `activeAutomaticFiltersTitle` — localized comma-separated language names
 - `automaticFiltersCacheAge` — timestamp propagation
 - `languages(for:)` — both `.blockLanguage` and `.automaticBlocking` modes

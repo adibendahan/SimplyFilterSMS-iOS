@@ -46,15 +46,8 @@ class AutomaticFilterManagerTests: XCTestCase {
     //MARK: Tests
     func test_isAutomaticFilteringOn_on() {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let response = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])])
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
-            cacheRecord.filtersData = response.hashed
-            cacheRecord.uuid = UUID()
-            cacheRecord.age = Date()
-            cacheRecord.filtersData = response.encoded
-            
-            return [cacheRecord]
+        self.persistanceManager.cachedFilterListsClosure = {
+            return self.cache(["he"])
         }
         
         self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
@@ -70,20 +63,13 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertTrue(isAutomaticFilteringOnResult)
         XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersCacheRecordsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
     }
     
     func test_isAutomaticFilteringOn_off() {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let response = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])])
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
-            cacheRecord.filtersData = response.hashed
-            cacheRecord.uuid = UUID()
-            cacheRecord.age = Date()
-            cacheRecord.filtersData = response.encoded
-            
-            return [cacheRecord]
+        self.persistanceManager.cachedFilterListsClosure = {
+            return self.cache(["he"])
         }
         
         self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
@@ -99,20 +85,13 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertFalse(isAutomaticFilteringOnResult)
         XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersCacheRecordsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
     }
     
     func test_activeAutomaticFiltersTitle_twoLanguages() {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let response = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: []), "en" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])])
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
-            cacheRecord.filtersData = response.hashed
-            cacheRecord.uuid = UUID()
-            cacheRecord.age = Date()
-            cacheRecord.filtersData = response.encoded
-            
-            return [cacheRecord]
+        self.persistanceManager.cachedFilterListsClosure = {
+            return self.cache(["he", "en"])
         }
         
         self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
@@ -131,20 +110,13 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertEqual(activeAutomaticFiltersTitleResult, "\(NLLanguage.english.localizedName!), \(NLLanguage.hebrew.localizedName!).")
         XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersCacheRecordsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
     }
     
     func test_activeAutomaticFiltersTitle_off() {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let response = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: []), "en" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])])
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
-            cacheRecord.filtersData = response.hashed
-            cacheRecord.uuid = UUID()
-            cacheRecord.age = Date()
-            cacheRecord.filtersData = response.encoded
-            
-            return [cacheRecord]
+        self.persistanceManager.cachedFilterListsClosure = {
+            return self.cache(["he", "en"])
         }
         
         self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
@@ -163,7 +135,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertNil(activeAutomaticFiltersTitleResult)
         XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersCacheRecordsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
     }
     
     func test_automaticFiltersCacheAge() {
@@ -171,12 +143,9 @@ class AutomaticFilterManagerTests: XCTestCase {
         let expectedCacheAge = Date()
         
         self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let response = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: []), "en" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])])
             let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
-            cacheRecord.filtersData = response.hashed
             cacheRecord.uuid = UUID()
             cacheRecord.age = expectedCacheAge
-            cacheRecord.filtersData = response.encoded
             
             return [cacheRecord]
         }
@@ -222,25 +191,16 @@ class AutomaticFilterManagerTests: XCTestCase {
     
     func test_languagesForAutomaticBlocking() {
         // Prepare
-        let response = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: []), "en" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])])
-        
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
-            cacheRecord.filtersData = response.hashed
-            cacheRecord.uuid = UUID()
-            cacheRecord.age = Date()
-            cacheRecord.filtersData = response.encoded
-            
-            return [cacheRecord]
+        self.persistanceManager.cachedFilterListsClosure = {
+            return self.cache(["he", "en"])
         }
         
         // Act
         let languagesResult = self.testSubject.languages(for: .automaticBlocking)
         
         // Verify
-        XCTAssertEqual(languagesResult.count, response.filterLists.count)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersCacheRecordsCounter, 1)
+        XCTAssertEqual(Set(languagesResult), [.hebrew, .english])
+        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
     }
     
     func test_languageAutomaticState() {
@@ -525,9 +485,19 @@ class AutomaticFilterManagerTests: XCTestCase {
     private var automaticFiltersUpdatedObserver: NSObjectProtocol?
 
     private func catalog(_ languages: [String]) -> FilterListCatalogResponse {
+        var entries: [FilterListCatalogEntry] = []
+
+        for language in languages {
+            let entry = FilterListCatalogEntry(id: "ai-\(language)",
+                                               name: language,
+                                               url: "\(language).sfsfilters",
+                                               language: language)
+            entries.append(entry)
+        }
+
         return FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
                                          version: FilterListCatalogResponse.currentVersion,
-                                         lists: languages.map({ FilterListCatalogEntry(id: "ai-\($0)", name: $0, url: "\($0).sfsfilters", language: $0) }))
+                                         lists: entries)
     }
 
     private func payload(text: String, revision: Int? = nil) -> FilterExportPayload {

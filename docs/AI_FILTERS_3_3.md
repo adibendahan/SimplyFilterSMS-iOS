@@ -8,8 +8,9 @@
 | 1 Rework | Done in `4fe2625`: `revision`, allow records without `folder`, shared `.sfsfilters` decoder, in-memory-store iCloud fix. |
 | 1 Catalog + `name` | Done in `a423168`: `FilterListCatalogResponse`, `name` on `FilterExportPayload` (no default on exports), local `ai/catalog.json`. |
 | 2 Cache | Done in `4e1dd33`: `FilterListsCache`, `cachedFilterLists()`, `saveCache(_:)`, `touchCache()`. |
-| 3 Refresh | Done. **Gap until step 4:** the extension and `languages(for: .automaticBlocking)` still read the old base64 row, so AI Filtering blocks nothing and shows no languages. |
-| 4–7 | Not started. |
+| 3 Refresh | Done in `8d690c9`: conditional GET per list, request types own their URL, `FilterListService`. |
+| 4 Consumers | Done: the extension reads the new cache; `AutomaticFilterListsResponse` deleted. |
+| 5–7 | Not started. |
 
 
 ## Context
@@ -146,6 +147,13 @@ The extension reads exactly as it does today: Core Data, read-only, one row. No 
   - **Check records as they're used:** convert each record's settings with `init?(exportKey:)`; skip the record if any is unknown. A regex that doesn't compile doesn't match. No separate validation pass, and the regex isn't compiled twice.
   - Allow step (#3), then block step (#7); the priority order is unchanged. A block uses the record's folder.
   - The match reason shows the list's `name` ("AI Filtering · Hebrew").
+  - **Done differently:**
+    - `ActiveFilterLists` (in `FilterListsCache.swift`) reads the row in two steps: decode only the catalog and work out which list URLs are on, then decode the lists, where each `CachedList` builds its `payload.filters` only if its URL is on. The other lists are read but never built into objects. Keyed by URL, not language, so lists subscribed by URL later fit as is. Measured with Hebrew on, against decoding the whole `FilterListsCache`: ~4.6 ms vs ~42 ms per message (before the split into two steps).
+    - Allow and block share one `runAutomaticFilters(type:...)`; records of other types (e.g. `denyLanguage`) are skipped.
+    - A record whose text is empty or only whitespace is skipped too, since it would match every message.
+    - The match reason uses the language's localized name when the catalog entry has a `language` (as before, so Hebrew users see "עברית"), and the catalog `name` otherwise (`FilterListCatalogEntry.displayName`).
+    - `isMatching(text:target:matching:filterCase:body:sender:)`: `case` is a keyword, so the label is `filterCase`.
+    - **Measured** (`test_automaticFilters_performance`, simulator on a Mac): all 10 languages on, 2,450 records (480 regex), a message that matches nothing: **~24 ms per message**, no memory growth across iterations. A device will be slower; check on one before release.
 - **`AutomaticFilterManager`**
   - `languages(for: .automaticBlocking)` comes from the cached catalog.
   - The cache age comes from the row.
