@@ -139,18 +139,14 @@ class MessageEvaluationManagerTests: XCTestCase {
     func test_evaluateMessage_automatic() {
         self.flushPersistanceManager()
         
-        let automaticFilterLists = AutomaticFilterListsResponse(filterLists: [
-            "he" : LanguageFilterListResponse(allowSenders: ["BituahLeumi", "Taasuka", "bit", "100", "ontopo"],
-                                              allowBody: [],
-                                              denySender: [],
-                                              denyBody: ["הלוואה"])
+        self.saveFilterLists([
+            "he": [self.allowSender("BituahLeumi"),
+                   self.allowSender("Taasuka"),
+                   self.allowSender("bit"),
+                   self.allowSender("100"),
+                   self.allowSender("ontopo"),
+                   self.denyBody("הלוואה")]
         ])
-        
-        let cacheRecord = AutomaticFiltersCache(context: self.testSubject.context)
-        cacheRecord.uuid = UUID()
-        cacheRecord.filtersData = automaticFilterLists.encoded
-        cacheRecord.hashed = automaticFilterLists.hashed
-        cacheRecord.age = Date()
         
         let noLinks = AutomaticFiltersRule(context: self.testSubject.context)
         noLinks.isActive = true
@@ -303,17 +299,9 @@ class MessageEvaluationManagerTests: XCTestCase {
     func test_priorityOrder_automaticAllowSendersBeatsRules() {
         self.flushPersistanceManager()
 
-        let filterLists = AutomaticFilterListsResponse(filterLists: [
-            NLLanguage.hebrew.rawValue: LanguageFilterListResponse(allowSenders: ["BituahLeumi"],
-                                                                   allowBody: [],
-                                                                   denySender: [],
-                                                                   denyBody: [])
+        self.saveFilterLists([
+            NLLanguage.hebrew.rawValue: [self.allowSender("BituahLeumi")]
         ])
-        let cache = AutomaticFiltersCache(context: self.testSubject.context)
-        cache.uuid = UUID()
-        cache.filtersData = filterLists.encoded
-        cache.hashed = filterLists.hashed
-        cache.age = Date()
 
         let langRecord = AutomaticFiltersLanguage(context: self.testSubject.context)
         langRecord.lang = NLLanguage.hebrew.rawValue
@@ -333,17 +321,9 @@ class MessageEvaluationManagerTests: XCTestCase {
     func test_priorityOrder_automaticAllowBodyBeatsRules() {
         self.flushPersistanceManager()
 
-        let filterLists = AutomaticFilterListsResponse(filterLists: [
-            NLLanguage.hebrew.rawValue: LanguageFilterListResponse(allowSenders: [],
-                                                                   allowBody: ["trusted phrase"],
-                                                                   denySender: [],
-                                                                   denyBody: [])
+        self.saveFilterLists([
+            NLLanguage.hebrew.rawValue: [self.allowBody("trusted phrase")]
         ])
-        let cache = AutomaticFiltersCache(context: self.testSubject.context)
-        cache.uuid = UUID()
-        cache.filtersData = filterLists.encoded
-        cache.hashed = filterLists.hashed
-        cache.age = Date()
 
         let langRecord = AutomaticFiltersLanguage(context: self.testSubject.context)
         langRecord.lang = NLLanguage.hebrew.rawValue
@@ -363,17 +343,9 @@ class MessageEvaluationManagerTests: XCTestCase {
     func test_priorityOrder_allUnknownBeatsAutomaticAllow() {
         self.flushPersistanceManager()
 
-        let filterLists = AutomaticFilterListsResponse(filterLists: [
-            NLLanguage.hebrew.rawValue: LanguageFilterListResponse(allowSenders: ["BituahLeumi"],
-                                                                   allowBody: [],
-                                                                   denySender: [],
-                                                                   denyBody: [])
+        self.saveFilterLists([
+            NLLanguage.hebrew.rawValue: [self.allowSender("BituahLeumi")]
         ])
-        let cache = AutomaticFiltersCache(context: self.testSubject.context)
-        cache.uuid = UUID()
-        cache.filtersData = filterLists.encoded
-        cache.hashed = filterLists.hashed
-        cache.age = Date()
 
         let langRecord = AutomaticFiltersLanguage(context: self.testSubject.context)
         langRecord.lang = NLLanguage.hebrew.rawValue
@@ -506,6 +478,129 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(upperResult, .junk, "(?i)[a-z]{3} should match uppercase ABC via inline flag")
     }
 
+    // MARK: AI Filtering list tests
+
+    func test_automaticFilters_onlyActiveLanguagesApply() {
+        self.flushPersistanceManager()
+        self.saveFilterLists([
+            NLLanguage.hebrew.rawValue: [self.denyBody("הלוואה")],
+            NLLanguage.english.rawValue: [self.denyBody("loan")]
+        ])
+        self.setLanguage(.hebrew, isActive: true)
+        self.setLanguage(.english, isActive: false)
+        try? self.testSubject.context.save()
+
+        let hebrewResult = self.testSubject.evaluateMessage(body: "הלוואה מהירה", sender: "1234567").action
+        let englishResult = self.testSubject.evaluateMessage(body: "fast loan", sender: "1234567").action
+
+        XCTAssertEqual(hebrewResult, .junk)
+        XCTAssertEqual(englishResult, .allow, "a list whose language is off must not block")
+    }
+
+    func test_automaticFilters_denyUsesRecordFolder() {
+        self.flushPersistanceManager()
+        self.saveFilterLists([
+            NLLanguage.hebrew.rawValue: [self.denyBody("sale", folder: "promotion")]
+        ])
+        self.setLanguage(.hebrew, isActive: true)
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "big sale today", sender: "1234567")
+
+        XCTAssertEqual(result.action, .promotion)
+        XCTAssertEqual(result.match, .automaticFilter(NLLanguage.hebrew.localizedName!))
+    }
+
+    func test_automaticFilters_skipsRecordsItCannotUse() {
+        self.flushPersistanceManager()
+        let unknownMatching = FilterExportRecord(text: "spam",
+                                                 type: "deny",
+                                                 folder: "junk",
+                                                 target: "body",
+                                                 matching: "fuzzy",
+                                                 caseSensitivity: "insensitive")
+        let invalidRegex = FilterExportRecord(text: "(spam",
+                                              type: "deny",
+                                              folder: "junk",
+                                              target: "body",
+                                              matching: "regex",
+                                              caseSensitivity: nil)
+        self.saveFilterLists([
+            NLLanguage.hebrew.rawValue: [unknownMatching,
+                                         invalidRegex,
+                                         self.denyBody("spam", folder: "inbox"),
+                                         self.denyBody(" "),
+                                         self.denyBody("spam", folder: "transaction")]
+        ])
+        self.setLanguage(.hebrew, isActive: true)
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "(spam here", sender: "1234567").action
+
+        XCTAssertEqual(result, .transaction, "only the last record is usable")
+    }
+
+    func test_automaticFilters_legacyCacheBlocksNothing() {
+        self.flushPersistanceManager()
+        let cacheRecord = AutomaticFiltersCache(context: self.testSubject.context)
+        cacheRecord.uuid = UUID()
+        cacheRecord.filtersData = "eyJmaWx0ZXJMaXN0cyI6eyJoZSI6eyJhbGxvd0JvZHkiOltdLCJhbGxvd1NlbmRlcnMiOltdLCJkZW55Qm9keSI6WyJ3b3JkIl0sImRlbnlTZW5kZXIiOltdfX19"
+        cacheRecord.age = Date()
+        self.setLanguage(.hebrew, isActive: true)
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "word", sender: "1234567").action
+
+        XCTAssertEqual(result, .allow)
+    }
+
+    func test_activeFilterLists_decodesOnlyActiveLanguages() {
+        let records = [self.denyBody("spam")]
+        self.saveFilterLists([
+            NLLanguage.hebrew.rawValue: records,
+            NLLanguage.english.rawValue: records,
+            NLLanguage.arabic.rawValue: records
+        ])
+        try? self.testSubject.context.save()
+        let cacheRecord = try? self.testSubject.context.fetch(AutomaticFiltersCache.fetchRequest()).last
+        let filtersData = cacheRecord?.filtersData ?? ""
+
+        let activeFilterLists = ActiveFilterLists(encoded: filtersData, activeLanguages: [NLLanguage.hebrew.rawValue])
+
+        XCTAssertEqual(activeFilterLists?.lists.count, 1)
+        XCTAssertEqual(activeFilterLists?.lists.first?.name, NLLanguage.hebrew.localizedName)
+        XCTAssertEqual(activeFilterLists?.lists.first?.records, records)
+    }
+
+    func test_automaticFilters_performance() {
+        self.flushPersistanceManager()
+        let languages: [NLLanguage] = [.hebrew, .english, .arabic, .spanish, .french,
+                                       .portuguese, .german, .japanese, .korean, .italian]
+        var recordsByLanguage: [String: [FilterExportRecord]] = [:]
+
+        for language in languages {
+            var records: [FilterExportRecord] = []
+            for index in 0..<48 {
+                records.append(self.allowSender("Sender\(language.rawValue)\(index)"))
+            }
+            for index in 0..<197 {
+                records.append(self.denyBody("phrase \(language.rawValue) \(index)"))
+            }
+            recordsByLanguage[language.rawValue] = records
+            self.setLanguage(language, isActive: true)
+        }
+        self.saveFilterLists(recordsByLanguage)
+        try? self.testSubject.context.save()
+
+        let options = XCTMeasureOptions()
+        options.iterationCount = 10
+
+        self.measure(metrics: [XCTClockMetric(), XCTMemoryMetric()], options: options) {
+            let result = self.testSubject.evaluateMessage(body: "a message that matches nothing", sender: "1234567")
+            XCTAssertEqual(result.action, .allow)
+        }
+    }
+
     // MARK: Private Variables and Helpers
     private var testSubject: MessageEvaluationManagerProtocol = MessageEvaluationManager(inMemory: true)
     
@@ -518,6 +613,74 @@ class MessageEvaluationManagerTests: XCTestCase {
         }
     }
     
+    private func allowSender(_ sender: String) -> FilterExportRecord {
+        let pattern = "(?i)^\(NSRegularExpression.escapedPattern(for: sender))$"
+        return FilterExportRecord(text: pattern,
+                                  type: "allow",
+                                  folder: nil,
+                                  target: "sender",
+                                  matching: "regex",
+                                  caseSensitivity: nil)
+    }
+
+    private func allowBody(_ text: String) -> FilterExportRecord {
+        return FilterExportRecord(text: text,
+                                  type: "allow",
+                                  folder: nil,
+                                  target: "body",
+                                  matching: "contains",
+                                  caseSensitivity: "insensitive")
+    }
+
+    private func denyBody(_ text: String, folder: String = "junk") -> FilterExportRecord {
+        return FilterExportRecord(text: text,
+                                  type: "deny",
+                                  folder: folder,
+                                  target: "body",
+                                  matching: "contains",
+                                  caseSensitivity: "insensitive")
+    }
+
+    private func setLanguage(_ language: NLLanguage, isActive: Bool) {
+        let languageRecord = AutomaticFiltersLanguage(context: self.testSubject.context)
+        languageRecord.lang = language.rawValue
+        languageRecord.isActive = isActive
+    }
+
+    private func saveFilterLists(_ recordsByLanguage: [String: [FilterExportRecord]]) {
+        var entries: [FilterListCatalogEntry] = []
+        var sections: [FilterListsCacheSection] = []
+
+        for (language, records) in recordsByLanguage {
+            let entry = FilterListCatalogEntry(id: "ai-\(language)",
+                                               name: language,
+                                               url: "\(language).sfsfilters",
+                                               language: language)
+            let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                              version: FilterExportPayload.currentVersion,
+                                              exportedAt: Date(),
+                                              appVersion: "3.3.0",
+                                              name: language,
+                                              revision: nil,
+                                              filters: records,
+                                              forceClearBeforeImport: nil)
+            let section = FilterListsCacheSection(url: entry.resolvedURL!.absoluteString,
+                                                  etag: nil,
+                                                  payload: payload)
+            entries.append(entry)
+            sections.append(section)
+        }
+
+        let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                                version: FilterListCatalogResponse.currentVersion,
+                                                lists: entries)
+        let cache = FilterListsCache(catalogETag: nil, catalog: catalog, lists: sections)
+        let cacheRecord = AutomaticFiltersCache(context: self.testSubject.context)
+        cacheRecord.uuid = UUID()
+        cacheRecord.filtersData = cache.encoded
+        cacheRecord.age = Date()
+    }
+
     private func flushPersistanceManager() {
         self.flushEntity(name: "Filter")
         self.flushEntity(name: "AutomaticFiltersCache")
@@ -571,23 +734,12 @@ class MessageEvaluationManagerTests: XCTestCase {
             automaticFilterRule.selectedChoice = rule == .shortSender ? 5 : 0
         }
         
-        let filtersList = AutomaticFilterListsResponse(filterLists: [
-            NLLanguage.hebrew.rawValue : LanguageFilterListResponse(allowSenders: [],
-                                                                    allowBody: [],
-                                                                    denySender: [],
-                                                                    denyBody: ["קורונה", "חדשות"]),
-            
-            NLLanguage.english.rawValue : LanguageFilterListResponse(allowSenders: [],
-                                                                     allowBody: [],
-                                                                     denySender: [],
-                                                                     denyBody: ["test1", "spam"])
+        self.saveFilterLists([
+            NLLanguage.hebrew.rawValue: [self.denyBody("קורונה"),
+                                         self.denyBody("חדשות")],
+            NLLanguage.english.rawValue: [self.denyBody("test1"),
+                                          self.denyBody("spam")]
         ])
-        
-        let cache = AutomaticFiltersCache(context: self.testSubject.context)
-        cache.uuid = UUID()
-        cache.hashed = filtersList.hashed
-        cache.filtersData = filtersList.encoded
-        cache.age = Date()
         
         let automaticFiltersLanguageHE = AutomaticFiltersLanguage(context: self.testSubject.context)
         automaticFiltersLanguageHE.lang = NLLanguage.hebrew.rawValue

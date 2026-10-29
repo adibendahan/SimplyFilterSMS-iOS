@@ -64,7 +64,9 @@ Also compiled into the extension from outside that folder:
 | File | Purpose |
 |------|---------|
 | `Managers/Protocols/FilterTransferManagerProtocol.swift` | `.sfsfilters` types (`FilterExportPayload`, `FilterExportRecord`) and the single record validation path, `FilterTransferCandidate.init?(record:)` |
-| `Services Layer/Responses/FilterListCatalogResponse.swift` | The AI Filtering list catalog (`id`, `name`, `url`, `language`) |
+| `Services Layer/Responses/FilterListCatalogResponse.swift` | The AI Filtering list catalog (`id`, `name`, `url`, `language`), `resolvedURL`, `displayName` |
+
+`Shared with Extension/FilterListsCache.swift` also holds `ActiveFilterLists`, the extension's reader for the cache row: it decodes only the lists whose language is on, once per message.
 
 ## Database Access
 

@@ -118,12 +118,11 @@ class PersistanceManagerTests: XCTestCase {
     func test_fetchAutomaticFiltersCacheRecords() {
         // Prepare
         let cacheAge = Date()
-        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
+        let filtersData = self.filterListsCache(records: [self.record(text: "word")]).encoded
         
         let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
         existingCache.uuid = UUID()
-        existingCache.hashed = filtersList.hashed
-        existingCache.filtersData = filtersList.encoded
+        existingCache.filtersData = filtersData
         existingCache.age = cacheAge
 
         // Act
@@ -131,8 +130,7 @@ class PersistanceManagerTests: XCTestCase {
 
         // Verify
         XCTAssertEqual(cache.count, 1)
-        XCTAssertEqual(cache[0].hashed, filtersList.hashed)
-        XCTAssertEqual(cache[0].filtersData, filtersList.encoded)
+        XCTAssertEqual(cache[0].filtersData, filtersData)
         XCTAssertEqual(cache[0].age, cacheAge)
     }
     
@@ -273,11 +271,10 @@ class PersistanceManagerTests: XCTestCase {
     func test_saveCache_filterLists() throws {
         // Prepare
         let oldDate = Date(timeIntervalSince1970: 0)
-        let legacyFilterList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
         for _ in 0..<2 {
             let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
             existingCache.uuid = UUID()
-            existingCache.filtersData = legacyFilterList.encoded
+            existingCache.filtersData = self.legacyFiltersData
             existingCache.age = oldDate
         }
         let cache = self.filterListsCache(records: [self.record(text: "spam")])
@@ -316,9 +313,8 @@ class PersistanceManagerTests: XCTestCase {
 
     func test_cachedFilterLists_legacyCache() {
         // Prepare
-        let legacyFilterList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
         let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
-        existingCache.filtersData = legacyFilterList.encoded
+        existingCache.filtersData = self.legacyFiltersData
         existingCache.age = Date()
 
         // Act + Verify
@@ -381,6 +377,7 @@ class PersistanceManagerTests: XCTestCase {
     // MARK: Private Variables and Helpers
     private var testSubject: PersistanceManagerProtocol = PersistanceManager(inMemory: true)
     private var saveNotificationCompleteHandler: ((Notification)->())?
+    private let legacyFiltersData = "eyJmaWx0ZXJMaXN0cyI6eyJoZSI6eyJhbGxvd0JvZHkiOltdLCJhbGxvd1NlbmRlcnMiOltdLCJkZW55Qm9keSI6WyJ3b3JkIl0sImRlbnlTZW5kZXIiOltdfX19"
 
     private func waitForSavedNotification(completeHandler: @escaping ((Notification)->()) ) {
         self.saveNotificationCompleteHandler = completeHandler
@@ -415,12 +412,19 @@ class PersistanceManagerTests: XCTestCase {
                                           revision: 1,
                                           filters: records,
                                           forceClearBeforeImport: nil)
+        let entry = FilterListCatalogEntry(id: "ai-he",
+                                           name: "Hebrew",
+                                           url: "he.sfsfilters",
+                                           language: "he")
         let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
                                                 version: FilterListCatalogResponse.currentVersion,
-                                                lists: [FilterListCatalogEntry(id: "ai-he", name: "Hebrew", url: "he.sfsfilters", language: "he")])
+                                                lists: [entry])
+        let section = FilterListsCacheSection(url: "https://example.com/he.sfsfilters",
+                                              etag: "he-etag",
+                                              payload: payload)
         return FilterListsCache(catalogETag: "catalog-etag",
                                 catalog: catalog,
-                                lists: [FilterListsCacheSection(url: "https://example.com/he.sfsfilters", etag: "he-etag", payload: payload)])
+                                lists: [section])
     }
 
     private func flushEntity(name: String) {

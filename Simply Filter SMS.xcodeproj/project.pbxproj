@@ -107,8 +107,6 @@
 		69F3D32427B961E800D7DDA7 /* AutomaticFilterManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F3D32327B961E800D7DDA7 /* AutomaticFilterManagerTests.swift */; };
 		69F3D32827B97FA600D7DDA7 /* FilterListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F3D32727B97FA600D7DDA7 /* FilterListService.swift */; };
 		69F3D32B27B9824B00D7DDA7 /* mock_FilterListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F3D32A27B9824B00D7DDA7 /* mock_FilterListService.swift */; };
-		69F4096F27B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4096E27B948D800749552 /* AutomaticFilterListsResponse.swift */; };
-		69F4097027B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F4096E27B948D800749552 /* AutomaticFilterListsResponse.swift */; };
 		69F7654F304AFF7800CF046E /* SchedulingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F7654E304AFF7800CF046E /* SchedulingManagerProtocol.swift */; };
 		69F76551304AFF7E00CF046E /* SchedulingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76550304AFF7E00CF046E /* SchedulingManager.swift */; };
 		69F76553304AFF7E00CF046E /* mock_SchedulingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F76552304AFF7E00CF046E /* mock_SchedulingManager.swift */; };
@@ -331,7 +329,6 @@
 		69F3D32327B961E800D7DDA7 /* AutomaticFilterManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFilterManagerTests.swift; sourceTree = "<group>"; };
 		69F3D32727B97FA600D7DDA7 /* FilterListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListService.swift; sourceTree = "<group>"; };
 		69F3D32A27B9824B00D7DDA7 /* mock_FilterListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_FilterListService.swift; sourceTree = "<group>"; };
-		69F4096E27B948D800749552 /* AutomaticFilterListsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticFilterListsResponse.swift; sourceTree = "<group>"; };
 		69F4097427B94A2D00749552 /* HTTPService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPService.swift; sourceTree = "<group>"; };
 		69F4097627B94A9100749552 /* URLRequestProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestProtocol.swift; sourceTree = "<group>"; };
 		69F7654E304AFF7800CF046E /* SchedulingManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingManagerProtocol.swift; sourceTree = "<group>"; };
@@ -689,7 +686,6 @@
 		69F4096D27B948B300749552 /* Responses */ = {
 			isa = PBXGroup;
 			children = (
-				69F4096E27B948D800749552 /* AutomaticFilterListsResponse.swift */,
 				69ECF14B28677505000380A2 /* ReportMessageResponse.swift */,
 				69315B623091592000D52285 /* FilterListCatalogResponse.swift */,
 			);
@@ -1069,7 +1065,6 @@
 				EABCA17395164EA18CE84A83BA8BAF39 /* DebugDataManagerProtocol.swift in Sources */,
 				69D87E442877445E00266D86 /* ReportMessageView.swift in Sources */,
 				69B2A9AB279CD964000DFAFC /* PersistanceManager.swift in Sources */,
-				69F4096F27B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */,
 				6987D80227AAD9E400B3DB84 /* ViewModfiers.swift in Sources */,
 				DTLAY0UT00000001B0000001 /* DynamicTypeLayout.swift in Sources */,
 				A24PSR0FILE0001B0000001 /* PersistentStoreReload.swift in Sources */,
@@ -1119,7 +1114,6 @@
 				AA5BCED7D8924F6E9A3B5C05 /* CallingCodes.swift in Sources */,
 				697E0D3130915B5B008BC5C5 /* FilterTransferManagerProtocol.swift in Sources */,
 				691D57CB27BBE63300DDA267 /* MessageEvaluationManager.swift in Sources */,
-				69F4097027B948D800749552 /* AutomaticFilterListsResponse.swift in Sources */,
 				697979A9302E68E5000260F0 /* PersistanceManagerProtocol.swift in Sources */,
 				69315B633091592000D52285 /* FilterListCatalogResponse.swift in Sources */,
 				69CD70FF2770D65D00F91A2F /* MessageFilterExtension.swift in Sources */,

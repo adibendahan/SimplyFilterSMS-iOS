@@ -82,7 +82,8 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         }
         logger?.debug("Priority #2 (allUnknown) → not active, continuing")
         // Priority #3 - Automatic Filters (allow)
-        result = self.runAutomaticFiltersAllow(body: body, sender: sender)
+        let activeFilterLists = self.loadActiveFilterLists()
+        result = self.runAutomaticFilters(type: .allow, activeFilterLists: activeFilterLists, body: body, sender: sender)
         guard !result.action.isFiltered else {
             logger?.debug("Priority #3 (Automatic Filters Allow) → DECISION: \(result.action.logName, privacy: .public)")
             return result
@@ -110,7 +111,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         }
         logger?.debug("Priority #6 (Deny Language Filters) → no match, continuing")
         // Priority #7 - Automatic Filters (deny)
-        result = self.runAutomaticFiltersDeny(body: body, sender: sender)
+        result = self.runAutomaticFilters(type: .deny, activeFilterLists: activeFilterLists, body: body, sender: sender)
         if !result.action.isFiltered {
             result = MessageEvaluationResult(action: .allow, match: .noMatch)
             logger?.debug("Priority #7 (Automatic Filters Deny) → no match → fallthrough ALLOW")
@@ -203,82 +204,53 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         return result
     }
 
-    private func loadAutomaticFilterCache() -> ([AutomaticFiltersLanguage], AutomaticFilterListsResponse)? {
+    private func loadActiveFilterLists() -> ActiveFilterLists? {
         let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
+        guard let languageRecords = try? self.context.fetch(languageRequest) else { return nil }
+
+        var activeLanguages: Set<String> = []
+        for languageRecord in languageRecords {
+            guard let lang = languageRecord.lang, languageRecord.isActive else { continue }
+            activeLanguages.insert(lang)
+        }
+        guard !activeLanguages.isEmpty else { return nil }
+
         let cacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
-        guard let languageRecords = try? self.context.fetch(languageRequest),
-              let cacheRow = try? self.context.fetch(cacheRequest).first,
-              let filtersData = cacheRow.filtersData,
-              let filterList = AutomaticFilterListsResponse(base64String: filtersData) else {
-            return nil
-        }
-        return (languageRecords, filterList)
+        guard let cacheRow = try? self.context.fetch(cacheRequest).first,
+              let filtersData = cacheRow.filtersData else { return nil }
+
+        return ActiveFilterLists(encoded: filtersData, activeLanguages: activeLanguages)
     }
 
-    private func runAutomaticFiltersAllow(body: String, sender: String) -> MessageEvaluationResult {
+    private func runAutomaticFilters(type: FilterType, activeFilterLists: ActiveFilterLists?, body: String, sender: String) -> MessageEvaluationResult {
         var result = MessageEvaluationResult(action: .none)
-        let lowercasedBody = body.lowercased()
-        let lowercasedSender = sender.lowercased()
-        guard let (languageRecords, filterList) = self.loadAutomaticFilterCache() else {
-            logger?.debug("[Automatic Filters Allow] no cache, skipping")
+        guard let activeFilterLists = activeFilterLists else {
+            logger?.debug("[Automatic Filters \(type.logDescription, privacy: .public)] no active lists, skipping")
             return result
         }
-        logger?.debug("[Automatic Filters Allow] \(languageRecords.count, privacy: .public) language record(s)")
-        for record in languageRecords {
-            guard result.action == .none,
-                  record.isActive,
-                  let langRawValue = record.lang,
-                  let languageResponse = filterList.filterLists[langRawValue] else { continue }
-            let lang = NLLanguage(rawValue: langRawValue)
-            for allowedSender in languageResponse.allowSenders {
-                if lowercasedSender == allowedSender.lowercased() {
-                    result = MessageEvaluationResult(action: .allow, match: .automaticFilter(lang.localizedName ?? langRawValue))
-                    logger?.debug("  → ALLOW: matched allow sender '\(allowedSender, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
-                    break
-                }
-            }
-            guard !result.action.isFiltered else { break }
-            for allowedBody in languageResponse.allowBody {
-                if lowercasedBody.contains(allowedBody.lowercased()) {
-                    result = MessageEvaluationResult(action: .allow, match: .automaticFilter(lang.localizedName ?? langRawValue))
-                    logger?.debug("  → ALLOW: matched allow body phrase '\(allowedBody, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
-                    break
-                }
-            }
-        }
-        return result
-    }
+        logger?.debug("[Automatic Filters \(type.logDescription, privacy: .public)] \(activeFilterLists.lists.count, privacy: .public) active list(s)")
+        for list in activeFilterLists.lists {
+            for record in list.records {
+                guard FilterType(exportKey: record.type) == type,
+                      let text = record.text,
+                      !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                      let folder = DenyFolderType(exportKey: record.folder, for: type),
+                      let target = FilterTarget(exportKey: record.target),
+                      let matching = FilterMatching(exportKey: record.matching),
+                      let filterCase = FilterCase(exportKey: record.caseSensitivity, for: matching) else { continue }
 
-    private func runAutomaticFiltersDeny(body: String, sender: String) -> MessageEvaluationResult {
-        var result = MessageEvaluationResult(action: .none)
-        let lowercasedBody = body.lowercased()
-        let lowercasedSender = sender.lowercased()
-        guard let (languageRecords, filterList) = self.loadAutomaticFilterCache() else {
-            logger?.debug("[Automatic Filters Deny] no cache, skipping")
-            return result
-        }
-        logger?.debug("[Automatic Filters Deny] \(languageRecords.count, privacy: .public) language record(s)")
-        for record in languageRecords {
-            guard result.action == .none,
-                  record.isActive,
-                  let langRawValue = record.lang,
-                  let languageResponse = filterList.filterLists[langRawValue] else { continue }
-            let lang = NLLanguage(rawValue: langRawValue)
-            logger?.debug("  Checking language '\(lang.localizedName ?? langRawValue, privacy: .public)' — denySenders: \(languageResponse.denySender.count, privacy: .public), denyBody: \(languageResponse.denyBody.count, privacy: .public)")
-            for deniedSender in languageResponse.denySender {
-                if lowercasedSender == deniedSender.lowercased() {
-                    result = MessageEvaluationResult(action: .junk, match: .automaticFilter(lang.localizedName ?? langRawValue))
-                    logger?.debug("  → JUNK: matched deny sender '\(deniedSender, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
-                    break
-                }
-            }
-            guard !result.action.isFiltered else { break }
-            for deniedBody in languageResponse.denyBody {
-                if lowercasedBody.contains(deniedBody.lowercased()) {
-                    result = MessageEvaluationResult(action: .junk, match: .automaticFilter(lang.localizedName ?? langRawValue))
-                    logger?.debug("  → JUNK: matched deny body phrase '\(deniedBody, privacy: .public)' [\(lang.localizedName ?? langRawValue, privacy: .public)]")
-                    break
-                }
+                let matched = self.isMatching(text: text,
+                                              target: target,
+                                              matching: matching,
+                                              filterCase: filterCase,
+                                              body: body,
+                                              sender: sender)
+                guard matched else { continue }
+
+                let action: ILMessageFilterAction = type == .allow ? .allow : folder.action
+                result = MessageEvaluationResult(action: action, match: .automaticFilter(list.name))
+                logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(text, privacy: .public)' [\(list.name, privacy: .public)]")
+                return result
             }
         }
         return result
@@ -365,9 +337,18 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     }
 
     private func isMatching(filter: Filter, body: String, sender: String) -> Bool {
+        return self.isMatching(text: filter.text ?? "",
+                               target: filter.filterTarget,
+                               matching: filter.filterMatching,
+                               filterCase: filter.filterCase,
+                               body: body,
+                               sender: sender)
+    }
+
+    private func isMatching(text: String, target: FilterTarget, matching: FilterMatching, filterCase: FilterCase, body: String, sender: String) -> Bool {
         var messageForEvaluation = ""
-        var textForEvaluation = filter.text ?? ""
-        switch filter.filterTarget {
+        var textForEvaluation = text
+        switch target {
         case .all:
             messageForEvaluation = body + " " + sender
         case .sender:
@@ -375,19 +356,19 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         case .body:
             messageForEvaluation = body
         }
-        if filter.filterMatching == .regex {
+        if matching == .regex {
             guard let regex = try? Regex(textForEvaluation) else { return false }
             return messageForEvaluation.contains(regex)
         }
-        if filter.filterCase == .caseInsensitive {
+        if filterCase == .caseInsensitive {
             messageForEvaluation = messageForEvaluation.lowercased()
             textForEvaluation = textForEvaluation.lowercased()
         }
-        guard filter.filterMatching == .exact else {
+        guard matching == .exact else {
             return messageForEvaluation.contains(textForEvaluation)
         }
         var isMatching = false
-        guard let range = messageForEvaluation.range(of: textForEvaluation, options: filter.filterCase.compareOption) else { return isMatching }
+        guard let range = messageForEvaluation.range(of: textForEvaluation, options: filterCase.compareOption) else { return isMatching }
         let nsRange = NSRange(range, in: messageForEvaluation)
         isMatching = true
         if nsRange.location > 0,

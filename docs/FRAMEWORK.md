@@ -97,7 +97,7 @@ struct MessageEvaluationResult {
 
 2. **All Unknown** — Active `AutomaticFiltersRule` for `.allUnknown`. Returns `.junk` (absolute gate after allows).
 
-3. **Automatic filters (allow)** — Active languages’ cached community lists: `allowSenders` / `allowBody`. Returns `.allow`.
+3. **Automatic filters (allow)** — `allow` records from the AI Filtering lists whose language is on. Returns `.allow`. The row is read once per message (`ActiveFilterLists`), here, and reused by step 7; only the lists that are on are decoded.
 
 4. **Filter rules** — Other active `AutomaticFiltersRule`s (`.allUnknown` skipped here):
    - `links` — Body contains a URL (`NSDataDetector`)
@@ -111,7 +111,7 @@ struct MessageEvaluationResult {
 
 6. **Language deny** — `Filter` records with `type == .denyLanguage`. Dominant body language via `NLLanguageRecognizer`.
 
-7. **Automatic filters (deny)** — Cached community `denySender` / `denyBody`. Returns `.junk`.
+7. **Automatic filters (deny)** — `deny` records from the same lists. Returns the record's folder action. A record whose settings don't convert (`init?(exportKey:)`) is skipped; a regex that doesn't compile doesn't match. The match reason is the list's `displayName`.
 
 8. **No match** — `.allow` with `match: .noMatch`.
 
@@ -248,7 +248,7 @@ protocol AutomaticFilterManagerProtocol {
 - `isAutomaticFilteringOn` — True if any language has automatic filtering enabled AND cache records exist.
 - `activeAutomaticFiltersTitle` — Comma-separated localized names of active languages (e.g., "English, Hebrew").
 - `languages(for:)` — Returns different lists per mode:
-  - `.automaticBlocking` — Languages available in the cached filter lists
+  - `.automaticBlocking` — The `language`s in the cached catalog (each once)
   - `.blockLanguage` — All supported `NLLanguage` cases minus already-blocked ones
 - `updateAutomaticFiltersIfNeeded()` — Refreshes when the cache is older than `kUpdateAutomaticFiltersMinDays`. Fetches the catalog, then each list with its stored ETag: a `304` keeps the section, a `200` replaces it, a failure keeps the old one. Lists no longer in the catalog are dropped. Saves once if anything changed, otherwise `touchCache()` (skipped when a list failed, so the next launch retries).
 - `forceUpdateAutomaticFilters()` — Same refresh regardless of cache age, sending no ETags. Used by pull-to-refresh.
@@ -620,20 +620,7 @@ protocol ReportMessageServiceProtocol: AnyObject {
 
 ### Request/Response DTOs
 
-**AutomaticFilterListsResponse:**
-```swift
-struct AutomaticFilterListsResponse: Codable {
-    let filterLists: [String: LanguageFilterListResponse]  // language code -> filter lists
-}
-struct LanguageFilterListResponse: Codable {
-    let allowSenders: [String]
-    let allowBody: [String]
-    let denySender: [String]
-    let denyBody: [String]
-}
-```
-
-Supports base64 encoding/decoding for CoreData caching.
+**FilterListCatalogResponse:** the AI Filtering catalog (`format`, `version`, `lists` of `{ id, name, url, language? }`). `FilterListCatalogEntry.resolvedURL` resolves `url` against `URL.filterListCatalogURL`; `displayName` is the localized language name, or `name` when there's no `language`.
 
 **ReportMessageResponse:**
 ```swift
