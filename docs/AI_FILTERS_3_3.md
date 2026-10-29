@@ -6,8 +6,9 @@
 |---|---|
 | 1 Shared records | Done in `39eac8a`. |
 | 1 Rework | Done in `4fe2625`: `revision`, allow records without `folder`, shared `.sfsfilters` decoder, in-memory-store iCloud fix. |
-| 1 Catalog + `name` | Done, not committed: `FilterListCatalogResponse`, `name` on `FilterExportPayload` (no default on exports), local `ai/catalog.json`. |
-| 2–7 | Not started. |
+| 1 Catalog + `name` | Done in `a423168`: `FilterListCatalogResponse`, `name` on `FilterExportPayload` (no default on exports), local `ai/catalog.json`. |
+| 2 Cache | Done, not committed: `FilterListsCache`, `cachedFilterLists()`, `saveCache(_:)`, `touchCache()`. |
+| 3–7 | Not started. |
 
 
 ## Context
@@ -105,6 +106,9 @@ The extension reads exactly as it does today: Core Data, read-only, one row. No 
   - `saveCache(_:) -> Bool` (sets `age`)
   - `touchCache()`
   - Drop `isCacheStale` and the "wipe all rows first" save.
+    - **Done differently:** the old `saveCache(with:)` and `isCacheStale` stay until step 3 moves the fetch over, so every commit builds and the old refresh keeps working. In the mock, the old hooks are renamed `saveLegacyCache*`.
+    - `saveCache(_:)` updates the newest row in place and deletes any extra rows, e.g. two devices that each created one before syncing.
+- **Where it lives:** `Framework Layer/Shared with Extension/FilterListsCache.swift` (app + extension). `init?(encoded:)` / `encoded` use ISO 8601 dates, like `.sfsfilters`. `validated` drops records that `FilterTransferCandidate.init?(record:)` rejects.
 - **Sync:** as today (one row, newest wins). The `hashed` and `uuid` attributes stay unused.
 
 ## 3. Refresh (conditional GET, per list)

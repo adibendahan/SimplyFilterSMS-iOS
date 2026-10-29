@@ -353,7 +353,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
+        XCTAssertEqual(self.persistanceManager.saveLegacyCacheCounter, 1)
 
     }
     

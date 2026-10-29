@@ -379,6 +379,31 @@ class PersistanceManager: PersistanceManagerProtocol {
         return self.commitContext()
     }
 
+    func cachedFilterLists() -> FilterListsCache? {
+        guard let filtersData = self.fetchAutomaticFiltersCacheRecords().first?.filtersData else { return nil }
+        return FilterListsCache(encoded: filtersData)
+    }
+
+    func saveCache(_ cache: FilterListsCache) -> Bool {
+        guard let filtersData = cache.validated.encoded else { return false }
+        AppManager.logger.debug("saveCache — saving \(cache.lists.count, privacy: .public) filter lists")
+        let records = self.fetchAutomaticFiltersCacheRecords()
+        records.dropFirst().forEach { self.context.delete($0) }
+        let cacheRecord = records.first ?? AutomaticFiltersCache(context: self.context)
+        if cacheRecord.uuid == nil {
+            cacheRecord.uuid = UUID()
+        }
+        cacheRecord.filtersData = filtersData
+        cacheRecord.age = Date()
+        return self.commitContext()
+    }
+
+    func touchCache() {
+        guard let cacheRecord = self.fetchAutomaticFiltersCacheRecords().first else { return }
+        cacheRecord.age = Date()
+        _ = self.commitContext()
+    }
+
     func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
         guard let automaticFiltersCache = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.first else {

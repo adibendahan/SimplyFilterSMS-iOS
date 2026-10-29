@@ -79,6 +79,8 @@
 		69AA2C55279D75B100CEABE5 /* AppManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C54279D75B100CEABE5 /* AppManagerProtocol.swift */; };
 		69AA2C57279D78E700CEABE5 /* DefaultsManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C56279D78E700CEABE5 /* DefaultsManagerProtocol.swift */; };
 		69AA2C59279D793600CEABE5 /* DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C58279D793600CEABE5 /* DefaultsManager.swift */; };
+		69AB299C30935D8A006D815A /* FilterListsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AB299B30935D8A006D815A /* FilterListsCache.swift */; };
+		69AB299D30935D8A006D815A /* FilterListsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AB299B30935D8A006D815A /* FilterListsCache.swift */; };
 		69B2A9A9279CD89E000DFAFC /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2A9A8279CD89E000DFAFC /* AppManager.swift */; };
 		69B2A9AB279CD964000DFAFC /* PersistanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */; };
 		69B2D03227A5B0E600F965AB /* StatefulItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2D03127A5B0E600F965AB /* StatefulItem.swift */; };
@@ -294,6 +296,7 @@
 		69AA2C54279D75B100CEABE5 /* AppManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManagerProtocol.swift; sourceTree = "<group>"; };
 		69AA2C56279D78E700CEABE5 /* DefaultsManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManagerProtocol.swift; sourceTree = "<group>"; };
 		69AA2C58279D793600CEABE5 /* DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManager.swift; sourceTree = "<group>"; };
+		69AB299B30935D8A006D815A /* FilterListsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListsCache.swift; sourceTree = "<group>"; };
 		69B2A9A8279CD89E000DFAFC /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		69B2A9AA279CD964000DFAFC /* PersistanceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceManager.swift; sourceTree = "<group>"; };
 		69B2D03127A5B0E600F965AB /* StatefulItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatefulItem.swift; sourceTree = "<group>"; };
@@ -664,6 +667,7 @@
 				695D5BC2278E01C00037C926 /* SharedExtensions.swift */,
 				69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */,
 				AA1BCED7D8924F6E9A3B5C01 /* CallingCodes.swift */,
+				69AB299B30935D8A006D815A /* FilterListsCache.swift */,
 			);
 			path = "Shared with Extension";
 			sourceTree = "<group>";
@@ -1054,6 +1058,7 @@
 				AA4BCED7D8924F6E9A3B5C04 /* CallingCodes.swift in Sources */,
 				69CD70CA2770D4D100F91A2F /* Simply_Filter_SMSApp.swift in Sources */,
 				69B2A9A9279CD89E000DFAFC /* AppManager.swift in Sources */,
+				69AB299C30935D8A006D815A /* FilterListsCache.swift in Sources */,
 				E35862B339E54B54A79D65A2AF0C8C10 /* DebugDataManager.swift in Sources */,
 				EABCA17395164EA18CE84A83BA8BAF39 /* DebugDataManagerProtocol.swift in Sources */,
 				69D87E442877445E00266D86 /* ReportMessageView.swift in Sources */,
@@ -1115,6 +1120,7 @@
 				69189C1827A989C600C8FFA5 /* MessageEvaluationManagerProtocol.swift in Sources */,
 				C646F01C0DCEC6EE1D98C0A7 /* Constants.swift in Sources */,
 				34A2FE52B4B2F54879E8532B /* SharedExtensions.swift in Sources */,
+				69AB299D30935D8A006D815A /* FilterListsCache.swift in Sources */,
 				3A0C95A77D36D89D7D96A797 /* SharedUITestsHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

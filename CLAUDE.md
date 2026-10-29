@@ -60,6 +60,7 @@ Code compiled into both the app and the Message Filter Extension:
 - `Constants.swift` — All enums (`FilterType`, `DenyFolderType`, `FilterTarget`, `FilterMatching`, `FilterCase`, `RuleType`, `ReportType`) and global constants.
 - `SharedExtensions.swift` — Extensions on `Filter` (CoreData), `NLLanguage`, `ILMessageFilterAction`, `String`, the `.sfsfilters` `exportKey` mappings on the filter enums, plus the `~` postfix operator.
 - `AppPersistentCloudKitContainer.swift` — CoreData/CloudKit container setup with App Group (`group.com.grizz.apps.dev.simply-filter-sms`).
+- `FilterListsCache.swift` — what `AutomaticFiltersCache.filtersData` holds: plain JSON, one section per filter list keyed by URL (`{ url, etag, payload }`) plus the catalog. Records are validated on save; readers never re-validate. A legacy base64 row decodes as no cache.
 
 Also compiled into the extension from outside this folder: `Protocols/FilterTransferManagerProtocol.swift` (`.sfsfilters` types and `FilterTransferCandidate.init?(record:)` validation), `MessageEvaluationManager(Protocol).swift`, and `Services Layer/Responses/` (`AutomaticFilterListsResponse`, `FilterListCatalogResponse`). Changing an existing file's target membership has no Xcode MCP tool, so it's done by hand in Xcode.
 
