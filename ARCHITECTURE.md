@@ -8,7 +8,7 @@ For project-wide patterns (MVVM, navigation, conventions), see [CLAUDE.md](CLAUD
 
 | Document | Description |
 |----------|-------------|
-| [docs/SCREENS.md](docs/SCREENS.md) | Per-screen breakdown of all SwiftUI views, ViewModels, layouts, and supporting components |
+| [docs/SCREENS.md](docs/SCREENS.md) | One sentence per screen, plus the traps the code doesn't show |
 | [docs/FRAMEWORK.md](docs/FRAMEWORK.md) | Framework and Services layer — all managers, protocols, data flow, and the message evaluation pipeline |
 | [docs/EXTENSION.md](docs/EXTENSION.md) | Message Filter Extension (automatic filtering) and Reporting Extension (user-initiated junk/not-junk reporting from iOS Messages) |
 | [docs/TESTS.md](docs/TESTS.md) | Testing patterns, unit tests, UI tests, mocks, and test infrastructure |

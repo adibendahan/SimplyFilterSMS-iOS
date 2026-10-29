@@ -52,7 +52,7 @@ Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testa
 - **HTTPService** — Base class for HTTP requests with `URLRequestProtocol`. Every request is a type in `Requests/` that owns its full `url` (and `headers`); services never pass a base URL. `fetchIfModified(request:)` is the conditional GET (`FetchResult`).
 
 ### View Layer (`Simply Filter SMS/View Layer/`)
-- **Screens/** — SwiftUI views: `AppHomeView`, `FilterListView`, `AddFilterView`, `TestFiltersView`, `LanguageListView`, `AboutView`, `HelpView`, `ChooseAccentColorView`, `ReportMessageView`, `EnableExtensionVideoView`, `WhatsNewView`, `TipJarView`, `FilterTransferPreviewView`.
+- **Screens/** — one SwiftUI screen per file; what each is for is in [docs/SCREENS.md](docs/SCREENS.md).
 - **Others/** — `BaseViewModel` (base class for all ViewModels), reusable components, button styles, view modifiers.
 
 ### Shared with Extension (`Framework Layer/Shared with Extension/`)
