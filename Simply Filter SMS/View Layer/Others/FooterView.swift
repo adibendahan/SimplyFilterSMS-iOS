@@ -38,7 +38,6 @@ struct FooterView: View {
 private struct FooterBackground: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
 
-    /// Home indicator + Duo vertical-bar gutters. Background only; text stays inset.
     private var backgroundEdges: Edge.Set { [.bottom, .leading, .trailing] }
 
     func body(content: Content) -> some View {
