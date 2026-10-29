@@ -82,6 +82,32 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertEqual(languages.first?.text, NLLanguage.english.filterText)
     }
 
+    func test_import_fileExportedBy3_2() throws {
+        let json = """
+        {
+          "format": "simply-filter-sms-filters",
+          "version": 1,
+          "exportedAt": "2026-08-15T18:00:00Z",
+          "appVersion": "3.2.0",
+          "filters": [
+            { "text": "promo", "type": "deny", "folder": "promotion", "target": "body", "matching": "contains", "case": "insensitive" },
+            { "text": "Mom", "type": "allow", "folder": "junk", "target": "sender", "matching": "exact", "case": "sensitive" },
+            { "text": "\\\\d{5}", "type": "deny", "folder": "junk", "target": "all", "matching": "regex", "case": "sensitive" },
+            { "text": "\(NLLanguage.english.filterText)", "type": "denyLanguage", "folder": "junk", "target": "body", "matching": "contains", "case": "insensitive" }
+          ]
+        }
+        """
+
+        let preview = try self.testSubject.previewImport(data: Data(json.utf8))
+
+        XCTAssertEqual(preview.count, 4)
+        XCTAssertEqual(preview.invalidCount, 0)
+        XCTAssertTrue(preview.candidates.contains(where: { $0.text == "promo" && $0.denyFolder == .promotion }))
+        XCTAssertTrue(preview.candidates.contains(where: { $0.text == "Mom" && $0.type == .allow && $0.filterCase == .caseSensitive }))
+        XCTAssertTrue(preview.candidates.contains(where: { $0.text == #"\d{5}"# && $0.filterMatching == .regex }))
+        XCTAssertTrue(preview.candidates.contains(where: { $0.type == .denyLanguage }))
+    }
+
     func test_import_skipsDuplicatesAndDoesNotDeleteExisting() throws {
         self.persistanceManager.addFilter(text: "keep-me",
                                           type: .allow,

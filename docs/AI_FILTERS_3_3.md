@@ -10,7 +10,8 @@
 | 2 Cache | Done in `4e1dd33`: `FilterListsCache`, `cachedFilterLists()`, `saveCache(_:)`, `touchCache()`. |
 | 3 Refresh | Done in `8d690c9`: conditional GET per list, request types own their URL, `FilterListService`. |
 | 4 Consumers | Done: the extension reads the new cache; `AutomaticFilterListsResponse` deleted. |
-| 5–7 | Not started. |
+| 7 Tests | Done: `HTTPServiceTests` (stubbed `URLProtocol`), a 3.2-exported file still imports. The rest of the list was covered in steps 2–4. |
+| 5–6 | Not started. |
 
 
 ## Context
