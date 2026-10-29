@@ -26,7 +26,6 @@ class ApplicationTestCase: XCTestCase {
         wait(for: [delayExpectation], timeout: seconds)
     }
 
-    /// Sheet/push/keyboard animations and Home footer layout.
     func waitForUIToSettle() {
         sleep(seconds: 2.0)
     }

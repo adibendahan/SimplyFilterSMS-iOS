@@ -8,8 +8,6 @@
 import SwiftUI
 import UIKit
 
-/// Sets delaysContentTouches on parent UIScrollViews.
-/// Used to override UIScrollView.appearance() for specific scroll views.
 struct InstantTouchDisabler: UIViewRepresentable {
     var delaysContentTouches: Bool
 

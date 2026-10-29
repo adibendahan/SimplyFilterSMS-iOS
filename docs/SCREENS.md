@@ -33,6 +33,7 @@ The app tint picker, as a sheet from the Home menu only.
 
 ## CountryListView
 Picks the countries allowed by the "country allowlist" rule, as a sheet from that rule's row on Home.
+- Sorted in three groups, each by calling code: Israel, then countries whose main language is the device's, then the rest.
 
 ## TestFiltersView
 Type a sender and a message and see the verdict live, as a sheet from the menu.

@@ -15,7 +15,6 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
 
     //MARK: - Initialization -
 
-    /// Extension/tests — owns a read-only App Group store (in-memory when `inMemory` is true).
     init(inMemory: Bool = false) {
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory, isReadOnly: !inMemory)
         if inMemory {
@@ -30,7 +29,6 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             loadError = error
         }
         if let loadError {
-            // Logger may not be set yet (extension calls setLogger after init).
             let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "evaluation")
             logger.error("Owned store load failed: \(loadError.localizedDescription, privacy: .public)")
         }
@@ -42,7 +40,6 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         self.contextSource = .owned(container)
     }
 
-    /// App — always reads the live `PersistanceManager` context.
     init(persistanceManager: PersistanceManagerProtocol) {
         self.contextSource = .persistance(persistanceManager)
     }
@@ -67,21 +64,18 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         defer {
             logger?.debug("━━━━ Final decision: action=\(result.action.logName, privacy: .public), reason='\(result.reason ?? "", privacy: .public)' ━━━━")
         }
-        // Priority #1 - Allow Filters
         result = self.runUserFilters(type: .allow, body: body, sender: sender)
         guard !result.action.isFiltered else {
             logger?.debug("Priority #1 (Allow Filters) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
         logger?.debug("Priority #1 (Allow Filters) → no match, continuing")
-        // Priority #2 - allUnknown (absolute gate, overrides everything)
         result = self.runAllUnknownRule()
         guard !result.action.isFiltered else {
             logger?.debug("Priority #2 (allUnknown) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
         logger?.debug("Priority #2 (allUnknown) → not active, continuing")
-        // Priority #3 - Automatic Filters (allow)
         let activeFilterLists = self.loadActiveFilterLists()
         result = self.runAutomaticFilters(type: .allow, activeFilterLists: activeFilterLists, body: body, sender: sender)
         guard !result.action.isFiltered else {
@@ -89,28 +83,24 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             return result
         }
         logger?.debug("Priority #3 (Automatic Filters Allow) → no match, continuing")
-        // Priority #4 - Filter Rules
         result = self.runFilterRules(body: body, sender: sender)
         guard !result.action.isFiltered else {
             logger?.debug("Priority #4 (Filter Rules) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
         logger?.debug("Priority #4 (Filter Rules) → no match, continuing")
-        // Priority #5 - Deny Filters
         result = self.runUserFilters(type: .deny, body: body, sender: sender)
         guard !result.action.isFiltered else {
             logger?.debug("Priority #5 (Deny Filters) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
         logger?.debug("Priority #5 (Deny Filters) → no match, continuing")
-        // Priority #6 - Deny Language Filters
         result = self.runUserFilters(type: .denyLanguage, body: body, sender: sender)
         guard !result.action.isFiltered else {
             logger?.debug("Priority #6 (Deny Language Filters) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
         logger?.debug("Priority #6 (Deny Language Filters) → no match, continuing")
-        // Priority #7 - Automatic Filters (deny)
         result = self.runAutomaticFilters(type: .deny, activeFilterLists: activeFilterLists, body: body, sender: sender)
         if !result.action.isFiltered {
             result = MessageEvaluationResult(action: .allow, match: .noMatch)
