@@ -11,21 +11,21 @@ import Foundation
 class mock_HTTPService: HTTPServiceProtocol {
     
     var executeCounter = 0
+    var fetchIfModifiedCounter = 0
     
-    var executeClosure: ((AnyClass.Type?, URL, URLRequestProtocol) -> ())?
+    var executeClosure: ((AnyClass.Type?, URLRequestProtocol) -> ())?
+    var fetchIfModifiedClosure: ((URLRequestProtocol) throws -> (FetchResult<Data>))?
     
-    func execute<T>(type: T.Type, baseURL: URL, request: URLRequestProtocol) async throws -> T where T : Decodable {
+    func execute<T>(type: T.Type, request: URLRequestProtocol) async throws -> T where T : Decodable {
         
         self.executeCounter += 1
-        self.executeClosure?(type as? AnyClass.Type, baseURL, request)
+        self.executeClosure?(type as? AnyClass.Type, request)
         
-        switch type {
-        case is AutomaticFilterListsResponse.Type:
-            let mock: T = AutomaticFilterListsResponse(filterLists: [:]) as! T
-            return mock
-        default:
-            break
-        }
         fatalError("Unsupported mock object?")
+    }
+
+    func fetchIfModified(request: URLRequestProtocol) async throws -> FetchResult<Data> {
+        self.fetchIfModifiedCounter += 1
+        return try self.fetchIfModifiedClosure?(request) ?? .notModified
     }
 }

@@ -270,55 +270,6 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssert(updatedFilter.denyFolderType == .promotion)
     }
 
-    func test_saveCache() {
-        // Prepare
-        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        let newerfiltersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
-        let oldDate = Date()
-        
-        let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
-        existingCache.uuid = UUID()
-        existingCache.hashed = filtersList.hashed
-        existingCache.filtersData = filtersList.encoded
-        existingCache.age = oldDate
-        
-        self.expectingSaveContext()
-        
-        // Act
-        _ = self.testSubject.saveCache(with: newerfiltersList)
-        
-        // Verify
-        self.waitForExpectations(timeout: 1, handler: nil)
-        
-        let newCache = try? self.testSubject.context.fetch(AutomaticFiltersCache.fetchRequest()).first
-        
-        XCTAssertEqual(newCache?.filtersData, newerfiltersList.encoded)
-        XCTAssertEqual(newCache?.hashed, newerfiltersList.hashed)
-        XCTAssert(newCache?.age ?? oldDate > oldDate)
-    }
-    
-    func test_isCacheStale() {
-        // Prepare
-        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        let filtersList_same = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        let filtersList_diff = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
-        let oldDate = Date()
-        let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
-        existingCache.uuid = UUID()
-        existingCache.hashed = filtersList.hashed
-        existingCache.filtersData = filtersList.encoded
-        existingCache.age = oldDate
-        
-        // Act
-        let expectFalse = self.testSubject.isCacheStale(comparedTo: filtersList_same)
-        let expectTrue = self.testSubject.isCacheStale(comparedTo: filtersList_diff)
-        
-        // Verify
-        XCTAssertFalse(expectFalse)
-        XCTAssertTrue(expectTrue)
-    }
-    
-    
     func test_saveCache_filterLists() throws {
         // Prepare
         let oldDate = Date(timeIntervalSince1970: 0)
@@ -346,10 +297,9 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssertEqual(self.testSubject.cachedFilterLists(), cache)
     }
 
-    func test_saveCache_dropsInvalidRecords() {
+    func test_saveCache_keepsRecordsAsDownloaded() {
         // Prepare
-        let valid = self.record(text: "spam")
-        let cache = self.filterListsCache(records: [valid,
+        let cache = self.filterListsCache(records: [self.record(text: "spam"),
                                                     self.record(text: "spam", folder: "inbox"),
                                                     self.record(text: "(unclosed", matching: "regex", caseSensitivity: nil)])
 
@@ -357,7 +307,7 @@ class PersistanceManagerTests: XCTestCase {
         _ = self.testSubject.saveCache(cache)
 
         // Verify
-        XCTAssertEqual(self.testSubject.cachedFilterLists()?.lists.first?.payload.filters, [valid])
+        XCTAssertEqual(self.testSubject.cachedFilterLists(), cache)
     }
 
     func test_cachedFilterLists_noCache() {

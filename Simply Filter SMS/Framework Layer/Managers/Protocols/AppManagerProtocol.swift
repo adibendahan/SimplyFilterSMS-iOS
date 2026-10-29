@@ -16,7 +16,7 @@ protocol AppManagerProtocol {
     var automaticFilterManager: AutomaticFilterManagerProtocol { get }
     var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
     var networkSyncManager: NetworkSyncManagerProtocol { get }
-    var amazonS3Service: AmazonS3ServiceProtocol { get }
+    var filterListService: FilterListServiceProtocol { get }
     var reportMessageService: ReportMessageServiceProtocol { get }
     var tipJarManager: TipJarManagerProtocol { get }
     var filterTransferManager: FilterTransferManagerProtocol { get }

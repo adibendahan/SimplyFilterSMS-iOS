@@ -14,24 +14,32 @@ import NaturalLanguage
 class AutomaticFilterManagerTests: XCTestCase {
     
     var persistanceManager = mock_PersistanceManager()
-    var amazonS3Service = mock_AmazonS3Service()
+    var filterListService = mock_FilterListService()
     
     //MARK: Test Lifecycle
     override func setUp() {
         super.setUp()
         
-        self.amazonS3Service = mock_AmazonS3Service()
+        self.filterListService = mock_FilterListService()
         self.testSubject = AutomaticFilterManager(persistanceManager: self.persistanceManager,
-                                                  amazonS3Service: self.amazonS3Service)
+                                                  filterListService: self.filterListService)
         self.persistanceManager.resetCounters()
-        self.amazonS3Service.resetCounters()
+        self.filterListService.resetCounters()
+        self.automaticFiltersUpdatedCount = 0
+        self.automaticFiltersUpdatedObserver = NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: nil) { [weak self] _ in
+            self?.automaticFiltersUpdatedCount += 1
+        }
     }
     
     override func tearDown() {
         super.tearDown()
 
+        if let observer = self.automaticFiltersUpdatedObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+
         self.persistanceManager = mock_PersistanceManager()
-        self.amazonS3Service = mock_AmazonS3Service()
+        self.filterListService = mock_FilterListService()
     }
     
     
@@ -337,25 +345,211 @@ class AutomaticFilterManagerTests: XCTestCase {
         XCTAssertEqual(numbersOnlyRule?.selectedChoice, 4)
     }
     
-    func test_forceUpdateAutomaticFilters() {
+    func test_update_noCache_downloadsEverything() async {
         // Prepare
-        let expectation = self.expectation(description: "URLRequest")
-        self.amazonS3Service.fetchAutomaticFiltersClosure = {
-            return AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])])
+        var catalogETag: String? = "unset"
+        var listETags: [String?] = []
+        self.filterListService.fetchFilterListCatalogClosure = { etag in
+            catalogETag = etag
+            return .modified(self.catalog(["he", "en"]), etag: "catalog-1")
         }
-        
-        
-        // Act
-        Task (priority: .userInitiated) {
-            let _ = await self.testSubject.forceUpdateAutomaticFilters()
-            expectation.fulfill()
+        self.filterListService.fetchFilterListClosure = { url, etag in
+            listETags.append(etag)
+            return .modified(self.payload(text: url.lastPathComponent), etag: "\(url.lastPathComponent)-1")
         }
-        
-        // Verify
-        self.waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertEqual(self.persistanceManager.saveLegacyCacheCounter, 1)
+        var savedCache: FilterListsCache?
+        self.persistanceManager.saveCacheClosure = { savedCache = $0 }
 
+        // Act
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
+
+        // Verify
+        XCTAssertNil(catalogETag)
+        XCTAssertEqual(listETags, [nil, nil])
+        XCTAssertEqual(savedCache, FilterListsCache(catalogETag: "catalog-1",
+                                                    catalog: self.catalog(["he", "en"]),
+                                                    lists: [self.section("he", etag: "he.sfsfilters-1", text: "he.sfsfilters"),
+                                                            self.section("en", etag: "en.sfsfilters-1", text: "en.sfsfilters")]))
+        XCTAssertEqual(self.automaticFiltersUpdatedCount, 1)
+    }
+
+    func test_update_nothingChanged_touchesCache() async {
+        // Prepare
+        let cache = self.cache(["he", "en"])
+        self.persistanceManager.cachedFilterListsClosure = { cache }
+        var catalogETag: String?
+        var listETags: [String?] = []
+        self.filterListService.fetchFilterListCatalogClosure = { etag in
+            catalogETag = etag
+            return .notModified
+        }
+        self.filterListService.fetchFilterListClosure = { _, etag in
+            listETags.append(etag)
+            return .notModified
+        }
+
+        // Act
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
+
+        // Verify
+        XCTAssertEqual(catalogETag, "catalog-1")
+        XCTAssertEqual(listETags, ["he-1", "en-1"])
+        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
+        XCTAssertEqual(self.persistanceManager.touchCacheCounter, 1)
+        XCTAssertEqual(self.automaticFiltersUpdatedCount, 0)
+    }
+
+    func test_update_oneListChanged_replacesOnlyThatSection() async {
+        // Prepare
+        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
+        self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
+        self.filterListService.fetchFilterListClosure = { url, _ in
+            url.lastPathComponent == "he.sfsfilters" ? .modified(self.payload(text: "new"), etag: "he-2") : .notModified
+        }
+        var savedCache: FilterListsCache?
+        self.persistanceManager.saveCacheClosure = { savedCache = $0 }
+
+        // Act
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
+
+        // Verify
+        XCTAssertEqual(savedCache?.lists, [self.section("he", etag: "he-2", text: "new"),
+                                           self.section("en", etag: "en-1", text: "en")])
+        XCTAssertEqual(self.automaticFiltersUpdatedCount, 1)
+    }
+
+    func test_update_listFails_keepsSectionAndDoesNotTouch() async {
+        // Prepare
+        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
+        self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
+        self.filterListService.fetchFilterListClosure = { url, _ in
+            url.lastPathComponent == "he.sfsfilters" ? nil : .notModified
+        }
+
+        // Act
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
+
+        // Verify
+        XCTAssertEqual(self.filterListService.fetchFilterListCounter, 2)
+        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
+        XCTAssertEqual(self.persistanceManager.touchCacheCounter, 0)
+    }
+
+    func test_update_catalogFails_changesNothing() async {
+        // Prepare
+        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he"]) }
+        self.filterListService.fetchFilterListCatalogClosure = { _ in nil }
+
+        // Act
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
+
+        // Verify
+        XCTAssertEqual(self.filterListService.fetchFilterListCounter, 0)
+        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
+        XCTAssertEqual(self.persistanceManager.touchCacheCounter, 0)
+    }
+
+    func test_update_dropsListsNotInCatalog() async {
+        // Prepare
+        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
+        self.filterListService.fetchFilterListCatalogClosure = { _ in .modified(self.catalog(["he"]), etag: "catalog-2") }
+        self.filterListService.fetchFilterListClosure = { _, _ in .notModified }
+        var savedCache: FilterListsCache?
+        self.persistanceManager.saveCacheClosure = { savedCache = $0 }
+
+        // Act
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
+
+        // Verify
+        XCTAssertEqual(savedCache?.lists, [self.section("he", etag: "he-1", text: "he")])
+        XCTAssertEqual(self.automaticFiltersUpdatedCount, 1)
+    }
+
+    func test_update_sameRevision_savesWithoutNotification() async {
+        // Prepare
+        self.persistanceManager.cachedFilterListsClosure = {
+            FilterListsCache(catalogETag: "catalog-1",
+                             catalog: self.catalog(["he"]),
+                             lists: [self.section("he", etag: "he-1", text: "he", revision: 2)])
+        }
+        self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
+        self.filterListService.fetchFilterListClosure = { _, _ in .modified(self.payload(text: "typo fix", revision: 2), etag: "he-2") }
+
+        // Act
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
+
+        // Verify
+        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
+        XCTAssertEqual(self.automaticFiltersUpdatedCount, 0)
+    }
+
+    func test_forceUpdate_sendsNoETags() async {
+        // Prepare
+        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he"]) }
+        var sentETags: [String?] = []
+        self.filterListService.fetchFilterListCatalogClosure = { etag in
+            sentETags.append(etag)
+            return .modified(self.catalog(["he"]), etag: "catalog-1")
+        }
+        self.filterListService.fetchFilterListClosure = { _, etag in
+            sentETags.append(etag)
+            return .modified(self.payload(text: "he"), etag: "he-1")
+        }
+
+        // Act
+        await self.testSubject.forceUpdateAutomaticFilters()
+
+        // Verify
+        XCTAssertEqual(sentETags, [nil, nil])
+        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
+        XCTAssertEqual(self.persistanceManager.touchCacheCounter, 1)
+    }
+    
+    func test_update_concurrentCallsShareOneRefresh() async {
+        // Prepare
+        self.filterListService.fetchFilterListCatalogClosure = { _ in .modified(self.catalog(["he"]), etag: "catalog-1") }
+        self.filterListService.fetchFilterListClosure = { _, _ in .modified(self.payload(text: "he"), etag: "he-1") }
+
+        // Act
+        async let first: Void = self.testSubject.updateAutomaticFiltersIfNeeded()
+        async let second: Void = self.testSubject.forceUpdateAutomaticFilters()
+        _ = await (first, second)
+
+        // Verify
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
+        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
     }
     
     private var testSubject: AutomaticFilterManagerProtocol = AutomaticFilterManager(persistanceManager: mock_PersistanceManager())
+    private var automaticFiltersUpdatedCount = 0
+    private var automaticFiltersUpdatedObserver: NSObjectProtocol?
+
+    private func catalog(_ languages: [String]) -> FilterListCatalogResponse {
+        return FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                         version: FilterListCatalogResponse.currentVersion,
+                                         lists: languages.map({ FilterListCatalogEntry(id: "ai-\($0)", name: $0, url: "\($0).sfsfilters", language: $0) }))
+    }
+
+    private func payload(text: String, revision: Int? = nil) -> FilterExportPayload {
+        return FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                   version: FilterExportPayload.currentVersion,
+                                   exportedAt: Date(timeIntervalSince1970: 1_800_000_000),
+                                   appVersion: "3.3.0",
+                                   name: nil,
+                                   revision: revision,
+                                   filters: [FilterExportRecord(text: text, type: "deny", folder: "junk", target: "all", matching: "contains", caseSensitivity: "insensitive")],
+                                   forceClearBeforeImport: nil)
+    }
+
+    private func section(_ language: String, etag: String, text: String, revision: Int? = nil) -> FilterListsCacheSection {
+        return FilterListsCacheSection(url: URL(string: "\(language).sfsfilters", relativeTo: .filterListCatalogURL)!.absoluteString,
+                                       etag: etag,
+                                       payload: self.payload(text: text, revision: revision))
+    }
+
+    private func cache(_ languages: [String]) -> FilterListsCache {
+        return FilterListsCache(catalogETag: "catalog-1",
+                                catalog: self.catalog(languages),
+                                lists: languages.map({ self.section($0, etag: "\($0)-1", text: $0) }))
+    }
 }

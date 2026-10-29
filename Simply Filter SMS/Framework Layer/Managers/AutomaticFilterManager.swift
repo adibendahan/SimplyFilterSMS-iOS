@@ -12,10 +12,10 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     
     //MARK: - Initialization -
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
-         amazonS3Service: AmazonS3ServiceProtocol = AppManager.shared.amazonS3Service) {
+         filterListService: FilterListServiceProtocol = AppManager.shared.filterListService) {
         
         self.persistanceManager = persistanceManager
-        self.amazonS3Service = amazonS3Service
+        self.filterListService = filterListService
     }
     
     
@@ -180,23 +180,12 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
 
     func updateAutomaticFiltersIfNeeded() async {
-        guard self.shouldFetchFilters else {
-            AppManager.logger.debug("updateAutomaticFiltersIfNeeded — cache is fresh, skipping fetch")
-            return
-        }
-        AppManager.logger.debug("updateAutomaticFiltersIfNeeded — cache is stale, fetching from S3")
-        guard let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() else { return }
-        await MainActor.run {
-            self.updateCacheIfNeeded(newFilterList: automaticFilterList)
-        }
+        await self.refreshFilterLists(force: false)
     }
 
     func forceUpdateAutomaticFilters() async {
-        AppManager.logger.debug("forceUpdateAutomaticFilters — forcing S3 fetch")
-        guard let automaticFilterList = await self.amazonS3Service?.fetchAutomaticFilters() else { return }
-        await MainActor.run {
-            self.updateCacheIfNeeded(newFilterList: automaticFilterList, force: true)
-        }
+        AppManager.logger.debug("forceUpdateAutomaticFilters — forcing fetch")
+        await self.refreshFilterLists(force: true)
     }
     
     //MARK: - Private  -
@@ -226,8 +215,9 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         }
     }
     
-    private weak var amazonS3Service: AmazonS3ServiceProtocol?
+    private weak var filterListService: FilterListServiceProtocol?
     private weak var persistanceManager: PersistanceManagerProtocol?
+    private var refreshTask: Task<Void, Never>?
     private var shouldFetchFilters: Bool {
         var shouldFetchFilters = true
         
@@ -240,17 +230,112 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         return shouldFetchFilters
     }
     
-    private func updateCacheIfNeeded(newFilterList: AutomaticFilterListsResponse, force: Bool = false) {
-        guard let persistanceManager = self.persistanceManager else { return }
-        let isCacheStale = persistanceManager.isCacheStale(comparedTo: newFilterList)
-        AppManager.logger.debug("updateCacheIfNeeded — isCacheStale: \(isCacheStale, privacy: .public), force: \(force, privacy: .public)")
-        if force || isCacheStale {
-            AppManager.logger.debug("updateCacheIfNeeded — saving new filter cache")
-            guard persistanceManager.saveCache(with: newFilterList) else { return }
+    @MainActor
+    private func refreshFilterLists(force: Bool) async {
+        if let refreshTask = self.refreshTask {
+            AppManager.logger.debug("refreshFilterLists — joining the refresh in progress")
+            await refreshTask.value
+            return
         }
-        if isCacheStale {
-            AppManager.logger.debug("updateCacheIfNeeded — posting automaticFiltersUpdated notification")
+        guard force || self.shouldFetchFilters else {
+            AppManager.logger.debug("refreshFilterLists — cache is fresh, skipping fetch")
+            return
+        }
+        let refreshTask = Task { await self.performRefresh(force: force) }
+        self.refreshTask = refreshTask
+        await refreshTask.value
+        self.refreshTask = nil
+    }
+
+    @MainActor
+    private func performRefresh(force: Bool) async {
+        guard let persistanceManager = self.persistanceManager,
+              let filterListService = self.filterListService else { return }
+
+        let cache = persistanceManager.cachedFilterLists()
+        let catalogETagToSend = force ? nil : cache?.catalogETag
+        let catalogResponse = await filterListService.fetchFilterListCatalog(etag: catalogETagToSend)
+        let catalog: FilterListCatalogResponse
+        let catalogETag: String?
+
+        switch catalogResponse {
+        case .modified(let fetchedCatalog, let etag):
+            catalog = fetchedCatalog
+            catalogETag = etag
+        case .notModified:
+            guard let cache = cache else { return }
+            catalog = cache.catalog
+            catalogETag = cache.catalogETag
+        case nil:
+            AppManager.logger.debug("performRefresh — catalog fetch failed, keeping the cache")
+            return
+        }
+
+        var lists: [FilterListsCacheSection] = []
+        var fetchedURLs: Set<URL> = []
+        var hasFailures = false
+
+        for entry in catalog.lists {
+            guard let url = URL(string: entry.url, relativeTo: .filterListCatalogURL)?.absoluteURL,
+                  !fetchedURLs.contains(url) else { continue }
+            fetchedURLs.insert(url)
+
+            let cachedSection = cache?.lists.first(where: { $0.url == url.absoluteString })
+            let listETagToSend = force ? nil : cachedSection?.etag
+            let listResponse = await filterListService.fetchFilterList(at: url, etag: listETagToSend)
+
+            switch listResponse {
+            case .modified(let payload, let etag):
+                lists.append(FilterListsCacheSection(url: url.absoluteString, etag: etag, payload: payload))
+            case .notModified:
+                if let cachedSection = cachedSection {
+                    lists.append(cachedSection)
+                }
+            case nil:
+                hasFailures = true
+                if let cachedSection = cachedSection {
+                    lists.append(cachedSection)
+                }
+            }
+        }
+
+        let newCache = FilterListsCache(catalogETag: catalogETag, catalog: catalog, lists: lists)
+        let hasNewFilters = Self.hasNewFilters(from: cache, to: newCache)
+        AppManager.logger.debug("performRefresh — lists: \(lists.count, privacy: .public), changed: \(newCache != cache, privacy: .public), new filters: \(hasNewFilters, privacy: .public), failures: \(hasFailures, privacy: .public)")
+
+        guard newCache != cache else {
+            if !hasFailures {
+                persistanceManager.touchCache()
+            }
+            return
+        }
+        guard persistanceManager.saveCache(newCache) else { return }
+        if hasNewFilters {
             NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
         }
+    }
+
+    private static func hasNewFilters(from oldCache: FilterListsCache?, to newCache: FilterListsCache) -> Bool {
+        let oldLists = oldCache?.lists ?? []
+        let oldURLs = Set(oldLists.map({ $0.url }))
+        let newURLs = Set(newCache.lists.map({ $0.url }))
+        guard oldURLs == newURLs else { return true }
+
+        for newList in newCache.lists {
+            guard let oldList = oldLists.first(where: { $0.url == newList.url }) else { return true }
+
+            if let newRevision = newList.payload.revision,
+               let oldRevision = oldList.payload.revision {
+
+                if newRevision > oldRevision {
+                    return true
+                }
+            }
+            else if newList.payload.filters != oldList.payload.filters {
+                return true
+            }
+        }
+
+        return false
     }
 }

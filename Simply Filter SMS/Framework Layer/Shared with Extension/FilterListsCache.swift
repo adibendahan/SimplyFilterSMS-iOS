@@ -10,7 +10,7 @@ import Foundation
 
 struct FilterListsCache: Codable, Equatable {
     let catalogETag: String?
-    let catalog: FilterListCatalogResponse?
+    let catalog: FilterListCatalogResponse
     let lists: [FilterListsCacheSection]
 }
 
@@ -36,27 +36,5 @@ extension FilterListsCache {
         encoder.dateEncodingStrategy = .iso8601
         guard let data = try? encoder.encode(self) else { return nil }
         return String(data: data, encoding: .utf8)
-    }
-
-    var validated: FilterListsCache {
-        return FilterListsCache(catalogETag: self.catalogETag,
-                                catalog: self.catalog,
-                                lists: self.lists.map({ $0.validated }))
-    }
-}
-
-extension FilterListsCacheSection {
-    var validated: FilterListsCacheSection {
-        let payload = self.payload
-        return FilterListsCacheSection(url: self.url,
-                                       etag: self.etag,
-                                       payload: FilterExportPayload(format: payload.format,
-                                                                    version: payload.version,
-                                                                    exportedAt: payload.exportedAt,
-                                                                    appVersion: payload.appVersion,
-                                                                    name: payload.name,
-                                                                    revision: payload.revision,
-                                                                    filters: payload.filters.filter({ FilterTransferCandidate(record: $0) != nil }),
-                                                                    forceClearBeforeImport: payload.forceClearBeforeImport))
     }
 }

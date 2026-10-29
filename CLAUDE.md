@@ -35,7 +35,7 @@ Three-layer clean architecture with protocol-based dependency injection:
 - **AppManager** — Singleton service locator (`AppManager.shared`). Creates and holds all managers/services. Use `AppManager(inMemory: true)` for previews/tests.
 - **MessageEvaluationManager** — Core filtering engine. App uses `init(persistanceManager:)` (live context across `reloadContainer()`). Extension/tests use `init(inMemory:)` with a synchronously loaded owned App Group store (`shouldAddStoreAsynchronously = false`).
 - **PersistanceManager** — CoreData CRUD operations for `Filter`, `AutomaticFiltersRule`, `AutomaticFiltersLanguage` entities.
-- **AutomaticFilterManager** — Fetches community filter lists from S3, applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown, country allowlist). S3 fetch completions hop to the MainActor before Core Data cache writes.
+- **AutomaticFilterManager** — Refreshes the AI Filtering lists (through `FilterListService`), applies automatic rules (block links, numbers-only senders, short senders, emails, emojis, all unknown, country allowlist). The refresh runs on the main actor, and a concurrent caller joins the running refresh (`refreshTask`).
 - **SchedulingManager** — `BGProcessingTask` that refreshes AI filter lists without a foreground open, plus the monthly inactivity reminder and its ask cadence. Only `AppDelegate.applicationDidBecomeActive` moves the reminder clock — never anything on the launch path, since `didFinishLaunching` also runs for background wakes.
 - **DefaultsManager** — UserDefaults wrapper for app settings. Custom accent is `@StoredDefault("accentColorRGB", defaultValue: kNoColorDict)`.
 - **NetworkSyncManager** — NWPathMonitor + CloudKit sync status tracking. `reloadContainer()` only on a genuine offline→online reconnection (`NetworkStatus.isReconnection(from:)`) — `.unknown` is not a network state, and rebuilding the stack on the monitor's first report aborted the initial import. `maxSetupRetries` is `0`: a failed setup is recorded for the UI and left to Core Data's own recovery. `reloadContainer()` posts `.persistentStoreReloaded`; screens use `.modifier(persistentStoreReload)`.
@@ -46,10 +46,10 @@ Three-layer clean architecture with protocol-based dependency injection:
 Every manager has a corresponding `*Protocol` in `Managers/Protocols/` for testability.
 
 ### Services Layer (`Simply Filter SMS/Services Layer/`)
-- **AmazonS3Service** — Fetches automatic filter lists from AWS S3.
+- **FilterListService** — Fetches the AI Filtering catalog and lists by URL (`fetchIfModified`), wherever they are hosted. A thin gateway: what to fetch and keep is decided in `AutomaticFilterManager`.
 - **ReportMessageService** — Reports spam/ham to `https://api.ben-dahan.com/report` (public endpoint, no auth). Used by the in-app reporting UI. The Reporting Extension uses the same endpoint via iOS system delivery (`ILClassificationExtensionNetworkReportDestination`).
 - **UserNotificationCenterService** — Thin `UNUserNotificationCenter` gateway (status, request alerts, schedule/cancel). All policy stays in `SchedulingManager`.
-- **HTTPService** — Base class for HTTP requests with `URLRequestProtocol`.
+- **HTTPService** — Base class for HTTP requests with `URLRequestProtocol`. Every request is a type in `Requests/` that owns its full `url` (and `headers`); services never pass a base URL. `fetchIfModified(request:)` is the conditional GET (`FetchResult`).
 
 ### View Layer (`Simply Filter SMS/View Layer/`)
 - **Screens/** — SwiftUI views: `AppHomeView`, `FilterListView`, `AddFilterView`, `TestFiltersView`, `LanguageListView`, `AboutView`, `HelpView`, `ChooseAccentColorView`, `ReportMessageView`, `EnableExtensionVideoView`, `WhatsNewView`, `TipJarView`, `FilterTransferPreviewView`.
@@ -60,7 +60,7 @@ Code compiled into both the app and the Message Filter Extension:
 - `Constants.swift` — All enums (`FilterType`, `DenyFolderType`, `FilterTarget`, `FilterMatching`, `FilterCase`, `RuleType`, `ReportType`) and global constants.
 - `SharedExtensions.swift` — Extensions on `Filter` (CoreData), `NLLanguage`, `ILMessageFilterAction`, `String`, the `.sfsfilters` `exportKey` mappings on the filter enums, plus the `~` postfix operator.
 - `AppPersistentCloudKitContainer.swift` — CoreData/CloudKit container setup with App Group (`group.com.grizz.apps.dev.simply-filter-sms`).
-- `FilterListsCache.swift` — what `AutomaticFiltersCache.filtersData` holds: plain JSON, one section per filter list keyed by URL (`{ url, etag, payload }`) plus the catalog. Records are validated on save; readers never re-validate. A legacy base64 row decodes as no cache.
+- `FilterListsCache.swift` — what `AutomaticFiltersCache.filtersData` holds: plain JSON, one section per filter list keyed by URL (`{ url, etag, payload }`) plus the catalog. Lists are stored as downloaded; the extension skips records it can't use when reading them. A legacy base64 row decodes as no cache.
 
 Also compiled into the extension from outside this folder: `Protocols/FilterTransferManagerProtocol.swift` (`.sfsfilters` types and `FilterTransferCandidate.init?(record:)` validation), `MessageEvaluationManager(Protocol).swift`, and `Services Layer/Responses/` (`AutomaticFilterListsResponse`, `FilterListCatalogResponse`). Changing an existing file's target membership has no Xcode MCP tool, so it's done by hand in Xcode.
 

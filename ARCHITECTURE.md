@@ -54,7 +54,7 @@ AppManager (Singleton)
 ├── MessageEvaluationManager ── Filter evaluation engine
 │   └── app: PersistanceManager (live context) / extension: owned App Group store
 ├── AutomaticFilterManager ─── Community filter lists
-│   └── depends on: PersistanceManager, AmazonS3Service
+│   └── depends on: PersistanceManager, FilterListService
 ├── TipJarManager ─────────── StoreKit 2 IAP
 ├── FilterTransferManager ── Merge-only import/export
 │   └── depends on: PersistanceManager
@@ -62,7 +62,7 @@ AppManager (Singleton)
 │   └── depends on: DefaultsManager
 ├── SchedulingManager ─────── Background refresh + inactivity reminder
 │   └── depends on: AutomaticFilterManager, DefaultsManager, UserNotificationCenterService
-├── AmazonS3Service ────────── HTTP → S3
+├── FilterListService ──────── HTTP → filter lists (catalog + lists, by URL)
 │   └── depends on: NetworkSyncManager
 ├── ReportMessageService ───── HTTP → Lambda
 │   └── depends on: NetworkSyncManager

@@ -19,7 +19,7 @@ class mock_AppManager: AppManagerProtocol {
     var automaticFilterManager: AutomaticFilterManagerProtocol = mock_AutomaticFilterManager()
     var messageEvaluationManager: MessageEvaluationManagerProtocol = mock_MessageEvaluationManager()
     var networkSyncManager: NetworkSyncManagerProtocol = mock_NetworkSyncManager()
-    var amazonS3Service: AmazonS3ServiceProtocol = mock_AmazonS3Service()
+    var filterListService: FilterListServiceProtocol = mock_FilterListService()
     var reportMessageService: ReportMessageServiceProtocol = mock_ReportMessageService()
     var tipJarManager: TipJarManagerProtocol = mock_TipJarManager()
     var filterTransferManager: FilterTransferManagerProtocol = mock_FilterTransferManager()

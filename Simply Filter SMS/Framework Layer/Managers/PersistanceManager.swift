@@ -368,24 +368,13 @@ class PersistanceManager: PersistanceManagerProtocol {
         guard self.commitAndAnnounce() else { return }
     }
 
-    func saveCache(with filterList: AutomaticFilterListsResponse) -> Bool {
-        AppManager.logger.debug("saveCache — saving new automatic filters cache")
-        self.deleteExistingCaches()
-        let newCache = AutomaticFiltersCache(context: self.context)
-        newCache.uuid = UUID()
-        newCache.hashed = filterList.hashed
-        newCache.filtersData = filterList.encoded
-        newCache.age = Date()
-        return self.commitContext()
-    }
-
     func cachedFilterLists() -> FilterListsCache? {
         guard let filtersData = self.fetchAutomaticFiltersCacheRecords().first?.filtersData else { return nil }
         return FilterListsCache(encoded: filtersData)
     }
 
     func saveCache(_ cache: FilterListsCache) -> Bool {
-        guard let filtersData = cache.validated.encoded else { return false }
+        guard let filtersData = cache.encoded else { return false }
         AppManager.logger.debug("saveCache — saving \(cache.lists.count, privacy: .public) filter lists")
         let records = self.fetchAutomaticFiltersCacheRecords()
         records.dropFirst().forEach { self.context.delete($0) }
@@ -404,21 +393,6 @@ class PersistanceManager: PersistanceManagerProtocol {
         _ = self.commitContext()
     }
 
-    func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool {
-        let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
-        guard let automaticFiltersCache = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.first else {
-            AppManager.logger.debug("isCacheStale — no existing cache, returning stale")
-            return true
-        }
-        let isStale = automaticFiltersCache.filtersData != newFilterList.encoded
-        AppManager.logger.debug("isCacheStale — \(isStale ? "stale" : "fresh", privacy: .public)")
-        if !isStale {
-            automaticFiltersCache.age = Date()
-            _ = self.commitContext()
-        }
-        return isStale
-    }
-    
     #if DEBUG
     func clearAllUserData() {
         for filter in fetchFilterRecords() {
@@ -473,15 +447,6 @@ class PersistanceManager: PersistanceManagerProtocol {
         } catch {
             AppManager.logger.error("ERROR! While fetching \(entity): \(error.localizedDescription)")
             return nil
-        }
-    }
-    
-    private func deleteExistingCaches() {
-        let request: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
-        guard let caches = try? self.context.fetch(request) else { return }
-        
-        for cache in caches {
-            self.context.delete(cache)
         }
     }
 }

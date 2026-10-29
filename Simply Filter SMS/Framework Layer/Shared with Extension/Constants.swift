@@ -34,6 +34,7 @@ let currentWhatsNewVersion = 6
 // URLs
 extension URL {
     static let appBaseURL = URL(string: "https://grizz-apps-dev.s3.us-east-2.amazonaws.com")!
+    static let filterListCatalogURL = URL.appBaseURL.appendingPathComponent("simply-filter-sms/3.3.0/ai/catalog.json")
     static let reportMessageURL = URL(string: "https://api.ben-dahan.com")!
     static let appReviewURL = URL(string: "https://apps.apple.com/app/id1603222959?action=write-review")!
     static let appTwitterURL = URL(string: "https://twitter.com/a_bd")!
