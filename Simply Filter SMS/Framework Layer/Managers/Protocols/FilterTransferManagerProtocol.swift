@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import NaturalLanguage
 
 
 enum FilterTransferError: Error, Equatable {
@@ -98,16 +97,12 @@ struct FilterTransferCandidate: Equatable, Identifiable {
         guard let text = record.text?.trimmingCharacters(in: .whitespacesAndNewlines),
               text.count >= kMinimumFilterLength,
               let type = FilterType(exportKey: record.type),
+              type.isTransferable,
               let folder = DenyFolderType(exportKey: record.folder, for: type),
               let target = FilterTarget(exportKey: record.target),
               let matching = FilterMatching(exportKey: record.matching),
               let filterCase = FilterCase(exportKey: record.caseSensitivity, for: matching) else {
             return nil
-        }
-
-        if type == .denyLanguage {
-            let language = NLLanguage(filterText: text)
-            guard language != .undetermined else { return nil }
         }
 
         if matching == .regex {

@@ -92,6 +92,10 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         var seenKeys = Set<String>()
 
         for record in payload.filters {
+            if let recordType = FilterType(exportKey: record.type), !recordType.isTransferable {
+                continue
+            }
+
             guard let candidate = FilterTransferCandidate(record: record) else {
                 invalidCount += 1
                 continue
@@ -191,6 +195,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     private func candidatesFromStore() -> [FilterTransferCandidate] {
         return self.persistanceManager.fetchFilterRecords().compactMap { filter in
             guard let text = filter.text, text.isEmpty == false else { return nil }
+            guard filter.filterType.isTransferable else { return nil }
             return FilterTransferCandidate(id: filter.uuid ?? UUID(),
                                          text: text,
                                          type: filter.filterType,
@@ -218,6 +223,13 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     private static func forceClearTypes(from payload: FilterExportPayload) -> Set<FilterType> {
-        Set((payload.forceClearBeforeImport ?? []).compactMap({ FilterType(exportKey: $0) }))
+        var types: Set<FilterType> = []
+
+        for exportKey in payload.forceClearBeforeImport ?? [] {
+            guard let type = FilterType(exportKey: exportKey), type.isTransferable else { continue }
+            types.insert(type)
+        }
+
+        return types
     }
 }

@@ -28,7 +28,7 @@ class FilterTransferManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    func test_roundTrip_denyAllowRegexLanguage() throws {
+    func test_roundTrip_denyAllowRegex_skipsLanguageBlocks() throws {
         self.persistanceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .junk,
@@ -61,10 +61,10 @@ class FilterTransferManagerTests: XCTestCase {
         let preview = try self.testSubject.queueImport(data: data)
         let result = self.testSubject.importFilters(preview.candidates)
 
-        XCTAssertEqual(result.added, 4)
+        XCTAssertEqual(result.added, 3)
         XCTAssertEqual(result.duplicateCount, 0)
         XCTAssertEqual(result.invalidCount, 0)
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 4)
+        XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 3)
 
         let deny = self.persistanceManager.fetchFilterRecords(for: .deny)
         XCTAssertEqual(deny.count, 2)
@@ -77,9 +77,29 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertEqual(allow.first?.filterMatching, .exact)
         XCTAssertEqual(allow.first?.filterCase, .caseSensitive)
 
-        let languages = self.persistanceManager.fetchFilterRecords(for: .denyLanguage)
-        XCTAssertEqual(languages.count, 1)
-        XCTAssertEqual(languages.first?.text, NLLanguage.english.filterText)
+        XCTAssertEqual(self.persistanceManager.fetchFilterRecords(for: .denyLanguage).count, 0)
+    }
+
+    func test_export_skipsLanguageBlocks() throws {
+        self.persistanceManager.addFilter(text: "promo",
+                                          type: .deny,
+                                          denyFolder: .junk,
+                                          filterTarget: .body,
+                                          filterMatching: .contains,
+                                          filterCase: .caseInsensitive)
+        self.persistanceManager.addFilter(text: NLLanguage.english.filterText,
+                                          type: .denyLanguage,
+                                          denyFolder: .junk,
+                                          filterTarget: .body,
+                                          filterMatching: .contains,
+                                          filterCase: .caseInsensitive)
+
+        let preview = self.testSubject.queueExport()
+        let object = try JSONSerialization.jsonObject(with: self.testSubject.exportPayload()) as? [String: Any]
+        let filters = try XCTUnwrap(object?["filters"] as? [[String: Any]])
+
+        XCTAssertEqual(preview.candidates.map({ $0.text }), ["promo"])
+        XCTAssertEqual(filters.compactMap({ $0["type"] as? String }), ["deny"])
     }
 
     func test_import_fileExportedBy3_2() throws {
@@ -100,12 +120,12 @@ class FilterTransferManagerTests: XCTestCase {
 
         let preview = try self.testSubject.previewImport(data: Data(json.utf8))
 
-        XCTAssertEqual(preview.count, 4)
+        XCTAssertEqual(preview.count, 3)
         XCTAssertEqual(preview.invalidCount, 0)
         XCTAssertTrue(preview.candidates.contains(where: { $0.text == "promo" && $0.denyFolder == .promotion }))
         XCTAssertTrue(preview.candidates.contains(where: { $0.text == "Mom" && $0.type == .allow && $0.filterCase == .caseSensitive }))
         XCTAssertTrue(preview.candidates.contains(where: { $0.text == #"\d{5}"# && $0.filterMatching == .regex }))
-        XCTAssertTrue(preview.candidates.contains(where: { $0.type == .denyLanguage }))
+        XCTAssertFalse(preview.candidates.contains(where: { $0.type == .denyLanguage }))
     }
 
     func test_import_skipsDuplicatesAndDoesNotDeleteExisting() throws {
@@ -166,6 +186,26 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertEqual(self.persistanceManager.fetchFilterRecords(for: .allow).first?.text, "keep-allow")
     }
 
+    func test_forceClearBeforeImport_ignoresLanguageBlocks() throws {
+        self.persistanceManager.addFilter(text: NLLanguage.english.filterText,
+                                          type: .denyLanguage,
+                                          denyFolder: .junk,
+                                          filterTarget: .body,
+                                          filterMatching: .contains,
+                                          filterCase: .caseInsensitive)
+
+        let data = try self.payload(filters: [
+            record(text: "fresh-deny", type: "deny")
+        ], forceClearBeforeImport: ["denyLanguage"])
+
+        let preview = try self.testSubject.queueImport(data: data)
+        let result = self.testSubject.importFilters(preview.candidates)
+
+        XCTAssertEqual(result.added, 1)
+        XCTAssertTrue(preview.forceClearTypes.isEmpty)
+        XCTAssertEqual(self.persistanceManager.fetchFilterRecords(for: .denyLanguage).first?.text, NLLanguage.english.filterText)
+    }
+
     func test_preview_skipsIntraFileDuplicates() throws {
         let data = try self.payload(filters: [
             record(text: "same", type: "deny"),
@@ -199,17 +239,17 @@ class FilterTransferManagerTests: XCTestCase {
         }
     }
 
-    func test_skipsInvalidRegexAndUnknownLanguage() throws {
+    func test_skipsInvalidRegex_ignoresLanguageBlocks() throws {
         let data = try self.payload(filters: [
             record(text: "[unclosed", type: "deny", matching: "regex"),
-            record(text: "$lang:klingon", type: "denyLanguage", target: "body"),
+            record(text: NLLanguage.english.filterText, type: "denyLanguage", target: "body"),
             record(text: "ok", type: "deny")
         ])
 
         let preview = try self.testSubject.previewImport(data: data)
 
         XCTAssertEqual(preview.count, 1)
-        XCTAssertEqual(preview.invalidCount, 2)
+        XCTAssertEqual(preview.invalidCount, 1)
         XCTAssertEqual(preview.candidates.first?.text, "ok")
     }
 

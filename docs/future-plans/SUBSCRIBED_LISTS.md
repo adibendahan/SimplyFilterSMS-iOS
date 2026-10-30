@@ -20,7 +20,7 @@ Not built yet. Planned for the release after 3.3.
 **App-side rules:**
 - **Cap the list size** (number to decide, e.g. 1 MB or 5,000 filters), because the message extension has very little memory.
 - **Ignore `forceClearBeforeImport`.** A subscribed list lives in its own section and never touches the user's own filters.
-- **Language blocks (`denyLanguage`)** are dropped from AI lists. For user lists, allowing them is **an open decision.**
+- **Language blocks (`denyLanguage`)** aren't part of the format: they're a preference, not a filter. Lists never apply them.
 
 **What's needed then:**
 - A synced Core Data entity for user subscriptions: URL, name and on/off.
