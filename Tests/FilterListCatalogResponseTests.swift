@@ -13,8 +13,13 @@ class FilterListCatalogResponseTests: XCTestCase {
 
     //MARK: Tests
     func test_initData_valid() throws {
-        let response = try XCTUnwrap(FilterListCatalogResponse(data: self.json()))
+        // Prepare
+        let data = self.json()
 
+        // Act
+        let response = try XCTUnwrap(FilterListCatalogResponse(data: data))
+
+        // Verify
         XCTAssertEqual(response.version, 1)
         XCTAssertEqual(response.lists, [
             FilterListCatalogEntry(id: "ai-he", name: "Hebrew", url: "he.sfsfilters", language: "he"),
@@ -23,16 +28,39 @@ class FilterListCatalogResponseTests: XCTestCase {
     }
 
     func test_initData_wrongFormat() {
-        XCTAssertNil(FilterListCatalogResponse(data: self.json(format: FilterExportPayload.formatIdentifier)))
+        // Prepare
+        let data = self.json(format: FilterExportPayload.formatIdentifier)
+
+        // Act
+        let response = FilterListCatalogResponse(data: data)
+
+        // Verify
+        XCTAssertNil(response)
     }
 
     func test_initData_unsupportedVersion() {
-        XCTAssertNil(FilterListCatalogResponse(data: self.json(version: FilterListCatalogResponse.currentVersion + 1)))
-        XCTAssertNil(FilterListCatalogResponse(data: self.json(version: 0)))
+        // Prepare
+        let newerData = self.json(version: FilterListCatalogResponse.currentVersion + 1)
+        let zeroData = self.json(version: 0)
+
+        // Act
+        let newerResponse = FilterListCatalogResponse(data: newerData)
+        let zeroResponse = FilterListCatalogResponse(data: zeroData)
+
+        // Verify
+        XCTAssertNil(newerResponse)
+        XCTAssertNil(zeroResponse)
     }
 
     func test_initData_garbage() {
-        XCTAssertNil(FilterListCatalogResponse(data: Data("not json".utf8)))
+        // Prepare
+        let data = Data("not json".utf8)
+
+        // Act
+        let response = FilterListCatalogResponse(data: data)
+
+        // Verify
+        XCTAssertNil(response)
     }
 
 

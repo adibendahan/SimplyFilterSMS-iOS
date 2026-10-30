@@ -77,12 +77,12 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         }
         logger?.debug("Priority #2 (allUnknown) → not active, continuing")
         let activeFilterLists = self.loadActiveFilterLists()
-        result = self.runAutomaticFilters(type: .allow, activeFilterLists: activeFilterLists, body: body, sender: sender)
+        result = self.runFilterLists(type: .allow, activeFilterLists: activeFilterLists, body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #3 (Automatic Filters Allow) → DECISION: \(result.action.logName, privacy: .public)")
+            logger?.debug("Priority #3 (Filter Lists Allow) → DECISION: \(result.action.logName, privacy: .public)")
             return result
         }
-        logger?.debug("Priority #3 (Automatic Filters Allow) → no match, continuing")
+        logger?.debug("Priority #3 (Filter Lists Allow) → no match, continuing")
         result = self.runFilterRules(body: body, sender: sender)
         guard !result.action.isFiltered else {
             logger?.debug("Priority #4 (Filter Rules) → DECISION: \(result.action.logName, privacy: .public)")
@@ -101,13 +101,13 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             return result
         }
         logger?.debug("Priority #6 (Deny Language Filters) → no match, continuing")
-        result = self.runAutomaticFilters(type: .deny, activeFilterLists: activeFilterLists, body: body, sender: sender)
+        result = self.runFilterLists(type: .deny, activeFilterLists: activeFilterLists, body: body, sender: sender)
         if !result.action.isFiltered {
             result = MessageEvaluationResult(action: .allow, match: .noMatch)
-            logger?.debug("Priority #7 (Automatic Filters Deny) → no match → fallthrough ALLOW")
+            logger?.debug("Priority #7 (Filter Lists Deny) → no match → fallthrough ALLOW")
         }
         else {
-            logger?.debug("Priority #7 (Automatic Filters Deny) → DECISION: \(result.action.logName, privacy: .public)")
+            logger?.debug("Priority #7 (Filter Lists Deny) → DECISION: \(result.action.logName, privacy: .public)")
         }
         return result
     }
@@ -212,13 +212,13 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         return ActiveFilterLists(encoded: filtersData, activeLanguages: activeLanguages)
     }
 
-    private func runAutomaticFilters(type: FilterType, activeFilterLists: ActiveFilterLists?, body: String, sender: String) -> MessageEvaluationResult {
+    private func runFilterLists(type: FilterType, activeFilterLists: ActiveFilterLists?, body: String, sender: String) -> MessageEvaluationResult {
         var result = MessageEvaluationResult(action: .none)
         guard let activeFilterLists = activeFilterLists else {
-            logger?.debug("[Automatic Filters \(type.logDescription, privacy: .public)] no active lists, skipping")
+            self.logger?.debug("[Filter Lists \(type.logDescription, privacy: .public)] no active lists, skipping")
             return result
         }
-        logger?.debug("[Automatic Filters \(type.logDescription, privacy: .public)] \(activeFilterLists.lists.count, privacy: .public) active list(s)")
+        self.logger?.debug("[Filter Lists \(type.logDescription, privacy: .public)] \(activeFilterLists.lists.count, privacy: .public) active list(s)")
         for list in activeFilterLists.lists {
             for record in list.records {
                 guard FilterType(exportKey: record.type) == type,
@@ -232,9 +232,15 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                                               sender: sender)
                 guard matched else { continue }
 
-                let action: ILMessageFilterAction = type == .allow ? .allow : candidate.denyFolder.action
+                let action: ILMessageFilterAction
+                switch type {
+                case .allow:
+                    action = .allow
+                case .deny, .denyLanguage:
+                    action = candidate.denyFolder.action
+                }
                 result = MessageEvaluationResult(action: action, match: .automaticFilter(list.name))
-                logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(candidate.text, privacy: .public)' [\(list.name, privacy: .public)]")
+                self.logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(candidate.text, privacy: .public)' [\(list.name, privacy: .public)]")
                 return result
             }
         }

@@ -407,7 +407,9 @@ class AutomaticFilterManagerTests: XCTestCase {
         self.persistanceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
         self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
         self.filterListService.fetchFilterListClosure = { url, _ in
-            url.lastPathComponent == "he.sfsfilters" ? .modified(self.payload(text: "new"), etag: "he-2") : .notModified
+            guard url.lastPathComponent == "he.sfsfilters" else { return .notModified }
+            let payload = self.payload(text: "new")
+            return .modified(payload, etag: "he-2")
         }
         var savedCache: FilterListsCache?
         self.persistanceManager.saveCacheClosure = { savedCache = $0 }
@@ -426,7 +428,8 @@ class AutomaticFilterManagerTests: XCTestCase {
         self.persistanceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
         self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
         self.filterListService.fetchFilterListClosure = { url, _ in
-            url.lastPathComponent == "he.sfsfilters" ? nil : .notModified
+            guard url.lastPathComponent == "he.sfsfilters" else { return .notModified }
+            return nil
         }
 
         // Act
