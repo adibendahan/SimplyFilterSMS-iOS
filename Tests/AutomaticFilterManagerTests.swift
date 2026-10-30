@@ -46,8 +46,8 @@ class AutomaticFilterManagerTests: XCTestCase {
     //MARK: Tests
     func test_isAutomaticFilteringOn_on() {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = {
-            return self.cache(["he"])
+        self.persistanceManager.cachedFilterListCatalogClosure = {
+            return self.catalog(["he"])
         }
         
         self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
@@ -63,13 +63,13 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertTrue(isAutomaticFilteringOnResult)
         XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_isAutomaticFilteringOn_off() {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = {
-            return self.cache(["he"])
+        self.persistanceManager.cachedFilterListCatalogClosure = {
+            return self.catalog(["he"])
         }
         
         self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
@@ -85,13 +85,13 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertFalse(isAutomaticFilteringOnResult)
         XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_activeAutomaticFiltersTitle_twoLanguages() {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = {
-            return self.cache(["he", "en"])
+        self.persistanceManager.cachedFilterListCatalogClosure = {
+            return self.catalog(["he", "en"])
         }
         
         self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
@@ -110,13 +110,13 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertEqual(activeAutomaticFiltersTitleResult, "\(NLLanguage.english.localizedName!), \(NLLanguage.hebrew.localizedName!).")
         XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_activeAutomaticFiltersTitle_off() {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = {
-            return self.cache(["he", "en"])
+        self.persistanceManager.cachedFilterListCatalogClosure = {
+            return self.catalog(["he", "en"])
         }
         
         self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
@@ -135,7 +135,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertNil(activeAutomaticFiltersTitleResult)
         XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_automaticFiltersCacheAge() {
@@ -191,8 +191,8 @@ class AutomaticFilterManagerTests: XCTestCase {
     
     func test_languagesForAutomaticBlocking() {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = {
-            return self.cache(["he", "en"])
+        self.persistanceManager.cachedFilterListCatalogClosure = {
+            return self.catalog(["he", "en"])
         }
         
         // Act
@@ -200,7 +200,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         
         // Verify
         XCTAssertEqual(Set(languagesResult), [.hebrew, .english])
-        XCTAssertEqual(self.persistanceManager.cachedFilterListsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_languageAutomaticState() {
@@ -359,7 +359,7 @@ class AutomaticFilterManagerTests: XCTestCase {
 
     func test_update_freshCache_skipsFetch() async {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he"]) }
+        self.persistanceManager.cachedFilterListCatalogClosure = { self.catalog(["he"]) }
         self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
             let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
             cacheRecord.uuid = UUID()

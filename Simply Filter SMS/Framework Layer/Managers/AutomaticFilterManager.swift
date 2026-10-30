@@ -105,9 +105,9 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             supportedLanguages.append(contentsOf: remainingSupportedLanguages)
             
         case .automaticBlocking:
-            if let cache = persistanceManager.cachedFilterLists() {
+            if let catalog = persistanceManager.cachedFilterListCatalog() {
                 
-                for entry in cache.catalog.lists {
+                for entry in catalog.lists {
                     guard let langRawValue = entry.language else { continue }
                     let language = NLLanguage(langRawValue)
                     
@@ -221,7 +221,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     private weak var persistanceManager: PersistanceManagerProtocol?
     private var refreshTask: Task<Void, Never>?
     private var shouldFetchFilters: Bool {
-        guard self.persistanceManager?.cachedFilterLists() != nil else { return true }
+        guard self.persistanceManager?.cachedFilterListCatalog() != nil else { return true }
         var shouldFetchFilters = true
         
         if let cacheAge = self.automaticFiltersCacheAge,
@@ -289,7 +289,8 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
 
             switch listResponse {
             case .modified(let payload, let etag):
-                lists.append(FilterListsCacheSection(url: url.absoluteString, etag: etag, payload: payload))
+                let section = FilterListsCacheSection(url: url.absoluteString, etag: etag, payload: payload)
+                lists.append(section)
             case .notModified:
                 if let cachedSection = cachedSection {
                     lists.append(cachedSection)
@@ -303,10 +304,11 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         }
 
         let newCache = FilterListsCache(catalogETag: catalogETag, catalog: catalog, lists: lists)
+        let hasChanges = newCache != cache
         let hasNewFilters = Self.hasNewFilters(from: cache, to: newCache)
-        AppManager.logger.debug("performRefresh — lists: \(lists.count, privacy: .public), changed: \(newCache != cache, privacy: .public), new filters: \(hasNewFilters, privacy: .public), failures: \(hasFailures, privacy: .public)")
+        AppManager.logger.debug("performRefresh — lists: \(lists.count, privacy: .public), changed: \(hasChanges, privacy: .public), new filters: \(hasNewFilters, privacy: .public), failures: \(hasFailures, privacy: .public)")
 
-        guard newCache != cache else {
+        guard hasChanges else {
             if !hasFailures {
                 persistanceManager.touchCache()
             }
@@ -320,9 +322,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
 
     private static func hasNewFilters(from oldCache: FilterListsCache?, to newCache: FilterListsCache) -> Bool {
         let oldLists = oldCache?.lists ?? []
-        let oldURLs = Set(oldLists.map({ $0.url }))
-        let newURLs = Set(newCache.lists.map({ $0.url }))
-        guard oldURLs == newURLs else { return true }
+        guard oldLists.count == newCache.lists.count else { return true }
 
         for newList in newCache.lists {
             guard let oldList = oldLists.first(where: { $0.url == newList.url }) else { return true }

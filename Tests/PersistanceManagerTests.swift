@@ -321,6 +321,28 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssertNil(self.testSubject.cachedFilterLists())
     }
 
+    func test_cachedFilterListCatalog() {
+        // Prepare
+        let cache = self.filterListsCache(records: [self.record(text: "spam")])
+        _ = self.testSubject.saveCache(cache)
+
+        // Act
+        let catalog = self.testSubject.cachedFilterListCatalog()
+
+        // Verify
+        XCTAssertEqual(catalog, cache.catalog)
+    }
+
+    func test_cachedFilterListCatalog_legacyCache() {
+        // Prepare
+        let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
+        existingCache.filtersData = self.legacyFiltersData
+        existingCache.age = Date()
+
+        // Act + Verify
+        XCTAssertNil(self.testSubject.cachedFilterListCatalog())
+    }
+
     func test_touchCache() {
         // Prepare
         let oldDate = Date(timeIntervalSince1970: 0)
