@@ -78,7 +78,16 @@ enum FilterType: Int64, CaseIterable, Identifiable {
             return true
         }
     }
-    
+
+    var isTransferable: Bool {
+        switch self {
+        case .denyLanguage:
+            return false
+        default:
+            return true
+        }
+    }
+
     var supportsAdvancedOptions: Bool {
         switch self {
         case .deny, .allow:
