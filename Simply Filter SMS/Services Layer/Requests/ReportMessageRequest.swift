@@ -8,7 +8,7 @@
 import Foundation
 
 class ReportMessageRequest: URLRequestProtocol {
-    var path: String = "/report"
+    var url: URL = URL.reportMessageURL.appendingPathComponent("report")
     var method: HTTPMethod = .post
     var task: HTTPTask
     var errorDomain: String = "com.grizz.apps.dev.Simply-Filter-SMS.ReportMessageRequest"

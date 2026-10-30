@@ -20,7 +20,7 @@ class AppManager: AppManagerProtocol {
     var automaticFilterManager: AutomaticFilterManagerProtocol
     var messageEvaluationManager: MessageEvaluationManagerProtocol
     var networkSyncManager: NetworkSyncManagerProtocol
-    var amazonS3Service: AmazonS3ServiceProtocol
+    var filterListService: FilterListServiceProtocol
     var reportMessageService: ReportMessageServiceProtocol
     var tipJarManager: TipJarManagerProtocol
     var filterTransferManager: FilterTransferManagerProtocol
@@ -33,19 +33,19 @@ class AppManager: AppManagerProtocol {
         let defaultsManager = DefaultsManager()
         let messageEvaluationManager = MessageEvaluationManager(persistanceManager: persistanceManager)
         let networkSyncManager = NetworkSyncManager(persistanceManager: persistanceManager)
-        let amazonS3Service = AmazonS3Service(networkSyncManager: networkSyncManager)
+        let filterListService = FilterListService(networkSyncManager: networkSyncManager)
         let reportMessageService = ReportMessageService(networkSyncManager: networkSyncManager)
         
         messageEvaluationManager.setLogger(AppManager.logger)
         
         let automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager,
-                                                             amazonS3Service: amazonS3Service)
+                                                             filterListService: filterListService)
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
         self.automaticFilterManager = automaticFilterManager
         self.messageEvaluationManager = messageEvaluationManager
         self.networkSyncManager = networkSyncManager
-        self.amazonS3Service = amazonS3Service
+        self.filterListService = filterListService
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
         self.filterTransferManager = FilterTransferManager(persistanceManager: persistanceManager)
@@ -60,13 +60,37 @@ class AppManager: AppManagerProtocol {
         if UIApplication.shared.isInTestingMode {
             defaultsManager.reset()
             persistanceManager.resetContainer()
-            let emptyList = LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: [])
-            let seedCache = AutomaticFilterListsResponse(filterLists: [
-                "en": emptyList, "he": emptyList, "ar": emptyList,
-                "es": emptyList, "fr": emptyList, "pt": emptyList,
-                "de": emptyList, "ja": emptyList, "ko": emptyList, "it": emptyList
-            ])
-            _ = persistanceManager.saveCache(with: seedCache)
+            let languages = ["en", "he", "ar", "es", "fr", "pt", "de", "ja", "ko", "it"]
+            var entries: [FilterListCatalogEntry] = []
+            var lists: [FilterListsCacheSection] = []
+
+            for language in languages {
+                let fileName = "\(language).sfsfilters"
+                let entry = FilterListCatalogEntry(id: "ai-\(language)",
+                                                   name: language,
+                                                   url: fileName,
+                                                   language: language)
+                guard let listURL = entry.resolvedURL else { continue }
+                let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                                  version: FilterExportPayload.currentVersion,
+                                                  exportedAt: Date(),
+                                                  appVersion: appVersion,
+                                                  name: language,
+                                                  revision: nil,
+                                                  filters: [],
+                                                  forceClearBeforeImport: nil)
+                let section = FilterListsCacheSection(url: listURL.absoluteString,
+                                                      etag: nil,
+                                                      payload: payload)
+                entries.append(entry)
+                lists.append(section)
+            }
+
+            let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                                    version: FilterListCatalogResponse.currentVersion,
+                                                    lists: entries)
+            let cache = FilterListsCache(catalogETag: nil, catalog: catalog, lists: lists)
+            _ = persistanceManager.saveCache(cache)
             defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
         }
         #endif // DEBUG

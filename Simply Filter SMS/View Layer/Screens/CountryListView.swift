@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 //MARK: - View -
 struct CountryListView: View {
 
@@ -79,7 +78,7 @@ struct CountryListView: View {
                 .contentShape(Rectangle())
             }
         }
-        } // NavigationView
+        }
     }
 
     @ViewBuilder
@@ -113,7 +112,6 @@ struct CountryListView: View {
     }
 }
 
-
 //MARK: - ViewModel -
 extension CountryListView {
 
@@ -127,9 +125,7 @@ extension CountryListView {
         private let rule: RuleType
         private var selectedCodes: Set<String> = []
         private var allEntries: [CallingCodeEntry] = []
-        /// Pre-computed localized search terms per calling code (ISO name lookups are expensive).
         private var localizedNames: [String: [String]] = [:]
-        /// ISO region codes whose primary (or a major) language matches the current locale's language.
         private var localeLanguageRegions: Set<String> = []
 
         init(rule: RuleType = .countryAllowlist,
@@ -143,7 +139,6 @@ extension CountryListView {
             self.allEntries = CallingCodeEntry.allCases
                 .sorted { self.sortKey($0) < self.sortKey($1) }
 
-            // Pre-compute localized country names for each entry.
             for entry in self.allEntries {
                 let names = entry.isoCountryCodes.compactMap {
                     Locale.current.localizedString(forRegionCode: $0)
@@ -175,8 +170,6 @@ extension CountryListView {
 
         // MARK: - Private
 
-        /// Returns ISO region codes where `languageCode` is the primary language,
-        /// using CLDR likely-subtags via `Locale.Language.maximalIdentifier`.
         private static func primaryRegions(for languageCode: String) -> Set<String> {
             guard !languageCode.isEmpty else { return [] }
             return Set(Locale.Region.isoRegions.compactMap { region -> String? in
@@ -188,9 +181,6 @@ extension CountryListView {
             })
         }
 
-        /// Sort key: (bucket, numericCode).
-        /// Buckets: 0 = Israel, 1 = locale-language countries, 2 = rest.
-        /// Within each bucket, entries are ordered by numeric calling code.
         private func sortKey(_ entry: CallingCodeEntry) -> (Int, Int) {
             let numeric = Int(entry.callingCode.dropFirst()) ?? Int.max
             switch entry.callingCode {
@@ -222,7 +212,6 @@ extension CountryListView {
         }
     }
 }
-
 
 //MARK: - Preview -
 struct CountryListView_Previews: PreviewProvider {

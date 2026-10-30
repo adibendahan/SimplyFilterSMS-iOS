@@ -1,631 +1,128 @@
 # Framework & Services Layer
 
-Deep dive into the managers, services, protocols, and data flow.
-
----
-
-## AppManager
-
-**Files:** `Framework Layer/Managers/AppManager.swift`, `Protocols/AppManagerProtocol.swift`
-
-Singleton service locator (`AppManager.shared`). Creates, wires, and exposes all managers and services.
-
-### Protocol
-
-```swift
-protocol AppManagerProtocol {
-    static var logger: Logger { get }
-    var persistanceManager: PersistanceManagerProtocol { get }
-    var defaultsManager: DefaultsManagerProtocol { get set }
-    var automaticFilterManager: AutomaticFilterManagerProtocol { get }
-    var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
-    var networkSyncManager: NetworkSyncManagerProtocol { get }
-    var amazonS3Service: AmazonS3ServiceProtocol { get }
-    var reportMessageService: ReportMessageServiceProtocol { get }
-    var tipJarManager: TipJarManagerProtocol { get }
-    var filterTransferManager: FilterTransferManagerProtocol { get }
-    var flowManager: FlowManagerProtocol { get }
-    func onAppLaunch()
-    func onNewUserSession()
-}
-```
-
-### Initialization Order
-
-1. `PersistanceManager` (in-memory if specified)
-2. `DefaultsManager`
-3. `MessageEvaluationManager` (app: receives persistance manager; follows live context across `reloadContainer()`)
-4. `NetworkSyncManager` (receives persistance manager)
-5. `AmazonS3Service` (receives network sync manager)
-6. `ReportMessageService` (receives network sync manager)
-7. `AutomaticFilterManager` (receives persistance manager + S3 service)
-8. `TipJarManager`
-9. `FilterTransferManager` (receives persistance manager)
-10. `FlowManager` (receives defaults manager)
-11. Logger wired to MessageEvaluationManager
-
-In `#if DEBUG` + testing mode (`-Testing` launch argument): resets DefaultsManager and PersistanceManager.
-
-### Lifecycle
-
-- `onAppLaunch()` — Initializes app age, detects new session (day boundary), triggers auto-filter update if online.
-- `onNewUserSession()` — Increments session counter, updates session timestamp, fetches latest automatic filters.
-- `AppManager.previews` — Static in-memory instance with debug data loaded, used by SwiftUI previews.
-
-### Logger
-
-```swift
-static let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
-```
+What the code doesn't tell you: ordering, rules and the reasons behind them. For signatures and file layout, read the code.
 
 ---
 
 ## MessageEvaluationManager
 
-**Files:** `Framework Layer/Managers/MessageEvaluationManager.swift`, `Protocols/MessageEvaluationManagerProtocol.swift`
+### Evaluation pipeline (first match wins)
 
-Core filtering engine. Shared between the main app and the Message Filter Extension.
+1. **Allow filters** → `.allow`.
+2. **All Unknown** rule → `.junk`. An absolute gate: only the user's own allows beat it.
+3. **AI list allow records** → `.allow`. Before the rules, so an allow-listed sender (e.g. a bank) isn't blocked by "links".
+4. **Smart rules** (links, numbers-only, short sender, email, emojis, country allowlist).
+5. **Deny filters** → the filter's folder.
+6. **Language deny** (dominant body language via `NLLanguageRecognizer`).
+7. **AI list deny records** → the record's folder. Records are checked in file order and the first match wins, so list files keep `promotion` / `transaction` records after `junk` ones.
+8. **No match** → `.allow`.
 
-### Protocol
+- The cache row is read once per message, before step 3, and only the lists whose language is on are decoded (`ActiveFilterLists`). Step 7 reuses it.
+- A list record whose settings don't convert is skipped; a regex that doesn't compile doesn't match. Lists are stored as downloaded, so this is the only validation they get.
+- If the extension's store fails to load, the message is allowed with `storeUnavailable`: never block on our own failure.
 
-```swift
-protocol MessageEvaluationManagerProtocol {
-    var context: NSManagedObjectContext { get }
-    func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult
-    func setLogger(_ logger: Logger)
-}
-```
+### Two ways to build it
 
-### MessageEvaluationResult
+- **App:** `init(persistanceManager:)` reads `PersistanceManager.context` on every call, so it keeps working across `reloadContainer()`.
+- **Extension / tests:** `init(inMemory:)` owns a read-only container, loaded synchronously in `init` (`shouldAddStoreAsynchronously = false`).
 
-```swift
-enum MessageEvaluationMatch {
-    case none, noMatch, storeUnavailable
-    case userFilter(String), smartFilter(String), automaticFilter(String)
-}
-
-struct MessageEvaluationResult {
-    var action: ILMessageFilterAction  // .allow, .junk, .transaction, .promotion
-    var match: MessageEvaluationMatch
-    var reason: String? { match.caption }  // logs / Test Filters caption
-}
-```
-
-### Evaluation Pipeline (order matters — first match wins)
-
-1. **Allow filters** — `Filter` records with `type == .allow`. Returns `.allow` if matched.
-
-2. **All Unknown** — Active `AutomaticFiltersRule` for `.allUnknown`. Returns `.junk` (absolute gate after allows).
-
-3. **Automatic filters (allow)** — Active languages’ cached community lists: `allowSenders` / `allowBody`. Returns `.allow`.
-
-4. **Filter rules** — Other active `AutomaticFiltersRule`s (`.allUnknown` skipped here):
-   - `links` — Body contains a URL (`NSDataDetector`)
-   - `numbersOnly` — Sender contains letters (i.e. not numbers-only)
-   - `shortSender` — Sender length ≤ configurable threshold (3–6)
-   - `email` — Sender looks like an email
-   - `emojis` — Body contains emoji
-   - `countryAllowlist` — Sender’s calling code not in the selected allowlist
-
-5. **Deny filters** — `Filter` records with `type == .deny`. Returns the filter’s `denyFolderType.action`.
-
-6. **Language deny** — `Filter` records with `type == .denyLanguage`. Dominant body language via `NLLanguageRecognizer`.
-
-7. **Automatic filters (deny)** — Cached community `denySender` / `denyBody`. Returns `.junk`.
-
-8. **No match** — `.allow` with `match: .noMatch`.
-
-Owned-store load failure (extension/tests) returns `.allow` with reason `"storeUnavailable"` before the pipeline runs.
-
-### Filter Matching Logic
-
-For each user filter, matching depends on three settings:
-- **FilterTarget:** `.all` (sender+body combined), `.sender`, or `.body`
-- **FilterMatching:** `.contains`, `.exact` (word boundaries), or `.regex`
-- **FilterCase:** `.caseInsensitive` or `.caseSensitive`
-
-### Database Access
-
-**App:** `init(persistanceManager:)` — `ContextSource.persistance`; `context` always reads `PersistanceManager.context` (survives `reloadContainer()`).
-
-**Extension / tests:** `init(inMemory:)` — `ContextSource.owned`; owns an `AppPersistentCloudKitContainer` (`isReadOnly: true` unless in-memory). Loads the store synchronously in init (`shouldAddStoreAsynchronously = false`). On failure, logs and leaves an empty store; evaluate then allows without running filters. Successful load sets `stalenessInterval = 0`.
 ---
 
 ## PersistanceManager
 
-**Files:** `Framework Layer/Managers/PersistanceManager.swift`, `Protocols/PersistanceManagerProtocol.swift`
-
-CoreData CRUD layer. Manages three entity types: `Filter`, `AutomaticFiltersRule`, `AutomaticFiltersLanguage`, plus cache records.
-
-### Protocol (key methods)
-
-```swift
-protocol PersistanceManagerProtocol {
-    var container: NSPersistentCloudKitContainer { get }
-    var fingerprint: String { get set }
-
-    // Filters
-    func fetchFilterRecords() -> [Filter]
-    func fetchFilterRecords(for filterType: FilterType) -> [Filter]
-    func addFilter(text:type:denyFolder:filterTarget:filterMatching:filterCase:)
-    func deleteFilters(withOffsets:in:)
-    func deleteFilters(_ filters: Set<Filter>)
-    func updateFilter(_ filter: Filter, denyFolder: DenyFolderType)
-    func updateFilter(_ filter: Filter, filterMatching: FilterMatching)
-    func updateFilter(_ filter: Filter, filterCase: FilterCase)
-    func updateFilter(_ filter: Filter, filterTarget: FilterTarget)
-    func updateFilter(_ filter: Filter, filterText: String)
-    func isDuplicateFilter(text:filterTarget:filterMatching:filterCase:) -> Bool
-
-    // Automatic filters
-    func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage]
-    func fetchAutomaticFiltersRuleRecords() -> [AutomaticFiltersRule]
-    func fetchAutomaticFiltersCacheRecords() -> [AutomaticFiltersCache]
-    func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage?
-    func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule?
-    func ensureAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule
-    func saveCache(_ filterList: AutomaticFilterListsResponse)
-    func isCacheStale(_ filterList: AutomaticFilterListsResponse) -> Bool
-
-    // Lifecycle
-    func commitContext()
-    func reloadContainer()
-    #if DEBUG
-    func loadDebugData()
-    func reset()
-    #endif
-}
-```
-
-### Container Setup
-
-Uses `AppPersistentCloudKitContainer` (subclass of `NSPersistentCloudKitContainer`):
-- Stores database in the App Group container for extension sharing
-- Supports in-memory mode for tests/previews
-- CloudKit sync is automatic via the container
-
-### CloudKit Schema Deployment (IMPORTANT)
-
-**Every CoreData model change requires a manual schema deployment to production.**
-
-The development CloudKit environment auto-evolves its schema when the app runs (new entities and attributes are picked up automatically). The production environment does **not** — it must be explicitly deployed via the CloudKit Console.
-
-**Steps after any CoreData model change:**
-1. Run the debug build on a device or simulator and let it launch fully — the dev schema updates automatically.
-2. Go to [CloudKit Console](https://icloud.developer.apple.com/dashboard) → select the app container → Schema → Environments.
-3. Review the diff between Development and Production carefully. Watch for stale record types from deleted/abandoned features — once deployed to production they **cannot be removed**.
-4. If the diff looks clean, click **Deploy to Production**.
-
-**Symptoms of a missing production schema field:** data syncs correctly in debug builds but not in TestFlight/App Store builds. Fields silently dropped on upload; only previously-deployed fields come back after reinstall.
-
 ### Fingerprint
 
-A computed string of filter UUIDs + automatic rule states (`ruleId` / `isActive` / `selectedCountries`) + language rows (`lang` / `isActive`). Does **not** include `AutomaticFiltersCache`. Used by `NetworkSyncManager` to detect whether a CloudKit import changed user-visible filter data.
+Filter UUIDs + rule states + language rows. It deliberately **excludes** `AutomaticFiltersCache`, so a list refresh never looks like a CloudKit change to `NetworkSyncManager`.
 
-### Cache Management
+### Cache row
 
-- `saveCache()` — Encodes `AutomaticFilterListsResponse` to base64, stores in CoreData with hash and timestamp. Deletes old cache records first.
-- `isCacheStale()` — Compares encoded base64 strings of new vs cached filter lists.
-
-### Debug Support
-
-- `loadDebugData()` — Populates with sample filters (deny/allow/language) for previews and testing.
-- `reset()` — Deletes all records from all entities.
+- `cachedFilterLists()` reads the newest row; a legacy base64 row (3.2 and earlier) reads as `nil`, and a `nil` cache is downloaded whatever its `age`.
+- `saveCache(_:)` updates the newest row and deletes any others. Two devices can each create a row before they sync.
 
 ---
 
 ## AutomaticFilterManager
 
-**Files:** `Framework Layer/Managers/AutomaticFilterManager.swift`, `Protocols/AutomaticFilterManagerProtocol.swift`
+### Refresh
 
-Manages community-sourced filter lists fetched from AWS S3, plus smart rule states and language blocking states.
-
-### Protocol (key members)
-
-```swift
-protocol AutomaticFilterManagerProtocol {
-    var isAutomaticFilteringOn: Bool { get }
-    var activeAutomaticFiltersTitle: String? { get }
-    var automaticFiltersCacheAge: Date? { get }
-    var rules: [RuleType] { get }
-
-    func languages(for mode: LanguageListView.Mode) -> [NLLanguage]
-    func languageAutomaticState(for language: NLLanguage) -> Bool
-    func setLanguageAutmaticState(for language: NLLanguage, value: Bool)
-    func automaticRuleState(for rule: RuleType) -> Bool
-    func setAutomaticRuleState(for rule: RuleType, value: Bool)
-    func selectedChoice(for rule: RuleType) -> Int
-    func setSelectedChoice(for rule: RuleType, choice: Int)
-    func updateAutomaticFiltersIfNeeded()
-    func forceUpdateAutomaticFilters() async
-}
-```
-
-### Key Behaviors
-
-- `isAutomaticFilteringOn` — True if any language has automatic filtering enabled AND cache records exist.
-- `activeAutomaticFiltersTitle` — Comma-separated localized names of active languages (e.g., "English, Hebrew").
-- `languages(for:)` — Returns different lists per mode:
-  - `.automaticBlocking` — Languages available in the cached filter lists
-  - `.blockLanguage` — All supported `NLLanguage` cases minus already-blocked ones
-- `updateAutomaticFiltersIfNeeded()` — Checks if cache is older than `kUpdateAutomaticFiltersMinDays` (3 days). If so, fetches from S3 in a background `Task`.
-- `forceUpdateAutomaticFilters()` — Async. Always fetches regardless of cache age. Used by pull-to-refresh.
-- After an S3 fetch, cache writes (`updateCacheIfNeeded`) run on the **MainActor** so Core Data view-context work stays on the main thread.
-- Rule/language state changes persist immediately via `PersistanceManager.commitContext()`.
-
----
-
-## DefaultsManager
-
-**Files:** `Framework Layer/Managers/DefaultsManager.swift`, `Protocols/DefaultsManagerProtocol.swift`
-
-UserDefaults wrapper for app settings.
-
-### Protocol
-
-```swift
-protocol DefaultsManagerProtocol {
-    var isAppFirstRun: Bool { get set }
-    var isExpandedAddFilter: Bool { get set }
-    var lastOfflineNotificationDismiss: Date? { get set }
-    var sessionAge: Date? { get set }
-    var sessionCounter: Int { get set }
-    var didPromptForReview: Bool { get set }
-    var lastSeenWhatsNewVersion: Int { get set }
-    var didDismissReportingExtensionNudge: Bool { get set }
-    var accentColorRGB: [String: Double] { get set }
-    var appAge: Date { get }
-    #if DEBUG
-    func reset()
-    #endif
-}
-```
-
-### Key Properties
-
-- `isAppFirstRun` — Controls onboarding display. Set to `false` after first dismiss.
-- `isExpandedAddFilter` — Persists the expand/collapse state of AddFilterView's advanced options.
-- `sessionCounter` / `sessionAge` — Track user sessions for review prompt logic.
-- `appAge` — First launch date. Initialized once, never changes.
-- `didPromptForReview` — Ensures App Store review prompt is shown only once.
-- `lastOfflineNotificationDismiss` — Suppresses offline notification for `kHideiClouldStatusMemory` (60) minutes after dismiss.
-- `lastSeenWhatsNewVersion` — Tracks the last What's New version the user has seen. Compared against `currentWhatsNewVersion` to decide whether to show the What's New sheet.
-- `accentColorRGB` — `@StoredDefault` dictionary (`kNoColorDict` = system accent). `Color(accentRGB:)` / `Color.accentRGB` convert. Debug `reset()` clears the key.
+- Runs when the cache is older than `kUpdateAutomaticFiltersMinDays`; pull-to-refresh forces it and sends no ETags.
+- Catalog first, then each list with its stored ETag: `304` keeps the section, `200` replaces it, a failure keeps the old one. Lists that left the catalog are dropped.
+- Saves once if anything changed. Otherwise `touchCache()`, except when a list failed, so the next launch retries instead of waiting days.
+- Runs on the **main actor** (Core Data view context). A second caller joins the running refresh (`refreshTask`), so pull-to-refresh waits for the real result.
+- Posts `.automaticFiltersUpdated` only for a real change: a list added or removed, a higher `revision`, or different filters when there's no `revision`. Re-uploading the same file doesn't notify anyone.
 
 ---
 
 ## NetworkSyncManager
 
-**Files:** `Framework Layer/Managers/NetworkSyncManager.swift`, `Protocols/NetworkSyncManagerProtocol.swift`
+### Sync monitoring
 
-Monitors network connectivity and CloudKit sync status.
+- An import posts `.cloudSyncOperationComplete` (toast + refresh) only when the fingerprint changed.
+- `AppHomeView.startMonitoring` compares fingerprints once on its own, in case the import finished before the observers were registered.
 
-### Protocol
+### Recovery
 
-```swift
-protocol NetworkSyncManagerProtocol: AnyObject {
-    var syncStatus: SyncStatus { get }    // .unknown, .active, .failed
-    var networkStatus: NetworkStatus { get } // .unknown, .online, .offline
-    func onFirstStatusKnown(_ handler: @escaping () -> Void)
-}
-```
+`reloadContainer()` runs only on a genuine reconnection: `NetworkStatus.isReconnection(from:)`, which is `.offline` → `.online` and nothing else. A failed setup is recorded as `syncStatus = .failed` for the UI and otherwise left alone.
 
-### Notification Names (defined in protocol file)
+**`.unknown` is not a network state.** It means the path monitor hasn't reported yet, so leaving it is a first report, never a reconnection. Treating it as one called `reloadContainer()` during CloudKit setup on a fresh install, tore down the store and aborted the initial import: no filters for the whole first session, and duplicates after relaunch. Present from 2022-02-09 until `dc22149`; pinned by `NetworkStatusTests`.
 
-```swift
-extension NSNotification.Name {
-    static let networkStatusChange
-    static let cloudSyncOperationComplete
-    static let automaticFiltersUpdated
-    static let onClipboardSet
-    static let filtersStateChanged
-    static let persistentStoreReloaded
-}
-```
+**Never retry a failed setup with `reloadContainer()`.** It destroys the `NSCloudKitMirroringDelegate` that is already running Core Data's own backoff, and **one** teardown is enough to lose the initial import on a fresh install. A setup retry was tried (`0ac0579`), disabled, then deleted. Core Data retries setup itself.
 
-### Network Monitoring
-
-Uses `NWPathMonitor` on a background queue. Posts `.networkStatusChange` on status changes.
-
-### CloudKit Sync Monitoring
-
-Subscribes to `NSPersistentCloudKitContainer.eventChangedNotification`. Tracks three event types (setup, import, export). Maintains a "pre-sync fingerprint" (from `PersistanceManager.fingerprint`) to detect actual data changes during import.
-
-On **successful import**: posts `.cloudSyncOperationComplete` (toast + refresh) when the fingerprint changed. Failed imports are logged separately.
-
-`AppHomeView.startMonitoring` also compares store fingerprint to the last UI fingerprint once and `refresh()`es if the store is already ahead (import finished before observers were registered).
-
-### Recovery Logic
-
-Reloads the CloudKit container on a genuine reconnection — `NetworkStatus.isReconnection(from:)`, which is `.offline` → `.online` and nothing else. A failed setup is recorded as `syncStatus = .failed` for the UI and otherwise left alone.
-
-**`.unknown` is not a network state.** It means the path monitor has not reported yet, so leaving it is a first report, never a reconnection. Treating it as one called `reloadContainer()` during CloudKit setup on a fresh install, tearing down the store and aborting the initial import — no filters for the whole first session, and duplicates after relaunch. Present from 2022-02-09 until `dc22149`; pinned by `NetworkStatusTests`.
-
-**`maxSetupRetries` is `0`, and must stay there.** `scheduleSetupRetryIfNeeded` was added (2026-08-13, `0ac0579`) as an attempted fix for the bug above and was not the cause. Its "retry" is `reloadContainer()`, which destroys the `NSCloudKitMirroringDelegate` already running Core Data's own backoff recovery — **one** teardown is enough to lose the initial import on a fresh install, so `1` would not be safer than `2`. Worse, `setupRetryCount` resets only on setup success, so once the attempts are spent sync is dead for the session with no path back on stable Wi-Fi. Core Data retries setup itself. The dead machinery should be deleted outright; the constant is at `0` as the smallest safe change before release.
-
-`PersistanceManager.reloadContainer()` resets the view context (invalidating all managed objects), loads a new container, then posts `.persistentStoreReloaded` on the main queue. Screens that cache Core Data objects conform to `ViewWithPersistentStoreReload` and apply `.modifier(persistentStoreReload)` (`PersistentStoreReload.swift`).
----
-
-## TipJarManager
-
-**Files:** `Framework Layer/Managers/TipJarManager.swift`, `Protocols/TipJarManagerProtocol.swift`
-
-Manages in-app purchase tip jar using StoreKit 2. Three consumable tip tiers (small, medium, large).
-
-### Protocol
-
-```swift
-protocol TipJarManagerProtocol {
-    @MainActor var products: [Product] { get }
-    @MainActor var isLoadingProducts: Bool { get }
-    func purchase(_ product: Product) async -> TipPurchaseResult
-}
-```
-
-### TipPurchaseResult
-
-```swift
-enum TipPurchaseResult {
-    case success(TipTier)
-    case userCancelled
-    case pending
-    case failure(Error)
-}
-```
-
-### Key Behaviors
-
-- **Product loading** — On init, launches a `Task` that calls `Product.products(for:)` with `TipTier.allCases` product IDs. Products are sorted by price ascending. Both `products` and `isLoadingProducts` are `@MainActor`-isolated.
-- **Transaction listener** — Background `Task` listens to `Transaction.updates` for server-side transaction completions. Finishes verified transactions automatically.
-- **Unfinished transactions** — On init, iterates `Transaction.unfinished` and finishes any verified pending transactions.
-- **Purchase flow** — `purchase(_:)` handles all StoreKit result cases (success, userCancelled, pending, unknown) and verification. Returns a typed `TipPurchaseResult`.
-- **StoreKit configuration** — Local `TipJar.storekit` file (synced from App Store Connect) in `Resources/` for simulator testing. Referenced in the scheme's `LaunchAction`.
-
-### TipTier
-
-Defined in `Constants.swift`. `CaseIterable` enum with `String` raw values (product IDs). Computed properties: `emoji`, `displayName`, `tierDescription`, `iconColor`, `confettiBirthRate`, `confettiLifetime`, `confettiVelocity`.
+`reloadContainer()` resets the view context, which invalidates every managed object, then posts `.persistentStoreReloaded`. Any screen that holds Core Data objects applies `.modifier(persistentStoreReload)`.
 
 ---
 
 ## FilterTransferManager
 
-**Files:** `Framework Layer/Managers/FilterTransferManager.swift`, `Protocols/FilterTransferManagerProtocol.swift`
+### `.sfsfilters` rules
 
-Merge-only import/export of user filters. Export writes a versioned JSON payload to a `.sfsfilters` file in the temp directory — the user picks which filters first (same picker UI as import). Import never deletes existing filters; new rows get new UUIDs via `addFilter`. One in-flight picker at a time (`pendingPreview` / `pendingKind` / `lastImportResult`).
+One format for exports, AI Filtering lists and (later) subscribed lists.
 
-### Protocol
+- **Compatibility:** changes are additive and optional only, so `version` stays `1` and 3.2 can still read new files.
+- **Omitted fields:** regex records have no `case` (the pattern decides) and allow records have no `folder`. Import fills in `.caseInsensitive` / `.junk`. Older files that still have them import fine.
+- **`name` / `revision`** are for published lists. Exports never write them; list creators add them by hand.
+- **Language blocks (`denyLanguage`) aren't transferred.** They're a preference, not a filter (`FilterType.isTransferable`). Exports leave them out. Imports skip them silently: they aren't counted as invalid, because a 3.2 export legitimately contains them. A `forceClearBeforeImport` entry for them is ignored, so a file can't wipe them.
+- **Validation:** `FilterTransferCandidate.init?(record:)` is the only path, for imports and for AI list records in the extension alike. It drops bad records one at a time. Imports also require `isImportable` (the regex compiles). The extension skips that: a bad regex simply doesn't match, and checking it would compile every pattern twice per message. The extension checks a record's `type` before converting it, because it scans the lists twice per message (allow, then deny).
 
-```swift
-protocol FilterTransferManagerProtocol {
-    var pendingPreview: FilterTransferPreview { get }
-    var pendingKind: FilterTransferKind { get }
-    func exportPayload() throws -> Data
-    func writeExportFile(candidates: [FilterTransferCandidate]) throws -> URL
-    func queueExport() -> FilterTransferPreview
-    func clearPendingExport()
-    func deleteExportFile(at url: URL)
-    func isExportFile(_ url: URL) -> Bool
-    func readFile(at url: URL) throws -> Data
-    func previewImport(data: Data) throws -> FilterTransferPreview
-    func queueImport(data: Data) throws -> FilterTransferPreview
-    func clearPendingImport() -> FilterTransferResult?
-    func importFilters(_ candidates: [FilterTransferCandidate]) -> FilterTransferResult
-}
-```
+### Sessions
 
-### Key Behaviors
-
-- **`queueImport`** starts an import session (`pendingPreview`, `pendingKind = .importFilters`). Home still `recordLaunch(.filterImport)` when there is nothing to add; `presentNextFlow` shows the native alert instead of the preview sheet.
-- **`queueExport`** starts an export session from local filters (`pendingKind = .exportFilters`). Home `requestSheet(.filterExport)`.
-- **`importFilters`** writes onto that session. **`clearPendingImport`** ends it and returns the result (or nil) for the dismiss toast.
-- **`writeExportFile(candidates:)`** writes only the selected rows and holds the temp URL. The export picker presents the share sheet on top of itself. **`clearPendingExport()`** runs when that picker dismisses and deletes the temp file.
-- **`isExportFile`** is `.sfsfilters` only. **`deleteExportFile`** only removes a `.sfsfilters` file inside the temp directory.
-- Custom UTI / document type: `kFilterExportTypeIdentifier` in `Constants.swift`.
+- Import and export share one in-flight picker (`pendingPreview` / `pendingKind`).
+- An import with nothing new still goes through `recordLaunch(.filterImport)`; Home then shows the "nothing to import" alert instead of the sheet.
+- `deleteExportFile` only removes a `.sfsfilters` file inside the temp directory, so it can never delete a user's file.
 
 ---
 
 ## FlowManager
 
-**Files:** `Framework Layer/Managers/FlowManager.swift`, `Protocols/FlowManagerProtocol.swift`
+Order and occupancy are in `CLAUDE.md`. Beyond that:
 
-Launch-order queue for Home sheets. It is not a navigator — Home still owns `sheetScreen`.
-
-### Protocol
-
-```swift
-protocol FlowManagerProtocol {
-    func recordLaunch(_ screen: Screen) -> Bool
-    func request(_ screen: Screen)
-    func enableWhatsNew()
-    func next() -> Screen?
-    func complete(_ screen: Screen)
-    func resetSession()
-}
-```
-
-### Key Behaviors
-
-- **Occupancy:** `next()` sets `activeScreen`. Further `next()` returns nil until `complete`.
-- **Order:** first run (`.enableExtension`) → launch (file / deep link) → automatic What's New (after `enableWhatsNew()`) → user `request`.
-- **`recordLaunch`** returns `false` for `.enableExtension` during first run (already showing that sheet). Last successful launch wins.
-- Automatic What's New is skipped if the session started as first run or a launch claimed the session.
-- Debug `AppManager.reset()` clears the pending import and `resetSession()`.
-
-The inactivity notification alert does **not** go through FlowManager. It is a Home alert like
-`showNothingToImportAlert`, raised from `navigationScreen`'s `didSet` when navigation returns to
-Home.
+- `recordLaunch(.enableExtension)` returns `false` during first run, since that sheet is already showing. The last successful launch wins.
+- Automatic What's New is skipped when the session started as first run or a launch claimed it.
 
 ---
 
 ## SchedulingManager
 
-**Files:** `Framework Layer/Managers/SchedulingManager.swift`, `Protocols/SchedulingManagerProtocol.swift`
+### Background refresh
 
-Keeps automatic filtering useful for people who never open the app. Two jobs: a background task
-that refreshes the filter lists when iOS is willing to run us, and a monthly banner that asks
-them to come back when it is not.
+- One `BGProcessingTask`, not an app refresh task: processing targets idle and overnight windows, which suits an app that's rarely opened. `earliestBeginDate` is now + `kUpdateAutomaticFiltersMinDays`.
+- Registered in `AppDelegate.didFinishLaunching` (iOS requires it before launch returns). Submitted from `onAppLaunch()` and again at the top of every wake.
+- The Message Filter Extension never fetches; only the app does.
 
-### Protocol
+### Inactivity reminder
 
-```swift
-protocol SchedulingManagerProtocol: AnyObject {
-    var isFinalInactivityNotificationAsk: Bool { get }
+- One repeating notification, first firing a month out, then monthly. It's an interval trigger because a `UNCalendarNotificationTrigger` on today's day of month would fire again the same evening.
+- **Only** `AppDelegate.applicationDidBecomeActive` moves the clock. iOS runs `didFinishLaunching` for background wakes too, so nothing on the launch path may touch it.
+- Cancelled when AI Filtering goes off (`.filtersStateChanged`).
 
-    func scheduleAutomaticFiltersProcessing()
-    func handleAutomaticFiltersProcessing(task: BGProcessingTask)
-    func refreshInactivityReminder()
-    func shouldShowInactivityNotificationAlert() async -> Bool
-    func requestInactivityNotificationPermission() async
-    func recordInactivityNotificationDecline()
+### When to ask
 
-    #if DEBUG
-    func reset()
-    #endif // DEBUG
-}
-```
-
-### Background Refresh
-
-- One `BGProcessingTask` (`kAutomaticFiltersProcessingTaskIdentifier`), `requiresNetworkConnectivity`,
-  `earliestBeginDate` = now + `kUpdateAutomaticFiltersMinDays`. Processing (not app refresh) targets
-  idle/overnight windows, which suits an app that is rarely opened.
-- Registered in `AppDelegate.didFinishLaunching` (iOS requires it before launch returns); submitted
-  from `AppManager.onAppLaunch()` and again at the top of every handled wake.
-- The handler calls the existing `updateAutomaticFiltersIfNeeded()`, so the stale check, S3 client
-  and App Group cache write are unchanged. The Message Filter Extension still never fetches.
-- Info.plist carries `processing` in `UIBackgroundModes` and the identifier in
-  `BGTaskSchedulerPermittedIdentifiers`.
-
-### Inactivity Reminder
-
-- A single repeating notification (`kInactivityReminderNotificationIdentifier`), first firing a month
-  out at `kInactivityReminderHour`, then monthly. A `UNCalendarNotificationTrigger` cannot express
-  this: matching today's day of month would fire again the same evening, so an interval is used.
-- **Only** `AppDelegate.applicationDidBecomeActive` refreshes the clock. iOS also runs
-  `didFinishLaunching` for background task wakes, so nothing on the launch path may touch it —
-  that callback fires only on a real foreground entry, which is the guarantee this relies on.
-- Cancelled when AI Filtering goes off, via `.filtersStateChanged` observed inside the manager.
-- No sound, no badge.
-
-### Ask Cadence
-
-- Shown only when AI Filtering is on, this is not the first session, alerts are not already
-  allowed, fewer than `kInactivityNotificationMaxAsks` declines are on record, and at least
-  `kInactivityNotificationMinSessionsBetweenAsks` sessions have passed since the last decline.
-- Raised from `AppHomeView.ViewModel.navigationScreen`'s `didSet`, so it appears only on the way
-  back to Home from a pushed screen — never on app open and never after a launch sheet, since
-  dismissing a sheet does not touch `navigationScreen`. It shares that hook with
-  `tryRequestReview()`, which returns whether it prompted so the two never stack.
-- `shouldShowInactivityNotificationAlert()` is read-only. Permission bookkeeping happens in
-  `refreshInactivityReminder()`, which is already asking iOS for the authorization status.
-- Remembering a grant (`inactivityNotificationWasGranted`) is what lets a later revoke in Settings
-  be noticed; when it is, the decline history is wiped and the conversation may start over.
-- A denial from the system prompt after Continue counts as a decline.
+- AI Filtering is on, it's not the first session, alerts aren't already allowed, fewer than `kInactivityNotificationMaxAsks` declines, and at least `kInactivityNotificationMinSessionsBetweenAsks` sessions since the last one.
+- A remembered grant is what lets a later revoke in Settings be noticed; then the decline history is wiped. A denial at the system prompt counts as a decline.
 
 ---
 
-## Services Layer
+## Services
 
-### HTTPService (Base)
-
-**Files:** `Services Layer/Base/HTTPService.swift`, `Base/URLRequestProtocol.swift`
-
-Generic HTTP client with protocol-based request definitions.
-
-```swift
-protocol HTTPServiceProtocol {
-    func execute<T: Decodable>(type: T.Type, baseURL: URL, request: URLRequestProtocol) async throws -> T
-}
-```
-
-**URLRequestProtocol** defines: `path`, `method` (GET/POST/PUT/DELETE/PATCH), `task` (plain or with parameters), `errorDomain`.
-
-**HTTPServiceBase** — Common base for services. Holds `httpService: HTTPServiceProtocol` and a weak `networkSyncManager` reference.
-
-### UserNotificationCenterService
-
-**File:** `Services Layer/UserNotificationCenterService.swift`
-
-```swift
-protocol UserNotificationCenterServiceProtocol: AnyObject {
-    func authorizationStatus() async -> UNAuthorizationStatus
-    func requestAlertAuthorization() async -> Bool
-    func schedule(_ request: UNNotificationRequest) async
-    func cancelPendingNotification(withIdentifier identifier: String)
-}
-```
-
-A pipe to `UNUserNotificationCenter` and nothing more — all policy lives in `SchedulingManager`.
-`UNAuthorizationStatus.allowsAlerts` (extension in the same file) maps the platform enum, the same
-way `NWPath.Status.networkStatus` does.
-
-### AmazonS3Service
-
-**File:** `Services Layer/AmazonS3Service.swift`
-
-```swift
-protocol AmazonS3ServiceProtocol: AnyObject {
-    func fetchAutomaticFilters() async -> AutomaticFilterListsResponse?
-}
-```
-
-- Fetches `GET /simply-filter-sms/1.0.0/automatic_filters.json` from S3
-- Guards against duplicate concurrent requests via `isFetching` flag
-- Returns `nil` when offline or already fetching
-
-### ReportMessageService
-
-**File:** `Services Layer/ReportMessageService.swift`
-
-```swift
-protocol ReportMessageServiceProtocol: AnyObject {
-    @discardableResult
-    func reportMessage(reportMessageRequestBody: ReportMessageRequestBody) async -> Bool
-}
-```
-
-- Posts to `POST /report` (`https://api.ben-dahan.com/report`, public, no auth)
-- Body: `{ classification: { sender, bodies, type } }`
-- Returns `true` on HTTP 200
-
-### Request/Response DTOs
-
-**AutomaticFilterListsResponse:**
-```swift
-struct AutomaticFilterListsResponse: Codable {
-    let filterLists: [String: LanguageFilterListResponse]  // language code -> filter lists
-}
-struct LanguageFilterListResponse: Codable {
-    let allowSenders: [String]
-    let allowBody: [String]
-    let denySender: [String]
-    let denyBody: [String]
-}
-```
-
-Supports base64 encoding/decoding for CoreData caching.
-
-**ReportMessageResponse:**
-```swift
-struct ReportMessageResponse: Codable {
-    let statusCode: Int?
-    let message: String?
-}
-```
-
----
-
-## Utility Files
-
-### EmojiGenerator
-
-**File:** `Framework Layer/EmojiGenerator.swift`
-
-`enum EmojiGenerator` with a single static method `randomEmoji() -> String`. Picks from 11 Unicode emoji ranges, validates via `isEmojiPresentation` / `isEmoji`, retries up to 8 times, falls back to "smile". Used by the emoji rule toggle button in AppHomeView.
-
-### SharedUITestsHelpers
-
-**File:** `Framework Layer/SharedUITestsHelpers.swift`
-
-- `UIApplication.isInTestingMode` — Checks for `-Testing` in process arguments (DEBUG only)
-- `TestIdentifier` enum — All accessibility identifiers used by UI tests (e.g., `.addFilterButton`, `.appMenuButton`, `.testSenderInput`)
+- **`fetchIfModified(request:)`** ignores the local URL cache (`.reloadIgnoringLocalCacheData`), so iOS's own cache can't hide a `304`. It sends `If-None-Match` only when there's an ETag.
+- **`FilterListService`:** a catalog entry's `url` is relative to `URL.filterListCatalogURL` or absolute, so lists can live anywhere.

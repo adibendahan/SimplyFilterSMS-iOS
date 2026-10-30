@@ -5,12 +5,8 @@
 
 import SwiftUI
 
-
 // MARK: - Card
 
-/// Frosted-glass card showing a spinning loader during submission and a
-/// green-circle checkmark on success. Used in ReportMessageView and the
-/// Reporting Extension.
 struct ReportSubmitCard: View {
 
     let isDone: Bool
@@ -50,31 +46,22 @@ struct ReportSubmitCard: View {
     }
 }
 
-
 // MARK: - Animation
 
-/// Two arcs spin during loading (SpinningView style).
-/// On success:
-///   - The inner arc fades out; the green filled circle springs in.
-///   - The outer arc (same line) unwinds via trim.from 0→1 while the checkmark draws via trim 0→1.
-///   - Stroke stays white throughout — no color snap.
 private struct ReportSubmitAnimationView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let isDone: Bool
 
-    // Outer arc
     @State private var circleEnd: CGFloat = 0.001
     @State private var rotationDegree: Angle = .degrees(-90)
-    @State private var arcTrimFrom: CGFloat = 0   // sweeps 0→1 to unwind the arc on success
+    @State private var arcTrimFrom: CGFloat = 0
 
-    // Inner arc
     @State private var smallCircleEnd: CGFloat = 1
     @State private var smallRotationDegree: Angle = .degrees(-30)
     @State private var innerArcOpacity: Double = 1
 
-    // Success
     @State private var showFilledCircle: Bool = false
     @State private var checkTrim: CGFloat = 0
 
@@ -84,7 +71,6 @@ private struct ReportSubmitAnimationView: View {
 
     var body: some View {
         ZStack {
-            // Inner arc
             Circle()
                 .trim(from: 0, to: smallCircleEnd)
                 .stroke(Color.white, style: StrokeStyle(lineWidth: 5, lineCap: .round))
@@ -92,7 +78,6 @@ private struct ReportSubmitAnimationView: View {
                 .frame(width: 30, height: 30)
                 .opacity(innerArcOpacity)
 
-            // Green filled circle — springs in on success, sits behind the outer arc
             if showFilledCircle {
                 Circle()
                     .fill(Color.green)
@@ -100,15 +85,12 @@ private struct ReportSubmitAnimationView: View {
                     .transition(.scale(scale: 0.5).combined(with: .opacity))
             }
 
-            // Outer arc — the same line as during loading.
-            // arcTrimFrom sweeps 0→1 to unwind it as the checkmark draws.
             Circle()
                 .trim(from: arcTrimFrom, to: circleEnd)
                 .stroke(Color.white, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                 .rotationEffect(rotationDegree)
                 .frame(width: 80, height: 80)
 
-            // Checkmark — draws simultaneously with the arc unwinding.
             TickShape()
                 .trim(from: 0, to: checkTrim)
                 .stroke(Color.white, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
@@ -136,19 +118,15 @@ private struct ReportSubmitAnimationView: View {
     private func transitionToSuccess() {
         isSpinning = false
 
-        // Complete the outer arc and fade the inner arc simultaneously
         withAnimation(.easeOut(duration: 0.2)) {
             circleEnd = 1
             innerArcOpacity = 0
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-            // Green circle springs in
             withAnimation(.spring(response: 0.38, dampingFraction: 0.72)) {
                 showFilledCircle = true
             }
-            // The arc unwinds (trim.from 0→1) while the checkmark draws (trim 0→1).
-            // Same duration, same easing: the line reshapes from circle to checkmark.
             withAnimation(.easeInOut(duration: 0.52)) {
                 arcTrimFrom = 1
             }
@@ -201,10 +179,8 @@ private struct ReportSubmitAnimationView: View {
     }
 }
 
-
 // MARK: - Checkmark shape
 
-/// Two-segment checkmark path.
 private struct TickShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -214,7 +190,6 @@ private struct TickShape: Shape {
         return path
     }
 }
-
 
 // MARK: - Preview
 

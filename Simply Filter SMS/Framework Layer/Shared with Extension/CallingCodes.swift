@@ -7,15 +7,13 @@
 
 import Foundation
 
-
 // MARK: - CallingCodeEntry Enum
 
-/// Each case represents a country or group of countries sharing an ITU calling code.
 enum CallingCodeEntry: CaseIterable {
 
     // MARK: Cases (grouped by region)
 
-    // Americas
+    // MARK: Americas
     case nanp               // +1  — North America (NANP)
     case peru               // +51
     case mexico             // +52
@@ -45,7 +43,7 @@ enum CallingCodeEntry: CaseIterable {
     case uruguay            // +598
     case netherlandsAntilles // +599
 
-    // Europe
+    // MARK: Europe
     case russiaKazakhstan   // +7
     case greece             // +30
     case netherlands        // +31
@@ -97,7 +95,7 @@ enum CallingCodeEntry: CaseIterable {
     case faroeIslands       // +298
     case greenland          // +299
 
-    // Africa
+    // MARK: Africa
     case egypt              // +20
     case southAfrica        // +27
     case morocco            // +212
@@ -158,7 +156,7 @@ enum CallingCodeEntry: CaseIterable {
     case eritrea            // +291
     case aruba              // +297
 
-    // Asia-Pacific
+    // MARK: Asia-Pacific
     case malaysia           // +60
     case australia          // +61
     case indonesia          // +62
@@ -206,7 +204,7 @@ enum CallingCodeEntry: CaseIterable {
     case bangladesh         // +880
     case taiwan             // +886
 
-    // Middle East
+    // MARK: Middle East
     case israel             // +972
     case maldives           // +960
     case lebanon            // +961
@@ -231,15 +229,10 @@ enum CallingCodeEntry: CaseIterable {
     case kyrgyzstan         // +996
     case uzbekistan         // +998
 
-
     // MARK: - Computed Properties
 
-    /// Calling code string including the leading '+'.
     var callingCode: String { data.0 }
 
-    /// Human-readable display name, always localized to the current locale.
-    /// Single-country entries use the system locale name. Grouped multi-country entries
-    /// use an app localization key (e.g. "callingCode_+1") with fallback to the hardcoded name.
     var displayName: String {
         guard isoCountryCodes.count > 1 else {
             return Locale.current.localizedString(forRegionCode: isoCountryCodes[0]) ?? data.1
@@ -249,13 +242,10 @@ enum CallingCodeEntry: CaseIterable {
         return localized != key ? localized : data.1
     }
 
-    /// Display name for use in summaries — same as displayName since no suffix is ever appended.
     var summaryName: String { displayName }
 
-    /// ISO 3166-1 alpha-2 codes for the countries in this entry.
     var isoCountryCodes: [String] { data.2 }
 
-    /// Flag emoji derived from the first ISO country code.
     var flagEmoji: String {
         let code = isoCountryCodes.first ?? ""
         guard code.count == 2 else { return "🌍" }
@@ -267,10 +257,8 @@ enum CallingCodeEntry: CaseIterable {
 
     // MARK: - Lookup
 
-    /// O(1) lookup by calling code string.
     static let byCallingCode: [String: CallingCodeEntry] =
         Dictionary(uniqueKeysWithValues: allCases.map { ($0.callingCode, $0) })
-
 
     // MARK: - Private Data
 
@@ -694,22 +682,14 @@ enum CallingCodeEntry: CaseIterable {
     // swiftlint:enable large_tuple
 }
 
-
 // MARK: - CallingCodes Namespace
 
 enum CallingCodes {
 
-    /// Normalize a raw sender string: keep only digits and '+'.
     static func normalize(_ sender: String) -> String {
         sender.filter { $0.isNumber || $0 == "+" }
     }
 
-    /// Identify the calling-code entry for a raw sender string.
-    ///
-    /// - Normalizes formatting characters.
-    /// - Returns `nil` if the string does not start with `+`.
-    /// - Tries longest-prefix match: 4-char prefix, then 3-char, then 2-char.
-    /// - Returns `nil` if no prefix matches.
     static func callingCode(for sender: String) -> CallingCodeEntry? {
         let normalized = normalize(sender)
         guard normalized.hasPrefix("+"), normalized.count >= 2 else { return nil }

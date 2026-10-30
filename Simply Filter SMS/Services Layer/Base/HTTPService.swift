@@ -7,18 +7,25 @@
 
 import Foundation
 
+enum FetchResult<T> {
+    case notModified
+    case modified(T, etag: String?)
+}
+
+extension FetchResult: Equatable where T: Equatable { }
+
 protocol HTTPServiceProtocol {
     func execute<T>(type: T.Type,
-                    baseURL: URL,
                     request: URLRequestProtocol) async throws -> T where T: Decodable
+
+    func fetchIfModified(request: URLRequestProtocol) async throws -> FetchResult<Data>
 }
 
 class HTTPService: HTTPServiceProtocol {
     func execute<T>(type: T.Type,
-                    baseURL: URL,
                     request: URLRequestProtocol) async throws -> T where T: Decodable {
         
-        let request = URLRequest(baseURL: baseURL, request: request)
+        let request = URLRequest(request: request)
         let (data, _) = try await URLSession.shared.data(for: request)
         
         do {
@@ -26,6 +33,23 @@ class HTTPService: HTTPServiceProtocol {
             return decodedData
         } catch {
             throw RequestError.noData
+        }
+    }
+
+    func fetchIfModified(request: URLRequestProtocol) async throws -> FetchResult<Data> {
+        var request = URLRequest(request: request)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else { throw RequestError.unknown }
+
+        switch httpResponse.statusCode {
+        case 304:
+            return .notModified
+        case 200..<300:
+            let etag = httpResponse.value(forHTTPHeaderField: "ETag")
+            return .modified(data, etag: etag)
+        default:
+            throw RequestError.badStatus(httpResponse.statusCode)
         }
     }
 }

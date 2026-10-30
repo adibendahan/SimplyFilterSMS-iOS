@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NaturalLanguage
 
 
 //MARK: - View -
@@ -134,7 +133,7 @@ struct FilterTransferCandidateListView: View {
                 if self.model.regularCandidates(for: self.filterType).count > 0 {
                     AdaptiveColumnHeader(leadingAccessory: {
                         self.sectionSelectAll(self.model.regularCandidates(for: self.filterType))
-                    }, primary: self.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~,
+                    }, primary: "filterList_text"~,
                        secondary: self.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~,
                        secondaryIsMuted: false)
                 }
@@ -175,7 +174,7 @@ struct FilterTransferCandidateListView: View {
         AdaptiveRow {
             EmptyView()
         } content: {
-            Text(self.model.displayName(for: candidate))
+            Text(candidate.text)
                 .font(candidate.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
                 .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -205,7 +204,7 @@ struct FilterTransferCandidateListView: View {
     }
 
     private func candidateAccessibilityLabel(_ candidate: FilterTransferCandidate) -> String {
-        var parts = [self.model.displayName(for: candidate)]
+        var parts = [candidate.text]
         if candidate.type.supportsAdvancedOptions {
             parts.append(String(format: "a11y_filterRow_targetLabel"~, candidate.filterTarget.name))
             parts.append(String(format: "a11y_filterRow_matchLabel"~, candidate.filterMatching.name))
@@ -298,12 +297,6 @@ extension FilterTransferPreviewView {
             }
         }
 
-        func displayName(for candidate: FilterTransferCandidate) -> String {
-            guard candidate.type == .denyLanguage else { return candidate.text }
-            let language = NLLanguage(filterText: candidate.text)
-            return language.localizedName ?? candidate.text
-        }
-
         func confirm() -> Bool {
             let selected = self.preview.candidates.filter({ self.selectedIDs.contains($0.id) })
             guard selected.isEmpty == false else { return false }
@@ -340,15 +333,11 @@ struct FilterTransferPreviewView_Previews: PreviewProvider {
             version: FilterExportPayload.currentVersion,
             exportedAt: Date(),
             appVersion: appVersion,
+            name: nil,
+            revision: nil,
             filters: [
                 FilterExportRecord(text: "promo",
                                    type: FilterType.deny.exportKey,
-                                   folder: DenyFolderType.junk.exportKey,
-                                   target: FilterTarget.body.exportKey,
-                                   matching: FilterMatching.contains.exportKey,
-                                   caseSensitivity: FilterCase.caseInsensitive.exportKey),
-                FilterExportRecord(text: NLLanguage.english.filterText,
-                                   type: FilterType.denyLanguage.exportKey,
                                    folder: DenyFolderType.junk.exportKey,
                                    target: FilterTarget.body.exportKey,
                                    matching: FilterMatching.contains.exportKey,
