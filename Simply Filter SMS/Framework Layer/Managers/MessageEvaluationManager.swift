@@ -222,24 +222,19 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         for list in activeFilterLists.lists {
             for record in list.records {
                 guard FilterType(exportKey: record.type) == type,
-                      let text = record.text,
-                      !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                      let folder = DenyFolderType(exportKey: record.folder, for: type),
-                      let target = FilterTarget(exportKey: record.target),
-                      let matching = FilterMatching(exportKey: record.matching),
-                      let filterCase = FilterCase(exportKey: record.caseSensitivity, for: matching) else { continue }
+                      let candidate = FilterTransferCandidate(record: record) else { continue }
 
-                let matched = self.isMatching(text: text,
-                                              target: target,
-                                              matching: matching,
-                                              filterCase: filterCase,
+                let matched = self.isMatching(text: candidate.text,
+                                              target: candidate.filterTarget,
+                                              matching: candidate.filterMatching,
+                                              filterCase: candidate.filterCase,
                                               body: body,
                                               sender: sender)
                 guard matched else { continue }
 
-                let action: ILMessageFilterAction = type == .allow ? .allow : folder.action
+                let action: ILMessageFilterAction = type == .allow ? .allow : candidate.denyFolder.action
                 result = MessageEvaluationResult(action: action, match: .automaticFilter(list.name))
-                logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(text, privacy: .public)' [\(list.name, privacy: .public)]")
+                logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(candidate.text, privacy: .public)' [\(list.name, privacy: .public)]")
                 return result
             }
         }
