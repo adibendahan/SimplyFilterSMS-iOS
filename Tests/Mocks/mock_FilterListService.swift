@@ -13,18 +13,18 @@ class mock_FilterListService: FilterListServiceProtocol {
     var fetchFilterListCatalogCounter = 0
     var fetchFilterListCounter = 0
 
-    var fetchFilterListCatalogClosure: ((String?) -> (FetchResult<FilterListCatalogResponse>?))?
-    var fetchFilterListClosure: ((URL, String?) -> (FetchResult<FilterExportPayload>?))?
+    var fetchFilterListCatalogClosure: ((String?) async -> (FetchResult<FilterListCatalogResponse>?))?
+    var fetchFilterListClosure: ((URL, String?) async -> (FetchResult<FilterExportPayload>?))?
 
-    
+
     func fetchFilterListCatalog(etag: String?) async -> FetchResult<FilterListCatalogResponse>? {
         self.fetchFilterListCatalogCounter += 1
-        return self.fetchFilterListCatalogClosure?(etag)
+        return await self.fetchFilterListCatalogClosure?(etag)
     }
 
     func fetchFilterList(at url: URL, etag: String?) async -> FetchResult<FilterExportPayload>? {
         self.fetchFilterListCounter += 1
-        return self.fetchFilterListClosure?(url, etag)
+        return await self.fetchFilterListClosure?(url, etag)
     }
     
     func resetCounters() {

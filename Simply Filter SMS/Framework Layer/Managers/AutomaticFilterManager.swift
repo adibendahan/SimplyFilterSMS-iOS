@@ -179,10 +179,12 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         self.persistanceManager?.setSelectedCountries(countries, for: rule)
     }
 
+    @MainActor
     func updateAutomaticFiltersIfNeeded() async {
         await self.refreshFilterLists(force: false)
     }
 
+    @MainActor
     func forceUpdateAutomaticFilters() async {
         AppManager.logger.debug("forceUpdateAutomaticFilters — forcing fetch")
         await self.refreshFilterLists(force: true)

@@ -508,15 +508,33 @@ class AutomaticFilterManagerTests: XCTestCase {
         XCTAssertEqual(self.persistanceManager.touchCacheCounter, 1)
     }
     
+    @MainActor
     func test_update_concurrentCallsShareOneRefresh() async {
         // Prepare
-        self.filterListService.fetchFilterListCatalogClosure = { _ in .modified(self.catalog(["he"]), etag: "catalog-1") }
+        let firstCatalogRequestStarted = self.expectation(description: "first catalog request started")
+        var releaseFirstCatalogRequest: CheckedContinuation<Void, Never>?
+        self.filterListService.fetchFilterListCatalogClosure = { _ in
+            let isFirstRequest = self.filterListService.fetchFilterListCatalogCounter == 1
+            if isFirstRequest {
+                await withCheckedContinuation { continuation in
+                    releaseFirstCatalogRequest = continuation
+                    firstCatalogRequestStarted.fulfill()
+                }
+            }
+            return .modified(self.catalog(["he"]), etag: "catalog-1")
+        }
         self.filterListService.fetchFilterListClosure = { _, _ in .modified(self.payload(text: "he"), etag: "he-1") }
 
         // Act
-        async let first: Void = self.testSubject.updateAutomaticFiltersIfNeeded()
-        async let second: Void = self.testSubject.forceUpdateAutomaticFilters()
-        _ = await (first, second)
+        let firstCall = Task {
+            await self.testSubject.updateAutomaticFiltersIfNeeded()
+        }
+        await self.fulfillment(of: [firstCatalogRequestStarted], timeout: 1)
+        Task {
+            releaseFirstCatalogRequest?.resume()
+        }
+        await self.testSubject.forceUpdateAutomaticFilters()
+        await firstCall.value
 
         // Verify
         XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
