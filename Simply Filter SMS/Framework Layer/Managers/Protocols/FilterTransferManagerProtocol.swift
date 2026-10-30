@@ -105,16 +105,17 @@ struct FilterTransferCandidate: Equatable, Identifiable {
             return nil
         }
 
-        if matching == .regex {
-            guard (try? Regex(text)) != nil else { return nil }
-        }
-
         self.init(text: text,
                   type: type,
                   denyFolder: folder,
                   filterTarget: target,
                   filterMatching: matching,
                   filterCase: filterCase)
+    }
+
+    var isImportable: Bool {
+        guard self.filterMatching == .regex else { return true }
+        return (try? Regex(self.text)) != nil
     }
 
     var duplicateKey: String {

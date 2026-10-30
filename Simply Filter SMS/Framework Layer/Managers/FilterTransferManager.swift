@@ -96,7 +96,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                 continue
             }
 
-            guard let candidate = FilterTransferCandidate(record: record) else {
+            guard let candidate = FilterTransferCandidate(record: record), candidate.isImportable else {
                 invalidCount += 1
                 continue
             }

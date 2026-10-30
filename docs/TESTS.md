@@ -20,7 +20,7 @@ How tests are written here and the traps around them. The test names say what ea
 - `mock_PersistanceManager` and `mock_MessageEvaluationManager` wrap a real in-memory store, so tests can create real Core Data objects through `context`.
 - **In-memory stores never sync** (`cloudKitContainerOptions = nil`). With CloudKit mirroring on, a save in an isolated test run throws `No eligible connection available`.
 - `MessageEvaluationManagerTests` use `MessageEvaluationManager(inMemory: true)` and flush every entity before each test.
-- `AutomaticFiltersFlowTests` is the one end-to-end AI Filtering test: real refresh, real store, real evaluation, with only the download mocked. It's what catches the refresh and the extension disagreeing on how lists are stored (e.g. their URL keys).
+- `FilterListsFlowTests` is the one end-to-end AI Filtering test: real refresh, real store, real evaluation, with only the download mocked. It's what catches the refresh and the extension disagreeing on how lists are stored (e.g. their URL keys).
 - `HTTPServiceTests` stub `URLSession.shared` with a `URLProtocol` that only answers `filters.example.com`, registered in `setUp` and removed in `tearDown`, so nothing else in the run is intercepted.
 
 ---

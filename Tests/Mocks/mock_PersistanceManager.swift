@@ -26,6 +26,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchFilterRecordsCounter = 0
     var saveCacheCounter = 0
     var cachedFilterListsCounter = 0
+    var cachedFilterListCatalogCounter = 0
     var touchCacheCounter = 0
     var commitContextCounter = 0
     var fetchFilterRecordsForTypeCounter = 0
@@ -55,6 +56,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchFilterRecordsClosure: (() -> ([Filter]))?
     var saveCacheClosure: ((FilterListsCache) -> ())?
     var cachedFilterListsClosure: (() -> (FilterListsCache?))?
+    var cachedFilterListCatalogClosure: (() -> (FilterListCatalogResponse?))?
     var touchCacheClosure: (() -> ())?
     var commitContextClosure: (() -> ())?
     var fetchFilterRecordsForTypeClosure: ((FilterType) -> ([Filter]))?
@@ -158,6 +160,11 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.cachedFilterListsClosure?() ?? nil
     }
 
+    func cachedFilterListCatalog() -> FilterListCatalogResponse? {
+        self.cachedFilterListCatalogCounter += 1
+        return self.cachedFilterListCatalogClosure?() ?? nil
+    }
+
     func saveCache(_ cache: FilterListsCache) -> Bool {
         self.saveCacheCounter += 1
         self.saveCacheClosure?(cache)
@@ -254,6 +261,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.fetchFilterRecordsCounter = 0
         self.saveCacheCounter = 0
         self.cachedFilterListsCounter = 0
+        self.cachedFilterListCatalogCounter = 0
         self.touchCacheCounter = 0
         self.commitContextCounter = 0
         self.fetchFilterRecordsForTypeCounter = 0

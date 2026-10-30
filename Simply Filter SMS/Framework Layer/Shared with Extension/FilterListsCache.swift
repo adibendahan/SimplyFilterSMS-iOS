@@ -48,13 +48,22 @@ extension FilterListsCache {
     }
 }
 
-extension ActiveFilterLists {
-    init?(encoded: String, activeLanguages: Set<String>) {
-        guard let data = encoded.data(using: .utf8),
+extension FilterListCatalogResponse {
+    init?(encodedCache: String) {
+        guard let data = encodedCache.data(using: .utf8),
               let cachedCatalog = try? JSONDecoder().decode(CachedCatalog.self, from: data) else { return nil }
 
+        self = cachedCatalog.catalog
+    }
+}
+
+extension ActiveFilterLists {
+    init?(encoded: String, activeLanguages: Set<String>) {
+        guard let catalog = FilterListCatalogResponse(encodedCache: encoded),
+              let data = encoded.data(using: .utf8) else { return nil }
+
         var namesByURL: [String: String] = [:]
-        for entry in cachedCatalog.catalog.lists {
+        for entry in catalog.lists {
             guard let language = entry.language, activeLanguages.contains(language) else { continue }
             guard let url = entry.resolvedURL else { continue }
             namesByURL[url.absoluteString] = entry.displayName

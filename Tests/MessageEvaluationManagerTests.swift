@@ -480,7 +480,7 @@ class MessageEvaluationManagerTests: XCTestCase {
 
     // MARK: AI Filtering list tests
 
-    func test_automaticFilters_onlyActiveLanguagesApply() {
+    func test_filterLists_onlyActiveLanguagesApply() {
         self.flushPersistanceManager()
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: [self.denyBody("הלוואה")],
@@ -497,7 +497,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(englishResult, .allow, "a list whose language is off must not block")
     }
 
-    func test_automaticFilters_denyUsesRecordFolder() {
+    func test_filterLists_denyUsesRecordFolder() {
         self.flushPersistanceManager()
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: [self.denyBody("sale", folder: "promotion")]
@@ -511,7 +511,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(result.match, .automaticFilter(NLLanguage.hebrew.localizedName!))
     }
 
-    func test_automaticFilters_skipsRecordsItCannotUse() {
+    func test_filterLists_skipsRecordsItCannotUse() {
         self.flushPersistanceManager()
         let unknownMatching = FilterExportRecord(text: "spam",
                                                  type: "deny",
@@ -540,7 +540,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(result, .transaction, "only the last record is usable")
     }
 
-    func test_automaticFilters_legacyCacheBlocksNothing() {
+    func test_filterLists_legacyCacheBlocksNothing() {
         self.flushPersistanceManager()
         let cacheRecord = AutomaticFiltersCache(context: self.testSubject.context)
         cacheRecord.uuid = UUID()
@@ -573,7 +573,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(activeFilterLists?.lists.first?.records, records)
     }
 
-    func test_automaticFilters_performance() {
+    func test_filterLists_performance() {
         self.flushPersistanceManager()
         let languages: [NLLanguage] = [.hebrew, .english, .arabic, .spanish, .french,
                                        .portuguese, .german, .japanese, .korean, .italian]

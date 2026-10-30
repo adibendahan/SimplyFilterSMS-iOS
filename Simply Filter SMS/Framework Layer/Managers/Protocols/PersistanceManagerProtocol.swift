@@ -53,6 +53,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     func updateFilter(_ filter: Filter, filterTarget: FilterTarget)
     func updateFilter(_ filter: Filter, filterText: String)
     func cachedFilterLists() -> FilterListsCache?
+    func cachedFilterListCatalog() -> FilterListCatalogResponse?
     func saveCache(_ cache: FilterListsCache) -> Bool
     func touchCache()
     func selectedCountries(for rule: RuleType) -> [String]

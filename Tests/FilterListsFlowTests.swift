@@ -1,5 +1,5 @@
 //
-//  AutomaticFiltersFlowTests.swift
+//  FilterListsFlowTests.swift
 //  Tests
 //
 //  Created by Adi Ben-Dahan on 29/10/2026.
@@ -11,7 +11,7 @@ import NaturalLanguage
 import IdentityLookup
 @testable import Simply_Filter_SMS
 
-class AutomaticFiltersFlowTests: XCTestCase {
+class FilterListsFlowTests: XCTestCase {
 
     //MARK: Test Lifecycle
     override func setUp() {

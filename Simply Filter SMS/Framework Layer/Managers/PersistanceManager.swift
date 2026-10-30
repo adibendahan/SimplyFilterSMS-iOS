@@ -373,12 +373,26 @@ class PersistanceManager: PersistanceManagerProtocol {
         return FilterListsCache(encoded: filtersData)
     }
 
+    func cachedFilterListCatalog() -> FilterListCatalogResponse? {
+        guard let filtersData = self.fetchAutomaticFiltersCacheRecords().first?.filtersData else { return nil }
+        return FilterListCatalogResponse(encodedCache: filtersData)
+    }
+
     func saveCache(_ cache: FilterListsCache) -> Bool {
         guard let filtersData = cache.encoded else { return false }
         AppManager.logger.debug("saveCache — saving \(cache.lists.count, privacy: .public) filter lists")
         let records = self.fetchAutomaticFiltersCacheRecords()
-        records.dropFirst().forEach { self.context.delete($0) }
-        let cacheRecord = records.first ?? AutomaticFiltersCache(context: self.context)
+        for extraRecord in records.dropFirst() {
+            self.context.delete(extraRecord)
+        }
+
+        let cacheRecord: AutomaticFiltersCache
+        if let existingRecord = records.first {
+            cacheRecord = existingRecord
+        }
+        else {
+            cacheRecord = AutomaticFiltersCache(context: self.context)
+        }
         if cacheRecord.uuid == nil {
             cacheRecord.uuid = UUID()
         }

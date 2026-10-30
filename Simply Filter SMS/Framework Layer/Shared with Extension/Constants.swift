@@ -264,7 +264,12 @@ enum FilterMatching: Int64, CaseIterable, Identifiable {
     }
 
     var definesOwnCase: Bool {
-        return self == .regex
+        switch self {
+        case .regex:
+            return true
+        default:
+            return false
+        }
     }
 
     static var title: String {

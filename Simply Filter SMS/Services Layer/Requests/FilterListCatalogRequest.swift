@@ -11,12 +11,10 @@ class FilterListCatalogRequest: URLRequestProtocol {
     var url: URL = .filterListCatalogURL
     var method: HTTPMethod = .get
     var task: HTTPTask = .requestPlain
-    var headers: [String: String] = [:]
+    var headers: [String: String]
     var errorDomain: String = "com.grizz.apps.dev.Simply-Filter-SMS.FilterListCatalogRequest"
 
     init(etag: String?) {
-        if let etag = etag {
-            self.headers["If-None-Match"] = etag
-        }
+        self.headers = .ifNoneMatch(etag)
     }
 }
