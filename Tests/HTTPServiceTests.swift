@@ -73,15 +73,16 @@ class HTTPServiceTests: XCTestCase {
         let request = FilterListRequest(url: self.listURL, etag: nil)
 
         // Act
-        var didThrow = false
+        var thrownStatusCode: Int?
         do {
             _ = try await self.testSubject.fetchIfModified(request: request)
+        } catch RequestError.badStatus(let statusCode) {
+            thrownStatusCode = statusCode
         } catch {
-            didThrow = true
         }
 
         // Verify
-        XCTAssertTrue(didThrow)
+        XCTAssertEqual(thrownStatusCode, 500)
     }
 
 

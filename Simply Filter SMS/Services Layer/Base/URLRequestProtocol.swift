@@ -21,6 +21,13 @@ extension URLRequestProtocol {
     }
 }
 
+extension Dictionary where Key == String, Value == String {
+    static func ifNoneMatch(_ etag: String?) -> [String: String] {
+        guard let etag = etag else { return [:] }
+        return ["If-None-Match": etag]
+    }
+}
+
 extension URLRequest {
     init(request: URLRequestProtocol) {
         var urlComponents = URLComponents(url: request.url, resolvingAgainstBaseURL: false)
@@ -82,5 +89,6 @@ enum HTTPTask {
 
 enum RequestError: Error {
     case noData
+    case badStatus(Int)
     case unknown
 }

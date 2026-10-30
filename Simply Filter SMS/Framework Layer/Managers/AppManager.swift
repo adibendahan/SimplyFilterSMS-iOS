@@ -61,7 +61,6 @@ class AppManager: AppManagerProtocol {
             defaultsManager.reset()
             persistanceManager.resetContainer()
             let languages = ["en", "he", "ar", "es", "fr", "pt", "de", "ja", "ko", "it"]
-            let listsFolderURL = URL.filterListCatalogURL.deletingLastPathComponent()
             var entries: [FilterListCatalogEntry] = []
             var lists: [FilterListsCacheSection] = []
 
@@ -71,6 +70,7 @@ class AppManager: AppManagerProtocol {
                                                    name: language,
                                                    url: fileName,
                                                    language: language)
+                guard let listURL = entry.resolvedURL else { continue }
                 let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
                                                   version: FilterExportPayload.currentVersion,
                                                   exportedAt: Date(),
@@ -79,7 +79,6 @@ class AppManager: AppManagerProtocol {
                                                   revision: nil,
                                                   filters: [],
                                                   forceClearBeforeImport: nil)
-                let listURL = listsFolderURL.appendingPathComponent(fileName)
                 let section = FilterListsCacheSection(url: listURL.absoluteString,
                                                       etag: nil,
                                                       payload: payload)

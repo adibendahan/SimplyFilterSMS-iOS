@@ -46,9 +46,10 @@ class HTTPService: HTTPServiceProtocol {
         case 304:
             return .notModified
         case 200..<300:
-            return .modified(data, etag: httpResponse.value(forHTTPHeaderField: "ETag"))
+            let etag = httpResponse.value(forHTTPHeaderField: "ETag")
+            return .modified(data, etag: etag)
         default:
-            throw RequestError.noData
+            throw RequestError.badStatus(httpResponse.statusCode)
         }
     }
 }
