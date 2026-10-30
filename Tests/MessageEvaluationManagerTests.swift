@@ -555,6 +555,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_activeFilterLists_decodesOnlyActiveLanguages() {
+        self.flushPersistanceManager()
         let records = [self.denyBody("spam")]
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: records,
@@ -562,7 +563,7 @@ class MessageEvaluationManagerTests: XCTestCase {
             NLLanguage.arabic.rawValue: records
         ])
         try? self.testSubject.context.save()
-        let cacheRecord = try? self.testSubject.context.fetch(AutomaticFiltersCache.fetchRequest()).last
+        let cacheRecord = try? self.testSubject.context.fetch(AutomaticFiltersCache.fetchRequest()).first
         let filtersData = cacheRecord?.filtersData ?? ""
 
         let activeFilterLists = ActiveFilterLists(encoded: filtersData, activeLanguages: [NLLanguage.hebrew.rawValue])
