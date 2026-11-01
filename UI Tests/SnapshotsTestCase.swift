@@ -27,7 +27,7 @@ class SnapshotsTestCase: ApplicationTestCase {
 
         app.tap(.appMenuButton)
         app.tap(.debugToolsButton)
-        app.tap(.loadDebugDataMenuButton)
+        app.tapMenuItem(symbol: "chevron.left.forwardslash.chevron.right")
         self.sleep(seconds: 5)
         app.waitForHittable(app.button(.automaticFilterLink))
         let allowLink = app.button(.allowFiltersLink)
@@ -129,7 +129,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         // MARK: testFilters Screenshot
         app.tap(.appMenuButton)
         app.tap(.filterToolsMenuButton)
-        app.tap(.testYourFiltersMenuButton)
+        app.tapMenuItem(symbol: "arrow.up.message")
 
         let senderField = app.textField(.testSenderInput)
         let bodyView = app.textField(.testBodyInput)

@@ -131,6 +131,17 @@ class TestApplication: XCUIApplication {
         }
     }
     
+    // TEMPORARY — DO NOT COMMIT.
+    // iOS 27 regression: accessibility identifiers are dropped from buttons inside
+    // an expanded Menu submenu (verified working on iOS 26.5, broken on 27.0).
+    // The child Image keeps its SF Symbol identifier, so tap that instead —
+    // language-independent, unlike matching localized titles.
+    func tapMenuItem(symbol: String) {
+        let image = self.images[symbol].firstMatch
+        XCTAssertTrue(image.waitForExistence(timeout: 5), "Missing menu item symbol \(symbol)")
+        image.forceTap()
+    }
+    
     func conditionalTap(_ testIdentifier: TestIdentifier,  _ condition: Bool) {
         guard condition else { return }
         let button = self.button(testIdentifier)
