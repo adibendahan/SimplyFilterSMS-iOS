@@ -24,6 +24,7 @@ protocol AppManagerProtocol {
     var schedulingManager: SchedulingManagerProtocol { get }
 
     @MainActor func onAppLaunch()
+    @MainActor func onAppBecameActive() -> Bool
     @MainActor func onNewUserSession()
 
     #if DEBUG

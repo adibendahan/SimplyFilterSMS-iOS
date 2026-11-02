@@ -113,7 +113,7 @@ Order and occupancy are in `CLAUDE.md`. Beyond that:
 ### Inactivity reminder
 
 - One repeating notification, first firing a month out, then monthly. It's an interval trigger because a `UNCalendarNotificationTrigger` on today's day of month would fire again the same evening.
-- **Only** `AppDelegate.applicationDidBecomeActive` moves the clock. iOS runs `didFinishLaunching` for background wakes too, so nothing on the launch path may touch it.
+- **Only** the `scenePhase` `.active` hook moves the clock. iOS runs `didFinishLaunching` for background wakes too, so nothing on the launch path may touch it.
 - Cancelled when AI Filtering goes off (`.filtersStateChanged`).
 
 ### When to ask
