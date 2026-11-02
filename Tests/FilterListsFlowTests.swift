@@ -40,7 +40,7 @@ class FilterListsFlowTests: XCTestCase {
         XCTAssertEqual(beforeRefresh.action, .allow, "nothing is blocked before the lists are downloaded")
 
         // Act
-        await self.automaticFilterManager.forceUpdateAutomaticFilters()
+        await self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
         self.automaticFilterManager.setLanguageAutomaticState(for: .hebrew, value: true)
         self.automaticFilterManager.setLanguageAutomaticState(for: .english, value: false)
 

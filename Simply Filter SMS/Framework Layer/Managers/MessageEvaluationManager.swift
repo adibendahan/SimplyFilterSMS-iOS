@@ -203,13 +203,27 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             guard let lang = languageRecord.lang, languageRecord.isActive else { continue }
             activeLanguages.insert(lang)
         }
-        guard !activeLanguages.isEmpty else { return nil }
+        guard !activeLanguages.isEmpty else {
+            self.logger?.debug("[Filter Lists] no active languages")
+            return nil
+        }
+        let activeLanguagesDescription = activeLanguages.sorted().joined(separator: ", ")
 
         let cacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
+        cacheRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
         guard let cacheRow = try? self.context.fetch(cacheRequest).first,
-              let filtersData = cacheRow.filtersData else { return nil }
+              let filtersData = cacheRow.filtersData else {
+            self.logger?.debug("[Filter Lists] active languages: \(activeLanguagesDescription, privacy: .public) | no cache row")
+            return nil
+        }
 
-        return ActiveFilterLists(encoded: filtersData, activeLanguages: activeLanguages)
+        guard let activeFilterLists = ActiveFilterLists(encoded: filtersData, activeLanguages: activeLanguages) else {
+            self.logger?.debug("[Filter Lists] active languages: \(activeLanguagesDescription, privacy: .public) | cache row doesn't decode")
+            return nil
+        }
+        let listNames = activeFilterLists.lists.map(\.name).joined(separator: ", ")
+        self.logger?.debug("[Filter Lists] active languages: \(activeLanguagesDescription, privacy: .public) | lists: \(listNames, privacy: .public)")
+        return activeFilterLists
     }
 
     private func runFilterLists(type: FilterType, activeFilterLists: ActiveFilterLists?, body: String, sender: String) -> MessageEvaluationResult {
@@ -240,7 +254,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     action = candidate.denyFolder.action
                 }
                 result = MessageEvaluationResult(action: action, match: .automaticFilter(list.name))
-                self.logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(candidate.text, privacy: .public)' [\(list.name, privacy: .public)]")
+                self.logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(candidate.text, privacy: .public)' | target: \(candidate.filterTarget.exportKey, privacy: .public), matching: \(candidate.filterMatching.exportKey, privacy: .public), case: \(candidate.filterCase.exportKey, privacy: .public) [\(list.name, privacy: .public)]")
                 return result
             }
         }

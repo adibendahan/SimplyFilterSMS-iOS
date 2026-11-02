@@ -45,7 +45,6 @@ Filter UUIDs + rule states + language rows. It deliberately **excludes** `Automa
 
 ### Refresh
 
-- Runs when the cache is older than `kUpdateAutomaticFiltersMinDays`; pull-to-refresh forces it and sends no ETags.
 - Catalog first, then each list with its stored ETag: `304` keeps the section, `200` replaces it, a failure keeps the old one. Lists that left the catalog are dropped.
 - Saves once if anything changed. Otherwise `touchCache()`, except when a list failed, so the next launch retries instead of waiting days.
 - Runs on the **main actor** (Core Data view context). A second caller joins the running refresh (`refreshTask`), so pull-to-refresh waits for the real result.

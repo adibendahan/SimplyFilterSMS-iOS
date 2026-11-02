@@ -24,5 +24,5 @@ protocol AutomaticFilterManagerProtocol {
     func selectedCountries(for rule: RuleType) -> [String]
     func setSelectedCountries(_ countries: [String], for rule: RuleType)
     @MainActor func updateAutomaticFiltersIfNeeded() async
-    @MainActor func forceUpdateAutomaticFilters() async
+    @MainActor func updateAutomaticFiltersWhenOnline()
 }

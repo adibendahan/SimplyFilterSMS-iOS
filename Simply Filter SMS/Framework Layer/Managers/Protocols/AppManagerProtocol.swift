@@ -23,8 +23,8 @@ protocol AppManagerProtocol {
     var flowManager: FlowManagerProtocol { get }
     var schedulingManager: SchedulingManagerProtocol { get }
 
-    func onAppLaunch()
-    func onNewUserSession()
+    @MainActor func onAppLaunch()
+    @MainActor func onNewUserSession()
 
     #if DEBUG
     var debugDataManager: DebugDataManagerProtocol { get }

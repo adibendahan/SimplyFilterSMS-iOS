@@ -39,7 +39,8 @@ class AppManager: AppManagerProtocol {
         messageEvaluationManager.setLogger(AppManager.logger)
         
         let automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager,
-                                                             filterListService: filterListService)
+                                                             filterListService: filterListService,
+                                                             networkSyncManager: networkSyncManager)
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
         self.automaticFilterManager = automaticFilterManager
@@ -96,6 +97,7 @@ class AppManager: AppManagerProtocol {
         #endif // DEBUG
     }
     
+    @MainActor
     func onAppLaunch() {
         let _ = self.defaultsManager.appAge // make sure it's initialized
         AppManager.logger.debug("onAppLaunch — session #\(self.defaultsManager.sessionCounter, privacy: .public), installDate: \(self.defaultsManager.appAge, privacy: .public)")
@@ -107,6 +109,7 @@ class AppManager: AppManagerProtocol {
             }
             else {
                 AppManager.logger.debug("onAppLaunch — same day, skipping new session")
+                self.automaticFilterManager.updateAutomaticFiltersWhenOnline()
             }
         }
         else {
@@ -115,23 +118,12 @@ class AppManager: AppManagerProtocol {
         }
     }
 
+    @MainActor
     func onNewUserSession() {
         self.defaultsManager.sessionCounter += 1
         self.defaultsManager.sessionAge = Date()
-        AppManager.logger.debug("onNewUserSession — session #\(self.defaultsManager.sessionCounter, privacy: .public), waiting for network status")
-        self.networkSyncManager.onFirstStatusKnown { [weak self] in
-            guard let self else { return }
-            AppManager.logger.debug("onNewUserSession — network: \(self.networkSyncManager.networkStatus.name, privacy: .public)")
-            if self.networkSyncManager.networkStatus == .online {
-                AppManager.logger.debug("onNewUserSession — online, triggering automatic filter update check")
-                Task(priority: .background) {
-                    await self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
-                }
-            }
-            else {
-                AppManager.logger.debug("onNewUserSession — offline, skipping automatic filter update")
-            }
-        }
+        AppManager.logger.debug("onNewUserSession — session #\(self.defaultsManager.sessionCounter, privacy: .public)")
+        self.automaticFilterManager.updateAutomaticFiltersWhenOnline()
     }
     
     #if DEBUG

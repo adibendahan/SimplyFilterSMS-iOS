@@ -554,6 +554,23 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(result, .allow)
     }
 
+    func test_filterLists_readsNewestCacheRow() {
+        self.flushPersistanceManager()
+        let olderRecord = AutomaticFiltersCache(context: self.testSubject.context)
+        olderRecord.uuid = UUID()
+        olderRecord.filtersData = "eyJmaWx0ZXJMaXN0cyI6eyJoZSI6eyJhbGxvd0JvZHkiOltdLCJhbGxvd1NlbmRlcnMiOltdLCJkZW55Qm9keSI6WyJ3b3JkIl0sImRlbnlTZW5kZXIiOltdfX19"
+        olderRecord.age = Date().addingTimeInterval(-86400)
+        self.saveFilterLists([
+            NLLanguage.hebrew.rawValue: [self.denyBody("word")]
+        ])
+        self.setLanguage(.hebrew, isActive: true)
+        try? self.testSubject.context.save()
+
+        let result = self.testSubject.evaluateMessage(body: "word", sender: "1234567").action
+
+        XCTAssertEqual(result, .junk, "the newest row is the one the app refreshed")
+    }
+
     func test_activeFilterLists_decodesOnlyActiveLanguages() {
         self.flushPersistanceManager()
         let records = [self.denyBody("spam")]
