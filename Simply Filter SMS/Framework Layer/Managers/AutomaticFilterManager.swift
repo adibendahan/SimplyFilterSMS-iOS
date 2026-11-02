@@ -249,6 +249,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
 
     @MainActor
     private var didCheckFilterListsToday: Bool {
+        guard self.persistanceManager?.cachedFilterListCatalog() != nil else { return false }
         guard let lastCheck = self.automaticFiltersCacheAge else { return false }
         return lastCheck.daysBetween(date: Date()) == 0
     }
