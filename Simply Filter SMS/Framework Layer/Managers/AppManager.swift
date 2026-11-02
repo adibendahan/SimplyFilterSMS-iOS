@@ -102,19 +102,26 @@ class AppManager: AppManagerProtocol {
         let _ = self.defaultsManager.appAge // make sure it's initialized
         AppManager.logger.debug("onAppLaunch — session #\(self.defaultsManager.sessionCounter, privacy: .public), installDate: \(self.defaultsManager.appAge, privacy: .public)")
         self.schedulingManager.scheduleAutomaticFiltersProcessing()
+    }
+
+    @MainActor
+    func onAppBecameActive() -> Bool {
         if let sessionAge = self.defaultsManager.sessionAge {
             if sessionAge.daysBetween(date: Date()) != 0 {
-                AppManager.logger.debug("onAppLaunch — new day detected, starting new session")
+                AppManager.logger.debug("onAppBecameActive — new day detected, starting new session")
                 self.onNewUserSession()
+                return true
             }
             else {
-                AppManager.logger.debug("onAppLaunch — same day, skipping new session")
+                AppManager.logger.debug("onAppBecameActive — same day, skipping new session")
                 self.automaticFilterManager.updateAutomaticFiltersWhenOnline()
+                return false
             }
         }
         else {
-            AppManager.logger.debug("onAppLaunch — sessionAge not set, starting new session")
+            AppManager.logger.debug("onAppBecameActive — sessionAge not set, starting new session")
             self.onNewUserSession()
+            return true
         }
     }
 

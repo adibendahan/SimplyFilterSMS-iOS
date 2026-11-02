@@ -28,17 +28,25 @@ class mock_AppManager: AppManagerProtocol {
     var debugDataManager: DebugDataManagerProtocol = mock_DebugDataManager()
 
     var onAppLaunchCounter = 0
+    var onAppBecameActiveCounter = 0
     var onNewUserSessionCounter = 0
-    
+
     var onAppLaunchClosuer: (() -> ())?
+    var onAppBecameActiveClosure: (() -> (Bool))?
     var onNewUserSessionClosuer: (() -> ())?
-    
+
     @MainActor
     func onAppLaunch() {
         self.onAppLaunchCounter += 1
         self.onAppLaunchClosuer?()
     }
-    
+
+    @MainActor
+    func onAppBecameActive() -> Bool {
+        self.onAppBecameActiveCounter += 1
+        return self.onAppBecameActiveClosure?() ?? false
+    }
+
     @MainActor
     func onNewUserSession() {
         self.onNewUserSessionCounter += 1
@@ -47,6 +55,7 @@ class mock_AppManager: AppManagerProtocol {
     
     func resetCounters() {
         self.onAppLaunchCounter = 0
+        self.onAppBecameActiveCounter = 0
         self.onNewUserSessionCounter = 0
     }
 

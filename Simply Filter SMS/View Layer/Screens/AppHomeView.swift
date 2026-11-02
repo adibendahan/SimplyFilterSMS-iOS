@@ -758,6 +758,16 @@ extension AppHomeView {
             self.presentNextFlow()
         }
 
+        @MainActor
+        func appBecameActive() {
+            self.appManager.schedulingManager.refreshInactivityReminder()
+            let didStartNewSession = self.appManager.onAppBecameActive()
+            guard didStartNewSession else { return }
+            self.didShowNotificationThisSession = false
+            self.tryShowTipPromotion()
+            self.tryShowReportingExtensionNudge()
+        }
+
         private func runLaunchFlowIfNeeded() {
             #if DEBUG
             if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
@@ -766,8 +776,6 @@ extension AppHomeView {
             #endif
             self.startMonitoring()
             self.enableWhatsNewAndPresent()
-            self.tryShowTipPromotion()
-            self.tryShowReportingExtensionNudge()
         }
 
         private func markWhatsNewSeen() {
