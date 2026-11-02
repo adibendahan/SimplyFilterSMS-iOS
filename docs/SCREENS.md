@@ -43,7 +43,6 @@ Type a sender and a message and see the verdict live, as a sheet from the menu.
 ## LanguageListView
 One screen, two modes: `.automaticBlocking` (pushed from Home; toggles AI Filtering per language) and `.blockLanguage` (a sheet; adds a "deny language" filter).
 - Only `.blockLanguage` wraps itself in a `NavigationView`; the pushed mode uses Home's.
-- Pull-to-refresh is only offered when the cache is at least a day old.
 - The view model is `@unchecked Sendable` because `.refreshable` needs a `@Sendable` action.
 
 ## AddFilterView

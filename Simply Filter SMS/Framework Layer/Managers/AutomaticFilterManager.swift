@@ -12,10 +12,16 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     
     //MARK: - Initialization -
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
-         filterListService: FilterListServiceProtocol = AppManager.shared.filterListService) {
+         filterListService: FilterListServiceProtocol = AppManager.shared.filterListService,
+         networkSyncManager: NetworkSyncManagerProtocol = AppManager.shared.networkSyncManager) {
         
         self.persistanceManager = persistanceManager
         self.filterListService = filterListService
+        self.networkSyncManager = networkSyncManager
+    }
+    
+    deinit {
+        self.networkStatusTask?.cancel()
     }
     
     
@@ -181,13 +187,31 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
 
     @MainActor
     func updateAutomaticFiltersIfNeeded() async {
-        await self.refreshFilterLists(force: false)
+        await self.refreshFilterLists()
     }
 
     @MainActor
-    func forceUpdateAutomaticFilters() async {
-        AppManager.logger.debug("forceUpdateAutomaticFilters — forcing fetch")
-        await self.refreshFilterLists(force: true)
+    func updateAutomaticFiltersWhenOnline() {
+        guard !ProcessInfo.processInfo.isInTestingMode else {
+            AppManager.logger.debug("updateAutomaticFiltersWhenOnline — testing mode, keeping the seeded filter lists")
+            return
+        }
+        guard !self.didCheckFilterListsToday else {
+            AppManager.logger.debug("updateAutomaticFiltersWhenOnline — today's check already succeeded")
+            return
+        }
+        AppManager.logger.debug("updateAutomaticFiltersWhenOnline — waiting for network status")
+        self.networkSyncManager?.onFirstStatusKnown { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                guard self.networkSyncManager?.networkStatus == .online else {
+                    AppManager.logger.debug("updateAutomaticFiltersWhenOnline — offline, checking once back online")
+                    self.updateAutomaticFiltersOnNextOnline()
+                    return
+                }
+                self.updateAutomaticFiltersInBackground()
+            }
+        }
     }
     
     //MARK: - Private  -
@@ -219,45 +243,65 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     
     private weak var filterListService: FilterListServiceProtocol?
     private weak var persistanceManager: PersistanceManagerProtocol?
+    private weak var networkSyncManager: NetworkSyncManagerProtocol?
     private var refreshTask: Task<Void, Never>?
-    private var shouldFetchFilters: Bool {
-        guard self.persistanceManager?.cachedFilterListCatalog() != nil else { return true }
-        var shouldFetchFilters = true
-        
-        if let cacheAge = self.automaticFiltersCacheAge,
-           cacheAge.daysBetween(date: Date()) < kUpdateAutomaticFiltersMinDays {
-            
-            shouldFetchFilters = false
+    private var networkStatusTask: Task<Void, Never>?
+
+    @MainActor
+    private var didCheckFilterListsToday: Bool {
+        guard let lastCheck = self.automaticFiltersCacheAge else { return false }
+        return lastCheck.daysBetween(date: Date()) == 0
+    }
+
+    @MainActor
+    private func updateAutomaticFiltersOnNextOnline() {
+        guard self.networkStatusTask == nil else { return }
+        let networkStatusChanges = NotificationCenter.default.notifications(named: .networkStatusChange)
+        self.networkStatusTask = Task { @MainActor [weak self] in
+            for await notification in networkStatusChanges {
+                guard let networkStatus = notification.object as? NetworkStatus, networkStatus == .online else { continue }
+                guard let self else { return }
+                self.networkStatusTask = nil
+                AppManager.logger.debug("updateAutomaticFiltersOnNextOnline — back online")
+                self.updateAutomaticFiltersInBackground()
+                return
+            }
         }
-        
-        return shouldFetchFilters
+    }
+
+    @MainActor
+    private func updateAutomaticFiltersInBackground() {
+        AppManager.logger.debug("updateAutomaticFiltersInBackground — triggering automatic filter update check")
+        Task(priority: .background) {
+            await self.updateAutomaticFiltersIfNeeded()
+        }
     }
     
     @MainActor
-    private func refreshFilterLists(force: Bool) async {
+    private func refreshFilterLists() async {
         if let refreshTask = self.refreshTask {
             AppManager.logger.debug("refreshFilterLists — joining the refresh in progress")
             await refreshTask.value
             return
         }
-        guard force || self.shouldFetchFilters else {
-            AppManager.logger.debug("refreshFilterLists — cache is fresh, skipping fetch")
-            return
+        var cacheAgeDescription = "none"
+        if let cacheAge = self.automaticFiltersCacheAge {
+            cacheAgeDescription = "\(cacheAge.daysBetween(date: Date()))d"
         }
-        let refreshTask = Task { await self.performRefresh(force: force) }
+        AppManager.logger.debug("refreshFilterLists — fetching | cache age: \(cacheAgeDescription, privacy: .public)")
+        let refreshTask = Task { await self.performRefresh() }
         self.refreshTask = refreshTask
         await refreshTask.value
         self.refreshTask = nil
     }
 
     @MainActor
-    private func performRefresh(force: Bool) async {
+    private func performRefresh() async {
         guard let persistanceManager = self.persistanceManager,
               let filterListService = self.filterListService else { return }
 
         let cache = persistanceManager.cachedFilterLists()
-        let catalogETagToSend = force ? nil : cache?.catalogETag
-        let catalogResponse = await filterListService.fetchFilterListCatalog(etag: catalogETagToSend)
+        let catalogResponse = await filterListService.fetchFilterListCatalog(etag: cache?.catalogETag)
         let catalog: FilterListCatalogResponse
         let catalogETag: String?
 
@@ -266,7 +310,10 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             catalog = fetchedCatalog
             catalogETag = etag
         case .notModified:
-            guard let cache = cache else { return }
+            guard let cache = cache else {
+                AppManager.logger.debug("performRefresh — catalog not modified but there is no readable cache, stopping")
+                return
+            }
             catalog = cache.catalog
             catalogETag = cache.catalogETag
         case nil:
@@ -284,22 +331,30 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             fetchedURLs.insert(url)
 
             let cachedSection = cache?.lists.first(where: { $0.url == url.absoluteString })
-            let listETagToSend = force ? nil : cachedSection?.etag
-            let listResponse = await filterListService.fetchFilterList(at: url, etag: listETagToSend)
+            let listResponse = await filterListService.fetchFilterList(at: url, etag: cachedSection?.etag)
 
+            let listName = url.lastPathComponent
+            let hasCachedSection = cachedSection != nil
             switch listResponse {
             case .modified(let payload, let etag):
                 let section = FilterListsCacheSection(url: url.absoluteString, etag: etag, payload: payload)
                 lists.append(section)
+                var revisionDescription = "none"
+                if let revision = payload.revision {
+                    revisionDescription = "\(revision)"
+                }
+                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): downloaded | revision: \(revisionDescription, privacy: .public), records: \(payload.filters.count, privacy: .public)")
             case .notModified:
                 if let cachedSection = cachedSection {
                     lists.append(cachedSection)
                 }
+                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): not modified | kept cached: \(hasCachedSection, privacy: .public)")
             case nil:
                 hasFailures = true
                 if let cachedSection = cachedSection {
                     lists.append(cachedSection)
                 }
+                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): failed | kept cached: \(hasCachedSection, privacy: .public)")
             }
         }
 
@@ -310,12 +365,20 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
 
         guard hasChanges else {
             if !hasFailures {
+                AppManager.logger.debug("performRefresh — no changes, touching the cache age")
                 persistanceManager.touchCache()
+            }
+            else {
+                AppManager.logger.debug("performRefresh — no changes but some lists failed, leaving the cache age alone")
             }
             return
         }
-        guard persistanceManager.saveCache(newCache) else { return }
+        guard persistanceManager.saveCache(newCache) else {
+            AppManager.logger.error("performRefresh — saving the cache failed")
+            return
+        }
         if hasNewFilters {
+            AppManager.logger.debug("performRefresh — posting automaticFiltersUpdated")
             NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
         }
     }

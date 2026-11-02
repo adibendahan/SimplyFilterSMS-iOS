@@ -31,7 +31,7 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
     var selectedCountriesCounter = 0
     var setSelectedCountriesCounter = 0
     var updateAutomaticFiltersIfNeededCounter = 0
-    var forceUpdateAutomaticFiltersCounter = 0
+    var updateAutomaticFiltersWhenOnlineCounter = 0
     
     var isAutomaticFilteringOnClosure: (() -> (Bool))?
     var rulesClosure: (() -> ([RuleType]))?
@@ -47,7 +47,7 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
     var selectedCountriesClosure: ((RuleType) -> ([String]))?
     var setSelectedCountriesClosure: (([String], RuleType) -> ())?
     var updateAutomaticFiltersIfNeededClosure: (() -> ())?
-    var forceUpdateAutomaticFiltersClosure: (() -> ())?
+    var updateAutomaticFiltersWhenOnlineClosure: (() -> ())?
     
     var isAutomaticFilteringOn: Bool {
         get {
@@ -139,9 +139,10 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         self.updateAutomaticFiltersIfNeededClosure?()
     }
     
-    func forceUpdateAutomaticFilters() async {
-        self.forceUpdateAutomaticFiltersCounter += 1
-        self.forceUpdateAutomaticFiltersClosure?()
+    @MainActor
+    func updateAutomaticFiltersWhenOnline() {
+        self.updateAutomaticFiltersWhenOnlineCounter += 1
+        self.updateAutomaticFiltersWhenOnlineClosure?()
     }
     
     func resetCounters() {
@@ -163,6 +164,6 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
         self.selectedCountriesCounter = 0
         self.setSelectedCountriesCounter = 0
         self.updateAutomaticFiltersIfNeededCounter = 0
-        self.forceUpdateAutomaticFiltersCounter = 0
+        self.updateAutomaticFiltersWhenOnlineCounter = 0
     }
 }

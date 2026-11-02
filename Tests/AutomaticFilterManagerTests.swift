@@ -15,14 +15,17 @@ class AutomaticFilterManagerTests: XCTestCase {
     
     var persistanceManager = mock_PersistanceManager()
     var filterListService = mock_FilterListService()
-    
+    var networkSyncManager = mock_NetworkSyncManager()
+
     //MARK: Test Lifecycle
     override func setUp() {
         super.setUp()
-        
+
         self.filterListService = mock_FilterListService()
+        self.networkSyncManager = mock_NetworkSyncManager()
         self.testSubject = AutomaticFilterManager(persistanceManager: self.persistanceManager,
-                                                  filterListService: self.filterListService)
+                                                  filterListService: self.filterListService,
+                                                  networkSyncManager: self.networkSyncManager)
         self.persistanceManager.resetCounters()
         self.filterListService.resetCounters()
         self.automaticFiltersUpdatedCount = 0
@@ -357,9 +360,9 @@ class AutomaticFilterManagerTests: XCTestCase {
         XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
     }
 
-    func test_update_freshCache_skipsFetch() async {
+    func test_update_freshCache_stillChecksWithETags() async {
         // Prepare
-        self.persistanceManager.cachedFilterListCatalogClosure = { self.catalog(["he"]) }
+        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he"]) }
         self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
             let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
             cacheRecord.uuid = UUID()
@@ -367,12 +370,19 @@ class AutomaticFilterManagerTests: XCTestCase {
 
             return [cacheRecord]
         }
+        var catalogETag: String?
+        self.filterListService.fetchFilterListCatalogClosure = { etag in
+            catalogETag = etag
+            return .notModified
+        }
+        self.filterListService.fetchFilterListClosure = { _, _ in .notModified }
 
         // Act
         await self.testSubject.updateAutomaticFiltersIfNeeded()
 
         // Verify
-        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 0)
+        XCTAssertEqual(catalogETag, "catalog-1")
+        XCTAssertEqual(self.filterListService.fetchFilterListCounter, 1)
         XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
     }
 
@@ -489,28 +499,6 @@ class AutomaticFilterManagerTests: XCTestCase {
         XCTAssertEqual(self.automaticFiltersUpdatedCount, 0)
     }
 
-    func test_forceUpdate_sendsNoETags() async {
-        // Prepare
-        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he"]) }
-        var sentETags: [String?] = []
-        self.filterListService.fetchFilterListCatalogClosure = { etag in
-            sentETags.append(etag)
-            return .modified(self.catalog(["he"]), etag: "catalog-1")
-        }
-        self.filterListService.fetchFilterListClosure = { _, etag in
-            sentETags.append(etag)
-            return .modified(self.payload(text: "he"), etag: "he-1")
-        }
-
-        // Act
-        await self.testSubject.forceUpdateAutomaticFilters()
-
-        // Verify
-        XCTAssertEqual(sentETags, [nil, nil])
-        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
-        XCTAssertEqual(self.persistanceManager.touchCacheCounter, 1)
-    }
-    
     @MainActor
     func test_update_concurrentCallsShareOneRefresh() async {
         // Prepare
@@ -536,7 +524,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         Task {
             releaseFirstCatalogRequest?.resume()
         }
-        await self.testSubject.forceUpdateAutomaticFilters()
+        await self.testSubject.updateAutomaticFiltersIfNeeded()
         await firstCall.value
 
         // Verify
@@ -544,6 +532,74 @@ class AutomaticFilterManagerTests: XCTestCase {
         XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
     }
     
+    @MainActor
+    func test_updateWhenOnline_checkedToday_skips() {
+        // Prepare
+        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
+            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+            cacheRecord.uuid = UUID()
+            cacheRecord.age = Date()
+
+            return [cacheRecord]
+        }
+        self.networkSyncManager.networkStatusClosure = { .online }
+
+        // Act
+        self.testSubject.updateAutomaticFiltersWhenOnline()
+
+        // Verify
+        XCTAssertEqual(self.networkSyncManager.networkStatusGetCounter, 0)
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 0)
+    }
+
+    @MainActor
+    func test_updateWhenOnline_notCheckedToday_fetches() async {
+        // Prepare
+        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
+            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+            cacheRecord.uuid = UUID()
+            cacheRecord.age = Calendar.current.date(byAdding: .day, value: -1, to: Date())
+
+            return [cacheRecord]
+        }
+        self.networkSyncManager.networkStatusClosure = { .online }
+        let catalogRequested = self.expectation(description: "catalog requested")
+        self.filterListService.fetchFilterListCatalogClosure = { _ in
+            catalogRequested.fulfill()
+            return nil
+        }
+
+        // Act
+        self.testSubject.updateAutomaticFiltersWhenOnline()
+
+        // Verify
+        await self.fulfillment(of: [catalogRequested], timeout: 1)
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
+    }
+
+    @MainActor
+    func test_updateWhenOnline_offline_fetchesOnceBackOnline() async {
+        // Prepare
+        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = { [] }
+        self.networkSyncManager.networkStatusClosure = { .offline }
+        let catalogRequested = self.expectation(description: "catalog requested")
+        self.filterListService.fetchFilterListCatalogClosure = { _ in
+            catalogRequested.fulfill()
+            return nil
+        }
+
+        // Act
+        self.testSubject.updateAutomaticFiltersWhenOnline()
+        let fetchedWhileOffline = self.filterListService.fetchFilterListCatalogCounter
+        NotificationCenter.default.post(name: .networkStatusChange, object: NetworkStatus.offline)
+        NotificationCenter.default.post(name: .networkStatusChange, object: NetworkStatus.online)
+
+        // Verify
+        await self.fulfillment(of: [catalogRequested], timeout: 1)
+        XCTAssertEqual(fetchedWhileOffline, 0)
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
+    }
+
     private var testSubject: AutomaticFilterManagerProtocol = AutomaticFilterManager(persistanceManager: mock_PersistanceManager())
     private var automaticFiltersUpdatedCount = 0
     private var automaticFiltersUpdatedObserver: NSObjectProtocol?

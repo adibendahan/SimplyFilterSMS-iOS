@@ -369,8 +369,17 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
 
     func cachedFilterLists() -> FilterListsCache? {
-        guard let filtersData = self.fetchAutomaticFiltersCacheRecords().first?.filtersData else { return nil }
-        return FilterListsCache(encoded: filtersData)
+        let records = self.fetchAutomaticFiltersCacheRecords()
+        guard let filtersData = records.first?.filtersData else {
+            AppManager.logger.debug("cachedFilterLists — no cache row (rows: \(records.count, privacy: .public))")
+            return nil
+        }
+        guard let cache = FilterListsCache(encoded: filtersData) else {
+            AppManager.logger.debug("cachedFilterLists — cache row doesn't decode (legacy or unreadable) | rows: \(records.count, privacy: .public), size: \(filtersData.utf8.count, privacy: .public) bytes")
+            return nil
+        }
+        AppManager.logger.debug("cachedFilterLists — rows: \(records.count, privacy: .public), lists: \(cache.lists.count, privacy: .public), size: \(filtersData.utf8.count, privacy: .public) bytes")
+        return cache
     }
 
     func cachedFilterListCatalog() -> FilterListCatalogResponse? {
@@ -380,8 +389,8 @@ class PersistanceManager: PersistanceManagerProtocol {
 
     func saveCache(_ cache: FilterListsCache) -> Bool {
         guard let filtersData = cache.encoded else { return false }
-        AppManager.logger.debug("saveCache — saving \(cache.lists.count, privacy: .public) filter lists")
         let records = self.fetchAutomaticFiltersCacheRecords()
+        AppManager.logger.debug("saveCache — saving \(cache.lists.count, privacy: .public) filter lists | existing rows: \(records.count, privacy: .public), size: \(filtersData.utf8.count, privacy: .public) bytes")
         for extraRecord in records.dropFirst() {
             self.context.delete(extraRecord)
         }
@@ -403,6 +412,7 @@ class PersistanceManager: PersistanceManagerProtocol {
 
     func touchCache() {
         guard let cacheRecord = self.fetchAutomaticFiltersCacheRecords().first else { return }
+        AppManager.logger.debug("touchCache — cache age set to now")
         cacheRecord.age = Date()
         _ = self.commitContext()
     }

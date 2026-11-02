@@ -26,7 +26,9 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     func writeExportFile(candidates: [FilterTransferCandidate]) throws -> URL {
-        let data = try self.encodePayload(records: candidates.map({ self.record(from: $0) }))
+        let records = candidates.map({ self.record(from: $0) })
+        let data = try self.encodePayload(records: records)
+        AppManager.logger.debug("writeExportFile — records: \(records.count, privacy: .public), size: \(data.count, privacy: .public) bytes")
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -45,6 +47,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                           duplicateCount: 0,
                                           invalidCount: 0,
                                           forceClearTypes: [])
+        AppManager.logger.debug("queueExport — exportable filters: \(preview.candidates.count, privacy: .public)")
         self.pendingPreview = preview
         self.pendingKind = .exportFilters
         return preview
@@ -89,10 +92,12 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         var accepted: [FilterTransferCandidate] = []
         var duplicateCount = 0
         var invalidCount = 0
+        var skippedCount = 0
         var seenKeys = Set<String>()
 
         for record in payload.filters {
             if let recordType = FilterType(exportKey: record.type), !recordType.isTransferable {
+                skippedCount += 1
                 continue
             }
 
@@ -115,6 +120,9 @@ class FilterTransferManager: FilterTransferManagerProtocol {
             seenKeys.insert(key)
             accepted.append(candidate)
         }
+
+        let forceClearDescription = typesToClear.map(\.exportKey).sorted().joined(separator: ", ")
+        AppManager.logger.debug("previewImport — appVersion: \(payload.appVersion, privacy: .public), records: \(payload.filters.count, privacy: .public), accepted: \(accepted.count, privacy: .public), duplicates: \(duplicateCount, privacy: .public), invalid: \(invalidCount, privacy: .public), skipped (not transferable): \(skippedCount, privacy: .public), force clear: [\(forceClearDescription, privacy: .public)]")
 
         return FilterTransferPreview(candidates: accepted,
                                      duplicateCount: duplicateCount,
@@ -142,6 +150,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         for type in self.pendingPreview.forceClearTypes {
             let existing = self.persistanceManager.fetchFilterRecords(for: type)
             if !existing.isEmpty {
+                AppManager.logger.debug("importFilters — force clear \(type.exportKey, privacy: .public): deleting \(existing.count, privacy: .public)")
                 self.persistanceManager.deleteFilters(Set(existing))
             }
         }
@@ -162,6 +171,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         let result = FilterTransferResult(added: added,
                                         duplicateCount: self.pendingPreview.duplicateCount,
                                         invalidCount: self.pendingPreview.invalidCount)
+        AppManager.logger.debug("importFilters — selected: \(candidates.count, privacy: .public), added: \(added, privacy: .public)")
         self.lastImportResult = result
         return result
     }

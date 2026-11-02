@@ -33,11 +33,13 @@ class mock_AppManager: AppManagerProtocol {
     var onAppLaunchClosuer: (() -> ())?
     var onNewUserSessionClosuer: (() -> ())?
     
+    @MainActor
     func onAppLaunch() {
         self.onAppLaunchCounter += 1
         self.onAppLaunchClosuer?()
     }
     
+    @MainActor
     func onNewUserSession() {
         self.onNewUserSessionCounter += 1
         self.onNewUserSessionClosuer?()
