@@ -542,6 +542,7 @@ class AutomaticFilterManagerTests: XCTestCase {
 
             return [cacheRecord]
         }
+        self.persistanceManager.cachedFilterListCatalogClosure = { self.catalog(["he"]) }
         self.networkSyncManager.networkStatusClosure = { .online }
 
         // Act
@@ -550,6 +551,32 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertEqual(self.networkSyncManager.networkStatusGetCounter, 0)
         XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 0)
+    }
+
+    @MainActor
+    func test_updateWhenOnline_checkedTodayUnreadableCache_fetches() async {
+        // Prepare
+        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
+            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+            cacheRecord.uuid = UUID()
+            cacheRecord.age = Date()
+
+            return [cacheRecord]
+        }
+        self.persistanceManager.cachedFilterListCatalogClosure = { nil }
+        self.networkSyncManager.networkStatusClosure = { .online }
+        let catalogRequested = self.expectation(description: "catalog requested")
+        self.filterListService.fetchFilterListCatalogClosure = { _ in
+            catalogRequested.fulfill()
+            return nil
+        }
+
+        // Act
+        self.testSubject.updateAutomaticFiltersWhenOnline()
+
+        // Verify
+        await self.fulfillment(of: [catalogRequested], timeout: 1)
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
     }
 
     @MainActor

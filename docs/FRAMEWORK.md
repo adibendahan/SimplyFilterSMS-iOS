@@ -45,6 +45,8 @@ Filter UUIDs + rule states + language rows. It deliberately **excludes** `Automa
 
 ### Refresh
 
+- **When:** the first launch of each calendar day. Offline, it waits for the device to come online, and later launches that day retry until a check reaches every list. Pull-to-refresh works at any time, and the background task runs when iOS decides, no earlier than `kUpdateAutomaticFiltersMinDays` apart. A readable cache's `age` marks the day done and syncs through iCloud, so a check on another device counts for this one.
+- **Never:** the extension, or turning a language on. Every list in the catalog is cached, so a language works immediately and offline, and a switch synced from another device works before this app runs.
 - Catalog first, then each list with its stored ETag: `304` keeps the section, `200` replaces it, a failure keeps the old one. Lists that left the catalog are dropped.
 - Saves once if anything changed. Otherwise `touchCache()`, except when a list failed, so the next launch retries instead of waiting days.
 - Runs on the **main actor** (Core Data view context). A second caller joins the running refresh (`refreshTask`), so pull-to-refresh waits for the real result.
