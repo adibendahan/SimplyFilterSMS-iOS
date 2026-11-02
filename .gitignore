@@ -104,3 +104,4 @@ data/reported_messages_archive*.json
 # App Store Connect. We archive locally, so it's noise.
 
 *.xcodeproj/xcshareddata/xcodecloud/
+.claude/settings.local.json
