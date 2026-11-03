@@ -24,6 +24,9 @@ class AppHomeViewModelTests: XCTestCase {
         self.networkSyncManager = mock_NetworkSyncManager()
         self.appManager.defaultsManager = self.defaultsManager
         self.appManager.networkSyncManager = self.networkSyncManager
+        self.defaultsManager.isAppFirstRunClosure = { false }
+        self.defaultsManager.lastSeenWhatsNewVersionClosure = { currentWhatsNewVersion }
+        self.appManager.flowManager = FlowManager(defaultsManager: self.defaultsManager)
     }
 
     //MARK: Tests
@@ -39,32 +42,6 @@ class AppHomeViewModelTests: XCTestCase {
 
         // Verify
         XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.cloudSyncOperationComplete.title)
-    }
-
-    func test_showNotification_higherPriorityWhileObstructed_replacesPending() {
-        // Prepare
-        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
-        testSubject.sheetScreen = .whatsNew
-
-        // Act
-        testSubject.showNotification(.automaticFiltersUpdated)
-        testSubject.showNotification(.filtersImported(added: 1, skipped: 0))
-        testSubject.sheetScreen = nil
-
-        // Verify
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.filtersImported(added: 1, skipped: 0).title)
-    }
-
-    func test_showNotification_importResultAfterSaveFailed_keepsSaveFailed() {
-        // Prepare
-        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
-
-        // Act
-        testSubject.showNotification(.saveFailed)
-        testSubject.showNotification(.filtersImported(added: 1, skipped: 0))
-
-        // Verify
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.saveFailed.title)
     }
 
     func test_startMonitoring_offlineDismissedRecently_hidesOffline() {

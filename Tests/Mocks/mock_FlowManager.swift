@@ -16,12 +16,19 @@ class mock_FlowManager: FlowManagerProtocol {
     var nextCounter = 0
     var completeCounter = 0
     var resetSessionCounter = 0
+    var requestNotificationCounter = 0
+    var nextNotificationCounter = 0
+    var completeNotificationCounter = 0
+    var cancelNotificationCounter = 0
 
     var nextScreen: Screen?
     var recordLaunchClosure: ((Screen) -> Bool)?
     var requestClosure: ((Screen) -> ())?
     var nextClosure: (() -> Screen?)?
     var completeClosure: ((Screen) -> ())?
+    var requestNotificationClosure: ((NotificationView.Notification) -> ())?
+    var nextNotificationClosure: (() -> NotificationView.Notification?)?
+    var cancelNotificationClosure: ((NotificationView.Notification) -> Bool)?
 
     func recordLaunch(_ screen: Screen) -> Bool {
         self.recordLaunchCounter += 1
@@ -52,5 +59,24 @@ class mock_FlowManager: FlowManagerProtocol {
 
     func resetSession() {
         self.resetSessionCounter += 1
+    }
+
+    func requestNotification(_ notification: NotificationView.Notification) {
+        self.requestNotificationCounter += 1
+        self.requestNotificationClosure?(notification)
+    }
+
+    func nextNotification() -> NotificationView.Notification? {
+        self.nextNotificationCounter += 1
+        return self.nextNotificationClosure?()
+    }
+
+    func completeNotification() {
+        self.completeNotificationCounter += 1
+    }
+
+    func cancelNotification(_ notification: NotificationView.Notification) -> Bool {
+        self.cancelNotificationCounter += 1
+        return self.cancelNotificationClosure?(notification) ?? false
     }
 }

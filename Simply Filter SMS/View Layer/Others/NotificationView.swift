@@ -214,7 +214,7 @@ struct NotificationView: View {
         }
     }
 
-    enum Notification {
+    enum Notification: Equatable {
         case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
 
         var icon: String {

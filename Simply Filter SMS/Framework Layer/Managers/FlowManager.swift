@@ -84,6 +84,39 @@ class FlowManager: FlowManagerProtocol {
         self.launchActionClaimedSession = false
         self.whatsNewEnabled = false
         self.startedAsFirstRun = self.defaultsManager.isAppFirstRun
+        self.shownNotification = nil
+        self.pendingNotification = nil
+    }
+
+    func requestNotification(_ notification: NotificationView.Notification) {
+        guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
+            let shown = self.shownNotification.map { String(describing: $0) } ?? "nil"
+            let pending = self.pendingNotification.map { String(describing: $0) } ?? "nil"
+            AppManager.logger.debug("FlowManager — notification dropped: \(String(describing: notification), privacy: .public) (shown: \(shown, privacy: .public), pending: \(pending, privacy: .public))")
+            return
+        }
+        self.pendingNotification = notification
+    }
+
+    func nextNotification() -> NotificationView.Notification? {
+        guard let notification = self.pendingNotification else { return nil }
+        self.pendingNotification = nil
+        self.shownNotification = notification
+        return notification
+    }
+
+    func completeNotification() {
+        self.shownNotification = nil
+    }
+
+    func cancelNotification(_ notification: NotificationView.Notification) -> Bool {
+        if self.pendingNotification == notification {
+            self.pendingNotification = nil
+        }
+
+        guard self.shownNotification == notification else { return false }
+        self.shownNotification = nil
+        return true
     }
 
 
@@ -95,6 +128,8 @@ class FlowManager: FlowManagerProtocol {
     private var activeScreen: Screen?
     private var pendingLaunchScreen: Screen?
     private var pendingUserRequest: Screen?
+    private var shownNotification: NotificationView.Notification?
+    private var pendingNotification: NotificationView.Notification?
 
     private var shouldShowWhatsNew: Bool {
         return self.startedAsFirstRun == false

@@ -31,6 +31,7 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - **CloudKit recovery:** `reloadContainer()` runs only on a genuine offline→online reconnection (`NetworkStatus.isReconnection(from:)`). `.unknown` is not a network state: rebuilding the stack on the monitor's first report aborted the initial import. A failed setup is left to Core Data's own recovery; never retry it with `reloadContainer()`. After a reload, screens holding Core Data objects refresh through `.modifier(persistentStoreReload)`.
 - **Inactivity reminder clock:** only the `scenePhase` `.active` hook (`AppHomeView.ViewModel.appBecameActive()`) moves it. Nothing on the launch path may, because `didFinishLaunching` also runs for background wakes. `AppDelegate` lifecycle methods like `applicationDidBecomeActive` never run in this scene-based app.
 - **FlowManager is a launch-order queue, not a navigator.** Order: first run → launch (file / deep link) → automatic What's New → user `request`. `next()` occupies it until `complete`.
+- **FlowManager also holds Home's one notification slot.** A notification is dropped when the shown or pending one has a lower `priority` (0 is most urgent); there is no queue. Home owns only whether it's obstructed and the snooze.
 
 ## MVVM
 
