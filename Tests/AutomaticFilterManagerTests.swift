@@ -324,7 +324,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         self.persistanceManager.saveCacheClosure = { savedCache = $0 }
 
         // Act
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
 
         // Verify
         XCTAssertNil(catalogETag)
@@ -353,7 +353,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         }
 
         // Act
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
 
         // Verify
         XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
@@ -378,7 +378,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         self.filterListService.fetchFilterListClosure = { _, _ in .notModified }
 
         // Act
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
 
         // Verify
         XCTAssertEqual(catalogETag, "catalog-1")
@@ -402,7 +402,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         }
 
         // Act
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
 
         // Verify
         XCTAssertEqual(catalogETag, "catalog-1")
@@ -425,7 +425,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         self.persistanceManager.saveCacheClosure = { savedCache = $0 }
 
         // Act
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
 
         // Verify
         XCTAssertEqual(savedCache?.lists, [self.section("he", etag: "he-2", text: "new"),
@@ -443,7 +443,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         }
 
         // Act
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
 
         // Verify
         XCTAssertEqual(self.filterListService.fetchFilterListCounter, 2)
@@ -457,7 +457,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         self.filterListService.fetchFilterListCatalogClosure = { _ in nil }
 
         // Act
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
 
         // Verify
         XCTAssertEqual(self.filterListService.fetchFilterListCounter, 0)
@@ -474,7 +474,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         self.persistanceManager.saveCacheClosure = { savedCache = $0 }
 
         // Act
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
 
         // Verify
         XCTAssertEqual(savedCache?.lists, [self.section("he", etag: "he-1", text: "he")])
@@ -492,7 +492,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         self.filterListService.fetchFilterListClosure = { _, _ in .modified(self.payload(text: "typo fix", revision: 2), etag: "he-2") }
 
         // Act
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
 
         // Verify
         XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
@@ -518,13 +518,13 @@ class AutomaticFilterManagerTests: XCTestCase {
 
         // Act
         let firstCall = Task {
-            await self.testSubject.updateAutomaticFiltersIfNeeded()
+            await self.testSubject.refreshFilterLists()
         }
         await self.fulfillment(of: [firstCatalogRequestStarted], timeout: 1)
         Task {
             releaseFirstCatalogRequest?.resume()
         }
-        await self.testSubject.updateAutomaticFiltersIfNeeded()
+        await self.testSubject.refreshFilterLists()
         await firstCall.value
 
         // Verify

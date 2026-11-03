@@ -186,11 +186,6 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
 
     @MainActor
-    func updateAutomaticFiltersIfNeeded() async {
-        await self.refreshFilterLists()
-    }
-
-    @MainActor
     func updateAutomaticFiltersWhenOnline() {
         guard !ProcessInfo.processInfo.isInTestingMode else {
             AppManager.logger.debug("updateAutomaticFiltersWhenOnline — testing mode, keeping the seeded filter lists")
@@ -274,12 +269,12 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     private func updateAutomaticFiltersInBackground() {
         AppManager.logger.debug("updateAutomaticFiltersInBackground — triggering automatic filter update check")
         Task(priority: .background) {
-            await self.updateAutomaticFiltersIfNeeded()
+            await self.refreshFilterLists()
         }
     }
     
     @MainActor
-    private func refreshFilterLists() async {
+    func refreshFilterLists() async {
         if let refreshTask = self.refreshTask {
             AppManager.logger.debug("refreshFilterLists — joining the refresh in progress")
             await refreshTask.value
