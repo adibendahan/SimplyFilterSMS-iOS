@@ -833,6 +833,7 @@ extension AppHomeView {
                 self.pendingNotification = nil
             }
             guard case .offline = self.shownNotification else { return }
+            AppManager.logger.debug("AppHome — offline notification cancelled (back online)")
             self.shownNotification = nil
             self.notification.show = false
         }
@@ -845,16 +846,26 @@ extension AppHomeView {
         }
         
         func showNotification(_ notification: NotificationView.Notification) {
-            guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else { return }
+            let name = String(describing: notification)
+
+            guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
+                let shown = self.shownNotification.map { String(describing: $0) } ?? "nil"
+                let pending = self.pendingNotification.map { String(describing: $0) } ?? "nil"
+                AppManager.logger.debug("AppHome — notification dropped: \(name, privacy: .public) (shown: \(shown, privacy: .public), pending: \(pending, privacy: .public))")
+                return
+            }
 
             guard self.isHomeUnobstructed else {
+                AppManager.logger.debug("AppHome — notification pending (Home obstructed): \(name, privacy: .public)")
                 self.pendingNotification = notification
                 return
             }
 
+            AppManager.logger.debug("AppHome — notification shown: \(name, privacy: .public)")
             self.didShowNotificationThisSession = true
             self.shownNotification = notification
             self.notification.onHide = { [weak self] in
+                AppManager.logger.debug("AppHome — notification hidden: \(name, privacy: .public)")
                 self?.shownNotification = nil
             }
             self.notification.onTap = nil
