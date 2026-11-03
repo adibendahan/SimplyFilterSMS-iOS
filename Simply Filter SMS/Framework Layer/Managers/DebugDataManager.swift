@@ -39,7 +39,7 @@ class DebugDataManager: DebugDataManagerProtocol {
 
     #if DEBUG
     func expireAutomaticFiltersCache() {
-        guard let cache = self.persistanceManager.fetchAutomaticFiltersCacheRecords().first else { return }
+        guard let cache = self.persistanceManager.fetchFilterListsCacheRecords().first else { return }
         cache.age = Calendar.current.date(byAdding: .day, value: -7, to: Date())
         _ = self.persistanceManager.commitContext()
     }

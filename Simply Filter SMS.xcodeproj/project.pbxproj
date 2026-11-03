@@ -323,6 +323,7 @@
 		69D4D17F2ED23D7700275627 /* EmojiGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiGenerator.swift; sourceTree = "<group>"; };
 		69D87E432877445E00266D86 /* ReportMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMessageView.swift; sourceTree = "<group>"; };
 		69D87EB8309A4F2E00C733E6 /* AppHomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHomeViewModelTests.swift; sourceTree = "<group>"; };
+		69D87EBA309A628F00C733E6 /* Simply_Filter_SMS 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Simply_Filter_SMS 5.xcdatamodel"; sourceTree = "<group>"; };
 		69DB7013277A1F0200245DBA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		69DB7016277A1F2100245DBA /* AppPersistentCloudKitContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPersistentCloudKitContainer.swift; sourceTree = "<group>"; };
 		69DE6ABA284AC11900366D10 /* EditableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableText.swift; sourceTree = "<group>"; };
@@ -1638,12 +1639,13 @@
 		69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				69D87EBA309A628F00C733E6 /* Simply_Filter_SMS 5.xcdatamodel */,
 				6916BE7427A176650096CC8D /* Simply_Filter_SMS 3.xcdatamodel */,
 				6973D025278CE89800A173CD /* Simply_Filter_SMS 2.xcdatamodel */,
 				69CD70D52770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodel */,
 				AA8BCED7D8924F6E9A3B5C08 /* Simply_Filter_SMS 4.xcdatamodel */,
 			);
-			currentVersion = AA8BCED7D8924F6E9A3B5C08 /* Simply_Filter_SMS 4.xcdatamodel */;
+			currentVersion = 69D87EBA309A628F00C733E6 /* Simply_Filter_SMS 5.xcdatamodel */;
 			path = "Simply-Filter-SMS.xcdatamodeld";
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

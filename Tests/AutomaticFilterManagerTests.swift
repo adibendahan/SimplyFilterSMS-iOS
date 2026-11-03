@@ -145,8 +145,8 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Prepare
         let expectedCacheAge = Date()
         
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = expectedCacheAge
             
@@ -159,7 +159,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         
         // Verify
         XCTAssertEqual(expectedCacheAge, cacheAgeResult)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersCacheRecordsCounter, 1)
+        XCTAssertEqual(self.persistanceManager.fetchFilterListsCacheRecordsCounter, 1)
     }
     
     func test_languagesForBlockLanguage() {
@@ -338,8 +338,8 @@ class AutomaticFilterManagerTests: XCTestCase {
 
     func test_update_freshLegacyCache_downloadsEverything() async {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Date()
 
@@ -363,8 +363,8 @@ class AutomaticFilterManagerTests: XCTestCase {
     func test_update_freshCache_stillChecksWithETags() async {
         // Prepare
         self.persistanceManager.cachedFilterListsClosure = { self.cache(["he"]) }
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Date()
 
@@ -535,8 +535,8 @@ class AutomaticFilterManagerTests: XCTestCase {
     @MainActor
     func test_updateWhenOnline_checkedToday_skips() {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Date()
 
@@ -556,8 +556,8 @@ class AutomaticFilterManagerTests: XCTestCase {
     @MainActor
     func test_updateWhenOnline_checkedTodayUnreadableCache_fetches() async {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Date()
 
@@ -582,8 +582,8 @@ class AutomaticFilterManagerTests: XCTestCase {
     @MainActor
     func test_updateWhenOnline_notCheckedToday_fetches() async {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = {
-            let cacheRecord = AutomaticFiltersCache(context: self.persistanceManager.context)
+        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Calendar.current.date(byAdding: .day, value: -1, to: Date())
 
@@ -607,7 +607,7 @@ class AutomaticFilterManagerTests: XCTestCase {
     @MainActor
     func test_updateWhenOnline_offline_fetchesOnceBackOnline() async {
         // Prepare
-        self.persistanceManager.fetchAutomaticFiltersCacheRecordsClosure = { [] }
+        self.persistanceManager.fetchFilterListsCacheRecordsClosure = { [] }
         self.networkSyncManager.networkStatusClosure = { .offline }
         let catalogRequested = self.expectation(description: "catalog requested")
         self.filterListService.fetchFilterListCatalogClosure = { _ in

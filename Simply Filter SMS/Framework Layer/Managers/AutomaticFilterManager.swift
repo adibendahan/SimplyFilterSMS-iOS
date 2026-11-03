@@ -94,7 +94,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     
     var automaticFiltersCacheAge: Date? {
         guard let persistanceManager = self.persistanceManager,
-              let cache = persistanceManager.fetchAutomaticFiltersCacheRecords().first else { return nil }
+              let cache = persistanceManager.fetchFilterListsCacheRecords().first else { return nil }
         
         return cache.age
     }

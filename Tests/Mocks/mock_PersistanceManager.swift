@@ -32,7 +32,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchFilterRecordsForTypeCounter = 0
     var fetchAutomaticFiltersLanguageRecordsCounter = 0
     var fetchAutomaticFiltersRuleRecordsCounter = 0
-    var fetchAutomaticFiltersCacheRecordsCounter = 0
+    var fetchFilterListsCacheRecordsCounter = 0
     var fetchAutomaticFiltersLanguageRecordCounter = 0
     var fetchAutomaticFiltersRuleRecordCounter = 0
     var ensuredAutomaticFiltersLanguageRecordCounter = 0
@@ -62,7 +62,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchFilterRecordsForTypeClosure: ((FilterType) -> ([Filter]))?
     var fetchAutomaticFiltersLanguageRecordsClosure: (() -> ([AutomaticFiltersLanguage]))?
     var fetchAutomaticFiltersRuleRecordsClosure: (() -> ([AutomaticFiltersRule]))?
-    var fetchAutomaticFiltersCacheRecordsClosure: (() -> ([AutomaticFiltersCache]))?
+    var fetchFilterListsCacheRecordsClosure: (() -> ([FilterListsCache]))?
     var fetchAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage?))?
     var fetchAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule?))?
     var ensuredAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage))?
@@ -198,9 +198,9 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.fetchAutomaticFiltersRuleRecordsClosure?() ?? []
     }
     
-    func fetchAutomaticFiltersCacheRecords() -> [AutomaticFiltersCache] {
-        self.fetchAutomaticFiltersCacheRecordsCounter += 1
-        return self.fetchAutomaticFiltersCacheRecordsClosure?() ?? []
+    func fetchFilterListsCacheRecords() -> [FilterListsCache] {
+        self.fetchFilterListsCacheRecordsCounter += 1
+        return self.fetchFilterListsCacheRecordsClosure?() ?? []
     }
     
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage? {
@@ -267,7 +267,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.fetchFilterRecordsForTypeCounter = 0
         self.fetchAutomaticFiltersLanguageRecordsCounter = 0
         self.fetchAutomaticFiltersRuleRecordsCounter = 0
-        self.fetchAutomaticFiltersCacheRecordsCounter = 0
+        self.fetchFilterListsCacheRecordsCounter = 0
         self.fetchAutomaticFiltersLanguageRecordCounter = 0
         self.fetchAutomaticFiltersRuleRecordCounter = 0
         self.ensuredAutomaticFiltersRuleRecordCounter = 0

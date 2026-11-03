@@ -209,10 +209,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         }
         let activeLanguagesDescription = activeLanguages.sorted().joined(separator: ", ")
 
-        let cacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
-        cacheRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
-        guard let cacheRow = try? self.context.fetch(cacheRequest).first,
-              let filtersData = cacheRow.filtersData else {
+        guard let filtersData = self.loadCachedFilterLists() else {
             self.logger?.debug("[Filter Lists] active languages: \(activeLanguagesDescription, privacy: .public) | no cache row")
             return nil
         }
@@ -224,6 +221,20 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         let listNames = activeFilterLists.lists.map(\.name).joined(separator: ", ")
         self.logger?.debug("[Filter Lists] active languages: \(activeLanguagesDescription, privacy: .public) | lists: \(listNames, privacy: .public)")
         return activeFilterLists
+    }
+
+    private func loadCachedFilterLists() -> String? {
+        let cacheRequest: NSFetchRequest<FilterListsCache> = FilterListsCache.fetchRequest()
+        cacheRequest.sortDescriptors = [NSSortDescriptor(keyPath: \FilterListsCache.age, ascending: false)]
+        if let data = try? self.context.fetch(cacheRequest).first?.data {
+            return data
+        }
+
+        let legacyRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
+        legacyRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
+        guard let legacyData = try? self.context.fetch(legacyRequest).first?.filtersData else { return nil }
+        self.logger?.debug("[Filter Lists] no 3.3 cache yet, reading the 3.2 cache")
+        return FilterListsSnapshot(legacyEncoded: legacyData)?.encoded
     }
 
     private func runFilterLists(type: FilterType, activeFilterLists: ActiveFilterLists?, body: String, sender: String) -> MessageEvaluationResult {

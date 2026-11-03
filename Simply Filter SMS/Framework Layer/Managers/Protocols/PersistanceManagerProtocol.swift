@@ -24,7 +24,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     func fetchFilterRecords(for filterType: FilterType) -> [Filter]
     func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage]
     func fetchAutomaticFiltersRuleRecords() -> [AutomaticFiltersRule]
-    func fetchAutomaticFiltersCacheRecords() -> [AutomaticFiltersCache]
+    func fetchFilterListsCacheRecords() -> [FilterListsCache]
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage?
     func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule?
     func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule
