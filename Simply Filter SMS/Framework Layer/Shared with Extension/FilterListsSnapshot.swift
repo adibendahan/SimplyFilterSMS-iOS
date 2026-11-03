@@ -1,5 +1,5 @@
 //
-//  FilterListsCache.swift
+//  FilterListsSnapshot.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 29/10/2026.
@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct FilterListsCache: Codable, Equatable {
+struct FilterListsSnapshot: Codable, Equatable {
     let catalogETag: String?
     let catalog: FilterListCatalogResponse
     let lists: [FilterListsCacheSection]
@@ -29,7 +29,7 @@ struct ActiveFilterList {
     let records: [FilterExportRecord]
 }
 
-extension FilterListsCache {
+extension FilterListsSnapshot {
     init?(encoded: String) {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601

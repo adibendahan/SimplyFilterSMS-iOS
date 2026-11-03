@@ -54,8 +54,8 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var updateFilterMatchingClosure: ((Filter, FilterMatching) -> ())?
     var updateFilterTextClosure: ((Filter, String) -> ())?
     var fetchFilterRecordsClosure: (() -> ([Filter]))?
-    var saveCacheClosure: ((FilterListsCache) -> ())?
-    var cachedFilterListsClosure: (() -> (FilterListsCache?))?
+    var saveCacheClosure: ((FilterListsSnapshot) -> ())?
+    var cachedFilterListsClosure: (() -> (FilterListsSnapshot?))?
     var cachedFilterListCatalogClosure: (() -> (FilterListCatalogResponse?))?
     var touchCacheClosure: (() -> ())?
     var commitContextClosure: (() -> ())?
@@ -155,7 +155,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.fetchFilterRecordsForTypeClosure?(filterType) ?? []
     }
     
-    func cachedFilterLists() -> FilterListsCache? {
+    func cachedFilterLists() -> FilterListsSnapshot? {
         self.cachedFilterListsCounter += 1
         return self.cachedFilterListsClosure?() ?? nil
     }
@@ -165,7 +165,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.cachedFilterListCatalogClosure?() ?? nil
     }
 
-    func saveCache(_ cache: FilterListsCache) -> Bool {
+    func saveCache(_ cache: FilterListsSnapshot) -> Bool {
         self.saveCacheCounter += 1
         self.saveCacheClosure?(cache)
         return true

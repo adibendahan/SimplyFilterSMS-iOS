@@ -320,7 +320,7 @@ class AutomaticFilterManagerTests: XCTestCase {
             listETags.append(etag)
             return .modified(self.payload(text: url.lastPathComponent), etag: "\(url.lastPathComponent)-1")
         }
-        var savedCache: FilterListsCache?
+        var savedCache: FilterListsSnapshot?
         self.persistanceManager.saveCacheClosure = { savedCache = $0 }
 
         // Act
@@ -329,7 +329,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         // Verify
         XCTAssertNil(catalogETag)
         XCTAssertEqual(listETags, [nil, nil])
-        XCTAssertEqual(savedCache, FilterListsCache(catalogETag: "catalog-1",
+        XCTAssertEqual(savedCache, FilterListsSnapshot(catalogETag: "catalog-1",
                                                     catalog: self.catalog(["he", "en"]),
                                                     lists: [self.section("he", etag: "he.sfsfilters-1", text: "he.sfsfilters"),
                                                             self.section("en", etag: "en.sfsfilters-1", text: "en.sfsfilters")]))
@@ -421,7 +421,7 @@ class AutomaticFilterManagerTests: XCTestCase {
             let payload = self.payload(text: "new")
             return .modified(payload, etag: "he-2")
         }
-        var savedCache: FilterListsCache?
+        var savedCache: FilterListsSnapshot?
         self.persistanceManager.saveCacheClosure = { savedCache = $0 }
 
         // Act
@@ -470,7 +470,7 @@ class AutomaticFilterManagerTests: XCTestCase {
         self.persistanceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
         self.filterListService.fetchFilterListCatalogClosure = { _ in .modified(self.catalog(["he"]), etag: "catalog-2") }
         self.filterListService.fetchFilterListClosure = { _, _ in .notModified }
-        var savedCache: FilterListsCache?
+        var savedCache: FilterListsSnapshot?
         self.persistanceManager.saveCacheClosure = { savedCache = $0 }
 
         // Act
@@ -484,7 +484,7 @@ class AutomaticFilterManagerTests: XCTestCase {
     func test_update_sameRevision_savesWithoutNotification() async {
         // Prepare
         self.persistanceManager.cachedFilterListsClosure = {
-            FilterListsCache(catalogETag: "catalog-1",
+            FilterListsSnapshot(catalogETag: "catalog-1",
                              catalog: self.catalog(["he"]),
                              lists: [self.section("he", etag: "he-1", text: "he", revision: 2)])
         }
@@ -664,8 +664,8 @@ class AutomaticFilterManagerTests: XCTestCase {
                                        payload: self.payload(text: text, revision: revision))
     }
 
-    private func cache(_ languages: [String]) -> FilterListsCache {
-        return FilterListsCache(catalogETag: "catalog-1",
+    private func cache(_ languages: [String]) -> FilterListsSnapshot {
+        return FilterListsSnapshot(catalogETag: "catalog-1",
                                 catalog: self.catalog(languages),
                                 lists: languages.map({ self.section($0, etag: "\($0)-1", text: $0) }))
     }

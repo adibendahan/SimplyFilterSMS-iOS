@@ -90,7 +90,7 @@ class AppManager: AppManagerProtocol {
             let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
                                                     version: FilterListCatalogResponse.currentVersion,
                                                     lists: entries)
-            let cache = FilterListsCache(catalogETag: nil, catalog: catalog, lists: lists)
+            let cache = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: lists)
             _ = persistanceManager.saveCache(cache)
             defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
         }

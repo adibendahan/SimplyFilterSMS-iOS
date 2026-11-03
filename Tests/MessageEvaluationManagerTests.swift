@@ -692,7 +692,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
                                                 version: FilterListCatalogResponse.currentVersion,
                                                 lists: entries)
-        let cache = FilterListsCache(catalogETag: nil, catalog: catalog, lists: sections)
+        let cache = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: sections)
         let cacheRecord = AutomaticFiltersCache(context: self.testSubject.context)
         cacheRecord.uuid = UUID()
         cacheRecord.filtersData = cache.encoded

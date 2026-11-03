@@ -368,13 +368,13 @@ class PersistanceManager: PersistanceManagerProtocol {
         guard self.commitAndAnnounce() else { return }
     }
 
-    func cachedFilterLists() -> FilterListsCache? {
+    func cachedFilterLists() -> FilterListsSnapshot? {
         let records = self.fetchAutomaticFiltersCacheRecords()
         guard let filtersData = records.first?.filtersData else {
             AppManager.logger.debug("cachedFilterLists — no cache row (rows: \(records.count, privacy: .public))")
             return nil
         }
-        guard let cache = FilterListsCache(encoded: filtersData) else {
+        guard let cache = FilterListsSnapshot(encoded: filtersData) else {
             AppManager.logger.debug("cachedFilterLists — cache row doesn't decode (legacy or unreadable) | rows: \(records.count, privacy: .public), size: \(filtersData.utf8.count, privacy: .public) bytes")
             return nil
         }
@@ -387,7 +387,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         return FilterListCatalogResponse(encodedCache: filtersData)
     }
 
-    func saveCache(_ cache: FilterListsCache) -> Bool {
+    func saveCache(_ cache: FilterListsSnapshot) -> Bool {
         guard let filtersData = cache.encoded else { return false }
         let records = self.fetchAutomaticFiltersCacheRecords()
         AppManager.logger.debug("saveCache — saving \(cache.lists.count, privacy: .public) filter lists | existing rows: \(records.count, privacy: .public), size: \(filtersData.utf8.count, privacy: .public) bytes")

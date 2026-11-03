@@ -354,7 +354,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             }
         }
 
-        let newCache = FilterListsCache(catalogETag: catalogETag, catalog: catalog, lists: lists)
+        let newCache = FilterListsSnapshot(catalogETag: catalogETag, catalog: catalog, lists: lists)
         let hasChanges = newCache != cache
         let hasNewFilters = Self.hasNewFilters(from: cache, to: newCache)
         AppManager.logger.debug("performRefresh — lists: \(lists.count, privacy: .public), changed: \(hasChanges, privacy: .public), new filters: \(hasNewFilters, privacy: .public), failures: \(hasFailures, privacy: .public)")
@@ -379,7 +379,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         }
     }
 
-    private static func hasNewFilters(from oldCache: FilterListsCache?, to newCache: FilterListsCache) -> Bool {
+    private static func hasNewFilters(from oldCache: FilterListsSnapshot?, to newCache: FilterListsSnapshot) -> Bool {
         let oldLists = oldCache?.lists ?? []
         guard oldLists.count == newCache.lists.count else { return true }
 

@@ -425,7 +425,7 @@ class PersistanceManagerTests: XCTestCase {
                                   caseSensitivity: caseSensitivity)
     }
 
-    private func filterListsCache(records: [FilterExportRecord]) -> FilterListsCache {
+    private func filterListsCache(records: [FilterExportRecord]) -> FilterListsSnapshot {
         let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
                                           version: FilterExportPayload.currentVersion,
                                           exportedAt: Date(timeIntervalSince1970: 1_800_000_000),
@@ -444,7 +444,7 @@ class PersistanceManagerTests: XCTestCase {
         let section = FilterListsCacheSection(url: "https://example.com/he.sfsfilters",
                                               etag: "he-etag",
                                               payload: payload)
-        return FilterListsCache(catalogETag: "catalog-etag",
+        return FilterListsSnapshot(catalogETag: "catalog-etag",
                                 catalog: catalog,
                                 lists: [section])
     }
