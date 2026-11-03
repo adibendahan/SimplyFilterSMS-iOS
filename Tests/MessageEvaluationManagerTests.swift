@@ -571,6 +571,46 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(result, .junk, "the newest row is the one the app refreshed")
     }
 
+    func test_legacyFilterLists_allowSenderIsCaseInsensitiveEquality() {
+        self.saveLegacyFilterLists()
+
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "Claim now", sender: "amber.it").action, .allow)
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "Claim now", sender: "AmberXIT").action, .junk, "the dot is literal")
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "Claim now", sender: "Amber.IT store").action, .junk, "equality, not contains")
+    }
+
+    func test_legacyFilterLists_allowBodyIsCaseInsensitiveContains() {
+        self.saveLegacyFilterLists()
+
+        let result = self.testSubject.evaluateMessage(body: "Here is YOUR CODE: 1234. Claim now", sender: "1234567").action
+
+        XCTAssertEqual(result, .allow)
+    }
+
+    func test_legacyFilterLists_denySenderIsCaseInsensitiveEqualityToJunk() {
+        self.saveLegacyFilterLists()
+
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "hello", sender: "spamco").action, .junk)
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "hello", sender: "SpamCo2").action, .allow)
+    }
+
+    func test_legacyFilterLists_denyBodyIsCaseInsensitiveContainsToJunk() {
+        self.saveLegacyFilterLists()
+
+        let result = self.testSubject.evaluateMessage(body: "CLAIM NOW for a prize", sender: "1234567").action
+
+        XCTAssertEqual(result, .junk)
+    }
+
+    func test_legacyFilterLists_unreadableIsNil() {
+        XCTAssertNil(FilterListsSnapshot(legacyEncoded: "not base64 at all"))
+        XCTAssertNil(FilterListsSnapshot(legacyEncoded: FilterListsSnapshot(catalogETag: nil,
+                                                                     catalog: FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                                                                                        version: 1,
+                                                                                                        lists: []),
+                                                                     lists: []).encoded ?? ""))
+    }
+
     func test_activeFilterLists_decodesOnlyActiveLanguages() {
         self.flushPersistanceManager()
         let records = [self.denyBody("spam")]
@@ -697,6 +737,17 @@ class MessageEvaluationManagerTests: XCTestCase {
         cacheRecord.uuid = UUID()
         cacheRecord.filtersData = cache.encoded
         cacheRecord.age = Date()
+    }
+
+    private func saveLegacyFilterLists() {
+        self.flushPersistanceManager()
+        let legacyEncoded = "eyJmaWx0ZXJfbGlzdHMiOnsiZW4iOnsiYWxsb3dfYm9keSI6WyJ5b3VyIGNvZGUiXSwiYWxsb3dfc2VuZGVyIjpbIkFtYmVyLklUIl0sImRlbnlfYm9keSI6WyJDbGFpbSBub3ciXSwiZGVueV9zZW5kZXIiOlsiU3BhbUNvIl19fX0="
+        let cacheRecord = AutomaticFiltersCache(context: self.testSubject.context)
+        cacheRecord.uuid = UUID()
+        cacheRecord.filtersData = FilterListsSnapshot(legacyEncoded: legacyEncoded)?.encoded
+        cacheRecord.age = Date()
+        self.setLanguage(.english, isActive: true)
+        try? self.testSubject.context.save()
     }
 
     private func flushPersistanceManager() {

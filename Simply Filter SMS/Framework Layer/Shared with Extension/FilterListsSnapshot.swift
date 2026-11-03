@@ -48,6 +48,39 @@ extension FilterListsSnapshot {
     }
 }
 
+extension FilterListsSnapshot {
+    init?(legacyEncoded: String) {
+        guard let data = Data(base64Encoded: legacyEncoded, options: .ignoreUnknownCharacters),
+              let legacy = try? JSONDecoder().decode(LegacyFilterLists.self, from: data) else { return nil }
+
+        var entries: [FilterListCatalogEntry] = []
+        var sections: [FilterListsCacheSection] = []
+        for language in legacy.filterLists.keys.sorted() {
+            guard let languageLists = legacy.filterLists[language] else { continue }
+            let entry = FilterListCatalogEntry(id: "legacy-\(language)",
+                                               name: language,
+                                               url: "legacy/\(language)",
+                                               language: language)
+            guard let url = entry.resolvedURL else { continue }
+            let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                              version: FilterExportPayload.currentVersion,
+                                              exportedAt: Date(timeIntervalSince1970: 0),
+                                              appVersion: "3.2",
+                                              name: language,
+                                              revision: nil,
+                                              filters: languageLists.records,
+                                              forceClearBeforeImport: nil)
+            entries.append(entry)
+            sections.append(FilterListsCacheSection(url: url.absoluteString, etag: nil, payload: payload))
+        }
+
+        let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                                version: FilterListCatalogResponse.currentVersion,
+                                                lists: entries)
+        self.init(catalogETag: nil, catalog: catalog, lists: sections)
+    }
+}
+
 extension FilterListCatalogResponse {
     init?(encodedCache: String) {
         guard let data = encodedCache.data(using: .utf8),
@@ -115,6 +148,55 @@ private struct CachedList: Decodable {
 
     private enum CodingKeys: String, CodingKey {
         case url, payload
+    }
+}
+
+private struct LegacyFilterLists: Decodable {
+    let filterLists: [String: LegacyLanguageLists]
+
+    private enum CodingKeys: String, CodingKey {
+        case filterLists = "filter_lists"
+    }
+}
+
+private struct LegacyLanguageLists: Decodable {
+    let allowSender: [String]
+    let allowBody: [String]
+    let denySender: [String]
+    let denyBody: [String]
+
+    var records: [FilterExportRecord] {
+        let allowSenders = self.allowSender.map { Self.senderRecord($0, type: "allow", folder: nil) }
+        let allowBodies = self.allowBody.map { Self.bodyRecord($0, type: "allow", folder: nil) }
+        let denySenders = self.denySender.map { Self.senderRecord($0, type: "deny", folder: "junk") }
+        let denyBodies = self.denyBody.map { Self.bodyRecord($0, type: "deny", folder: "junk") }
+        return allowSenders + allowBodies + denySenders + denyBodies
+    }
+
+    private static func senderRecord(_ sender: String, type: String, folder: String?) -> FilterExportRecord {
+        let escapedSender = NSRegularExpression.escapedPattern(for: sender)
+        return FilterExportRecord(text: "(?i)^\(escapedSender)$",
+                                  type: type,
+                                  folder: folder,
+                                  target: "sender",
+                                  matching: "regex",
+                                  caseSensitivity: nil)
+    }
+
+    private static func bodyRecord(_ body: String, type: String, folder: String?) -> FilterExportRecord {
+        return FilterExportRecord(text: body,
+                                  type: type,
+                                  folder: folder,
+                                  target: "body",
+                                  matching: "contains",
+                                  caseSensitivity: "insensitive")
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case allowSender = "allow_sender"
+        case allowBody = "allow_body"
+        case denySender = "deny_sender"
+        case denyBody = "deny_body"
     }
 }
 
