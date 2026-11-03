@@ -540,25 +540,11 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(result, .transaction, "only the last record is usable")
     }
 
-    func test_filterLists_legacyCacheBlocksNothing() {
-        self.flushPersistanceManager()
-        let cacheRecord = AutomaticFiltersCache(context: self.testSubject.context)
-        cacheRecord.uuid = UUID()
-        cacheRecord.filtersData = "eyJmaWx0ZXJMaXN0cyI6eyJoZSI6eyJhbGxvd0JvZHkiOltdLCJhbGxvd1NlbmRlcnMiOltdLCJkZW55Qm9keSI6WyJ3b3JkIl0sImRlbnlTZW5kZXIiOltdfX19"
-        cacheRecord.age = Date()
-        self.setLanguage(.hebrew, isActive: true)
-        try? self.testSubject.context.save()
-
-        let result = self.testSubject.evaluateMessage(body: "word", sender: "1234567").action
-
-        XCTAssertEqual(result, .allow)
-    }
-
     func test_filterLists_readsNewestCacheRow() {
         self.flushPersistanceManager()
-        let olderRecord = AutomaticFiltersCache(context: self.testSubject.context)
+        let olderRecord = FilterListsCache(context: self.testSubject.context)
         olderRecord.uuid = UUID()
-        olderRecord.filtersData = "eyJmaWx0ZXJMaXN0cyI6eyJoZSI6eyJhbGxvd0JvZHkiOltdLCJhbGxvd1NlbmRlcnMiOltdLCJkZW55Qm9keSI6WyJ3b3JkIl0sImRlbnlTZW5kZXIiOltdfX19"
+        olderRecord.data = "not a cache"
         olderRecord.age = Date().addingTimeInterval(-86400)
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: [self.denyBody("word")]
@@ -571,6 +557,57 @@ class MessageEvaluationManagerTests: XCTestCase {
         XCTAssertEqual(result, .junk, "the newest row is the one the app refreshed")
     }
 
+    func test_filterLists_newCacheWinsOverLegacy() {
+        self.saveLegacyFilterLists()
+        self.saveFilterLists([
+            NLLanguage.english.rawValue: [self.denyBody("spam")]
+        ])
+        try? self.testSubject.context.save()
+
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "Claim now", sender: "1234567").action, .allow)
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "spam", sender: "1234567").action, .junk)
+    }
+
+    func test_legacyFilterLists_allowSenderIsCaseInsensitiveEquality() {
+        self.saveLegacyFilterLists()
+
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "Claim now", sender: "amber.it").action, .allow)
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "Claim now", sender: "AmberXIT").action, .junk, "the dot is literal")
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "Claim now", sender: "Amber.IT store").action, .junk, "equality, not contains")
+    }
+
+    func test_legacyFilterLists_allowBodyIsCaseInsensitiveContains() {
+        self.saveLegacyFilterLists()
+
+        let result = self.testSubject.evaluateMessage(body: "Here is YOUR CODE: 1234. Claim now", sender: "1234567").action
+
+        XCTAssertEqual(result, .allow)
+    }
+
+    func test_legacyFilterLists_denySenderIsCaseInsensitiveEqualityToJunk() {
+        self.saveLegacyFilterLists()
+
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "hello", sender: "spamco").action, .junk)
+        XCTAssertEqual(self.testSubject.evaluateMessage(body: "hello", sender: "SpamCo2").action, .allow)
+    }
+
+    func test_legacyFilterLists_denyBodyIsCaseInsensitiveContainsToJunk() {
+        self.saveLegacyFilterLists()
+
+        let result = self.testSubject.evaluateMessage(body: "CLAIM NOW for a prize", sender: "1234567").action
+
+        XCTAssertEqual(result, .junk)
+    }
+
+    func test_legacyFilterLists_unreadableIsNil() {
+        XCTAssertNil(FilterListsSnapshot(legacyEncoded: "not base64 at all"))
+        XCTAssertNil(FilterListsSnapshot(legacyEncoded: FilterListsSnapshot(catalogETag: nil,
+                                                                     catalog: FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                                                                                        version: 1,
+                                                                                                        lists: []),
+                                                                     lists: []).encoded ?? ""))
+    }
+
     func test_activeFilterLists_decodesOnlyActiveLanguages() {
         self.flushPersistanceManager()
         let records = [self.denyBody("spam")]
@@ -580,8 +617,8 @@ class MessageEvaluationManagerTests: XCTestCase {
             NLLanguage.arabic.rawValue: records
         ])
         try? self.testSubject.context.save()
-        let cacheRecord = try? self.testSubject.context.fetch(AutomaticFiltersCache.fetchRequest()).first
-        let filtersData = cacheRecord?.filtersData ?? ""
+        let cacheRecord = try? self.testSubject.context.fetch(FilterListsCache.fetchRequest()).first
+        let filtersData = cacheRecord?.data ?? ""
 
         let activeFilterLists = ActiveFilterLists(encoded: filtersData, activeLanguages: [NLLanguage.hebrew.rawValue])
 
@@ -692,16 +729,28 @@ class MessageEvaluationManagerTests: XCTestCase {
         let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
                                                 version: FilterListCatalogResponse.currentVersion,
                                                 lists: entries)
-        let cache = FilterListsCache(catalogETag: nil, catalog: catalog, lists: sections)
+        let cache = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: sections)
+        let cacheRecord = FilterListsCache(context: self.testSubject.context)
+        cacheRecord.uuid = UUID()
+        cacheRecord.data = cache.encoded
+        cacheRecord.age = Date()
+    }
+
+    private func saveLegacyFilterLists() {
+        self.flushPersistanceManager()
+        let legacyEncoded = "eyJmaWx0ZXJfbGlzdHMiOnsiZW4iOnsiYWxsb3dfYm9keSI6WyJ5b3VyIGNvZGUiXSwiYWxsb3dfc2VuZGVyIjpbIkFtYmVyLklUIl0sImRlbnlfYm9keSI6WyJDbGFpbSBub3ciXSwiZGVueV9zZW5kZXIiOlsiU3BhbUNvIl19fX0="
         let cacheRecord = AutomaticFiltersCache(context: self.testSubject.context)
         cacheRecord.uuid = UUID()
-        cacheRecord.filtersData = cache.encoded
+        cacheRecord.filtersData = legacyEncoded
         cacheRecord.age = Date()
+        self.setLanguage(.english, isActive: true)
+        try? self.testSubject.context.save()
     }
 
     private func flushPersistanceManager() {
         self.flushEntity(name: "Filter")
         self.flushEntity(name: "AutomaticFiltersCache")
+        self.flushEntity(name: "FilterListsCache")
         self.flushEntity(name: "AutomaticFiltersLanguage")
         self.flushEntity(name: "AutomaticFiltersRule")
         

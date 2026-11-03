@@ -32,11 +32,12 @@ What the code doesn't tell you: ordering, rules and the reasons behind them. For
 
 ### Fingerprint
 
-Filter UUIDs + rule states + language rows. It deliberately **excludes** `AutomaticFiltersCache`, so a list refresh never looks like a CloudKit change to `NetworkSyncManager`.
+Filter UUIDs + rule states + language rows. It deliberately **excludes** `FilterListsCache` and `AutomaticFiltersCache`, so a list refresh never looks like a CloudKit change to `NetworkSyncManager`.
 
 ### Cache row
 
-- `cachedFilterLists()` reads the newest row; a legacy base64 row (3.2 and earlier) reads as `nil`, and a `nil` cache is downloaded whatever its `age`.
+- 3.3 keeps the lists in `FilterListsCache` and never writes `AutomaticFiltersCache`. That entity belongs to 3.0–3.2 devices on the same Apple ID: 3.2 deletes every row of it when it saves and reads an unsorted first row, so the two formats can't share one entity.
+- Until a `FilterListsCache` row exists (an update from 3.2, even one that hasn't launched the app), the app and the extension read the newest 3.2 row converted in memory (`FilterListsSnapshot(legacyEncoded:)`), with 3.2's matching rules. Its catalog has no `age`, so the first launch still downloads.
 - `saveCache(_:)` updates the newest row and deletes any others. Two devices can each create a row before they sync.
 
 ---
