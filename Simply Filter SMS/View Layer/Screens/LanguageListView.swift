@@ -239,7 +239,7 @@ extension LanguageListView {
 
                     if networkStatus == .online {
                         Task(priority: .background) {
-                            await self?.appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                            await self?.appManager.automaticFilterManager.refreshFilterLists()
                         }
                         self?.isLoading = true
                     }
@@ -305,7 +305,7 @@ extension LanguageListView {
         
         @Sendable func updateFilters() async {
             try? await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
-            await self.appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+            await self.appManager.automaticFilterManager.refreshFilterLists()
             
             Task {
                 DispatchQueue.main.async {

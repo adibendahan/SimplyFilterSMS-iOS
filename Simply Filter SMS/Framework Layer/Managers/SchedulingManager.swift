@@ -60,7 +60,7 @@ class SchedulingManager: SchedulingManagerProtocol {
         self.scheduleAutomaticFiltersProcessing()
         
         let refresh = Task {
-            await self.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+            await self.automaticFilterManager.refreshFilterLists()
             task.setTaskCompleted(success: !Task.isCancelled)
         }
         
