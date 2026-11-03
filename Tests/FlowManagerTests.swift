@@ -132,4 +132,87 @@ class FlowManagerTests: XCTestCase {
         self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
         XCTAssertTrue(self.testSubject.recordLaunch(.tipJar))
     }
+
+    func test_notification_lowerPriorityWhilePending_keepsHigher() {
+        self.testSubject.requestNotification(.cloudSyncOperationComplete)
+        self.testSubject.requestNotification(.filterListsUpdated)
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .cloudSyncOperationComplete)
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_notification_higherPriorityWhilePending_replaces() {
+        self.testSubject.requestNotification(.filterListsUpdated)
+        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .filtersImported(added: 1, skipped: 0))
+    }
+
+    func test_notification_samePriority_newerReplaces() {
+        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
+        self.testSubject.requestNotification(.filtersImported(added: 2, skipped: 0))
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .filtersImported(added: 2, skipped: 0))
+    }
+
+    func test_notification_lowerPriorityWhileShown_dropped() {
+        self.testSubject.requestNotification(.offline)
+        _ = self.testSubject.nextNotification()
+        self.testSubject.requestNotification(.tipPromotion)
+
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_notification_failureWhileImportResultShown_replaces() {
+        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
+        _ = self.testSubject.nextNotification()
+        self.testSubject.requestNotification(.saveFailed)
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .saveFailed)
+    }
+
+    func test_notification_completed_freesSlot() {
+        self.testSubject.requestNotification(.offline)
+        _ = self.testSubject.nextNotification()
+        self.testSubject.completeNotification()
+        self.testSubject.requestNotification(.tipPromotion)
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+    }
+
+    func test_cancelNotification_shown_returnsTrueAndFreesSlot() {
+        self.testSubject.requestNotification(.offline)
+        _ = self.testSubject.nextNotification()
+
+        XCTAssertTrue(self.testSubject.cancelNotification(.offline))
+        self.testSubject.requestNotification(.tipPromotion)
+        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+    }
+
+    func test_cancelNotification_pending_dropsItReturnsFalse() {
+        self.testSubject.requestNotification(.offline)
+
+        XCTAssertFalse(self.testSubject.cancelNotification(.offline))
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_cancelNotification_otherShown_keepsIt() {
+        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
+        _ = self.testSubject.nextNotification()
+
+        XCTAssertFalse(self.testSubject.cancelNotification(.offline))
+        self.testSubject.requestNotification(.tipPromotion)
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_resetSession_clearsNotifications() {
+        self.testSubject.requestNotification(.offline)
+        _ = self.testSubject.nextNotification()
+        self.testSubject.requestNotification(.saveFailed)
+        self.testSubject.resetSession()
+
+        XCTAssertNil(self.testSubject.nextNotification())
+        self.testSubject.requestNotification(.tipPromotion)
+        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+    }
 }

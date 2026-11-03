@@ -829,44 +829,34 @@ extension AppHomeView {
         }
 
         private func hideOfflineNotification() {
-            if case .offline = self.pendingNotification {
-                self.pendingNotification = nil
-            }
-            guard case .offline = self.shownNotification else { return }
+            guard self.appManager.flowManager.cancelNotification(.offline) else { return }
             AppManager.logger.debug("AppHome — offline notification cancelled (back online)")
-            self.shownNotification = nil
+            self.delayedShow?.cancel()
+            self.delayedShow = nil
             self.notification.show = false
         }
 
         private func showPendingNotification() {
             guard self.isHomeUnobstructed,
-                  let pendingNotification = self.pendingNotification else { return }
-            self.pendingNotification = nil
-            self.showNotification(pendingNotification)
+                  let notification = self.appManager.flowManager.nextNotification() else { return }
+            self.present(notification)
         }
-        
+
         func showNotification(_ notification: NotificationView.Notification) {
-            let notificationName = String(describing: notification)
-
-            guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
-                let shownDescription = self.shownNotification.map { String(describing: $0) } ?? "nil"
-                let pendingDescription = self.pendingNotification.map { String(describing: $0) } ?? "nil"
-                AppManager.logger.debug("AppHome — notification dropped: \(notificationName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
-                return
+            self.appManager.flowManager.requestNotification(notification)
+            if !self.isHomeUnobstructed {
+                AppManager.logger.debug("AppHome — notification pending (Home obstructed): \(String(describing: notification), privacy: .public)")
             }
+            self.showPendingNotification()
+        }
 
-            guard self.isHomeUnobstructed else {
-                AppManager.logger.debug("AppHome — notification pending (Home obstructed): \(notificationName, privacy: .public)")
-                self.pendingNotification = notification
-                return
-            }
-
-            AppManager.logger.debug("AppHome — notification shown: \(notificationName, privacy: .public)")
+        private func present(_ notification: NotificationView.Notification) {
+            let name = String(describing: notification)
+            AppManager.logger.debug("AppHome — notification shown: \(name, privacy: .public)")
             self.didShowNotificationThisSession = true
-            self.shownNotification = notification
             self.notification.onHide = { [weak self] in
-                AppManager.logger.debug("AppHome — notification hidden: \(notificationName, privacy: .public)")
-                self?.shownNotification = nil
+                AppManager.logger.debug("AppHome — notification hidden: \(name, privacy: .public)")
+                self?.appManager.flowManager.completeNotification()
             }
             self.notification.onTap = nil
 
@@ -899,12 +889,14 @@ extension AppHomeView {
 
             if !self.notification.show {
                 self.notification.setNotification(notification)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    guard self.shownNotification != nil else { return }
+                self.delayedShow?.cancel()
+                let delayedShow = DispatchWorkItem { [weak self] in
                     withAnimation {
-                        self.notification.show = true
+                        self?.notification.show = true
                     }
                 }
+                self.delayedShow = delayedShow
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: delayedShow)
             }
             else {
                 withAnimation {
@@ -1055,8 +1047,7 @@ extension AppHomeView {
         private var lastUIFingerprint: String = ""
         private var didAddObservers = false
         private var didShowNotificationThisSession = false
-        private var pendingNotification: NotificationView.Notification?
-        private var shownNotification: NotificationView.Notification?
+        private var delayedShow: DispatchWorkItem?
         private var isReplacingSheetForLaunch = false
         private var isAlertPresented: Bool {
             return self.showNothingToImportAlert || self.showInactivityNotificationAlert
