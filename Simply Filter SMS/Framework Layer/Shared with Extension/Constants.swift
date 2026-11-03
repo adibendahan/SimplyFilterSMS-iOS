@@ -23,7 +23,6 @@ let kInactivityReminderHour = 19
 let kInactivityNotificationMaxAsks = 3
 let kInactivityNotificationMinSessionsBetweenAsks = 3
 let kMinimumFilterLength = 1
-let kHideiClouldStatusMemory = 60
 let kFilterExportFileExtension = "sfsfilters"
 let kFilterExportTypeIdentifier = "com.grizz.apps.dev.simply-filter-sms.filters"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
