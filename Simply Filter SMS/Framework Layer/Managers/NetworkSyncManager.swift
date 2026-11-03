@@ -75,8 +75,11 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
                         }
                     }
                 case .export:
-                    AppManager.logger.debug("CloudKit export event — succeeded: \(cloudEvent.succeeded, privacy: .public)")
-                    break
+                    guard let endDate = cloudEvent.endDate else { return }
+                    let eventID = cloudEvent.identifier.uuidString.prefix(8)
+                    let duration = endDate.timeIntervalSince(cloudEvent.startDate)
+                    let errorDescription = cloudEvent.error.map { String(describing: $0) } ?? "nil"
+                    AppManager.logger.debug("CloudKit export ended — id: \(eventID, privacy: .public), succeeded: \(cloudEvent.succeeded, privacy: .public), duration: \(duration, format: .fixed(precision: 2), privacy: .public)s, error: \(errorDescription, privacy: .public)")
                 @unknown default:
                     break
                 }
