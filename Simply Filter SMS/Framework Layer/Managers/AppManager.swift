@@ -61,37 +61,37 @@ class AppManager: AppManagerProtocol {
         if UIApplication.shared.isInTestingMode {
             defaultsManager.reset()
             persistanceManager.resetContainer()
-            let languages = ["en", "he", "ar", "es", "fr", "pt", "de", "ja", "ko", "it"]
-            var entries: [FilterListCatalogEntry] = []
-            var lists: [FilterListsCacheSection] = []
+            let testingLanguages = ["en", "he", "ar", "es", "fr", "pt", "de", "ja", "ko", "it"]
+            var catalogEntries: [FilterListCatalogEntry] = []
+            var cacheSections: [FilterListsCacheSection] = []
 
-            for language in languages {
+            for language in testingLanguages {
                 let fileName = "\(language).sfsfilters"
-                let entry = FilterListCatalogEntry(id: "ai-\(language)",
-                                                   name: language,
-                                                   url: fileName,
-                                                   language: language)
-                guard let listURL = entry.resolvedURL else { continue }
-                let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
-                                                  version: FilterExportPayload.currentVersion,
-                                                  exportedAt: Date(),
-                                                  appVersion: appVersion,
-                                                  name: language,
-                                                  revision: nil,
-                                                  filters: [],
-                                                  forceClearBeforeImport: nil)
-                let section = FilterListsCacheSection(url: listURL.absoluteString,
-                                                      etag: nil,
-                                                      payload: payload)
-                entries.append(entry)
-                lists.append(section)
+                let catalogEntry = FilterListCatalogEntry(id: "ai-\(language)",
+                                                          name: language,
+                                                          url: fileName,
+                                                          language: language)
+                guard let listURL = catalogEntry.resolvedURL else { continue }
+                let listPayload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                                      version: FilterExportPayload.currentVersion,
+                                                      exportedAt: Date(),
+                                                      appVersion: appVersion,
+                                                      name: language,
+                                                      revision: nil,
+                                                      filters: [],
+                                                      forceClearBeforeImport: nil)
+                let cacheSection = FilterListsCacheSection(url: listURL.absoluteString,
+                                                           etag: nil,
+                                                           payload: listPayload)
+                catalogEntries.append(catalogEntry)
+                cacheSections.append(cacheSection)
             }
 
             let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
                                                     version: FilterListCatalogResponse.currentVersion,
-                                                    lists: entries)
-            let cache = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: lists)
-            _ = persistanceManager.saveCache(cache)
+                                                    lists: catalogEntries)
+            let testingSnapshot = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: cacheSections)
+            _ = persistanceManager.saveCache(testingSnapshot)
             defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
         }
         #endif // DEBUG

@@ -355,9 +355,9 @@ struct NotificationView: View {
             }
         }
 
-        func isOutranked(by others: Notification?...) -> Bool {
-            let competing = others.compactMap { $0 }
-            return competing.contains { $0.priority < self.priority }
+        func isOutranked(by otherNotifications: Notification?...) -> Bool {
+            let competingNotifications = otherNotifications.compactMap { $0 }
+            return competingNotifications.contains { $0.priority < self.priority }
         }
 
         var priority: Int {

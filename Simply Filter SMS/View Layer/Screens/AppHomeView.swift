@@ -846,26 +846,26 @@ extension AppHomeView {
         }
         
         func showNotification(_ notification: NotificationView.Notification) {
-            let name = String(describing: notification)
+            let notificationName = String(describing: notification)
 
             guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
-                let shown = self.shownNotification.map { String(describing: $0) } ?? "nil"
-                let pending = self.pendingNotification.map { String(describing: $0) } ?? "nil"
-                AppManager.logger.debug("AppHome — notification dropped: \(name, privacy: .public) (shown: \(shown, privacy: .public), pending: \(pending, privacy: .public))")
+                let shownDescription = self.shownNotification.map { String(describing: $0) } ?? "nil"
+                let pendingDescription = self.pendingNotification.map { String(describing: $0) } ?? "nil"
+                AppManager.logger.debug("AppHome — notification dropped: \(notificationName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
                 return
             }
 
             guard self.isHomeUnobstructed else {
-                AppManager.logger.debug("AppHome — notification pending (Home obstructed): \(name, privacy: .public)")
+                AppManager.logger.debug("AppHome — notification pending (Home obstructed): \(notificationName, privacy: .public)")
                 self.pendingNotification = notification
                 return
             }
 
-            AppManager.logger.debug("AppHome — notification shown: \(name, privacy: .public)")
+            AppManager.logger.debug("AppHome — notification shown: \(notificationName, privacy: .public)")
             self.didShowNotificationThisSession = true
             self.shownNotification = notification
             self.notification.onHide = { [weak self] in
-                AppManager.logger.debug("AppHome — notification hidden: \(name, privacy: .public)")
+                AppManager.logger.debug("AppHome — notification hidden: \(notificationName, privacy: .public)")
                 self?.shownNotification = nil
             }
             self.notification.onTap = nil
@@ -1062,9 +1062,9 @@ extension AppHomeView {
             return self.showNothingToImportAlert || self.showInactivityNotificationAlert
         }
         private var userIgnoresNetworkStatus: Bool {
-            guard let lastDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss,
-                  let snooze = NotificationView.Notification.offline.snoozeAfterHide else { return false }
-            return lastDismiss.addingTimeInterval(snooze) > Date()
+            guard let lastDismissDate = self.appManager.defaultsManager.lastOfflineNotificationDismiss,
+                  let snoozeDuration = NotificationView.Notification.offline.snoozeAfterHide else { return false }
+            return lastDismissDate.addingTimeInterval(snoozeDuration) > Date()
         }
         
         private func setAutomaticRuleState(for rule: RuleType, value: Bool) {

@@ -26,9 +26,9 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     func writeExportFile(candidates: [FilterTransferCandidate]) throws -> URL {
-        let records = candidates.map({ self.record(from: $0) })
-        let data = try self.encodePayload(records: records)
-        AppManager.logger.debug("writeExportFile — records: \(records.count, privacy: .public), size: \(data.count, privacy: .public) bytes")
+        let exportRecords = candidates.map({ self.record(from: $0) })
+        let data = try self.encodePayload(records: exportRecords)
+        AppManager.logger.debug("writeExportFile — records: \(exportRecords.count, privacy: .public), size: \(data.count, privacy: .public) bytes")
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -233,13 +233,13 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     private static func forceClearTypes(from payload: FilterExportPayload) -> Set<FilterType> {
-        var types: Set<FilterType> = []
+        var forceClearTypes: Set<FilterType> = []
 
         for exportKey in payload.forceClearBeforeImport ?? [] {
-            guard let type = FilterType(exportKey: exportKey), type.isTransferable else { continue }
-            types.insert(type)
+            guard let filterType = FilterType(exportKey: exportKey), filterType.isTransferable else { continue }
+            forceClearTypes.insert(filterType)
         }
 
-        return types
+        return forceClearTypes
     }
 }

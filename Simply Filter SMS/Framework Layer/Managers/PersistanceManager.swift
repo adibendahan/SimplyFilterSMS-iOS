@@ -369,36 +369,36 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
 
     func cachedFilterLists() -> FilterListsSnapshot? {
-        let records = self.fetchFilterListsCacheRecords()
-        guard let data = records.first?.data else {
-            AppManager.logger.debug("cachedFilterLists — no cache row (rows: \(records.count, privacy: .public)), reading the 3.2 cache")
+        let cacheRecords = self.fetchFilterListsCacheRecords()
+        guard let encodedSnapshot = cacheRecords.first?.data else {
+            AppManager.logger.debug("cachedFilterLists — no cache row (rows: \(cacheRecords.count, privacy: .public)), reading the 3.2 cache")
             return self.legacyFilterLists()
         }
-        guard let cache = FilterListsSnapshot(encoded: data) else {
-            AppManager.logger.debug("cachedFilterLists — cache row doesn't decode | rows: \(records.count, privacy: .public), size: \(data.utf8.count, privacy: .public) bytes")
+        guard let snapshot = FilterListsSnapshot(encoded: encodedSnapshot) else {
+            AppManager.logger.debug("cachedFilterLists — cache row doesn't decode | rows: \(cacheRecords.count, privacy: .public), size: \(encodedSnapshot.utf8.count, privacy: .public) bytes")
             return nil
         }
-        AppManager.logger.debug("cachedFilterLists — rows: \(records.count, privacy: .public), lists: \(cache.lists.count, privacy: .public), size: \(data.utf8.count, privacy: .public) bytes")
-        return cache
+        AppManager.logger.debug("cachedFilterLists — rows: \(cacheRecords.count, privacy: .public), lists: \(snapshot.lists.count, privacy: .public), size: \(encodedSnapshot.utf8.count, privacy: .public) bytes")
+        return snapshot
     }
 
     func cachedFilterListCatalog() -> FilterListCatalogResponse? {
-        guard let data = self.fetchFilterListsCacheRecords().first?.data else {
+        guard let encodedSnapshot = self.fetchFilterListsCacheRecords().first?.data else {
             return self.legacyFilterLists()?.catalog
         }
-        return FilterListCatalogResponse(encodedCache: data)
+        return FilterListCatalogResponse(encodedCache: encodedSnapshot)
     }
 
-    func saveCache(_ cache: FilterListsSnapshot) -> Bool {
-        guard let data = cache.encoded else { return false }
-        let records = self.fetchFilterListsCacheRecords()
-        AppManager.logger.debug("saveCache — saving \(cache.lists.count, privacy: .public) filter lists | existing rows: \(records.count, privacy: .public), size: \(data.utf8.count, privacy: .public) bytes")
-        for extraRecord in records.dropFirst() {
-            self.context.delete(extraRecord)
+    func saveCache(_ snapshot: FilterListsSnapshot) -> Bool {
+        guard let encodedSnapshot = snapshot.encoded else { return false }
+        let cacheRecords = self.fetchFilterListsCacheRecords()
+        AppManager.logger.debug("saveCache — saving \(snapshot.lists.count, privacy: .public) filter lists | existing rows: \(cacheRecords.count, privacy: .public), size: \(encodedSnapshot.utf8.count, privacy: .public) bytes")
+        for duplicateRecord in cacheRecords.dropFirst() {
+            self.context.delete(duplicateRecord)
         }
 
         let cacheRecord: FilterListsCache
-        if let existingRecord = records.first {
+        if let existingRecord = cacheRecords.first {
             cacheRecord = existingRecord
         }
         else {
@@ -407,7 +407,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         if cacheRecord.uuid == nil {
             cacheRecord.uuid = UUID()
         }
-        cacheRecord.data = data
+        cacheRecord.data = encodedSnapshot
         cacheRecord.age = Date()
         return self.commitContext()
     }

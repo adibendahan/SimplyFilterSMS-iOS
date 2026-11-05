@@ -33,58 +33,58 @@ extension FilterListsSnapshot {
     init?(encoded: String) {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        guard let data = encoded.data(using: .utf8),
-              let cache = try? decoder.decode(Self.self, from: data) else { return nil }
+        guard let jsonData = encoded.data(using: .utf8),
+              let snapshot = try? decoder.decode(Self.self, from: jsonData) else { return nil }
 
-        self = cache
+        self = snapshot
     }
 
     var encoded: String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         encoder.dateEncodingStrategy = .iso8601
-        guard let data = try? encoder.encode(self) else { return nil }
-        return String(data: data, encoding: .utf8)
+        guard let jsonData = try? encoder.encode(self) else { return nil }
+        return String(data: jsonData, encoding: .utf8)
     }
 }
 
 extension FilterListsSnapshot {
     init?(legacyEncoded: String) {
-        guard let data = Data(base64Encoded: legacyEncoded, options: .ignoreUnknownCharacters),
-              let legacy = try? JSONDecoder().decode(LegacyFilterLists.self, from: data) else { return nil }
+        guard let legacyJSON = Data(base64Encoded: legacyEncoded, options: .ignoreUnknownCharacters),
+              let legacyFilterLists = try? JSONDecoder().decode(LegacyFilterLists.self, from: legacyJSON) else { return nil }
 
-        var entries: [FilterListCatalogEntry] = []
-        var sections: [FilterListsCacheSection] = []
-        for language in legacy.filterLists.keys.sorted() {
-            guard let languageLists = legacy.filterLists[language] else { continue }
-            let entry = FilterListCatalogEntry(id: "legacy-\(language)",
-                                               name: language,
-                                               url: "legacy/\(language)",
-                                               language: language)
-            guard let url = entry.resolvedURL else { continue }
-            let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
-                                              version: FilterExportPayload.currentVersion,
-                                              exportedAt: Date(timeIntervalSince1970: 0),
-                                              appVersion: "3.2",
-                                              name: language,
-                                              revision: nil,
-                                              filters: languageLists.records,
-                                              forceClearBeforeImport: nil)
-            entries.append(entry)
-            sections.append(FilterListsCacheSection(url: url.absoluteString, etag: nil, payload: payload))
+        var catalogEntries: [FilterListCatalogEntry] = []
+        var cacheSections: [FilterListsCacheSection] = []
+        for language in legacyFilterLists.filterLists.keys.sorted() {
+            guard let languageLists = legacyFilterLists.filterLists[language] else { continue }
+            let catalogEntry = FilterListCatalogEntry(id: "legacy-\(language)",
+                                                      name: language,
+                                                      url: "legacy/\(language)",
+                                                      language: language)
+            guard let listURL = catalogEntry.resolvedURL else { continue }
+            let listPayload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                                  version: FilterExportPayload.currentVersion,
+                                                  exportedAt: Date(timeIntervalSince1970: 0),
+                                                  appVersion: "3.2",
+                                                  name: language,
+                                                  revision: nil,
+                                                  filters: languageLists.records,
+                                                  forceClearBeforeImport: nil)
+            catalogEntries.append(catalogEntry)
+            cacheSections.append(FilterListsCacheSection(url: listURL.absoluteString, etag: nil, payload: listPayload))
         }
 
         let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
                                                 version: FilterListCatalogResponse.currentVersion,
-                                                lists: entries)
-        self.init(catalogETag: nil, catalog: catalog, lists: sections)
+                                                lists: catalogEntries)
+        self.init(catalogETag: nil, catalog: catalog, lists: cacheSections)
     }
 }
 
 extension FilterListCatalogResponse {
     init?(encodedCache: String) {
-        guard let data = encodedCache.data(using: .utf8),
-              let cachedCatalog = try? JSONDecoder().decode(CachedCatalog.self, from: data) else { return nil }
+        guard let jsonData = encodedCache.data(using: .utf8),
+              let cachedCatalog = try? JSONDecoder().decode(CachedCatalog.self, from: jsonData) else { return nil }
 
         self = cachedCatalog.catalog
     }
@@ -93,26 +93,26 @@ extension FilterListCatalogResponse {
 extension ActiveFilterLists {
     init?(encoded: String, activeLanguages: Set<String>) {
         guard let catalog = FilterListCatalogResponse(encodedCache: encoded),
-              let data = encoded.data(using: .utf8) else { return nil }
+              let jsonData = encoded.data(using: .utf8) else { return nil }
 
         var namesByURL: [String: String] = [:]
-        for entry in catalog.lists {
-            guard let language = entry.language, activeLanguages.contains(language) else { continue }
-            guard let url = entry.resolvedURL else { continue }
-            namesByURL[url.absoluteString] = entry.displayName
+        for catalogEntry in catalog.lists {
+            guard let language = catalogEntry.language, activeLanguages.contains(language) else { continue }
+            guard let listURL = catalogEntry.resolvedURL else { continue }
+            namesByURL[listURL.absoluteString] = catalogEntry.displayName
         }
 
         let decoder = JSONDecoder()
         decoder.userInfo[.activeURLs] = Set(namesByURL.keys)
-        guard let cachedLists = try? decoder.decode(CachedLists.self, from: data) else { return nil }
+        guard let cachedLists = try? decoder.decode(CachedLists.self, from: jsonData) else { return nil }
 
-        var lists: [ActiveFilterList] = []
+        var activeLists: [ActiveFilterList] = []
         for cachedList in cachedLists.lists {
-            guard let name = namesByURL[cachedList.url], let records = cachedList.records else { continue }
-            lists.append(ActiveFilterList(name: name, records: records))
+            guard let listName = namesByURL[cachedList.url], let listRecords = cachedList.records else { continue }
+            activeLists.append(ActiveFilterList(name: listName, records: listRecords))
         }
 
-        self.lists = lists
+        self.lists = activeLists
     }
 }
 

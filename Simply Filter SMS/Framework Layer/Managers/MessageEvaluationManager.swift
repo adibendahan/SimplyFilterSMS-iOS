@@ -226,15 +226,15 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     private func loadCachedFilterLists() -> String? {
         let cacheRequest: NSFetchRequest<FilterListsCache> = FilterListsCache.fetchRequest()
         cacheRequest.sortDescriptors = [NSSortDescriptor(keyPath: \FilterListsCache.age, ascending: false)]
-        if let data = try? self.context.fetch(cacheRequest).first?.data {
-            return data
+        if let encodedSnapshot = try? self.context.fetch(cacheRequest).first?.data {
+            return encodedSnapshot
         }
 
-        let legacyRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
-        legacyRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
-        guard let legacyData = try? self.context.fetch(legacyRequest).first?.filtersData else { return nil }
+        let legacyCacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
+        legacyCacheRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
+        guard let encodedLegacyCache = try? self.context.fetch(legacyCacheRequest).first?.filtersData else { return nil }
         self.logger?.debug("[Filter Lists] no 3.3 cache yet, reading the 3.2 cache")
-        return FilterListsSnapshot(legacyEncoded: legacyData)?.encoded
+        return FilterListsSnapshot(legacyEncoded: encodedLegacyCache)?.encoded
     }
 
     private func runFilterLists(type: FilterType, activeFilterLists: ActiveFilterLists?, body: String, sender: String) -> MessageEvaluationResult {
@@ -244,15 +244,15 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             return result
         }
         self.logger?.debug("[Filter Lists \(type.logDescription, privacy: .public)] \(activeFilterLists.lists.count, privacy: .public) active list(s)")
-        for list in activeFilterLists.lists {
-            for record in list.records {
+        for filterList in activeFilterLists.lists {
+            for record in filterList.records {
                 guard FilterType(exportKey: record.type) == type,
-                      let candidate = FilterTransferCandidate(record: record) else { continue }
+                      let listFilter = FilterTransferCandidate(record: record) else { continue }
 
-                let matched = self.isMatching(text: candidate.text,
-                                              target: candidate.filterTarget,
-                                              matching: candidate.filterMatching,
-                                              filterCase: candidate.filterCase,
+                let matched = self.isMatching(text: listFilter.text,
+                                              target: listFilter.filterTarget,
+                                              matching: listFilter.filterMatching,
+                                              filterCase: listFilter.filterCase,
                                               body: body,
                                               sender: sender)
                 guard matched else { continue }
@@ -262,10 +262,10 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 case .allow:
                     action = .allow
                 case .deny, .denyLanguage:
-                    action = candidate.denyFolder.action
+                    action = listFilter.denyFolder.action
                 }
-                result = MessageEvaluationResult(action: action, match: .automaticFilter(list.name))
-                self.logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(candidate.text, privacy: .public)' | target: \(candidate.filterTarget.exportKey, privacy: .public), matching: \(candidate.filterMatching.exportKey, privacy: .public), case: \(candidate.filterCase.exportKey, privacy: .public) [\(list.name, privacy: .public)]")
+                result = MessageEvaluationResult(action: action, match: .automaticFilter(filterList.name))
+                self.logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(listFilter.text, privacy: .public)' | target: \(listFilter.filterTarget.exportKey, privacy: .public), matching: \(listFilter.filterMatching.exportKey, privacy: .public), case: \(listFilter.filterCase.exportKey, privacy: .public) [\(filterList.name, privacy: .public)]")
                 return result
             }
         }
