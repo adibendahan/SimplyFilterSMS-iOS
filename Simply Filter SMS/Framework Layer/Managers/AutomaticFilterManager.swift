@@ -245,8 +245,8 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     @MainActor
     private var didCheckFilterListsToday: Bool {
         guard self.persistanceManager?.cachedFilterListCatalog() != nil else { return false }
-        guard let lastCheck = self.automaticFiltersCacheAge else { return false }
-        return lastCheck.daysBetween(date: Date()) == 0
+        guard let lastCheckDate = self.automaticFiltersCacheAge else { return false }
+        return lastCheckDate.daysBetween(date: Date()) == 0
     }
 
     @MainActor
@@ -296,71 +296,18 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         guard let persistanceManager = self.persistanceManager,
               let filterListService = self.filterListService else { return }
 
-        let cache = persistanceManager.cachedFilterLists()
-        let catalogResponse = await filterListService.fetchFilterListCatalog(etag: cache?.catalogETag)
-        let catalog: FilterListCatalogResponse
-        let catalogETag: String?
+        let cachedSnapshot = persistanceManager.cachedFilterLists()
+        guard let revalidatedCatalog = await self.fetchCatalog(revalidating: cachedSnapshot, service: filterListService) else { return }
+        let (catalog, catalogETag) = revalidatedCatalog
+        let (revalidatedLists, hasFailedLists) = await self.fetchLists(in: catalog, revalidating: cachedSnapshot, service: filterListService)
 
-        switch catalogResponse {
-        case .modified(let fetchedCatalog, let etag):
-            catalog = fetchedCatalog
-            catalogETag = etag
-        case .notModified:
-            guard let cache = cache else {
-                AppManager.logger.debug("performRefresh — catalog not modified but there is no readable cache, stopping")
-                return
-            }
-            catalog = cache.catalog
-            catalogETag = cache.catalogETag
-        case nil:
-            AppManager.logger.debug("performRefresh — catalog fetch failed, keeping the cache")
-            return
-        }
+        let refreshedSnapshot = FilterListsSnapshot(catalogETag: catalogETag, catalog: catalog, lists: revalidatedLists)
+        let hasSnapshotChanged = refreshedSnapshot != cachedSnapshot
+        let hasNewFilters = Self.hasNewFilters(from: cachedSnapshot, to: refreshedSnapshot)
+        AppManager.logger.debug("performRefresh — lists: \(revalidatedLists.count, privacy: .public), changed: \(hasSnapshotChanged, privacy: .public), new filters: \(hasNewFilters, privacy: .public), failures: \(hasFailedLists, privacy: .public)")
 
-        var lists: [FilterListsCacheSection] = []
-        var fetchedURLs: Set<URL> = []
-        var hasFailures = false
-
-        for entry in catalog.lists {
-            guard let url = entry.resolvedURL,
-                  !fetchedURLs.contains(url) else { continue }
-            fetchedURLs.insert(url)
-
-            let cachedSection = cache?.lists.first(where: { $0.url == url.absoluteString })
-            let listResponse = await filterListService.fetchFilterList(at: url, etag: cachedSection?.etag)
-
-            let listName = url.lastPathComponent
-            let hasCachedSection = cachedSection != nil
-            switch listResponse {
-            case .modified(let payload, let etag):
-                let section = FilterListsCacheSection(url: url.absoluteString, etag: etag, payload: payload)
-                lists.append(section)
-                var revisionDescription = "none"
-                if let revision = payload.revision {
-                    revisionDescription = "\(revision)"
-                }
-                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): downloaded | revision: \(revisionDescription, privacy: .public), records: \(payload.filters.count, privacy: .public)")
-            case .notModified:
-                if let cachedSection = cachedSection {
-                    lists.append(cachedSection)
-                }
-                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): not modified | kept cached: \(hasCachedSection, privacy: .public)")
-            case nil:
-                hasFailures = true
-                if let cachedSection = cachedSection {
-                    lists.append(cachedSection)
-                }
-                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): failed | kept cached: \(hasCachedSection, privacy: .public)")
-            }
-        }
-
-        let newCache = FilterListsSnapshot(catalogETag: catalogETag, catalog: catalog, lists: lists)
-        let hasChanges = newCache != cache
-        let hasNewFilters = Self.hasNewFilters(from: cache, to: newCache)
-        AppManager.logger.debug("performRefresh — lists: \(lists.count, privacy: .public), changed: \(hasChanges, privacy: .public), new filters: \(hasNewFilters, privacy: .public), failures: \(hasFailures, privacy: .public)")
-
-        guard hasChanges else {
-            if !hasFailures {
+        guard hasSnapshotChanged else {
+            if !hasFailedLists {
                 AppManager.logger.debug("performRefresh — no changes, touching the cache age")
                 persistanceManager.touchCache()
             }
@@ -369,7 +316,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             }
             return
         }
-        guard persistanceManager.saveCache(newCache) else {
+        guard persistanceManager.saveCache(refreshedSnapshot) else {
             AppManager.logger.error("performRefresh — saving the cache failed")
             return
         }
@@ -379,21 +326,89 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         }
     }
 
-    private static func hasNewFilters(from oldCache: FilterListsSnapshot?, to newCache: FilterListsSnapshot) -> Bool {
-        let oldLists = oldCache?.lists ?? []
-        guard oldLists.count == newCache.lists.count else { return true }
+    private func fetchCatalog(revalidating cachedSnapshot: FilterListsSnapshot?,
+                              service: FilterListServiceProtocol) async -> (catalog: FilterListCatalogResponse, catalogETag: String?)? {
+        let catalogResponse = await service.fetchFilterListCatalog(etag: cachedSnapshot?.catalogETag)
+        let catalog: FilterListCatalogResponse
+        let catalogETag: String?
 
-        for newList in newCache.lists {
-            guard let oldList = oldLists.first(where: { $0.url == newList.url }) else { return true }
+        switch catalogResponse {
+        case .modified(let downloadedCatalog, let downloadedETag):
+            catalog = downloadedCatalog
+            catalogETag = downloadedETag
+        case .notModified:
+            guard let cachedSnapshot = cachedSnapshot else {
+                AppManager.logger.debug("performRefresh — catalog not modified but there is no readable cache, stopping")
+                return nil
+            }
+            catalog = cachedSnapshot.catalog
+            catalogETag = cachedSnapshot.catalogETag
+        case nil:
+            AppManager.logger.debug("performRefresh — catalog fetch failed, keeping the cache")
+            return nil
+        }
 
-            if let newRevision = newList.payload.revision,
-               let oldRevision = oldList.payload.revision {
+        return (catalog, catalogETag)
+    }
 
-                if newRevision > oldRevision {
+    private func fetchLists(in catalog: FilterListCatalogResponse,
+                            revalidating cachedSnapshot: FilterListsSnapshot?,
+                            service: FilterListServiceProtocol) async -> (lists: [FilterListsCacheSection], hasFailedLists: Bool) {
+        var revalidatedLists: [FilterListsCacheSection] = []
+        var requestedURLs: Set<URL> = []
+        var hasFailedLists = false
+
+        for catalogEntry in catalog.lists {
+            guard let listURL = catalogEntry.resolvedURL,
+                  !requestedURLs.contains(listURL) else { continue }
+            requestedURLs.insert(listURL)
+
+            let cachedSection = cachedSnapshot?.lists.first(where: { $0.url == listURL.absoluteString })
+            let listResponse = await service.fetchFilterList(at: listURL, etag: cachedSection?.etag)
+
+            let listName = listURL.lastPathComponent
+            let hasCachedSection = cachedSection != nil
+            switch listResponse {
+            case .modified(let downloadedList, let downloadedETag):
+                let downloadedSection = FilterListsCacheSection(url: listURL.absoluteString, etag: downloadedETag, payload: downloadedList)
+                revalidatedLists.append(downloadedSection)
+                var revisionDescription = "none"
+                if let revision = downloadedList.revision {
+                    revisionDescription = "\(revision)"
+                }
+                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): downloaded | revision: \(revisionDescription, privacy: .public), records: \(downloadedList.filters.count, privacy: .public)")
+            case .notModified:
+                if let cachedSection = cachedSection {
+                    revalidatedLists.append(cachedSection)
+                }
+                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): not modified | kept cached: \(hasCachedSection, privacy: .public)")
+            case nil:
+                hasFailedLists = true
+                if let cachedSection = cachedSection {
+                    revalidatedLists.append(cachedSection)
+                }
+                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): failed | kept cached: \(hasCachedSection, privacy: .public)")
+            }
+        }
+
+        return (revalidatedLists, hasFailedLists)
+    }
+
+    private static func hasNewFilters(from cachedSnapshot: FilterListsSnapshot?, to refreshedSnapshot: FilterListsSnapshot) -> Bool {
+        let cachedLists = cachedSnapshot?.lists ?? []
+        guard cachedLists.count == refreshedSnapshot.lists.count else { return true }
+
+        for refreshedList in refreshedSnapshot.lists {
+            guard let cachedList = cachedLists.first(where: { $0.url == refreshedList.url }) else { return true }
+
+            if let refreshedRevision = refreshedList.payload.revision,
+               let cachedRevision = cachedList.payload.revision {
+
+                if refreshedRevision > cachedRevision {
                     return true
                 }
             }
-            else if newList.payload.filters != oldList.payload.filters {
+            else if refreshedList.payload.filters != cachedList.payload.filters {
                 return true
             }
         }
