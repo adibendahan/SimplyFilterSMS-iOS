@@ -15,7 +15,7 @@ enum FilterTransferError: Error, Equatable {
 
 struct FilterExportPayload: Codable, Equatable {
     static let formatIdentifier = "simply-filter-sms-filters"
-    static let currentVersion = 1
+    static let currentVersion = 2
 
     let format: String
     let version: Int

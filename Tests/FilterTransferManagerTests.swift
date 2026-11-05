@@ -232,6 +232,25 @@ class FilterTransferManagerTests: XCTestCase {
         }
     }
 
+    func test_export_writesVersion2() throws {
+        self.persistanceManager.addFilter(text: "promo",
+                                          type: .deny,
+                                          denyFolder: .junk,
+                                          filterTarget: .all,
+                                          filterMatching: .contains,
+                                          filterCase: .caseInsensitive)
+
+        let exportedData = try self.testSubject.exportPayload()
+        let exportedPayload = try FilterExportPayload(data: exportedData)
+        XCTAssertEqual(exportedPayload.version, 2)
+    }
+
+    func test_import_version1File() throws {
+        let data = try self.payload(version: 1, filters: [record(text: "promo", type: "deny")])
+        let preview = try self.testSubject.previewImport(data: data)
+        XCTAssertEqual(preview.count, 1)
+    }
+
     func test_unsupportedVersion_throws() throws {
         let data = try self.payload(version: 99, filters: [record(text: "x", type: "deny")])
         XCTAssertThrowsError(try self.testSubject.previewImport(data: data)) { error in

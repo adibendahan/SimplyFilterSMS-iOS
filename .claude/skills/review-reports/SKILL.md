@@ -167,7 +167,7 @@ Local state: `.claude/skills/review-reports/.review-state.json` (gitignored). Tr
 
 ## List files
 
-Each `ai/<lang>.sfsfilters` is a `.sfsfilters` payload (`format`, `version: 1`, `name`, `revision`, `exportedAt`, `appVersion`, `filters`). Every record is decided on its own — there is no default shape:
+Each `ai/<lang>.sfsfilters` is a `.sfsfilters` payload (`format`, `version: 2`, `name`, `revision`, `exportedAt`, `appVersion`, `filters`). Every record is decided on its own — there is no default shape:
 
 - **type:** `allow` / `deny`
 - **target:** `sender` / `body` / `all`

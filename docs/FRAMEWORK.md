@@ -80,7 +80,7 @@ Filter UUIDs + rule states + language rows. It deliberately **excludes** `Filter
 
 One format for exports, AI Filtering lists and (later) subscribed lists.
 
-- **Compatibility:** changes are additive and optional only, so `version` stays `1` and 3.2 can still read new files.
+- **Compatibility:** exports and AI lists are `version` `2`, which 3.2 refuses as a whole: it requires `case` and `folder` on every record and would otherwise drop every allow and regex filter. 3.3 reads `1` and `2`. Further changes are additive and optional.
 - **Omitted fields:** regex records have no `case` (the pattern decides) and allow records have no `folder`. Import fills in `.caseInsensitive` / `.junk`. Older files that still have them import fine.
 - **`name` / `revision`** are for published lists. Exports never write them; list creators add them by hand.
 - **Language blocks (`denyLanguage`) aren't transferred.** They're a preference, not a filter (`FilterType.isTransferable`). Exports leave them out. Imports skip them silently: they aren't counted as invalid, because a 3.2 export legitimately contains them. A `forceClearBeforeImport` entry for them is ignored, so a file can't wipe them.
