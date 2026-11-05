@@ -5,6 +5,7 @@
 
 import SwiftUI
 
+
 // MARK: - Card
 
 struct ReportSubmitCard: View {
@@ -45,6 +46,7 @@ struct ReportSubmitCard: View {
         }
     }
 }
+
 
 // MARK: - Animation
 
@@ -179,6 +181,7 @@ private struct ReportSubmitAnimationView: View {
     }
 }
 
+
 // MARK: - Checkmark shape
 
 private struct TickShape: Shape {
@@ -190,6 +193,7 @@ private struct TickShape: Shape {
         return path
     }
 }
+
 
 // MARK: - Preview
 

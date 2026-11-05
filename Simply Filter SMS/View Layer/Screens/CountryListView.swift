@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 //MARK: - View -
 struct CountryListView: View {
 
@@ -78,7 +79,7 @@ struct CountryListView: View {
                 .contentShape(Rectangle())
             }
         }
-        }
+        } // NavigationView
     }
 
     @ViewBuilder
@@ -111,6 +112,7 @@ struct CountryListView: View {
         .accessibilityAddTraits(model.isSelected(entry) ? .isSelected : [])
     }
 }
+
 
 //MARK: - ViewModel -
 extension CountryListView {
@@ -212,6 +214,7 @@ extension CountryListView {
         }
     }
 }
+
 
 //MARK: - Preview -
 struct CountryListView_Previews: PreviewProvider {

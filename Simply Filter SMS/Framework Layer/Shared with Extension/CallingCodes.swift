@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 // MARK: - CallingCodeEntry Enum
 
 enum CallingCodeEntry: CaseIterable {
@@ -229,6 +230,7 @@ enum CallingCodeEntry: CaseIterable {
     case kyrgyzstan         // +996
     case uzbekistan         // +998
 
+
     // MARK: - Computed Properties
 
     var callingCode: String { data.0 }
@@ -259,6 +261,7 @@ enum CallingCodeEntry: CaseIterable {
 
     static let byCallingCode: [String: CallingCodeEntry] =
         Dictionary(uniqueKeysWithValues: allCases.map { ($0.callingCode, $0) })
+
 
     // MARK: - Private Data
 
@@ -681,6 +684,7 @@ enum CallingCodeEntry: CaseIterable {
     }
     // swiftlint:enable large_tuple
 }
+
 
 // MARK: - CallingCodes Namespace
 
