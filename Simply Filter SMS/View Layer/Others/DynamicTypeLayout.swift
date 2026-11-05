@@ -49,7 +49,6 @@ private struct AdaptiveStackedRowPadding: ViewModifier {
     }
 }
 
-/// List row that stacks trailing content below the leading + primary column at large Dynamic Type sizes.
 struct AdaptiveRow<Leading: View, Content: View, Trailing: View>: View {
     @Environment(\.needsStackedLayout) private var needsStackedLayout
 
@@ -100,7 +99,6 @@ extension AdaptiveRow where Trailing == EmptyView {
     }
 }
 
-/// Toggle that moves the switch onto its own row at large Dynamic Type sizes.
 struct AdaptiveToggle<Label: View>: View {
     @Binding var isOn: Bool
     @Environment(\.needsStackedLayout) private var needsStackedLayout
@@ -120,7 +118,6 @@ struct AdaptiveToggle<Label: View>: View {
     }
 }
 
-/// Inline controls (caption + button) that stack vertically at large Dynamic Type sizes.
 struct AdaptiveFlowRow<Content: View>: View {
     @Environment(\.needsStackedLayout) private var needsStackedLayout
     @ViewBuilder var content: () -> Content
@@ -134,7 +131,6 @@ struct AdaptiveFlowRow<Content: View>: View {
     }
 }
 
-/// Horizontal group that becomes vertical at large Dynamic Type sizes (e.g. tip cards).
 struct AdaptiveStack<Content: View>: View {
     @Environment(\.needsStackedLayout) private var needsStackedLayout
     var spacing: CGFloat = DynamicTypeLayout.stackedSpacing
@@ -149,7 +145,6 @@ struct AdaptiveStack<Content: View>: View {
     }
 }
 
-/// Fixed-size filter option chip — does not scale with Dynamic Type (a11y labels live on the Menu).
 struct FilterRowOptionChip: View {
     let systemName: String
     let isActive: Bool
@@ -171,7 +166,6 @@ struct FilterRowOptionChip: View {
     }
 }
 
-/// Section column header with an optional leading accessory (e.g. select-all).
 struct AdaptiveColumnHeader<Leading: View>: View {
     @Environment(\.needsStackedLayout) private var needsStackedLayout
 
@@ -233,8 +227,6 @@ extension View {
         modifier(AdaptiveStackedRowPadding())
     }
 
-    /// Caps Dynamic Type for decorative chrome (footer, toasts, badges) that must stay compact.
-    /// VoiceOver labels remain fully accessible; only visual sizing is limited.
     func limitedDynamicTypeSize(_ max: DynamicTypeSize = .xxxLarge) -> some View {
         dynamicTypeSize(...max)
     }

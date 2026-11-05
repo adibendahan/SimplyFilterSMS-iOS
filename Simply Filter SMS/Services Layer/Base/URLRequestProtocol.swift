@@ -8,21 +8,38 @@
 import Foundation
 
 protocol URLRequestProtocol {
-    var path: String { get }
+    var url: URL { get }
     var method: HTTPMethod { get }
     var task: HTTPTask { get }
+    var headers: [String: String] { get }
     var errorDomain: String { get }
 }
 
+extension URLRequestProtocol {
+    var headers: [String: String] {
+        return [:]
+    }
+}
+
+extension Dictionary where Key == String, Value == String {
+    static func ifNoneMatch(_ etag: String?) -> [String: String] {
+        guard let etag = etag else { return [:] }
+        return ["If-None-Match": etag]
+    }
+}
+
 extension URLRequest {
-    init(baseURL: URL?, request: URLRequestProtocol) {
-        guard let url = baseURL?.appendingPathComponent(request.path) else { fatalError("no url")}
-        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+    init(request: URLRequestProtocol) {
+        var urlComponents = URLComponents(url: request.url, resolvingAgainstBaseURL: false)
         guard let componentsURL = urlComponents?.url else { fatalError("no url") }
         
         self.init(url: componentsURL)
         
         self.httpMethod = request.method.rawValue
+
+        for (field, value) in request.headers {
+            self.setValue(value, forHTTPHeaderField: field)
+        }
         
         switch request.task {
         case .requestPlain:
@@ -72,5 +89,6 @@ enum HTTPTask {
 
 enum RequestError: Error {
     case noData
+    case badStatus(Int)
     case unknown
 }

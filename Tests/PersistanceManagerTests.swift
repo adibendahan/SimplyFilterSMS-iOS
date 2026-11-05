@@ -115,24 +115,22 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssertEqual(rules[1].ruleType, .shortSender)
     }
     
-    func test_fetchAutomaticFiltersCacheRecords() {
+    func test_fetchFilterListsCacheRecords() {
         // Prepare
         let cacheAge = Date()
-        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        
-        let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
+        let data = self.filterListsCache(records: [self.record(text: "word")]).encoded
+
+        let existingCache = FilterListsCache(context: self.testSubject.context)
         existingCache.uuid = UUID()
-        existingCache.hashed = filtersList.hashed
-        existingCache.filtersData = filtersList.encoded
+        existingCache.data = data
         existingCache.age = cacheAge
 
         // Act
-        let cache = self.testSubject.fetchAutomaticFiltersCacheRecords()
+        let cache = self.testSubject.fetchFilterListsCacheRecords()
 
         // Verify
         XCTAssertEqual(cache.count, 1)
-        XCTAssertEqual(cache[0].hashed, filtersList.hashed)
-        XCTAssertEqual(cache[0].filtersData, filtersList.encoded)
+        XCTAssertEqual(cache[0].data, data)
         XCTAssertEqual(cache[0].age, cacheAge)
     }
     
@@ -270,55 +268,120 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssert(updatedFilter.denyFolderType == .promotion)
     }
 
-    func test_saveCache() {
+    func test_saveCache_filterLists() throws {
         // Prepare
-        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        let newerfiltersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
-        let oldDate = Date()
-        
-        let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
-        existingCache.uuid = UUID()
-        existingCache.hashed = filtersList.hashed
-        existingCache.filtersData = filtersList.encoded
-        existingCache.age = oldDate
-        
+        let oldDate = Date(timeIntervalSince1970: 0)
+        for _ in 0..<2 {
+            let existingCache = FilterListsCache(context: self.testSubject.context)
+            existingCache.uuid = UUID()
+            existingCache.data = self.filterListsCache(records: [self.record(text: "old")]).encoded
+            existingCache.age = oldDate
+        }
+        let legacyCache = self.insertLegacyCache(age: oldDate)
+        let cache = self.filterListsCache(records: [self.record(text: "spam")])
+
         self.expectingSaveContext()
-        
+
         // Act
-        _ = self.testSubject.saveCache(with: newerfiltersList)
-        
+        let saved = self.testSubject.saveCache(cache)
+
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
-        
-        let newCache = try? self.testSubject.context.fetch(AutomaticFiltersCache.fetchRequest()).first
-        
-        XCTAssertEqual(newCache?.filtersData, newerfiltersList.encoded)
-        XCTAssertEqual(newCache?.hashed, newerfiltersList.hashed)
-        XCTAssert(newCache?.age ?? oldDate > oldDate)
+        let rows = try self.testSubject.context.fetch(FilterListsCache.fetchRequest())
+        let legacyRows = try self.testSubject.context.fetch(AutomaticFiltersCache.fetchRequest())
+        XCTAssertTrue(saved)
+        XCTAssertEqual(rows.count, 1)
+        XCTAssertNotNil(rows.first?.uuid)
+        XCTAssert(rows.first?.age ?? oldDate > oldDate)
+        XCTAssertEqual(self.testSubject.cachedFilterLists(), cache)
+        XCTAssertEqual(legacyRows, [legacyCache], "the 3.2 row belongs to 3.2 devices")
+        XCTAssertEqual(legacyCache.filtersData, self.legacyFiltersData)
+        XCTAssertEqual(legacyCache.age, oldDate)
     }
-    
-    func test_isCacheStale() {
+
+    func test_saveCache_keepsRecordsAsDownloaded() {
         // Prepare
-        let filtersList = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        let filtersList_same = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word"])])
-        let filtersList_diff = AutomaticFilterListsResponse(filterLists: ["he" : LanguageFilterListResponse(allowSenders: [], allowBody: [], denySender: [], denyBody: ["word", "word2"])])
-        let oldDate = Date()
-        let existingCache = AutomaticFiltersCache(context: self.testSubject.context)
-        existingCache.uuid = UUID()
-        existingCache.hashed = filtersList.hashed
-        existingCache.filtersData = filtersList.encoded
-        existingCache.age = oldDate
-        
+        let cache = self.filterListsCache(records: [self.record(text: "spam"),
+                                                    self.record(text: "spam", folder: "inbox"),
+                                                    self.record(text: "(unclosed", matching: "regex", caseSensitivity: nil)])
+
         // Act
-        let expectFalse = self.testSubject.isCacheStale(comparedTo: filtersList_same)
-        let expectTrue = self.testSubject.isCacheStale(comparedTo: filtersList_diff)
-        
+        _ = self.testSubject.saveCache(cache)
+
         // Verify
-        XCTAssertFalse(expectFalse)
-        XCTAssertTrue(expectTrue)
+        XCTAssertEqual(self.testSubject.cachedFilterLists(), cache)
     }
-    
-    
+
+    func test_cachedFilterLists_noCache() {
+        XCTAssertNil(self.testSubject.cachedFilterLists())
+    }
+
+    func test_cachedFilterLists_onlyLegacyCache_readsItConverted() {
+        // Prepare
+        _ = self.insertLegacyCache(age: Date())
+
+        // Act
+        let cache = self.testSubject.cachedFilterLists()
+
+        // Verify
+        XCTAssertEqual(cache, FilterListsSnapshot(legacyEncoded: self.legacyFiltersData))
+        XCTAssertEqual(cache?.catalog.lists.map(\.language), ["en"])
+    }
+
+    func test_cachedFilterLists_newCacheWinsOverLegacy() {
+        // Prepare
+        _ = self.insertLegacyCache(age: Date())
+        let cache = self.filterListsCache(records: [self.record(text: "spam")])
+        _ = self.testSubject.saveCache(cache)
+
+        // Act + Verify
+        XCTAssertEqual(self.testSubject.cachedFilterLists(), cache)
+    }
+
+    func test_cachedFilterListCatalog() {
+        // Prepare
+        let cache = self.filterListsCache(records: [self.record(text: "spam")])
+        _ = self.testSubject.saveCache(cache)
+
+        // Act
+        let catalog = self.testSubject.cachedFilterListCatalog()
+
+        // Verify
+        XCTAssertEqual(catalog, cache.catalog)
+    }
+
+    func test_cachedFilterListCatalog_onlyLegacyCache_readsItConverted() {
+        // Prepare
+        _ = self.insertLegacyCache(age: Date())
+
+        // Act
+        let catalog = self.testSubject.cachedFilterListCatalog()
+
+        // Verify
+        XCTAssertEqual(catalog?.lists.map(\.language), ["en"])
+    }
+
+    func test_touchCache() {
+        // Prepare
+        let oldDate = Date(timeIntervalSince1970: 0)
+        let cache = self.filterListsCache(records: [self.record(text: "spam")])
+        _ = self.testSubject.saveCache(cache)
+        let cacheRecord = self.testSubject.fetchFilterListsCacheRecords().first
+        cacheRecord?.age = oldDate
+        let legacyCache = self.insertLegacyCache(age: oldDate)
+
+        self.expectingSaveContext()
+
+        // Act
+        self.testSubject.touchCache()
+
+        // Verify
+        self.waitForExpectations(timeout: 1, handler: nil)
+        XCTAssert(cacheRecord?.age ?? oldDate > oldDate)
+        XCTAssertEqual(self.testSubject.cachedFilterLists(), cache)
+        XCTAssertEqual(legacyCache.age, oldDate, "the 3.2 row belongs to 3.2 devices")
+    }
+
     func test_selectedCountries_roundTrip() {
         // Prepare + Act
         self.expectingSaveContext()
@@ -356,6 +419,7 @@ class PersistanceManagerTests: XCTestCase {
     // MARK: Private Variables and Helpers
     private var testSubject: PersistanceManagerProtocol = PersistanceManager(inMemory: true)
     private var saveNotificationCompleteHandler: ((Notification)->())?
+    private let legacyFiltersData = "eyJmaWx0ZXJfbGlzdHMiOnsiZW4iOnsiYWxsb3dfYm9keSI6WyJ5b3VyIGNvZGUiXSwiYWxsb3dfc2VuZGVyIjpbIkFtYmVyLklUIl0sImRlbnlfYm9keSI6WyJDbGFpbSBub3ciXSwiZGVueV9zZW5kZXIiOlsiU3BhbUNvIl19fX0="
 
     private func waitForSavedNotification(completeHandler: @escaping ((Notification)->()) ) {
         self.saveNotificationCompleteHandler = completeHandler
@@ -369,6 +433,50 @@ class PersistanceManagerTests: XCTestCase {
         }
     }
     
+    private func record(text: String,
+                        folder: String = "junk",
+                        matching: String = "contains",
+                        caseSensitivity: String? = "insensitive") -> FilterExportRecord {
+        return FilterExportRecord(text: text,
+                                  type: "deny",
+                                  folder: folder,
+                                  target: "all",
+                                  matching: matching,
+                                  caseSensitivity: caseSensitivity)
+    }
+
+    private func insertLegacyCache(age: Date) -> AutomaticFiltersCache {
+        let legacyCache = AutomaticFiltersCache(context: self.testSubject.context)
+        legacyCache.uuid = UUID()
+        legacyCache.filtersData = self.legacyFiltersData
+        legacyCache.age = age
+        return legacyCache
+    }
+
+    private func filterListsCache(records: [FilterExportRecord]) -> FilterListsSnapshot {
+        let payload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                          version: FilterExportPayload.currentVersion,
+                                          exportedAt: Date(timeIntervalSince1970: 1_800_000_000),
+                                          appVersion: "3.3.0",
+                                          name: "Hebrew",
+                                          revision: 1,
+                                          filters: records,
+                                          forceClearBeforeImport: nil)
+        let entry = FilterListCatalogEntry(id: "ai-he",
+                                           name: "Hebrew",
+                                           url: "he.sfsfilters",
+                                           language: "he")
+        let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                                version: FilterListCatalogResponse.currentVersion,
+                                                lists: [entry])
+        let section = FilterListsCacheSection(url: "https://example.com/he.sfsfilters",
+                                              etag: "he-etag",
+                                              payload: payload)
+        return FilterListsSnapshot(catalogETag: "catalog-etag",
+                                catalog: catalog,
+                                lists: [section])
+    }
+
     private func flushEntity(name: String) {
         let fetchRequest:NSFetchRequest<NSFetchRequestResult> = NSFetchRequest<NSFetchRequestResult>(entityName: name)
         let objs = try! self.testSubject.context.fetch(fetchRequest)
@@ -381,6 +489,7 @@ class PersistanceManagerTests: XCTestCase {
     private func flushPersistanceManager() {
         self.flushEntity(name: "Filter")
         self.flushEntity(name: "AutomaticFiltersCache")
+        self.flushEntity(name: "FilterListsCache")
         self.flushEntity(name: "AutomaticFiltersLanguage")
         self.flushEntity(name: "AutomaticFiltersRule")
         

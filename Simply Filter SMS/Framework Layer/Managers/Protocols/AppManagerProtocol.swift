@@ -16,15 +16,16 @@ protocol AppManagerProtocol {
     var automaticFilterManager: AutomaticFilterManagerProtocol { get }
     var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
     var networkSyncManager: NetworkSyncManagerProtocol { get }
-    var amazonS3Service: AmazonS3ServiceProtocol { get }
+    var filterListService: FilterListServiceProtocol { get }
     var reportMessageService: ReportMessageServiceProtocol { get }
     var tipJarManager: TipJarManagerProtocol { get }
     var filterTransferManager: FilterTransferManagerProtocol { get }
     var flowManager: FlowManagerProtocol { get }
     var schedulingManager: SchedulingManagerProtocol { get }
 
-    func onAppLaunch()
-    func onNewUserSession()
+    @MainActor func onAppLaunch()
+    @MainActor func onAppBecameActive() -> Bool
+    @MainActor func onNewUserSession()
 
     #if DEBUG
     var debugDataManager: DebugDataManagerProtocol { get }

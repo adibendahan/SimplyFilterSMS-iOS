@@ -22,7 +22,6 @@ struct FilledButton: ButtonStyle {
     }
 }
 
-
 struct FilterBadge: View {
     let text: String
     let color: Color
@@ -48,7 +47,6 @@ struct FilterBadge: View {
     }
 }
 
-
 struct OutlineButton: ButtonStyle {
     
     @Environment(\.isEnabled)
@@ -66,7 +64,6 @@ struct OutlineButton: ButtonStyle {
     }
 }
 
-/// Plain text buttons; filled pill when Show Button Shapes is on.
 struct AccessibleTextButtonStyle: ButtonStyle {
     @Environment(\.accessibilityShowButtonShapes) private var showButtonShapes
     var compact: Bool = false

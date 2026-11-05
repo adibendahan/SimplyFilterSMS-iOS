@@ -758,6 +758,16 @@ extension AppHomeView {
             self.presentNextFlow()
         }
 
+        @MainActor
+        func appBecameActive() {
+            self.appManager.schedulingManager.refreshInactivityReminder()
+            let didStartNewSession = self.appManager.onAppBecameActive()
+            guard didStartNewSession else { return }
+            self.didShowNotificationThisSession = false
+            self.tryShowTipPromotion()
+            self.tryShowReportingExtensionNudge()
+        }
+
         private func runLaunchFlowIfNeeded() {
             #if DEBUG
             if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
@@ -766,8 +776,6 @@ extension AppHomeView {
             #endif
             self.startMonitoring()
             self.enableWhatsNewAndPresent()
-            self.tryShowTipPromotion()
-            self.tryShowReportingExtensionNudge()
         }
 
         private func markWhatsNewSeen() {
@@ -820,6 +828,16 @@ extension AppHomeView {
                 && !self.isReplacingSheetForLaunch
         }
 
+        private func hideOfflineNotification() {
+            if case .offline = self.pendingNotification {
+                self.pendingNotification = nil
+            }
+            guard case .offline = self.shownNotification else { return }
+            AppManager.logger.debug("AppHome — offline notification cancelled (back online)")
+            self.shownNotification = nil
+            self.notification.show = false
+        }
+
         private func showPendingNotification() {
             guard self.isHomeUnobstructed,
                   let pendingNotification = self.pendingNotification else { return }
@@ -828,12 +846,28 @@ extension AppHomeView {
         }
         
         func showNotification(_ notification: NotificationView.Notification) {
+            let notificationName = String(describing: notification)
+
+            guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
+                let shownDescription = self.shownNotification.map { String(describing: $0) } ?? "nil"
+                let pendingDescription = self.pendingNotification.map { String(describing: $0) } ?? "nil"
+                AppManager.logger.debug("AppHome — notification dropped: \(notificationName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
+                return
+            }
+
             guard self.isHomeUnobstructed else {
+                AppManager.logger.debug("AppHome — notification pending (Home obstructed): \(notificationName, privacy: .public)")
                 self.pendingNotification = notification
                 return
             }
 
+            AppManager.logger.debug("AppHome — notification shown: \(notificationName, privacy: .public)")
             self.didShowNotificationThisSession = true
+            self.shownNotification = notification
+            self.notification.onHide = { [weak self] in
+                AppManager.logger.debug("AppHome — notification hidden: \(notificationName, privacy: .public)")
+                self?.shownNotification = nil
+            }
             self.notification.onTap = nil
 
             switch notification {
@@ -866,6 +900,7 @@ extension AppHomeView {
             if !self.notification.show {
                 self.notification.setNotification(notification)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    guard self.shownNotification != nil else { return }
                     withAnimation {
                         self.notification.show = true
                     }
@@ -900,7 +935,7 @@ extension AppHomeView {
                 NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { notification in
                     guard let networkStatus = notification.object as? NetworkStatus else { return }
                     if networkStatus == .online {
-                        self.notification.show = false
+                        self.hideOfflineNotification()
                     }
                     else {
                         if !self.userIgnoresNetworkStatus {
@@ -974,8 +1009,7 @@ extension AppHomeView {
             let defaultsManager = self.appManager.defaultsManager
             guard defaultsManager.sessionCounter % 5 == 0,
                   defaultsManager.sessionCounter > 0,
-                  !defaultsManager.didTip,
-                  !self.notification.show else {
+                  !defaultsManager.didTip else {
                 return
             }
 
@@ -1022,13 +1056,15 @@ extension AppHomeView {
         private var didAddObservers = false
         private var didShowNotificationThisSession = false
         private var pendingNotification: NotificationView.Notification?
+        private var shownNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
         private var isAlertPresented: Bool {
             return self.showNothingToImportAlert || self.showInactivityNotificationAlert
         }
         private var userIgnoresNetworkStatus: Bool {
-            guard let lastOfflineNotificationDismiss = self.appManager.defaultsManager.lastOfflineNotificationDismiss else { return false }
-            return Date().minutesBetween(date: lastOfflineNotificationDismiss) < kHideiClouldStatusMemory
+            guard let lastDismissDate = self.appManager.defaultsManager.lastOfflineNotificationDismiss,
+                  let snoozeDuration = NotificationView.Notification.offline.snoozeAfterHide else { return false }
+            return lastDismissDate.addingTimeInterval(snoozeDuration) > Date()
         }
         
         private func setAutomaticRuleState(for rule: RuleType, value: Bool) {

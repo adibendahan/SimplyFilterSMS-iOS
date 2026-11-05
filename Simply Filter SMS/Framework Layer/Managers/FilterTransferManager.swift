@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import NaturalLanguage
 
 class FilterTransferManager: FilterTransferManagerProtocol {
 
@@ -27,7 +26,9 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     func writeExportFile(candidates: [FilterTransferCandidate]) throws -> URL {
-        let data = try self.encodePayload(records: candidates.map({ self.record(from: $0) }))
+        let exportRecords = candidates.map({ self.record(from: $0) })
+        let data = try self.encodePayload(records: exportRecords)
+        AppManager.logger.debug("writeExportFile — records: \(exportRecords.count, privacy: .public), size: \(data.count, privacy: .public) bytes")
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -46,6 +47,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                           duplicateCount: 0,
                                           invalidCount: 0,
                                           forceClearTypes: [])
+        AppManager.logger.debug("queueExport — exportable filters: \(preview.candidates.count, privacy: .public)")
         self.pendingPreview = preview
         self.pendingKind = .exportFilters
         return preview
@@ -85,15 +87,21 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     func previewImport(data: Data) throws -> FilterTransferPreview {
-        let payload = try self.decodePayload(data)
+        let payload = try FilterExportPayload(data: data)
         let typesToClear = Self.forceClearTypes(from: payload)
         var accepted: [FilterTransferCandidate] = []
         var duplicateCount = 0
         var invalidCount = 0
+        var skippedCount = 0
         var seenKeys = Set<String>()
 
         for record in payload.filters {
-            guard let candidate = Self.candidate(from: record) else {
+            if let recordType = FilterType(exportKey: record.type), !recordType.isTransferable {
+                skippedCount += 1
+                continue
+            }
+
+            guard let candidate = FilterTransferCandidate(record: record), candidate.isImportable else {
                 invalidCount += 1
                 continue
             }
@@ -112,6 +120,9 @@ class FilterTransferManager: FilterTransferManagerProtocol {
             seenKeys.insert(key)
             accepted.append(candidate)
         }
+
+        let forceClearDescription = typesToClear.map(\.exportKey).sorted().joined(separator: ", ")
+        AppManager.logger.debug("previewImport — appVersion: \(payload.appVersion, privacy: .public), records: \(payload.filters.count, privacy: .public), accepted: \(accepted.count, privacy: .public), duplicates: \(duplicateCount, privacy: .public), invalid: \(invalidCount, privacy: .public), skipped (not transferable): \(skippedCount, privacy: .public), force clear: [\(forceClearDescription, privacy: .public)]")
 
         return FilterTransferPreview(candidates: accepted,
                                      duplicateCount: duplicateCount,
@@ -139,6 +150,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         for type in self.pendingPreview.forceClearTypes {
             let existing = self.persistanceManager.fetchFilterRecords(for: type)
             if !existing.isEmpty {
+                AppManager.logger.debug("importFilters — force clear \(type.exportKey, privacy: .public): deleting \(existing.count, privacy: .public)")
                 self.persistanceManager.deleteFilters(Set(existing))
             }
         }
@@ -159,6 +171,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         let result = FilterTransferResult(added: added,
                                         duplicateCount: self.pendingPreview.duplicateCount,
                                         invalidCount: self.pendingPreview.invalidCount)
+        AppManager.logger.debug("importFilters — selected: \(candidates.count, privacy: .public), added: \(added, privacy: .public)")
         self.lastImportResult = result
         return result
     }
@@ -175,6 +188,8 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                           version: FilterExportPayload.currentVersion,
                                           exportedAt: Date(),
                                           appVersion: appVersion,
+                                          name: nil,
+                                          revision: nil,
                                           filters: records,
                                           forceClearBeforeImport: nil)
         let encoder = JSONEncoder()
@@ -190,6 +205,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     private func candidatesFromStore() -> [FilterTransferCandidate] {
         return self.persistanceManager.fetchFilterRecords().compactMap { filter in
             guard let text = filter.text, text.isEmpty == false else { return nil }
+            guard filter.filterType.isTransferable else { return nil }
             return FilterTransferCandidate(id: filter.uuid ?? UUID(),
                                          text: text,
                                          type: filter.filterType,
@@ -203,10 +219,10 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     private func record(from candidate: FilterTransferCandidate) -> FilterExportRecord {
         return FilterExportRecord(text: candidate.text,
                                   type: candidate.type.exportKey,
-                                  folder: candidate.denyFolder.exportKey,
+                                  folder: candidate.denyFolder.exportKey(for: candidate.type),
                                   target: candidate.filterTarget.exportKey,
                                   matching: candidate.filterMatching.exportKey,
-                                  caseSensitivity: candidate.filterCase.exportKey)
+                                  caseSensitivity: candidate.filterCase.exportKey(for: candidate.filterMatching))
     }
 
     private func clearPendingExportFile() {
@@ -216,58 +232,14 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         }
     }
 
-    private func decodePayload(_ data: Data) throws -> FilterExportPayload {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-
-        do {
-            let payload = try decoder.decode(FilterExportPayload.self, from: data)
-            guard payload.format == FilterExportPayload.formatIdentifier else {
-                throw FilterTransferError.invalidFile
-            }
-            guard payload.version >= 1 else {
-                throw FilterTransferError.invalidFile
-            }
-            guard payload.version <= FilterExportPayload.currentVersion else {
-                throw FilterTransferError.unsupportedVersion
-            }
-            return payload
-        } catch let error as FilterTransferError {
-            throw error
-        } catch {
-            throw FilterTransferError.invalidFile
-        }
-    }
-
     private static func forceClearTypes(from payload: FilterExportPayload) -> Set<FilterType> {
-        Set((payload.forceClearBeforeImport ?? []).compactMap({ FilterType(exportKey: $0) }))
-    }
+        var forceClearTypes: Set<FilterType> = []
 
-    private static func candidate(from record: FilterExportRecord) -> FilterTransferCandidate? {
-        guard let text = record.text?.trimmingCharacters(in: .whitespacesAndNewlines),
-              text.count >= kMinimumFilterLength,
-              let type = FilterType(exportKey: record.type),
-              let folder = DenyFolderType(exportKey: record.folder),
-              let target = FilterTarget(exportKey: record.target),
-              let matching = FilterMatching(exportKey: record.matching),
-              let filterCase = FilterCase(exportKey: record.caseSensitivity) else {
-            return nil
+        for exportKey in payload.forceClearBeforeImport ?? [] {
+            guard let filterType = FilterType(exportKey: exportKey), filterType.isTransferable else { continue }
+            forceClearTypes.insert(filterType)
         }
 
-        if type == .denyLanguage {
-            let language = NLLanguage(filterText: text)
-            guard language != .undetermined else { return nil }
-        }
-
-        if matching == .regex {
-            guard (try? Regex(text)) != nil else { return nil }
-        }
-
-        return FilterTransferCandidate(text: text,
-                                     type: type,
-                                     denyFolder: folder,
-                                     filterTarget: target,
-                                     filterMatching: matching,
-                                     filterCase: filterCase)
+        return forceClearTypes
     }
 }

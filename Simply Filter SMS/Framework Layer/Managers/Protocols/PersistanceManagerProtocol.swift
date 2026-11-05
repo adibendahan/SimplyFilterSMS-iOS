@@ -24,7 +24,7 @@ protocol PersistanceManagerProtocol: AnyObject {
     func fetchFilterRecords(for filterType: FilterType) -> [Filter]
     func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage]
     func fetchAutomaticFiltersRuleRecords() -> [AutomaticFiltersRule]
-    func fetchAutomaticFiltersCacheRecords() -> [AutomaticFiltersCache]
+    func fetchFilterListsCacheRecords() -> [FilterListsCache]
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage?
     func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule?
     func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule
@@ -52,8 +52,10 @@ protocol PersistanceManagerProtocol: AnyObject {
     func updateFilter(_ filter: Filter, filterCase: FilterCase)
     func updateFilter(_ filter: Filter, filterTarget: FilterTarget)
     func updateFilter(_ filter: Filter, filterText: String)
-    func saveCache(with filterList: AutomaticFilterListsResponse) -> Bool
-    func isCacheStale(comparedTo newFilterList: AutomaticFilterListsResponse) -> Bool
+    func cachedFilterLists() -> FilterListsSnapshot?
+    func cachedFilterListCatalog() -> FilterListCatalogResponse?
+    func saveCache(_ cache: FilterListsSnapshot) -> Bool
+    func touchCache()
     func selectedCountries(for rule: RuleType) -> [String]
     func setSelectedCountries(_ countries: [String], for rule: RuleType)
 

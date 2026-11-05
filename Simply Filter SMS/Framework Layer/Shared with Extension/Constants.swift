@@ -23,7 +23,6 @@ let kInactivityReminderHour = 19
 let kInactivityNotificationMaxAsks = 3
 let kInactivityNotificationMinSessionsBetweenAsks = 3
 let kMinimumFilterLength = 1
-let kHideiClouldStatusMemory = 60
 let kFilterExportFileExtension = "sfsfilters"
 let kFilterExportTypeIdentifier = "com.grizz.apps.dev.simply-filter-sms.filters"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
@@ -34,6 +33,7 @@ let currentWhatsNewVersion = 6
 // URLs
 extension URL {
     static let appBaseURL = URL(string: "https://grizz-apps-dev.s3.us-east-2.amazonaws.com")!
+    static let filterListCatalogURL = URL.appBaseURL.appendingPathComponent("simply-filter-sms/3.3.0/ai/catalog.json")
     static let reportMessageURL = URL(string: "https://api.ben-dahan.com")!
     static let appReviewURL = URL(string: "https://apps.apple.com/app/id1603222959?action=write-review")!
     static let appTwitterURL = URL(string: "https://twitter.com/a_bd")!
@@ -77,7 +77,16 @@ enum FilterType: Int64, CaseIterable, Identifiable {
             return true
         }
     }
-    
+
+    var isTransferable: Bool {
+        switch self {
+        case .denyLanguage:
+            return false
+        default:
+            return true
+        }
+    }
+
     var supportsAdvancedOptions: Bool {
         switch self {
         case .deny, .allow:
@@ -250,6 +259,15 @@ enum FilterMatching: Int64, CaseIterable, Identifiable {
             return .contains
         case .regex:
             return .contains
+        }
+    }
+
+    var definesOwnCase: Bool {
+        switch self {
+        case .regex:
+            return true
+        default:
+            return false
         }
     }
 

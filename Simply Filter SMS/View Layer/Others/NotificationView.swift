@@ -345,6 +345,39 @@ struct NotificationView: View {
                 return 6
             }
         }
+
+        var snoozeAfterHide: TimeInterval? {
+            switch self {
+            case .offline:
+                return 60 * 60
+            default:
+                return nil
+            }
+        }
+
+        func isOutranked(by otherNotifications: Notification?...) -> Bool {
+            let competingNotifications = otherNotifications.compactMap { $0 }
+            return competingNotifications.contains { $0.priority < self.priority }
+        }
+
+        var priority: Int {
+            switch self {
+            case .filterImportFailed, .filterExportFailed, .saveFailed:
+                return 0
+            case .filtersImported, .onClipboardSet, .tipSuccessful:
+                return 1
+            case .offline:
+                return 2
+            case .cloudSyncOperationComplete:
+                return 3
+            case .automaticFiltersUpdated:
+                return 4
+            case .enableReportingExtension:
+                return 5
+            case .tipPromotion:
+                return 6
+            }
+        }
     }
 }
 

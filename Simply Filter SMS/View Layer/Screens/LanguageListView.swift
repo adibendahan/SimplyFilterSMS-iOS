@@ -155,7 +155,7 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
         }
         .sheet(item: $model.sheetScreen) { $0.build() }
         .if(self.model.shouldAllowRefresh) {
-            $0.refreshable(action: self.model.forceUpdateFilters)
+            $0.refreshable(action: self.model.updateFilters)
         }
         .onAppear {
             self.model.startMonitoring()
@@ -182,7 +182,7 @@ extension LanguageListView {
         @Published private(set) var autoFilterErrorText: String
         @Published private(set) var isLoading: Bool
         @Published private(set) var isOnline: Bool
-        @Published private(set) var shouldAllowRefresh: Bool
+        let shouldAllowRefresh: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
         @Published var sheetScreen: Screen? = nil
         private var didAddObservers = false
@@ -224,16 +224,8 @@ extension LanguageListView {
                 self.autoFilterErrorText = "autoFilter_empty"~
             }
             
-            if mode == .automaticBlocking,
-               let lastUpdate = cacheAge,
-               lastUpdate.daysBetween(date: Date()) > 0 {
-                
-                self.shouldAllowRefresh = true
-            }
-            else {
-                self.shouldAllowRefresh = false
-            }
-            
+            self.shouldAllowRefresh = mode == .automaticBlocking
+
             super.init(appManager: appManager)
         }
 
@@ -247,7 +239,7 @@ extension LanguageListView {
 
                     if networkStatus == .online {
                         Task(priority: .background) {
-                            await self?.appManager.automaticFilterManager.updateAutomaticFiltersIfNeeded()
+                            await self?.appManager.automaticFilterManager.refreshFilterLists()
                         }
                         self?.isLoading = true
                     }
@@ -297,16 +289,6 @@ extension LanguageListView {
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: self.appManager.automaticFilterManager.languageAutomaticState,
                                                 setter: self.appManager.automaticFilterManager.setLanguageAutomaticState) })
-            
-            if self.mode == .automaticBlocking,
-               let lastUpdate = self.lastUpdate,
-               lastUpdate.daysBetween(date: Date()) > 0 {
-                
-                self.shouldAllowRefresh = true
-            }
-            else {
-                self.shouldAllowRefresh = false
-            }
         }
         
         func addFilter(language: NLLanguage) {
@@ -321,9 +303,9 @@ extension LanguageListView {
             }
         }
         
-        @Sendable func forceUpdateFilters() async {
+        @Sendable func updateFilters() async {
             try? await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
-            await self.appManager.automaticFilterManager.forceUpdateAutomaticFilters()
+            await self.appManager.automaticFilterManager.refreshFilterLists()
             
             Task {
                 DispatchQueue.main.async {
