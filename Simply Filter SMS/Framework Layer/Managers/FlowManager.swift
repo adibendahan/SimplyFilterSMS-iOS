@@ -10,14 +10,22 @@ import Foundation
 class FlowManager: FlowManagerProtocol {
 
     //MARK: - Initialization -
-    init(defaultsManager: DefaultsManagerProtocol) {
+    init(defaultsManager: DefaultsManagerProtocol,
+         networkSyncManager: NetworkSyncManagerProtocol,
+         filterListManager: FilterListManagerProtocol) {
         self.defaultsManager = defaultsManager
+        self.networkSyncManager = networkSyncManager
+        self.filterListManager = filterListManager
         self.startedAsFirstRun = defaultsManager.isAppFirstRun
     }
 
 
     //MARK: - Public API (FlowManagerProtocol) -
     private(set) var didShowNotificationThisSession = false
+
+    var isNotificationShowing: Bool {
+        return self.shownNotification != nil
+    }
 
     func recordLaunch(_ screen: Screen) -> Bool {
         if screen == .enableExtension && self.defaultsManager.isAppFirstRun {
@@ -31,6 +39,7 @@ class FlowManager: FlowManagerProtocol {
 
     func request(_ screen: Screen) {
         self.pendingUserRequest = screen
+        NotificationCenter.default.post(name: .flowRequested, object: nil)
     }
 
     func enableWhatsNew() {
@@ -88,19 +97,59 @@ class FlowManager: FlowManagerProtocol {
         self.startedAsFirstRun = self.defaultsManager.isAppFirstRun
         self.shownNotification = nil
         self.pendingNotification = nil
+        self.waitingNotification = nil
         self.didShowNotificationThisSession = false
     }
 
+
+    //MARK: - Notifications -
+    func startMonitoring() {
+        self.showOfflineIfStillOffline()
+
+        guard !self.didAddObservers else { return }
+        self.didAddObservers = true
+
+        NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { [weak self] _ in
+            self?.requestNotification(.cloudSyncOperationComplete)
+        }
+
+        NotificationCenter.default.addObserver(forName: .filtersSaveFailed, object: nil, queue: .main) { [weak self] _ in
+            self?.requestNotification(.saveFailed)
+        }
+
+        NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { [weak self] notification in
+            guard let networkStatus = notification.object as? NetworkStatus else { return }
+            self?.networkStatusChanged(to: networkStatus)
+        }
+
+        NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: .main) { [weak self] _ in
+            guard let self, self.filterListManager.hasActiveFilterLists else { return }
+            self.requestNotification(.filterListsUpdated)
+        }
+    }
+
+    func setHomeAvailability(_ isHomeUnobstructed: @escaping () -> Bool) {
+        self.isHomeUnobstructed = isHomeUnobstructed
+    }
+
+    func homeMayBeUnobstructed() {
+        guard self.isHomeUnobstructed(),
+              let waitingNotification = self.waitingNotification else { return }
+        self.waitingNotification = nil
+        self.enqueue(waitingNotification)
+    }
+
     func requestNotification(_ notification: NotificationView.Notification) {
-        guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
-            let notificationName = String(describing: notification)
-            let shownDescription = self.shownNotification.map { String(describing: $0) } ?? "nil"
-            let pendingDescription = self.pendingNotification.map { String(describing: $0) } ?? "nil"
-            AppManager.logger.debug("FlowManager — notification dropped: \(notificationName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
+        let mustWait = notification.waitsForHome && !self.isHomeUnobstructed()
+        guard mustWait else {
+            self.enqueue(notification)
             return
         }
-        self.pendingNotification = notification
-        NotificationCenter.default.post(name: .notificationSlotChanged, object: nil)
+
+        guard !notification.isOutranked(by: self.waitingNotification) else { return }
+        let notificationName = String(describing: notification)
+        AppManager.logger.debug("FlowManager — notification waiting (Home obstructed): \(notificationName, privacy: .public)")
+        self.waitingNotification = notification
     }
 
     func nextNotification() -> NotificationView.Notification? {
@@ -113,21 +162,43 @@ class FlowManager: FlowManagerProtocol {
 
     func completeNotification() {
         self.shownNotification = nil
+        self.showOfflineIfStillOffline()
     }
 
-    func cancelNotification(_ notification: NotificationView.Notification) -> Bool {
-        if self.pendingNotification == notification {
-            self.pendingNotification = nil
-        }
+    func didTapNotification(_ notification: NotificationView.Notification) {
+        switch notification {
+        case .enableReportingExtension:
+            self.defaultsManager.didDismissReportingExtensionNudge = true
+            self.request(.enableReportingExtension)
 
-        guard self.shownNotification == notification else { return false }
-        self.shownNotification = nil
-        return true
+        case .tipPromotion:
+            self.request(.tipJar)
+
+        default:
+            break
+        }
+    }
+
+    func didDismissNotification(_ notification: NotificationView.Notification) {
+        switch notification {
+        case .offline:
+            self.defaultsManager.lastOfflineNotificationDismiss = Date()
+
+        default:
+            break
+        }
+    }
+
+    func showSessionNudges() {
+        self.tryShowTipPromotion()
+        self.tryShowReportingExtensionNudge()
     }
 
 
     //MARK: - Private -
-    private let defaultsManager: DefaultsManagerProtocol
+    private var defaultsManager: DefaultsManagerProtocol
+    private let networkSyncManager: NetworkSyncManagerProtocol
+    private let filterListManager: FilterListManagerProtocol
     private var startedAsFirstRun: Bool
     private var launchActionClaimedSession = false
     private var whatsNewEnabled = false
@@ -136,6 +207,9 @@ class FlowManager: FlowManagerProtocol {
     private var pendingUserRequest: Screen?
     private var shownNotification: NotificationView.Notification?
     private var pendingNotification: NotificationView.Notification?
+    private var waitingNotification: NotificationView.Notification?
+    private var isHomeUnobstructed: () -> Bool = { true }
+    private var didAddObservers = false
 
     private var shouldShowWhatsNew: Bool {
         return self.startedAsFirstRun == false
@@ -143,5 +217,69 @@ class FlowManager: FlowManagerProtocol {
             && self.launchActionClaimedSession == false
             && WhatsNewEntry.allCases.isEmpty == false
             && currentWhatsNewVersion > self.defaultsManager.lastSeenWhatsNewVersion
+    }
+
+    private var userIgnoresNetworkStatus: Bool {
+        guard let lastDismissDate = self.defaultsManager.lastOfflineNotificationDismiss,
+              let snoozeDuration = NotificationView.Notification.offline.snoozeAfterHide else { return false }
+        return lastDismissDate.addingTimeInterval(snoozeDuration) > Date()
+    }
+
+    private func enqueue(_ notification: NotificationView.Notification) {
+        guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
+            let notificationName = String(describing: notification)
+            let shownDescription = self.shownNotification.map { String(describing: $0) } ?? "nil"
+            let pendingDescription = self.pendingNotification.map { String(describing: $0) } ?? "nil"
+            AppManager.logger.debug("FlowManager — notification dropped: \(notificationName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
+            return
+        }
+        self.pendingNotification = notification
+        NotificationCenter.default.post(name: .notificationSlotChanged, object: nil)
+    }
+
+    private func cancel(_ notification: NotificationView.Notification) {
+        if self.pendingNotification == notification {
+            self.pendingNotification = nil
+        }
+
+        guard self.shownNotification == notification else { return }
+        self.shownNotification = nil
+        AppManager.logger.debug("FlowManager — notification cancelled: \(String(describing: notification), privacy: .public)")
+        NotificationCenter.default.post(name: .notificationSlotChanged, object: nil)
+    }
+
+    private func networkStatusChanged(to networkStatus: NetworkStatus) {
+        guard networkStatus == .online else {
+            guard !self.userIgnoresNetworkStatus else { return }
+            self.requestNotification(.offline)
+            return
+        }
+        self.cancel(.offline)
+    }
+
+    private func showOfflineIfStillOffline() {
+        guard self.networkSyncManager.networkStatus == .offline,
+              !self.userIgnoresNetworkStatus else { return }
+        self.requestNotification(.offline)
+    }
+
+    private func tryShowTipPromotion() {
+        let sessionCounter = self.defaultsManager.sessionCounter
+        guard sessionCounter % 5 == 0,
+              sessionCounter > 0,
+              !self.defaultsManager.didTip else { return }
+
+        self.requestNotification(.tipPromotion)
+    }
+
+    private func tryShowReportingExtensionNudge() {
+        let sessionCounter = self.defaultsManager.sessionCounter
+        guard !self.defaultsManager.isAppFirstRun,
+              !self.defaultsManager.didDismissReportingExtensionNudge,
+              self.filterListManager.hasActiveFilterLists,
+              sessionCounter > 0 && sessionCounter % 3 == 0,
+              !self.didShowNotificationThisSession else { return }
+
+        self.requestNotification(.enableReportingExtension)
     }
 }

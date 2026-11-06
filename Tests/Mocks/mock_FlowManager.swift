@@ -16,18 +16,17 @@ class mock_FlowManager: FlowManagerProtocol {
     var nextCounter = 0
     var completeCounter = 0
     var resetSessionCounter = 0
+    var startMonitoringCounter = 0
+    var setHomeAvailabilityCounter = 0
+    var homeMayBeUnobstructedCounter = 0
     var requestNotificationCounter = 0
     var nextNotificationCounter = 0
     var completeNotificationCounter = 0
-    var cancelNotificationCounter = 0
-
+    var didTapNotificationCounter = 0
+    var didDismissNotificationCounter = 0
+    var showSessionNudgesCounter = 0
     var didShowNotificationThisSessionGetCounter = 0
-    var didShowNotificationThisSessionClosure: (() -> Bool)?
-
-    var didShowNotificationThisSession: Bool {
-        self.didShowNotificationThisSessionGetCounter += 1
-        return self.didShowNotificationThisSessionClosure?() ?? false
-    }
+    var isNotificationShowingGetCounter = 0
 
     var nextScreen: Screen?
     var recordLaunchClosure: ((Screen) -> Bool)?
@@ -36,7 +35,20 @@ class mock_FlowManager: FlowManagerProtocol {
     var completeClosure: ((Screen) -> ())?
     var requestNotificationClosure: ((NotificationView.Notification) -> ())?
     var nextNotificationClosure: (() -> NotificationView.Notification?)?
-    var cancelNotificationClosure: ((NotificationView.Notification) -> Bool)?
+    var didTapNotificationClosure: ((NotificationView.Notification) -> ())?
+    var didDismissNotificationClosure: ((NotificationView.Notification) -> ())?
+    var didShowNotificationThisSessionClosure: (() -> Bool)?
+    var isNotificationShowingClosure: (() -> Bool)?
+
+    var didShowNotificationThisSession: Bool {
+        self.didShowNotificationThisSessionGetCounter += 1
+        return self.didShowNotificationThisSessionClosure?() ?? false
+    }
+
+    var isNotificationShowing: Bool {
+        self.isNotificationShowingGetCounter += 1
+        return self.isNotificationShowingClosure?() ?? false
+    }
 
     func recordLaunch(_ screen: Screen) -> Bool {
         self.recordLaunchCounter += 1
@@ -69,6 +81,18 @@ class mock_FlowManager: FlowManagerProtocol {
         self.resetSessionCounter += 1
     }
 
+    func startMonitoring() {
+        self.startMonitoringCounter += 1
+    }
+
+    func setHomeAvailability(_ isHomeUnobstructed: @escaping () -> Bool) {
+        self.setHomeAvailabilityCounter += 1
+    }
+
+    func homeMayBeUnobstructed() {
+        self.homeMayBeUnobstructedCounter += 1
+    }
+
     func requestNotification(_ notification: NotificationView.Notification) {
         self.requestNotificationCounter += 1
         self.requestNotificationClosure?(notification)
@@ -83,8 +107,17 @@ class mock_FlowManager: FlowManagerProtocol {
         self.completeNotificationCounter += 1
     }
 
-    func cancelNotification(_ notification: NotificationView.Notification) -> Bool {
-        self.cancelNotificationCounter += 1
-        return self.cancelNotificationClosure?(notification) ?? false
+    func didTapNotification(_ notification: NotificationView.Notification) {
+        self.didTapNotificationCounter += 1
+        self.didTapNotificationClosure?(notification)
+    }
+
+    func didDismissNotification(_ notification: NotificationView.Notification) {
+        self.didDismissNotificationCounter += 1
+        self.didDismissNotificationClosure?(notification)
+    }
+
+    func showSessionNudges() {
+        self.showSessionNudgesCounter += 1
     }
 }

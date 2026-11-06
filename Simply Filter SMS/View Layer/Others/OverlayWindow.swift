@@ -25,8 +25,6 @@ extension OverlayWindowView {
     class ViewModel: BaseViewModel, ObservableObject {
         let notification: NotificationView.ViewModel
         @Published private(set) var confettiTier: TipTier?
-        var onRequestSheet: ((Screen) -> Void)?
-        var onNotificationHidden: (() -> Void)?
 
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             self.notification = NotificationView.ViewModel(notification: .offline)
@@ -45,8 +43,16 @@ extension OverlayWindowView {
         }
 
         private func showNext() {
-            guard let nextNotification = self.appManager.flowManager.nextNotification() else { return }
+            guard let nextNotification = self.appManager.flowManager.nextNotification() else {
+                self.hideIfCancelled()
+                return
+            }
             self.present(nextNotification)
+        }
+
+        private func hideIfCancelled() {
+            guard !self.appManager.flowManager.isNotificationShowing else { return }
+            self.hide()
         }
 
         private func present(_ notification: NotificationView.Notification) {
@@ -93,40 +99,35 @@ extension OverlayWindowView {
                 AppManager.logger.debug("Notification — hidden: \(notificationName, privacy: .public)")
                 self?.confettiTier = nil
                 self?.appManager.flowManager.completeNotification()
-                self?.onNotificationHidden?()
             }
+
+            let onTap = { [weak self] in
+                guard let self else { return }
+                withAnimation { self.notification.show = false }
+                self.appManager.flowManager.didTapNotification(notification)
+            }
+            let onDismiss = { [weak self] in
+                guard let self else { return }
+                self.appManager.flowManager.didDismissNotification(notification)
+            }
+
             self.notification.onTap = nil
+            self.notification.setOnButtonTap(onDismiss)
             self.confettiTier = nil
 
             switch notification {
             case .enableReportingExtension:
-                let onTap = { [weak self] in
-                    guard let self = self else { return }
-                    self.appManager.defaultsManager.didDismissReportingExtensionNudge = true
-                    withAnimation { self.notification.show = false }
-                    self.onRequestSheet?(.enableReportingExtension)
-                }
                 self.notification.onTap = onTap
                 self.notification.setOnButtonTap(onTap)
 
             case .tipPromotion:
-                self.notification.onTap = { [weak self] in
-                    withAnimation { self?.notification.show = false }
-                    self?.onRequestSheet?(.tipJar)
-                }
-                self.notification.setOnButtonTap(nil)
-
-            case .offline:
-                self.notification.setOnButtonTap { [weak self] in
-                    self?.appManager.defaultsManager.lastOfflineNotificationDismiss = Date()
-                }
+                self.notification.onTap = onTap
 
             case .tipSuccessful(let tier):
                 self.confettiTier = tier
-                self.notification.setOnButtonTap(nil)
 
             default:
-                self.notification.setOnButtonTap(nil)
+                break
             }
         }
 
