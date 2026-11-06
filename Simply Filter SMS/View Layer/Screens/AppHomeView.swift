@@ -172,7 +172,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
             self.model.requestSheet(.about)
         })
-        .modifier(EmbeddedNotificationView(model: self.model.notification))
+        .modifier(NotificationWindowView(model: self.model.notificationWindow))
         .modifier(persistentStoreReload)
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
@@ -556,7 +556,7 @@ extension AppHomeView {
         @Published private(set) var subtitle: String
         @Published private(set) var selectedCountriesSummary: String
         @Published var rules: [StatefulItem<RuleType>]
-        @Published var notification: NotificationView.ViewModel
+        let notificationWindow: NotificationWindowView.ViewModel
         @Published var navigationScreen: Screen? = nil {
             didSet {
                 if oldValue != nil,
@@ -571,7 +571,7 @@ extension AppHomeView {
             didSet {
                 if self.sheetScreen == nil, let dismissed = oldValue {
                     self.completeDismissedSheet(dismissed)
-                    self.showPendingNotification()
+                    self.showWaitingNotification()
                 }
             }
         }
@@ -579,14 +579,14 @@ extension AppHomeView {
         @Published var showNothingToImportAlert = false {
             didSet {
                 if oldValue && !self.showNothingToImportAlert {
-                    self.showPendingNotification()
+                    self.showWaitingNotification()
                 }
             }
         }
         @Published var showInactivityNotificationAlert = false {
             didSet {
                 if oldValue && !self.showInactivityNotificationAlert {
-                    self.showPendingNotification()
+                    self.showWaitingNotification()
                 }
             }
         }
@@ -604,9 +604,12 @@ extension AppHomeView {
             self.shortSenderChoice = appManager.automaticFilterManager.selectedChoice(for: .shortSender)
             self.filters = appManager.persistanceManager.fetchFilterRecords()
             self.rules = []
-            self.notification = NotificationView.ViewModel(notification: .offline)
+            self.notificationWindow = NotificationWindowView.ViewModel(appManager: appManager)
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
+            self.notificationWindow.onRequestSheet = { [weak self] screen in
+                self?.requestSheet(screen)
+            }
             self.customAccent = Color(accentRGB: appManager.defaultsManager.accentColorRGB)
             self.lastUIFingerprint = appManager.persistanceManager.fingerprint
 
@@ -637,7 +640,7 @@ extension AppHomeView {
             if self.sheetScreen != .chooseAccentColor {
                 self.customAccent = Color(accentRGB: self.appManager.defaultsManager.accentColorRGB)
             }
-            self.showPendingNotification()
+            self.showWaitingNotification()
         }
         
         func setSelectedChoice(for rule: RuleType, choice: Int) {
@@ -740,7 +743,7 @@ extension AppHomeView {
         func presentNextFlow() {
             guard !self.isReplacingSheetForLaunch else { return }
             guard let screen = self.appManager.flowManager.next() else {
-                self.showPendingNotification()
+                self.showWaitingNotification()
                 return
             }
             if screen == .filterImport,
@@ -831,80 +834,29 @@ extension AppHomeView {
         private func hideOfflineNotification() {
             guard self.appManager.flowManager.cancelNotification(.offline) else { return }
             AppManager.logger.debug("AppHome — offline notification cancelled (back online)")
-            self.delayedShow?.cancel()
-            self.delayedShow = nil
-            self.notification.show = false
-        }
-
-        private func showPendingNotification() {
-            guard self.isHomeUnobstructed,
-                  let notification = self.appManager.flowManager.nextNotification() else { return }
-            self.present(notification)
+            self.notificationWindow.hide()
         }
 
         func showNotification(_ notification: NotificationView.Notification) {
-            self.appManager.flowManager.requestNotification(notification)
-            if !self.isHomeUnobstructed {
-                AppManager.logger.debug("AppHome — notification pending (Home obstructed): \(String(describing: notification), privacy: .public)")
-            }
-            self.showPendingNotification()
-        }
-
-        private func present(_ notification: NotificationView.Notification) {
-            let name = String(describing: notification)
-            AppManager.logger.debug("AppHome — notification shown: \(name, privacy: .public)")
             self.didShowNotificationThisSession = true
-            self.notification.onHide = { [weak self] in
-                AppManager.logger.debug("AppHome — notification hidden: \(name, privacy: .public)")
-                self?.appManager.flowManager.completeNotification()
-            }
-            self.notification.onTap = nil
-
-            switch notification {
-            case .enableReportingExtension:
-                let onTap = { [weak self] in
-                    guard let self = self else { return }
-                    self.appManager.defaultsManager.didDismissReportingExtensionNudge = true
-                    withAnimation { self.notification.show = false }
-                    self.requestSheet(.enableReportingExtension)
-                }
-                self.notification.onTap = onTap
-                self.notification.setOnButtonTap(onTap)
-
-            case .tipPromotion:
-                self.notification.onTap = { [weak self] in
-                    withAnimation { self?.notification.show = false }
-                    self?.requestSheet(.tipJar)
-                }
-                self.notification.setOnButtonTap(nil)
-
-            case .offline:
-                self.notification.setOnButtonTap {
-                    self.appManager.defaultsManager.lastOfflineNotificationDismiss = Date()
-                }
-
-            default:
-                self.notification.setOnButtonTap(nil)
+            let mustWait = notification.waitsForHome && !self.isHomeUnobstructed
+            guard mustWait else {
+                self.appManager.flowManager.requestNotification(notification)
+                return
             }
 
-            if !self.notification.show {
-                self.notification.setNotification(notification)
-                self.delayedShow?.cancel()
-                let delayedShow = DispatchWorkItem { [weak self] in
-                    withAnimation {
-                        self?.notification.show = true
-                    }
-                }
-                self.delayedShow = delayedShow
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: delayedShow)
-            }
-            else {
-                withAnimation {
-                    self.notification.setNotification(notification)
-                }
-            }
+            guard !notification.isOutranked(by: self.waitingNotification) else { return }
+            AppManager.logger.debug("AppHome — notification waiting (Home obstructed): \(String(describing: notification), privacy: .public)")
+            self.waitingNotification = notification
         }
-        
+
+        private func showWaitingNotification() {
+            guard self.isHomeUnobstructed,
+                  let waitingNotification = self.waitingNotification else { return }
+            self.waitingNotification = nil
+            self.appManager.flowManager.requestNotification(waitingNotification)
+        }
+
         func startMonitoring() {
             if self.appManager.networkSyncManager.networkStatus == .offline,
                !self.userIgnoresNetworkStatus {
@@ -950,7 +902,7 @@ extension AppHomeView {
             }
 
             self.catchUpFromStoreIfNeeded()
-            self.showPendingNotification()
+            self.showWaitingNotification()
         }
 
         private func catchUpFromStoreIfNeeded() {
@@ -1047,7 +999,7 @@ extension AppHomeView {
         private var lastUIFingerprint: String = ""
         private var didAddObservers = false
         private var didShowNotificationThisSession = false
-        private var delayedShow: DispatchWorkItem?
+        private var waitingNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
         private var isAlertPresented: Bool {
             return self.showNothingToImportAlert || self.showInactivityNotificationAlert

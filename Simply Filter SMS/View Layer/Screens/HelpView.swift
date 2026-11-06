@@ -189,7 +189,6 @@ struct HelpView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .ignoresSafeArea(.container, edges: .bottom)
-        .modifier(EmbeddedNotificationView(model: model.notification))
     }
 
     private func expansion(_ item: HelpFAQ) -> Binding<Bool> {
@@ -258,37 +257,17 @@ extension HelpView {
         @Published var expandedFAQ: HelpFAQ?
         @Published var composeMailScreen: Bool = false
         @Published var result: Result<MFMailComposeResult, Error>?
-        @Published var notification: NotificationView.ViewModel
         var onRequestScreen: ((Screen) -> Void)?
 
         init(appManager: AppManagerProtocol = AppManager.shared,
              onRequestScreen: ((Screen) -> Void)? = nil) {
-            self.notification = NotificationView.ViewModel(notification: .onClipboardSet(""))
             self.onRequestScreen = onRequestScreen
             super.init(appManager: appManager)
-
-            NotificationCenter.default.addObserver(forName: .onClipboardSet, object: nil, queue: .main) { [weak self] not in
-                guard let notificationObject = not.object as? NotificationView.Notification else { return }
-                self?.showNotification(notificationObject)
-            }
         }
 
         func setClipboard(content: String, displayName: String) {
             UIPasteboard.general.setValue(content, forPasteboardType: UTType.plainText.identifier)
-            NotificationCenter.default.post(name: .onClipboardSet, object: NotificationView.Notification.onClipboardSet(displayName))
-        }
-
-        func showNotification(_ notification: NotificationView.Notification) {
-            if !self.notification.show {
-                self.notification.setNotification(notification)
-                withAnimation {
-                    self.notification.show = true
-                }
-            } else {
-                withAnimation {
-                    self.notification.setNotification(notification)
-                }
-            }
+            self.appManager.flowManager.requestNotification(.onClipboardSet(displayName))
         }
     }
 }

@@ -65,14 +65,3 @@ struct EmbeddedCloseButton: ViewModifier {
         }
     }
 }
-
-struct EmbeddedNotificationView: ViewModifier {
-    var model: NotificationView.ViewModel
-
-    func body(content: Content) -> some View {
-        ZStack(alignment: .top) {
-            content
-            NotificationView(model: model)
-        }
-    }
-}

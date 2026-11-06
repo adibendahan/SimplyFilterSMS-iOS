@@ -19,3 +19,8 @@ protocol FlowManagerProtocol {
     func completeNotification()
     func cancelNotification(_ notification: NotificationView.Notification) -> Bool
 }
+
+
+extension NSNotification.Name {
+    static let notificationSlotChanged: NSNotification.Name = NSNotification.Name("NotificationSlotChanged")
+}

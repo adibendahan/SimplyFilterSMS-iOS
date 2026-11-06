@@ -21,7 +21,6 @@ extension NSNotification.Name {
     static let networkStatusChange: NSNotification.Name = NSNotification.Name("NetworkStatusChange")
     static let cloudSyncOperationComplete: NSNotification.Name = NSNotification.Name("CloudSyncOperationComplete")
     static let automaticFiltersUpdated: NSNotification.Name = NSNotification.Name("AutomaticFiltersUpdated")
-    static let onClipboardSet: NSNotification.Name = NSNotification.Name("OnClipboardSet")
     static let filtersStateChanged: NSNotification.Name = NSNotification.Name("FiltersStateChanged")
     static let persistentStoreReloaded: NSNotification.Name = NSNotification.Name("PersistentStoreReloaded")
     static let filtersSaveFailed: NSNotification.Name = NSNotification.Name("FiltersSaveFailed")

@@ -59,7 +59,6 @@ struct TipJarView: View {
                 if shouldDismiss { dismiss() }
             }
         }
-        .modifier(EmbeddedNotificationView(model: model.notification))
     }
 
     @ViewBuilder
@@ -154,7 +153,6 @@ extension TipJarView {
         @Published var products: [Product] = []
         @Published var isLoading: Bool = true
         @Published var purchaseState: PurchaseState = .idle
-        @Published var notification: NotificationView.ViewModel
         @Published var shouldDismiss: Bool = false
 
         enum PurchaseState: Equatable {
@@ -175,7 +173,6 @@ extension TipJarView {
         }
 
         override init(appManager: AppManagerProtocol = AppManager.shared) {
-            self.notification = NotificationView.ViewModel(notification: .tipSuccessful)
             super.init(appManager: appManager)
 
             Task { @MainActor [weak self] in
@@ -232,12 +229,12 @@ extension TipJarView {
         }
 
         private func showThankYouToast() {
-            notification.setNotification(.tipSuccessful)
-            notification.onHide = { [weak self] in
+            self.appManager.flowManager.requestNotification(.tipSuccessful)
+
+            let dismissDelay = NotificationView.Notification.tipSuccessful.timeout ?? 0
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(nanoseconds: UInt64(dismissDelay * 1_000_000_000))
                 self?.shouldDismiss = true
-            }
-            withAnimation {
-                notification.show = true
             }
         }
     }
