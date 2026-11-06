@@ -196,9 +196,6 @@ struct NotificationView: View {
             self.subtitle = notification.subtitle
             self.buttonTitle = notification.buttonTitle
             self.currentTimeout = notification.timeout
-            if self.show {
-                self.scheduleAutoHide()
-            }
         }
 
         func setOnButtonTap(_ newOnButtonTap: (() -> ())?) {

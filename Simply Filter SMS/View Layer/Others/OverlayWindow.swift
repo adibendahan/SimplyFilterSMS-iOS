@@ -50,6 +50,43 @@ extension OverlayWindowView {
         }
 
         private func present(_ notification: NotificationView.Notification) {
+            guard !self.notification.show else {
+                self.replace(with: notification)
+                return
+            }
+
+            self.configure(for: notification)
+            self.notification.setNotification(notification)
+            self.show(after: notification.showDelay)
+        }
+
+        private func replace(with notification: NotificationView.Notification) {
+            let notificationName = String(describing: notification)
+            AppManager.logger.debug("Notification — replacing with: \(notificationName, privacy: .public)")
+            self.notification.onHide = nil
+            withAnimation {
+                self.notification.show = false
+            }
+
+            self.show(after: self.kReplaceDelay) { [weak self] in
+                self?.configure(for: notification)
+                self?.notification.setNotification(notification)
+            }
+        }
+
+        private func show(after delay: TimeInterval, prepare: (() -> Void)? = nil) {
+            self.delayedShow?.cancel()
+            let delayedShow = DispatchWorkItem { [weak self] in
+                prepare?()
+                withAnimation {
+                    self?.notification.show = true
+                }
+            }
+            self.delayedShow = delayedShow
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: delayedShow)
+        }
+
+        private func configure(for notification: NotificationView.Notification) {
             let notificationName = String(describing: notification)
             AppManager.logger.debug("Notification — shown: \(notificationName, privacy: .public)")
             self.notification.onHide = { [weak self] in
@@ -91,25 +128,9 @@ extension OverlayWindowView {
             default:
                 self.notification.setOnButtonTap(nil)
             }
-
-            guard !self.notification.show else {
-                withAnimation {
-                    self.notification.setNotification(notification)
-                }
-                return
-            }
-
-            self.notification.setNotification(notification)
-            self.delayedShow?.cancel()
-            let delayedShow = DispatchWorkItem { [weak self] in
-                withAnimation {
-                    self?.notification.show = true
-                }
-            }
-            self.delayedShow = delayedShow
-            DispatchQueue.main.asyncAfter(deadline: .now() + notification.showDelay, execute: delayedShow)
         }
 
+        private let kReplaceDelay: TimeInterval = 0.35
         private var delayedShow: DispatchWorkItem?
     }
 }
