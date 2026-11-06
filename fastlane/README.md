@@ -71,6 +71,14 @@ Download existing metadata from App Store Connect
 
 Upload metadata to App Store Connect
 
+### ios upload_creative_assets
+
+```sh
+[bundle exec] fastlane ios upload_creative_assets
+```
+
+Upload creative assets (fastlane/creative_assets/*.png, or files:a.png,b.png) to the App Asset Library
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
