@@ -402,6 +402,22 @@ struct NotificationView: View {
                 return 6
             }
         }
+
+        #if DEBUG
+        static let debugSamples: [Notification] = [
+            .offline,
+            .cloudSyncOperationComplete,
+            .automaticFiltersUpdated,
+            .onClipboardSet("support@example.com"),
+            .tipSuccessful(.large),
+            .tipPromotion,
+            .enableReportingExtension,
+            .filtersImported(added: 3, skipped: 1),
+            .filterImportFailed,
+            .filterExportFailed,
+            .saveFailed
+        ]
+        #endif // DEBUG
     }
 }
 
