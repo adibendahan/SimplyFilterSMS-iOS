@@ -172,7 +172,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
             self.model.requestSheet(.about)
         })
-        .modifier(NotificationWindowView(model: self.model.notificationWindow))
+        .modifier(OverlayWindowView(model: self.model.overlayWindow))
         .modifier(persistentStoreReload)
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
@@ -556,7 +556,7 @@ extension AppHomeView {
         @Published private(set) var subtitle: String
         @Published private(set) var selectedCountriesSummary: String
         @Published var rules: [StatefulItem<SmartFilterType>]
-        let notificationWindow: NotificationWindowView.ViewModel
+        let overlayWindow: OverlayWindowView.ViewModel
         @Published var navigationScreen: Screen? = nil {
             didSet {
                 if oldValue != nil,
@@ -604,11 +604,14 @@ extension AppHomeView {
             self.shortSenderChoice = appManager.smartFilterManager.selectedChoice(for: .shortSender)
             self.filters = appManager.persistenceManager.fetchFilterRecords()
             self.rules = []
-            self.notificationWindow = NotificationWindowView.ViewModel(appManager: appManager)
+            self.overlayWindow = OverlayWindowView.ViewModel(appManager: appManager)
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
-            self.notificationWindow.onRequestSheet = { [weak self] screen in
+            self.overlayWindow.onRequestSheet = { [weak self] screen in
                 self?.requestSheet(screen)
+            }
+            self.overlayWindow.onNotificationHidden = { [weak self] in
+                self?.showOfflineIfStillOffline()
             }
             self.customAccent = Color(accentRGB: appManager.defaultsManager.accentColorRGB)
             self.lastUIFingerprint = appManager.persistenceManager.fingerprint
@@ -766,7 +769,6 @@ extension AppHomeView {
             self.appManager.schedulingManager.refreshInactivityReminder()
             let didStartNewSession = self.appManager.onAppBecameActive()
             guard didStartNewSession else { return }
-            self.didShowNotificationThisSession = false
             self.tryShowTipPromotion()
             self.tryShowReportingExtensionNudge()
         }
@@ -834,11 +836,16 @@ extension AppHomeView {
         private func hideOfflineNotification() {
             guard self.appManager.flowManager.cancelNotification(.offline) else { return }
             AppManager.logger.debug("AppHome — offline notification cancelled (back online)")
-            self.notificationWindow.hide()
+            self.overlayWindow.hide()
+        }
+
+        private func showOfflineIfStillOffline() {
+            guard self.appManager.networkSyncManager.networkStatus == .offline,
+                  !self.userIgnoresNetworkStatus else { return }
+            self.showNotification(.offline)
         }
 
         func showNotification(_ notification: NotificationView.Notification) {
-            self.didShowNotificationThisSession = true
             let mustWait = notification.waitsForHome && !self.isHomeUnobstructed
             guard mustWait else {
                 self.appManager.flowManager.requestNotification(notification)
@@ -858,10 +865,7 @@ extension AppHomeView {
         }
 
         func startMonitoring() {
-            if self.appManager.networkSyncManager.networkStatus == .offline,
-               !self.userIgnoresNetworkStatus {
-                self.showNotification(.offline)
-            }
+            self.showOfflineIfStillOffline()
 
             if !didAddObservers {
                 self.didAddObservers = true
@@ -918,7 +922,7 @@ extension AppHomeView {
             guard !defaultsManager.didDismissReportingExtensionNudge else { return }
             guard self.hasActiveFilterLists else { return }
             guard defaultsManager.sessionCounter > 0 && defaultsManager.sessionCounter % 3 == 0 else { return }
-            guard !self.didShowNotificationThisSession else { return }
+            guard !self.appManager.flowManager.didShowNotificationThisSession else { return }
 
             self.showNotification(.enableReportingExtension)
         }
@@ -998,7 +1002,6 @@ extension AppHomeView {
         
         private var lastUIFingerprint: String = ""
         private var didAddObservers = false
-        private var didShowNotificationThisSession = false
         private var waitingNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
         private var isAlertPresented: Bool {

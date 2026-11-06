@@ -233,4 +233,29 @@ class FlowManagerTests: XCTestCase {
 
         wait(for: [slotChanged], timeout: 0.1)
     }
+
+    func test_didShowNotificationThisSession_requestedAndDropped_false() {
+        self.testSubject.requestNotification(.saveFailed)
+
+        self.testSubject.requestNotification(.filterListsUpdated)
+
+        XCTAssertFalse(self.testSubject.didShowNotificationThisSession)
+    }
+
+    func test_didShowNotificationThisSession_shown_true() {
+        self.testSubject.requestNotification(.onClipboardSet("Email"))
+
+        _ = self.testSubject.nextNotification()
+
+        XCTAssertTrue(self.testSubject.didShowNotificationThisSession)
+    }
+
+    func test_resetSession_clearsDidShowNotification() {
+        self.testSubject.requestNotification(.onClipboardSet("Email"))
+        _ = self.testSubject.nextNotification()
+
+        self.testSubject.resetSession()
+
+        XCTAssertFalse(self.testSubject.didShowNotificationThisSession)
+    }
 }

@@ -196,6 +196,9 @@ struct NotificationView: View {
             self.subtitle = notification.subtitle
             self.buttonTitle = notification.buttonTitle
             self.currentTimeout = notification.timeout
+            if self.show {
+                self.scheduleAutoHide()
+            }
         }
 
         func setOnButtonTap(_ newOnButtonTap: (() -> ())?) {
@@ -221,7 +224,7 @@ struct NotificationView: View {
     }
 
     enum Notification: Equatable {
-        case offline, cloudSyncOperationComplete, filterListsUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
+        case offline, cloudSyncOperationComplete, filterListsUpdated, onClipboardSet(String), tipSuccessful(TipTier), tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
 
         var icon: String {
             switch self {
@@ -349,6 +352,15 @@ struct NotificationView: View {
                 return 10
             case .filtersImported, .filterImportFailed, .filterExportFailed, .saveFailed:
                 return 6
+            }
+        }
+
+        var showDelay: TimeInterval {
+            switch self {
+            case .onClipboardSet, .tipSuccessful, .filtersImported, .filterImportFailed, .filterExportFailed, .saveFailed:
+                return 0
+            case .offline, .cloudSyncOperationComplete, .filterListsUpdated, .tipPromotion, .enableReportingExtension:
+                return 1
             }
         }
 

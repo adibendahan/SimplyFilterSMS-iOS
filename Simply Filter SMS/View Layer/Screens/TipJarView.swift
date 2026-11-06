@@ -29,17 +29,13 @@ struct TipJarView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
-                ScrollView {
-                    VStack(spacing: isCompact ? 8 : 16) {
-                        headerSection
-                        tipCardsSection
-                        footerSection
-                    }
-                    .padding(.horizontal)
+            ScrollView {
+                VStack(spacing: isCompact ? 8 : 16) {
+                    headerSection
+                    tipCardsSection
+                    footerSection
                 }
-
-                confettiOverlay
+                .padding(.horizontal)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -130,19 +126,6 @@ struct TipJarView: View {
             .frame(maxWidth: .infinity)
             .padding(.bottom, 16)
     }
-
-    @ViewBuilder
-    private var confettiOverlay: some View {
-        if case .success(let tier) = model.purchaseState {
-            ConfettiView(
-                birthRate: tier.confettiBirthRate,
-                lifetime: tier.confettiLifetime,
-                velocity: tier.confettiVelocity
-            )
-            .ignoresSafeArea()
-            .allowsHitTesting(false)
-        }
-    }
 }
 
 
@@ -204,15 +187,8 @@ extension TipJarView {
             switch result {
             case .success(let tier):
                 purchaseState = .success(tier)
-                showThankYouToast()
-
-                let delay = Double(tier.confettiLifetime) + 0.5
-                Task { @MainActor [weak self] in
-                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
-                    if case .success = self?.purchaseState {
-                        self?.purchaseState = .idle
-                    }
-                }
+                self.appManager.flowManager.requestNotification(.tipSuccessful(tier))
+                self.shouldDismiss = true
 
             case .userCancelled, .pending:
                 purchaseState = .idle
@@ -225,16 +201,6 @@ extension TipJarView {
                         self?.purchaseState = .idle
                     }
                 }
-            }
-        }
-
-        private func showThankYouToast() {
-            self.appManager.flowManager.requestNotification(.tipSuccessful)
-
-            let dismissDelay = NotificationView.Notification.tipSuccessful.timeout ?? 0
-            Task { @MainActor [weak self] in
-                try? await Task.sleep(nanoseconds: UInt64(dismissDelay * 1_000_000_000))
-                self?.shouldDismiss = true
             }
         }
     }

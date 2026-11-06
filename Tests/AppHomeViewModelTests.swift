@@ -38,12 +38,12 @@ class AppHomeViewModelTests: XCTestCase {
 
         // Act
         testSubject.showNotification(.tipPromotion)
-        let titleWhileSheetOpen = testSubject.notificationWindow.notification.title
+        let titleWhileSheetOpen = testSubject.overlayWindow.notification.title
         testSubject.sheetScreen = nil
 
         // Verify
         XCTAssertNotEqual(titleWhileSheetOpen, NotificationView.Notification.tipPromotion.title)
-        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.tipPromotion.title)
+        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.tipPromotion.title)
     }
 
     func test_showNotification_resultWhileSheetOpen_showsImmediately() {
@@ -56,7 +56,7 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.showNotification(.filtersImported(added: 1, skipped: 0))
 
         // Verify
-        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.filtersImported(added: 1, skipped: 0).title)
+        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.filtersImported(added: 1, skipped: 0).title)
     }
 
     func test_startMonitoring_offlineDismissedRecently_hidesOffline() {
@@ -71,7 +71,7 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.tipPromotion.title)
+        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.tipPromotion.title)
     }
 
     func test_startMonitoring_offlineDismissedOverAnHourAgo_showsOffline() {
@@ -86,7 +86,35 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.offline.title)
+        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.offline.title)
+    }
+
+    func test_higherPriorityToastHides_stillOffline_showsOfflineAgain() {
+        // Prepare
+        self.networkSyncManager.networkStatusClosure = { .offline }
+        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date().addingTimeInterval(-61 * 60) }
+        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
+        testSubject.showNotification(.saveFailed)
+        testSubject.showNotification(.offline)
+
+        // Act
+        testSubject.overlayWindow.notification.onHide?()
+
+        // Verify
+        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.offline.title)
+    }
+
+    func test_higherPriorityToastHides_backOnline_doesNotShowOffline() {
+        // Prepare
+        self.networkSyncManager.networkStatusClosure = { .online }
+        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
+        testSubject.showNotification(.saveFailed)
+
+        // Act
+        testSubject.overlayWindow.notification.onHide?()
+
+        // Verify
+        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.saveFailed.title)
     }
 
     func test_tryShowTipPromotion_offlineShowing_keepsOffline() {
@@ -100,7 +128,7 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.offline.title)
+        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.offline.title)
     }
 
     func test_tryShowTipPromotion_nothingShowing_showsTip() {
@@ -114,6 +142,6 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.tipPromotion.title)
+        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.tipPromotion.title)
     }
 }

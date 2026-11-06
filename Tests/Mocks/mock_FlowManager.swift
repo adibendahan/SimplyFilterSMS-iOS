@@ -21,6 +21,14 @@ class mock_FlowManager: FlowManagerProtocol {
     var completeNotificationCounter = 0
     var cancelNotificationCounter = 0
 
+    var didShowNotificationThisSessionGetCounter = 0
+    var didShowNotificationThisSessionClosure: (() -> Bool)?
+
+    var didShowNotificationThisSession: Bool {
+        self.didShowNotificationThisSessionGetCounter += 1
+        return self.didShowNotificationThisSessionClosure?() ?? false
+    }
+
     var nextScreen: Screen?
     var recordLaunchClosure: ((Screen) -> Bool)?
     var requestClosure: ((Screen) -> ())?
