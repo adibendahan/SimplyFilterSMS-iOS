@@ -90,12 +90,14 @@ class FlowManager: FlowManagerProtocol {
 
     func requestNotification(_ notification: NotificationView.Notification) {
         guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
-            let shown = self.shownNotification.map { String(describing: $0) } ?? "nil"
-            let pending = self.pendingNotification.map { String(describing: $0) } ?? "nil"
-            AppManager.logger.debug("FlowManager — notification dropped: \(String(describing: notification), privacy: .public) (shown: \(shown, privacy: .public), pending: \(pending, privacy: .public))")
+            let notificationName = String(describing: notification)
+            let shownDescription = self.shownNotification.map { String(describing: $0) } ?? "nil"
+            let pendingDescription = self.pendingNotification.map { String(describing: $0) } ?? "nil"
+            AppManager.logger.debug("FlowManager — notification dropped: \(notificationName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
             return
         }
         self.pendingNotification = notification
+        NotificationCenter.default.post(name: .notificationSlotChanged, object: nil)
     }
 
     func nextNotification() -> NotificationView.Notification? {

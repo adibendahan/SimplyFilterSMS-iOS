@@ -31,6 +31,11 @@ struct NotificationView: View {
         .accessibilityElement(children: .combine)
         .modifier(NotificationGlassBackground())
         .gesture(dismissDragGesture)
+        .onGeometryChange(for: CGRect.self) { geometry in
+            geometry.frame(in: .global)
+        } action: { frame in
+            self.model.visibleFrame = frame
+        }
         .offset(y: self.offset)
         .accessibilityHidden(offset != kShowOffset)
         .animation(reduceMotion ? nil : .interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
@@ -164,6 +169,7 @@ struct NotificationView: View {
             }
         }
         var onHide: (() -> Void)?
+        var visibleFrame: CGRect = .zero
 
         private var currentTimeout: TimeInterval?
         private var autoHideWork: DispatchWorkItem?
@@ -355,6 +361,15 @@ struct NotificationView: View {
             }
         }
 
+        var waitsForHome: Bool {
+            switch self {
+            case .tipPromotion, .enableReportingExtension:
+                return true
+            default:
+                return false
+            }
+        }
+
         func isOutranked(by otherNotifications: Notification?...) -> Bool {
             let competingNotifications = otherNotifications.compactMap { $0 }
             return competingNotifications.contains { $0.priority < self.priority }
@@ -434,7 +449,9 @@ struct NotificationView_Previews: PreviewProvider {
             .navigationTitle("Preview")
         }
         .preferredColorScheme(.dark)
-        .modifier(EmbeddedNotificationView(model: model))
+        .overlay(alignment: .top) {
+            NotificationView(model: model)
+        }
     }
 }
 

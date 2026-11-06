@@ -232,7 +232,6 @@ struct AboutView: View {
             }
         }
         .ignoresSafeArea(.container, edges: .bottom)
-        .modifier(EmbeddedNotificationView(model: model.notification))
     }
 }
 
@@ -245,36 +244,10 @@ extension AboutView {
         @Published var composeMailScreen: Bool = false
         @Published var showTipJar: Bool = false
         @Published var result: Result<MFMailComposeResult, Error>?
-        @Published var notification: NotificationView.ViewModel
-
-        override init(appManager: AppManagerProtocol = AppManager.shared) {
-            self.notification = NotificationView.ViewModel(notification: .onClipboardSet(""))
-
-            super.init(appManager: appManager)
-
-            NotificationCenter.default.addObserver(forName: .onClipboardSet, object: nil, queue: .main) { not in
-                guard let notificationObject = not.object as? NotificationView.Notification else { return }
-                self.showNotification(notificationObject)
-            }
-        }
 
         func setClipboard(content: String, displayName: String) {
-            UIPasteboard.general.setValue(content,
-                        forPasteboardType: UTType.plainText.identifier)
-            NotificationCenter.default.post(name: .onClipboardSet, object: NotificationView.Notification.onClipboardSet(displayName))
-        }
-
-        func showNotification(_ notification: NotificationView.Notification) {
-            if !self.notification.show {
-                self.notification.setNotification(notification)
-                withAnimation {
-                    self.notification.show = true
-                }
-            } else {
-                withAnimation {
-                    self.notification.setNotification(notification)
-                }
-            }
+            UIPasteboard.general.setValue(content, forPasteboardType: UTType.plainText.identifier)
+            self.appManager.flowManager.requestNotification(.onClipboardSet(displayName))
         }
     }
 }

@@ -215,4 +215,22 @@ class FlowManagerTests: XCTestCase {
         self.testSubject.requestNotification(.tipPromotion)
         XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
     }
+
+    func test_requestNotification_accepted_postsSlotChanged() {
+        let slotChanged = XCTNSNotificationExpectation(name: .notificationSlotChanged)
+
+        self.testSubject.requestNotification(.offline)
+
+        wait(for: [slotChanged], timeout: 1)
+    }
+
+    func test_requestNotification_dropped_doesNotPost() {
+        self.testSubject.requestNotification(.saveFailed)
+        let slotChanged = XCTNSNotificationExpectation(name: .notificationSlotChanged)
+        slotChanged.isInverted = true
+
+        self.testSubject.requestNotification(.tipPromotion)
+
+        wait(for: [slotChanged], timeout: 0.1)
+    }
 }

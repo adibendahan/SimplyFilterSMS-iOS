@@ -24,7 +24,6 @@ FAQ, setup shortcuts and contact, as a sheet from the menu.
 ## AboutView
 App info, links and credits, as a sheet from the menu.
 - Email opens the Mail composer, or copies the address with a toast when Mail isn't set up (always on the simulator). Help does the same.
-- A screen that shows toasts owns its own `EmbeddedNotificationView`; About's is separate from Home's.
 
 ## ChooseAccentColorView
 The app tint picker, as a sheet from the Home menu only.

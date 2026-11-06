@@ -31,7 +31,7 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - **CloudKit recovery:** `reloadContainer()` runs only on a genuine offline→online reconnection (`NetworkStatus.isReconnection(from:)`). `.unknown` is not a network state: rebuilding the stack on the monitor's first report aborted the initial import. A failed setup is left to Core Data's own recovery; never retry it with `reloadContainer()`. After a reload, screens holding Core Data objects refresh through `.modifier(persistentStoreReload)`.
 - **Inactivity reminder clock:** only the `scenePhase` `.active` hook (`AppHomeView.ViewModel.appBecameActive()`) moves it. Nothing on the launch path may, because `didFinishLaunching` also runs for background wakes. `AppDelegate` lifecycle methods like `applicationDidBecomeActive` never run in this scene-based app.
 - **FlowManager is a launch-order queue, not a navigator.** Order: first run → launch (file / deep link) → automatic What's New → user `request`. `next()` occupies it until `complete`.
-- **FlowManager also holds Home's one notification slot.** A notification is dropped when the shown or pending one has a lower `priority` (0 is most urgent); there is no queue. Home owns only whether it's obstructed and the snooze.
+- **FlowManager also holds the app's one notification slot.** A notification is dropped when the shown or pending one has a lower `priority` (0 is most urgent); there is no queue. Toasts show over sheets, except `waitsForHome` nudges, which Home holds until it's unobstructed.
 
 ## MVVM
 
@@ -40,7 +40,7 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - **Navigation:** `Screen.build()` makes each View + ViewModel. ViewModels publish `navigationScreen` (push) and `sheetScreen` (sheet); Home's sheets go through `FlowManager`.
 - **Sheet callbacks — don't touch `Screen`.** Associated values break its `Int` raw values and the whole router. The presenting ViewModel owns the presented one (`@Published var fooViewModel: FooView.ViewModel?`, `Identifiable` via `let id = UUID()`), injects the closure when creating it, and presents with `.sheet(item:)`. Example: `FiltersView.ViewModel.addFilterViewModel`.
 - **Home alerts aren't `Screen`s:** a `@Published var showFooAlert: Bool` plus `.alert(isPresented:)`. Never add a `Screen` that builds `EmptyView` to route one. To wait behind first run / launch / What's New, raise it from `navigationScreen`'s `didSet` (`oldValue != nil && navigationScreen == nil`) and guard on `isHomeUnobstructed`. Nudges sharing that hook are mutually exclusive: `tryRequestReview()` returns whether it prompted, and the inactivity ask runs only when it didn't.
-- **`EmbeddedNotificationView` goes outside `NavigationView`,** or the toast appears below the navigation bar. Each `NotificationView.Notification` has a `timeout` and hides itself; no timers at call sites.
+- **Toasts go through `flowManager.requestNotification`,** never a screen's own `NotificationView`: Home's `NotificationWindowView` shows them in an overlay window per scene. Each `NotificationView.Notification` has a `timeout` and hides itself; no timers at call sites.
 - **`StatefulItem<T>`** bridges getter/setter closures to a `Bool` for toggles backed by manager calls.
 
 ## Conventions

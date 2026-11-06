@@ -30,18 +30,33 @@ class AppHomeViewModelTests: XCTestCase {
     }
 
     //MARK: Tests
-    func test_showNotification_lowerPriorityWhileObstructed_keepsHigherPending() {
+    func test_showNotification_nudgeWhileSheetOpen_waitsUntilDismissed() {
         // Prepare
+        self.networkSyncManager.networkStatusClosure = { .online }
         let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
-        testSubject.sheetScreen = .whatsNew
+        testSubject.sheetScreen = .about
 
         // Act
-        testSubject.showNotification(.cloudSyncOperationComplete)
-        testSubject.showNotification(.filterListsUpdated)
+        testSubject.showNotification(.tipPromotion)
+        let titleWhileSheetOpen = testSubject.notificationWindow.notification.title
         testSubject.sheetScreen = nil
 
         // Verify
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.cloudSyncOperationComplete.title)
+        XCTAssertNotEqual(titleWhileSheetOpen, NotificationView.Notification.tipPromotion.title)
+        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.tipPromotion.title)
+    }
+
+    func test_showNotification_resultWhileSheetOpen_showsImmediately() {
+        // Prepare
+        self.networkSyncManager.networkStatusClosure = { .online }
+        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
+        testSubject.sheetScreen = .about
+
+        // Act
+        testSubject.showNotification(.filtersImported(added: 1, skipped: 0))
+
+        // Verify
+        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.filtersImported(added: 1, skipped: 0).title)
     }
 
     func test_startMonitoring_offlineDismissedRecently_hidesOffline() {
@@ -56,7 +71,7 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.tipPromotion.title)
+        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.tipPromotion.title)
     }
 
     func test_startMonitoring_offlineDismissedOverAnHourAgo_showsOffline() {
@@ -71,7 +86,7 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.offline.title)
+        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.offline.title)
     }
 
     func test_tryShowTipPromotion_offlineShowing_keepsOffline() {
@@ -85,7 +100,7 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.offline.title)
+        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.offline.title)
     }
 
     func test_tryShowTipPromotion_nothingShowing_showsTip() {
@@ -99,6 +114,6 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.tipPromotion.title)
+        XCTAssertEqual(testSubject.notificationWindow.notification.title, NotificationView.Notification.tipPromotion.title)
     }
 }
