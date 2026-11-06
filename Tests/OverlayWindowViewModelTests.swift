@@ -184,6 +184,44 @@ class OverlayWindowViewModelTests: XCTestCase {
         XCTAssertNil(testSubject.confettiTier)
     }
 
+    func test_replacingShownToast_slidesOldOutThenNewIn() {
+        // Prepare
+        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestNotification(.offline)
+        testSubject.notification.show = true
+        let afterReplace = expectation(description: "after the replace delay")
+
+        // Act
+        self.appManager.flowManager.requestNotification(.saveFailed)
+        let shownDuringExit = testSubject.notification.show
+        let titleDuringExit = testSubject.notification.title
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            afterReplace.fulfill()
+        }
+        wait(for: [afterReplace], timeout: 3)
+
+        // Verify
+        XCTAssertFalse(shownDuringExit)
+        XCTAssertEqual(titleDuringExit, NotificationView.Notification.offline.title)
+        XCTAssertTrue(testSubject.notification.show)
+        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.saveFailed.title)
+    }
+
+    func test_replacingShownToast_oldExitDoesNotFinishNew() {
+        // Prepare
+        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestNotification(.offline)
+        testSubject.notification.show = true
+        self.appManager.flowManager.requestNotification(.saveFailed)
+
+        // Act
+        testSubject.notification.onHide?()
+        self.appManager.flowManager.requestNotification(.tipPromotion)
+
+        // Verify
+        XCTAssertNil(self.appManager.flowManager.nextNotification())
+    }
+
     func test_replacingShownToast_usesNewTimeout() {
         // Prepare
         let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
