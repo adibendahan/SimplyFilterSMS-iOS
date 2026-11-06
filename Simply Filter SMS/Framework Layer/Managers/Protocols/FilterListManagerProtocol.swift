@@ -13,6 +13,7 @@ protocol FilterListManagerProtocol {
     var activeFilterListsTitle: String? { get }
     var filterListsLastUpdated: Date? { get }
     var filterListLanguages: [NLLanguage] { get }
+    var isCheckingFilterLists: Bool { get }
     
     func isFilterListActive(for language: NLLanguage) -> Bool
     func setFilterListActive(for language: NLLanguage, value: Bool)

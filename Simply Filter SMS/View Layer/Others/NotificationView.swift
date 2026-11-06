@@ -396,9 +396,9 @@ struct NotificationView: View {
                 return 3
             case .filterListsUpdated:
                 return 4
-            case .enableReportingExtension:
-                return 5
             case .tipPromotion:
+                return 5
+            case .enableReportingExtension:
                 return 6
             }
         }

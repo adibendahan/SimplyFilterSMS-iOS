@@ -365,6 +365,151 @@ class FlowManagerTests: XCTestCase {
         XCTAssertNil(self.testSubject.nextNotification())
     }
 
+    func test_sessionNudge_shown_recordsSession() {
+        self.defaultsManager.sessionCounterClosure = { 7 }
+        self.defaultsManager.didTipClosure = { false }
+        self.testSubject.showSessionNudges()
+
+        _ = self.testSubject.nextNotification()
+
+        XCTAssertEqual(self.defaultsManager.lastTipPromotionSession, 7)
+    }
+
+    func test_sessionNudge_requestedButNotShown_recordsNothing() {
+        self.defaultsManager.sessionCounterClosure = { 7 }
+        self.defaultsManager.didTipClosure = { false }
+
+        self.testSubject.showSessionNudges()
+
+        XCTAssertEqual(self.defaultsManager.lastTipPromotionSession, 0)
+    }
+
+    func test_tipPromotion_dueCountsFromLastShown() {
+        self.defaultsManager.didTipClosure = { false }
+        self.defaultsManager.lastTipPromotionSession = 7
+        self.defaultsManager.sessionCounterClosure = { 11 }
+
+        self.testSubject.showSessionNudges()
+        XCTAssertNil(self.testSubject.nextNotification())
+
+        self.defaultsManager.sessionCounterClosure = { 12 }
+        self.testSubject.resetSession()
+        self.testSubject.showSessionNudges()
+        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+    }
+
+    func test_tipPromotion_tipped_neverDue() {
+        self.defaultsManager.didTipClosure = { true }
+        self.defaultsManager.sessionCounterClosure = { 50 }
+
+        self.testSubject.showSessionNudges()
+
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_skippedNudge_dueNextSession() {
+        self.defaultsManager.didTipClosure = { false }
+        self.defaultsManager.sessionCounterClosure = { 5 }
+        self.testSubject.requestNotification(.filterListsUpdated)
+        _ = self.testSubject.nextNotification()
+        self.testSubject.showSessionNudges()
+        self.testSubject.completeNotification()
+        XCTAssertNil(self.testSubject.nextNotification())
+
+        self.defaultsManager.sessionCounterClosure = { 6 }
+        self.testSubject.resetSession()
+        self.testSubject.showSessionNudges()
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+    }
+
+    func test_bothNudgesDue_tipFirstReportingNextSession() {
+        self.isFirstRun = false
+        self.testSubject = self.makeTestSubject()
+        self.filterListManager.hasActiveFilterListsClosure = { true }
+        self.defaultsManager.didTipClosure = { false }
+        self.defaultsManager.sessionCounterClosure = { 6 }
+
+        self.testSubject.showSessionNudges()
+        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+        self.testSubject.completeNotification()
+        XCTAssertNil(self.testSubject.nextNotification())
+
+        self.defaultsManager.sessionCounterClosure = { 7 }
+        self.testSubject.resetSession()
+        self.testSubject.showSessionNudges()
+        XCTAssertEqual(self.testSubject.nextNotification(), .enableReportingExtension)
+    }
+
+    func test_reportingNudge_aiFilteringOff_neverDue() {
+        self.isFirstRun = false
+        self.testSubject = self.makeTestSubject()
+        self.filterListManager.hasActiveFilterListsClosure = { false }
+        self.defaultsManager.didTipClosure = { true }
+        self.defaultsManager.sessionCounterClosure = { 9 }
+
+        self.testSubject.showSessionNudges()
+
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_sessionNudge_checkRunning_waitsForIt() {
+        self.defaultsManager.didTipClosure = { false }
+        self.defaultsManager.sessionCounterClosure = { 5 }
+        var isChecking = true
+        self.filterListManager.isCheckingFilterListsClosure = { isChecking }
+        self.testSubject.startMonitoring()
+
+        self.testSubject.showSessionNudges()
+        XCTAssertNil(self.testSubject.nextNotification())
+
+        isChecking = false
+        NotificationCenter.default.post(name: .filterListsCheckFinished, object: nil)
+        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+    }
+
+    func test_sessionNudge_checkShowedAIToast_skipsNudge() {
+        self.filterListManager.hasActiveFilterListsClosure = { true }
+        self.defaultsManager.didTipClosure = { false }
+        self.defaultsManager.sessionCounterClosure = { 5 }
+        var isChecking = true
+        self.filterListManager.isCheckingFilterListsClosure = { isChecking }
+        self.testSubject.startMonitoring()
+        self.testSubject.showSessionNudges()
+
+        NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
+        XCTAssertEqual(self.testSubject.nextNotification(), .filterListsUpdated)
+        isChecking = false
+        NotificationCenter.default.post(name: .filterListsCheckFinished, object: nil)
+        self.testSubject.completeNotification()
+
+        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertEqual(self.defaultsManager.lastTipPromotionSession, 0)
+    }
+
+    func test_waitingNudge_otherToastShowedMeanwhile_skipped() {
+        var isHomeUnobstructed = false
+        self.testSubject.setHomeAvailability { isHomeUnobstructed }
+        self.testSubject.requestNotification(.tipPromotion)
+        self.testSubject.requestNotification(.cloudSyncOperationComplete)
+        _ = self.testSubject.nextNotification()
+        self.testSubject.completeNotification()
+
+        isHomeUnobstructed = true
+        self.testSubject.homeMayBeUnobstructed()
+
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_tipShown_reportingNudgeCannotReplaceIt() {
+        self.testSubject.requestNotification(.tipPromotion)
+        _ = self.testSubject.nextNotification()
+
+        self.testSubject.requestNotification(.enableReportingExtension)
+
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
     func test_dismissOtherToast_recordsNothing() {
         self.testSubject.didDismissNotification(.saveFailed)
 

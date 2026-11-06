@@ -137,15 +137,20 @@ class FilterListManager: FilterListManagerProtocol {
             return
         }
         AppManager.logger.debug("updateFilterListsWhenOnline — waiting for network status")
+        self.isCheckingFilterLists = true
         self.networkSyncManager?.onFirstStatusKnown { [weak self] in
             MainActor.assumeIsolated {
                 guard let self else { return }
                 guard self.networkSyncManager?.networkStatus == .online else {
                     AppManager.logger.debug("updateFilterListsWhenOnline — offline, checking once back online")
+                    self.finishFilterListsCheck()
                     self.updateFilterListsOnNextOnline()
                     return
                 }
-                self.updateFilterListsInBackground()
+                Task(priority: .background) { @MainActor in
+                    await self.refreshFilterLists()
+                    self.finishFilterListsCheck()
+                }
             }
         }
     }
@@ -156,6 +161,7 @@ class FilterListManager: FilterListManagerProtocol {
     private weak var persistenceManager: PersistenceManagerProtocol?
     private weak var networkSyncManager: NetworkSyncManagerProtocol?
     private var refreshTask: Task<Void, Never>?
+    private(set) var isCheckingFilterLists = false
     private var networkStatusTask: Task<Void, Never>?
 
     @MainActor
@@ -179,6 +185,13 @@ class FilterListManager: FilterListManagerProtocol {
                 return
             }
         }
+    }
+
+    @MainActor
+    private func finishFilterListsCheck() {
+        guard self.isCheckingFilterLists else { return }
+        self.isCheckingFilterLists = false
+        NotificationCenter.default.post(name: .filterListsCheckFinished, object: nil)
     }
 
     @MainActor

@@ -26,6 +26,7 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var updateFilterListsWhenOnlineCounter = 0
     
     var hasActiveFilterListsClosure: (() -> (Bool))?
+    var isCheckingFilterListsClosure: (() -> (Bool))?
     var activeFilterListsTitleClosure: (() -> (String?))?
     var filterListsLastUpdatedClosure: (() -> (Date?))?
     var filterListLanguagesClosure: (() -> ([NLLanguage]))?
@@ -34,6 +35,10 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var refreshFilterListsClosure: (() -> ())?
     var updateFilterListsWhenOnlineClosure: (() -> ())?
     
+    var isCheckingFilterLists: Bool {
+        return self.isCheckingFilterListsClosure?() ?? false
+    }
+
     var hasActiveFilterLists: Bool {
         get {
             self.hasActiveFilterListsGetCounter += 1
