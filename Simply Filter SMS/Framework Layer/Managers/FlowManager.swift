@@ -99,6 +99,7 @@ class FlowManager: FlowManagerProtocol {
         self.pendingNotification = nil
         self.waitingNotification = nil
         self.didShowNotificationThisSession = false
+        self.isSessionNudgeWaitingForCheck = false
     }
 
 
@@ -126,6 +127,12 @@ class FlowManager: FlowManagerProtocol {
             guard let self, self.automaticFilterManager.isAutomaticFilteringOn else { return }
             self.requestNotification(.automaticFiltersUpdated)
         }
+
+        NotificationCenter.default.addObserver(forName: .filterListsCheckFinished, object: nil, queue: .main) { [weak self] _ in
+            guard let self, self.isSessionNudgeWaitingForCheck else { return }
+            self.isSessionNudgeWaitingForCheck = false
+            self.tryShowSessionNudge()
+        }
     }
 
     func setHomeAvailability(_ isHomeUnobstructed: @escaping () -> Bool) {
@@ -136,6 +143,11 @@ class FlowManager: FlowManagerProtocol {
         guard self.isHomeUnobstructed(),
               let waitingNotification = self.waitingNotification else { return }
         self.waitingNotification = nil
+
+        guard !self.didShowNotificationThisSession else {
+            AppManager.logger.debug("FlowManager — nudge skipped, another toast showed this session: \(String(describing: waitingNotification), privacy: .public)")
+            return
+        }
         self.enqueue(waitingNotification)
     }
 
@@ -157,6 +169,7 @@ class FlowManager: FlowManagerProtocol {
         self.pendingNotification = nil
         self.shownNotification = notification
         self.didShowNotificationThisSession = true
+        self.recordShownNudge(notification)
         return notification
     }
 
@@ -190,8 +203,12 @@ class FlowManager: FlowManagerProtocol {
     }
 
     func showSessionNudges() {
-        self.tryShowTipPromotion()
-        self.tryShowReportingExtensionNudge()
+        guard self.automaticFilterManager.isCheckingFilterLists else {
+            self.tryShowSessionNudge()
+            return
+        }
+        AppManager.logger.debug("FlowManager — session nudge waits for the filter lists check")
+        self.isSessionNudgeWaitingForCheck = true
     }
 
 
@@ -209,6 +226,7 @@ class FlowManager: FlowManagerProtocol {
     private var pendingNotification: NotificationView.Notification?
     private var waitingNotification: NotificationView.Notification?
     private var isHomeUnobstructed: () -> Bool = { true }
+    private var isSessionNudgeWaitingForCheck = false
     private var didAddObservers = false
 
     private var shouldShowWhatsNew: Bool {
@@ -263,23 +281,44 @@ class FlowManager: FlowManagerProtocol {
         self.requestNotification(.offline)
     }
 
-    private func tryShowTipPromotion() {
-        let sessionCounter = self.defaultsManager.sessionCounter
-        guard sessionCounter % 5 == 0,
-              sessionCounter > 0,
-              !self.defaultsManager.didTip else { return }
-
-        self.requestNotification(.tipPromotion)
+    private var isTipPromotionDue: Bool {
+        let sessionsSinceShown = self.defaultsManager.sessionCounter - self.defaultsManager.lastTipPromotionSession
+        return !self.defaultsManager.didTip
+            && sessionsSinceShown >= kTipPromotionSessionInterval
     }
 
-    private func tryShowReportingExtensionNudge() {
-        let sessionCounter = self.defaultsManager.sessionCounter
-        guard !self.defaultsManager.isAppFirstRun,
-              !self.defaultsManager.didDismissReportingExtensionNudge,
-              self.automaticFilterManager.isAutomaticFilteringOn,
-              sessionCounter > 0 && sessionCounter % 3 == 0,
-              !self.didShowNotificationThisSession else { return }
+    private var isReportingExtensionNudgeDue: Bool {
+        let sessionsSinceShown = self.defaultsManager.sessionCounter - self.defaultsManager.lastReportingExtensionNudgeSession
+        return !self.defaultsManager.isAppFirstRun
+            && !self.defaultsManager.didDismissReportingExtensionNudge
+            && self.automaticFilterManager.isAutomaticFilteringOn
+            && sessionsSinceShown >= kReportingExtensionNudgeSessionInterval
+    }
 
-        self.requestNotification(.enableReportingExtension)
+    private func tryShowSessionNudge() {
+        guard !self.didShowNotificationThisSession else {
+            AppManager.logger.debug("FlowManager — session nudge skipped, another toast showed this session")
+            return
+        }
+
+        if self.isTipPromotionDue {
+            self.requestNotification(.tipPromotion)
+        } else if self.isReportingExtensionNudgeDue {
+            self.requestNotification(.enableReportingExtension)
+        }
+    }
+
+    private func recordShownNudge(_ notification: NotificationView.Notification) {
+        let sessionCounter = self.defaultsManager.sessionCounter
+        switch notification {
+        case .tipPromotion:
+            self.defaultsManager.lastTipPromotionSession = sessionCounter
+
+        case .enableReportingExtension:
+            self.defaultsManager.lastReportingExtensionNudgeSession = sessionCounter
+
+        default:
+            break
+        }
     }
 }

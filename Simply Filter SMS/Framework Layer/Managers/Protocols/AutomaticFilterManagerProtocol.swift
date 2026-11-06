@@ -13,6 +13,7 @@ protocol AutomaticFilterManagerProtocol {
     var rules: [RuleType] { get }
     var activeAutomaticFiltersTitle: String? { get }
     var automaticFiltersCacheAge: Date? { get }
+    var isCheckingFilterLists: Bool { get }
     
     func languages(for type: LanguageListView.Mode) -> [NLLanguage]
     func languageAutomaticState(for language: NLLanguage) -> Bool

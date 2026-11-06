@@ -34,6 +34,7 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
     var updateAutomaticFiltersWhenOnlineCounter = 0
     
     var isAutomaticFilteringOnClosure: (() -> (Bool))?
+    var isCheckingFilterListsClosure: (() -> (Bool))?
     var rulesClosure: (() -> ([RuleType]))?
     var activeAutomaticFiltersTitleClosure: (() -> (String?))?
     var automaticFiltersCacheAgeClosure: (() -> (Date?))?
@@ -49,6 +50,10 @@ class mock_AutomaticFilterManager: AutomaticFilterManagerProtocol {
     var refreshFilterListsClosure: (() -> ())?
     var updateAutomaticFiltersWhenOnlineClosure: (() -> ())?
     
+    var isCheckingFilterLists: Bool {
+        return self.isCheckingFilterListsClosure?() ?? false
+    }
+
     var isAutomaticFilteringOn: Bool {
         get {
             self.isAutomaticFilteringOnGetCounter += 1
