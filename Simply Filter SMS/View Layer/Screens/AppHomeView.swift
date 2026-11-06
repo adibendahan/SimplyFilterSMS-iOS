@@ -426,6 +426,18 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     Label("AI Refresh in 1m", systemImage: "arrow.clockwise")
                 }
 
+                Menu {
+                    ForEach(Array(NotificationView.Notification.debugSamples.enumerated()), id: \.offset) { _, notification in
+                        Button {
+                            self.model.showDebugNotification(notification)
+                        } label: {
+                            Label(notification.title, systemImage: notification.icon)
+                        }
+                    }
+                } label: {
+                    Label("Show Toast", systemImage: "rectangle.topthird.inset.filled")
+                }
+
                 Button(role: .destructive) {
                     self.model.reset()
                 } label: {
@@ -926,6 +938,10 @@ extension AppHomeView {
         func refreshAutomaticFiltersSoon() {
             self.appManager.debugDataManager.expireAutomaticFiltersCache()
             self.appManager.schedulingManager.scheduleAutomaticFiltersProcessingSoon()
+        }
+
+        func showDebugNotification(_ notification: NotificationView.Notification) {
+            self.appManager.flowManager.requestNotification(notification)
         }
         #endif // DEBUG
         
