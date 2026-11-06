@@ -118,4 +118,80 @@ platform :ios do
     )
   end
 
+  desc "Upload creative assets (fastlane/creative_assets/*.png, or files:a.png,b.png) to the App Asset Library"
+  lane :upload_creative_assets do |options|
+    api_key
+    client = Spaceship::ConnectAPI.client.tunes_request_client
+    app = Spaceship::ConnectAPI::App.find(CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier))
+    UI.user_error!("App not found") unless app
+
+    library_id = client.get("v1/apps/#{app.id}/assetLibrary").body["data"]["id"]
+
+    existing_names = client.get("v1/appAssetLibraries/#{library_id}/images", { limit: 200 })
+      .all_pages
+      .flat_map { |page| page.body["data"] }
+      .reject { |image| image["attributes"]["state"] == "FAILED" }
+      .map { |image| image["attributes"]["fileName"] }
+
+    assets_folder = File.join(FastlaneCore::FastlaneFolder.path, "creative_assets")
+    paths = Dir[File.join(assets_folder, "*.png")].sort
+    if options[:files]
+      requested = options[:files].split(",").map(&:strip)
+      paths = paths.select { |path| requested.include?(File.basename(path)) }
+      UI.user_error!("No matching files in #{assets_folder}") if paths.empty?
+    end
+
+    uploaded_ids = {}
+    paths.each do |path|
+      file_name = File.basename(path)
+      if existing_names.include?(file_name)
+        UI.important("Skipping #{file_name}: already in the library")
+        next
+      end
+
+      bytes = File.binread(path)
+      reservation = client.post("v1/appAssetLibraryImages", {
+        data: {
+          type: "appAssetLibraryImages",
+          attributes: {
+            fileName: file_name,
+            fileSize: bytes.bytesize,
+            category: "CREATIVE_ASSETS",
+            referenceName: File.basename(path, ".png")
+          },
+          relationships: {
+            assetLibrary: { data: { type: "appAssetLibraries", id: library_id } }
+          }
+        }
+      }).body["data"]
+
+      Spaceship::ConnectAPI::FileUploader.upload(reservation["attributes"]["uploadOperations"], bytes)
+      client.patch("v1/appAssetLibraryImages/#{reservation['id']}", {
+        data: { type: "appAssetLibraryImages", id: reservation["id"], attributes: { uploaded: true } }
+      })
+      UI.message("Uploaded #{file_name}")
+      uploaded_ids[reservation["id"]] = file_name
+    end
+
+    deadline = Time.now + 600
+    pending = uploaded_ids.dup
+    until pending.empty? || Time.now > deadline
+      sleep(15)
+      pending.keys.each do |id|
+        attributes = client.get("v1/appAssetLibraryImages/#{id}").body["data"]["attributes"]
+        state = attributes["state"]
+        next if ["AWAITING_UPLOAD", "UPLOAD_COMPLETE"].include?(state)
+
+        if state == "FAILED"
+          UI.error("#{pending[id]}: FAILED #{attributes['stateDetails']}")
+        else
+          UI.success("#{pending[id]}: #{state}")
+        end
+        pending.delete(id)
+      end
+    end
+
+    pending.each_value { |file_name| UI.important("#{file_name}: still processing, check App Store Connect") }
+  end
+
 end
