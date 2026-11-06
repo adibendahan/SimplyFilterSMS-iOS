@@ -8,6 +8,8 @@
 import Foundation
 
 protocol FlowManagerProtocol {
+    var didShowNotificationThisSession: Bool { get }
+
     func recordLaunch(_ screen: Screen) -> Bool
     func request(_ screen: Screen)
     func enableWhatsNew()

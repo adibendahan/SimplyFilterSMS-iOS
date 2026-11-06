@@ -17,6 +17,8 @@ class FlowManager: FlowManagerProtocol {
 
 
     //MARK: - Public API (FlowManagerProtocol) -
+    private(set) var didShowNotificationThisSession = false
+
     func recordLaunch(_ screen: Screen) -> Bool {
         if screen == .enableExtension && self.defaultsManager.isAppFirstRun {
             return false
@@ -86,6 +88,7 @@ class FlowManager: FlowManagerProtocol {
         self.startedAsFirstRun = self.defaultsManager.isAppFirstRun
         self.shownNotification = nil
         self.pendingNotification = nil
+        self.didShowNotificationThisSession = false
     }
 
     func requestNotification(_ notification: NotificationView.Notification) {
@@ -104,6 +107,7 @@ class FlowManager: FlowManagerProtocol {
         guard let notification = self.pendingNotification else { return nil }
         self.pendingNotification = nil
         self.shownNotification = notification
+        self.didShowNotificationThisSession = true
         return notification
     }
 

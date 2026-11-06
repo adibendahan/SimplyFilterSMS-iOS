@@ -1,5 +1,5 @@
 //
-//  NotificationWindow.swift
+//  OverlayWindow.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 06/11/2026.
@@ -9,22 +9,24 @@ import SwiftUI
 import UIKit
 
 //MARK: - View -
-struct NotificationWindowView: ViewModifier {
+struct OverlayWindowView: ViewModifier {
     let model: ViewModel
 
     func body(content: Content) -> some View {
         content
-            .background(NotificationWindowInstaller(notification: self.model.notification))
+            .background(OverlayWindowInstaller(model: self.model))
     }
 }
 
 
 //MARK: - ViewModel -
-extension NotificationWindowView {
+extension OverlayWindowView {
 
     class ViewModel: BaseViewModel, ObservableObject {
         let notification: NotificationView.ViewModel
+        @Published private(set) var confettiTier: TipTier?
         var onRequestSheet: ((Screen) -> Void)?
+        var onNotificationHidden: (() -> Void)?
 
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             self.notification = NotificationView.ViewModel(notification: .offline)
@@ -52,9 +54,12 @@ extension NotificationWindowView {
             AppManager.logger.debug("Notification — shown: \(notificationName, privacy: .public)")
             self.notification.onHide = { [weak self] in
                 AppManager.logger.debug("Notification — hidden: \(notificationName, privacy: .public)")
+                self?.confettiTier = nil
                 self?.appManager.flowManager.completeNotification()
+                self?.onNotificationHidden?()
             }
             self.notification.onTap = nil
+            self.confettiTier = nil
 
             switch notification {
             case .enableReportingExtension:
@@ -79,6 +84,10 @@ extension NotificationWindowView {
                     self?.appManager.defaultsManager.lastOfflineNotificationDismiss = Date()
                 }
 
+            case .tipSuccessful(let tier):
+                self.confettiTier = tier
+                self.notification.setOnButtonTap(nil)
+
             default:
                 self.notification.setOnButtonTap(nil)
             }
@@ -98,7 +107,7 @@ extension NotificationWindowView {
                 }
             }
             self.delayedShow = delayedShow
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: delayedShow)
+            DispatchQueue.main.asyncAfter(deadline: .now() + notification.showDelay, execute: delayedShow)
         }
 
         private var delayedShow: DispatchWorkItem?
@@ -107,23 +116,23 @@ extension NotificationWindowView {
 
 
 //MARK: - Window -
-private struct NotificationWindowInstaller: UIViewRepresentable {
-    let notification: NotificationView.ViewModel
+private struct OverlayWindowInstaller: UIViewRepresentable {
+    let model: OverlayWindowView.ViewModel
 
-    func makeUIView(context: Context) -> NotificationWindowAnchor {
-        return NotificationWindowAnchor(notification: self.notification)
+    func makeUIView(context: Context) -> OverlayWindowAnchor {
+        return OverlayWindowAnchor(model: self.model)
     }
 
-    func updateUIView(_ uiView: NotificationWindowAnchor, context: Context) {
+    func updateUIView(_ uiView: OverlayWindowAnchor, context: Context) {
     }
 }
 
-private final class NotificationWindowAnchor: UIView {
-    private let notification: NotificationView.ViewModel
+private final class OverlayWindowAnchor: UIView {
+    private let model: OverlayWindowView.ViewModel
     private var overlayWindow: PassthroughWindow?
 
-    init(notification: NotificationView.ViewModel) {
-        self.notification = notification
+    init(model: OverlayWindowView.ViewModel) {
+        self.model = model
         super.init(frame: .zero)
         self.isUserInteractionEnabled = false
     }
@@ -137,10 +146,10 @@ private final class NotificationWindowAnchor: UIView {
         guard self.overlayWindow == nil,
               let windowScene = self.window?.windowScene else { return }
 
-        let host = UIHostingController(rootView: NotificationWindowContent(notification: self.notification))
+        let host = UIHostingController(rootView: OverlayWindowContent(model: self.model))
         host.view.backgroundColor = .clear
 
-        let overlayWindow = PassthroughWindow(windowScene: windowScene, notification: self.notification)
+        let overlayWindow = PassthroughWindow(windowScene: windowScene, notification: self.model.notification)
         overlayWindow.rootViewController = host
         overlayWindow.windowLevel = UIWindow.Level(UIWindow.Level.normal.rawValue + 1)
         overlayWindow.isHidden = false
@@ -165,12 +174,24 @@ private final class PassthroughWindow: UIWindow {
     }
 }
 
-private struct NotificationWindowContent: View {
-    let notification: NotificationView.ViewModel
+private struct OverlayWindowContent: View {
+    @ObservedObject var model: OverlayWindowView.ViewModel
 
     var body: some View {
-        NotificationView(model: self.notification)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .adaptiveLayoutEnvironment()
+        ZStack(alignment: .top) {
+            if let confettiTier = self.model.confettiTier {
+                ConfettiView(
+                    birthRate: confettiTier.confettiBirthRate,
+                    lifetime: confettiTier.confettiLifetime,
+                    velocity: confettiTier.confettiVelocity
+                )
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+            }
+
+            NotificationView(model: self.model.notification)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        }
+        .adaptiveLayoutEnvironment()
     }
 }
