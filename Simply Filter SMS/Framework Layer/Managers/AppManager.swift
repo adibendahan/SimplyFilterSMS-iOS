@@ -50,7 +50,9 @@ class AppManager: AppManagerProtocol {
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
         self.filterTransferManager = FilterTransferManager(persistanceManager: persistanceManager)
-        self.flowManager = FlowManager(defaultsManager: defaultsManager)
+        self.flowManager = FlowManager(defaultsManager: defaultsManager,
+                                       networkSyncManager: networkSyncManager,
+                                       automaticFilterManager: automaticFilterManager)
         self.schedulingManager = SchedulingManager(automaticFilterManager: automaticFilterManager,
                                                    defaultsManager: defaultsManager)
         self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,

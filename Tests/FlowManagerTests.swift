@@ -12,28 +12,51 @@ import XCTest
 class FlowManagerTests: XCTestCase {
 
     private var defaultsManager: mock_DefaultsManager!
+    private var networkSyncManager: mock_NetworkSyncManager!
+    private var automaticFilterManager: mock_AutomaticFilterManager!
     private var isFirstRun = true
     private var lastSeenWhatsNewVersion = 0
+    private var networkStatus: NetworkStatus = .online
     private var testSubject: FlowManager!
 
     override func setUp() {
         super.setUp()
         self.isFirstRun = true
         self.lastSeenWhatsNewVersion = 0
+        self.networkStatus = .online
         self.defaultsManager = mock_DefaultsManager()
+        self.networkSyncManager = mock_NetworkSyncManager()
+        self.automaticFilterManager = mock_AutomaticFilterManager()
+        self.networkSyncManager.networkStatusClosure = { [unowned self] in
+            return self.networkStatus
+        }
+        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date.distantPast }
         self.defaultsManager.isAppFirstRunClosure = { [unowned self] in
             return self.isFirstRun
         }
         self.defaultsManager.lastSeenWhatsNewVersionClosure = { [unowned self] in
             return self.lastSeenWhatsNewVersion
         }
-        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject = self.makeTestSubject()
     }
 
     override func tearDown() {
         self.testSubject = nil
         self.defaultsManager = nil
+        self.networkSyncManager = nil
+        self.automaticFilterManager = nil
         super.tearDown()
+    }
+
+    private func makeTestSubject() -> FlowManager {
+        return FlowManager(defaultsManager: self.defaultsManager,
+                           networkSyncManager: self.networkSyncManager,
+                           automaticFilterManager: self.automaticFilterManager)
+    }
+
+    private func postNetworkStatus(_ networkStatus: NetworkStatus) {
+        self.networkStatus = networkStatus
+        NotificationCenter.default.post(name: .networkStatusChange, object: networkStatus)
     }
 
     func test_firstRun_winsOverFileAndWhatsNew() {
@@ -58,7 +81,7 @@ class FlowManagerTests: XCTestCase {
 
     func test_afterFirstRun_fileBeatsWhatsNew() {
         self.isFirstRun = false
-        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         self.testSubject.enableWhatsNew()
 
@@ -67,7 +90,7 @@ class FlowManagerTests: XCTestCase {
 
     func test_whatsNew_waitsUntilEnabled() {
         self.isFirstRun = false
-        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject = self.makeTestSubject()
 
         XCTAssertNil(self.testSubject.next())
         self.testSubject.enableWhatsNew()
@@ -76,7 +99,7 @@ class FlowManagerTests: XCTestCase {
 
     func test_whatsNew_skippedWhenLaunchClaimedSession() {
         self.isFirstRun = false
-        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         self.testSubject.complete(.filterImport)
         self.testSubject.enableWhatsNew()
@@ -86,7 +109,7 @@ class FlowManagerTests: XCTestCase {
 
     func test_lastLaunchURLWins() {
         self.isFirstRun = false
-        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         XCTAssertTrue(self.testSubject.recordLaunch(.tipJar))
 
@@ -102,7 +125,7 @@ class FlowManagerTests: XCTestCase {
     func test_userRequest_afterFirstRun() {
         self.isFirstRun = false
         self.lastSeenWhatsNewVersion = currentWhatsNewVersion
-        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject = self.makeTestSubject()
         self.testSubject.request(.about)
 
         XCTAssertEqual(self.testSubject.next(), .about)
@@ -110,7 +133,7 @@ class FlowManagerTests: XCTestCase {
 
     func test_userRequest_whatsNew_afterLaunchClaimedSession() {
         self.isFirstRun = false
-        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         self.testSubject.complete(.filterImport)
         self.testSubject.request(.whatsNew)
@@ -129,7 +152,7 @@ class FlowManagerTests: XCTestCase {
 
     func test_recordLaunch_returnsTrueWhenQueued() {
         self.isFirstRun = false
-        self.testSubject = FlowManager(defaultsManager: self.defaultsManager)
+        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.tipJar))
     }
 
@@ -180,29 +203,172 @@ class FlowManagerTests: XCTestCase {
         XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
     }
 
-    func test_cancelNotification_shown_returnsTrueAndFreesSlot() {
-        self.testSubject.requestNotification(.offline)
+    func test_backOnline_offlineShown_freesSlot() {
+        self.testSubject.startMonitoring()
+        self.postNetworkStatus(.offline)
         _ = self.testSubject.nextNotification()
 
-        XCTAssertTrue(self.testSubject.cancelNotification(.offline))
+        self.postNetworkStatus(.online)
+
+        XCTAssertFalse(self.testSubject.isNotificationShowing)
         self.testSubject.requestNotification(.tipPromotion)
         XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
     }
 
-    func test_cancelNotification_pending_dropsItReturnsFalse() {
-        self.testSubject.requestNotification(.offline)
+    func test_backOnline_offlinePending_dropsIt() {
+        self.testSubject.startMonitoring()
+        self.postNetworkStatus(.offline)
 
-        XCTAssertFalse(self.testSubject.cancelNotification(.offline))
+        self.postNetworkStatus(.online)
+
         XCTAssertNil(self.testSubject.nextNotification())
     }
 
-    func test_cancelNotification_otherShown_keepsIt() {
+    func test_backOnline_otherShown_keepsIt() {
+        self.testSubject.startMonitoring()
         self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
         _ = self.testSubject.nextNotification()
 
-        XCTAssertFalse(self.testSubject.cancelNotification(.offline))
+        self.postNetworkStatus(.online)
+
+        XCTAssertTrue(self.testSubject.isNotificationShowing)
+    }
+
+    func test_offline_snoozed_notShown() {
+        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date() }
+        self.testSubject.startMonitoring()
+
+        self.postNetworkStatus(.offline)
+
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_startMonitoring_alreadyOffline_showsOffline() {
+        self.networkStatus = .offline
+
+        self.testSubject.startMonitoring()
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .offline)
+    }
+
+    func test_higherPriorityToastCompletes_stillOffline_showsOfflineAgain() {
+        self.networkStatus = .offline
+        self.testSubject.requestNotification(.saveFailed)
+        _ = self.testSubject.nextNotification()
+        self.testSubject.requestNotification(.offline)
+
+        self.testSubject.completeNotification()
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .offline)
+    }
+
+    func test_toastCompletes_online_showsNothing() {
+        self.testSubject.requestNotification(.saveFailed)
+        _ = self.testSubject.nextNotification()
+
+        self.testSubject.completeNotification()
+
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_appEvents_becomeToasts() {
+        self.automaticFilterManager.isAutomaticFilteringOnClosure = { true }
+        self.testSubject.startMonitoring()
+
+        NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
+        XCTAssertEqual(self.testSubject.nextNotification(), .automaticFiltersUpdated)
+        self.testSubject.completeNotification()
+
+        NotificationCenter.default.post(name: .cloudSyncOperationComplete, object: nil)
+        XCTAssertEqual(self.testSubject.nextNotification(), .cloudSyncOperationComplete)
+        self.testSubject.completeNotification()
+
+        NotificationCenter.default.post(name: .filtersSaveFailed, object: nil)
+        XCTAssertEqual(self.testSubject.nextNotification(), .saveFailed)
+    }
+
+    func test_automaticFiltersUpdated_aiFilteringOff_noToast() {
+        self.automaticFilterManager.isAutomaticFilteringOnClosure = { false }
+        self.testSubject.startMonitoring()
+
+        NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
+
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_nudge_homeObstructed_waitsUntilUnobstructed() {
+        var isHomeUnobstructed = false
+        self.testSubject.setHomeAvailability { isHomeUnobstructed }
+
         self.testSubject.requestNotification(.tipPromotion)
         XCTAssertNil(self.testSubject.nextNotification())
+
+        isHomeUnobstructed = true
+        self.testSubject.homeMayBeUnobstructed()
+        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+    }
+
+    func test_result_homeObstructed_showsImmediately() {
+        self.testSubject.setHomeAvailability { false }
+
+        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .filtersImported(added: 1, skipped: 0))
+    }
+
+    func test_tapTipPromotion_requestsTipJar() {
+        self.isFirstRun = false
+        self.lastSeenWhatsNewVersion = currentWhatsNewVersion
+        self.testSubject = self.makeTestSubject()
+        let flowRequested = XCTNSNotificationExpectation(name: .flowRequested)
+
+        self.testSubject.didTapNotification(.tipPromotion)
+
+        wait(for: [flowRequested], timeout: 1)
+        XCTAssertEqual(self.testSubject.next(), .tipJar)
+    }
+
+    func test_tapReportingNudge_dismissesItAndRequestsSheet() {
+        self.isFirstRun = false
+        self.lastSeenWhatsNewVersion = currentWhatsNewVersion
+        self.testSubject = self.makeTestSubject()
+
+        self.testSubject.didTapNotification(.enableReportingExtension)
+
+        XCTAssertEqual(self.defaultsManager.didDismissReportingExtensionNudgeSetCounter, 1)
+        XCTAssertEqual(self.testSubject.next(), .enableReportingExtension)
+    }
+
+    func test_dismissOffline_recordsSnooze() {
+        self.testSubject.didDismissNotification(.offline)
+
+        XCTAssertEqual(self.defaultsManager.lastOfflineNotificationDismissSetCounter, 1)
+    }
+
+    func test_showSessionNudges_tipDue_showsTip() {
+        self.defaultsManager.sessionCounterClosure = { 5 }
+        self.defaultsManager.didTipClosure = { false }
+
+        self.testSubject.showSessionNudges()
+
+        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+    }
+
+    func test_showSessionNudges_offlineShowing_keepsOffline() {
+        self.defaultsManager.sessionCounterClosure = { 5 }
+        self.defaultsManager.didTipClosure = { false }
+        self.testSubject.requestNotification(.offline)
+        _ = self.testSubject.nextNotification()
+
+        self.testSubject.showSessionNudges()
+
+        XCTAssertNil(self.testSubject.nextNotification())
+    }
+
+    func test_dismissOtherToast_recordsNothing() {
+        self.testSubject.didDismissNotification(.saveFailed)
+
+        XCTAssertEqual(self.defaultsManager.lastOfflineNotificationDismissSetCounter, 0)
     }
 
     func test_resetSession_clearsNotifications() {

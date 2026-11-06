@@ -26,18 +26,20 @@ class AppHomeViewModelTests: XCTestCase {
         self.appManager.networkSyncManager = self.networkSyncManager
         self.defaultsManager.isAppFirstRunClosure = { false }
         self.defaultsManager.lastSeenWhatsNewVersionClosure = { currentWhatsNewVersion }
-        self.appManager.flowManager = FlowManager(defaultsManager: self.defaultsManager)
+        self.appManager.flowManager = FlowManager(defaultsManager: self.defaultsManager,
+                                                  networkSyncManager: self.networkSyncManager,
+                                                  automaticFilterManager: self.appManager.automaticFilterManager)
     }
 
     //MARK: Tests
-    func test_showNotification_nudgeWhileSheetOpen_waitsUntilDismissed() {
+    func test_nudgeWhileSheetOpen_waitsUntilDismissed() {
         // Prepare
         self.networkSyncManager.networkStatusClosure = { .online }
         let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
         testSubject.sheetScreen = .about
 
         // Act
-        testSubject.showNotification(.tipPromotion)
+        self.appManager.flowManager.requestNotification(.tipPromotion)
         let titleWhileSheetOpen = testSubject.overlayWindow.notification.title
         testSubject.sheetScreen = nil
 
@@ -46,102 +48,56 @@ class AppHomeViewModelTests: XCTestCase {
         XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.tipPromotion.title)
     }
 
-    func test_showNotification_resultWhileSheetOpen_showsImmediately() {
+    func test_resultWhileSheetOpen_showsImmediately() {
         // Prepare
         self.networkSyncManager.networkStatusClosure = { .online }
         let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
         testSubject.sheetScreen = .about
 
         // Act
-        testSubject.showNotification(.filtersImported(added: 1, skipped: 0))
+        self.appManager.flowManager.requestNotification(.filtersImported(added: 1, skipped: 0))
 
         // Verify
         XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.filtersImported(added: 1, skipped: 0).title)
     }
 
-    func test_startMonitoring_offlineDismissedRecently_hidesOffline() {
+    func test_flowRequest_presentsSheet() {
+        // Prepare
+        self.networkSyncManager.networkStatusClosure = { .online }
+        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
+
+        // Act
+        self.appManager.flowManager.request(.tipJar)
+
+        // Verify
+        XCTAssertEqual(testSubject.sheetScreen, .tipJar)
+    }
+
+    func test_launch_offlineDismissedRecently_noOfflineToast() {
         // Prepare
         self.networkSyncManager.networkStatusClosure = { .offline }
         self.defaultsManager.lastOfflineNotificationDismissClosure = { Date().addingTimeInterval(-10 * 60) }
-        self.defaultsManager.sessionCounterClosure = { 5 }
-        self.defaultsManager.didTipClosure = { false }
 
         // Act
         let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
-        testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.tipPromotion.title)
+        withExtendedLifetime(testSubject) {
+            XCTAssertFalse(self.appManager.flowManager.isNotificationShowing)
+        }
     }
 
-    func test_startMonitoring_offlineDismissedOverAnHourAgo_showsOffline() {
+    func test_launch_offlineDismissedOverAnHourAgo_showsOffline() {
         // Prepare
         self.networkSyncManager.networkStatusClosure = { .offline }
         self.defaultsManager.lastOfflineNotificationDismissClosure = { Date().addingTimeInterval(-61 * 60) }
-        self.defaultsManager.sessionCounterClosure = { 5 }
-        self.defaultsManager.didTipClosure = { false }
 
         // Act
         let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
-        testSubject.tryShowTipPromotion()
 
         // Verify
-        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.offline.title)
-    }
-
-    func test_higherPriorityToastHides_stillOffline_showsOfflineAgain() {
-        // Prepare
-        self.networkSyncManager.networkStatusClosure = { .offline }
-        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date().addingTimeInterval(-61 * 60) }
-        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
-        testSubject.showNotification(.saveFailed)
-        testSubject.showNotification(.offline)
-
-        // Act
-        testSubject.overlayWindow.notification.onHide?()
-
-        // Verify
-        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.offline.title)
-    }
-
-    func test_higherPriorityToastHides_backOnline_doesNotShowOffline() {
-        // Prepare
-        self.networkSyncManager.networkStatusClosure = { .online }
-        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
-        testSubject.showNotification(.saveFailed)
-
-        // Act
-        testSubject.overlayWindow.notification.onHide?()
-
-        // Verify
-        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.saveFailed.title)
-    }
-
-    func test_tryShowTipPromotion_offlineShowing_keepsOffline() {
-        // Prepare
-        self.defaultsManager.sessionCounterClosure = { 5 }
-        self.defaultsManager.didTipClosure = { false }
-        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
-
-        // Act
-        testSubject.showNotification(.offline)
-        testSubject.tryShowTipPromotion()
-
-        // Verify
-        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.offline.title)
-    }
-
-    func test_tryShowTipPromotion_nothingShowing_showsTip() {
-        // Prepare
-        self.networkSyncManager.networkStatusClosure = { .online }
-        self.defaultsManager.sessionCounterClosure = { 5 }
-        self.defaultsManager.didTipClosure = { false }
-        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
-
-        // Act
-        testSubject.tryShowTipPromotion()
-
-        // Verify
-        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.tipPromotion.title)
+        withExtendedLifetime(testSubject) {
+            XCTAssertTrue(self.appManager.flowManager.isNotificationShowing)
+        }
     }
 }

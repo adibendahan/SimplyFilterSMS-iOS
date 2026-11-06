@@ -13,6 +13,7 @@ class OverlayWindowViewModelTests: XCTestCase {
 
     private var appManager = mock_AppManager()
     private var defaultsManager = mock_DefaultsManager()
+    private var networkSyncManager = mock_NetworkSyncManager()
 
     //MARK: Test Lifecycle
     override func setUp() {
@@ -20,8 +21,14 @@ class OverlayWindowViewModelTests: XCTestCase {
 
         self.appManager = mock_AppManager()
         self.defaultsManager = mock_DefaultsManager()
+        self.networkSyncManager = mock_NetworkSyncManager()
+        self.defaultsManager.isAppFirstRunClosure = { false }
+        self.defaultsManager.lastSeenWhatsNewVersionClosure = { currentWhatsNewVersion }
         self.appManager.defaultsManager = self.defaultsManager
-        self.appManager.flowManager = FlowManager(defaultsManager: self.defaultsManager)
+        self.appManager.networkSyncManager = self.networkSyncManager
+        self.appManager.flowManager = FlowManager(defaultsManager: self.defaultsManager,
+                                                  networkSyncManager: self.networkSyncManager,
+                                                  automaticFilterManager: self.appManager.automaticFilterManager)
     }
 
     //MARK: Tests
@@ -63,34 +70,42 @@ class OverlayWindowViewModelTests: XCTestCase {
     func test_tipPromotionTap_requestsTipJar() {
         // Prepare
         let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        var requestedScreen: Screen?
-        testSubject.onRequestSheet = { screen in
-            requestedScreen = screen
-        }
         self.appManager.flowManager.requestNotification(.tipPromotion)
 
         // Act
         testSubject.notification.onTap?()
 
         // Verify
-        XCTAssertEqual(requestedScreen, .tipJar)
+        XCTAssertEqual(self.appManager.flowManager.next(), .tipJar)
     }
 
     func test_reportingExtensionTap_dismissesNudgeAndRequestsSheet() {
         // Prepare
         let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        var requestedScreen: Screen?
-        testSubject.onRequestSheet = { screen in
-            requestedScreen = screen
-        }
         self.appManager.flowManager.requestNotification(.enableReportingExtension)
 
         // Act
         testSubject.notification.onTap?()
 
         // Verify
-        XCTAssertEqual(requestedScreen, .enableReportingExtension)
+        XCTAssertEqual(self.appManager.flowManager.next(), .enableReportingExtension)
         XCTAssertEqual(self.defaultsManager.didDismissReportingExtensionNudgeSetCounter, 1)
+    }
+
+    func test_offlineCancelled_hidesToast() {
+        // Prepare
+        self.networkSyncManager.networkStatusClosure = { .offline }
+        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date.distantPast }
+        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.startMonitoring()
+        testSubject.notification.show = true
+
+        // Act
+        self.networkSyncManager.networkStatusClosure = { .online }
+        NotificationCenter.default.post(name: .networkStatusChange, object: NetworkStatus.online)
+
+        // Verify
+        XCTAssertFalse(testSubject.notification.show)
     }
 
     func test_offlineHideButton_recordsDismiss() {
