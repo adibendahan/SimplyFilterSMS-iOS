@@ -95,7 +95,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         }
         app.addFilter(type: .deny,
                       text: addFilterText,
-                      denyFolderType: .junk,
+                      messageFolder: .junk,
                       filterTarget: .body,
                       filterMatching: .exact,
                       filterCase: .caseInsensitive,
@@ -126,7 +126,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         self.waitForUIToSettle()
 
 
-        // MARK: testFilters Screenshot
+        // MARK: filterTester Screenshot
         app.tap(.appMenuButton)
         app.tap(.filterToolsMenuButton)
         app.tap(.testYourFiltersMenuButton)

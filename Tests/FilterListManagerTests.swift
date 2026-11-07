@@ -13,7 +13,7 @@ import NaturalLanguage
 
 class FilterListManagerTests: XCTestCase {
     
-    var persistanceManager = mock_PersistanceManager()
+    var persistenceManager = mock_PersistenceManager()
     var filterListService = mock_FilterListService()
     var networkSyncManager = mock_NetworkSyncManager()
 
@@ -23,10 +23,10 @@ class FilterListManagerTests: XCTestCase {
 
         self.filterListService = mock_FilterListService()
         self.networkSyncManager = mock_NetworkSyncManager()
-        self.testSubject = FilterListManager(persistanceManager: self.persistanceManager,
+        self.testSubject = FilterListManager(persistenceManager: self.persistenceManager,
                                              filterListService: self.filterListService,
                                              networkSyncManager: self.networkSyncManager)
-        self.persistanceManager.resetCounters()
+        self.persistenceManager.resetCounters()
         self.filterListService.resetCounters()
         self.filterListsUpdatedCount = 0
         self.filterListsUpdatedObserver = NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: nil) { [weak self] _ in
@@ -41,7 +41,7 @@ class FilterListManagerTests: XCTestCase {
             NotificationCenter.default.removeObserver(observer)
         }
 
-        self.persistanceManager = mock_PersistanceManager()
+        self.persistenceManager = mock_PersistenceManager()
         self.filterListService = mock_FilterListService()
     }
     
@@ -49,12 +49,12 @@ class FilterListManagerTests: XCTestCase {
     //MARK: Tests
     func test_hasActiveFilterLists_on() {
         // Prepare
-        self.persistanceManager.cachedFilterListCatalogClosure = {
+        self.persistenceManager.cachedFilterListCatalogClosure = {
             return self.catalog(["he"])
         }
         
-        self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
-            let automaticFiltersLanguage = AutomaticFiltersLanguage(context: self.persistanceManager.context)
+        self.persistenceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
+            let automaticFiltersLanguage = AutomaticFiltersLanguage(context: self.persistenceManager.context)
             automaticFiltersLanguage.lang = NLLanguage.hebrew.rawValue
             automaticFiltersLanguage.isActive = true
             return [automaticFiltersLanguage]
@@ -65,18 +65,18 @@ class FilterListManagerTests: XCTestCase {
         
         // Verify
         XCTAssertTrue(hasActiveFilterListsResult)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
+        XCTAssertEqual(self.persistenceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
+        XCTAssertEqual(self.persistenceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_hasActiveFilterLists_off() {
         // Prepare
-        self.persistanceManager.cachedFilterListCatalogClosure = {
+        self.persistenceManager.cachedFilterListCatalogClosure = {
             return self.catalog(["he"])
         }
         
-        self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
-            let automaticFiltersLanguage = AutomaticFiltersLanguage(context: self.persistanceManager.context)
+        self.persistenceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
+            let automaticFiltersLanguage = AutomaticFiltersLanguage(context: self.persistenceManager.context)
             automaticFiltersLanguage.lang = NLLanguage.hebrew.rawValue
             automaticFiltersLanguage.isActive = false
             return [automaticFiltersLanguage]
@@ -87,21 +87,21 @@ class FilterListManagerTests: XCTestCase {
         
         // Verify
         XCTAssertFalse(hasActiveFilterListsResult)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
+        XCTAssertEqual(self.persistenceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
+        XCTAssertEqual(self.persistenceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_activeFilterListsTitle_twoLanguages() {
         // Prepare
-        self.persistanceManager.cachedFilterListCatalogClosure = {
+        self.persistenceManager.cachedFilterListCatalogClosure = {
             return self.catalog(["he", "en"])
         }
         
-        self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
-            let automaticFiltersLanguageHebrew = AutomaticFiltersLanguage(context: self.persistanceManager.context)
+        self.persistenceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
+            let automaticFiltersLanguageHebrew = AutomaticFiltersLanguage(context: self.persistenceManager.context)
             automaticFiltersLanguageHebrew.lang = NLLanguage.hebrew.rawValue
             automaticFiltersLanguageHebrew.isActive = true
-            let automaticFiltersLanguageEnglish = AutomaticFiltersLanguage(context: self.persistanceManager.context)
+            let automaticFiltersLanguageEnglish = AutomaticFiltersLanguage(context: self.persistenceManager.context)
             automaticFiltersLanguageEnglish.lang = NLLanguage.english.rawValue
             automaticFiltersLanguageEnglish.isActive = true
             return [automaticFiltersLanguageEnglish, automaticFiltersLanguageHebrew]
@@ -112,21 +112,21 @@ class FilterListManagerTests: XCTestCase {
         
         // Verify
         XCTAssertEqual(activeFilterListsTitleResult, "\(NLLanguage.english.localizedName!), \(NLLanguage.hebrew.localizedName!).")
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
+        XCTAssertEqual(self.persistenceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
+        XCTAssertEqual(self.persistenceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_activeFilterListsTitle_off() {
         // Prepare
-        self.persistanceManager.cachedFilterListCatalogClosure = {
+        self.persistenceManager.cachedFilterListCatalogClosure = {
             return self.catalog(["he", "en"])
         }
         
-        self.persistanceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
-            let automaticFiltersLanguageHebrew = AutomaticFiltersLanguage(context: self.persistanceManager.context)
+        self.persistenceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
+            let automaticFiltersLanguageHebrew = AutomaticFiltersLanguage(context: self.persistenceManager.context)
             automaticFiltersLanguageHebrew.lang = NLLanguage.hebrew.rawValue
             automaticFiltersLanguageHebrew.isActive = false
-            let automaticFiltersLanguageEnglish = AutomaticFiltersLanguage(context: self.persistanceManager.context)
+            let automaticFiltersLanguageEnglish = AutomaticFiltersLanguage(context: self.persistenceManager.context)
             automaticFiltersLanguageEnglish.lang = NLLanguage.english.rawValue
             automaticFiltersLanguageEnglish.isActive = false
             return [automaticFiltersLanguageEnglish, automaticFiltersLanguageHebrew]
@@ -137,16 +137,16 @@ class FilterListManagerTests: XCTestCase {
         
         // Verify
         XCTAssertNil(activeFilterListsTitleResult)
-        XCTAssertEqual(self.persistanceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
-        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
+        XCTAssertEqual(self.persistenceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
+        XCTAssertEqual(self.persistenceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_filterListsCacheAge() {
         // Prepare
         let expectedCacheAge = Date()
         
-        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
-            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = expectedCacheAge
             
@@ -159,12 +159,12 @@ class FilterListManagerTests: XCTestCase {
         
         // Verify
         XCTAssertEqual(expectedCacheAge, cacheAgeResult)
-        XCTAssertEqual(self.persistanceManager.fetchFilterListsCacheRecordsCounter, 1)
+        XCTAssertEqual(self.persistenceManager.fetchFilterListsCacheRecordsCounter, 1)
     }
     
     func test_languagesForBlockLanguage() {
         // Prepare
-        self.persistanceManager.isDuplicateFilterLanguageClosure = { (_) in return true }
+        self.persistenceManager.isDuplicateFilterLanguageClosure = { (_) in return true }
         
         // Act
         let emptyResult = self.testSubject.languages(for: .blockLanguage)
@@ -173,7 +173,7 @@ class FilterListManagerTests: XCTestCase {
         XCTAssertTrue(emptyResult.isEmpty)
         
         // Prepare
-        self.persistanceManager.isDuplicateFilterLanguageClosure = { (_) in return false }
+        self.persistenceManager.isDuplicateFilterLanguageClosure = { (_) in return false }
         
         // Act
         let fullResult = self.testSubject.languages(for: .blockLanguage)
@@ -189,27 +189,27 @@ class FilterListManagerTests: XCTestCase {
             XCTAssertEqual(fullResult[0], current, "Non-English/Hebrew locale should appear first")
             XCTAssertEqual(fullResult[1], .english, "English should appear second after current locale")
         }
-        XCTAssertEqual(self.persistanceManager.isDuplicateFilterLanguageCounter, NLLanguage.allSupportedCases.count * 2)
+        XCTAssertEqual(self.persistenceManager.isDuplicateFilterLanguageCounter, NLLanguage.allSupportedCases.count * 2)
     }
     
-    func test_languagesForAutomaticBlocking() {
+    func test_languagesForFilterLists() {
         // Prepare
-        self.persistanceManager.cachedFilterListCatalogClosure = {
+        self.persistenceManager.cachedFilterListCatalogClosure = {
             return self.catalog(["he", "en"])
         }
         
         // Act
-        let languagesResult = self.testSubject.languages(for: .automaticBlocking)
+        let languagesResult = self.testSubject.languages(for: .filterLists)
         
         // Verify
         XCTAssertEqual(Set(languagesResult), [.hebrew, .english])
-        XCTAssertEqual(self.persistanceManager.cachedFilterListCatalogCounter, 1)
+        XCTAssertEqual(self.persistenceManager.cachedFilterListCatalogCounter, 1)
     }
     
     func test_isFilterListActive() {
         // Prepare
-        self.persistanceManager.ensuredAutomaticFiltersLanguageRecordClosure = { language in
-            let automaticFiltersLanguageRecord = AutomaticFiltersLanguage(context: self.persistanceManager.context)
+        self.persistenceManager.ensuredAutomaticFiltersLanguageRecordClosure = { language in
+            let automaticFiltersLanguageRecord = AutomaticFiltersLanguage(context: self.persistenceManager.context)
             automaticFiltersLanguageRecord.lang = language.rawValue
             automaticFiltersLanguageRecord.isActive = language == .hebrew
             return automaticFiltersLanguageRecord
@@ -222,7 +222,7 @@ class FilterListManagerTests: XCTestCase {
         // Verify
         XCTAssertTrue(resultExpectedTrue)
         XCTAssertFalse(resultExpectedFalse)
-        XCTAssertEqual(self.persistanceManager.ensuredAutomaticFiltersLanguageRecordCounter, 2)
+        XCTAssertEqual(self.persistenceManager.ensuredAutomaticFiltersLanguageRecordCounter, 2)
     }
     
     func test_setFilterListActive() {
@@ -230,8 +230,8 @@ class FilterListManagerTests: XCTestCase {
         self.testSubject.setFilterListActive(for: .english, value: true)
         
         // Verify
-        XCTAssertEqual(self.persistanceManager.ensuredAutomaticFiltersLanguageRecordCounter, 1)
-        XCTAssertEqual(self.persistanceManager.commitContextCounter, 1)
+        XCTAssertEqual(self.persistenceManager.ensuredAutomaticFiltersLanguageRecordCounter, 1)
+        XCTAssertEqual(self.persistenceManager.commitContextCounter, 1)
     }
     
     func test_update_noCache_downloadsEverything() async {
@@ -247,7 +247,7 @@ class FilterListManagerTests: XCTestCase {
             return .modified(self.payload(text: url.lastPathComponent), etag: "\(url.lastPathComponent)-1")
         }
         var savedCache: FilterListsSnapshot?
-        self.persistanceManager.saveCacheClosure = { savedCache = $0 }
+        self.persistenceManager.saveCacheClosure = { savedCache = $0 }
 
         // Act
         await self.testSubject.refreshFilterLists()
@@ -264,8 +264,8 @@ class FilterListManagerTests: XCTestCase {
 
     func test_update_freshLegacyCache_downloadsEverything() async {
         // Prepare
-        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
-            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Date()
 
@@ -283,14 +283,14 @@ class FilterListManagerTests: XCTestCase {
 
         // Verify
         XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
-        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
+        XCTAssertEqual(self.persistenceManager.saveCacheCounter, 1)
     }
 
     func test_update_freshCache_stillChecksWithETags() async {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he"]) }
-        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
-            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
+        self.persistenceManager.cachedFilterListsClosure = { self.cache(["he"]) }
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Date()
 
@@ -309,13 +309,13 @@ class FilterListManagerTests: XCTestCase {
         // Verify
         XCTAssertEqual(catalogETag, "catalog-1")
         XCTAssertEqual(self.filterListService.fetchFilterListCounter, 1)
-        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
+        XCTAssertEqual(self.persistenceManager.saveCacheCounter, 0)
     }
 
     func test_update_nothingChanged_touchesCache() async {
         // Prepare
         let cache = self.cache(["he", "en"])
-        self.persistanceManager.cachedFilterListsClosure = { cache }
+        self.persistenceManager.cachedFilterListsClosure = { cache }
         var catalogETag: String?
         var listETags: [String?] = []
         self.filterListService.fetchFilterListCatalogClosure = { etag in
@@ -333,14 +333,14 @@ class FilterListManagerTests: XCTestCase {
         // Verify
         XCTAssertEqual(catalogETag, "catalog-1")
         XCTAssertEqual(listETags, ["he-1", "en-1"])
-        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
-        XCTAssertEqual(self.persistanceManager.touchCacheCounter, 1)
+        XCTAssertEqual(self.persistenceManager.saveCacheCounter, 0)
+        XCTAssertEqual(self.persistenceManager.touchCacheCounter, 1)
         XCTAssertEqual(self.filterListsUpdatedCount, 0)
     }
 
     func test_update_oneListChanged_replacesOnlyThatSection() async {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
+        self.persistenceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
         self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
         self.filterListService.fetchFilterListClosure = { url, _ in
             guard url.lastPathComponent == "he.sfsfilters" else { return .notModified }
@@ -348,7 +348,7 @@ class FilterListManagerTests: XCTestCase {
             return .modified(payload, etag: "he-2")
         }
         var savedCache: FilterListsSnapshot?
-        self.persistanceManager.saveCacheClosure = { savedCache = $0 }
+        self.persistenceManager.saveCacheClosure = { savedCache = $0 }
 
         // Act
         await self.testSubject.refreshFilterLists()
@@ -361,7 +361,7 @@ class FilterListManagerTests: XCTestCase {
 
     func test_update_listFails_keepsSectionAndDoesNotTouch() async {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
+        self.persistenceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
         self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
         self.filterListService.fetchFilterListClosure = { url, _ in
             guard url.lastPathComponent == "he.sfsfilters" else { return .notModified }
@@ -373,13 +373,13 @@ class FilterListManagerTests: XCTestCase {
 
         // Verify
         XCTAssertEqual(self.filterListService.fetchFilterListCounter, 2)
-        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
-        XCTAssertEqual(self.persistanceManager.touchCacheCounter, 0)
+        XCTAssertEqual(self.persistenceManager.saveCacheCounter, 0)
+        XCTAssertEqual(self.persistenceManager.touchCacheCounter, 0)
     }
 
     func test_update_catalogFails_changesNothing() async {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he"]) }
+        self.persistenceManager.cachedFilterListsClosure = { self.cache(["he"]) }
         self.filterListService.fetchFilterListCatalogClosure = { _ in nil }
 
         // Act
@@ -387,17 +387,17 @@ class FilterListManagerTests: XCTestCase {
 
         // Verify
         XCTAssertEqual(self.filterListService.fetchFilterListCounter, 0)
-        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 0)
-        XCTAssertEqual(self.persistanceManager.touchCacheCounter, 0)
+        XCTAssertEqual(self.persistenceManager.saveCacheCounter, 0)
+        XCTAssertEqual(self.persistenceManager.touchCacheCounter, 0)
     }
 
     func test_update_dropsListsNotInCatalog() async {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
+        self.persistenceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
         self.filterListService.fetchFilterListCatalogClosure = { _ in .modified(self.catalog(["he"]), etag: "catalog-2") }
         self.filterListService.fetchFilterListClosure = { _, _ in .notModified }
         var savedCache: FilterListsSnapshot?
-        self.persistanceManager.saveCacheClosure = { savedCache = $0 }
+        self.persistenceManager.saveCacheClosure = { savedCache = $0 }
 
         // Act
         await self.testSubject.refreshFilterLists()
@@ -409,7 +409,7 @@ class FilterListManagerTests: XCTestCase {
 
     func test_update_sameRevision_savesWithoutNotification() async {
         // Prepare
-        self.persistanceManager.cachedFilterListsClosure = {
+        self.persistenceManager.cachedFilterListsClosure = {
             FilterListsSnapshot(catalogETag: "catalog-1",
                              catalog: self.catalog(["he"]),
                              lists: [self.section("he", etag: "he-1", text: "he", revision: 2)])
@@ -421,7 +421,7 @@ class FilterListManagerTests: XCTestCase {
         await self.testSubject.refreshFilterLists()
 
         // Verify
-        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
+        XCTAssertEqual(self.persistenceManager.saveCacheCounter, 1)
         XCTAssertEqual(self.filterListsUpdatedCount, 0)
     }
 
@@ -455,20 +455,20 @@ class FilterListManagerTests: XCTestCase {
 
         // Verify
         XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
-        XCTAssertEqual(self.persistanceManager.saveCacheCounter, 1)
+        XCTAssertEqual(self.persistenceManager.saveCacheCounter, 1)
     }
     
     @MainActor
     func test_updateWhenOnline_checkedToday_skips() {
         // Prepare
-        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
-            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Date()
 
             return [cacheRecord]
         }
-        self.persistanceManager.cachedFilterListCatalogClosure = { self.catalog(["he"]) }
+        self.persistenceManager.cachedFilterListCatalogClosure = { self.catalog(["he"]) }
         self.networkSyncManager.networkStatusClosure = { .online }
 
         // Act
@@ -482,14 +482,14 @@ class FilterListManagerTests: XCTestCase {
     @MainActor
     func test_updateWhenOnline_checkedTodayUnreadableCache_fetches() async {
         // Prepare
-        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
-            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Date()
 
             return [cacheRecord]
         }
-        self.persistanceManager.cachedFilterListCatalogClosure = { nil }
+        self.persistenceManager.cachedFilterListCatalogClosure = { nil }
         self.networkSyncManager.networkStatusClosure = { .online }
         let catalogRequested = self.expectation(description: "catalog requested")
         self.filterListService.fetchFilterListCatalogClosure = { _ in
@@ -508,8 +508,8 @@ class FilterListManagerTests: XCTestCase {
     @MainActor
     func test_updateWhenOnline_notCheckedToday_fetches() async {
         // Prepare
-        self.persistanceManager.fetchFilterListsCacheRecordsClosure = {
-            let cacheRecord = FilterListsCache(context: self.persistanceManager.context)
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
             cacheRecord.uuid = UUID()
             cacheRecord.age = Calendar.current.date(byAdding: .day, value: -1, to: Date())
 
@@ -533,7 +533,7 @@ class FilterListManagerTests: XCTestCase {
     @MainActor
     func test_updateWhenOnline_offline_fetchesOnceBackOnline() async {
         // Prepare
-        self.persistanceManager.fetchFilterListsCacheRecordsClosure = { [] }
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = { [] }
         self.networkSyncManager.networkStatusClosure = { .offline }
         let catalogRequested = self.expectation(description: "catalog requested")
         self.filterListService.fetchFilterListCatalogClosure = { _ in
@@ -553,7 +553,7 @@ class FilterListManagerTests: XCTestCase {
         XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
     }
 
-    private var testSubject: FilterListManagerProtocol = FilterListManager(persistanceManager: mock_PersistanceManager())
+    private var testSubject: FilterListManagerProtocol = FilterListManager(persistenceManager: mock_PersistenceManager())
     private var filterListsUpdatedCount = 0
     private var filterListsUpdatedObserver: NSObjectProtocol?
 

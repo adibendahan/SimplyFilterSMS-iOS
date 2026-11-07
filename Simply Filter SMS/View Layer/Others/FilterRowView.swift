@@ -196,10 +196,10 @@ struct FilterRowView: View {
         Menu {
             folderPicker
         } label: {
-            FilterRowOptionChip(systemName: self.model.filter.denyFolderType.iconName, isActive: true)
+            FilterRowOptionChip(systemName: self.model.filter.messageFolder.iconName, isActive: true)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.denyFolderType.name))
+        .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.messageFolder.name))
     }
 
     private var targetPicker: some View {
@@ -246,10 +246,10 @@ struct FilterRowView: View {
 
     private var folderPicker: some View {
         Picker(selection: Binding(
-            get: { self.model.filter.denyFolderType },
+            get: { self.model.filter.messageFolder },
             set: { self.model.updateFilter(denyFolder: $0) }
         )) {
-            ForEach(DenyFolderType.allCases) { folder in
+            ForEach(MessageFolder.allCases) { folder in
                 Label(folder.name, systemImage: folder.iconName)
                     .tag(folder)
             }
@@ -294,29 +294,29 @@ extension FilterRowView {
             }
         }
         
-        func updateFilter(denyFolder: DenyFolderType) {
-            self.appManager.persistanceManager.updateFilter(self.filter, denyFolder: denyFolder)
+        func updateFilter(denyFolder: MessageFolder) {
+            self.appManager.persistenceManager.updateFilter(self.filter, denyFolder: denyFolder)
             self.onUpdate?(true)
         }
         
         func updateFilter(filterMatching: FilterMatching) {
-            self.appManager.persistanceManager.updateFilter(self.filter, filterMatching: filterMatching)
+            self.appManager.persistenceManager.updateFilter(self.filter, filterMatching: filterMatching)
             self.onUpdate?(true)
         }
         
         func updateFilter(filterCase: FilterCase) {
-            self.appManager.persistanceManager.updateFilter(self.filter, filterCase: filterCase)
+            self.appManager.persistenceManager.updateFilter(self.filter, filterCase: filterCase)
             self.onUpdate?(true)
         }
         
         func updateFilter(filterTarget: FilterTarget) {
-            self.appManager.persistanceManager.updateFilter(self.filter, filterTarget: filterTarget)
+            self.appManager.persistenceManager.updateFilter(self.filter, filterTarget: filterTarget)
             self.onUpdate?(true)
         }
         
         func isLiveDuplicate(text: String) -> Bool {
             guard text != (self.filter.text ?? "") else { return false }
-            return self.appManager.persistanceManager.isDuplicateFilter(
+            return self.appManager.persistenceManager.isDuplicateFilter(
                 text: text,
                 filterTarget: self.filter.filterTarget,
                 filterMatching: self.filter.filterMatching,
@@ -344,7 +344,7 @@ extension FilterRowView {
                 return true
             }
 
-            guard !self.appManager.persistanceManager.isDuplicateFilter(
+            guard !self.appManager.persistenceManager.isDuplicateFilter(
                 text: filterText,
                 filterTarget: self.filter.filterTarget,
                 filterMatching: self.filter.filterMatching,
@@ -355,7 +355,7 @@ extension FilterRowView {
             }
 
             AppManager.logger.debug("FilterRow.updateFilter(text) — saving")
-            self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
+            self.appManager.persistenceManager.updateFilter(self.filter, filterText: filterText)
 
             guard self.filter.text == filterText else {
                 AppManager.logger.debug("FilterRow.updateFilter(text) — save failed, reverted")

@@ -30,7 +30,7 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
             NavigationView {
                 self.makeBody()
             }
-        case .automaticBlocking:
+        case .filterLists:
             self.makeBody()
         }
     }
@@ -53,7 +53,7 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
                                     .foregroundColor(.primary)
                             }
                             
-                        case .automaticBlocking:
+                        case .filterLists:
                             AdaptiveToggle(isOn: $model.languages[index].state) {
                                 Text(localizedName)
                             }
@@ -61,7 +61,7 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
                     }
                 }
                 
-                if self.model.mode == .automaticBlocking &&
+                if self.model.mode == .filterLists &&
                     self.model.languages.count == 0 {
                     
                     if !self.model.isLoading {
@@ -98,7 +98,7 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
                             .multilineTextAlignment(.leading)
                     }
 
-                    if self.model.mode == .automaticBlocking {
+                    if self.model.mode == .filterLists {
                         Button {
                             self.model.sheetScreen = .enableReportingExtension
                         } label: {
@@ -137,7 +137,7 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
                 }
             }
         }
-        .if(self.model.mode == .automaticBlocking) {
+        .if(self.model.mode == .filterLists) {
             $0.toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
@@ -169,7 +169,7 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
 extension LanguageListView {
     
     enum Mode {
-        case blockLanguage, automaticBlocking
+        case blockLanguage, filterLists
     }
     
     class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject, Identifiable, PersistentStoreReloadRefreshing {
@@ -179,7 +179,7 @@ extension LanguageListView {
         @Published private(set) var footer: String
         @Published private(set) var lastUpdate: Date?
         @Published private(set) var footerSecondLine: String?
-        @Published private(set) var autoFilterErrorText: String
+        @Published private(set) var filterListsErrorText: String
         @Published private(set) var isLoading: Bool
         @Published private(set) var isOnline: Bool
         let shouldAllowRefresh: Bool
@@ -203,7 +203,7 @@ extension LanguageListView {
             self.isOnline = isOnline
             
             switch mode {
-            case .automaticBlocking:
+            case .filterLists:
                 self.title = "autoFilter_title"~
                 self.footerSecondLine = "help_automaticFiltering"~
             case .blockLanguage:
@@ -218,19 +218,19 @@ extension LanguageListView {
             
 
             if isOnline {
-                self.autoFilterErrorText = "autoFilter_error"~
+                self.filterListsErrorText = "autoFilter_error"~
             }
             else {
-                self.autoFilterErrorText = "autoFilter_empty"~
+                self.filterListsErrorText = "autoFilter_empty"~
             }
             
-            self.shouldAllowRefresh = mode == .automaticBlocking
+            self.shouldAllowRefresh = mode == .filterLists
 
             super.init(appManager: appManager)
         }
 
         func startMonitoring() {
-            guard !didAddObservers, mode == .automaticBlocking else { return }
+            guard !didAddObservers, mode == .filterLists else { return }
             didAddObservers = true
 
             if !isOnline && self.languages.isEmpty {
@@ -244,7 +244,7 @@ extension LanguageListView {
                         self?.isLoading = true
                     }
                     else {
-                        self?.autoFilterErrorText = "autoFilter_empty"~
+                        self?.filterListsErrorText = "autoFilter_empty"~
                         self?.isLoading = false
                     }
                 }
@@ -264,7 +264,7 @@ extension LanguageListView {
             case .blockLanguage:
                 return "lang_how"~
                 
-            case .automaticBlocking:
+            case .filterLists:
                 let formatter = DateFormatter()
                 formatter.locale = Locale.current
                 formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ddMMyyyy HHmm", options: 0, locale: Locale.current)
@@ -292,7 +292,7 @@ extension LanguageListView {
         }
         
         func addFilter(language: NLLanguage) {
-            let filter = self.appManager.persistanceManager.addFilter(text: language.filterText,
+            let filter = self.appManager.persistenceManager.addFilter(text: language.filterText,
                                                                       type: .denyLanguage,
                                                                       denyFolder: .junk,
                                                                       filterTarget: .body,
@@ -324,7 +324,7 @@ struct LanguageListView_Previews: PreviewProvider {
         LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage, appManager: AppManager.previews))
         
         NavigationView {
-            LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking, appManager: AppManager.previews))
+            LanguageListView(model: LanguageListView.ViewModel(mode: .filterLists, appManager: AppManager.previews))
         }
     }
 }

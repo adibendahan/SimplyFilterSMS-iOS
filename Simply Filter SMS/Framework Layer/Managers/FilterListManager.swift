@@ -11,11 +11,11 @@ import NaturalLanguage
 class FilterListManager: FilterListManagerProtocol {
     
     //MARK: - Initialization -
-    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
+    init(persistenceManager: PersistenceManagerProtocol = AppManager.shared.persistenceManager,
          filterListService: FilterListServiceProtocol = AppManager.shared.filterListService,
          networkSyncManager: NetworkSyncManagerProtocol = AppManager.shared.networkSyncManager) {
         
-        self.persistanceManager = persistanceManager
+        self.persistenceManager = persistenceManager
         self.filterListService = filterListService
         self.networkSyncManager = networkSyncManager
     }
@@ -29,8 +29,8 @@ class FilterListManager: FilterListManagerProtocol {
     var hasActiveFilterLists: Bool {
         var hasActiveFilterLists = false
         
-        let automaticFiltersLanguageRecords = self.persistanceManager?.fetchAutomaticFiltersLanguageRecords()
-        let supportedLanguages: [NLLanguage] = self.languages(for: .automaticBlocking)
+        let automaticFiltersLanguageRecords = self.persistenceManager?.fetchAutomaticFiltersLanguageRecords()
+        let supportedLanguages: [NLLanguage] = self.languages(for: .filterLists)
         
         for filterListLanguageRecord in automaticFiltersLanguageRecords ?? [] {
             if let langRawValue = filterListLanguageRecord.lang {
@@ -52,8 +52,8 @@ class FilterListManager: FilterListManagerProtocol {
         var activeLanguagesString = ""
         var activeFilterListNames: [String] = []
         
-        let automaticFiltersLanguageRecords = self.persistanceManager?.fetchAutomaticFiltersLanguageRecords()
-        let supportedLanguages = self.languages(for: .automaticBlocking)
+        let automaticFiltersLanguageRecords = self.persistenceManager?.fetchAutomaticFiltersLanguageRecords()
+        let supportedLanguages = self.languages(for: .filterLists)
         
         for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords ?? [] {
             if let langRawValue = automaticFiltersLanguageRecord.lang,
@@ -89,25 +89,25 @@ class FilterListManager: FilterListManagerProtocol {
     }
     
     var filterListsCacheAge: Date? {
-        guard let persistanceManager = self.persistanceManager,
-              let cache = persistanceManager.fetchFilterListsCacheRecords().first else { return nil }
+        guard let persistenceManager = self.persistenceManager,
+              let cache = persistenceManager.fetchFilterListsCacheRecords().first else { return nil }
         
         return cache.age
     }
     
     func languages(for type: LanguageListView.Mode) -> [NLLanguage] {
-        guard let persistanceManager = self.persistanceManager else { return [] }
+        guard let persistenceManager = self.persistenceManager else { return [] }
         var supportedLanguages: [NLLanguage] = []
         
         switch type {
         case .blockLanguage:
             let remainingSupportedLanguages = NLLanguage.allSupportedCases
-                .filter({ !persistanceManager.isDuplicateFilter(language: $0) })
+                .filter({ !persistenceManager.isDuplicateFilter(language: $0) })
                 .sorted(by: Self.languageSortOrder)
             supportedLanguages.append(contentsOf: remainingSupportedLanguages)
             
-        case .automaticBlocking:
-            if let catalog = persistanceManager.cachedFilterListCatalog() {
+        case .filterLists:
+            if let catalog = persistenceManager.cachedFilterListCatalog() {
                 
                 for entry in catalog.lists {
                     guard let langRawValue = entry.language else { continue }
@@ -128,17 +128,17 @@ class FilterListManager: FilterListManagerProtocol {
     }
     
     func isFilterListActive(for language: NLLanguage) -> Bool {
-        guard let persistanceManager = self.persistanceManager else { return false }
-        let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
+        guard let persistenceManager = self.persistenceManager else { return false }
+        let automaticFiltersLanguage = persistenceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         return automaticFiltersLanguage.isActive
     }
     
     func setFilterListActive(for language: NLLanguage, value: Bool) {
-        guard let persistanceManager = self.persistanceManager else { return }
+        guard let persistenceManager = self.persistenceManager else { return }
         AppManager.logger.debug("setFilterListActive — '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(value, privacy: .public)")
-        let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
+        let automaticFiltersLanguage = persistenceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         automaticFiltersLanguage.isActive = value
-        _ = persistanceManager.commitAndAnnounce()
+        _ = persistenceManager.commitAndAnnounce()
     }
     
     @MainActor
@@ -193,14 +193,14 @@ class FilterListManager: FilterListManagerProtocol {
     }
     
     private weak var filterListService: FilterListServiceProtocol?
-    private weak var persistanceManager: PersistanceManagerProtocol?
+    private weak var persistenceManager: PersistenceManagerProtocol?
     private weak var networkSyncManager: NetworkSyncManagerProtocol?
     private var refreshTask: Task<Void, Never>?
     private var networkStatusTask: Task<Void, Never>?
 
     @MainActor
     private var didCheckFilterListsToday: Bool {
-        guard self.persistanceManager?.cachedFilterListCatalog() != nil else { return false }
+        guard self.persistenceManager?.cachedFilterListCatalog() != nil else { return false }
         guard let lastCheckDate = self.filterListsCacheAge else { return false }
         return lastCheckDate.daysBetween(date: Date()) == 0
     }
@@ -249,10 +249,10 @@ class FilterListManager: FilterListManagerProtocol {
 
     @MainActor
     private func performRefresh() async {
-        guard let persistanceManager = self.persistanceManager,
+        guard let persistenceManager = self.persistenceManager,
               let filterListService = self.filterListService else { return }
 
-        let cachedSnapshot = persistanceManager.cachedFilterLists()
+        let cachedSnapshot = persistenceManager.cachedFilterLists()
         guard let revalidatedCatalog = await self.fetchCatalog(revalidating: cachedSnapshot, service: filterListService) else { return }
         let (catalog, catalogETag) = revalidatedCatalog
         let (revalidatedLists, hasFailedLists) = await self.fetchLists(in: catalog, revalidating: cachedSnapshot, service: filterListService)
@@ -265,14 +265,14 @@ class FilterListManager: FilterListManagerProtocol {
         guard hasSnapshotChanged else {
             if !hasFailedLists {
                 AppManager.logger.debug("performRefresh — no changes, touching the cache age")
-                persistanceManager.touchCache()
+                persistenceManager.touchCache()
             }
             else {
                 AppManager.logger.debug("performRefresh — no changes but some lists failed, leaving the cache age alone")
             }
             return
         }
-        guard persistanceManager.saveCache(refreshedSnapshot) else {
+        guard persistenceManager.saveCache(refreshedSnapshot) else {
             AppManager.logger.error("performRefresh — saving the cache failed")
             return
         }

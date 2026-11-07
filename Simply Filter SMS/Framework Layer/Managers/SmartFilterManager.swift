@@ -10,57 +10,57 @@ import Foundation
 class SmartFilterManager: SmartFilterManagerProtocol {
 
     //MARK: - Initialization -
-    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
-        self.persistanceManager = persistanceManager
+    init(persistenceManager: PersistenceManagerProtocol = AppManager.shared.persistenceManager) {
+        self.persistenceManager = persistenceManager
     }
 
 
     //MARK: - Public API (SmartFilterManagerProtocol) -
-    var rules: [RuleType] {
-        return RuleType.allCases
+    var rules: [SmartFilterType] {
+        return SmartFilterType.allCases
     }
 
-    func ruleState(for rule: RuleType) -> Bool {
-        guard let persistanceManager = self.persistanceManager,
-              let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return false }
+    func ruleState(for rule: SmartFilterType) -> Bool {
+        guard let persistenceManager = self.persistenceManager,
+              let automaticFiltersRule = persistenceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return false }
         return automaticFiltersRule.isActive
     }
 
-    func setRuleState(for rule: RuleType, value: Bool) {
-        guard let persistanceManager = self.persistanceManager else { return }
+    func setRuleState(for rule: SmartFilterType, value: Bool) {
+        guard let persistenceManager = self.persistenceManager else { return }
         AppManager.logger.debug("setRuleState — '\(rule.title, privacy: .public)' → \(value, privacy: .public)")
-        let automaticFiltersRule = persistanceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
+        let automaticFiltersRule = persistenceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
         automaticFiltersRule.isActive = value
-        if automaticFiltersRule.ruleType == .shortSender && automaticFiltersRule.selectedChoice < 3 {
+        if automaticFiltersRule.smartFilterType == .shortSender && automaticFiltersRule.selectedChoice < 3 {
             automaticFiltersRule.selectedChoice = 6
         }
-        _ = persistanceManager.commitAndAnnounce()
+        _ = persistenceManager.commitAndAnnounce()
     }
 
-    func selectedChoice(for rule: RuleType) -> Int {
-        guard let persistanceManager = self.persistanceManager,
-              let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return 0 }
+    func selectedChoice(for rule: SmartFilterType) -> Int {
+        guard let persistenceManager = self.persistenceManager,
+              let automaticFiltersRule = persistenceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return 0 }
         return Int(automaticFiltersRule.selectedChoice)
     }
 
-    func setSelectedChoice(for rule: RuleType, choice: Int) {
-        guard let persistanceManager = self.persistanceManager,
-              let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
+    func setSelectedChoice(for rule: SmartFilterType, choice: Int) {
+        guard let persistenceManager = self.persistenceManager,
+              let automaticFiltersRule = persistenceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
         AppManager.logger.debug("setSelectedChoice — '\(rule.title, privacy: .public)' → \(choice, privacy: .public)")
         automaticFiltersRule.selectedChoice = Int64(choice)
-        _ = persistanceManager.commitAndAnnounce()
+        _ = persistenceManager.commitAndAnnounce()
     }
 
-    func selectedCountries(for rule: RuleType) -> [String] {
-        return self.persistanceManager?.selectedCountries(for: rule) ?? []
+    func selectedCountries(for rule: SmartFilterType) -> [String] {
+        return self.persistenceManager?.selectedCountries(for: rule) ?? []
     }
 
-    func setSelectedCountries(_ countries: [String], for rule: RuleType) {
+    func setSelectedCountries(_ countries: [String], for rule: SmartFilterType) {
         AppManager.logger.debug("setSelectedCountries — \(countries, privacy: .public)")
-        self.persistanceManager?.setSelectedCountries(countries, for: rule)
+        self.persistenceManager?.setSelectedCountries(countries, for: rule)
     }
 
 
     //MARK: - Private  -
-    private weak var persistanceManager: PersistanceManagerProtocol?
+    private weak var persistenceManager: PersistenceManagerProtocol?
 }

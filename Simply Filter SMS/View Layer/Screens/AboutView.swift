@@ -253,8 +253,8 @@ extension AboutView {
             super.init(appManager: appManager)
 
             NotificationCenter.default.addObserver(forName: .onClipboardSet, object: nil, queue: .main) { not in
-                guard let notficationObject = not.object as? NotificationView.Notification else { return }
-                self.showNotification(notficationObject)
+                guard let notificationObject = not.object as? NotificationView.Notification else { return }
+                self.showNotification(notificationObject)
             }
         }
 

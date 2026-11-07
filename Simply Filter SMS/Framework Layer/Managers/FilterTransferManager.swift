@@ -13,9 +13,9 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     private(set) var pendingKind: FilterTransferKind = .importFilters
 
     //MARK: - Initialization -
-    init(persistanceManager: PersistanceManagerProtocol,
+    init(persistenceManager: PersistenceManagerProtocol,
          fileManager: FileManager = .default) {
-        self.persistanceManager = persistanceManager
+        self.persistenceManager = persistenceManager
         self.fileManager = fileManager
     }
 
@@ -108,7 +108,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
 
             let key = candidate.duplicateKey
             let isStoreDuplicate = !typesToClear.contains(candidate.type) &&
-                self.persistanceManager.isDuplicateFilter(text: candidate.text,
+                self.persistenceManager.isDuplicateFilter(text: candidate.text,
                                                           filterTarget: candidate.filterTarget,
                                                           filterMatching: candidate.filterMatching,
                                                           filterCase: candidate.filterCase)
@@ -148,17 +148,17 @@ class FilterTransferManager: FilterTransferManagerProtocol {
 
     func importFilters(_ candidates: [FilterTransferCandidate]) -> FilterTransferResult {
         for type in self.pendingPreview.forceClearTypes {
-            let existing = self.persistanceManager.fetchFilterRecords(for: type)
+            let existing = self.persistenceManager.fetchFilterRecords(for: type)
             if !existing.isEmpty {
                 AppManager.logger.debug("importFilters — force clear \(type.exportKey, privacy: .public): deleting \(existing.count, privacy: .public)")
-                self.persistanceManager.deleteFilters(Set(existing))
+                self.persistenceManager.deleteFilters(Set(existing))
             }
         }
 
         var added = 0
 
         for candidate in candidates {
-            if self.persistanceManager.addFilter(text: candidate.text,
+            if self.persistenceManager.addFilter(text: candidate.text,
                                                  type: candidate.type,
                                                  denyFolder: candidate.denyFolder,
                                                  filterTarget: candidate.filterTarget,
@@ -178,7 +178,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
 
 
     //MARK: - Private -
-    private let persistanceManager: PersistanceManagerProtocol
+    private let persistenceManager: PersistenceManagerProtocol
     private let fileManager: FileManager
     private var lastImportResult: FilterTransferResult?
     private var pendingExportURL: URL?
@@ -203,13 +203,13 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     private func candidatesFromStore() -> [FilterTransferCandidate] {
-        return self.persistanceManager.fetchFilterRecords().compactMap { filter in
+        return self.persistenceManager.fetchFilterRecords().compactMap { filter in
             guard let text = filter.text, text.isEmpty == false else { return nil }
             guard filter.filterType.isTransferable else { return nil }
             return FilterTransferCandidate(id: filter.uuid ?? UUID(),
                                          text: text,
                                          type: filter.filterType,
-                                         denyFolder: filter.denyFolderType,
+                                         denyFolder: filter.messageFolder,
                                          filterTarget: filter.filterTarget,
                                          filterMatching: filter.filterMatching,
                                          filterCase: filter.filterCase)

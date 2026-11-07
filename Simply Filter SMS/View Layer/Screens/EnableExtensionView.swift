@@ -159,7 +159,7 @@ extension EnableExtensionView {
 #Preview {
     EnableExtensionView(
         model: EnableExtensionView.ViewModel(
-            steps: Array(EnableExtensionStep.allCases),
+            steps: Array(EnableFilterExtensionStep.allCases),
             isInteractiveDismissDisabled: false,
             onDismiss: {},
             onCTA: {},

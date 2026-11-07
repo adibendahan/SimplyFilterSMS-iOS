@@ -15,7 +15,7 @@ class AppManager: AppManagerProtocol {
     static let shared: AppManagerProtocol = AppManager()
     static let logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
     
-    var persistanceManager: PersistanceManagerProtocol
+    var persistenceManager: PersistenceManagerProtocol
     var defaultsManager: DefaultsManagerProtocol
     var filterListManager: FilterListManagerProtocol
     var smartFilterManager: SmartFilterManagerProtocol
@@ -30,20 +30,20 @@ class AppManager: AppManagerProtocol {
     var debugDataManager: DebugDataManagerProtocol
 
     init(inMemory: Bool = false) {
-        let persistanceManager = PersistanceManager(inMemory: inMemory)
+        let persistenceManager = PersistenceManager(inMemory: inMemory)
         let defaultsManager = DefaultsManager()
-        let messageEvaluationManager = MessageEvaluationManager(persistanceManager: persistanceManager)
-        let networkSyncManager = NetworkSyncManager(persistanceManager: persistanceManager)
+        let messageEvaluationManager = MessageEvaluationManager(persistenceManager: persistenceManager)
+        let networkSyncManager = NetworkSyncManager(persistenceManager: persistenceManager)
         let filterListService = FilterListService(networkSyncManager: networkSyncManager)
         let reportMessageService = ReportMessageService(networkSyncManager: networkSyncManager)
         
         messageEvaluationManager.setLogger(AppManager.logger)
         
-        let filterListManager = FilterListManager(persistanceManager: persistanceManager,
+        let filterListManager = FilterListManager(persistenceManager: persistenceManager,
                                                   filterListService: filterListService,
                                                   networkSyncManager: networkSyncManager)
-        let smartFilterManager = SmartFilterManager(persistanceManager: persistanceManager)
-        self.persistanceManager = persistanceManager
+        let smartFilterManager = SmartFilterManager(persistenceManager: persistenceManager)
+        self.persistenceManager = persistenceManager
         self.defaultsManager = defaultsManager
         self.filterListManager = filterListManager
         self.smartFilterManager = smartFilterManager
@@ -52,11 +52,11 @@ class AppManager: AppManagerProtocol {
         self.filterListService = filterListService
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
-        self.filterTransferManager = FilterTransferManager(persistanceManager: persistanceManager)
+        self.filterTransferManager = FilterTransferManager(persistenceManager: persistenceManager)
         self.flowManager = FlowManager(defaultsManager: defaultsManager)
         self.schedulingManager = SchedulingManager(filterListManager: filterListManager,
                                                    defaultsManager: defaultsManager)
-        self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
+        self.debugDataManager = DebugDataManager(persistenceManager: persistenceManager,
                                                  defaultsManager: defaultsManager,
                                                  filterListManager: filterListManager,
                                                  smartFilterManager: smartFilterManager)
@@ -64,7 +64,7 @@ class AppManager: AppManagerProtocol {
         #if DEBUG
         if UIApplication.shared.isInTestingMode {
             defaultsManager.reset()
-            persistanceManager.resetContainer()
+            persistenceManager.resetContainer()
             let testingLanguages = ["en", "he", "ar", "es", "fr", "pt", "de", "ja", "ko", "it"]
             var catalogEntries: [FilterListCatalogEntry] = []
             var cacheSections: [FilterListsCacheSection] = []
@@ -95,7 +95,7 @@ class AppManager: AppManagerProtocol {
                                                     version: FilterListCatalogResponse.currentVersion,
                                                     lists: catalogEntries)
             let testingSnapshot = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: cacheSections)
-            _ = persistanceManager.saveCache(testingSnapshot)
+            _ = persistenceManager.saveCache(testingSnapshot)
             defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
         }
         #endif // DEBUG
@@ -144,7 +144,7 @@ class AppManager: AppManagerProtocol {
 
     func reset() {
         self.defaultsManager.reset()
-        self.persistanceManager.clearAllUserData()
+        self.persistenceManager.clearAllUserData()
         _ = self.filterTransferManager.clearPendingImport()
         self.filterTransferManager.clearPendingExport()
         self.flowManager.resetSession()

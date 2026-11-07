@@ -136,7 +136,7 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     }
 }
 
-enum DenyFolderType: Int64, CaseIterable, Identifiable {
+enum MessageFolder: Int64, CaseIterable, Identifiable {
     var id: Int64 { return self.rawValue }
     
     case junk=0, transaction, promotion
@@ -374,7 +374,7 @@ enum ReportType: Int64, CaseIterable, Identifiable {
     }
 }
 
-enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
+enum SmartFilterType: Int64, CaseIterable, Equatable, Identifiable {
     case allUnknown=0, links, numbersOnly, shortSender, email, emojis, countryAllowlist=6
     
     var id: Self { self }

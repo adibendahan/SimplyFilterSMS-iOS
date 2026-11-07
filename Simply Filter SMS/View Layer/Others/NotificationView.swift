@@ -422,7 +422,7 @@ private struct NotificationActionButtonStyle: ViewModifier {
     }
 }
 
-struct NotificationToastView_Previews: PreviewProvider {
+struct NotificationView_Previews: PreviewProvider {
     static var previews: some View {
         let model = NotificationView.ViewModel(notification: .filterListsUpdated)
         NavigationView {

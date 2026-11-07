@@ -27,7 +27,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     @ObservedObject var model: ViewModel
 
     @ScaledMetric(relativeTo: .title) private var shieldIconSize: CGFloat = 34
-    @ScaledMetric(relativeTo: .title3) private var autoFilterTitleSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .title3) private var filterListsTitleSize: CGFloat = 20
     @ScaledMetric(relativeTo: .body) private var badgeFontSize: CGFloat = 16
     @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
 
@@ -40,7 +40,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 
                 //MARK: Automatic Filtering
                 Section {
-                    let screen: Screen = .automaticBlocking
+                    let screen: Screen = .filterLists
                     
                     AdaptiveRow {
                         Group {
@@ -163,7 +163,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             if let screen = selectedScreen ?? model.navigationScreen {
                 screen.build()
             } else {
-                CustomPlaceholderView()
+                DetailPlaceholderView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.listBackgroundColor(for: colorScheme))
             }
@@ -239,7 +239,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     private var filterListsTextColumn: some View {
         VStack(alignment: .leading) {
             Text("autoFilter_title"~)
-                .font(.system(size: autoFilterTitleSize, weight: .bold, design: .rounded))
+                .font(.system(size: filterListsTitleSize, weight: .bold, design: .rounded))
                 .fixedSize(horizontal: false, vertical: true)
 
             if !self.model.subtitle.isEmpty {
@@ -274,14 +274,14 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     }
     
     @ViewBuilder
-    private func smartFilterToggle(index: Int, rule: RuleType, isDisabled: Bool) -> some View {
+    private func smartFilterToggle(index: Int, rule: SmartFilterType, isDisabled: Bool) -> some View {
         AdaptiveToggle(isOn: $model.rules[index].state) {
             smartFilterLabel(index: index, rule: rule, isDisabled: isDisabled)
         }
     }
 
     @ViewBuilder
-    private func smartFilterLabel(index: Int, rule: RuleType, isDisabled: Bool) -> some View {
+    private func smartFilterLabel(index: Int, rule: SmartFilterType, isDisabled: Bool) -> some View {
         HStack(alignment: .top, spacing: 8) {
             smartFilterIcon(index: index, rule: rule, isDisabled: isDisabled)
 
@@ -291,7 +291,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     }
 
     @ViewBuilder
-    private func smartFilterIcon(index: Int, rule: RuleType, isDisabled: Bool) -> some View {
+    private func smartFilterIcon(index: Int, rule: SmartFilterType, isDisabled: Bool) -> some View {
         if rule.isTextIcon {
             let ruleKey: String = rule.title
             let baseEmoji = rule.icon
@@ -315,7 +315,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     }
 
     @ViewBuilder
-    private func smartFilterTextColumn(index: Int, rule: RuleType, isDisabled: Bool) -> some View {
+    private func smartFilterTextColumn(index: Int, rule: SmartFilterType, isDisabled: Bool) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             let color = rule.isDestructive && model.rules[index].state ? Color.red : .primary
             Text(rule.title)
@@ -337,7 +337,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     }
 
     @ViewBuilder
-    private func smartFilterShortSenderControls(subtitle: String, action: String, actionTitle: String, rule: RuleType) -> some View {
+    private func smartFilterShortSenderControls(subtitle: String, action: String, actionTitle: String, rule: SmartFilterType) -> some View {
         AdaptiveFlowRow {
             Text(subtitle)
                 .font(.caption2)
@@ -461,7 +461,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 
             Menu {
                 Button {
-                    self.model.requestSheet(.testFilters)
+                    self.model.requestSheet(.filterTester)
                 } label: {
                     Label("testFilters_title"~, systemImage: "arrow.up.message")
                 }
@@ -555,7 +555,7 @@ extension AppHomeView {
         @Published private(set) var shortSenderChoice: Int
         @Published private(set) var subtitle: String
         @Published private(set) var selectedCountriesSummary: String
-        @Published var rules: [StatefulItem<RuleType>]
+        @Published var rules: [StatefulItem<SmartFilterType>]
         @Published var notification: NotificationView.ViewModel
         @Published var navigationScreen: Screen? = nil {
             didSet {
@@ -602,17 +602,17 @@ extension AppHomeView {
             self.hasActiveFilterLists = hasActiveFilterLists
             self.isAllUnknownFilteringOn = appManager.smartFilterManager.ruleState(for: .allUnknown)
             self.shortSenderChoice = appManager.smartFilterManager.selectedChoice(for: .shortSender)
-            self.filters = appManager.persistanceManager.fetchFilterRecords()
+            self.filters = appManager.persistenceManager.fetchFilterRecords()
             self.rules = []
             self.notification = NotificationView.ViewModel(notification: .offline)
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
             self.customAccent = Color(accentRGB: appManager.defaultsManager.accentColorRGB)
-            self.lastUIFingerprint = appManager.persistanceManager.fingerprint
+            self.lastUIFingerprint = appManager.persistenceManager.fingerprint
 
             self.rules = appManager.smartFilterManager.rules
                 .map({
-                    StatefulItem<RuleType>(item: $0,
+                    StatefulItem<SmartFilterType>(item: $0,
                                            getter: appManager.smartFilterManager.ruleState,
                                            setter: self.setRuleState) })
                 .sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
@@ -628,19 +628,19 @@ extension AppHomeView {
             self.hasActiveFilterLists = hasActiveFilterLists
             self.isAllUnknownFilteringOn = self.appManager.smartFilterManager.ruleState(for: .allUnknown)
             self.shortSenderChoice = self.appManager.smartFilterManager.selectedChoice(for: .shortSender)
-            self.filters = self.appManager.persistanceManager.fetchFilterRecords()
+            self.filters = self.appManager.persistenceManager.fetchFilterRecords()
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: self.appManager)
-            self.rules = self.appManager.smartFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
+            self.rules = self.appManager.smartFilterManager.rules.map({ StatefulItem<SmartFilterType>(item: $0,
                                                                                                    getter: self.appManager.smartFilterManager.ruleState,
                                                                                                    setter: self.setRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
-            self.lastUIFingerprint = self.appManager.persistanceManager.fingerprint
+            self.lastUIFingerprint = self.appManager.persistenceManager.fingerprint
             if self.sheetScreen != .chooseAccentColor {
                 self.customAccent = Color(accentRGB: self.appManager.defaultsManager.accentColorRGB)
             }
             self.showPendingNotification()
         }
         
-        func setSelectedChoice(for rule: RuleType, choice: Int) {
+        func setSelectedChoice(for rule: SmartFilterType, choice: Int) {
             self.appManager.smartFilterManager.setSelectedChoice(for: rule, choice: choice)
             self.refresh()
         }
@@ -962,7 +962,7 @@ extension AppHomeView {
         }
 
         private func catchUpFromStoreIfNeeded() {
-            let currentFingerprint = self.appManager.persistanceManager.fingerprint
+            let currentFingerprint = self.appManager.persistenceManager.fingerprint
             guard currentFingerprint != self.lastUIFingerprint else { return }
             AppManager.logger.debug("AppHome — store ahead of UI, catching up")
             self.refresh()
@@ -1067,7 +1067,7 @@ extension AppHomeView {
             return lastDismissDate.addingTimeInterval(snoozeDuration) > Date()
         }
         
-        private func setRuleState(for rule: RuleType, value: Bool) {
+        private func setRuleState(for rule: SmartFilterType, value: Bool) {
             self.appManager.smartFilterManager.setRuleState(for: rule, value: value)
             self.refresh()
         }

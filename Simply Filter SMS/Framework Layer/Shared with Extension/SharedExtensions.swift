@@ -28,9 +28,9 @@ extension Filter {
         }
     }
 
-    var denyFolderType: DenyFolderType {
+    var messageFolder: MessageFolder {
         get {
-            return DenyFolderType(rawValue: self.folderType) ?? .junk
+            return MessageFolder(rawValue: self.folderType) ?? .junk
         }
         set {
             self.folderType = newValue.rawValue
@@ -66,9 +66,9 @@ extension Filter {
 }
 
 extension AutomaticFiltersRule {
-    var ruleType: RuleType? {
+    var smartFilterType: SmartFilterType? {
         get {
-            return RuleType(rawValue: self.ruleId)
+            return SmartFilterType(rawValue: self.ruleId)
         }
         set {
             self.ruleId = newValue?.rawValue ?? -1
@@ -240,7 +240,7 @@ extension FilterType {
     }
 }
 
-extension DenyFolderType {
+extension MessageFolder {
     var exportKey: String {
         switch self {
         case .junk:

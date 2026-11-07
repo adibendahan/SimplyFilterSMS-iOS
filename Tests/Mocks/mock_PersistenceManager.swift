@@ -1,5 +1,5 @@
 //
-//  mock_PersistanceManager.swift
+//  mock_PersistenceManager.swift
 //  Tests
 //
 //  Created by Adi Ben-Dahan on 29/01/2022.
@@ -11,7 +11,7 @@ import CoreData
 import NaturalLanguage
 @testable import Simply_Filter_SMS
 
-class mock_PersistanceManager: PersistanceManagerProtocol {
+class mock_PersistenceManager: PersistenceManagerProtocol {
     
     var addFilterCounter = 0
     var isDuplicateFilterCounter = 0
@@ -43,12 +43,12 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var selectedCountriesCounter = 0
     var setSelectedCountriesCounter = 0
     
-    var addFilterClosure: ((String, FilterType, DenyFolderType, FilterTarget, FilterMatching, FilterCase) -> ())?
+    var addFilterClosure: ((String, FilterType, MessageFolder, FilterTarget, FilterMatching, FilterCase) -> ())?
     var isDuplicateFilterClosure: ((String, FilterTarget, FilterMatching, FilterCase) -> (Bool))?
     var isDuplicateFilterLanguageClosure: ((NLLanguage) -> (Bool))?
     var deleteFiltersOffsetsClosure: ((IndexSet, [Filter]) -> ())?
     var deleteFiltersClosure: ((Set<Filter>) -> ())?
-    var updateFilterDenyFolderClosure: ((Filter, DenyFolderType) -> ())?
+    var updateFilterDenyFolderClosure: ((Filter, MessageFolder) -> ())?
     var updateFilterCaseClosure: ((Filter, FilterCase) -> ())?
     var updateFilterTargetClosure: ((Filter, FilterTarget) -> ())?
     var updateFilterMatchingClosure: ((Filter, FilterMatching) -> ())?
@@ -64,13 +64,13 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     var fetchAutomaticFiltersRuleRecordsClosure: (() -> ([AutomaticFiltersRule]))?
     var fetchFilterListsCacheRecordsClosure: (() -> ([FilterListsCache]))?
     var fetchAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage?))?
-    var fetchAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule?))?
+    var fetchAutomaticFiltersRuleRecordClosure: ((SmartFilterType) -> (AutomaticFiltersRule?))?
     var ensuredAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage))?
-    var ensuredAutomaticFiltersRuleRecordClosure: ((RuleType) -> (AutomaticFiltersRule))?
+    var ensuredAutomaticFiltersRuleRecordClosure: ((SmartFilterType) -> (AutomaticFiltersRule))?
     var reloadContainerClosure: (() -> ())?
     var fingerprintClosure: (() -> (String))?
-    var selectedCountriesClosure: ((RuleType) -> ([String]))?
-    var setSelectedCountriesClosure: ((([String], RuleType) -> ()))?
+    var selectedCountriesClosure: ((SmartFilterType) -> ([String]))?
+    var setSelectedCountriesClosure: ((([String], SmartFilterType) -> ()))?
     
 
     var fingerprint: String {
@@ -86,7 +86,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
     @discardableResult
     func addFilter(text: String,
                    type: FilterType,
-                   denyFolder: DenyFolderType,
+                   denyFolder: MessageFolder,
                    filterTarget: FilterTarget,
                    filterMatching: FilterMatching,
                    filterCase: FilterCase) -> Filter? {
@@ -120,7 +120,7 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.deleteFiltersClosure?(filters)
     }
 
-    func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
+    func updateFilter(_ filter: Filter, denyFolder: MessageFolder) {
         self.updateFilterDenyFolderCounter += 1
         self.updateFilterDenyFolderClosure?(filter, denyFolder)
     }
@@ -208,12 +208,12 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         return self.fetchAutomaticFiltersLanguageRecordClosure?(language) ?? nil
     }
     
-    func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule? {
+    func fetchAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule? {
         self.fetchAutomaticFiltersRuleRecordCounter += 1
         return self.fetchAutomaticFiltersRuleRecordClosure?(rule) ?? nil
     }
     
-    func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule {
+    func ensuredAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule {
         self.ensuredAutomaticFiltersRuleRecordCounter += 1
         return self.ensuredAutomaticFiltersRuleRecordClosure?(rule) ?? AutomaticFiltersRule(context: self.context)
     }
@@ -228,24 +228,24 @@ class mock_PersistanceManager: PersistanceManagerProtocol {
         self.reloadContainerClosure?()
     }
 
-    func selectedCountries(for rule: RuleType) -> [String] {
+    func selectedCountries(for rule: SmartFilterType) -> [String] {
         self.selectedCountriesCounter += 1
         return self.selectedCountriesClosure?(rule) ?? []
     }
 
-    func setSelectedCountries(_ countries: [String], for rule: RuleType) {
+    func setSelectedCountries(_ countries: [String], for rule: SmartFilterType) {
         self.setSelectedCountriesCounter += 1
         self.setSelectedCountriesClosure?(countries, rule)
     }
 
     //MARK: Helpers
-    private var persistance = PersistanceManager(inMemory: true)
+    private var persistence = PersistenceManager(inMemory: true)
     var context: NSManagedObjectContext
-    var preview: PersistanceManagerProtocol
+    var preview: PersistenceManagerProtocol
     
     init() {
-        self.context = persistance.context
-        self.preview = persistance
+        self.context = persistence.context
+        self.preview = persistence
     }
     
     func resetCounters() {

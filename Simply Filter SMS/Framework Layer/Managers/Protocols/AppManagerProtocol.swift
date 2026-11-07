@@ -11,7 +11,7 @@ import OSLog
 protocol AppManagerProtocol {
     static var logger: Logger { get }
     
-    var persistanceManager: PersistanceManagerProtocol { get }
+    var persistenceManager: PersistenceManagerProtocol { get }
     var defaultsManager: DefaultsManagerProtocol { get set }
     var filterListManager: FilterListManagerProtocol { get }
     var smartFilterManager: SmartFilterManagerProtocol { get }

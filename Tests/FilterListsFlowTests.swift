@@ -16,12 +16,12 @@ class FilterListsFlowTests: XCTestCase {
     //MARK: Test Lifecycle
     override func setUp() {
         super.setUp()
-        self.persistanceManager = PersistanceManager(inMemory: true)
+        self.persistenceManager = PersistenceManager(inMemory: true)
         self.filterListService = mock_FilterListService()
-        self.filterListManager = FilterListManager(persistanceManager: self.persistanceManager,
+        self.filterListManager = FilterListManager(persistenceManager: self.persistenceManager,
                                                    filterListService: self.filterListService)
-        self.smartFilterManager = SmartFilterManager(persistanceManager: self.persistanceManager)
-        self.messageEvaluationManager = MessageEvaluationManager(persistanceManager: self.persistanceManager)
+        self.smartFilterManager = SmartFilterManager(persistenceManager: self.persistenceManager)
+        self.messageEvaluationManager = MessageEvaluationManager(persistenceManager: self.persistenceManager)
     }
 
 
@@ -46,7 +46,7 @@ class FilterListsFlowTests: XCTestCase {
         self.filterListManager.setFilterListActive(for: .english, value: false)
 
         // Verify
-        XCTAssertEqual(Set(self.filterListManager.languages(for: .automaticBlocking)), [.hebrew, .english])
+        XCTAssertEqual(Set(self.filterListManager.languages(for: .filterLists)), [.hebrew, .english])
 
         let allowedSender = self.evaluate(body: "check https://link.com", sender: "BituahLeumi")
         XCTAssertEqual(allowedSender.action, .allow, "an allowed sender beats the links rule")
@@ -70,7 +70,7 @@ class FilterListsFlowTests: XCTestCase {
 
 
     //MARK: Private Variables and Helpers
-    private var persistanceManager: PersistanceManager!
+    private var persistenceManager: PersistenceManager!
     private var filterListService: mock_FilterListService!
     private var filterListManager: FilterListManager!
     private var smartFilterManager: SmartFilterManager!

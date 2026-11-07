@@ -13,7 +13,7 @@ class DebugDataManager: DebugDataManagerProtocol {
     struct FilterEntry {
         let text: String
         let type: FilterType
-        let denyFolder: DenyFolderType
+        let denyFolder: MessageFolder
         let filterTarget: FilterTarget
         let filterMatching: FilterMatching
         let filterCase: FilterCase
@@ -25,16 +25,16 @@ class DebugDataManager: DebugDataManagerProtocol {
         let denyLanguages: [NLLanguage]
     }
 
-    private let persistanceManager: PersistanceManagerProtocol
+    private let persistenceManager: PersistenceManagerProtocol
     private let defaultsManager: DefaultsManagerProtocol
     private let filterListManager: FilterListManagerProtocol
     private let smartFilterManager: SmartFilterManagerProtocol
 
-    init(persistanceManager: PersistanceManagerProtocol,
+    init(persistenceManager: PersistenceManagerProtocol,
          defaultsManager: DefaultsManagerProtocol,
          filterListManager: FilterListManagerProtocol,
          smartFilterManager: SmartFilterManagerProtocol) {
-        self.persistanceManager = persistanceManager
+        self.persistenceManager = persistenceManager
         self.defaultsManager = defaultsManager
         self.filterListManager = filterListManager
         self.smartFilterManager = smartFilterManager
@@ -42,9 +42,9 @@ class DebugDataManager: DebugDataManagerProtocol {
 
     #if DEBUG
     func expireFilterListsCache() {
-        guard let cache = self.persistanceManager.fetchFilterListsCacheRecords().first else { return }
+        guard let cache = self.persistenceManager.fetchFilterListsCacheRecords().first else { return }
         cache.age = Calendar.current.date(byAdding: .day, value: -7, to: Date())
-        _ = self.persistanceManager.commitContext()
+        _ = self.persistenceManager.commitContext()
     }
     #endif // DEBUG
 
@@ -59,7 +59,7 @@ class DebugDataManager: DebugDataManagerProtocol {
         let data = DebugDataManager.data(for: langCode)
 
         for entry in data.filters {
-            persistanceManager.addFilter(text: entry.text,
+            persistenceManager.addFilter(text: entry.text,
                                          type: entry.type,
                                          denyFolder: entry.denyFolder,
                                          filterTarget: entry.filterTarget,
@@ -68,7 +68,7 @@ class DebugDataManager: DebugDataManagerProtocol {
         }
 
         for language in data.denyLanguages {
-            persistanceManager.addFilter(text: language.filterText,
+            persistenceManager.addFilter(text: language.filterText,
                                          type: .denyLanguage,
                                          denyFolder: .junk,
                                          filterTarget: .body,
@@ -76,9 +76,9 @@ class DebugDataManager: DebugDataManagerProtocol {
                                          filterCase: .caseInsensitive)
         }
 
-        persistanceManager.setSelectedCountries(data.allowedCountryCodes, for: .countryAllowlist)
+        persistenceManager.setSelectedCountries(data.allowedCountryCodes, for: .countryAllowlist)
 
-        for rule in RuleType.allCases {
+        for rule in SmartFilterType.allCases {
             guard rule != .allUnknown else { continue }
             smartFilterManager.setRuleState(for: rule, value: true)
         }
@@ -87,7 +87,7 @@ class DebugDataManager: DebugDataManagerProtocol {
         // locales like Simplified Chinese are not in the AI filter lists — fall back
         // to English so Load Debug Data still turns AI Filtering ON for screenshots.
         let normalizedCode = String(langCode.split(separator: "-").first ?? Substring(langCode))
-        let supported = Set(filterListManager.languages(for: .automaticBlocking))
+        let supported = Set(filterListManager.languages(for: .filterLists))
         let preferred = [NLLanguage(langCode), NLLanguage(normalizedCode)].first { $0 != .undetermined }
         if let preferred, supported.contains(preferred) {
             filterListManager.setFilterListActive(for: preferred, value: true)

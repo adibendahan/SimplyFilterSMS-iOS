@@ -34,7 +34,7 @@ class TestApplication: XCUIApplication {
     
     func addFilter(type: FilterType,
                    text: String,
-                   denyFolderType: DenyFolderType? = nil,
+                   messageFolder: MessageFolder? = nil,
                    filterTarget: FilterTarget,
                    filterMatching: FilterMatching,
                    filterCase: FilterCase,
@@ -56,8 +56,8 @@ class TestApplication: XCUIApplication {
         self.tap(.expandButton)
         self.testCase.waitForUIToSettle()
         
-        if let denyFolderType = denyFolderType {
-            self.buttonContaining(denyFolderType.name).forceTap()
+        if let messageFolder = messageFolder {
+            self.buttonContaining(messageFolder.name).forceTap()
         }
 
         self.buttonContaining(filterTarget.name).forceTap()

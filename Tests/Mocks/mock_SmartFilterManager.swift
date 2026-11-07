@@ -20,45 +20,45 @@ class mock_SmartFilterManager: SmartFilterManagerProtocol {
     var selectedCountriesCounter = 0
     var setSelectedCountriesCounter = 0
 
-    var rulesClosure: (() -> ([RuleType]))?
-    var ruleStateClosure: ((RuleType) -> (Bool))?
-    var setRuleStateClosure: ((RuleType, Bool) -> ())?
-    var selectedChoiceClosure: ((RuleType) -> (Int))?
-    var setSelectedChoiceClosure: ((RuleType, Int) -> ())?
-    var selectedCountriesClosure: ((RuleType) -> ([String]))?
-    var setSelectedCountriesClosure: (([String], RuleType) -> ())?
+    var rulesClosure: (() -> ([SmartFilterType]))?
+    var ruleStateClosure: ((SmartFilterType) -> (Bool))?
+    var setRuleStateClosure: ((SmartFilterType, Bool) -> ())?
+    var selectedChoiceClosure: ((SmartFilterType) -> (Int))?
+    var setSelectedChoiceClosure: ((SmartFilterType, Int) -> ())?
+    var selectedCountriesClosure: ((SmartFilterType) -> ([String]))?
+    var setSelectedCountriesClosure: (([String], SmartFilterType) -> ())?
 
-    var rules: [RuleType] {
+    var rules: [SmartFilterType] {
         self.rulesGetCounter += 1
         return self.rulesClosure?() ?? []
     }
 
-    func ruleState(for rule: RuleType) -> Bool {
+    func ruleState(for rule: SmartFilterType) -> Bool {
         self.ruleStateCounter += 1
         return self.ruleStateClosure?(rule) ?? false
     }
 
-    func setRuleState(for rule: RuleType, value: Bool) {
+    func setRuleState(for rule: SmartFilterType, value: Bool) {
         self.setRuleStateCounter += 1
         self.setRuleStateClosure?(rule, value)
     }
 
-    func selectedChoice(for rule: RuleType) -> Int {
+    func selectedChoice(for rule: SmartFilterType) -> Int {
         self.selectedChoiceCounter += 1
         return self.selectedChoiceClosure?(rule) ?? 0
     }
 
-    func setSelectedChoice(for rule: RuleType, choice: Int) {
+    func setSelectedChoice(for rule: SmartFilterType, choice: Int) {
         self.setSelectedChoiceCounter += 1
         self.setSelectedChoiceClosure?(rule, choice)
     }
 
-    func selectedCountries(for rule: RuleType) -> [String] {
+    func selectedCountries(for rule: SmartFilterType) -> [String] {
         self.selectedCountriesCounter += 1
         return self.selectedCountriesClosure?(rule) ?? []
     }
 
-    func setSelectedCountries(_ countries: [String], for rule: RuleType) {
+    func setSelectedCountries(_ countries: [String], for rule: SmartFilterType) {
         self.setSelectedCountriesCounter += 1
         self.setSelectedCountriesClosure?(countries, rule)
     }

@@ -310,7 +310,7 @@ extension FiltersView {
                 self.footer = "lang_how"~
             }
             
-            let fetchedFilters = appManager.persistanceManager.fetchFilterRecords(for: filterType)
+            let fetchedFilters = appManager.persistenceManager.fetchFilterRecords(for: filterType)
             self.filters = fetchedFilters.filter({ $0.filterType == filterType })
             
             super.init(appManager: appManager)
@@ -324,7 +324,7 @@ extension FiltersView {
         }
         
         func refresh() {
-            let fetchedFilters = self.appManager.persistanceManager.fetchFilterRecords(for: self.filterType)
+            let fetchedFilters = self.appManager.persistenceManager.fetchFilterRecords(for: self.filterType)
 
             self.filters = fetchedFilters.filter({ $0.filterType == self.filterType })
             self.isAllUnknownFilteringOn = self.appManager.smartFilterManager.ruleState(for: .allUnknown)
@@ -391,7 +391,7 @@ extension FiltersView {
         
         func deleteFilters(_ filters: Set<Filter>) {
             guard !filters.isEmpty else { return }
-            self.appManager.persistanceManager.deleteFilters(filters)
+            self.appManager.persistenceManager.deleteFilters(filters)
             withAnimation {
                 self.filters.removeAll { filters.contains($0) }
                 self.selectedFilters.subtract(filters)
@@ -403,7 +403,7 @@ extension FiltersView {
 
 
 //MARK: - Preview -
-struct ContentView_Previews: PreviewProvider {
+struct FiltersView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             FiltersView(model: FiltersView.ViewModel(filterType: .allow, appManager: AppManager.previews))

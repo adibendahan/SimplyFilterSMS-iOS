@@ -1,5 +1,5 @@
 //
-//  ViewModfiers.swift
+//  ViewModifiers.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 02/02/2022.

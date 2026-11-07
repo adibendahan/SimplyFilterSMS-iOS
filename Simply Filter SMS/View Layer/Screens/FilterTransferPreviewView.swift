@@ -338,7 +338,7 @@ struct FilterTransferPreviewView_Previews: PreviewProvider {
             filters: [
                 FilterExportRecord(text: "promo",
                                    type: FilterType.deny.exportKey,
-                                   folder: DenyFolderType.junk.exportKey,
+                                   folder: MessageFolder.junk.exportKey,
                                    target: FilterTarget.body.exportKey,
                                    matching: FilterMatching.contains.exportKey,
                                    caseSensitivity: FilterCase.caseInsensitive.exportKey)
