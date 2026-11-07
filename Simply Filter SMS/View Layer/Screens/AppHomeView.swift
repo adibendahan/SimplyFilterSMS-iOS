@@ -600,7 +600,7 @@ extension AppHomeView {
             self.title = "filterList_filters"~
             self.subtitle = hasActiveFilterLists ? appManager.filterListManager.activeFilterListsTitle ?? "" : ""
             self.hasActiveFilterLists = hasActiveFilterLists
-            self.isAllUnknownFilteringOn = appManager.smartFilterManager.ruleState(for: .allUnknown)
+            self.isAllUnknownFilteringOn = appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.shortSenderChoice = appManager.smartFilterManager.selectedChoice(for: .shortSender)
             self.filters = appManager.persistenceManager.fetchFilterRecords()
             self.rules = []
@@ -610,11 +610,11 @@ extension AppHomeView {
             self.customAccent = Color(accentRGB: appManager.defaultsManager.accentColorRGB)
             self.lastUIFingerprint = appManager.persistenceManager.fingerprint
 
-            self.rules = appManager.smartFilterManager.rules
+            self.rules = appManager.smartFilterManager.smartFilterTypes
                 .map({
                     StatefulItem<SmartFilterType>(item: $0,
-                                           getter: appManager.smartFilterManager.ruleState,
-                                           setter: self.setRuleState) })
+                                           getter: appManager.smartFilterManager.isSmartFilterActive,
+                                           setter: self.setSmartFilterActive) })
                 .sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
 
             self.runLaunchFlowIfNeeded()
@@ -626,13 +626,13 @@ extension AppHomeView {
             self.title = "filterList_filters"~
             self.subtitle = hasActiveFilterLists ? self.appManager.filterListManager.activeFilterListsTitle ?? "" : ""
             self.hasActiveFilterLists = hasActiveFilterLists
-            self.isAllUnknownFilteringOn = self.appManager.smartFilterManager.ruleState(for: .allUnknown)
+            self.isAllUnknownFilteringOn = self.appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.shortSenderChoice = self.appManager.smartFilterManager.selectedChoice(for: .shortSender)
             self.filters = self.appManager.persistenceManager.fetchFilterRecords()
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: self.appManager)
-            self.rules = self.appManager.smartFilterManager.rules.map({ StatefulItem<SmartFilterType>(item: $0,
-                                                                                                   getter: self.appManager.smartFilterManager.ruleState,
-                                                                                                   setter: self.setRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
+            self.rules = self.appManager.smartFilterManager.smartFilterTypes.map({ StatefulItem<SmartFilterType>(item: $0,
+                                                                                                   getter: self.appManager.smartFilterManager.isSmartFilterActive,
+                                                                                                   setter: self.setSmartFilterActive) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
             self.lastUIFingerprint = self.appManager.persistenceManager.fingerprint
             if self.sheetScreen != .chooseAccentColor {
                 self.customAccent = Color(accentRGB: self.appManager.defaultsManager.accentColorRGB)
@@ -1067,8 +1067,8 @@ extension AppHomeView {
             return lastDismissDate.addingTimeInterval(snoozeDuration) > Date()
         }
         
-        private func setRuleState(for rule: SmartFilterType, value: Bool) {
-            self.appManager.smartFilterManager.setRuleState(for: rule, value: value)
+        private func setSmartFilterActive(for rule: SmartFilterType, value: Bool) {
+            self.appManager.smartFilterManager.setSmartFilterActive(for: rule, value: value)
             self.refresh()
         }
 

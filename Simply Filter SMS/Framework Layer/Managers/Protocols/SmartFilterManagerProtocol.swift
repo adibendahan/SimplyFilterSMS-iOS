@@ -8,10 +8,10 @@
 import Foundation
 
 protocol SmartFilterManagerProtocol {
-    var rules: [SmartFilterType] { get }
+    var smartFilterTypes: [SmartFilterType] { get }
 
-    func ruleState(for rule: SmartFilterType) -> Bool
-    func setRuleState(for rule: SmartFilterType, value: Bool)
+    func isSmartFilterActive(for rule: SmartFilterType) -> Bool
+    func setSmartFilterActive(for rule: SmartFilterType, value: Bool)
     func selectedChoice(for rule: SmartFilterType) -> Int
     func setSelectedChoice(for rule: SmartFilterType, choice: Int)
     func selectedCountries(for rule: SmartFilterType) -> [String]

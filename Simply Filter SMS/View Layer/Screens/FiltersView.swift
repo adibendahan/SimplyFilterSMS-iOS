@@ -298,7 +298,7 @@ extension FiltersView {
             self.filterType = filterType
             self.isFilterOptionsCollapsed = appManager.defaultsManager.isFilterOptionsCollapsed
             
-            self.isAllUnknownFilteringOn = appManager.smartFilterManager.ruleState(for: .allUnknown)
+            self.isAllUnknownFilteringOn = appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.canBlockAnotherLanguage = !appManager.filterListManager.languages(for: .blockLanguage).isEmpty
             
             switch filterType {
@@ -327,7 +327,7 @@ extension FiltersView {
             let fetchedFilters = self.appManager.persistenceManager.fetchFilterRecords(for: self.filterType)
 
             self.filters = fetchedFilters.filter({ $0.filterType == self.filterType })
-            self.isAllUnknownFilteringOn = self.appManager.smartFilterManager.ruleState(for: .allUnknown)
+            self.isAllUnknownFilteringOn = self.appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.canBlockAnotherLanguage = !self.appManager.filterListManager.languages(for: .blockLanguage).isEmpty
             self.updateRowViewModels()
         }

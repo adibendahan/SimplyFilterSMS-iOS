@@ -80,7 +80,7 @@ class DebugDataManager: DebugDataManagerProtocol {
 
         for rule in SmartFilterType.allCases {
             guard rule != .allUnknown else { continue }
-            smartFilterManager.setRuleState(for: rule, value: true)
+            smartFilterManager.setSmartFilterActive(for: rule, value: true)
         }
 
         // Prefer the full BCP-47 tag (zh-Hans), then the language code. Script-only

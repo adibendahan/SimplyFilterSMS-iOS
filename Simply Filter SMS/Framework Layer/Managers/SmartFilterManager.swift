@@ -16,19 +16,19 @@ class SmartFilterManager: SmartFilterManagerProtocol {
 
 
     //MARK: - Public API (SmartFilterManagerProtocol) -
-    var rules: [SmartFilterType] {
+    var smartFilterTypes: [SmartFilterType] {
         return SmartFilterType.allCases
     }
 
-    func ruleState(for rule: SmartFilterType) -> Bool {
+    func isSmartFilterActive(for rule: SmartFilterType) -> Bool {
         guard let persistenceManager = self.persistenceManager,
               let automaticFiltersRule = persistenceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return false }
         return automaticFiltersRule.isActive
     }
 
-    func setRuleState(for rule: SmartFilterType, value: Bool) {
+    func setSmartFilterActive(for rule: SmartFilterType, value: Bool) {
         guard let persistenceManager = self.persistenceManager else { return }
-        AppManager.logger.debug("setRuleState — '\(rule.title, privacy: .public)' → \(value, privacy: .public)")
+        AppManager.logger.debug("setSmartFilterActive — '\(rule.title, privacy: .public)' → \(value, privacy: .public)")
         let automaticFiltersRule = persistenceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
         automaticFiltersRule.isActive = value
         if automaticFiltersRule.smartFilterType == .shortSender && automaticFiltersRule.selectedChoice < 3 {

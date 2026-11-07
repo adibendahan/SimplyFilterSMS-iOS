@@ -35,7 +35,7 @@ class FilterListsFlowTests: XCTestCase {
         self.filterListService.fetchFilterListClosure = { url, _ in
             return self.listResponse(for: url)
         }
-        self.smartFilterManager.setRuleState(for: .links, value: true)
+        self.smartFilterManager.setSmartFilterActive(for: .links, value: true)
 
         let beforeRefresh = self.evaluate(body: "הלוואה מהירה", sender: "1234567")
         XCTAssertEqual(beforeRefresh.action, .allow, "nothing is blocked before the lists are downloaded")

@@ -44,7 +44,7 @@ class FiltersViewModelTests: XCTestCase {
     func test_refresh() {
         // Prepare
         self.defaultsManager.isAppFirstRunClosure = { return false }
-        self.smartFilterManager.ruleStateClosure = { smartFilterType in
+        self.smartFilterManager.isSmartFilterActiveClosure = { smartFilterType in
             switch smartFilterType {
             case .allUnknown:
                 return true
@@ -62,7 +62,7 @@ class FiltersViewModelTests: XCTestCase {
         
         // Verify
         XCTAssertEqual(self.persistenceManager.fetchFilterRecordsForTypeCounter, 1)
-        XCTAssertEqual(self.smartFilterManager.ruleStateCounter, 1)
+        XCTAssertEqual(self.smartFilterManager.isSmartFilterActiveCounter, 1)
         XCTAssertEqual(self.filterListManager.languagesCounter, 1)
         XCTAssertEqual(self.testSubject.isAllUnknownFilteringOn, true)
         XCTAssertEqual(self.testSubject.canBlockAnotherLanguage, true)

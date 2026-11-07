@@ -12,35 +12,35 @@ import XCTest
 
 class mock_SmartFilterManager: SmartFilterManagerProtocol {
 
-    var rulesGetCounter = 0
-    var ruleStateCounter = 0
-    var setRuleStateCounter = 0
+    var smartFilterTypesGetCounter = 0
+    var isSmartFilterActiveCounter = 0
+    var setSmartFilterActiveCounter = 0
     var selectedChoiceCounter = 0
     var setSelectedChoiceCounter = 0
     var selectedCountriesCounter = 0
     var setSelectedCountriesCounter = 0
 
-    var rulesClosure: (() -> ([SmartFilterType]))?
-    var ruleStateClosure: ((SmartFilterType) -> (Bool))?
-    var setRuleStateClosure: ((SmartFilterType, Bool) -> ())?
+    var smartFilterTypesClosure: (() -> ([SmartFilterType]))?
+    var isSmartFilterActiveClosure: ((SmartFilterType) -> (Bool))?
+    var setSmartFilterActiveClosure: ((SmartFilterType, Bool) -> ())?
     var selectedChoiceClosure: ((SmartFilterType) -> (Int))?
     var setSelectedChoiceClosure: ((SmartFilterType, Int) -> ())?
     var selectedCountriesClosure: ((SmartFilterType) -> ([String]))?
     var setSelectedCountriesClosure: (([String], SmartFilterType) -> ())?
 
-    var rules: [SmartFilterType] {
-        self.rulesGetCounter += 1
-        return self.rulesClosure?() ?? []
+    var smartFilterTypes: [SmartFilterType] {
+        self.smartFilterTypesGetCounter += 1
+        return self.smartFilterTypesClosure?() ?? []
     }
 
-    func ruleState(for rule: SmartFilterType) -> Bool {
-        self.ruleStateCounter += 1
-        return self.ruleStateClosure?(rule) ?? false
+    func isSmartFilterActive(for rule: SmartFilterType) -> Bool {
+        self.isSmartFilterActiveCounter += 1
+        return self.isSmartFilterActiveClosure?(rule) ?? false
     }
 
-    func setRuleState(for rule: SmartFilterType, value: Bool) {
-        self.setRuleStateCounter += 1
-        self.setRuleStateClosure?(rule, value)
+    func setSmartFilterActive(for rule: SmartFilterType, value: Bool) {
+        self.setSmartFilterActiveCounter += 1
+        self.setSmartFilterActiveClosure?(rule, value)
     }
 
     func selectedChoice(for rule: SmartFilterType) -> Int {
@@ -64,9 +64,9 @@ class mock_SmartFilterManager: SmartFilterManagerProtocol {
     }
 
     func resetCounters() {
-        self.rulesGetCounter = 0
-        self.ruleStateCounter = 0
-        self.setRuleStateCounter = 0
+        self.smartFilterTypesGetCounter = 0
+        self.isSmartFilterActiveCounter = 0
+        self.setSmartFilterActiveCounter = 0
         self.selectedChoiceCounter = 0
         self.setSelectedChoiceCounter = 0
         self.selectedCountriesCounter = 0

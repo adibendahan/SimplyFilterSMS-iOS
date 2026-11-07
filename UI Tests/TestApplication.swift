@@ -68,13 +68,13 @@ class TestApplication: XCUIApplication {
         
         self.textField(.filterText).typeText(text + "\n")
         self.waitForKeyboardToDismiss()
-        self.waitForHittable(self.button(.addFilteraddFilterButton))
+        self.waitForHittable(self.button(.addFilterConfirmButton))
         
         if let screenshotName = screenshotName {
             testCase.snapshotSettled(screenshotName)
         }
         
-        self.tap(.addFilteraddFilterButton)
+        self.tap(.addFilterConfirmButton)
         self.testCase.waitForUIToSettle()
     }
 

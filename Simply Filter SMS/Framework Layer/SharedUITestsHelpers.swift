@@ -30,7 +30,7 @@ enum TestIdentifier: String {
     case denyFiltersLink = "denyFiltersLink"
     case denyLanguageLink = "denyLanguageLink"
     case addFilterButton = "addFilterButton"
-    case addFilteraddFilterButton = "addFilteraddFilterButton"
+    case addFilterConfirmButton = "addFilterConfirmButton"
     case expandButton = "expandButton"
     case closeButton = "closeButton"
     case filterText = "filterText"

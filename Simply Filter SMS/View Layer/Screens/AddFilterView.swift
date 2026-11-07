@@ -203,7 +203,7 @@ struct AddFilterView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(FilledButton())
-                    .accessibilityIdentifier(TestIdentifier.addFilteraddFilterButton.rawValue)
+                    .accessibilityIdentifier(TestIdentifier.addFilterConfirmButton.rawValue)
                     .disabled(self.model.filterText.count < kMinimumFilterLength || self.model.isDuplicateFilter || self.model.isInvalidRegex)
                     .contentShape(Rectangle())
                 } // VStack
@@ -309,7 +309,7 @@ extension AddFilterView {
                 self.title = "addFilter_addFilter_deny"~
             }
             
-            let isAllUnknownFilteringOn = appManager.smartFilterManager.ruleState(for: .allUnknown)
+            let isAllUnknownFilteringOn = appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
             self.isExpanded = appManager.defaultsManager.isExpandedAddFilter
             

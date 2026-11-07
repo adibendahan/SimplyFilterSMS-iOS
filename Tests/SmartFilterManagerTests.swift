@@ -24,7 +24,7 @@ class SmartFilterManagerTests: XCTestCase {
 
 
     //MARK: Tests
-    func test_ruleState() {
+    func test_isSmartFilterActive() {
         // Prepare
         self.persistenceManager.fetchAutomaticFiltersRuleRecordClosure = { rule in
             let automaticFiltersRuleRecord = AutomaticFiltersRule(context: self.persistenceManager.context)
@@ -34,8 +34,8 @@ class SmartFilterManagerTests: XCTestCase {
         }
         
         // Act
-        let resultExpectedTrue = self.testSubject.ruleState(for: .email)
-        let resultExpectedFalse = self.testSubject.ruleState(for: .links)
+        let resultExpectedTrue = self.testSubject.isSmartFilterActive(for: .email)
+        let resultExpectedFalse = self.testSubject.isSmartFilterActive(for: .links)
         
         // Verify
         XCTAssertTrue(resultExpectedTrue)
@@ -43,9 +43,9 @@ class SmartFilterManagerTests: XCTestCase {
         XCTAssertEqual(self.persistenceManager.fetchAutomaticFiltersRuleRecordCounter, 2)
     }
     
-    func test_setRuleState() {
+    func test_setSmartFilterActive() {
         // Act
-        self.testSubject.setRuleState(for: .links, value: true)
+        self.testSubject.setSmartFilterActive(for: .links, value: true)
         
         // Verify
         XCTAssertEqual(self.persistenceManager.ensuredAutomaticFiltersRuleRecordCounter, 1)
