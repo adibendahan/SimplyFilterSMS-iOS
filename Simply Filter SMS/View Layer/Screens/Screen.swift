@@ -59,13 +59,13 @@ enum Screen: Int, Identifiable, Hashable {
                 LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking))
 
             case .denyFilterList:
-                FilterListView(model: FilterListView.ViewModel(filterType: .deny))
+                FiltersView(model: FiltersView.ViewModel(filterType: .deny))
 
             case .allowFilterList:
-                FilterListView(model: FilterListView.ViewModel(filterType: .allow))
+                FiltersView(model: FiltersView.ViewModel(filterType: .allow))
 
             case .denyLanguageFilterList:
-                FilterListView(model: FilterListView.ViewModel(filterType: .denyLanguage))
+                FiltersView(model: FiltersView.ViewModel(filterType: .denyLanguage))
 
             case .reportMessage:
                 ReportMessageView(model: ReportMessageView.ViewModel())

@@ -1,5 +1,5 @@
 //
-//  FilterListRowView.swift
+//  FilterRowView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 07/02/2022.
@@ -10,7 +10,7 @@ import NaturalLanguage
 
 
 //MARK: - View -
-struct FilterListRowView: View {
+struct FilterRowView: View {
 
     var dotFilterID: UUID?
     var focusedFilterID: FocusState<UUID?>.Binding
@@ -260,7 +260,7 @@ struct FilterListRowView: View {
 }
 
 //MARK: - View Model -
-extension FilterListRowView {
+extension FilterRowView {
     
     class ViewModel: BaseViewModel, ObservableObject {
         let id: UUID
@@ -331,15 +331,15 @@ extension FilterListRowView {
         @discardableResult
         func updateFilter(filterText: String) -> Bool {
             let current = self.filter.text ?? ""
-            AppManager.logger.debug("FilterListRow.updateFilter(text) — proposed: '\(filterText, privacy: .public)', current: '\(current, privacy: .public)'")
+            AppManager.logger.debug("FilterRow.updateFilter(text) — proposed: '\(filterText, privacy: .public)', current: '\(current, privacy: .public)'")
 
             guard filterText != current else {
-                AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, unchanged")
+                AppManager.logger.debug("FilterRow.updateFilter(text) — skipped, unchanged")
                 return false
             }
 
             if self.filter.filterMatching == .regex, (try? Regex(filterText)) == nil {
-                AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, invalid regex")
+                AppManager.logger.debug("FilterRow.updateFilter(text) — skipped, invalid regex")
                 self.text = current
                 return true
             }
@@ -349,16 +349,16 @@ extension FilterListRowView {
                 filterTarget: self.filter.filterTarget,
                 filterMatching: self.filter.filterMatching,
                 filterCase: self.filter.filterCase) else {
-                AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, duplicate")
+                AppManager.logger.debug("FilterRow.updateFilter(text) — skipped, duplicate")
                 self.text = current
                 return true
             }
 
-            AppManager.logger.debug("FilterListRow.updateFilter(text) — saving")
+            AppManager.logger.debug("FilterRow.updateFilter(text) — saving")
             self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
 
             guard self.filter.text == filterText else {
-                AppManager.logger.debug("FilterListRow.updateFilter(text) — save failed, reverted")
+                AppManager.logger.debug("FilterRow.updateFilter(text) — save failed, reverted")
                 self.text = self.filter.text ?? current
                 return true
             }
@@ -371,10 +371,10 @@ extension FilterListRowView {
 
 
 //MARK: - Preview -
-struct FilterListRowView_Previews: PreviewProvider {
+struct FilterRowView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            FilterListView(model: FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews))
+            FiltersView(model: FiltersView.ViewModel(filterType: .deny, appManager: AppManager.previews))
         }
     }
 }

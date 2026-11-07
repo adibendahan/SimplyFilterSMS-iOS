@@ -1,5 +1,5 @@
 //
-//  FilterListView.swift
+//  FiltersView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 20/12/2021.
@@ -10,7 +10,7 @@ import NaturalLanguage
 
 
 //MARK: - View -
-struct FilterListView: View, ViewWithPersistentStoreReload {
+struct FiltersView: View, ViewWithPersistentStoreReload {
     
     @Environment(\.presentationMode)
     var presentationMode: Binding<PresentationMode>
@@ -36,7 +36,7 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
         List (selection: $model.selectedFilters) {
             Section {
                 ForEach(self.model.regularRowViewModels, id: \.id) { rowModel in
-                    FilterListRowView(
+                    FilterRowView(
                         dotFilterID: dotFilterID,
                         focusedFilterID: $focusedFilterID,
                         model: rowModel,
@@ -65,7 +65,7 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
             if !self.model.regexFilters.isEmpty {
                 Section {
                     ForEach(self.model.regexRowViewModels, id: \.id) { rowModel in
-                        FilterListRowView(
+                        FilterRowView(
                             dotFilterID: dotFilterID,
                             focusedFilterID: $focusedFilterID,
                             model: rowModel,
@@ -266,11 +266,11 @@ struct FilterListView: View, ViewWithPersistentStoreReload {
 
 
 //MARK: - ViewModel -
-extension FilterListView {
+extension FiltersView {
     
     class ViewModel: BaseViewModel, ObservableObject, PersistentStoreReloadRefreshing {
         @Published private(set) var filters: [Filter]
-        @Published private(set) var rowViewModels: [FilterListRowView.ViewModel] = []
+        @Published private(set) var rowViewModels: [FilterRowView.ViewModel] = []
         @Published private(set) var filterType: FilterType
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var canBlockAnotherLanguage: Bool
@@ -285,10 +285,10 @@ extension FilterListView {
 
         var regularFilters: [Filter] { filters.filter { $0.filterMatching != .regex } }
         var regexFilters: [Filter] { filters.filter { $0.filterMatching == .regex } }
-        var regularRowViewModels: [FilterListRowView.ViewModel] {
+        var regularRowViewModels: [FilterRowView.ViewModel] {
             self.rowViewModels.filter({ $0.filter.filterMatching != .regex })
         }
-        var regexRowViewModels: [FilterListRowView.ViewModel] {
+        var regexRowViewModels: [FilterRowView.ViewModel] {
             self.rowViewModels.filter({ $0.filter.filterMatching == .regex })
         }
         
@@ -334,7 +334,7 @@ extension FilterListView {
 
         private func updateRowViewModels() {
             let existingViewModels = Dictionary(uniqueKeysWithValues: self.rowViewModels.map({ ($0.id, $0) }))
-            var updatedViewModels: [FilterListRowView.ViewModel] = []
+            var updatedViewModels: [FilterRowView.ViewModel] = []
 
             for filter in self.filters {
                 if let uuid = filter.uuid, let existing = existingViewModels[uuid] {
@@ -342,7 +342,7 @@ extension FilterListView {
                     updatedViewModels.append(existing)
                 }
                 else {
-                    let vm = FilterListRowView.ViewModel(
+                    let vm = FilterRowView.ViewModel(
                         filter: filter,
                         onUpdate: { [weak self] animated in
                             if animated {
@@ -384,7 +384,7 @@ extension FilterListView {
             }
         }
         
-        func deleteFilters(withOffsets offsets: IndexSet, rowViewModels: [FilterListRowView.ViewModel]) {
+        func deleteFilters(withOffsets offsets: IndexSet, rowViewModels: [FilterRowView.ViewModel]) {
             let toDelete = Set(offsets.map { rowViewModels[$0].filter })
             self.deleteFilters(toDelete)
         }
@@ -406,7 +406,7 @@ extension FilterListView {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            FilterListView(model: FilterListView.ViewModel(filterType: .allow, appManager: AppManager.previews))
+            FiltersView(model: FiltersView.ViewModel(filterType: .allow, appManager: AppManager.previews))
         }
     }
 }

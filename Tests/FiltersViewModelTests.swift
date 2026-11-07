@@ -1,5 +1,5 @@
 //
-//  FilterListViewModelTests.swift
+//  FiltersViewModelTests.swift
 //  Tests
 //
 //  Created by Adi Ben-Dahan on 29/01/2022.
@@ -9,9 +9,9 @@ import Foundation
 import XCTest
 @testable import Simply_Filter_SMS
 
-class FilterListViewModelTests: XCTestCase {
+class FiltersViewModelTests: XCTestCase {
     
-    private var testSubject: FilterListView.ViewModel = FilterListView.ViewModel(filterType: .deny)
+    private var testSubject: FiltersView.ViewModel = FiltersView.ViewModel(filterType: .deny)
     private var persistanceManager = mock_PersistanceManager()
     private var defaultsManager = mock_DefaultsManager()
     private var automaticFilterManager = mock_AutomaticFilterManager()
@@ -29,7 +29,7 @@ class FilterListViewModelTests: XCTestCase {
         appManager.defaultsManager = self.defaultsManager
         appManager.automaticFilterManager = self.automaticFilterManager
         
-        self.testSubject = FilterListView.ViewModel(filterType: .deny, appManager: appManager)
+        self.testSubject = FiltersView.ViewModel(filterType: .deny, appManager: appManager)
         self.persistanceManager.resetCounters()
         self.defaultsManager.resetCounters()
         self.automaticFilterManager.resetCounters()
