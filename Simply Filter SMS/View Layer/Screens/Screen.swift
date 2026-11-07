@@ -47,7 +47,7 @@ enum Screen: Int, Identifiable, Hashable {
                 FilterTesterView(model: FilterTesterView.ViewModel())
 
             case .addLanguageFilter:
-                LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage))
+                BlockLanguageView(model: BlockLanguageView.ViewModel())
 
             case .addAllowFilter:
                 AddFilterView(model: AddFilterView.ViewModel(filterType: .allow))
@@ -56,7 +56,7 @@ enum Screen: Int, Identifiable, Hashable {
                 AddFilterView(model: AddFilterView.ViewModel(filterType: .deny))
 
             case .filterLists:
-                LanguageListView(model: LanguageListView.ViewModel(mode: .filterLists))
+                FilterListLanguagesView(model: FilterListLanguagesView.ViewModel())
 
             case .denyFilters:
                 FiltersView(model: FiltersView.ViewModel(filterType: .deny))

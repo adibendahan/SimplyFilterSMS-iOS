@@ -35,22 +35,25 @@ The app tint picker, as a sheet from the Home menu only.
 Picks the countries allowed by the "country allowlist" rule, as a sheet from that rule's row on Home.
 - Sorted in three groups, each by calling code: Israel, then countries whose main language is the device's, then the rest.
 
-## TestFiltersView
+## FilterTesterView
 Type a sender and a message and see the verdict live, as a sheet from the menu.
 - A `ScrollView`, not a `Form`: a `Form` can't animate the row height when the result changes.
 - A blank sender means "test the body only": the view model evaluates with a numeric stand-in sender that isn't itself filtered.
 
-## LanguageListView
-One screen, two modes: `.automaticBlocking` (pushed from Home; toggles AI Filtering per language) and `.blockLanguage` (a sheet; adds a "deny language" filter).
-- Only `.blockLanguage` wraps itself in a `NavigationView`; the pushed mode uses Home's.
+## FilterListLanguagesView
+Pushed from Home; toggles AI Filtering per language.
 - The view model is `@unchecked Sendable` because `.refreshable` needs a `@Sendable` action.
+
+## BlockLanguageView
+A sheet that adds a "deny language" filter.
+- It wraps itself in a `NavigationView`; the pushed `FilterListLanguagesView` uses Home's.
 
 ## AddFilterView
 The add-filter sheet for allow and deny filters.
 - The duplicate warning is computed live against Core Data; `didAddFilter` hides it right after adding, when the new filter would otherwise match itself.
 - The "More/Less" state of the advanced options is remembered across launches.
 
-## FilterListView
+## FiltersView
 The list of one filter type (allow, deny or language), pushed from Home, with inline editing, swipe and bulk delete.
 - Regex filters get their own section.
 - **`EditableText` crash trap:** after Return, ending the session, clearing focus and the business `onCommit` are deferred to the next main-loop turn. Return's `triggerPrimaryAction` still writes to the text field after `onCommit` returns, so rebuilding the `List` inside that callback crashes with `EXC_BAD_ACCESS`.

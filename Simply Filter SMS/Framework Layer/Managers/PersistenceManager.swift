@@ -245,6 +245,12 @@ class PersistenceManager: PersistenceManagerProtocol {
         return true
     }
     
+    func blockableLanguages() -> [NLLanguage] {
+        return NLLanguage.allSupportedCases
+            .filter({ !self.isDuplicateFilter(language: $0) })
+            .sorted(by: NLLanguage.displayOrder)
+    }
+
     func isDuplicateFilter(language: NLLanguage) -> Bool {
         let predicate = NSPredicate(format: "text == %@", language.filterText)
         guard let _ = self.fetch(Filter.self, predicate: predicate)?.first else { return false }

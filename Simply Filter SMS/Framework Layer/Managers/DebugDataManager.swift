@@ -87,7 +87,7 @@ class DebugDataManager: DebugDataManagerProtocol {
         // locales like Simplified Chinese are not in the AI filter lists — fall back
         // to English so Load Debug Data still turns AI Filtering ON for screenshots.
         let normalizedCode = String(langCode.split(separator: "-").first ?? Substring(langCode))
-        let supported = Set(filterListManager.languages(for: .filterLists))
+        let supported = Set(filterListManager.filterListLanguages)
         let preferred = [NLLanguage(langCode), NLLanguage(normalizedCode)].first { $0 != .undetermined }
         if let preferred, supported.contains(preferred) {
             filterListManager.setFilterListActive(for: preferred, value: true)

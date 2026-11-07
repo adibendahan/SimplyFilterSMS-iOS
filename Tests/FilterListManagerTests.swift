@@ -162,44 +162,14 @@ class FilterListManagerTests: XCTestCase {
         XCTAssertEqual(self.persistenceManager.fetchFilterListsCacheRecordsCounter, 1)
     }
     
-    func test_languagesForBlockLanguage() {
-        // Prepare
-        self.persistenceManager.isDuplicateFilterLanguageClosure = { (_) in return true }
-        
-        // Act
-        let emptyResult = self.testSubject.languages(for: .blockLanguage)
-        
-        // Verify
-        XCTAssertTrue(emptyResult.isEmpty)
-        
-        // Prepare
-        self.persistenceManager.isDuplicateFilterLanguageClosure = { (_) in return false }
-        
-        // Act
-        let fullResult = self.testSubject.languages(for: .blockLanguage)
-        
-        // Verify
-        XCTAssertEqual(fullResult.count, NLLanguage.allSupportedCases.count)
-        // First result depends on current locale — verify English is always in the top 2 (either first or after the current locale language)
-        let currentLocale = Locale.current.language.languageCode.map { NLLanguage(rawValue: $0.identifier) }
-        let isCurrentLocaleSpecial = currentLocale == .english || currentLocale == .hebrew
-        if isCurrentLocaleSpecial {
-            XCTAssertEqual(fullResult[0], .english, "English locale should place English first")
-        } else if let current = currentLocale {
-            XCTAssertEqual(fullResult[0], current, "Non-English/Hebrew locale should appear first")
-            XCTAssertEqual(fullResult[1], .english, "English should appear second after current locale")
-        }
-        XCTAssertEqual(self.persistenceManager.isDuplicateFilterLanguageCounter, NLLanguage.allSupportedCases.count * 2)
-    }
-    
-    func test_languagesForFilterLists() {
+    func test_filterListLanguages() {
         // Prepare
         self.persistenceManager.cachedFilterListCatalogClosure = {
             return self.catalog(["he", "en"])
         }
         
         // Act
-        let languagesResult = self.testSubject.languages(for: .filterLists)
+        let languagesResult = self.testSubject.filterListLanguages
         
         // Verify
         XCTAssertEqual(Set(languagesResult), [.hebrew, .english])

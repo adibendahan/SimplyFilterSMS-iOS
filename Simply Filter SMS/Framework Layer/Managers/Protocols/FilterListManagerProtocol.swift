@@ -12,8 +12,8 @@ protocol FilterListManagerProtocol {
     var hasActiveFilterLists: Bool { get }
     var activeFilterListsTitle: String? { get }
     var filterListsLastUpdated: Date? { get }
+    var filterListLanguages: [NLLanguage] { get }
     
-    func languages(for type: LanguageListView.Mode) -> [NLLanguage]
     func isFilterListActive(for language: NLLanguage) -> Bool
     func setFilterListActive(for language: NLLanguage, value: Bool)
     @MainActor func refreshFilterLists() async

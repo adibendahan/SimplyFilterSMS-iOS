@@ -1,5 +1,5 @@
 //
-//  LanguageListView.swift
+//  FilterListLanguagesView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 11/01/2022.
@@ -7,63 +7,29 @@
 
 import SwiftUI
 import NaturalLanguage
-import CoreData
-import CryptoKit
 
 
 //MARK: - View -
-struct LanguageListView: View, ViewWithPersistentStoreReload {
-    
-    @Environment(\.colorScheme)
-    var colorScheme: ColorScheme
-    
-    @Environment(\.dismiss)
-    var dismiss
-    
+struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
+
     @ScaledMetric(relativeTo: .title) private var errorIconSize: CGFloat = 30
 
     @ObservedObject var model: ViewModel
-    
+
     var body: some View {
-        switch self.model.mode {
-        case .blockLanguage:
-            NavigationView {
-                self.makeBody()
-            }
-        case .filterLists:
-            self.makeBody()
-        }
-    }
-    
-    @ViewBuilder
-    func makeBody() -> some View {
         List {
             Section {
                 ForEach (self.model.languages.indices, id: \.self) { index in
                     let language = model.languages[index].item
-                    
+
                     if let localizedName = language.localizedName {
-                        switch self.model.mode {
-                        case .blockLanguage:
-                            Button {
-                                self.model.addFilter(language: language)
-                                dismiss()
-                            } label: {
-                                Text(localizedName)
-                                    .foregroundColor(.primary)
-                            }
-                            
-                        case .filterLists:
-                            AdaptiveToggle(isOn: $model.languages[index].state) {
-                                Text(localizedName)
-                            }
+                        AdaptiveToggle(isOn: $model.languages[index].state) {
+                            Text(localizedName)
                         }
                     }
                 }
-                
-                if self.model.mode == .filterLists &&
-                    self.model.languages.count == 0 {
-                    
+
+                if self.model.languages.isEmpty {
                     if !self.model.isLoading {
                         AdaptiveRow {
                             Image(systemName: "wifi.exclamationmark")
@@ -86,77 +52,53 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
                             .padding()
                     }
                 }
-                
+
             } header: {
                 if !self.model.languages.isEmpty {
                     Text("lang_supported"~)
                 }
             } footer: {
                 VStack(alignment: .leading) {
-                    if let helpText = self.model.footerSecondLine {
-                        Text((self.model.footer.isEmpty ? "" : self.model.footer + ". ") + helpText)
-                            .multilineTextAlignment(.leading)
-                    }
+                    Text((self.model.footer.isEmpty ? "" : self.model.footer + ". ") + "help_automaticFiltering"~)
+                        .multilineTextAlignment(.leading)
 
-                    if self.model.mode == .filterLists {
-                        Button {
-                            self.model.sheetScreen = .enableReportingExtension
-                        } label: {
-                            HStack {
-                                Image(systemName: "wand.and.stars")
-                                    .imageScale(.large)
-                                    .font(.system(size: 20, weight: .bold))
-                                Text("autoFilter_improveAIFiltering"~)
-                                    .font(.body)
-                            }
+                    Button {
+                        self.model.sheetScreen = .enableReportingExtension
+                    } label: {
+                        HStack {
+                            Image(systemName: "wand.and.stars")
+                                .imageScale(.large)
+                                .font(.system(size: 20, weight: .bold))
+                            Text("autoFilter_improveAIFiltering"~)
+                                .font(.body)
                         }
-                        .buttonStyle(AccessibleTextButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 20)
-                        .padding(.bottom, 48)
                     }
+                    .buttonStyle(AccessibleTextButtonStyle())
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top, 20)
+                    .padding(.bottom, 48)
                 }
             } // Section
         } // List
         .listStyle(.insetGrouped)
-        .navigationTitle(self.model.title)
-        .navigationBarTitleDisplayMode(self.model.mode == .blockLanguage ? .large : .inline)
-        .if(self.model.mode == .blockLanguage) {
-            $0.toolbar {
-                ToolbarItem {
+        .navigationTitle("autoFilter_title"~)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
                     Button {
-                        dismiss()
+                        self.model.sheetScreen = .enableReportingExtension
                     } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+                        Label("autoFilter_improveAIFiltering"~, systemImage: "wand.and.stars")
                     }
-                    .tint(.primary)
-                    .accessibilityLabel("general_close"~)
-                    .contentShape(Rectangle())
-                    .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
-            }
-        }
-        .if(self.model.mode == .filterLists) {
-            $0.toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button {
-                            self.model.sheetScreen = .enableReportingExtension
-                        } label: {
-                            Label("autoFilter_improveAIFiltering"~, systemImage: "wand.and.stars")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                    .tint(.primary)
-                }
+                .tint(.primary)
             }
         }
         .sheet(item: $model.sheetScreen) { $0.build() }
-        .if(self.model.shouldAllowRefresh) {
-            $0.refreshable(action: self.model.updateFilters)
-        }
+        .refreshable(action: self.model.updateFilters)
         .onAppear {
             self.model.startMonitoring()
         }
@@ -166,71 +108,29 @@ struct LanguageListView: View, ViewWithPersistentStoreReload {
 
 
 //MARK: - ViewModel -
-extension LanguageListView {
-    
-    enum Mode {
-        case blockLanguage, filterLists
-    }
-    
-    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject, Identifiable, PersistentStoreReloadRefreshing {
-        let id = UUID()
-        @Published private(set) var mode: LanguageListView.Mode
-        @Published private(set) var title: String
+extension FilterListLanguagesView {
+
+    class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject, PersistentStoreReloadRefreshing {
         @Published private(set) var footer: String
-        @Published private(set) var lastUpdate: Date?
-        @Published private(set) var footerSecondLine: String?
-        @Published private(set) var filterListsErrorText: String
         @Published private(set) var isLoading: Bool
         @Published private(set) var isOnline: Bool
-        let shouldAllowRefresh: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
         @Published var sheetScreen: Screen? = nil
         private var didAddObservers = false
-        private var onAdded: ((Filter) -> Void)?
 
-        init(mode: LanguageListView.Mode,
-             onAdded: ((Filter) -> Void)? = nil,
-             appManager: AppManagerProtocol = AppManager.shared) {
-            self.onAdded = onAdded
-            
-            let cacheAge = appManager.filterListManager.filterListsLastUpdated ?? nil
-            let isOnline = appManager.networkSyncManager.networkStatus == .online
-            
-            self.mode = mode
-            self.lastUpdate = cacheAge
-            self.footer = ViewModel.updatedFooter(for: mode, cacheAge: cacheAge)
+        override init(appManager: AppManagerProtocol = AppManager.shared) {
+            let lastUpdated = appManager.filterListManager.filterListsLastUpdated
+
+            self.footer = ViewModel.makeFooter(lastUpdated: lastUpdated)
             self.isLoading = false
-            self.isOnline = isOnline
-            
-            switch mode {
-            case .filterLists:
-                self.title = "autoFilter_title"~
-                self.footerSecondLine = "help_automaticFiltering"~
-            case .blockLanguage:
-                self.title = "filterList_menu_filterLanguage"~
-                self.footerSecondLine = nil
-            }
-
-            self.languages = appManager.filterListManager.languages(for: mode)
-                .map({ StatefulItem<NLLanguage>(item: $0,
-                                                getter: appManager.filterListManager.isFilterListActive,
-                                                setter: appManager.filterListManager.setFilterListActive) })
-            
-
-            if isOnline {
-                self.filterListsErrorText = "autoFilter_error"~
-            }
-            else {
-                self.filterListsErrorText = "autoFilter_empty"~
-            }
-            
-            self.shouldAllowRefresh = mode == .filterLists
+            self.isOnline = appManager.networkSyncManager.networkStatus == .online
+            self.languages = ViewModel.makeLanguages(appManager: appManager)
 
             super.init(appManager: appManager)
         }
 
         func startMonitoring() {
-            guard !didAddObservers, mode == .filterLists else { return }
+            guard !didAddObservers else { return }
             didAddObservers = true
 
             if !isOnline && self.languages.isEmpty {
@@ -244,7 +144,6 @@ extension LanguageListView {
                         self?.isLoading = true
                     }
                     else {
-                        self?.filterListsErrorText = "autoFilter_empty"~
                         self?.isLoading = false
                     }
                 }
@@ -258,55 +157,18 @@ extension LanguageListView {
                 }
             }
         }
-        
-        private static func updatedFooter(for mode: LanguageListView.Mode, cacheAge: Date?) -> String {
-            switch mode {
-            case .blockLanguage:
-                return "lang_how"~
-                
-            case .filterLists:
-                let formatter = DateFormatter()
-                formatter.locale = Locale.current
-                formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ddMMyyyy HHmm", options: 0, locale: Locale.current)
-                
-                
-                if let date = cacheAge {
-                    return String(format: "autoFilter_lastUpdated"~, formatter.string(from: date))
-                }
-                else
-                {
-                    return ""
-                }
-            }
-        }
-        
+
         func refresh() {
-            let cacheAge = self.appManager.filterListManager.filterListsLastUpdated ?? nil
-            
-            self.lastUpdate = cacheAge
-            self.footer = ViewModel.updatedFooter(for: self.mode, cacheAge: cacheAge)
-            self.languages = self.appManager.filterListManager.languages(for: self.mode)
-                .map({ StatefulItem<NLLanguage>(item: $0,
-                                                getter: self.appManager.filterListManager.isFilterListActive,
-                                                setter: self.appManager.filterListManager.setFilterListActive) })
+            let lastUpdated = self.appManager.filterListManager.filterListsLastUpdated
+
+            self.footer = ViewModel.makeFooter(lastUpdated: lastUpdated)
+            self.languages = ViewModel.makeLanguages(appManager: self.appManager)
         }
-        
-        func addFilter(language: NLLanguage) {
-            let filter = self.appManager.persistenceManager.addFilter(text: language.filterText,
-                                                                      type: .denyLanguage,
-                                                                      denyFolder: .junk,
-                                                                      filterTarget: .body,
-                                                                      filterMatching: .contains,
-                                                                      filterCase: .caseInsensitive)
-            if let filter {
-                self.onAdded?(filter)
-            }
-        }
-        
+
         @Sendable func updateFilters() async {
             try? await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
             await self.appManager.filterListManager.refreshFilterLists()
-            
+
             Task {
                 DispatchQueue.main.async {
                     self.refresh()
@@ -314,18 +176,32 @@ extension LanguageListView {
             }
 
         }
+
+        private static func makeLanguages(appManager: AppManagerProtocol) -> [StatefulItem<NLLanguage>] {
+            let filterListManager = appManager.filterListManager
+            return filterListManager.filterListLanguages
+                .map({ StatefulItem<NLLanguage>(item: $0,
+                                                getter: filterListManager.isFilterListActive,
+                                                setter: filterListManager.setFilterListActive) })
+        }
+
+        private static func makeFooter(lastUpdated: Date?) -> String {
+            guard let lastUpdated else { return "" }
+
+            let formatter = DateFormatter()
+            formatter.locale = Locale.current
+            formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ddMMyyyy HHmm", options: 0, locale: Locale.current)
+            return String(format: "autoFilter_lastUpdated"~, formatter.string(from: lastUpdated))
+        }
     }
 }
 
 
 //MARK: - Preview -
-struct LanguageListView_Previews: PreviewProvider {
+struct FilterListLanguagesView_Previews: PreviewProvider {
     static var previews: some View {
-        LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage, appManager: AppManager.previews))
-        
         NavigationView {
-            LanguageListView(model: LanguageListView.ViewModel(mode: .filterLists, appManager: AppManager.previews))
+            FilterListLanguagesView(model: FilterListLanguagesView.ViewModel(appManager: AppManager.previews))
         }
     }
 }
-

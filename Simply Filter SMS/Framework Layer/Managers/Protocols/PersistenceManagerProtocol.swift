@@ -32,6 +32,7 @@ protocol PersistenceManagerProtocol: AnyObject {
     
     
     //MARK: - Helpers -
+    func blockableLanguages() -> [NLLanguage]
     func isDuplicateFilter(language: NLLanguage) -> Bool
     func isDuplicateFilter(text: String,
                            filterTarget: FilterTarget,

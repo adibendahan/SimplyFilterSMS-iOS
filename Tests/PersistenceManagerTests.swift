@@ -1,5 +1,5 @@
 //
-//  mock_PersistenceManager.swift
+//  PersistenceManagerTests.swift
 //  Tests
 //
 //  Created by Adi Ben-Dahan on 28/01/2022.
@@ -380,6 +380,32 @@ class PersistenceManagerTests: XCTestCase {
         XCTAssert(cacheRecord?.age ?? oldDate > oldDate)
         XCTAssertEqual(self.testSubject.cachedFilterLists(), cache)
         XCTAssertEqual(legacyCache.age, oldDate, "the 3.2 row belongs to 3.2 devices")
+    }
+
+    func test_blockableLanguages() {
+        // Act
+        let allLanguages = self.testSubject.blockableLanguages()
+
+        // Verify
+        XCTAssertEqual(allLanguages.count, NLLanguage.allSupportedCases.count)
+        let currentLocale = Locale.current.language.languageCode.map { NLLanguage(rawValue: $0.identifier) }
+        let isCurrentLocaleSpecial = currentLocale == .english || currentLocale == .hebrew
+        if isCurrentLocaleSpecial {
+            XCTAssertEqual(allLanguages[0], .english, "English locale should place English first")
+        } else if let current = currentLocale {
+            XCTAssertEqual(allLanguages[0], current, "Non-English/Hebrew locale should appear first")
+            XCTAssertEqual(allLanguages[1], .english, "English should appear second after current locale")
+        }
+
+        // Prepare
+        self.testSubject.addFilter(text: NLLanguage.english.filterText, type: .denyLanguage, denyFolder: .junk, filterTarget: .body, filterMatching: .contains, filterCase: .caseInsensitive)
+
+        // Act
+        let remainingLanguages = self.testSubject.blockableLanguages()
+
+        // Verify
+        XCTAssertEqual(remainingLanguages.count, NLLanguage.allSupportedCases.count - 1)
+        XCTAssertFalse(remainingLanguages.contains(.english))
     }
 
     func test_selectedCountries_roundTrip() {

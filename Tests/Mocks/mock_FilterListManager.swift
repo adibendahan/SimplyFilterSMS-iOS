@@ -19,7 +19,7 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var activeFilterListsTitleSetCounter = 0
     var filterListsLastUpdatedGetCounter = 0
     var filterListsLastUpdatedSetCounter = 0
-    var languagesCounter = 0
+    var filterListLanguagesGetCounter = 0
     var isFilterListActiveCounter = 0
     var setFilterListActiveCounter = 0
     var refreshFilterListsCounter = 0
@@ -28,7 +28,7 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var hasActiveFilterListsClosure: (() -> (Bool))?
     var activeFilterListsTitleClosure: (() -> (String?))?
     var filterListsLastUpdatedClosure: (() -> (Date?))?
-    var languagesClosure: ((LanguageListView.Mode) -> ([NLLanguage]))?
+    var filterListLanguagesClosure: (() -> ([NLLanguage]))?
     var isFilterListActiveClosure: ((NLLanguage) -> (Bool))?
     var setFilterListActiveClosure: ((NLLanguage, Bool) -> ())?
     var refreshFilterListsClosure: (() -> ())?
@@ -64,13 +64,13 @@ class mock_FilterListManager: FilterListManagerProtocol {
         }
     }
     
-    func languages(for type: LanguageListView.Mode) -> [NLLanguage] {
-        self.languagesCounter += 1
-        return self.languagesClosure?(type) ?? []
+    var filterListLanguages: [NLLanguage] {
+        self.filterListLanguagesGetCounter += 1
+        return self.filterListLanguagesClosure?() ?? []
     }
     
     func isFilterListActive(for language: NLLanguage) -> Bool {
-        self.languagesCounter += 1
+        self.isFilterListActiveCounter += 1
         return self.isFilterListActiveClosure?(language) ?? false
     }
     
@@ -97,7 +97,7 @@ class mock_FilterListManager: FilterListManagerProtocol {
         self.activeFilterListsTitleSetCounter = 0
         self.filterListsLastUpdatedGetCounter = 0
         self.filterListsLastUpdatedSetCounter = 0
-        self.languagesCounter = 0
+        self.filterListLanguagesGetCounter = 0
         self.isFilterListActiveCounter = 0
         self.setFilterListActiveCounter = 0
         self.refreshFilterListsCounter = 0

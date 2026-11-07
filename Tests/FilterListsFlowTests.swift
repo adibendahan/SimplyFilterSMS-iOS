@@ -46,7 +46,7 @@ class FilterListsFlowTests: XCTestCase {
         self.filterListManager.setFilterListActive(for: .english, value: false)
 
         // Verify
-        XCTAssertEqual(Set(self.filterListManager.languages(for: .filterLists)), [.hebrew, .english])
+        XCTAssertEqual(Set(self.filterListManager.filterListLanguages), [.hebrew, .english])
 
         let allowedSender = self.evaluate(body: "check https://link.com", sender: "BituahLeumi")
         XCTAssertEqual(allowedSender.action, .allow, "an allowed sender beats the links rule")

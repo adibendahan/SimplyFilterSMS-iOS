@@ -109,7 +109,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
             AddFilterView(model: vm)
         }
         .sheet(item: $model.addLanguageViewModel) { vm in
-            LanguageListView(model: vm)
+            BlockLanguageView(model: vm)
         }
         .onReceive(self.model.$sheetScreen, perform: { sheetScreen in
             if sheetScreen == nil {
@@ -280,7 +280,7 @@ extension FiltersView {
         @Published private(set) var isFilterOptionsCollapsed: Bool
         @Published var sheetScreen: Screen? = nil
         @Published var addFilterViewModel: AddFilterView.ViewModel? = nil
-        @Published var addLanguageViewModel: LanguageListView.ViewModel? = nil
+        @Published var addLanguageViewModel: BlockLanguageView.ViewModel? = nil
         @Published private(set) var newlyAddedFilter: Filter? = nil
 
         var regularFilters: [Filter] { filters.filter { $0.filterMatching != .regex } }
@@ -299,7 +299,7 @@ extension FiltersView {
             self.isFilterOptionsCollapsed = appManager.defaultsManager.isFilterOptionsCollapsed
             
             self.isAllUnknownFilteringOn = appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
-            self.canBlockAnotherLanguage = !appManager.filterListManager.languages(for: .blockLanguage).isEmpty
+            self.canBlockAnotherLanguage = !appManager.persistenceManager.blockableLanguages().isEmpty
             
             switch filterType {
             case .deny:
@@ -328,7 +328,7 @@ extension FiltersView {
 
             self.filters = fetchedFilters.filter({ $0.filterType == self.filterType })
             self.isAllUnknownFilteringOn = self.appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
-            self.canBlockAnotherLanguage = !self.appManager.filterListManager.languages(for: .blockLanguage).isEmpty
+            self.canBlockAnotherLanguage = !self.appManager.persistenceManager.blockableLanguages().isEmpty
             self.updateRowViewModels()
         }
 
@@ -362,7 +362,7 @@ extension FiltersView {
 
         func showAddFilter() {
             if self.filterType == .denyLanguage {
-                let vm = LanguageListView.ViewModel(mode: .blockLanguage, onAdded: { [weak self] filter in
+                let vm = BlockLanguageView.ViewModel(onAdded: { [weak self] filter in
                     self?.filterWasAdded(filter)
                 })
                 self.addLanguageViewModel = vm

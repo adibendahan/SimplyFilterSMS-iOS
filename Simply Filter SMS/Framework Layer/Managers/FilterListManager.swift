@@ -30,7 +30,7 @@ class FilterListManager: FilterListManagerProtocol {
         var hasActiveFilterLists = false
         
         let automaticFiltersLanguageRecords = self.persistenceManager?.fetchAutomaticFiltersLanguageRecords()
-        let supportedLanguages: [NLLanguage] = self.languages(for: .filterLists)
+        let supportedLanguages: [NLLanguage] = self.filterListLanguages
         
         for filterListLanguageRecord in automaticFiltersLanguageRecords ?? [] {
             if let langRawValue = filterListLanguageRecord.lang {
@@ -53,7 +53,7 @@ class FilterListManager: FilterListManagerProtocol {
         var activeFilterListNames: [String] = []
         
         let automaticFiltersLanguageRecords = self.persistenceManager?.fetchAutomaticFiltersLanguageRecords()
-        let supportedLanguages = self.languages(for: .filterLists)
+        let supportedLanguages = self.filterListLanguages
         
         for automaticFiltersLanguageRecord in automaticFiltersLanguageRecords ?? [] {
             if let langRawValue = automaticFiltersLanguageRecord.lang,
@@ -95,36 +95,21 @@ class FilterListManager: FilterListManagerProtocol {
         return cache.age
     }
     
-    func languages(for type: LanguageListView.Mode) -> [NLLanguage] {
-        guard let persistenceManager = self.persistenceManager else { return [] }
-        var supportedLanguages: [NLLanguage] = []
-        
-        switch type {
-        case .blockLanguage:
-            let remainingSupportedLanguages = NLLanguage.allSupportedCases
-                .filter({ !persistenceManager.isDuplicateFilter(language: $0) })
-                .sorted(by: Self.languageSortOrder)
-            supportedLanguages.append(contentsOf: remainingSupportedLanguages)
-            
-        case .filterLists:
-            if let catalog = persistenceManager.cachedFilterListCatalog() {
-                
-                for entry in catalog.lists {
-                    guard let langRawValue = entry.language else { continue }
-                    let language = NLLanguage(langRawValue)
-                    
-                    if language != .undetermined,
-                       !supportedLanguages.contains(language) {
-                        supportedLanguages.append(language)
-                    }
-                }
-                
+    var filterListLanguages: [NLLanguage] {
+        guard let catalog = self.persistenceManager?.cachedFilterListCatalog() else { return [] }
+        var filterListLanguages: [NLLanguage] = []
+
+        for entry in catalog.lists {
+            guard let langRawValue = entry.language else { continue }
+            let language = NLLanguage(langRawValue)
+
+            if language != .undetermined,
+               !filterListLanguages.contains(language) {
+                filterListLanguages.append(language)
             }
-            
-            supportedLanguages.sort(by: Self.languageSortOrder)
         }
-        
-        return supportedLanguages
+
+        return filterListLanguages.sorted(by: NLLanguage.displayOrder)
     }
     
     func isFilterListActive(for language: NLLanguage) -> Bool {
@@ -166,31 +151,6 @@ class FilterListManager: FilterListManagerProtocol {
     }
     
     //MARK: - Private  -
-    
-    private static func languageSortOrder(_ a: NLLanguage, _ b: NLLanguage) -> Bool {
-        let currentLocale: NLLanguage? = Locale.current.language.languageCode.map { NLLanguage(rawValue: $0.identifier) }
-        var priority: [NLLanguage] = [.english, .hebrew]
-        if let current = currentLocale, !priority.contains(current) {
-            priority.insert(current, at: 0)
-        } else if currentLocale == .hebrew {
-            priority = [.hebrew, .english]
-        }
-        let ai = priority.firstIndex(of: a)
-        let bi = priority.firstIndex(of: b)
-        switch (ai, bi) {
-        case let (ai?, bi?):
-            return ai < bi
-        case (nil, _?):
-            return false
-        case (_?, nil):
-            return true
-        case (nil, nil):
-            let locale = Locale(identifier: "en_US")
-            let an = locale.localizedString(forIdentifier: a.rawValue) ?? a.rawValue
-            let bn = locale.localizedString(forIdentifier: b.rawValue) ?? b.rawValue
-            return an < bn
-        }
-    }
     
     private weak var filterListService: FilterListServiceProtocol?
     private weak var persistenceManager: PersistenceManagerProtocol?

@@ -53,7 +53,7 @@ class FiltersViewModelTests: XCTestCase {
             }
         }
         
-        self.filterListManager.languagesClosure = { _ in
+        self.persistenceManager.blockableLanguagesClosure = {
             return [.hebrew, .english]
         }
         
@@ -63,7 +63,7 @@ class FiltersViewModelTests: XCTestCase {
         // Verify
         XCTAssertEqual(self.persistenceManager.fetchFilterRecordsForTypeCounter, 1)
         XCTAssertEqual(self.smartFilterManager.isSmartFilterActiveCounter, 1)
-        XCTAssertEqual(self.filterListManager.languagesCounter, 1)
+        XCTAssertEqual(self.persistenceManager.blockableLanguagesCounter, 1)
         XCTAssertEqual(self.testSubject.isAllUnknownFilteringOn, true)
         XCTAssertEqual(self.testSubject.canBlockAnotherLanguage, true)
     }
