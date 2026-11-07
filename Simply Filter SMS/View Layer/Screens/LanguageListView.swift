@@ -193,7 +193,7 @@ extension LanguageListView {
              appManager: AppManagerProtocol = AppManager.shared) {
             self.onAdded = onAdded
             
-            let cacheAge = appManager.filterListManager.filterListsCacheAge ?? nil
+            let cacheAge = appManager.filterListManager.filterListsLastUpdated ?? nil
             let isOnline = appManager.networkSyncManager.networkStatus == .online
             
             self.mode = mode
@@ -281,7 +281,7 @@ extension LanguageListView {
         }
         
         func refresh() {
-            let cacheAge = self.appManager.filterListManager.filterListsCacheAge ?? nil
+            let cacheAge = self.appManager.filterListManager.filterListsLastUpdated ?? nil
             
             self.lastUpdate = cacheAge
             self.footer = ViewModel.updatedFooter(for: self.mode, cacheAge: cacheAge)

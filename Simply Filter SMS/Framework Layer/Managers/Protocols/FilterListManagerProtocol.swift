@@ -11,7 +11,7 @@ import NaturalLanguage
 protocol FilterListManagerProtocol {
     var hasActiveFilterLists: Bool { get }
     var activeFilterListsTitle: String? { get }
-    var filterListsCacheAge: Date? { get }
+    var filterListsLastUpdated: Date? { get }
     
     func languages(for type: LanguageListView.Mode) -> [NLLanguage]
     func isFilterListActive(for language: NLLanguage) -> Bool

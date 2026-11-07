@@ -141,7 +141,7 @@ class FilterListManagerTests: XCTestCase {
         XCTAssertEqual(self.persistenceManager.cachedFilterListCatalogCounter, 1)
     }
     
-    func test_filterListsCacheAge() {
+    func test_filterListsLastUpdated() {
         // Prepare
         let expectedCacheAge = Date()
         
@@ -155,7 +155,7 @@ class FilterListManagerTests: XCTestCase {
         
         
         // Act
-        let cacheAgeResult = self.testSubject.filterListsCacheAge
+        let cacheAgeResult = self.testSubject.filterListsLastUpdated
         
         // Verify
         XCTAssertEqual(expectedCacheAge, cacheAgeResult)

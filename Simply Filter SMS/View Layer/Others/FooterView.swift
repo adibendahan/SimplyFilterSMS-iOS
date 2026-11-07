@@ -65,7 +65,7 @@ private struct FooterBackground: ViewModifier {
 struct FooterView_Previews: PreviewProvider {
     static var previews: some View {
         EmptyView()
-            .modifier(EmbeddedFooterView())
+            .modifier(EmbeddedFooterModifier())
     }
 }
 #endif

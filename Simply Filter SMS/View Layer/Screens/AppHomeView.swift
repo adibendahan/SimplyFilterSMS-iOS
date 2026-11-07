@@ -168,7 +168,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     .background(Color.listBackgroundColor(for: colorScheme))
             }
         } // NavigationSplitView
-        .modifier(EmbeddedFooterView(isHidden: self.model.sheetScreen != nil) {
+        .modifier(EmbeddedFooterModifier(isHidden: self.model.sheetScreen != nil) {
             guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
             self.model.requestSheet(.about)
         })
@@ -1019,7 +1019,7 @@ extension AppHomeView {
         func tryRequestReview() -> Bool {
             var defaultsManager = self.appManager.defaultsManager
             guard !defaultsManager.didPromptForReview,
-                  defaultsManager.appAge.daysBetween(date: Date()) > 7,
+                  defaultsManager.installDate.daysBetween(date: Date()) > 7,
                   defaultsManager.sessionCounter > 5,
                   let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else {
                 return false

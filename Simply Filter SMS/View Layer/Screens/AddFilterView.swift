@@ -286,7 +286,7 @@ extension AddFilterView {
         @Published var regexTestText = ""
         @Published var isExpanded: Bool {
             didSet {
-                self.appManager.defaultsManager.isExpandedAddFilter = self.isExpanded
+                self.appManager.defaultsManager.isAddFilterExpanded = self.isExpanded
             }
         }
         
@@ -311,7 +311,7 @@ extension AddFilterView {
             
             let isAllUnknownFilteringOn = appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
-            self.isExpanded = appManager.defaultsManager.isExpandedAddFilter
+            self.isExpanded = appManager.defaultsManager.isAddFilterExpanded
             
             super.init(appManager: appManager)
         }

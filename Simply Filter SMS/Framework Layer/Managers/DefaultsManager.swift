@@ -16,7 +16,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     var isAppFirstRun: Bool
 
     @StoredDefault("isExpandedAddFilter", defaultValue: false)
-    var isExpandedAddFilter: Bool
+    var isAddFilterExpanded: Bool
 
     @StoredDefault("isFilterOptionsCollapsed", defaultValue: false)
     var isFilterOptionsCollapsed: Bool
@@ -49,10 +49,10 @@ class DefaultsManager: DefaultsManagerProtocol {
     var accentColorRGB: [String: Double]
 
     @StoredDefault("appAge", defaultValue: Date())
-    private(set) var appAge: Date
+    private(set) var installDate: Date
     
     //MARK: - Session Defaults -
-    var sessionAge: Date?
+    var sessionStartDate: Date?
     var lastOfflineNotificationDismiss: Date?
     
     //MARK: - Stored Defaults Removal -

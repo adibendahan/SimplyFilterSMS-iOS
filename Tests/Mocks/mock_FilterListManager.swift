@@ -17,8 +17,8 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var hasActiveFilterListsSetCounter = 0
     var activeFilterListsTitleGetCounter = 0
     var activeFilterListsTitleSetCounter = 0
-    var filterListsCacheAgeGetCounter = 0
-    var filterListsCacheAgeSetCounter = 0
+    var filterListsLastUpdatedGetCounter = 0
+    var filterListsLastUpdatedSetCounter = 0
     var languagesCounter = 0
     var isFilterListActiveCounter = 0
     var setFilterListActiveCounter = 0
@@ -27,7 +27,7 @@ class mock_FilterListManager: FilterListManagerProtocol {
     
     var hasActiveFilterListsClosure: (() -> (Bool))?
     var activeFilterListsTitleClosure: (() -> (String?))?
-    var filterListsCacheAgeClosure: (() -> (Date?))?
+    var filterListsLastUpdatedClosure: (() -> (Date?))?
     var languagesClosure: ((LanguageListView.Mode) -> ([NLLanguage]))?
     var isFilterListActiveClosure: ((NLLanguage) -> (Bool))?
     var setFilterListActiveClosure: ((NLLanguage, Bool) -> ())?
@@ -54,13 +54,13 @@ class mock_FilterListManager: FilterListManagerProtocol {
         }
     }
     
-    var filterListsCacheAge: Date? {
+    var filterListsLastUpdated: Date? {
         get {
-            self.filterListsCacheAgeGetCounter += 1
-            return self.filterListsCacheAgeClosure?() ?? nil
+            self.filterListsLastUpdatedGetCounter += 1
+            return self.filterListsLastUpdatedClosure?() ?? nil
         }
         set {
-            self.filterListsCacheAgeSetCounter += 1
+            self.filterListsLastUpdatedSetCounter += 1
         }
     }
     
@@ -95,8 +95,8 @@ class mock_FilterListManager: FilterListManagerProtocol {
         self.hasActiveFilterListsSetCounter = 0
         self.activeFilterListsTitleGetCounter = 0
         self.activeFilterListsTitleSetCounter = 0
-        self.filterListsCacheAgeGetCounter = 0
-        self.filterListsCacheAgeSetCounter = 0
+        self.filterListsLastUpdatedGetCounter = 0
+        self.filterListsLastUpdatedSetCounter = 0
         self.languagesCounter = 0
         self.isFilterListActiveCounter = 0
         self.setFilterListActiveCounter = 0

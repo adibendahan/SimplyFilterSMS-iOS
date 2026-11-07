@@ -88,7 +88,7 @@ class FilterListManager: FilterListManagerProtocol {
         return activeLanguagesString.isEmpty ? nil : activeLanguagesString
     }
     
-    var filterListsCacheAge: Date? {
+    var filterListsLastUpdated: Date? {
         guard let persistenceManager = self.persistenceManager,
               let cache = persistenceManager.fetchFilterListsCacheRecords().first else { return nil }
         
@@ -201,7 +201,7 @@ class FilterListManager: FilterListManagerProtocol {
     @MainActor
     private var didCheckFilterListsToday: Bool {
         guard self.persistenceManager?.cachedFilterListCatalog() != nil else { return false }
-        guard let lastCheckDate = self.filterListsCacheAge else { return false }
+        guard let lastCheckDate = self.filterListsLastUpdated else { return false }
         return lastCheckDate.daysBetween(date: Date()) == 0
     }
 
@@ -237,7 +237,7 @@ class FilterListManager: FilterListManagerProtocol {
             return
         }
         var cacheAgeDescription = "none"
-        if let cacheAge = self.filterListsCacheAge {
+        if let cacheAge = self.filterListsLastUpdated {
             cacheAgeDescription = "\(cacheAge.daysBetween(date: Date()))d"
         }
         AppManager.logger.debug("refreshFilterLists — fetching | cache age: \(cacheAgeDescription, privacy: .public)")
