@@ -13,10 +13,14 @@ import XCTest
 class DefaultsManagerTests: XCTestCase {
 
     private var previousRGB: [String: Double] = kNoColorDict
+    private var previousInstallDate: Any?
+    private var previousIsAddFilterExpanded: Any?
     private var testSubject: DefaultsManager!
 
     override func setUp() {
         super.setUp()
+        self.previousInstallDate = UserDefaults.standard.object(forKey: "installDate")
+        self.previousIsAddFilterExpanded = UserDefaults.standard.object(forKey: "isAddFilterExpanded")
         self.testSubject = DefaultsManager()
         self.previousRGB = self.testSubject.accentColorRGB
         self.testSubject.accentColorRGB = kNoColorDict
@@ -24,6 +28,10 @@ class DefaultsManagerTests: XCTestCase {
 
     override func tearDown() {
         self.testSubject.accentColorRGB = self.previousRGB
+        UserDefaults.standard.set(self.previousInstallDate, forKey: "installDate")
+        UserDefaults.standard.set(self.previousIsAddFilterExpanded, forKey: "isAddFilterExpanded")
+        UserDefaults.standard.removeObject(forKey: "appAge")
+        UserDefaults.standard.removeObject(forKey: "isExpandedAddFilter")
         self.testSubject = nil
         super.tearDown()
     }
@@ -54,6 +62,32 @@ class DefaultsManagerTests: XCTestCase {
         XCTAssertEqual(self.testSubject.accentColorRGB["blue"] ?? 0, 0.6, accuracy: 0.02)
         XCTAssertNotNil(Color(accentRGB: self.testSubject.accentColorRGB))
         XCTAssertEqual(self.testSubject.accentColorRGB["red"] ?? 0, 0.2, accuracy: 0.02)
+    }
+
+    func test_init_migratesRenamedKeys() {
+        let installDate = Date(timeIntervalSince1970: 1_600_000_000)
+        UserDefaults.standard.set(installDate, forKey: "appAge")
+        UserDefaults.standard.removeObject(forKey: "installDate")
+        UserDefaults.standard.set(true, forKey: "isExpandedAddFilter")
+        UserDefaults.standard.removeObject(forKey: "isAddFilterExpanded")
+
+        let migrated = DefaultsManager()
+
+        XCTAssertEqual(migrated.installDate, installDate)
+        XCTAssertTrue(migrated.isAddFilterExpanded)
+        XCTAssertNil(UserDefaults.standard.object(forKey: "appAge"))
+        XCTAssertNil(UserDefaults.standard.object(forKey: "isExpandedAddFilter"))
+    }
+
+    func test_init_keepsExistingValueOverRenamedKey() {
+        let installDate = Date(timeIntervalSince1970: 1_700_000_000)
+        UserDefaults.standard.set(installDate, forKey: "installDate")
+        UserDefaults.standard.set(Date(timeIntervalSince1970: 1_600_000_000), forKey: "appAge")
+
+        let migrated = DefaultsManager()
+
+        XCTAssertEqual(migrated.installDate, installDate)
+        XCTAssertNil(UserDefaults.standard.object(forKey: "appAge"))
     }
 
     func test_accentColorRGB_resetClearsStorage() {
