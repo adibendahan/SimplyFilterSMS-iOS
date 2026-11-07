@@ -370,14 +370,34 @@ struct NotificationView: View {
             }
         }
 
-        var waitsForHome: Bool {
+        static let allNudges: [Notification] = [.tipPromotion, .enableReportingExtension]
+
+        var isNudge: Bool {
+            return Self.allNudges.contains(self)
+        }
+
+        var nudgeKey: String? {
             switch self {
-            case .tipPromotion, .enableReportingExtension:
-                return true
+            case .tipPromotion:
+                return "tipPromotion"
+            case .enableReportingExtension:
+                return "enableReportingExtension"
             default:
-                return false
+                return nil
             }
         }
+
+        var nudgeInterval: Int? {
+            switch self {
+            case .tipPromotion:
+                return 5
+            case .enableReportingExtension:
+                return 3
+            default:
+                return nil
+            }
+        }
+
 
         func isOutranked(by otherNotifications: Notification?...) -> Bool {
             let competingNotifications = otherNotifications.compactMap { $0 }
@@ -407,7 +427,7 @@ struct NotificationView: View {
         static let debugSamples: [Notification] = [
             .offline,
             .cloudSyncOperationComplete,
-            .automaticFiltersUpdated,
+            .filterListsUpdated,
             .onClipboardSet("support@example.com"),
             .tipSuccessful(.large),
             .tipPromotion,

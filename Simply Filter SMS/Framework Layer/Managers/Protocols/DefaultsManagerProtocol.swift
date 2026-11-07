@@ -18,8 +18,7 @@ protocol DefaultsManagerProtocol {
     var didTip: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
     var didDismissReportingExtensionNudge: Bool { get set }
-    var lastTipPromotionSession: Int { get set }
-    var lastReportingExtensionNudgeSession: Int { get set }
+    var sessionNudgeLastShownSessions: [String: Int] { get set }
     var inactivityNotificationDeclineCount: Int { get set }
     var inactivityNotificationLastDeclineSession: Int { get set }
     var inactivityNotificationWasGranted: Bool { get set }

@@ -159,8 +159,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
 
     var inactivityNotificationDeclineCount = 0
     var inactivityNotificationLastDeclineSession = 0
-    var lastTipPromotionSession = 0
-    var lastReportingExtensionNudgeSession = 0
+    var sessionNudgeLastShownSessions: [String: Int] = [:]
     var inactivityNotificationWasGranted = false
 
     var accentColorRGB: [String: Double] = kNoColorDict

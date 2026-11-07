@@ -372,7 +372,7 @@ class FlowManagerTests: XCTestCase {
 
         _ = self.testSubject.nextNotification()
 
-        XCTAssertEqual(self.defaultsManager.lastTipPromotionSession, 7)
+        XCTAssertEqual(self.defaultsManager.sessionNudgeLastShownSessions["tipPromotion"], 7)
     }
 
     func test_sessionNudge_requestedButNotShown_recordsNothing() {
@@ -381,12 +381,12 @@ class FlowManagerTests: XCTestCase {
 
         self.testSubject.showSessionNudges()
 
-        XCTAssertEqual(self.defaultsManager.lastTipPromotionSession, 0)
+        XCTAssertNil(self.defaultsManager.sessionNudgeLastShownSessions["tipPromotion"])
     }
 
     func test_tipPromotion_dueCountsFromLastShown() {
         self.defaultsManager.didTipClosure = { false }
-        self.defaultsManager.lastTipPromotionSession = 7
+        self.defaultsManager.sessionNudgeLastShownSessions["tipPromotion"] = 7
         self.defaultsManager.sessionCounterClosure = { 11 }
 
         self.testSubject.showSessionNudges()
@@ -484,7 +484,7 @@ class FlowManagerTests: XCTestCase {
         self.testSubject.completeNotification()
 
         XCTAssertNil(self.testSubject.nextNotification())
-        XCTAssertEqual(self.defaultsManager.lastTipPromotionSession, 0)
+        XCTAssertNil(self.defaultsManager.sessionNudgeLastShownSessions["tipPromotion"])
     }
 
     func test_waitingNudge_otherToastShowedMeanwhile_skipped() {

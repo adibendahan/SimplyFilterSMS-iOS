@@ -152,7 +152,7 @@ class FlowManager: FlowManagerProtocol {
     }
 
     func requestNotification(_ notification: NotificationView.Notification) {
-        let mustWait = notification.waitsForHome && !self.isHomeUnobstructed()
+        let mustWait = notification.isNudge && !self.isHomeUnobstructed()
         guard mustWait else {
             self.enqueue(notification)
             return
@@ -281,18 +281,25 @@ class FlowManager: FlowManagerProtocol {
         self.requestNotification(.offline)
     }
 
-    private var isTipPromotionDue: Bool {
-        let sessionsSinceShown = self.defaultsManager.sessionCounter - self.defaultsManager.lastTipPromotionSession
-        return !self.defaultsManager.didTip
-            && sessionsSinceShown >= kTipPromotionSessionInterval
-    }
+    private func isDue(_ nudge: NotificationView.Notification) -> Bool {
+        guard let key = nudge.nudgeKey,
+              let interval = nudge.nudgeInterval else { return false }
+        let lastShownSession = self.defaultsManager.sessionNudgeLastShownSessions[key] ?? 0
+        let sessionsSinceShown = self.defaultsManager.sessionCounter - lastShownSession
+        guard sessionsSinceShown >= interval else { return false }
 
-    private var isReportingExtensionNudgeDue: Bool {
-        let sessionsSinceShown = self.defaultsManager.sessionCounter - self.defaultsManager.lastReportingExtensionNudgeSession
-        return !self.defaultsManager.isAppFirstRun
-            && !self.defaultsManager.didDismissReportingExtensionNudge
-            && self.filterListManager.hasActiveFilterLists
-            && sessionsSinceShown >= kReportingExtensionNudgeSessionInterval
+        switch nudge {
+        case .tipPromotion:
+            return !self.defaultsManager.didTip
+
+        case .enableReportingExtension:
+            return !self.defaultsManager.isAppFirstRun
+                && !self.defaultsManager.didDismissReportingExtensionNudge
+                && self.filterListManager.hasActiveFilterLists
+
+        default:
+            return false
+        }
     }
 
     private func tryShowSessionNudge() {
@@ -301,24 +308,14 @@ class FlowManager: FlowManagerProtocol {
             return
         }
 
-        if self.isTipPromotionDue {
-            self.requestNotification(.tipPromotion)
-        } else if self.isReportingExtensionNudgeDue {
-            self.requestNotification(.enableReportingExtension)
-        }
+        let dueNudges = NotificationView.Notification.allNudges.filter { self.isDue($0) }
+        let mostUrgentNudge = dueNudges.min { $0.priority < $1.priority }
+        guard let mostUrgentNudge else { return }
+        self.requestNotification(mostUrgentNudge)
     }
 
     private func recordShownNudge(_ notification: NotificationView.Notification) {
-        let sessionCounter = self.defaultsManager.sessionCounter
-        switch notification {
-        case .tipPromotion:
-            self.defaultsManager.lastTipPromotionSession = sessionCounter
-
-        case .enableReportingExtension:
-            self.defaultsManager.lastReportingExtensionNudgeSession = sessionCounter
-
-        default:
-            break
-        }
+        guard let key = notification.nudgeKey else { return }
+        self.defaultsManager.sessionNudgeLastShownSessions[key] = self.defaultsManager.sessionCounter
     }
 }
