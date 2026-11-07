@@ -264,7 +264,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                 case .deny, .denyLanguage:
                     action = listFilter.denyFolder.action
                 }
-                result = MessageEvaluationResult(action: action, match: .automaticFilter(filterList.name))
+                result = MessageEvaluationResult(action: action, match: .filterList(filterList.name))
                 self.logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(listFilter.text, privacy: .public)' | target: \(listFilter.filterTarget.exportKey, privacy: .public), matching: \(listFilter.filterMatching.exportKey, privacy: .public), case: \(listFilter.filterCase.exportKey, privacy: .public) [\(filterList.name, privacy: .public)]")
                 return result
             }

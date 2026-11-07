@@ -13,7 +13,8 @@ protocol AppManagerProtocol {
     
     var persistanceManager: PersistanceManagerProtocol { get }
     var defaultsManager: DefaultsManagerProtocol { get set }
-    var automaticFilterManager: AutomaticFilterManagerProtocol { get }
+    var filterListManager: FilterListManagerProtocol { get }
+    var smartFilterManager: SmartFilterManagerProtocol { get }
     var messageEvaluationManager: MessageEvaluationManagerProtocol { get }
     var networkSyncManager: NetworkSyncManagerProtocol { get }
     var filterListService: FilterListServiceProtocol { get }

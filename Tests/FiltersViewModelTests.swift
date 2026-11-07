@@ -14,7 +14,8 @@ class FiltersViewModelTests: XCTestCase {
     private var testSubject: FiltersView.ViewModel = FiltersView.ViewModel(filterType: .deny)
     private var persistanceManager = mock_PersistanceManager()
     private var defaultsManager = mock_DefaultsManager()
-    private var automaticFilterManager = mock_AutomaticFilterManager()
+    private var filterListManager = mock_FilterListManager()
+    private var smartFilterManager = mock_SmartFilterManager()
     private var appManager = mock_AppManager()
     
     //MARK: Test Lifecycle
@@ -27,12 +28,14 @@ class FiltersViewModelTests: XCTestCase {
         self.defaultsManager = mock_DefaultsManager()
         appManager.persistanceManager = self.persistanceManager
         appManager.defaultsManager = self.defaultsManager
-        appManager.automaticFilterManager = self.automaticFilterManager
+        appManager.filterListManager = self.filterListManager
+        appManager.smartFilterManager = self.smartFilterManager
         
         self.testSubject = FiltersView.ViewModel(filterType: .deny, appManager: appManager)
         self.persistanceManager.resetCounters()
         self.defaultsManager.resetCounters()
-        self.automaticFilterManager.resetCounters()
+        self.filterListManager.resetCounters()
+        self.smartFilterManager.resetCounters()
         self.appManager.resetCounters()
     }
     
@@ -41,7 +44,7 @@ class FiltersViewModelTests: XCTestCase {
     func test_refresh() {
         // Prepare
         self.defaultsManager.isAppFirstRunClosure = { return false }
-        self.automaticFilterManager.automaticRuleStateClosure = { ruleType in
+        self.smartFilterManager.ruleStateClosure = { ruleType in
             switch ruleType {
             case .allUnknown:
                 return true
@@ -50,7 +53,7 @@ class FiltersViewModelTests: XCTestCase {
             }
         }
         
-        self.automaticFilterManager.languagesClosure = { _ in
+        self.filterListManager.languagesClosure = { _ in
             return [.hebrew, .english]
         }
         
@@ -59,8 +62,8 @@ class FiltersViewModelTests: XCTestCase {
         
         // Verify
         XCTAssertEqual(self.persistanceManager.fetchFilterRecordsForTypeCounter, 1)
-        XCTAssertEqual(self.automaticFilterManager.automaticRuleStateCounter, 1)
-        XCTAssertEqual(self.automaticFilterManager.languagesCounter, 1)
+        XCTAssertEqual(self.smartFilterManager.ruleStateCounter, 1)
+        XCTAssertEqual(self.filterListManager.languagesCounter, 1)
         XCTAssertEqual(self.testSubject.isAllUnknownFilteringOn, true)
         XCTAssertEqual(self.testSubject.canBlockAnotherLanguage, true)
     }

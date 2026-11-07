@@ -148,7 +148,7 @@ extension CountryListView {
                 localizedNames[entry.callingCode] = names
             }
 
-            let stored = appManager.automaticFilterManager.selectedCountries(for: rule)
+            let stored = appManager.smartFilterManager.selectedCountries(for: rule)
             self.selectedCodes = Set(stored)
 
             updateFilteredEntries()
@@ -164,7 +164,7 @@ extension CountryListView {
             } else {
                 selectedCodes.insert(entry.callingCode)
             }
-            appManager.automaticFilterManager.setSelectedCountries(Array(selectedCodes), for: rule)
+            appManager.smartFilterManager.setSelectedCountries(Array(selectedCodes), for: rule)
             withAnimation {
                 updateFilteredEntries()
             }

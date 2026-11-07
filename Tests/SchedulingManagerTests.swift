@@ -10,24 +10,24 @@ import UserNotifications
 
 class SchedulingManagerTests: XCTestCase {
 
-    private var automaticFilterManager: mock_AutomaticFilterManager!
+    private var filterListManager: mock_FilterListManager!
     private var defaultsManager: mock_DefaultsManager!
     private var userNotificationCenterService: mock_UserNotificationCenterService!
     private var testSubject: SchedulingManager!
 
-    private var isAutomaticFilteringOn = true
+    private var hasActiveFilterLists = true
     private var authorizationStatus: UNAuthorizationStatus = .notDetermined
     private var sessionCounter = 0
 
     override func setUp() {
         super.setUp()
-        self.isAutomaticFilteringOn = true
+        self.hasActiveFilterLists = true
         self.authorizationStatus = .notDetermined
         self.sessionCounter = 2
 
-        self.automaticFilterManager = mock_AutomaticFilterManager()
-        self.automaticFilterManager.isAutomaticFilteringOnClosure = { [unowned self] in
-            return self.isAutomaticFilteringOn
+        self.filterListManager = mock_FilterListManager()
+        self.filterListManager.hasActiveFilterListsClosure = { [unowned self] in
+            return self.hasActiveFilterLists
         }
 
         self.defaultsManager = mock_DefaultsManager()
@@ -40,7 +40,7 @@ class SchedulingManagerTests: XCTestCase {
             return self.authorizationStatus
         }
 
-        self.testSubject = SchedulingManager(automaticFilterManager: self.automaticFilterManager,
+        self.testSubject = SchedulingManager(filterListManager: self.filterListManager,
                                              defaultsManager: self.defaultsManager,
                                              userNotificationCenterService: self.userNotificationCenterService)
     }
@@ -49,7 +49,7 @@ class SchedulingManagerTests: XCTestCase {
         self.testSubject = nil
         self.userNotificationCenterService = nil
         self.defaultsManager = nil
-        self.automaticFilterManager = nil
+        self.filterListManager = nil
         super.tearDown()
     }
 
@@ -69,8 +69,8 @@ class SchedulingManagerTests: XCTestCase {
         XCTAssertTrue(shouldShow)
     }
 
-    func test_doesNotAskWhenAutomaticFilteringIsOff() async {
-        self.isAutomaticFilteringOn = false
+    func test_doesNotAskWhenFilterListsAreOff() async {
+        self.hasActiveFilterLists = false
 
         let shouldShow = await self.testSubject.shouldShowInactivityNotificationAlert()
 
@@ -212,9 +212,9 @@ class SchedulingManagerTests: XCTestCase {
         XCTAssertEqual(self.userNotificationCenterService.cancelPendingNotificationCounter, 1)
     }
 
-    func test_refreshOnlyCancelsWhenAutomaticFilteringIsOff() async {
+    func test_refreshOnlyCancelsWhenFilterListsAreOff() async {
         self.authorizationStatus = .authorized
-        self.isAutomaticFilteringOn = false
+        self.hasActiveFilterLists = false
         let settled = self.expectNoReminderScheduled()
 
         self.testSubject.refreshInactivityReminder()
@@ -223,8 +223,8 @@ class SchedulingManagerTests: XCTestCase {
         XCTAssertEqual(self.userNotificationCenterService.cancelPendingNotificationCounter, 1)
     }
 
-    func test_turningAutomaticFilteringOffCancelsTheReminder() async {
-        self.isAutomaticFilteringOn = false
+    func test_turningFilterListsOffCancelsTheReminder() async {
+        self.hasActiveFilterLists = false
         let cancelled = self.expectation(description: "reminder cancelled")
         self.userNotificationCenterService.cancelPendingNotificationClosure = { _ in cancelled.fulfill() }
 

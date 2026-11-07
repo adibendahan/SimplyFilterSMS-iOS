@@ -16,10 +16,10 @@ class AddFilterViewModelTests: XCTestCase {
         let appManager = mock_AppManager()
         let persistanceManager = mock_PersistanceManager()
         let defaultsManager = mock_DefaultsManager()
-        let automaticFilterManager = mock_AutomaticFilterManager()
+        let filterListManager = mock_FilterListManager()
         appManager.persistanceManager = persistanceManager
         appManager.defaultsManager = defaultsManager
-        appManager.automaticFilterManager = automaticFilterManager
+        appManager.filterListManager = filterListManager
         self.appManager = appManager
     }
 

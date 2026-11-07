@@ -508,7 +508,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         let result = self.testSubject.evaluateMessage(body: "big sale today", sender: "1234567")
 
         XCTAssertEqual(result.action, .promotion)
-        XCTAssertEqual(result.match, .automaticFilter(NLLanguage.hebrew.localizedName!))
+        XCTAssertEqual(result.match, .filterList(NLLanguage.hebrew.localizedName!))
     }
 
     func test_filterLists_skipsRecordsItCannotUse() {

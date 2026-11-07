@@ -44,7 +44,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     
                     AdaptiveRow {
                         Group {
-                            if self.model.isAutomaticFilteringOn && !self.model.isAllUnknownFilteringOn && !reduceMotion {
+                            if self.model.hasActiveFilterLists && !self.model.isAllUnknownFilteringOn && !reduceMotion {
                                 ShieldGlintIcon()
                             } else {
                                 Image(systemName: "bolt.shield.fill")
@@ -56,9 +56,9 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         .frame(width: shieldIconSize + 4, alignment: .center)
                         .accessibilityHidden(true)
                     } content: {
-                        automaticFilterTextColumn
+                        filterListsTextColumn
                     } trailing: {
-                        automaticFilterStatusBadge
+                        filterListsStatusBadge
                     }
                     .padding(.vertical, 12)
                     .sidebarNavigationRow(screen: screen, isRegular: horizontalSizeClass == .regular) {
@@ -66,7 +66,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     }
                         .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
                         .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
-                        .accessibility(identifier: TestIdentifier.automaticFilterLink.rawValue)
+                        .accessibility(identifier: TestIdentifier.filterListsLink.rawValue)
                         .accentColor(Color.primary.opacity(0.35))
                 } header: {
                     Spacer()
@@ -236,7 +236,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     }
 
     @ViewBuilder
-    private var automaticFilterTextColumn: some View {
+    private var filterListsTextColumn: some View {
         VStack(alignment: .leading) {
             Text("autoFilter_title"~)
                 .font(.system(size: autoFilterTitleSize, weight: .bold, design: .rounded))
@@ -252,8 +252,8 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     }
 
     @ViewBuilder
-    private var automaticFilterStatusBadge: some View {
-        if self.model.isAutomaticFilteringOn {
+    private var filterListsStatusBadge: some View {
+        if self.model.hasActiveFilterLists {
             let onColor = model.customAccent ?? Color.green
             Text("autoFilter_ON"~)
                 .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
@@ -421,7 +421,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 }
 
                 Button {
-                    self.model.refreshAutomaticFiltersSoon()
+                    self.model.refreshFilterListsSoon()
                 } label: {
                     Label("AI Refresh in 1m", systemImage: "arrow.clockwise")
                 }
@@ -550,7 +550,7 @@ extension AppHomeView {
     class ViewModel: BaseViewModel, ObservableObject, PersistentStoreReloadRefreshing {
         @Published private(set) var filters: [Filter]
         @Published private(set) var title: String
-        @Published private(set) var isAutomaticFilteringOn: Bool
+        @Published private(set) var hasActiveFilterLists: Bool
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var shortSenderChoice: Int
         @Published private(set) var subtitle: String
@@ -595,13 +595,13 @@ extension AppHomeView {
         @Published var customAccent: Color? = nil
 
         override init(appManager: AppManagerProtocol = AppManager.shared) {
-            let isAutomaticFilteringOn = appManager.automaticFilterManager.isAutomaticFilteringOn
+            let hasActiveFilterLists = appManager.filterListManager.hasActiveFilterLists
 
             self.title = "filterList_filters"~
-            self.subtitle = isAutomaticFilteringOn ? appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
-            self.isAutomaticFilteringOn = isAutomaticFilteringOn
-            self.isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
-            self.shortSenderChoice = appManager.automaticFilterManager.selectedChoice(for: .shortSender)
+            self.subtitle = hasActiveFilterLists ? appManager.filterListManager.activeFilterListsTitle ?? "" : ""
+            self.hasActiveFilterLists = hasActiveFilterLists
+            self.isAllUnknownFilteringOn = appManager.smartFilterManager.ruleState(for: .allUnknown)
+            self.shortSenderChoice = appManager.smartFilterManager.selectedChoice(for: .shortSender)
             self.filters = appManager.persistanceManager.fetchFilterRecords()
             self.rules = []
             self.notification = NotificationView.ViewModel(notification: .offline)
@@ -610,29 +610,29 @@ extension AppHomeView {
             self.customAccent = Color(accentRGB: appManager.defaultsManager.accentColorRGB)
             self.lastUIFingerprint = appManager.persistanceManager.fingerprint
 
-            self.rules = appManager.automaticFilterManager.rules
+            self.rules = appManager.smartFilterManager.rules
                 .map({
                     StatefulItem<RuleType>(item: $0,
-                                           getter: appManager.automaticFilterManager.automaticRuleState,
-                                           setter: self.setAutomaticRuleState) })
+                                           getter: appManager.smartFilterManager.ruleState,
+                                           setter: self.setRuleState) })
                 .sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
 
             self.runLaunchFlowIfNeeded()
         }
         
         func refresh() {
-            let isAutomaticFilteringOn = self.appManager.automaticFilterManager.isAutomaticFilteringOn
+            let hasActiveFilterLists = self.appManager.filterListManager.hasActiveFilterLists
 
             self.title = "filterList_filters"~
-            self.subtitle = isAutomaticFilteringOn ? self.appManager.automaticFilterManager.activeAutomaticFiltersTitle ?? "" : ""
-            self.isAutomaticFilteringOn = isAutomaticFilteringOn
-            self.isAllUnknownFilteringOn = self.appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
-            self.shortSenderChoice = self.appManager.automaticFilterManager.selectedChoice(for: .shortSender)
+            self.subtitle = hasActiveFilterLists ? self.appManager.filterListManager.activeFilterListsTitle ?? "" : ""
+            self.hasActiveFilterLists = hasActiveFilterLists
+            self.isAllUnknownFilteringOn = self.appManager.smartFilterManager.ruleState(for: .allUnknown)
+            self.shortSenderChoice = self.appManager.smartFilterManager.selectedChoice(for: .shortSender)
             self.filters = self.appManager.persistanceManager.fetchFilterRecords()
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: self.appManager)
-            self.rules = self.appManager.automaticFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
-                                                                                                   getter: self.appManager.automaticFilterManager.automaticRuleState,
-                                                                                                   setter: self.setAutomaticRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
+            self.rules = self.appManager.smartFilterManager.rules.map({ StatefulItem<RuleType>(item: $0,
+                                                                                                   getter: self.appManager.smartFilterManager.ruleState,
+                                                                                                   setter: self.setRuleState) }).sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
             self.lastUIFingerprint = self.appManager.persistanceManager.fingerprint
             if self.sheetScreen != .chooseAccentColor {
                 self.customAccent = Color(accentRGB: self.appManager.defaultsManager.accentColorRGB)
@@ -641,7 +641,7 @@ extension AppHomeView {
         }
         
         func setSelectedChoice(for rule: RuleType, choice: Int) {
-            self.appManager.automaticFilterManager.setSelectedChoice(for: rule, choice: choice)
+            self.appManager.smartFilterManager.setSelectedChoice(for: rule, choice: choice)
             self.refresh()
         }
         
@@ -950,10 +950,10 @@ extension AppHomeView {
                     }
                 }
 
-                NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { _ in
+                NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: .main) { _ in
                     self.refresh()
-                    guard self.isAutomaticFilteringOn else { return }
-                    self.showNotification(.automaticFiltersUpdated)
+                    guard self.hasActiveFilterLists else { return }
+                    self.showNotification(.filterListsUpdated)
                 }
             }
 
@@ -972,7 +972,7 @@ extension AppHomeView {
             let defaultsManager = self.appManager.defaultsManager
             guard !defaultsManager.isAppFirstRun else { return }
             guard !defaultsManager.didDismissReportingExtensionNudge else { return }
-            guard self.isAutomaticFilteringOn else { return }
+            guard self.hasActiveFilterLists else { return }
             guard defaultsManager.sessionCounter > 0 && defaultsManager.sessionCounter % 3 == 0 else { return }
             guard !self.didShowNotificationThisSession else { return }
 
@@ -1046,9 +1046,9 @@ extension AppHomeView {
             self.appManager.schedulingManager.scheduleInactivityReminderSoon()
         }
 
-        func refreshAutomaticFiltersSoon() {
-            self.appManager.debugDataManager.expireAutomaticFiltersCache()
-            self.appManager.schedulingManager.scheduleAutomaticFiltersProcessingSoon()
+        func refreshFilterListsSoon() {
+            self.appManager.debugDataManager.expireFilterListsCache()
+            self.appManager.schedulingManager.scheduleFilterListsProcessingSoon()
         }
         #endif // DEBUG
         
@@ -1067,13 +1067,13 @@ extension AppHomeView {
             return lastDismissDate.addingTimeInterval(snoozeDuration) > Date()
         }
         
-        private func setAutomaticRuleState(for rule: RuleType, value: Bool) {
-            self.appManager.automaticFilterManager.setAutomaticRuleState(for: rule, value: value)
+        private func setRuleState(for rule: RuleType, value: Bool) {
+            self.appManager.smartFilterManager.setRuleState(for: rule, value: value)
             self.refresh()
         }
 
         private static func makeCountrySummary(appManager: AppManagerProtocol) -> String {
-            let codes = appManager.automaticFilterManager.selectedCountries(for: .countryAllowlist)
+            let codes = appManager.smartFilterManager.selectedCountries(for: .countryAllowlist)
             guard !codes.isEmpty else { return "autoFilter_countryAllowlist_empty"~ }
             let names = codes
                 .compactMap { CallingCodeEntry.byCallingCode[$0] }

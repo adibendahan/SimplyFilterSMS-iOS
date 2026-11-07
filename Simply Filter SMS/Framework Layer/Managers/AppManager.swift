@@ -17,7 +17,8 @@ class AppManager: AppManagerProtocol {
     
     var persistanceManager: PersistanceManagerProtocol
     var defaultsManager: DefaultsManagerProtocol
-    var automaticFilterManager: AutomaticFilterManagerProtocol
+    var filterListManager: FilterListManagerProtocol
+    var smartFilterManager: SmartFilterManagerProtocol
     var messageEvaluationManager: MessageEvaluationManagerProtocol
     var networkSyncManager: NetworkSyncManagerProtocol
     var filterListService: FilterListServiceProtocol
@@ -38,12 +39,14 @@ class AppManager: AppManagerProtocol {
         
         messageEvaluationManager.setLogger(AppManager.logger)
         
-        let automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager,
-                                                             filterListService: filterListService,
-                                                             networkSyncManager: networkSyncManager)
+        let filterListManager = FilterListManager(persistanceManager: persistanceManager,
+                                                  filterListService: filterListService,
+                                                  networkSyncManager: networkSyncManager)
+        let smartFilterManager = SmartFilterManager(persistanceManager: persistanceManager)
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
-        self.automaticFilterManager = automaticFilterManager
+        self.filterListManager = filterListManager
+        self.smartFilterManager = smartFilterManager
         self.messageEvaluationManager = messageEvaluationManager
         self.networkSyncManager = networkSyncManager
         self.filterListService = filterListService
@@ -51,11 +54,12 @@ class AppManager: AppManagerProtocol {
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
         self.filterTransferManager = FilterTransferManager(persistanceManager: persistanceManager)
         self.flowManager = FlowManager(defaultsManager: defaultsManager)
-        self.schedulingManager = SchedulingManager(automaticFilterManager: automaticFilterManager,
+        self.schedulingManager = SchedulingManager(filterListManager: filterListManager,
                                                    defaultsManager: defaultsManager)
         self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
                                                  defaultsManager: defaultsManager,
-                                                 automaticFilterManager: automaticFilterManager)
+                                                 filterListManager: filterListManager,
+                                                 smartFilterManager: smartFilterManager)
 
         #if DEBUG
         if UIApplication.shared.isInTestingMode {
@@ -101,7 +105,7 @@ class AppManager: AppManagerProtocol {
     func onAppLaunch() {
         let _ = self.defaultsManager.appAge // make sure it's initialized
         AppManager.logger.debug("onAppLaunch — session #\(self.defaultsManager.sessionCounter, privacy: .public), installDate: \(self.defaultsManager.appAge, privacy: .public)")
-        self.schedulingManager.scheduleAutomaticFiltersProcessing()
+        self.schedulingManager.scheduleFilterListsProcessing()
     }
 
     @MainActor
@@ -114,7 +118,7 @@ class AppManager: AppManagerProtocol {
             }
             else {
                 AppManager.logger.debug("onAppBecameActive — same day, skipping new session")
-                self.automaticFilterManager.updateAutomaticFiltersWhenOnline()
+                self.filterListManager.updateFilterListsWhenOnline()
                 return false
             }
         }
@@ -130,7 +134,7 @@ class AppManager: AppManagerProtocol {
         self.defaultsManager.sessionCounter += 1
         self.defaultsManager.sessionAge = Date()
         AppManager.logger.debug("onNewUserSession — session #\(self.defaultsManager.sessionCounter, privacy: .public)")
-        self.automaticFilterManager.updateAutomaticFiltersWhenOnline()
+        self.filterListManager.updateFilterListsWhenOnline()
     }
     
     #if DEBUG

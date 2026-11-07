@@ -29,7 +29,7 @@ class SnapshotsTestCase: ApplicationTestCase {
         app.tap(.debugToolsButton)
         app.tap(.loadDebugDataMenuButton)
         self.sleep(seconds: 5)
-        app.waitForHittable(app.button(.automaticFilterLink))
+        app.waitForHittable(app.button(.filterListsLink))
         let allowLink = app.button(.allowFiltersLink)
         XCTAssertTrue(allowLink.waitForExistence(timeout: 8))
         let populated = self.expectation(for: NSPredicate(format: "label MATCHES %@", ".*[1-9].*"), evaluatedWith: allowLink)
@@ -40,8 +40,8 @@ class SnapshotsTestCase: ApplicationTestCase {
             snapshotSettled("01.applicationHome")
         }
         
-        app.assertLabel(of: .automaticFilterLink, contains: "autoFilter_ON"~)
-        app.tap(.automaticFilterLink)
+        app.assertLabel(of: .filterListsLink, contains: "autoFilter_ON"~)
+        app.tap(.filterListsLink)
         app.waitForHittable(app.switches.firstMatch)
         snapshotSettled("02.automaticFilters")
         app.tap(.closeButton)

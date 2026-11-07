@@ -21,5 +21,5 @@ class mock_DebugDataManager: DebugDataManagerProtocol {
         loadLangCode = langCode
     }
 
-    func expireAutomaticFiltersCache() { }
+    func expireFilterListsCache() { }
 }

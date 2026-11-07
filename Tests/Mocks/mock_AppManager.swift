@@ -16,7 +16,8 @@ class mock_AppManager: AppManagerProtocol {
 
     var persistanceManager: PersistanceManagerProtocol = mock_PersistanceManager()
     var defaultsManager: DefaultsManagerProtocol = mock_DefaultsManager()
-    var automaticFilterManager: AutomaticFilterManagerProtocol = mock_AutomaticFilterManager()
+    var filterListManager: FilterListManagerProtocol = mock_FilterListManager()
+    var smartFilterManager: SmartFilterManagerProtocol = mock_SmartFilterManager()
     var messageEvaluationManager: MessageEvaluationManagerProtocol = mock_MessageEvaluationManager()
     var networkSyncManager: NetworkSyncManagerProtocol = mock_NetworkSyncManager()
     var filterListService: FilterListServiceProtocol = mock_FilterListService()

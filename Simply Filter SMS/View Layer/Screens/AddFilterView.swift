@@ -309,7 +309,7 @@ extension AddFilterView {
                 self.title = "addFilter_addFilter_deny"~
             }
             
-            let isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
+            let isAllUnknownFilteringOn = appManager.smartFilterManager.ruleState(for: .allUnknown)
             self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
             self.isExpanded = appManager.defaultsManager.isExpandedAddFilter
             

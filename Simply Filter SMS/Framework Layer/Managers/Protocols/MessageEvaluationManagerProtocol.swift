@@ -16,7 +16,7 @@ enum MessageEvaluationMatch: Equatable {
     case storeUnavailable
     case userFilter(String)
     case smartFilter(String)
-    case automaticFilter(String)
+    case filterList(String)
 
     var label: String? {
         switch self {
@@ -28,14 +28,14 @@ enum MessageEvaluationMatch: Equatable {
             return "testFilters_resultMatchedFilter"~
         case .smartFilter:
             return "testFilters_resultMatchedSmartFilter"~
-        case .automaticFilter:
+        case .filterList:
             return "testFilters_resultMatchedAutomaticFilter"~
         }
     }
 
     var value: String? {
         switch self {
-        case .userFilter(let text), .smartFilter(let text), .automaticFilter(let text):
+        case .userFilter(let text), .smartFilter(let text), .filterList(let text):
             return text
         case .none, .noMatch, .storeUnavailable:
             return nil

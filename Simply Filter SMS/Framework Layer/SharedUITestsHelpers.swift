@@ -25,7 +25,7 @@ extension UIApplication {
 enum TestIdentifier: String {
     case callToActionButton = "callToActionButton"
     case cancelButton = "cancelButton"
-    case automaticFilterLink = "automaticFilterLink"
+    case filterListsLink = "filterListsLink"
     case allowFiltersLink = "allowFiltersLink"
     case denyFiltersLink = "denyFiltersLink"
     case denyLanguageLink = "denyLanguageLink"

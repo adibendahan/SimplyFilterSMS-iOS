@@ -1,5 +1,5 @@
 //
-//  AutomaticFilterManager.swift
+//  FilterListManager.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 30/01/2022.
@@ -8,7 +8,7 @@
 import Foundation
 import NaturalLanguage
 
-class AutomaticFilterManager: AutomaticFilterManagerProtocol {
+class FilterListManager: FilterListManagerProtocol {
     
     //MARK: - Initialization -
     init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager,
@@ -25,36 +25,32 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     }
     
     
-    //MARK: - Public API (AutomaticFilterManagerProtocol) -
-    var isAutomaticFilteringOn: Bool {
-        var isAutomaticFilteringOn = false
+    //MARK: - Public API (FilterListManagerProtocol) -
+    var hasActiveFilterLists: Bool {
+        var hasActiveFilterLists = false
         
         let automaticFiltersLanguageRecords = self.persistanceManager?.fetchAutomaticFiltersLanguageRecords()
         let supportedLanguages: [NLLanguage] = self.languages(for: .automaticBlocking)
         
-        for automaticFilterLanguage in automaticFiltersLanguageRecords ?? [] {
-            if let langRawValue = automaticFilterLanguage.lang {
+        for filterListLanguageRecord in automaticFiltersLanguageRecords ?? [] {
+            if let langRawValue = filterListLanguageRecord.lang {
                 let lang = NLLanguage(rawValue: langRawValue)
                 
                 if supportedLanguages.contains(lang) &&
-                    automaticFilterLanguage.isActive == true {
+                    filterListLanguageRecord.isActive == true {
                     
-                    isAutomaticFilteringOn = true
+                    hasActiveFilterLists = true
                     break
                 }
             }
         }
         
-        return isAutomaticFilteringOn
+        return hasActiveFilterLists
     }
     
-    var rules: [RuleType] {
-        return RuleType.allCases
-    }
-    
-    var activeAutomaticFiltersTitle: String? {
+    var activeFilterListsTitle: String? {
         var activeLanguagesString = ""
-        var automaticFilterNames: [String] = []
+        var activeFilterListNames: [String] = []
         
         let automaticFiltersLanguageRecords = self.persistanceManager?.fetchAutomaticFiltersLanguageRecords()
         let supportedLanguages = self.languages(for: .automaticBlocking)
@@ -68,15 +64,15 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
                 if supportedLanguages.contains(lang),
                    let localizedName = lang.localizedName {
                     
-                    automaticFilterNames.append(localizedName)
+                    activeFilterListNames.append(localizedName)
                 }
             }
         }
         
-        guard automaticFilterNames.count > 0 else { return nil }
-        let count = automaticFilterNames.count - 1
+        guard activeFilterListNames.count > 0 else { return nil }
+        let count = activeFilterListNames.count - 1
         
-        for (index, string) in automaticFilterNames.enumerated() {
+        for (index, string) in activeFilterListNames.enumerated() {
             if index < count {
                 activeLanguagesString.append(string + ", ")
             }
@@ -92,7 +88,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         return activeLanguagesString.isEmpty ? nil : activeLanguagesString
     }
     
-    var automaticFiltersCacheAge: Date? {
+    var filterListsCacheAge: Date? {
         guard let persistanceManager = self.persistanceManager,
               let cache = persistanceManager.fetchFilterListsCacheRecords().first else { return nil }
         
@@ -131,80 +127,40 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
         return supportedLanguages
     }
     
-    func languageAutomaticState(for language: NLLanguage) -> Bool {
+    func isFilterListActive(for language: NLLanguage) -> Bool {
         guard let persistanceManager = self.persistanceManager else { return false }
         let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         return automaticFiltersLanguage.isActive
     }
     
-    func setLanguageAutomaticState(for language: NLLanguage, value: Bool) {
+    func setFilterListActive(for language: NLLanguage, value: Bool) {
         guard let persistanceManager = self.persistanceManager else { return }
-        AppManager.logger.debug("setLanguageAutomaticState — '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(value, privacy: .public)")
+        AppManager.logger.debug("setFilterListActive — '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(value, privacy: .public)")
         let automaticFiltersLanguage = persistanceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
         automaticFiltersLanguage.isActive = value
         _ = persistanceManager.commitAndAnnounce()
     }
     
-    func automaticRuleState(for rule: RuleType) -> Bool {
-        guard let persistanceManager = self.persistanceManager,
-              let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return false }
-        return automaticFiltersRule.isActive
-    }
-    
-    func setAutomaticRuleState(for rule: RuleType, value: Bool) {
-        guard let persistanceManager = self.persistanceManager else { return }
-        AppManager.logger.debug("setAutomaticRuleState — '\(rule.title, privacy: .public)' → \(value, privacy: .public)")
-        let automaticFiltersRule = persistanceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
-        automaticFiltersRule.isActive = value
-        if automaticFiltersRule.ruleType == .shortSender && automaticFiltersRule.selectedChoice < 3 {
-            automaticFiltersRule.selectedChoice = 6
-        }
-        _ = persistanceManager.commitAndAnnounce()
-    }
-
-    func selectedChoice(for rule: RuleType) -> Int {
-        guard let persistanceManager = self.persistanceManager,
-              let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return 0 }
-        return Int(automaticFiltersRule.selectedChoice)
-    }
-
-    func setSelectedChoice(for rule: RuleType, choice: Int) {
-        guard let persistanceManager = self.persistanceManager,
-              let automaticFiltersRule = persistanceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
-        AppManager.logger.debug("setSelectedChoice — '\(rule.title, privacy: .public)' → \(choice, privacy: .public)")
-        automaticFiltersRule.selectedChoice = Int64(choice)
-        _ = persistanceManager.commitAndAnnounce()
-    }
-
-    func selectedCountries(for rule: RuleType) -> [String] {
-        return self.persistanceManager?.selectedCountries(for: rule) ?? []
-    }
-
-    func setSelectedCountries(_ countries: [String], for rule: RuleType) {
-        AppManager.logger.debug("setSelectedCountries — \(countries, privacy: .public)")
-        self.persistanceManager?.setSelectedCountries(countries, for: rule)
-    }
-
     @MainActor
-    func updateAutomaticFiltersWhenOnline() {
+    func updateFilterListsWhenOnline() {
         guard !ProcessInfo.processInfo.isInTestingMode else {
-            AppManager.logger.debug("updateAutomaticFiltersWhenOnline — testing mode, keeping the seeded filter lists")
+            AppManager.logger.debug("updateFilterListsWhenOnline — testing mode, keeping the seeded filter lists")
             return
         }
         guard !self.didCheckFilterListsToday else {
-            AppManager.logger.debug("updateAutomaticFiltersWhenOnline — today's check already succeeded")
+            AppManager.logger.debug("updateFilterListsWhenOnline — today's check already succeeded")
             return
         }
-        AppManager.logger.debug("updateAutomaticFiltersWhenOnline — waiting for network status")
+        AppManager.logger.debug("updateFilterListsWhenOnline — waiting for network status")
         self.networkSyncManager?.onFirstStatusKnown { [weak self] in
             MainActor.assumeIsolated {
                 guard let self else { return }
                 guard self.networkSyncManager?.networkStatus == .online else {
-                    AppManager.logger.debug("updateAutomaticFiltersWhenOnline — offline, checking once back online")
-                    self.updateAutomaticFiltersOnNextOnline()
+                    AppManager.logger.debug("updateFilterListsWhenOnline — offline, checking once back online")
+                    self.updateFilterListsOnNextOnline()
                     return
                 }
-                self.updateAutomaticFiltersInBackground()
+                self.updateFilterListsInBackground()
             }
         }
     }
@@ -245,12 +201,12 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
     @MainActor
     private var didCheckFilterListsToday: Bool {
         guard self.persistanceManager?.cachedFilterListCatalog() != nil else { return false }
-        guard let lastCheckDate = self.automaticFiltersCacheAge else { return false }
+        guard let lastCheckDate = self.filterListsCacheAge else { return false }
         return lastCheckDate.daysBetween(date: Date()) == 0
     }
 
     @MainActor
-    private func updateAutomaticFiltersOnNextOnline() {
+    private func updateFilterListsOnNextOnline() {
         guard self.networkStatusTask == nil else { return }
         let networkStatusChanges = NotificationCenter.default.notifications(named: .networkStatusChange)
         self.networkStatusTask = Task { @MainActor [weak self] in
@@ -258,16 +214,16 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
                 guard let networkStatus = notification.object as? NetworkStatus, networkStatus == .online else { continue }
                 guard let self else { return }
                 self.networkStatusTask = nil
-                AppManager.logger.debug("updateAutomaticFiltersOnNextOnline — back online")
-                self.updateAutomaticFiltersInBackground()
+                AppManager.logger.debug("updateFilterListsOnNextOnline — back online")
+                self.updateFilterListsInBackground()
                 return
             }
         }
     }
 
     @MainActor
-    private func updateAutomaticFiltersInBackground() {
-        AppManager.logger.debug("updateAutomaticFiltersInBackground — triggering automatic filter update check")
+    private func updateFilterListsInBackground() {
+        AppManager.logger.debug("updateFilterListsInBackground — triggering automatic filter update check")
         Task(priority: .background) {
             await self.refreshFilterLists()
         }
@@ -281,7 +237,7 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             return
         }
         var cacheAgeDescription = "none"
-        if let cacheAge = self.automaticFiltersCacheAge {
+        if let cacheAge = self.filterListsCacheAge {
             cacheAgeDescription = "\(cacheAge.daysBetween(date: Date()))d"
         }
         AppManager.logger.debug("refreshFilterLists — fetching | cache age: \(cacheAgeDescription, privacy: .public)")
@@ -321,8 +277,8 @@ class AutomaticFilterManager: AutomaticFilterManagerProtocol {
             return
         }
         if hasNewFilters {
-            AppManager.logger.debug("performRefresh — posting automaticFiltersUpdated")
-            NotificationCenter.default.post(name: .automaticFiltersUpdated, object: nil)
+            AppManager.logger.debug("performRefresh — posting filterListsUpdated")
+            NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
         }
     }
 

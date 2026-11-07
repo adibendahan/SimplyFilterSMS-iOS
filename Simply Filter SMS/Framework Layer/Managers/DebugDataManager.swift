@@ -27,18 +27,21 @@ class DebugDataManager: DebugDataManagerProtocol {
 
     private let persistanceManager: PersistanceManagerProtocol
     private let defaultsManager: DefaultsManagerProtocol
-    private let automaticFilterManager: AutomaticFilterManagerProtocol
+    private let filterListManager: FilterListManagerProtocol
+    private let smartFilterManager: SmartFilterManagerProtocol
 
     init(persistanceManager: PersistanceManagerProtocol,
          defaultsManager: DefaultsManagerProtocol,
-         automaticFilterManager: AutomaticFilterManagerProtocol) {
+         filterListManager: FilterListManagerProtocol,
+         smartFilterManager: SmartFilterManagerProtocol) {
         self.persistanceManager = persistanceManager
         self.defaultsManager = defaultsManager
-        self.automaticFilterManager = automaticFilterManager
+        self.filterListManager = filterListManager
+        self.smartFilterManager = smartFilterManager
     }
 
     #if DEBUG
-    func expireAutomaticFiltersCache() {
+    func expireFilterListsCache() {
         guard let cache = self.persistanceManager.fetchFilterListsCacheRecords().first else { return }
         cache.age = Calendar.current.date(byAdding: .day, value: -7, to: Date())
         _ = self.persistanceManager.commitContext()
@@ -77,19 +80,19 @@ class DebugDataManager: DebugDataManagerProtocol {
 
         for rule in RuleType.allCases {
             guard rule != .allUnknown else { continue }
-            automaticFilterManager.setAutomaticRuleState(for: rule, value: true)
+            smartFilterManager.setRuleState(for: rule, value: true)
         }
 
         // Prefer the full BCP-47 tag (zh-Hans), then the language code. Script-only
         // locales like Simplified Chinese are not in the AI filter lists — fall back
         // to English so Load Debug Data still turns AI Filtering ON for screenshots.
         let normalizedCode = String(langCode.split(separator: "-").first ?? Substring(langCode))
-        let supported = Set(automaticFilterManager.languages(for: .automaticBlocking))
+        let supported = Set(filterListManager.languages(for: .automaticBlocking))
         let preferred = [NLLanguage(langCode), NLLanguage(normalizedCode)].first { $0 != .undetermined }
         if let preferred, supported.contains(preferred) {
-            automaticFilterManager.setLanguageAutomaticState(for: preferred, value: true)
+            filterListManager.setFilterListActive(for: preferred, value: true)
         } else {
-            automaticFilterManager.setLanguageAutomaticState(for: .english, value: true)
+            filterListManager.setFilterListActive(for: .english, value: true)
         }
     }
 

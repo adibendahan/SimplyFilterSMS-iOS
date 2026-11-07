@@ -193,7 +193,7 @@ extension LanguageListView {
              appManager: AppManagerProtocol = AppManager.shared) {
             self.onAdded = onAdded
             
-            let cacheAge = appManager.automaticFilterManager.automaticFiltersCacheAge ?? nil
+            let cacheAge = appManager.filterListManager.filterListsCacheAge ?? nil
             let isOnline = appManager.networkSyncManager.networkStatus == .online
             
             self.mode = mode
@@ -211,10 +211,10 @@ extension LanguageListView {
                 self.footerSecondLine = nil
             }
 
-            self.languages = appManager.automaticFilterManager.languages(for: mode)
+            self.languages = appManager.filterListManager.languages(for: mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
-                                                getter: appManager.automaticFilterManager.languageAutomaticState,
-                                                setter: appManager.automaticFilterManager.setLanguageAutomaticState) })
+                                                getter: appManager.filterListManager.isFilterListActive,
+                                                setter: appManager.filterListManager.setFilterListActive) })
             
 
             if isOnline {
@@ -239,7 +239,7 @@ extension LanguageListView {
 
                     if networkStatus == .online {
                         Task(priority: .background) {
-                            await self?.appManager.automaticFilterManager.refreshFilterLists()
+                            await self?.appManager.filterListManager.refreshFilterLists()
                         }
                         self?.isLoading = true
                     }
@@ -250,7 +250,7 @@ extension LanguageListView {
                 }
             }
 
-            NotificationCenter.default.addObserver(forName: .automaticFiltersUpdated, object: nil, queue: .main) { [weak self] _ in
+            NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: .main) { [weak self] _ in
                 withAnimation {
                     guard let self = self else { return }
                     self.refresh()
@@ -281,14 +281,14 @@ extension LanguageListView {
         }
         
         func refresh() {
-            let cacheAge = self.appManager.automaticFilterManager.automaticFiltersCacheAge ?? nil
+            let cacheAge = self.appManager.filterListManager.filterListsCacheAge ?? nil
             
             self.lastUpdate = cacheAge
             self.footer = ViewModel.updatedFooter(for: self.mode, cacheAge: cacheAge)
-            self.languages = self.appManager.automaticFilterManager.languages(for: self.mode)
+            self.languages = self.appManager.filterListManager.languages(for: self.mode)
                 .map({ StatefulItem<NLLanguage>(item: $0,
-                                                getter: self.appManager.automaticFilterManager.languageAutomaticState,
-                                                setter: self.appManager.automaticFilterManager.setLanguageAutomaticState) })
+                                                getter: self.appManager.filterListManager.isFilterListActive,
+                                                setter: self.appManager.filterListManager.setFilterListActive) })
         }
         
         func addFilter(language: NLLanguage) {
@@ -305,7 +305,7 @@ extension LanguageListView {
         
         @Sendable func updateFilters() async {
             try? await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
-            await self.appManager.automaticFilterManager.refreshFilterLists()
+            await self.appManager.filterListManager.refreshFilterLists()
             
             Task {
                 DispatchQueue.main.async {

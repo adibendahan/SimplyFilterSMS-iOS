@@ -215,7 +215,7 @@ struct NotificationView: View {
     }
 
     enum Notification {
-        case offline, cloudSyncOperationComplete, automaticFiltersUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
+        case offline, cloudSyncOperationComplete, filterListsUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
 
         var icon: String {
             switch self {
@@ -223,7 +223,7 @@ struct NotificationView: View {
                 return "icloud.slash.fill"
             case .cloudSyncOperationComplete:
                 return "icloud.and.arrow.down.fill"
-            case .automaticFiltersUpdated:
+            case .filterListsUpdated:
                 return "bolt.shield.fill"
             case .onClipboardSet:
                 return "doc.on.clipboard.fill"
@@ -246,7 +246,7 @@ struct NotificationView: View {
                 return .red.opacity(0.4)
             case .cloudSyncOperationComplete:
                 return .green.opacity(0.6)
-            case .automaticFiltersUpdated:
+            case .filterListsUpdated:
                 return .indigo.opacity(0.6)
             case .onClipboardSet:
                 return .primary.opacity(0.6)
@@ -270,7 +270,7 @@ struct NotificationView: View {
                 return "notification_offline_title"~
             case .cloudSyncOperationComplete:
                 return "notification_sync_title"~
-            case .automaticFiltersUpdated:
+            case .filterListsUpdated:
                 return "notification_automatic_title"~
             case .onClipboardSet(let contentDescription):
                 return contentDescription
@@ -297,7 +297,7 @@ struct NotificationView: View {
                 return "notification_offline_subtitle"~
             case .cloudSyncOperationComplete:
                 return "notification_sync_subtitle"~
-            case .automaticFiltersUpdated:
+            case .filterListsUpdated:
                 return "notification_automatic_subtitle"~
             case .onClipboardSet:
                 return "notification_clipboard_subtitle"~
@@ -331,7 +331,7 @@ struct NotificationView: View {
             switch self {
             case .offline:
                 return nil
-            case .cloudSyncOperationComplete, .automaticFiltersUpdated:
+            case .cloudSyncOperationComplete, .filterListsUpdated:
                 return 6
             case .onClipboardSet:
                 return 3
@@ -370,7 +370,7 @@ struct NotificationView: View {
                 return 2
             case .cloudSyncOperationComplete:
                 return 3
-            case .automaticFiltersUpdated:
+            case .filterListsUpdated:
                 return 4
             case .enableReportingExtension:
                 return 5
@@ -424,7 +424,7 @@ private struct NotificationActionButtonStyle: ViewModifier {
 
 struct NotificationToastView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = NotificationView.ViewModel(notification: .automaticFiltersUpdated)
+        let model = NotificationView.ViewModel(notification: .filterListsUpdated)
         NavigationView {
             List {
                 Button("Tap me") {
