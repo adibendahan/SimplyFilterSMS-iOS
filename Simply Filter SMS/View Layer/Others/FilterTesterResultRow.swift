@@ -1,5 +1,5 @@
 //
-//  TestFilterResultRow.swift
+//  FilterTesterResultRow.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 20/08/2026.
@@ -10,7 +10,7 @@ import IdentityLookup
 
 
 //MARK: - View -
-struct TestFilterResultRow: View {
+struct FilterTesterResultRow: View {
 
     let result: MessageEvaluationResult
 
@@ -95,13 +95,13 @@ private struct TestResultStyle {
 
 //MARK: - Preview -
 #Preview("Junk") {
-    TestFilterResultRow(result: MessageEvaluationResult(action: .junk, match: .userFilter("amazon")))
+    FilterTesterResultRow(result: MessageEvaluationResult(action: .junk, match: .userFilter("amazon")))
         .padding()
         .adaptiveLayoutEnvironment()
 }
 
 #Preview("Allowed") {
-    TestFilterResultRow(result: MessageEvaluationResult(action: .allow, match: .noMatch))
+    FilterTesterResultRow(result: MessageEvaluationResult(action: .allow, match: .noMatch))
         .padding()
         .adaptiveLayoutEnvironment()
 }

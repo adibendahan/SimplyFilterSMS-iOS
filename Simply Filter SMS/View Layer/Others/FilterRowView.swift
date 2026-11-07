@@ -1,5 +1,5 @@
 //
-//  FilterListRowView.swift
+//  FilterRowView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 07/02/2022.
@@ -10,7 +10,7 @@ import NaturalLanguage
 
 
 //MARK: - View -
-struct FilterListRowView: View {
+struct FilterRowView: View {
 
     var dotFilterID: UUID?
     var focusedFilterID: FocusState<UUID?>.Binding
@@ -196,10 +196,10 @@ struct FilterListRowView: View {
         Menu {
             folderPicker
         } label: {
-            FilterRowOptionChip(systemName: self.model.filter.denyFolderType.iconName, isActive: true)
+            FilterRowOptionChip(systemName: self.model.filter.messageFolder.iconName, isActive: true)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.denyFolderType.name))
+        .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.messageFolder.name))
     }
 
     private var targetPicker: some View {
@@ -246,10 +246,10 @@ struct FilterListRowView: View {
 
     private var folderPicker: some View {
         Picker(selection: Binding(
-            get: { self.model.filter.denyFolderType },
+            get: { self.model.filter.messageFolder },
             set: { self.model.updateFilter(denyFolder: $0) }
         )) {
-            ForEach(DenyFolderType.allCases) { folder in
+            ForEach(MessageFolder.allCases) { folder in
                 Label(folder.name, systemImage: folder.iconName)
                     .tag(folder)
             }
@@ -260,7 +260,7 @@ struct FilterListRowView: View {
 }
 
 //MARK: - View Model -
-extension FilterListRowView {
+extension FilterRowView {
     
     class ViewModel: BaseViewModel, ObservableObject {
         let id: UUID
@@ -294,29 +294,29 @@ extension FilterListRowView {
             }
         }
         
-        func updateFilter(denyFolder: DenyFolderType) {
-            self.appManager.persistanceManager.updateFilter(self.filter, denyFolder: denyFolder)
+        func updateFilter(denyFolder: MessageFolder) {
+            self.appManager.persistenceManager.updateFilter(self.filter, denyFolder: denyFolder)
             self.onUpdate?(true)
         }
         
         func updateFilter(filterMatching: FilterMatching) {
-            self.appManager.persistanceManager.updateFilter(self.filter, filterMatching: filterMatching)
+            self.appManager.persistenceManager.updateFilter(self.filter, filterMatching: filterMatching)
             self.onUpdate?(true)
         }
         
         func updateFilter(filterCase: FilterCase) {
-            self.appManager.persistanceManager.updateFilter(self.filter, filterCase: filterCase)
+            self.appManager.persistenceManager.updateFilter(self.filter, filterCase: filterCase)
             self.onUpdate?(true)
         }
         
         func updateFilter(filterTarget: FilterTarget) {
-            self.appManager.persistanceManager.updateFilter(self.filter, filterTarget: filterTarget)
+            self.appManager.persistenceManager.updateFilter(self.filter, filterTarget: filterTarget)
             self.onUpdate?(true)
         }
         
         func isLiveDuplicate(text: String) -> Bool {
             guard text != (self.filter.text ?? "") else { return false }
-            return self.appManager.persistanceManager.isDuplicateFilter(
+            return self.appManager.persistenceManager.isDuplicateFilter(
                 text: text,
                 filterTarget: self.filter.filterTarget,
                 filterMatching: self.filter.filterMatching,
@@ -331,34 +331,34 @@ extension FilterListRowView {
         @discardableResult
         func updateFilter(filterText: String) -> Bool {
             let current = self.filter.text ?? ""
-            AppManager.logger.debug("FilterListRow.updateFilter(text) — proposed: '\(filterText, privacy: .public)', current: '\(current, privacy: .public)'")
+            AppManager.logger.debug("FilterRow.updateFilter(text) — proposed: '\(filterText, privacy: .public)', current: '\(current, privacy: .public)'")
 
             guard filterText != current else {
-                AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, unchanged")
+                AppManager.logger.debug("FilterRow.updateFilter(text) — skipped, unchanged")
                 return false
             }
 
             if self.filter.filterMatching == .regex, (try? Regex(filterText)) == nil {
-                AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, invalid regex")
+                AppManager.logger.debug("FilterRow.updateFilter(text) — skipped, invalid regex")
                 self.text = current
                 return true
             }
 
-            guard !self.appManager.persistanceManager.isDuplicateFilter(
+            guard !self.appManager.persistenceManager.isDuplicateFilter(
                 text: filterText,
                 filterTarget: self.filter.filterTarget,
                 filterMatching: self.filter.filterMatching,
                 filterCase: self.filter.filterCase) else {
-                AppManager.logger.debug("FilterListRow.updateFilter(text) — skipped, duplicate")
+                AppManager.logger.debug("FilterRow.updateFilter(text) — skipped, duplicate")
                 self.text = current
                 return true
             }
 
-            AppManager.logger.debug("FilterListRow.updateFilter(text) — saving")
-            self.appManager.persistanceManager.updateFilter(self.filter, filterText: filterText)
+            AppManager.logger.debug("FilterRow.updateFilter(text) — saving")
+            self.appManager.persistenceManager.updateFilter(self.filter, filterText: filterText)
 
             guard self.filter.text == filterText else {
-                AppManager.logger.debug("FilterListRow.updateFilter(text) — save failed, reverted")
+                AppManager.logger.debug("FilterRow.updateFilter(text) — save failed, reverted")
                 self.text = self.filter.text ?? current
                 return true
             }
@@ -371,10 +371,10 @@ extension FilterListRowView {
 
 
 //MARK: - Preview -
-struct FilterListRowView_Previews: PreviewProvider {
+struct FilterRowView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            FilterListView(model: FilterListView.ViewModel(filterType: .deny, appManager: AppManager.previews))
+            FiltersView(model: FiltersView.ViewModel(filterType: .deny, appManager: AppManager.previews))
         }
     }
 }

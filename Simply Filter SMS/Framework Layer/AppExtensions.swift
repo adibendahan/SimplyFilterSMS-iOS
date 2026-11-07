@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NaturalLanguage
 import UniformTypeIdentifiers
 
 extension EnvironmentValues {
@@ -187,5 +188,32 @@ extension UIApplication {
 extension View {
     func optionalTint(_ color: Color?) -> some View {
         self.tint(color ?? Color.accentColor)
+    }
+}
+
+extension NLLanguage {
+    static func displayOrder(_ a: NLLanguage, _ b: NLLanguage) -> Bool {
+        let currentLocale: NLLanguage? = Locale.current.language.languageCode.map { NLLanguage(rawValue: $0.identifier) }
+        var priority: [NLLanguage] = [.english, .hebrew]
+        if let current = currentLocale, !priority.contains(current) {
+            priority.insert(current, at: 0)
+        } else if currentLocale == .hebrew {
+            priority = [.hebrew, .english]
+        }
+        let ai = priority.firstIndex(of: a)
+        let bi = priority.firstIndex(of: b)
+        switch (ai, bi) {
+        case let (ai?, bi?):
+            return ai < bi
+        case (nil, _?):
+            return false
+        case (_?, nil):
+            return true
+        case (nil, nil):
+            let locale = Locale(identifier: "en_US")
+            let an = locale.localizedString(forIdentifier: a.rawValue) ?? a.rawValue
+            let bn = locale.localizedString(forIdentifier: b.rawValue) ?? b.rawValue
+            return an < bn
+        }
     }
 }

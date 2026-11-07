@@ -1,5 +1,5 @@
 //
-//  mock_PersistanceManager.swift
+//  PersistenceManagerTests.swift
 //  Tests
 //
 //  Created by Adi Ben-Dahan on 28/01/2022.
@@ -11,7 +11,7 @@ import CoreData
 import NaturalLanguage
 @testable import Simply_Filter_SMS
 
-class PersistanceManagerTests: XCTestCase {
+class PersistenceManagerTests: XCTestCase {
     
     //MARK: Test Lifecycle
     override func setUp() {
@@ -22,14 +22,14 @@ class PersistanceManagerTests: XCTestCase {
                                                 name: NSNotification.Name.NSManagedObjectContextDidSave ,
                                                 object: nil )
         
-        self.testSubject = PersistanceManager(inMemory: true)
+        self.testSubject = PersistenceManager(inMemory: true)
     }
     
     override func tearDown() {
         super.tearDown()
         
         self.saveNotificationCompleteHandler = nil
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
     }
     
     
@@ -47,7 +47,7 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssertEqual(filters.count, 2)
         XCTAssertEqual(filters[1].text, "1")
         XCTAssertEqual(filters[1].filterType, .deny)
-        XCTAssertEqual(filters[1].denyFolderType, .junk)
+        XCTAssertEqual(filters[1].messageFolder, .junk)
         XCTAssertEqual(filters[0].text, "2")
         XCTAssertEqual(filters[0].filterType, .allow)
     }
@@ -67,7 +67,7 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssertEqual(denyFilters.count, 1)
         XCTAssertEqual(denyFilters[0].text, "1")
         XCTAssertEqual(denyFilters[0].filterType, .deny)
-        XCTAssertEqual(denyFilters[0].denyFolderType, .junk)
+        XCTAssertEqual(denyFilters[0].messageFolder, .junk)
         XCTAssertEqual(allowFilters[0].text, "2")
         XCTAssertEqual(allowFilters[0].filterType, .allow)
         XCTAssertEqual(allowFilters[1].text, "3")
@@ -99,11 +99,11 @@ class PersistanceManagerTests: XCTestCase {
     func test_fetchAutomaticFiltersRuleRecords() {
         // Prepare
         let rule1 = AutomaticFiltersRule(context: self.testSubject.context)
-        rule1.ruleId = RuleType.links.rawValue
+        rule1.ruleId = SmartFilterType.links.rawValue
         rule1.isActive = false
         
         let rule2 = AutomaticFiltersRule(context: self.testSubject.context)
-        rule2.ruleId = RuleType.shortSender.rawValue
+        rule2.ruleId = SmartFilterType.shortSender.rawValue
         rule2.isActive = false
 
         // Act
@@ -111,8 +111,8 @@ class PersistanceManagerTests: XCTestCase {
 
         // Verify
         XCTAssertEqual(rules.count, 2)
-        XCTAssertEqual(rules[0].ruleType, .links)
-        XCTAssertEqual(rules[1].ruleType, .shortSender)
+        XCTAssertEqual(rules[0].smartFilterType, .links)
+        XCTAssertEqual(rules[1].smartFilterType, .shortSender)
     }
     
     func test_fetchFilterListsCacheRecords() {
@@ -154,7 +154,7 @@ class PersistanceManagerTests: XCTestCase {
     func test_fetchAutomaticFiltersRuleRecord() {
         // Prepare
         let supported = AutomaticFiltersRule(context: self.testSubject.context)
-        supported.ruleId = RuleType.links.rawValue
+        supported.ruleId = SmartFilterType.links.rawValue
         supported.isActive = false
         
         // Act
@@ -163,7 +163,7 @@ class PersistanceManagerTests: XCTestCase {
         
         // Verify
         XCTAssertFalse(links?.isActive ?? true)
-        XCTAssertEqual(links?.ruleId, RuleType.links.rawValue)
+        XCTAssertEqual(links?.ruleId, SmartFilterType.links.rawValue)
         XCTAssertNil(shortSender)
     }
     
@@ -265,7 +265,7 @@ class PersistanceManagerTests: XCTestCase {
         // Verify
         self.waitForExpectations(timeout: 1, handler: nil)
         let updatedFilter = self.testSubject.fetchFilterRecords().first!
-        XCTAssert(updatedFilter.denyFolderType == .promotion)
+        XCTAssert(updatedFilter.messageFolder == .promotion)
     }
 
     func test_saveCache_filterLists() throws {
@@ -382,6 +382,32 @@ class PersistanceManagerTests: XCTestCase {
         XCTAssertEqual(legacyCache.age, oldDate, "the 3.2 row belongs to 3.2 devices")
     }
 
+    func test_blockableLanguages() {
+        // Act
+        let allLanguages = self.testSubject.blockableLanguages()
+
+        // Verify
+        XCTAssertEqual(allLanguages.count, NLLanguage.allSupportedCases.count)
+        let currentLocale = Locale.current.language.languageCode.map { NLLanguage(rawValue: $0.identifier) }
+        let isCurrentLocaleSpecial = currentLocale == .english || currentLocale == .hebrew
+        if isCurrentLocaleSpecial {
+            XCTAssertEqual(allLanguages[0], .english, "English locale should place English first")
+        } else if let current = currentLocale {
+            XCTAssertEqual(allLanguages[0], current, "Non-English/Hebrew locale should appear first")
+            XCTAssertEqual(allLanguages[1], .english, "English should appear second after current locale")
+        }
+
+        // Prepare
+        self.testSubject.addFilter(text: NLLanguage.english.filterText, type: .denyLanguage, denyFolder: .junk, filterTarget: .body, filterMatching: .contains, filterCase: .caseInsensitive)
+
+        // Act
+        let remainingLanguages = self.testSubject.blockableLanguages()
+
+        // Verify
+        XCTAssertEqual(remainingLanguages.count, NLLanguage.allSupportedCases.count - 1)
+        XCTAssertFalse(remainingLanguages.contains(.english))
+    }
+
     func test_selectedCountries_roundTrip() {
         // Prepare + Act
         self.expectingSaveContext()
@@ -417,7 +443,7 @@ class PersistanceManagerTests: XCTestCase {
     }
 
     // MARK: Private Variables and Helpers
-    private var testSubject: PersistanceManagerProtocol = PersistanceManager(inMemory: true)
+    private var testSubject: PersistenceManagerProtocol = PersistenceManager(inMemory: true)
     private var saveNotificationCompleteHandler: ((Notification)->())?
     private let legacyFiltersData = "eyJmaWx0ZXJfbGlzdHMiOnsiZW4iOnsiYWxsb3dfYm9keSI6WyJ5b3VyIGNvZGUiXSwiYWxsb3dfc2VuZGVyIjpbIkFtYmVyLklUIl0sImRlbnlfYm9keSI6WyJDbGFpbSBub3ciXSwiZGVueV9zZW5kZXIiOlsiU3BhbUNvIl19fX0="
 
@@ -486,7 +512,7 @@ class PersistanceManagerTests: XCTestCase {
         }
     }
     
-    private func flushPersistanceManager() {
+    private func flushPersistenceManager() {
         self.flushEntity(name: "Filter")
         self.flushEntity(name: "AutomaticFiltersCache")
         self.flushEntity(name: "FilterListsCache")
@@ -496,7 +522,7 @@ class PersistanceManagerTests: XCTestCase {
         do {
             try self.testSubject.context.save()
         } catch {
-            XCTAssert(false, "flushPersistanceManager failed")
+            XCTAssert(false, "flushPersistenceManager failed")
         }
     }
     

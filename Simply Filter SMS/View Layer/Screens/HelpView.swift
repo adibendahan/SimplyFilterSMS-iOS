@@ -210,7 +210,7 @@ struct HelpView: View {
 
 
 enum HelpFAQ: String, CaseIterable, Hashable {
-    case notFiltering, iMessage, testFilters,
+    case notFiltering, iMessage, filterTester,
          howItWorks, smartFilters, trustedCountries, ai, report,
          whereFiltered, folders,
          privacy, shareFilters
@@ -219,7 +219,7 @@ enum HelpFAQ: String, CaseIterable, Hashable {
         switch self {
         case .notFiltering: return "faq_question_notFiltering"~
         case .iMessage: return "faq_question_3"~
-        case .testFilters: return "faq_question_testFilters"~
+        case .filterTester: return "faq_question_testFilters"~
         case .howItWorks: return "faq_question_1"~
         case .smartFilters: return "faq_question_smartFilters"~
         case .trustedCountries: return "faq_question_trustedCountries"~
@@ -236,7 +236,7 @@ enum HelpFAQ: String, CaseIterable, Hashable {
         switch self {
         case .notFiltering: return "faq_answer_notFiltering"~
         case .iMessage: return "faq_answer_3"~
-        case .testFilters: return "faq_answer_testFilters"~
+        case .filterTester: return "faq_answer_testFilters"~
         case .howItWorks: return "faq_answer_1"~
         case .smartFilters: return "faq_answer_smartFilters"~
         case .trustedCountries: return "faq_answer_trustedCountries"~

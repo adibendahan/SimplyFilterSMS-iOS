@@ -9,8 +9,8 @@ import BackgroundTasks
 
 class mock_SchedulingManager: SchedulingManagerProtocol {
 
-    var scheduleAutomaticFiltersProcessingCounter = 0
-    var handleAutomaticFiltersProcessingCounter = 0
+    var scheduleFilterListsProcessingCounter = 0
+    var handleFilterListsProcessingCounter = 0
     var refreshInactivityReminderCounter = 0
     var shouldShowInactivityNotificationAlertCounter = 0
     var requestInactivityNotificationPermissionCounter = 0
@@ -24,12 +24,12 @@ class mock_SchedulingManager: SchedulingManagerProtocol {
         return self.isFinalInactivityNotificationAskClosure?() ?? false
     }
 
-    func scheduleAutomaticFiltersProcessing() {
-        self.scheduleAutomaticFiltersProcessingCounter += 1
+    func scheduleFilterListsProcessing() {
+        self.scheduleFilterListsProcessingCounter += 1
     }
 
-    func handleAutomaticFiltersProcessing(task: BGProcessingTask) {
-        self.handleAutomaticFiltersProcessingCounter += 1
+    func handleFilterListsProcessing(task: BGProcessingTask) {
+        self.handleFilterListsProcessingCounter += 1
     }
 
     func refreshInactivityReminder() {
@@ -54,11 +54,11 @@ class mock_SchedulingManager: SchedulingManagerProtocol {
     }
 
     func scheduleInactivityReminderSoon() { }
-    func scheduleAutomaticFiltersProcessingSoon() { }
+    func scheduleFilterListsProcessingSoon() { }
 
     func resetCounters() {
-        self.scheduleAutomaticFiltersProcessingCounter = 0
-        self.handleAutomaticFiltersProcessingCounter = 0
+        self.scheduleFilterListsProcessingCounter = 0
+        self.handleFilterListsProcessingCounter = 0
         self.refreshInactivityReminderCounter = 0
         self.shouldShowInactivityNotificationAlertCounter = 0
         self.requestInactivityNotificationPermissionCounter = 0

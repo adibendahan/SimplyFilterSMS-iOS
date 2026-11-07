@@ -1,5 +1,5 @@
 //
-//  TestFiltersView.swift
+//  FilterTesterView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 01/02/2022.
@@ -10,7 +10,7 @@ import UIKit
 
 
 //MARK: - View -
-struct TestFiltersView: View {
+struct FilterTesterView: View {
     
     @Environment(\.dismiss)
     var dismiss
@@ -71,7 +71,7 @@ struct TestFiltersView: View {
 
                         ZStack(alignment: .topLeading) {
                             if let result = self.model.result {
-                                TestFilterResultRow(result: result)
+                                FilterTesterResultRow(result: result)
                                     .padding(.horizontal, 20)
                                     .padding(.top, 16)
                                     .id(result.action.rawValue)
@@ -98,7 +98,7 @@ struct TestFiltersView: View {
             .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .onChange(of: self.model.result) { _, result in
                 guard UIAccessibility.isVoiceOverRunning, let result else { return }
-                UIAccessibility.post(notification: .announcement, argument: TestFilterResultRow.accessibilityText(for: result))
+                UIAccessibility.post(notification: .announcement, argument: FilterTesterResultRow.accessibilityText(for: result))
             }
             .onAppear {
                 guard self.model.result == nil else { return }
@@ -126,7 +126,7 @@ struct TestFiltersView: View {
 
 
 //MARK: - ViewModel -
-extension TestFiltersView {
+extension FilterTesterView {
     
     enum Field: Int, Hashable, Equatable {
         case text, sender
@@ -169,21 +169,21 @@ extension TestFiltersView {
 
 //MARK: - Preview -
 #Preview("Empty") {
-    TestFiltersView(model: TestFiltersView.ViewModel(appManager: AppManager.previews))
+    FilterTesterView(model: FilterTesterView.ViewModel(appManager: AppManager.previews))
 }
 
 #Preview("Junk result") {
-    let model = TestFiltersView.ViewModel(appManager: AppManager.previews)
+    let model = FilterTesterView.ViewModel(appManager: AppManager.previews)
     model.sender = "Amazon"
     model.text = "Your package has shipped. Track it here: https://amzn.to/xyz"
     model.result = MessageEvaluationResult(action: .junk, match: .userFilter("amazon"))
-    return TestFiltersView(model: model)
+    return FilterTesterView(model: model)
 }
 
 #Preview("Allowed result") {
-    let model = TestFiltersView.ViewModel(appManager: AppManager.previews)
+    let model = FilterTesterView.ViewModel(appManager: AppManager.previews)
     model.sender = "Mom"
     model.text = "Running late, be home soon"
     model.result = MessageEvaluationResult(action: .allow, match: .noMatch)
-    return TestFiltersView(model: model)
+    return FilterTesterView(model: model)
 }

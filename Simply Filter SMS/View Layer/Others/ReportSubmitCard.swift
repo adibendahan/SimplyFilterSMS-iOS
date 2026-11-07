@@ -69,7 +69,7 @@ private struct ReportSubmitAnimationView: View {
 
     @State private var isSpinning: Bool = false
 
-    private let dur: Double = 1.35
+    private let duration: Double = 1.35
 
     var body: some View {
         ZStack {
@@ -141,34 +141,34 @@ private struct ReportSubmitAnimationView: View {
     // MARK: - Spinner loop
 
     private func animate() {
-        withAnimation(.easeOut(duration: dur)) { circleEnd = 1 }
-        withAnimation(.easeOut(duration: dur * 1.1)) { rotationDegree = .degrees(365) }
-        withAnimation(.easeOut(duration: dur * 0.85)) {
+        withAnimation(.easeOut(duration: duration)) { circleEnd = 1 }
+        withAnimation(.easeOut(duration: duration * 1.1)) { rotationDegree = .degrees(365) }
+        withAnimation(.easeOut(duration: duration * 0.85)) {
             smallCircleEnd = 0.001
             smallRotationDegree = .degrees(679)
         }
 
-        Timer.scheduledTimer(withTimeInterval: dur * 0.7, repeats: false) { _ in
+        Timer.scheduledTimer(withTimeInterval: duration * 0.7, repeats: false) { _ in
             guard isSpinning else { return }
-            withAnimation(.easeIn(duration: dur * 0.4)) {
+            withAnimation(.easeIn(duration: duration * 0.4)) {
                 smallRotationDegree = .degrees(825)
                 rotationDegree = .degrees(375)
             }
         }
 
-        Timer.scheduledTimer(withTimeInterval: dur, repeats: false) { _ in
+        Timer.scheduledTimer(withTimeInterval: duration, repeats: false) { _ in
             guard isSpinning else { return }
-            withAnimation(.easeOut(duration: dur)) {
+            withAnimation(.easeOut(duration: duration)) {
                 rotationDegree = .degrees(990)
                 circleEnd = 0.001
             }
-            withAnimation(.linear(duration: dur * 0.8)) {
+            withAnimation(.linear(duration: duration * 0.8)) {
                 smallCircleEnd = 1
                 smallRotationDegree = .degrees(990)
             }
         }
 
-        Timer.scheduledTimer(withTimeInterval: dur * 1.98, repeats: false) { _ in
+        Timer.scheduledTimer(withTimeInterval: duration * 1.98, repeats: false) { _ in
             guard isSpinning else { return }
             reset()
             animate()

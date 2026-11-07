@@ -16,13 +16,13 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
     var networkStatus: NetworkStatus = .unknown
     var syncStatus: SyncStatus = .unknown
     
-    init(persistanceManager: PersistanceManagerProtocol = AppManager.shared.persistanceManager) {
+    init(persistenceManager: PersistenceManagerProtocol = AppManager.shared.persistenceManager) {
         let kNone = self.kNone
         let monitor = NWPathMonitor()
         let queue = DispatchQueue(label: "MonitorNetwork")
         
-        self.persistanceManager = persistanceManager
-        self.preSyncFingerprint = persistanceManager.fingerprint
+        self.persistenceManager = persistenceManager
+        self.preSyncFingerprint = persistenceManager.fingerprint
         self.networkMonitor = monitor
 
         monitor.pathUpdateHandler = self.onNetworkChange
@@ -57,7 +57,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
                     }
                 case .import:
                     if cloudEvent.endDate == nil {
-                        self.preSyncFingerprint = self.persistanceManager?.fingerprint ?? kNone
+                        self.preSyncFingerprint = self.persistenceManager?.fingerprint ?? kNone
                         AppManager.logger.debug("CloudKit import started — fingerprint: \(self.preSyncFingerprint, privacy: .public)")
                     }
                     else if !cloudEvent.succeeded {
@@ -65,7 +65,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
                         AppManager.logger.debug("CloudKit import complete — failed, error: \(errorDescription, privacy: .public)")
                     }
                     else {
-                        let currentFingerprint = self.persistanceManager?.fingerprint ?? kNone
+                        let currentFingerprint = self.persistenceManager?.fingerprint ?? kNone
                         if self.preSyncFingerprint != currentFingerprint {
                             AppManager.logger.debug("CloudKit import complete — data changed, posting cloudSyncOperationComplete")
                             NotificationCenter.default.post(name: .cloudSyncOperationComplete, object: nil)
@@ -88,7 +88,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
     }
     
     private let kNone = "none"
-    private weak var persistanceManager: PersistanceManagerProtocol?
+    private weak var persistenceManager: PersistenceManagerProtocol?
     private var networkMonitor: NWPathMonitor
     private var preSyncFingerprint: String
     private var disposables = Set<AnyCancellable>()
@@ -110,7 +110,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
             AppManager.logger.debug("Network status changed — \(self.networkStatus.name, privacy: .public) → \(newStatus.name, privacy: .public)")
             if newStatus.isReconnection(from: self.networkStatus), self.syncStatus == .failed {
                 AppManager.logger.debug("Network reconnected with failed sync — reloading CloudKit container")
-                self.persistanceManager?.reloadContainer()
+                self.persistenceManager?.reloadContainer()
             }
             self.networkStatus = newStatus
             NotificationCenter.default.post(name: .networkStatusChange, object: newStatus)

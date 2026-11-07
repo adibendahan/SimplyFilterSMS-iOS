@@ -16,8 +16,8 @@ let kDatabaseFilename = "CoreData.sqlite"
 let kAppGroupContainer = "group.com.grizz.apps.dev.simply-filter-sms"
 let kNoColorDict: [String: Double] = [:]
 let kSupportEmail = "grizz.apps.dev@gmail.com"
-let kUpdateAutomaticFiltersMinDays = 3
-let kAutomaticFiltersProcessingTaskIdentifier = "com.grizz.apps.dev.simply-filter-sms.process-automatic-filters"
+let kUpdateFilterListsMinDays = 3
+let kFilterListsProcessingTaskIdentifier = "com.grizz.apps.dev.simply-filter-sms.process-automatic-filters"
 let kInactivityReminderNotificationIdentifier = "com.grizz.apps.dev.simply-filter-sms.inactivity-reminder"
 let kInactivityReminderHour = 19
 let kInactivityNotificationMaxAsks = 3
@@ -136,7 +136,7 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     }
 }
 
-enum DenyFolderType: Int64, CaseIterable, Identifiable {
+enum MessageFolder: Int64, CaseIterable, Identifiable {
     var id: Int64 { return self.rawValue }
     
     case junk=0, transaction, promotion
@@ -374,7 +374,7 @@ enum ReportType: Int64, CaseIterable, Identifiable {
     }
 }
 
-enum RuleType: Int64, CaseIterable, Equatable, Identifiable {
+enum SmartFilterType: Int64, CaseIterable, Equatable, Identifiable {
     case allUnknown=0, links, numbersOnly, shortSender, email, emojis, countryAllowlist=6
     
     var id: Self { self }

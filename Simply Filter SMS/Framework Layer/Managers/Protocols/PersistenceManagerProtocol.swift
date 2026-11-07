@@ -1,5 +1,5 @@
 //
-//  PersistanceManagerProtocol.swift
+//  PersistenceManagerProtocol.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 23/01/2022.
@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 import NaturalLanguage
 
-protocol PersistanceManagerProtocol: AnyObject {
+protocol PersistenceManagerProtocol: AnyObject {
     
     //MARK: - Context -
     var context: NSManagedObjectContext { get }
@@ -26,12 +26,13 @@ protocol PersistanceManagerProtocol: AnyObject {
     func fetchAutomaticFiltersRuleRecords() -> [AutomaticFiltersRule]
     func fetchFilterListsCacheRecords() -> [FilterListsCache]
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage?
-    func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule?
-    func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule
+    func fetchAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule?
+    func ensuredAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule
     func ensuredAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage
     
     
     //MARK: - Helpers -
+    func blockableLanguages() -> [NLLanguage]
     func isDuplicateFilter(language: NLLanguage) -> Bool
     func isDuplicateFilter(text: String,
                            filterTarget: FilterTarget,
@@ -40,14 +41,14 @@ protocol PersistanceManagerProtocol: AnyObject {
     
     @discardableResult
     func addFilter(text: String, type: FilterType,
-                   denyFolder: DenyFolderType,
+                   denyFolder: MessageFolder,
                    filterTarget: FilterTarget,
                    filterMatching: FilterMatching,
                    filterCase: FilterCase) -> Filter?
     
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter])
     func deleteFilters(_ filters: Set<Filter>)
-    func updateFilter(_ filter: Filter, denyFolder: DenyFolderType)
+    func updateFilter(_ filter: Filter, denyFolder: MessageFolder)
     func updateFilter(_ filter: Filter, filterMatching: FilterMatching)
     func updateFilter(_ filter: Filter, filterCase: FilterCase)
     func updateFilter(_ filter: Filter, filterTarget: FilterTarget)
@@ -56,8 +57,8 @@ protocol PersistanceManagerProtocol: AnyObject {
     func cachedFilterListCatalog() -> FilterListCatalogResponse?
     func saveCache(_ cache: FilterListsSnapshot) -> Bool
     func touchCache()
-    func selectedCountries(for rule: RuleType) -> [String]
-    func setSelectedCountries(_ countries: [String], for rule: RuleType)
+    func selectedCountries(for rule: SmartFilterType) -> [String]
+    func setSelectedCountries(_ countries: [String], for rule: SmartFilterType)
 
     #if DEBUG
     func clearAllUserData()

@@ -9,8 +9,8 @@ import BackgroundTasks
 protocol SchedulingManagerProtocol: AnyObject {
     var isFinalInactivityNotificationAsk: Bool { get }
 
-    func scheduleAutomaticFiltersProcessing()
-    func handleAutomaticFiltersProcessing(task: BGProcessingTask)
+    func scheduleFilterListsProcessing()
+    func handleFilterListsProcessing(task: BGProcessingTask)
     func refreshInactivityReminder()
     func shouldShowInactivityNotificationAlert() async -> Bool
     func requestInactivityNotificationPermission() async
@@ -19,6 +19,6 @@ protocol SchedulingManagerProtocol: AnyObject {
     #if DEBUG
     func reset()
     func scheduleInactivityReminderSoon()
-    func scheduleAutomaticFiltersProcessingSoon()
+    func scheduleFilterListsProcessingSoon()
     #endif // DEBUG
 }

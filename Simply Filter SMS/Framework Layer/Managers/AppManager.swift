@@ -15,9 +15,10 @@ class AppManager: AppManagerProtocol {
     static let shared: AppManagerProtocol = AppManager()
     static let logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
     
-    var persistanceManager: PersistanceManagerProtocol
+    var persistenceManager: PersistenceManagerProtocol
     var defaultsManager: DefaultsManagerProtocol
-    var automaticFilterManager: AutomaticFilterManagerProtocol
+    var filterListManager: FilterListManagerProtocol
+    var smartFilterManager: SmartFilterManagerProtocol
     var messageEvaluationManager: MessageEvaluationManagerProtocol
     var networkSyncManager: NetworkSyncManagerProtocol
     var filterListService: FilterListServiceProtocol
@@ -29,38 +30,41 @@ class AppManager: AppManagerProtocol {
     var debugDataManager: DebugDataManagerProtocol
 
     init(inMemory: Bool = false) {
-        let persistanceManager = PersistanceManager(inMemory: inMemory)
+        let persistenceManager = PersistenceManager(inMemory: inMemory)
         let defaultsManager = DefaultsManager()
-        let messageEvaluationManager = MessageEvaluationManager(persistanceManager: persistanceManager)
-        let networkSyncManager = NetworkSyncManager(persistanceManager: persistanceManager)
+        let messageEvaluationManager = MessageEvaluationManager(persistenceManager: persistenceManager)
+        let networkSyncManager = NetworkSyncManager(persistenceManager: persistenceManager)
         let filterListService = FilterListService(networkSyncManager: networkSyncManager)
         let reportMessageService = ReportMessageService(networkSyncManager: networkSyncManager)
         
         messageEvaluationManager.setLogger(AppManager.logger)
         
-        let automaticFilterManager = AutomaticFilterManager(persistanceManager: persistanceManager,
-                                                             filterListService: filterListService,
-                                                             networkSyncManager: networkSyncManager)
-        self.persistanceManager = persistanceManager
+        let filterListManager = FilterListManager(persistenceManager: persistenceManager,
+                                                  filterListService: filterListService,
+                                                  networkSyncManager: networkSyncManager)
+        let smartFilterManager = SmartFilterManager(persistenceManager: persistenceManager)
+        self.persistenceManager = persistenceManager
         self.defaultsManager = defaultsManager
-        self.automaticFilterManager = automaticFilterManager
+        self.filterListManager = filterListManager
+        self.smartFilterManager = smartFilterManager
         self.messageEvaluationManager = messageEvaluationManager
         self.networkSyncManager = networkSyncManager
         self.filterListService = filterListService
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
-        self.filterTransferManager = FilterTransferManager(persistanceManager: persistanceManager)
+        self.filterTransferManager = FilterTransferManager(persistenceManager: persistenceManager)
         self.flowManager = FlowManager(defaultsManager: defaultsManager)
-        self.schedulingManager = SchedulingManager(automaticFilterManager: automaticFilterManager,
+        self.schedulingManager = SchedulingManager(filterListManager: filterListManager,
                                                    defaultsManager: defaultsManager)
-        self.debugDataManager = DebugDataManager(persistanceManager: persistanceManager,
+        self.debugDataManager = DebugDataManager(persistenceManager: persistenceManager,
                                                  defaultsManager: defaultsManager,
-                                                 automaticFilterManager: automaticFilterManager)
+                                                 filterListManager: filterListManager,
+                                                 smartFilterManager: smartFilterManager)
 
         #if DEBUG
         if UIApplication.shared.isInTestingMode {
             defaultsManager.reset()
-            persistanceManager.resetContainer()
+            persistenceManager.resetContainer()
             let testingLanguages = ["en", "he", "ar", "es", "fr", "pt", "de", "ja", "ko", "it"]
             var catalogEntries: [FilterListCatalogEntry] = []
             var cacheSections: [FilterListsCacheSection] = []
@@ -91,7 +95,7 @@ class AppManager: AppManagerProtocol {
                                                     version: FilterListCatalogResponse.currentVersion,
                                                     lists: catalogEntries)
             let testingSnapshot = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: cacheSections)
-            _ = persistanceManager.saveCache(testingSnapshot)
+            _ = persistenceManager.saveCache(testingSnapshot)
             defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
         }
         #endif // DEBUG
@@ -99,27 +103,27 @@ class AppManager: AppManagerProtocol {
     
     @MainActor
     func onAppLaunch() {
-        let _ = self.defaultsManager.appAge // make sure it's initialized
-        AppManager.logger.debug("onAppLaunch — session #\(self.defaultsManager.sessionCounter, privacy: .public), installDate: \(self.defaultsManager.appAge, privacy: .public)")
-        self.schedulingManager.scheduleAutomaticFiltersProcessing()
+        let _ = self.defaultsManager.installDate // make sure it's initialized
+        AppManager.logger.debug("onAppLaunch — session #\(self.defaultsManager.sessionCounter, privacy: .public), installDate: \(self.defaultsManager.installDate, privacy: .public)")
+        self.schedulingManager.scheduleFilterListsProcessing()
     }
 
     @MainActor
     func onAppBecameActive() -> Bool {
-        if let sessionAge = self.defaultsManager.sessionAge {
-            if sessionAge.daysBetween(date: Date()) != 0 {
+        if let sessionStartDate = self.defaultsManager.sessionStartDate {
+            if sessionStartDate.daysBetween(date: Date()) != 0 {
                 AppManager.logger.debug("onAppBecameActive — new day detected, starting new session")
                 self.onNewUserSession()
                 return true
             }
             else {
                 AppManager.logger.debug("onAppBecameActive — same day, skipping new session")
-                self.automaticFilterManager.updateAutomaticFiltersWhenOnline()
+                self.filterListManager.updateFilterListsWhenOnline()
                 return false
             }
         }
         else {
-            AppManager.logger.debug("onAppBecameActive — sessionAge not set, starting new session")
+            AppManager.logger.debug("onAppBecameActive — sessionStartDate not set, starting new session")
             self.onNewUserSession()
             return true
         }
@@ -128,9 +132,9 @@ class AppManager: AppManagerProtocol {
     @MainActor
     func onNewUserSession() {
         self.defaultsManager.sessionCounter += 1
-        self.defaultsManager.sessionAge = Date()
+        self.defaultsManager.sessionStartDate = Date()
         AppManager.logger.debug("onNewUserSession — session #\(self.defaultsManager.sessionCounter, privacy: .public)")
-        self.automaticFilterManager.updateAutomaticFiltersWhenOnline()
+        self.filterListManager.updateFilterListsWhenOnline()
     }
     
     #if DEBUG
@@ -140,7 +144,7 @@ class AppManager: AppManagerProtocol {
 
     func reset() {
         self.defaultsManager.reset()
-        self.persistanceManager.clearAllUserData()
+        self.persistenceManager.clearAllUserData()
         _ = self.filterTransferManager.clearPendingImport()
         self.filterTransferManager.clearPendingExport()
         self.flowManager.resetSession()

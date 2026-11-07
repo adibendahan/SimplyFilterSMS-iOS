@@ -72,7 +72,7 @@ struct FilterTransferCandidate: Equatable, Identifiable {
     let id: UUID
     let text: String
     let type: FilterType
-    let denyFolder: DenyFolderType
+    let denyFolder: MessageFolder
     let filterTarget: FilterTarget
     let filterMatching: FilterMatching
     let filterCase: FilterCase
@@ -80,7 +80,7 @@ struct FilterTransferCandidate: Equatable, Identifiable {
     init(id: UUID = UUID(),
          text: String,
          type: FilterType,
-         denyFolder: DenyFolderType,
+         denyFolder: MessageFolder,
          filterTarget: FilterTarget,
          filterMatching: FilterMatching,
          filterCase: FilterCase) {
@@ -98,7 +98,7 @@ struct FilterTransferCandidate: Equatable, Identifiable {
               text.count >= kMinimumFilterLength,
               let type = FilterType(exportKey: record.type),
               type.isTransferable,
-              let folder = DenyFolderType(exportKey: record.folder, for: type),
+              let folder = MessageFolder(exportKey: record.folder, for: type),
               let target = FilterTarget(exportKey: record.target),
               let matching = FilterMatching(exportKey: record.matching),
               let filterCase = FilterCase(exportKey: record.caseSensitivity, for: matching) else {

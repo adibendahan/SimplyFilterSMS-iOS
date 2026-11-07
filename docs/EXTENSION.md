@@ -12,7 +12,7 @@ iOS calls it for every SMS from a sender not in Contacts; it returns allow, junk
 - **No `AppManager`.** It builds its own `MessageEvaluationManager()`, with its own logger (category `extension`).
 - **Read-only, synchronous store.** It opens the App Group store read-only and loads it synchronously in `init`. If the load fails, every message is allowed (`storeUnavailable`) rather than evaluated against an empty store.
 - **Memory is tight.** The AI Filtering cache row is read once per message, and only the lists whose language is on are decoded (`ActiveFilterLists`).
-- The extension target also compiles `PersistanceManagerProtocol` so the shared `MessageEvaluationManager` type-checks; it only ever uses the owned-store path.
+- The extension target also compiles `PersistenceManagerProtocol` so the shared `MessageEvaluationManager` type-checks; it only ever uses the owned-store path.
 
 ---
 

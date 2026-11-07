@@ -31,7 +31,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
         
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
     }
     
     
@@ -70,7 +70,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     
     func test_evaluateMessage_allUnknownFilteringOn() {
         let automaticFilterRule = AutomaticFiltersRule(context: self.testSubject.context)
-        automaticFilterRule.ruleId = RuleType.allUnknown.rawValue
+        automaticFilterRule.ruleId = SmartFilterType.allUnknown.rawValue
         automaticFilterRule.isActive = true
         automaticFilterRule.selectedChoice = 0
         
@@ -89,14 +89,14 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
     
     func test_evaluateMessage_advanced() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
         
         let advancedFilter = Filter(context: self.testSubject.context)
         advancedFilter.filterMatching = .exact
         advancedFilter.filterTarget = .body
         advancedFilter.filterCase = .caseSensitive
         advancedFilter.text = "Discount"
-        advancedFilter.denyFolderType = .transaction
+        advancedFilter.messageFolder = .transaction
         advancedFilter.filterType = .deny
         
         let advancedFilter2 = Filter(context: self.testSubject.context)
@@ -137,7 +137,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
     
     func test_evaluateMessage_automatic() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
         
         self.saveFilterLists([
             "he": [self.allowSender("BituahLeumi"),
@@ -150,17 +150,17 @@ class MessageEvaluationManagerTests: XCTestCase {
         
         let noLinks = AutomaticFiltersRule(context: self.testSubject.context)
         noLinks.isActive = true
-        noLinks.ruleType = .links
+        noLinks.smartFilterType = .links
         noLinks.selectedChoice = 0
         
         let numbersOnly = AutomaticFiltersRule(context: self.testSubject.context)
         numbersOnly.isActive = true
-        numbersOnly.ruleType = .numbersOnly
+        numbersOnly.smartFilterType = .numbersOnly
         numbersOnly.selectedChoice = 0
         
         let noEmojis = AutomaticFiltersRule(context: self.testSubject.context)
         noEmojis.isActive = true
-        noEmojis.ruleType = .emojis
+        noEmojis.smartFilterType = .emojis
         noEmojis.selectedChoice = 0
         
         let automaticFiltersLanguageHE = AutomaticFiltersLanguage(context: self.testSubject.context)
@@ -215,12 +215,12 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
     
     func test_evaluateMessage_countryAllowlist() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         // Allow only Israel (+972)
         let allowedJSON = try! String(data: JSONEncoder().encode(["+972"]), encoding: .utf8)!
         let rule = AutomaticFiltersRule(context: self.testSubject.context)
-        rule.ruleId = RuleType.countryAllowlist.rawValue
+        rule.ruleId = SmartFilterType.countryAllowlist.rawValue
         rule.isActive = true
         rule.selectedChoice = 0
         rule.selectedCountries = allowedJSON
@@ -243,11 +243,11 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_evaluateMessage_countryAllowlist_emptyCountries_skipsRule() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         // Rule active but no countries selected — should be skipped (allow)
         let rule = AutomaticFiltersRule(context: self.testSubject.context)
-        rule.ruleId = RuleType.countryAllowlist.rawValue
+        rule.ruleId = SmartFilterType.countryAllowlist.rawValue
         rule.isActive = true
         rule.selectedChoice = 0
         rule.selectedCountries = try! String(data: JSONEncoder().encode([String]()), encoding: .utf8)!
@@ -258,12 +258,12 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_evaluateMessage_countryAllowlist_disabledRule_skipsRule() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         // Rule exists but isActive = false — should be skipped (allow)
         let allowedJSON = try! String(data: JSONEncoder().encode(["+972"]), encoding: .utf8)!
         let rule = AutomaticFiltersRule(context: self.testSubject.context)
-        rule.ruleId = RuleType.countryAllowlist.rawValue
+        rule.ruleId = SmartFilterType.countryAllowlist.rawValue
         rule.isActive = false
         rule.selectedChoice = 0
         rule.selectedCountries = allowedJSON
@@ -276,7 +276,7 @@ class MessageEvaluationManagerTests: XCTestCase {
 
     // P1 allUnknown overrides P2 allow filters — explicit allow veats everything
     func test_priorityOrder_allowFiltersBeatsAllUnknown() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         let allowFilter = Filter(context: self.testSubject.context)
         allowFilter.filterType = .allow
@@ -286,7 +286,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         allowFilter.text = "hello"
 
         let allUnknown = AutomaticFiltersRule(context: self.testSubject.context)
-        allUnknown.ruleId = RuleType.allUnknown.rawValue
+        allUnknown.ruleId = SmartFilterType.allUnknown.rawValue
         allUnknown.isActive = true
         allUnknown.selectedChoice = 0
         try? self.testSubject.context.save()
@@ -297,7 +297,7 @@ class MessageEvaluationManagerTests: XCTestCase {
 
     // P3 automatic allowSenders overrides P4 rules — trusted sender with a link must not be blocked by links rule
     func test_priorityOrder_automaticAllowSendersBeatsRules() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: [self.allowSender("BituahLeumi")]
@@ -308,7 +308,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         langRecord.isActive = true
 
         let linksRule = AutomaticFiltersRule(context: self.testSubject.context)
-        linksRule.ruleId = RuleType.links.rawValue
+        linksRule.ruleId = SmartFilterType.links.rawValue
         linksRule.isActive = true
         linksRule.selectedChoice = 0
         try? self.testSubject.context.save()
@@ -319,7 +319,7 @@ class MessageEvaluationManagerTests: XCTestCase {
 
     // P3 automatic allowBody overrides P4 rules — trusted body phrase with a link must not be blocked by links rule
     func test_priorityOrder_automaticAllowBodyBeatsRules() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: [self.allowBody("trusted phrase")]
@@ -330,7 +330,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         langRecord.isActive = true
 
         let linksRule = AutomaticFiltersRule(context: self.testSubject.context)
-        linksRule.ruleId = RuleType.links.rawValue
+        linksRule.ruleId = SmartFilterType.links.rawValue
         linksRule.isActive = true
         linksRule.selectedChoice = 0
         try? self.testSubject.context.save()
@@ -341,7 +341,7 @@ class MessageEvaluationManagerTests: XCTestCase {
 
     // P1 allUnknown overrides P3 automatic allowSenders — even a trusted sender must not escape allUnknown
     func test_priorityOrder_allUnknownBeatsAutomaticAllow() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: [self.allowSender("BituahLeumi")]
@@ -352,7 +352,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         langRecord.isActive = true
 
         let allUnknown = AutomaticFiltersRule(context: self.testSubject.context)
-        allUnknown.ruleId = RuleType.allUnknown.rawValue
+        allUnknown.ruleId = SmartFilterType.allUnknown.rawValue
         allUnknown.isActive = true
         allUnknown.selectedChoice = 0
         try? self.testSubject.context.save()
@@ -364,12 +364,12 @@ class MessageEvaluationManagerTests: XCTestCase {
     // Regression: block filter "Test" (all) must not be bypassed by unrelated allow filter "2" (all)
     // Repro: body="Test", sender="" → expected .junk, was .allow (reason "2")
     func test_blockFilterNotBypassedByUnrelatedAllowFilter() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         let blockFilter = Filter(context: self.testSubject.context)
         blockFilter.uuid = UUID()
         blockFilter.filterType = .deny
-        blockFilter.denyFolderType = .junk
+        blockFilter.messageFolder = .junk
         blockFilter.filterTarget = .all
         blockFilter.filterMatching = .contains
         blockFilter.filterCase = .caseInsensitive
@@ -393,11 +393,11 @@ class MessageEvaluationManagerTests: XCTestCase {
     // MARK: Regex filter tests
 
     func test_evaluateMessage_regexMatch() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         let filter = Filter(context: self.testSubject.context)
         filter.filterType = .deny
-        filter.denyFolderType = .junk
+        filter.messageFolder = .junk
         filter.filterTarget = .body
         filter.filterMatching = .regex
         filter.filterCase = .caseInsensitive
@@ -409,11 +409,11 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_evaluateMessage_regexNoMatch() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         let filter = Filter(context: self.testSubject.context)
         filter.filterType = .deny
-        filter.denyFolderType = .junk
+        filter.messageFolder = .junk
         filter.filterTarget = .body
         filter.filterMatching = .regex
         filter.filterCase = .caseInsensitive
@@ -425,11 +425,11 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_evaluateMessage_invalidRegexReturnsFalse() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         let filter = Filter(context: self.testSubject.context)
         filter.filterType = .deny
-        filter.denyFolderType = .junk
+        filter.messageFolder = .junk
         filter.filterTarget = .body
         filter.filterMatching = .regex
         filter.filterCase = .caseInsensitive
@@ -441,11 +441,11 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_evaluateMessage_regexCaseSensitive() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         let filter = Filter(context: self.testSubject.context)
         filter.filterType = .deny
-        filter.denyFolderType = .junk
+        filter.messageFolder = .junk
         filter.filterTarget = .body
         filter.filterMatching = .regex
         filter.filterCase = .caseInsensitive
@@ -460,11 +460,11 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_evaluateMessage_regexInlineFlag() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
 
         let filter = Filter(context: self.testSubject.context)
         filter.filterType = .deny
-        filter.denyFolderType = .junk
+        filter.messageFolder = .junk
         filter.filterTarget = .body
         filter.filterMatching = .regex
         filter.filterCase = .caseInsensitive
@@ -481,7 +481,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     // MARK: AI Filtering list tests
 
     func test_filterLists_onlyActiveLanguagesApply() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: [self.denyBody("הלוואה")],
             NLLanguage.english.rawValue: [self.denyBody("loan")]
@@ -498,7 +498,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_filterLists_denyUsesRecordFolder() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: [self.denyBody("sale", folder: "promotion")]
         ])
@@ -508,11 +508,11 @@ class MessageEvaluationManagerTests: XCTestCase {
         let result = self.testSubject.evaluateMessage(body: "big sale today", sender: "1234567")
 
         XCTAssertEqual(result.action, .promotion)
-        XCTAssertEqual(result.match, .automaticFilter(NLLanguage.hebrew.localizedName!))
+        XCTAssertEqual(result.match, .filterList(NLLanguage.hebrew.localizedName!))
     }
 
     func test_filterLists_skipsRecordsItCannotUse() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
         let unknownMatching = FilterExportRecord(text: "spam",
                                                  type: "deny",
                                                  folder: "junk",
@@ -541,7 +541,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_filterLists_readsNewestCacheRow() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
         let olderRecord = FilterListsCache(context: self.testSubject.context)
         olderRecord.uuid = UUID()
         olderRecord.data = "not a cache"
@@ -609,7 +609,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_activeFilterLists_decodesOnlyActiveLanguages() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
         let records = [self.denyBody("spam")]
         self.saveFilterLists([
             NLLanguage.hebrew.rawValue: records,
@@ -628,7 +628,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     func test_filterLists_performance() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
         let languages: [NLLanguage] = [.hebrew, .english, .arabic, .spanish, .french,
                                        .portuguese, .german, .japanese, .korean, .italian]
         var recordsByLanguage: [String: [FilterExportRecord]] = [:]
@@ -737,7 +737,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     }
 
     private func saveLegacyFilterLists() {
-        self.flushPersistanceManager()
+        self.flushPersistenceManager()
         let legacyEncoded = "eyJmaWx0ZXJfbGlzdHMiOnsiZW4iOnsiYWxsb3dfYm9keSI6WyJ5b3VyIGNvZGUiXSwiYWxsb3dfc2VuZGVyIjpbIkFtYmVyLklUIl0sImRlbnlfYm9keSI6WyJDbGFpbSBub3ciXSwiZGVueV9zZW5kZXIiOlsiU3BhbUNvIl19fX0="
         let cacheRecord = AutomaticFiltersCache(context: self.testSubject.context)
         cacheRecord.uuid = UUID()
@@ -747,7 +747,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         try? self.testSubject.context.save()
     }
 
-    private func flushPersistanceManager() {
+    private func flushPersistenceManager() {
         self.flushEntity(name: "Filter")
         self.flushEntity(name: "AutomaticFiltersCache")
         self.flushEntity(name: "FilterListsCache")
@@ -764,7 +764,7 @@ class MessageEvaluationManagerTests: XCTestCase {
     private func loadTestingData() {
         struct AllowEntry {
             let text: String
-            let folder: DenyFolderType
+            let folder: MessageFolder
         }
         
         let _ = [AllowEntry(text: "נתניהו", folder: .junk),
@@ -776,7 +776,7 @@ class MessageEvaluationManagerTests: XCTestCase {
             let newFilter = Filter(context: self.testSubject.context)
             newFilter.uuid = UUID()
             newFilter.filterType = .deny
-            newFilter.denyFolderType = entry.folder
+            newFilter.messageFolder = entry.folder
             newFilter.text = entry.text
             return newFilter
         }
@@ -794,7 +794,7 @@ class MessageEvaluationManagerTests: XCTestCase {
         langFilter.filterType = .denyLanguage
         langFilter.text = NLLanguage.arabic.filterText
         
-        for rule in RuleType.allCases {
+        for rule in SmartFilterType.allCases {
             let automaticFilterRule = AutomaticFiltersRule(context: self.testSubject.context)
             automaticFilterRule.ruleId = rule.rawValue
             automaticFilterRule.isActive = rule != .allUnknown

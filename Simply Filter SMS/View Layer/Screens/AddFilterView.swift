@@ -84,13 +84,13 @@ struct AddFilterView: View {
 
                             Spacer()
 
-                            Text(DenyFolderType.title)
+                            Text(MessageFolder.title)
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
                                 .italic()
                                 .bold()
 
-                            GlassPicker(selection: $model.selectedDenyFolderType) { folder in
+                            GlassPicker(selection: $model.selectedMessageFolder) { folder in
                                 Label(folder.name, systemImage: folder.iconName)
                             }
                         }
@@ -203,7 +203,7 @@ struct AddFilterView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(FilledButton())
-                    .accessibilityIdentifier(TestIdentifier.addFilteraddFilterButton.rawValue)
+                    .accessibilityIdentifier(TestIdentifier.addFilterConfirmButton.rawValue)
                     .disabled(self.model.filterText.count < kMinimumFilterLength || self.model.isDuplicateFilter || self.model.isInvalidRegex)
                     .contentShape(Rectangle())
                 } // VStack
@@ -279,14 +279,14 @@ extension AddFilterView {
         @Published private(set) var title: String
         @Published private(set) var filterType: FilterType
         @Published var filterText = ""
-        @Published var selectedDenyFolderType = DenyFolderType.junk
+        @Published var selectedMessageFolder = MessageFolder.junk
         @Published var selectedFilterTarget = FilterTarget.all
         @Published var selectedFilterMatching = FilterMatching.contains
         @Published var selectedFilterCase = FilterCase.caseInsensitive
         @Published var regexTestText = ""
         @Published var isExpanded: Bool {
             didSet {
-                self.appManager.defaultsManager.isExpandedAddFilter = self.isExpanded
+                self.appManager.defaultsManager.isAddFilterExpanded = self.isExpanded
             }
         }
         
@@ -309,15 +309,15 @@ extension AddFilterView {
                 self.title = "addFilter_addFilter_deny"~
             }
             
-            let isAllUnknownFilteringOn = appManager.automaticFilterManager.automaticRuleState(for: .allUnknown)
+            let isAllUnknownFilteringOn = appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
-            self.isExpanded = appManager.defaultsManager.isExpandedAddFilter
+            self.isExpanded = appManager.defaultsManager.isAddFilterExpanded
             
             super.init(appManager: appManager)
         }
         
         var isDuplicateFilter: Bool {
-            return !self.didAddFilter && self.appManager.persistanceManager.isDuplicateFilter(text: self.filterText,
+            return !self.didAddFilter && self.appManager.persistenceManager.isDuplicateFilter(text: self.filterText,
                                                                                               filterTarget: self.selectedFilterTarget,
                                                                                               filterMatching: self.selectedFilterMatching,
                                                                                               filterCase: self.selectedFilterCase)
@@ -337,9 +337,9 @@ extension AddFilterView {
 
         func addFilter() {
             self.didAddFilter = true
-            let filter = self.appManager.persistanceManager.addFilter(text: self.filterText,
+            let filter = self.appManager.persistenceManager.addFilter(text: self.filterText,
                                                                       type: self.filterType,
-                                                                      denyFolder: self.selectedDenyFolderType,
+                                                                      denyFolder: self.selectedMessageFolder,
                                                                       filterTarget: self.selectedFilterTarget,
                                                                       filterMatching: self.selectedFilterMatching,
                                                                       filterCase: self.selectedFilterCase)

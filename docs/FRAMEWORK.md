@@ -23,12 +23,12 @@ What the code doesn't tell you: ordering, rules and the reasons behind them. For
 
 ### Two ways to build it
 
-- **App:** `init(persistanceManager:)` reads `PersistanceManager.context` on every call, so it keeps working across `reloadContainer()`.
+- **App:** `init(persistenceManager:)` reads `PersistenceManager.context` on every call, so it keeps working across `reloadContainer()`.
 - **Extension / tests:** `init(inMemory:)` owns a read-only container, loaded synchronously in `init` (`shouldAddStoreAsynchronously = false`).
 
 ---
 
-## PersistanceManager
+## PersistenceManager
 
 ### Fingerprint
 
@@ -42,16 +42,16 @@ Filter UUIDs + rule states + language rows. It deliberately **excludes** `Filter
 
 ---
 
-## AutomaticFilterManager
+## FilterListManager
 
 ### Refresh
 
-- **When:** the first launch of each calendar day. Offline, it waits for the device to come online, and later launches that day retry until a check reaches every list. Pull-to-refresh works at any time, and the background task runs when iOS decides, no earlier than `kUpdateAutomaticFiltersMinDays` apart. A readable cache's `age` marks the day done and syncs through iCloud, so a check on another device counts for this one.
+- **When:** the first launch of each calendar day. Offline, it waits for the device to come online, and later launches that day retry until a check reaches every list. Pull-to-refresh works at any time, and the background task runs when iOS decides, no earlier than `kUpdateFilterListsMinDays` apart. A readable cache's `age` marks the day done and syncs through iCloud, so a check on another device counts for this one.
 - **Never:** the extension, or turning a language on. Every list in the catalog is cached, so a language works immediately and offline, and a switch synced from another device works before this app runs.
 - Catalog first, then each list with its stored ETag: `304` keeps the section, `200` replaces it, a failure keeps the old one. Lists that left the catalog are dropped.
 - Saves once if anything changed. Otherwise `touchCache()`, except when a list failed, so the next launch retries instead of waiting days.
 - Runs on the **main actor** (Core Data view context). A second caller joins the running refresh (`refreshTask`), so pull-to-refresh waits for the real result.
-- Posts `.automaticFiltersUpdated` only for a real change: a list added or removed, a higher `revision`, or different filters when there's no `revision`. Re-uploading the same file doesn't notify anyone.
+- Posts `.filterListsUpdated` only for a real change: a list added or removed, a higher `revision`, or different filters when there's no `revision`. Re-uploading the same file doesn't notify anyone.
 
 ---
 
@@ -107,7 +107,7 @@ Order and occupancy are in `CLAUDE.md`. Beyond that:
 
 ### Background refresh
 
-- One `BGProcessingTask`, not an app refresh task: processing targets idle and overnight windows, which suits an app that's rarely opened. `earliestBeginDate` is now + `kUpdateAutomaticFiltersMinDays`.
+- One `BGProcessingTask`, not an app refresh task: processing targets idle and overnight windows, which suits an app that's rarely opened. `earliestBeginDate` is now + `kUpdateFilterListsMinDays`.
 - Registered in `AppDelegate.didFinishLaunching` (iOS requires it before launch returns). Submitted from `onAppLaunch()` and again at the top of every wake.
 - The Message Filter Extension never fetches; only the app does.
 

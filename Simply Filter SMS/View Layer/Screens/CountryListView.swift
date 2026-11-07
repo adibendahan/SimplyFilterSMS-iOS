@@ -124,13 +124,13 @@ extension CountryListView {
         @Published private(set) var selectedEntries: [CallingCodeEntry] = []
         @Published private(set) var unselectedEntries: [CallingCodeEntry] = []
 
-        private let rule: RuleType
+        private let rule: SmartFilterType
         private var selectedCodes: Set<String> = []
         private var allEntries: [CallingCodeEntry] = []
         private var localizedNames: [String: [String]] = [:]
         private var localeLanguageRegions: Set<String> = []
 
-        init(rule: RuleType = .countryAllowlist,
+        init(rule: SmartFilterType = .countryAllowlist,
              appManager: AppManagerProtocol = AppManager.shared) {
             self.rule = rule
             super.init(appManager: appManager)
@@ -148,7 +148,7 @@ extension CountryListView {
                 localizedNames[entry.callingCode] = names
             }
 
-            let stored = appManager.automaticFilterManager.selectedCountries(for: rule)
+            let stored = appManager.smartFilterManager.selectedCountries(for: rule)
             self.selectedCodes = Set(stored)
 
             updateFilteredEntries()
@@ -164,7 +164,7 @@ extension CountryListView {
             } else {
                 selectedCodes.insert(entry.callingCode)
             }
-            appManager.automaticFilterManager.setSelectedCountries(Array(selectedCodes), for: rule)
+            appManager.smartFilterManager.setSelectedCountries(Array(selectedCodes), for: rule)
             withAnimation {
                 updateFilteredEntries()
             }

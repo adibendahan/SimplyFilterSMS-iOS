@@ -1,5 +1,5 @@
 //
-//  EnableExtensionStep.swift
+//  EnableFilterExtensionStep.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 07/03/2026.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum EnableExtensionStep: CaseIterable, Hashable, EnableExtensionStepProtocol {
+enum EnableFilterExtensionStep: CaseIterable, Hashable, EnableExtensionStepProtocol {
     case settings
     case messages
     case unknownSenders

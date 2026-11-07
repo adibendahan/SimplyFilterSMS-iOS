@@ -47,7 +47,7 @@ struct EnableExtensionView: View {
                             return
                         }
 
-                        @MainActor func pauseableSleep(_ nanoseconds: UInt64) async {
+                        @MainActor func pausableSleep(_ nanoseconds: UInt64) async {
                             let chunk: UInt64 = 50_000_000
                             var remaining = nanoseconds
                             while remaining > 0 && !Task.isCancelled {
@@ -62,18 +62,18 @@ struct EnableExtensionView: View {
                         }
 
                         while !Task.isCancelled {
-                            await pauseableSleep(kEnableExtensionCycleStartDelay)
+                            await pausableSleep(kEnableExtensionCycleStartDelay)
                             for step in model.steps {
                                 withAnimation(reduceMotion ? nil : .default) {
                                     activeStep = step.stepNumber
                                 }
-                                await pauseableSleep(kEnableExtensionStepDuration)
+                                await pausableSleep(kEnableExtensionStepDuration)
                             }
-                            await pauseableSleep(kEnableExtensionResetPause)
+                            await pausableSleep(kEnableExtensionResetPause)
                             withAnimation(reduceMotion ? nil : .default) {
                                 activeStep = 0
                             }
-                            await pauseableSleep(kEnableExtensionCycleStartDelay)
+                            await pausableSleep(kEnableExtensionCycleStartDelay)
                         }
                     }
                 }
@@ -159,7 +159,7 @@ extension EnableExtensionView {
 #Preview {
     EnableExtensionView(
         model: EnableExtensionView.ViewModel(
-            steps: Array(EnableExtensionStep.allCases),
+            steps: Array(EnableFilterExtensionStep.allCases),
             isInteractiveDismissDisabled: false,
             onDismiss: {},
             onCTA: {},

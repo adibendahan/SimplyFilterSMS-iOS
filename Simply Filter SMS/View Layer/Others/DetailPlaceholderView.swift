@@ -1,5 +1,5 @@
 //
-//  CustomPlaceholderView.swift
+//  DetailPlaceholderView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 02/01/2025.
@@ -7,7 +7,7 @@
 import SwiftUI
 
 
-struct CustomPlaceholderView: View {
+struct DetailPlaceholderView: View {
 
     @ScaledMetric(relativeTo: .largeTitle) private var placeholderIconSize: CGFloat = 60
 
@@ -67,8 +67,8 @@ struct CustomPlaceholderView: View {
 
 
 //MARK: - Preview -
-struct CustomPlaceholderView_Previews: PreviewProvider {
+struct DetailPlaceholderView_Previews: PreviewProvider {
     static var previews: some View {
-        CustomPlaceholderView()
+        DetailPlaceholderView()
     }
 }

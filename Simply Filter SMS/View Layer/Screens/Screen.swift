@@ -10,9 +10,9 @@ import SwiftUI
 enum Screen: Int, Identifiable, Hashable {
     var id: Self { self }
 
-    case appHome, onboarding, help, about, enableExtension, testFilters,
-         addLanguageFilter, addAllowFilter, addDenyFilter, automaticBlocking,
-         denyFilterList, allowFilterList, denyLanguageFilterList, reportMessage,
+    case appHome, onboarding, help, about, enableExtension, filterTester,
+         addLanguageFilter, addAllowFilter, addDenyFilter, filterLists,
+         denyFilters, allowFilters, denyLanguageFilters, reportMessage,
          whatsNew, tipJar, countryList, enableReportingExtension, filterImport,
          chooseAccentColor, filterExport
 
@@ -24,7 +24,7 @@ enum Screen: Int, Identifiable, Hashable {
 
             case .onboarding, .enableExtension:
                 EnableExtensionView(model: EnableExtensionView.ViewModel(
-                    steps: Array(EnableExtensionStep.allCases),
+                    steps: Array(EnableFilterExtensionStep.allCases),
                     isInteractiveDismissDisabled: true,
                     onDismiss: {
                         var defaultsManager = AppManager.shared.defaultsManager
@@ -43,11 +43,11 @@ enum Screen: Int, Identifiable, Hashable {
             case .about:
                 AboutView(model: AboutView.ViewModel())
 
-            case .testFilters:
-                TestFiltersView(model: TestFiltersView.ViewModel())
+            case .filterTester:
+                FilterTesterView(model: FilterTesterView.ViewModel())
 
             case .addLanguageFilter:
-                LanguageListView(model: LanguageListView.ViewModel(mode: .blockLanguage))
+                BlockLanguageView(model: BlockLanguageView.ViewModel())
 
             case .addAllowFilter:
                 AddFilterView(model: AddFilterView.ViewModel(filterType: .allow))
@@ -55,17 +55,17 @@ enum Screen: Int, Identifiable, Hashable {
             case .addDenyFilter:
                 AddFilterView(model: AddFilterView.ViewModel(filterType: .deny))
 
-            case .automaticBlocking:
-                LanguageListView(model: LanguageListView.ViewModel(mode: .automaticBlocking))
+            case .filterLists:
+                FilterListLanguagesView(model: FilterListLanguagesView.ViewModel())
 
-            case .denyFilterList:
-                FilterListView(model: FilterListView.ViewModel(filterType: .deny))
+            case .denyFilters:
+                FiltersView(model: FiltersView.ViewModel(filterType: .deny))
 
-            case .allowFilterList:
-                FilterListView(model: FilterListView.ViewModel(filterType: .allow))
+            case .allowFilters:
+                FiltersView(model: FiltersView.ViewModel(filterType: .allow))
 
-            case .denyLanguageFilterList:
-                FilterListView(model: FilterListView.ViewModel(filterType: .denyLanguage))
+            case .denyLanguageFilters:
+                FiltersView(model: FiltersView.ViewModel(filterType: .denyLanguage))
 
             case .reportMessage:
                 ReportMessageView(model: ReportMessageView.ViewModel())
@@ -114,22 +114,22 @@ enum Screen: Int, Identifiable, Hashable {
             return "about"
         case .enableExtension:
             return "enableExtension"
-        case .testFilters:
-            return "testFilters"
+        case .filterTester:
+            return "filterTester"
         case .addLanguageFilter:
             return "addLanguageFilter"
         case .addAllowFilter:
             return "addAllowFilter"
         case .addDenyFilter:
             return "addDenyFilter"
-        case .automaticBlocking:
-            return "automaticBlocking"
-        case .denyFilterList:
-            return "denyFilterList"
-        case .allowFilterList:
-            return "allowFilterList"
-        case .denyLanguageFilterList:
-            return "denyLanguageFilterList"
+        case .filterLists:
+            return "filterLists"
+        case .denyFilters:
+            return "denyFilters"
+        case .allowFilters:
+            return "allowFilters"
+        case .denyLanguageFilters:
+            return "denyLanguageFilters"
         case .reportMessage:
             return "reportMessage"
         case .whatsNew:
@@ -158,7 +158,7 @@ extension Screen {
         case "enable-reporting-extension":
             return .enableReportingExtension
         case "test-filters":
-            return .testFilters
+            return .filterTester
         case "tip-jar":
             return .tipJar
         default:
@@ -171,11 +171,11 @@ extension FilterType {
     var screen: Screen {
         switch self {
         case .deny:
-            return .denyFilterList
+            return .denyFilters
         case .allow:
-            return .allowFilterList
+            return .allowFilters
         case .denyLanguage:
-            return .denyLanguageFilterList
+            return .denyLanguageFilters
         }
     }
 }

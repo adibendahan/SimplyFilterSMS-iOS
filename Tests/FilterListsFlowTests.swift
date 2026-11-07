@@ -16,11 +16,12 @@ class FilterListsFlowTests: XCTestCase {
     //MARK: Test Lifecycle
     override func setUp() {
         super.setUp()
-        self.persistanceManager = PersistanceManager(inMemory: true)
+        self.persistenceManager = PersistenceManager(inMemory: true)
         self.filterListService = mock_FilterListService()
-        self.automaticFilterManager = AutomaticFilterManager(persistanceManager: self.persistanceManager,
-                                                             filterListService: self.filterListService)
-        self.messageEvaluationManager = MessageEvaluationManager(persistanceManager: self.persistanceManager)
+        self.filterListManager = FilterListManager(persistenceManager: self.persistenceManager,
+                                                   filterListService: self.filterListService)
+        self.smartFilterManager = SmartFilterManager(persistenceManager: self.persistenceManager)
+        self.messageEvaluationManager = MessageEvaluationManager(persistenceManager: self.persistenceManager)
     }
 
 
@@ -34,34 +35,34 @@ class FilterListsFlowTests: XCTestCase {
         self.filterListService.fetchFilterListClosure = { url, _ in
             return self.listResponse(for: url)
         }
-        self.automaticFilterManager.setAutomaticRuleState(for: .links, value: true)
+        self.smartFilterManager.setSmartFilterActive(for: .links, value: true)
 
         let beforeRefresh = self.evaluate(body: "הלוואה מהירה", sender: "1234567")
         XCTAssertEqual(beforeRefresh.action, .allow, "nothing is blocked before the lists are downloaded")
 
         // Act
-        await self.automaticFilterManager.refreshFilterLists()
-        self.automaticFilterManager.setLanguageAutomaticState(for: .hebrew, value: true)
-        self.automaticFilterManager.setLanguageAutomaticState(for: .english, value: false)
+        await self.filterListManager.refreshFilterLists()
+        self.filterListManager.setFilterListActive(for: .hebrew, value: true)
+        self.filterListManager.setFilterListActive(for: .english, value: false)
 
         // Verify
-        XCTAssertEqual(Set(self.automaticFilterManager.languages(for: .automaticBlocking)), [.hebrew, .english])
+        XCTAssertEqual(Set(self.filterListManager.filterListLanguages), [.hebrew, .english])
 
         let allowedSender = self.evaluate(body: "check https://link.com", sender: "BituahLeumi")
         XCTAssertEqual(allowedSender.action, .allow, "an allowed sender beats the links rule")
-        XCTAssertEqual(allowedSender.match, .automaticFilter(NLLanguage.hebrew.localizedName!))
+        XCTAssertEqual(allowedSender.match, .filterList(NLLanguage.hebrew.localizedName!))
 
         let otherSender = self.evaluate(body: "check https://link.com", sender: "1234567")
         XCTAssertEqual(otherSender.action, .junk, "the links rule still blocks everyone else")
 
         let blockedPhrase = self.evaluate(body: "הלוואה מהירה", sender: "1234567")
         XCTAssertEqual(blockedPhrase.action, .junk)
-        XCTAssertEqual(blockedPhrase.match, .automaticFilter(NLLanguage.hebrew.localizedName!))
+        XCTAssertEqual(blockedPhrase.match, .filterList(NLLanguage.hebrew.localizedName!))
 
         let englishOff = self.evaluate(body: "fast loan", sender: "1234567")
         XCTAssertEqual(englishOff.action, .allow, "a list whose language is off doesn't block")
 
-        self.automaticFilterManager.setLanguageAutomaticState(for: .english, value: true)
+        self.filterListManager.setFilterListActive(for: .english, value: true)
 
         let englishOn = self.evaluate(body: "fast loan", sender: "1234567")
         XCTAssertEqual(englishOn.action, .promotion, "the English list lives at an absolute URL and blocks to its record's folder")
@@ -69,9 +70,10 @@ class FilterListsFlowTests: XCTestCase {
 
 
     //MARK: Private Variables and Helpers
-    private var persistanceManager: PersistanceManager!
+    private var persistenceManager: PersistenceManager!
     private var filterListService: mock_FilterListService!
-    private var automaticFilterManager: AutomaticFilterManager!
+    private var filterListManager: FilterListManager!
+    private var smartFilterManager: SmartFilterManager!
     private var messageEvaluationManager: MessageEvaluationManager!
 
     private let hebrewListURL = "https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/3.3.0/ai/he.sfsfilters"

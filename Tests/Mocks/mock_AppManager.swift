@@ -14,9 +14,10 @@ class mock_AppManager: AppManagerProtocol {
 
     static var logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "tests")
 
-    var persistanceManager: PersistanceManagerProtocol = mock_PersistanceManager()
+    var persistenceManager: PersistenceManagerProtocol = mock_PersistenceManager()
     var defaultsManager: DefaultsManagerProtocol = mock_DefaultsManager()
-    var automaticFilterManager: AutomaticFilterManagerProtocol = mock_AutomaticFilterManager()
+    var filterListManager: FilterListManagerProtocol = mock_FilterListManager()
+    var smartFilterManager: SmartFilterManagerProtocol = mock_SmartFilterManager()
     var messageEvaluationManager: MessageEvaluationManagerProtocol = mock_MessageEvaluationManager()
     var networkSyncManager: NetworkSyncManagerProtocol = mock_NetworkSyncManager()
     var filterListService: FilterListServiceProtocol = mock_FilterListService()
@@ -31,14 +32,14 @@ class mock_AppManager: AppManagerProtocol {
     var onAppBecameActiveCounter = 0
     var onNewUserSessionCounter = 0
 
-    var onAppLaunchClosuer: (() -> ())?
+    var onAppLaunchClosure: (() -> ())?
     var onAppBecameActiveClosure: (() -> (Bool))?
-    var onNewUserSessionClosuer: (() -> ())?
+    var onNewUserSessionClosure: (() -> ())?
 
     @MainActor
     func onAppLaunch() {
         self.onAppLaunchCounter += 1
-        self.onAppLaunchClosuer?()
+        self.onAppLaunchClosure?()
     }
 
     @MainActor
@@ -50,7 +51,7 @@ class mock_AppManager: AppManagerProtocol {
     @MainActor
     func onNewUserSession() {
         self.onNewUserSessionCounter += 1
-        self.onNewUserSessionClosuer?()
+        self.onNewUserSessionClosure?()
     }
     
     func resetCounters() {

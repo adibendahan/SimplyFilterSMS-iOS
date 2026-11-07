@@ -1,5 +1,5 @@
 //
-//  FilterListViewModelTests.swift
+//  FiltersViewModelTests.swift
 //  Tests
 //
 //  Created by Adi Ben-Dahan on 29/01/2022.
@@ -9,12 +9,13 @@ import Foundation
 import XCTest
 @testable import Simply_Filter_SMS
 
-class FilterListViewModelTests: XCTestCase {
+class FiltersViewModelTests: XCTestCase {
     
-    private var testSubject: FilterListView.ViewModel = FilterListView.ViewModel(filterType: .deny)
-    private var persistanceManager = mock_PersistanceManager()
+    private var testSubject: FiltersView.ViewModel = FiltersView.ViewModel(filterType: .deny)
+    private var persistenceManager = mock_PersistenceManager()
     private var defaultsManager = mock_DefaultsManager()
-    private var automaticFilterManager = mock_AutomaticFilterManager()
+    private var filterListManager = mock_FilterListManager()
+    private var smartFilterManager = mock_SmartFilterManager()
     private var appManager = mock_AppManager()
     
     //MARK: Test Lifecycle
@@ -23,16 +24,18 @@ class FilterListViewModelTests: XCTestCase {
 
         let appManager = mock_AppManager()
         self.appManager = appManager
-        self.persistanceManager = mock_PersistanceManager()
+        self.persistenceManager = mock_PersistenceManager()
         self.defaultsManager = mock_DefaultsManager()
-        appManager.persistanceManager = self.persistanceManager
+        appManager.persistenceManager = self.persistenceManager
         appManager.defaultsManager = self.defaultsManager
-        appManager.automaticFilterManager = self.automaticFilterManager
+        appManager.filterListManager = self.filterListManager
+        appManager.smartFilterManager = self.smartFilterManager
         
-        self.testSubject = FilterListView.ViewModel(filterType: .deny, appManager: appManager)
-        self.persistanceManager.resetCounters()
+        self.testSubject = FiltersView.ViewModel(filterType: .deny, appManager: appManager)
+        self.persistenceManager.resetCounters()
         self.defaultsManager.resetCounters()
-        self.automaticFilterManager.resetCounters()
+        self.filterListManager.resetCounters()
+        self.smartFilterManager.resetCounters()
         self.appManager.resetCounters()
     }
     
@@ -41,8 +44,8 @@ class FilterListViewModelTests: XCTestCase {
     func test_refresh() {
         // Prepare
         self.defaultsManager.isAppFirstRunClosure = { return false }
-        self.automaticFilterManager.automaticRuleStateClosure = { ruleType in
-            switch ruleType {
+        self.smartFilterManager.isSmartFilterActiveClosure = { smartFilterType in
+            switch smartFilterType {
             case .allUnknown:
                 return true
             default:
@@ -50,7 +53,7 @@ class FilterListViewModelTests: XCTestCase {
             }
         }
         
-        self.automaticFilterManager.languagesClosure = { _ in
+        self.persistenceManager.blockableLanguagesClosure = {
             return [.hebrew, .english]
         }
         
@@ -58,9 +61,9 @@ class FilterListViewModelTests: XCTestCase {
         self.testSubject.refresh()
         
         // Verify
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecordsForTypeCounter, 1)
-        XCTAssertEqual(self.automaticFilterManager.automaticRuleStateCounter, 1)
-        XCTAssertEqual(self.automaticFilterManager.languagesCounter, 1)
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecordsForTypeCounter, 1)
+        XCTAssertEqual(self.smartFilterManager.isSmartFilterActiveCounter, 1)
+        XCTAssertEqual(self.persistenceManager.blockableLanguagesCounter, 1)
         XCTAssertEqual(self.testSubject.isAllUnknownFilteringOn, true)
         XCTAssertEqual(self.testSubject.canBlockAnotherLanguage, true)
     }
@@ -78,8 +81,8 @@ class FilterListViewModelTests: XCTestCase {
         // Prepare
         let filter = self.makeFilter()
         var stored = [filter]
-        self.persistanceManager.fetchFilterRecordsForTypeClosure = { _ in stored }
-        self.persistanceManager.deleteFiltersClosure = { deleted in
+        self.persistenceManager.fetchFilterRecordsForTypeClosure = { _ in stored }
+        self.persistenceManager.deleteFiltersClosure = { deleted in
             stored.removeAll { deleted.contains($0) }
         }
         self.testSubject.refresh()
@@ -90,7 +93,7 @@ class FilterListViewModelTests: XCTestCase {
                                        rowViewModels: self.testSubject.regularRowViewModels)
         
         // Verify
-        XCTAssertEqual(self.persistanceManager.deleteFiltersCounter, 1)
+        XCTAssertEqual(self.persistenceManager.deleteFiltersCounter, 1)
         XCTAssertTrue(self.testSubject.filters.isEmpty)
     }
     
@@ -98,8 +101,8 @@ class FilterListViewModelTests: XCTestCase {
         // Prepare
         let filter = self.makeFilter()
         var stored = [filter]
-        self.persistanceManager.fetchFilterRecordsForTypeClosure = { _ in stored }
-        self.persistanceManager.deleteFiltersClosure = { deleted in
+        self.persistenceManager.fetchFilterRecordsForTypeClosure = { _ in stored }
+        self.persistenceManager.deleteFiltersClosure = { deleted in
             stored.removeAll { deleted.contains($0) }
         }
         self.testSubject.refresh()
@@ -108,13 +111,13 @@ class FilterListViewModelTests: XCTestCase {
         self.testSubject.deleteFilters(Set(arrayLiteral: filter))
         
         // Verify
-        XCTAssertEqual(self.persistanceManager.deleteFiltersCounter, 1)
+        XCTAssertEqual(self.persistenceManager.deleteFiltersCounter, 1)
         XCTAssertTrue(self.testSubject.filters.isEmpty)
     }
     
     private func makeFilter() -> Filter {
-        let filter = Filter(context: self.persistanceManager.context)
-        filter.denyFolderType = .junk
+        let filter = Filter(context: self.persistenceManager.context)
+        filter.messageFolder = .junk
         filter.filterType = .deny
         filter.text = "newFilter"
         filter.uuid = UUID()

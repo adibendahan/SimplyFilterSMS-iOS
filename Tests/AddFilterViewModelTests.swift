@@ -14,12 +14,12 @@ class AddFilterViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         let appManager = mock_AppManager()
-        let persistanceManager = mock_PersistanceManager()
+        let persistenceManager = mock_PersistenceManager()
         let defaultsManager = mock_DefaultsManager()
-        let automaticFilterManager = mock_AutomaticFilterManager()
-        appManager.persistanceManager = persistanceManager
+        let filterListManager = mock_FilterListManager()
+        appManager.persistenceManager = persistenceManager
         appManager.defaultsManager = defaultsManager
-        appManager.automaticFilterManager = automaticFilterManager
+        appManager.filterListManager = filterListManager
         self.appManager = appManager
     }
 

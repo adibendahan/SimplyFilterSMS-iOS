@@ -11,7 +11,7 @@ import NaturalLanguage
 protocol DefaultsManagerProtocol {
     // Stored:
     var isAppFirstRun: Bool { get set }
-    var isExpandedAddFilter: Bool { get set }
+    var isAddFilterExpanded: Bool { get set }
     var isFilterOptionsCollapsed: Bool { get set }
     var sessionCounter: Int { get set }
     var didPromptForReview: Bool { get set }
@@ -22,11 +22,11 @@ protocol DefaultsManagerProtocol {
     var inactivityNotificationLastDeclineSession: Int { get set }
     var inactivityNotificationWasGranted: Bool { get set }
     var accentColorRGB: [String: Double] { get set }
-    var appAge: Date { get }
+    var installDate: Date { get }
     
     // Session:
     var lastOfflineNotificationDismiss: Date? { get set }
-    var sessionAge: Date? { get set }
+    var sessionStartDate: Date? { get set }
     
     #if DEBUG
     func reset()

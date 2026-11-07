@@ -12,42 +12,42 @@ import NaturalLanguage
 
 class FilterTransferManagerTests: XCTestCase {
 
-    private var persistanceManager: PersistanceManager!
+    private var persistenceManager: PersistenceManager!
     private var testSubject: FilterTransferManager!
 
     //MARK: Test Lifecycle
     override func setUp() {
         super.setUp()
-        self.persistanceManager = PersistanceManager(inMemory: true)
-        self.testSubject = FilterTransferManager(persistanceManager: self.persistanceManager)
+        self.persistenceManager = PersistenceManager(inMemory: true)
+        self.testSubject = FilterTransferManager(persistenceManager: self.persistenceManager)
     }
 
     override func tearDown() {
         self.testSubject = nil
-        self.persistanceManager = nil
+        self.persistenceManager = nil
         super.tearDown()
     }
 
     func test_roundTrip_denyAllowRegex_skipsLanguageBlocks() throws {
-        self.persistanceManager.addFilter(text: "promo",
+        self.persistenceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .body,
                                           filterMatching: .contains,
                                           filterCase: .caseInsensitive)
-        self.persistanceManager.addFilter(text: "Mom",
+        self.persistenceManager.addFilter(text: "Mom",
                                           type: .allow,
                                           denyFolder: .junk,
                                           filterTarget: .sender,
                                           filterMatching: .exact,
                                           filterCase: .caseSensitive)
-        self.persistanceManager.addFilter(text: #"\d{5}"#,
+        self.persistenceManager.addFilter(text: #"\d{5}"#,
                                           type: .deny,
                                           denyFolder: .promotion,
                                           filterTarget: .all,
                                           filterMatching: .regex,
                                           filterCase: .caseInsensitive)
-        self.persistanceManager.addFilter(text: NLLanguage.english.filterText,
+        self.persistenceManager.addFilter(text: NLLanguage.english.filterText,
                                           type: .denyLanguage,
                                           denyFolder: .junk,
                                           filterTarget: .body,
@@ -55,8 +55,8 @@ class FilterTransferManagerTests: XCTestCase {
                                           filterCase: .caseInsensitive)
 
         let data = try self.testSubject.exportPayload()
-        self.persistanceManager.deleteFilters(Set(self.persistanceManager.fetchFilterRecords()))
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 0)
+        self.persistenceManager.deleteFilters(Set(self.persistenceManager.fetchFilterRecords()))
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecords().count, 0)
 
         let preview = try self.testSubject.queueImport(data: data)
         let result = self.testSubject.importFilters(preview.candidates)
@@ -64,30 +64,30 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertEqual(result.added, 3)
         XCTAssertEqual(result.duplicateCount, 0)
         XCTAssertEqual(result.invalidCount, 0)
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 3)
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecords().count, 3)
 
-        let deny = self.persistanceManager.fetchFilterRecords(for: .deny)
+        let deny = self.persistenceManager.fetchFilterRecords(for: .deny)
         XCTAssertEqual(deny.count, 2)
         XCTAssertTrue(deny.contains(where: { $0.text == "promo" && $0.filterTarget == .body && $0.filterMatching == .contains }))
-        XCTAssertTrue(deny.contains(where: { $0.text == #"\d{5}"# && $0.filterMatching == .regex && $0.denyFolderType == .promotion }))
+        XCTAssertTrue(deny.contains(where: { $0.text == #"\d{5}"# && $0.filterMatching == .regex && $0.messageFolder == .promotion }))
 
-        let allow = self.persistanceManager.fetchFilterRecords(for: .allow)
+        let allow = self.persistenceManager.fetchFilterRecords(for: .allow)
         XCTAssertEqual(allow.count, 1)
         XCTAssertEqual(allow.first?.text, "Mom")
         XCTAssertEqual(allow.first?.filterMatching, .exact)
         XCTAssertEqual(allow.first?.filterCase, .caseSensitive)
 
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords(for: .denyLanguage).count, 0)
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecords(for: .denyLanguage).count, 0)
     }
 
     func test_export_skipsLanguageBlocks() throws {
-        self.persistanceManager.addFilter(text: "promo",
+        self.persistenceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .body,
                                           filterMatching: .contains,
                                           filterCase: .caseInsensitive)
-        self.persistanceManager.addFilter(text: NLLanguage.english.filterText,
+        self.persistenceManager.addFilter(text: NLLanguage.english.filterText,
                                           type: .denyLanguage,
                                           denyFolder: .junk,
                                           filterTarget: .body,
@@ -129,13 +129,13 @@ class FilterTransferManagerTests: XCTestCase {
     }
 
     func test_import_skipsDuplicatesAndDoesNotDeleteExisting() throws {
-        self.persistanceManager.addFilter(text: "keep-me",
+        self.persistenceManager.addFilter(text: "keep-me",
                                           type: .allow,
                                           denyFolder: .junk,
                                           filterTarget: .all,
                                           filterMatching: .contains,
                                           filterCase: .caseInsensitive)
-        self.persistanceManager.addFilter(text: "promo",
+        self.persistenceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .all,
@@ -153,18 +153,18 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertEqual(result.added, 1)
         XCTAssertEqual(result.duplicateCount, 1)
         XCTAssertEqual(result.invalidCount, 0)
-        let texts = Set(self.persistanceManager.fetchFilterRecords().compactMap({ $0.text }))
+        let texts = Set(self.persistenceManager.fetchFilterRecords().compactMap({ $0.text }))
         XCTAssertEqual(texts, ["keep-me", "promo", "new-one"])
     }
 
     func test_forceClearBeforeImport_clearsListedTypesThenAdds() throws {
-        self.persistanceManager.addFilter(text: "old-deny",
+        self.persistenceManager.addFilter(text: "old-deny",
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .all,
                                           filterMatching: .contains,
                                           filterCase: .caseInsensitive)
-        self.persistanceManager.addFilter(text: "keep-allow",
+        self.persistenceManager.addFilter(text: "keep-allow",
                                           type: .allow,
                                           denyFolder: .junk,
                                           filterTarget: .all,
@@ -181,13 +181,13 @@ class FilterTransferManagerTests: XCTestCase {
 
         XCTAssertEqual(result.added, 2)
         XCTAssertEqual(result.duplicateCount, 0)
-        let denyTexts = Set(self.persistanceManager.fetchFilterRecords(for: .deny).compactMap({ $0.text }))
+        let denyTexts = Set(self.persistenceManager.fetchFilterRecords(for: .deny).compactMap({ $0.text }))
         XCTAssertEqual(denyTexts, ["old-deny", "fresh-deny"])
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords(for: .allow).first?.text, "keep-allow")
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecords(for: .allow).first?.text, "keep-allow")
     }
 
     func test_forceClearBeforeImport_ignoresLanguageBlocks() throws {
-        self.persistanceManager.addFilter(text: NLLanguage.english.filterText,
+        self.persistenceManager.addFilter(text: NLLanguage.english.filterText,
                                           type: .denyLanguage,
                                           denyFolder: .junk,
                                           filterTarget: .body,
@@ -203,7 +203,7 @@ class FilterTransferManagerTests: XCTestCase {
 
         XCTAssertEqual(result.added, 1)
         XCTAssertTrue(preview.forceClearTypes.isEmpty)
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords(for: .denyLanguage).first?.text, NLLanguage.english.filterText)
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecords(for: .denyLanguage).first?.text, NLLanguage.english.filterText)
     }
 
     func test_preview_skipsIntraFileDuplicates() throws {
@@ -216,7 +216,7 @@ class FilterTransferManagerTests: XCTestCase {
 
         XCTAssertEqual(preview.count, 1)
         XCTAssertEqual(preview.duplicateCount, 1)
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 0)
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecords().count, 0)
     }
 
     func test_invalidJSON_throws() {
@@ -233,7 +233,7 @@ class FilterTransferManagerTests: XCTestCase {
     }
 
     func test_export_writesVersion2() throws {
-        self.persistanceManager.addFilter(text: "promo",
+        self.persistenceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .all,
@@ -287,13 +287,13 @@ class FilterTransferManagerTests: XCTestCase {
     }
 
     func test_export_omitsCaseForRegexOnly() throws {
-        self.persistanceManager.addFilter(text: #"\d{5}"#,
+        self.persistenceManager.addFilter(text: #"\d{5}"#,
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .all,
                                           filterMatching: .regex,
                                           filterCase: .caseSensitive)
-        self.persistanceManager.addFilter(text: "promo",
+        self.persistenceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .body,
@@ -322,13 +322,13 @@ class FilterTransferManagerTests: XCTestCase {
     }
 
     func test_export_omitsFolderForAllowOnly() throws {
-        self.persistanceManager.addFilter(text: "Mom",
+        self.persistenceManager.addFilter(text: "Mom",
                                           type: .allow,
                                           denyFolder: .junk,
                                           filterTarget: .sender,
                                           filterMatching: .exact,
                                           filterCase: .caseInsensitive)
-        self.persistanceManager.addFilter(text: "promo",
+        self.persistenceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .promotion,
                                           filterTarget: .body,
@@ -376,12 +376,12 @@ class FilterTransferManagerTests: XCTestCase {
         let result = self.testSubject.importFilters(Array(preview.candidates.prefix(1)))
 
         XCTAssertEqual(result.added, 1)
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords().count, 1)
-        XCTAssertEqual(self.persistanceManager.fetchFilterRecords().first?.text, preview.candidates.first?.text)
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecords().count, 1)
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecords().first?.text, preview.candidates.first?.text)
     }
 
     func test_writeExportFile_createsSfsfilters() throws {
-        self.persistanceManager.addFilter(text: "promo",
+        self.persistenceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .all,
@@ -402,13 +402,13 @@ class FilterTransferManagerTests: XCTestCase {
     }
 
     func test_queueExport_listsLocalFilters() {
-        self.persistanceManager.addFilter(text: "promo",
+        self.persistenceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .all,
                                           filterMatching: .contains,
                                           filterCase: .caseInsensitive)
-        self.persistanceManager.addFilter(text: "Mom",
+        self.persistenceManager.addFilter(text: "Mom",
                                           type: .allow,
                                           denyFolder: .junk,
                                           filterTarget: .sender,
@@ -423,13 +423,13 @@ class FilterTransferManagerTests: XCTestCase {
     }
 
     func test_writeExportFile_onlySelectedCandidates() throws {
-        self.persistanceManager.addFilter(text: "promo",
+        self.persistenceManager.addFilter(text: "promo",
                                           type: .deny,
                                           denyFolder: .junk,
                                           filterTarget: .all,
                                           filterMatching: .contains,
                                           filterCase: .caseInsensitive)
-        self.persistanceManager.addFilter(text: "Mom",
+        self.persistenceManager.addFilter(text: "Mom",
                                           type: .allow,
                                           denyFolder: .junk,
                                           filterTarget: .sender,
@@ -439,7 +439,7 @@ class FilterTransferManagerTests: XCTestCase {
         let preview = self.testSubject.queueExport()
         let selected = preview.candidates.filter({ $0.type == .deny })
         let url = try self.testSubject.writeExportFile(candidates: selected)
-        self.persistanceManager.deleteFilters(Set(self.persistanceManager.fetchFilterRecords()))
+        self.persistenceManager.deleteFilters(Set(self.persistenceManager.fetchFilterRecords()))
         let imported = try self.testSubject.previewImport(data: Data(contentsOf: url))
         XCTAssertEqual(imported.count, 1)
         XCTAssertEqual(imported.candidates.first?.text, "promo")

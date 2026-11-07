@@ -12,6 +12,6 @@ protocol DebugDataManagerProtocol: AnyObject {
     func load(for langCode: String)
 
     #if DEBUG
-    func expireAutomaticFiltersCache()
+    func expireFilterListsCache()
     #endif // DEBUG
 }

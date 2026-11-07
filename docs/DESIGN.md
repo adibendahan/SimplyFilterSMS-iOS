@@ -1,6 +1,6 @@
 # Design Rules
 
-The decisions behind the UI. Sizes, fonts, radii and colors are in the code (`ButtonStyles.swift`, `ViewModfiers.swift`, each type's `color`).
+The decisions behind the UI. Sizes, fonts, radii and colors are in the code (`ButtonStyles.swift`, `ViewModifiers.swift`, each type's `color`).
 
 ---
 

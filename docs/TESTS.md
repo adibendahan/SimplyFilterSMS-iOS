@@ -17,7 +17,7 @@ How tests are written here and the traps around them. The test names say what ea
 ## Unit tests
 
 - **One mock per protocol** in `Tests/Mocks/` (`mock_*`). Each method has a call counter and an optional closure for its result; `resetCounters()` clears them. Tests assert both the result and the call counts.
-- `mock_PersistanceManager` and `mock_MessageEvaluationManager` wrap a real in-memory store, so tests can create real Core Data objects through `context`.
+- `mock_PersistenceManager` and `mock_MessageEvaluationManager` wrap a real in-memory store, so tests can create real Core Data objects through `context`.
 - **In-memory stores never sync** (`cloudKitContainerOptions = nil`). With CloudKit mirroring on, a save in an isolated test run throws `No eligible connection available`.
 - `MessageEvaluationManagerTests` use `MessageEvaluationManager(inMemory: true)` and flush every entity before each test.
 - `FilterListsFlowTests` is the one end-to-end AI Filtering test: real refresh, real store, real evaluation, with only the download mocked. It's what catches the refresh and the extension disagreeing on how lists are stored (e.g. their URL keys).

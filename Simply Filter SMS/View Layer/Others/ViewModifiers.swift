@@ -1,5 +1,5 @@
 //
-//  ViewModfiers.swift
+//  ViewModifiers.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 02/02/2022.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-struct EmbeddedFooterView: ViewModifier {
+struct EmbeddedFooterModifier: ViewModifier {
     var isHidden: Bool = false
     var onTap: (() ->())? = nil
 
@@ -43,7 +43,7 @@ struct EmbeddedFooterView: ViewModifier {
 }
 
 
-struct EmbeddedCloseButton: ViewModifier {
+struct EmbeddedCloseButtonModifier: ViewModifier {
     var onTap: (() ->())? = nil
 
     @ScaledMetric(relativeTo: .body) private var closeIconSize: CGFloat = 20

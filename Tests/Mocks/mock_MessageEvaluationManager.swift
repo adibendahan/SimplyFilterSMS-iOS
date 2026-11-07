@@ -35,10 +35,10 @@ class mock_MessageEvaluationManager: MessageEvaluationManagerProtocol {
     }
 
     //MARK: Helpers
-    private var persistance = MessageEvaluationManager(inMemory: true)
+    private var persistence = MessageEvaluationManager(inMemory: true)
     var context: NSManagedObjectContext
 
     init() {
-        self.context = persistance.context
+        self.context = persistence.context
     }
 }

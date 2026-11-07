@@ -1,5 +1,5 @@
 //
-//  PersistanceManager.swift
+//  PersistenceManager.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 23/01/2022.
@@ -10,7 +10,7 @@ import CoreData
 import NaturalLanguage
 import UIKit
 
-class PersistanceManager: PersistanceManagerProtocol {
+class PersistenceManager: PersistenceManagerProtocol {
 
     
     //MARK: - Initialization -
@@ -35,7 +35,7 @@ class PersistanceManager: PersistanceManagerProtocol {
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
+                AppManager.logger.error("ERROR! While initializing PersistenceManager: \(error), \(error.userInfo)")
             }
 
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
@@ -45,7 +45,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     }
 
 
-    //MARK: - Public API (PersistanceManagerProtocol) -
+    //MARK: - Public API (PersistenceManagerProtocol) -
     //MARK: Context
     private(set) var container: NSPersistentCloudKitContainer
     
@@ -102,7 +102,7 @@ class PersistanceManager: PersistanceManagerProtocol {
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                AppManager.logger.error("ERROR! While initializing PersistanceManager: \(error), \(error.userInfo)")
+                AppManager.logger.error("ERROR! While initializing PersistenceManager: \(error), \(error.userInfo)")
             }
 
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
@@ -181,21 +181,21 @@ class PersistanceManager: PersistanceManagerProtocol {
         return automaticFiltersLanguageRecord
     }
     
-    func fetchAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule? {
+    func fetchAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule? {
         let predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
         guard let automaticFiltersRuleRecord =
                 self.fetch(AutomaticFiltersRule.self, predicate: predicate)?.first else { return nil }
         return automaticFiltersRuleRecord
     }
     
-    func ensuredAutomaticFiltersRuleRecord(for rule: RuleType) -> AutomaticFiltersRule {
+    func ensuredAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule {
         if let existing = self.fetchAutomaticFiltersRuleRecord(for: rule) {
             return existing
         }
         else {
             let newRule = AutomaticFiltersRule(context: self.context)
             newRule.ruleId = rule.rawValue
-            newRule.ruleType = rule
+            newRule.smartFilterType = rule
             newRule.isActive = false
             return newRule
         }
@@ -245,6 +245,12 @@ class PersistanceManager: PersistanceManagerProtocol {
         return true
     }
     
+    func blockableLanguages() -> [NLLanguage] {
+        return NLLanguage.allSupportedCases
+            .filter({ !self.isDuplicateFilter(language: $0) })
+            .sorted(by: NLLanguage.displayOrder)
+    }
+
     func isDuplicateFilter(language: NLLanguage) -> Bool {
         let predicate = NSPredicate(format: "text == %@", language.filterText)
         guard let _ = self.fetch(Filter.self, predicate: predicate)?.first else { return false }
@@ -253,7 +259,7 @@ class PersistanceManager: PersistanceManagerProtocol {
     
     @discardableResult
     func addFilter(text: String, type: FilterType,
-                   denyFolder: DenyFolderType = .junk,
+                   denyFolder: MessageFolder = .junk,
                    filterTarget: FilterTarget = .all,
                    filterMatching: FilterMatching = .contains,
                    filterCase: FilterCase = .caseInsensitive) -> Filter? {
@@ -269,7 +275,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         let newFilter = Filter(context: self.context)
         newFilter.uuid = UUID()
         newFilter.filterType = type
-        newFilter.denyFolderType = denyFolder
+        newFilter.messageFolder = denyFolder
         newFilter.filterMatching = filterMatching
         newFilter.filterTarget = filterTarget
         newFilter.filterCase = filterCase
@@ -292,9 +298,9 @@ class PersistanceManager: PersistanceManagerProtocol {
         guard self.commitAndAnnounce() else { return }
     }
 
-    func updateFilter(_ filter: Filter, denyFolder: DenyFolderType) {
+    func updateFilter(_ filter: Filter, denyFolder: MessageFolder) {
         AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' denyFolder → \(denyFolder.logDescription, privacy: .public)")
-        filter.denyFolderType = denyFolder
+        filter.messageFolder = denyFolder
         guard self.commitAndAnnounce() else { return }
     }
 
@@ -351,7 +357,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         guard self.commitAndAnnounce() else { return }
     }
     
-    func selectedCountries(for rule: RuleType) -> [String] {
+    func selectedCountries(for rule: SmartFilterType) -> [String] {
         guard let record = self.fetchAutomaticFiltersRuleRecord(for: rule),
               let json = record.selectedCountries,
               let data = json.data(using: .utf8),
@@ -359,7 +365,7 @@ class PersistanceManager: PersistanceManagerProtocol {
         return countries
     }
 
-    func setSelectedCountries(_ countries: [String], for rule: RuleType) {
+    func setSelectedCountries(_ countries: [String], for rule: SmartFilterType) {
         let record = self.ensuredAutomaticFiltersRuleRecord(for: rule)
         if let data = try? JSONEncoder().encode(countries),
            let json = String(data: data, encoding: .utf8) {

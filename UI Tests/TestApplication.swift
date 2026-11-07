@@ -34,7 +34,7 @@ class TestApplication: XCUIApplication {
     
     func addFilter(type: FilterType,
                    text: String,
-                   denyFolderType: DenyFolderType? = nil,
+                   messageFolder: MessageFolder? = nil,
                    filterTarget: FilterTarget,
                    filterMatching: FilterMatching,
                    filterCase: FilterCase,
@@ -56,8 +56,8 @@ class TestApplication: XCUIApplication {
         self.tap(.expandButton)
         self.testCase.waitForUIToSettle()
         
-        if let denyFolderType = denyFolderType {
-            self.buttonContaining(denyFolderType.name).forceTap()
+        if let messageFolder = messageFolder {
+            self.buttonContaining(messageFolder.name).forceTap()
         }
 
         self.buttonContaining(filterTarget.name).forceTap()
@@ -68,13 +68,13 @@ class TestApplication: XCUIApplication {
         
         self.textField(.filterText).typeText(text + "\n")
         self.waitForKeyboardToDismiss()
-        self.waitForHittable(self.button(.addFilteraddFilterButton))
+        self.waitForHittable(self.button(.addFilterConfirmButton))
         
         if let screenshotName = screenshotName {
             testCase.snapshotSettled(screenshotName)
         }
         
-        self.tap(.addFilteraddFilterButton)
+        self.tap(.addFilterConfirmButton)
         self.testCase.waitForUIToSettle()
     }
 

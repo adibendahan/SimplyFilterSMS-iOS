@@ -34,7 +34,7 @@ class AppHomeViewModelTests: XCTestCase {
 
         // Act
         testSubject.showNotification(.cloudSyncOperationComplete)
-        testSubject.showNotification(.automaticFiltersUpdated)
+        testSubject.showNotification(.filterListsUpdated)
         testSubject.sheetScreen = nil
 
         // Verify
@@ -47,7 +47,7 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.sheetScreen = .whatsNew
 
         // Act
-        testSubject.showNotification(.automaticFiltersUpdated)
+        testSubject.showNotification(.filterListsUpdated)
         testSubject.showNotification(.filtersImported(added: 1, skipped: 0))
         testSubject.sheetScreen = nil
 

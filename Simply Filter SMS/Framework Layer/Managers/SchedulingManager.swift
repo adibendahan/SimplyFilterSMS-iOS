@@ -10,18 +10,18 @@ import UserNotifications
 class SchedulingManager: SchedulingManagerProtocol {
     
     //MARK: - Initialization -
-    init(automaticFilterManager: AutomaticFilterManagerProtocol,
+    init(filterListManager: FilterListManagerProtocol,
          defaultsManager: DefaultsManagerProtocol,
          userNotificationCenterService: UserNotificationCenterServiceProtocol = UserNotificationCenterService()) {
         
-        self.automaticFilterManager = automaticFilterManager
+        self.filterListManager = filterListManager
         self.defaultsManager = defaultsManager
         self.userNotificationCenterService = userNotificationCenterService
         
         self.filtersStateObserver = NotificationCenter.default.addObserver(forName: .filtersStateChanged,
                                                                           object: nil,
                                                                           queue: .main) { [weak self] _ in
-            guard let self, !self.automaticFilterManager.isAutomaticFilteringOn else { return }
+            guard let self, !self.filterListManager.hasActiveFilterLists else { return }
             AppManager.logger.debug("SchedulingManager — AI Filtering is off, dropping the inactivity reminder")
             self.cancelInactivityReminder()
         }
@@ -39,33 +39,33 @@ class SchedulingManager: SchedulingManagerProtocol {
         return self.defaultsManager.inactivityNotificationDeclineCount + 1 == kInactivityNotificationMaxAsks
     }
     
-    func scheduleAutomaticFiltersProcessing() {
-        let request = BGProcessingTaskRequest(identifier: kAutomaticFiltersProcessingTaskIdentifier)
+    func scheduleFilterListsProcessing() {
+        let request = BGProcessingTaskRequest(identifier: kFilterListsProcessingTaskIdentifier)
         request.requiresNetworkConnectivity = true
         request.earliestBeginDate = Calendar.current.date(byAdding: .day,
-                                                         value: kUpdateAutomaticFiltersMinDays,
+                                                         value: kUpdateFilterListsMinDays,
                                                          to: Date())
         do {
             try BGTaskScheduler.shared.submit(request)
-            AppManager.logger.debug("scheduleAutomaticFiltersProcessing — queued, not before \(request.earliestBeginDate?.description ?? "now", privacy: .public)")
+            AppManager.logger.debug("scheduleFilterListsProcessing — queued, not before \(request.earliestBeginDate?.description ?? "now", privacy: .public)")
         }
         catch {
-            AppManager.logger.error("scheduleAutomaticFiltersProcessing — submit failed: \(error.localizedDescription, privacy: .public)")
+            AppManager.logger.error("scheduleFilterListsProcessing — submit failed: \(error.localizedDescription, privacy: .public)")
         }
     }
     
-    func handleAutomaticFiltersProcessing(task: BGProcessingTask) {
-        AppManager.logger.debug("handleAutomaticFiltersProcessing — iOS granted a background window")
+    func handleFilterListsProcessing(task: BGProcessingTask) {
+        AppManager.logger.debug("handleFilterListsProcessing — iOS granted a background window")
         
-        self.scheduleAutomaticFiltersProcessing()
+        self.scheduleFilterListsProcessing()
         
         let refresh = Task {
-            await self.automaticFilterManager.refreshFilterLists()
+            await self.filterListManager.refreshFilterLists()
             task.setTaskCompleted(success: !Task.isCancelled)
         }
         
         task.expirationHandler = {
-            AppManager.logger.debug("handleAutomaticFiltersProcessing — window expired before the fetch finished")
+            AppManager.logger.debug("handleFilterListsProcessing — window expired before the fetch finished")
             refresh.cancel()
         }
     }
@@ -78,14 +78,14 @@ class SchedulingManager: SchedulingManagerProtocol {
             self.recordAlertPermission(alertsAreAllowed)
             
             guard alertsAreAllowed,
-                  self.automaticFilterManager.isAutomaticFilteringOn else { return }
+                  self.filterListManager.hasActiveFilterLists else { return }
             
             await self.userNotificationCenterService.schedule(self.inactivityReminderRequest)
         }
     }
     
     func shouldShowInactivityNotificationAlert() async -> Bool {
-        guard self.automaticFilterManager.isAutomaticFilteringOn,
+        guard self.filterListManager.hasActiveFilterLists,
               self.defaultsManager.sessionCounter > 1,
               self.hasAsksLeft,
               self.hasWaitedSinceLastDecline else { return false }
@@ -124,23 +124,23 @@ class SchedulingManager: SchedulingManagerProtocol {
         }
     }
 
-    func scheduleAutomaticFiltersProcessingSoon() {
-        let request = BGProcessingTaskRequest(identifier: kAutomaticFiltersProcessingTaskIdentifier)
+    func scheduleFilterListsProcessingSoon() {
+        let request = BGProcessingTaskRequest(identifier: kFilterListsProcessingTaskIdentifier)
         request.requiresNetworkConnectivity = true
         request.earliestBeginDate = Date().addingTimeInterval(60)
         do {
             try BGTaskScheduler.shared.submit(request)
-            AppManager.logger.debug("scheduleAutomaticFiltersProcessingSoon — queued, not before \(request.earliestBeginDate?.description ?? "now", privacy: .public)")
+            AppManager.logger.debug("scheduleFilterListsProcessingSoon — queued, not before \(request.earliestBeginDate?.description ?? "now", privacy: .public)")
         }
         catch {
-            AppManager.logger.error("scheduleAutomaticFiltersProcessingSoon — submit failed: \(error.localizedDescription, privacy: .public)")
+            AppManager.logger.error("scheduleFilterListsProcessingSoon — submit failed: \(error.localizedDescription, privacy: .public)")
         }
     }
     #endif // DEBUG
     
     
     //MARK: - Private -
-    private let automaticFilterManager: AutomaticFilterManagerProtocol
+    private let filterListManager: FilterListManagerProtocol
     private let userNotificationCenterService: UserNotificationCenterServiceProtocol
     private var defaultsManager: DefaultsManagerProtocol
     private var filtersStateObserver: NSObjectProtocol?
