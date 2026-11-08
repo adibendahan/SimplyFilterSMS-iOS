@@ -126,6 +126,14 @@ class FilterListManager: FilterListManagerProtocol {
         _ = persistenceManager.commitAndAnnounce()
     }
     
+    func onFilterListsUpdateFinished(_ handler: @escaping () -> Void) {
+        guard self.isFilterListsUpdateInProgress else {
+            handler()
+            return
+        }
+        self.updateFinishedHandlers.append(handler)
+    }
+
     @MainActor
     func updateFilterListsWhenOnline() {
         guard !ProcessInfo.processInfo.isInTestingMode else {
@@ -136,16 +144,20 @@ class FilterListManager: FilterListManagerProtocol {
             AppManager.logger.debug("updateFilterListsWhenOnline — today's check already succeeded")
             return
         }
-        AppManager.logger.debug("updateFilterListsWhenOnline — waiting for network status")
+        self.isFilterListsUpdateInProgress = true
         self.networkSyncManager?.onFirstStatusKnown { [weak self] in
             MainActor.assumeIsolated {
                 guard let self else { return }
                 guard self.networkSyncManager?.networkStatus == .online else {
                     AppManager.logger.debug("updateFilterListsWhenOnline — offline, checking once back online")
+                    self.finishFilterListsUpdate()
                     self.updateFilterListsOnNextOnline()
                     return
                 }
-                self.updateFilterListsInBackground()
+                Task(priority: .background) { @MainActor in
+                    await self.refreshFilterLists()
+                    self.finishFilterListsUpdate()
+                }
             }
         }
     }
@@ -156,6 +168,8 @@ class FilterListManager: FilterListManagerProtocol {
     private weak var persistenceManager: PersistenceManagerProtocol?
     private weak var networkSyncManager: NetworkSyncManagerProtocol?
     private var refreshTask: Task<Void, Never>?
+    private var isFilterListsUpdateInProgress = false
+    private var updateFinishedHandlers: [() -> Void] = []
     private var networkStatusTask: Task<Void, Never>?
 
     @MainActor
@@ -179,6 +193,15 @@ class FilterListManager: FilterListManagerProtocol {
                 return
             }
         }
+    }
+
+    @MainActor
+    private func finishFilterListsUpdate() {
+        guard self.isFilterListsUpdateInProgress else { return }
+        self.isFilterListsUpdateInProgress = false
+        let handlers = self.updateFinishedHandlers
+        self.updateFinishedHandlers = []
+        handlers.forEach { $0() }
     }
 
     @MainActor

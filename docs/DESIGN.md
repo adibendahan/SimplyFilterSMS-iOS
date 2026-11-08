@@ -32,5 +32,4 @@ The user can pick the app's tint (`ChooseAccentColorView`). Getting this wrong m
 ## Smaller rules
 
 - **Filter option chips** in a filter row are tinted only when the option differs from the default (exact match, case-sensitive, a target other than "all"); the folder chip is always tinted. Tapping a chip opens a `Menu` holding a `Picker`, so the current value gets the system checkmark.
-- **Toasts** (`NotificationView`) sit outside `NavigationView`, or they appear below the navigation bar.
 - **The footer** (version and copyright, tap for About) is on Home only.

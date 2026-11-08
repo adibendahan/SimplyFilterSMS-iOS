@@ -28,4 +28,9 @@ class mock_HTTPService: HTTPServiceProtocol {
         self.fetchIfModifiedCounter += 1
         return try self.fetchIfModifiedClosure?(request) ?? .notModified
     }
+
+    func resetCounters() {
+        self.executeCounter = 0
+        self.fetchIfModifiedCounter = 0
+    }
 }

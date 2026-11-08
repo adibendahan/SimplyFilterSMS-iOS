@@ -18,6 +18,7 @@ protocol DefaultsManagerProtocol {
     var didTip: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
     var didDismissReportingExtensionNudge: Bool { get set }
+    var sessionNudgeLastShownSessions: [String: Int] { get set }
     var inactivityNotificationDeclineCount: Int { get set }
     var inactivityNotificationLastDeclineSession: Int { get set }
     var inactivityNotificationWasGranted: Bool { get set }
@@ -25,7 +26,7 @@ protocol DefaultsManagerProtocol {
     var installDate: Date { get }
     
     // Session:
-    var lastOfflineNotificationDismiss: Date? { get set }
+    var lastOfflineToastDismiss: Date? { get set }
     var sessionStartDate: Date? { get set }
     
     #if DEBUG

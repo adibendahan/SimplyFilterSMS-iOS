@@ -523,6 +523,68 @@ class FilterListManagerTests: XCTestCase {
         XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
     }
 
+    @MainActor
+    func test_filterListsUpdate_updatedToday_finishesImmediately() {
+        // Prepare
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
+            cacheRecord.uuid = UUID()
+            cacheRecord.age = Date()
+
+            return [cacheRecord]
+        }
+        self.persistenceManager.cachedFilterListCatalogClosure = { self.catalog(["he"]) }
+        var didFinish = false
+
+        // Act
+        self.testSubject.updateFilterListsWhenOnline()
+        self.testSubject.onFilterListsUpdateFinished { didFinish = true }
+
+        // Verify
+        XCTAssertTrue(didFinish)
+    }
+
+    @MainActor
+    func test_filterListsUpdate_online_finishesAfterRefresh() async {
+        // Prepare
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = { [] }
+        self.networkSyncManager.networkStatusClosure = { .online }
+        var didFinish = false
+        var didFinishBeforeFetch = true
+        self.filterListService.fetchFilterListCatalogClosure = { _ in
+            didFinishBeforeFetch = didFinish
+            return nil
+        }
+        let updateFinished = self.expectation(description: "updateFinished")
+
+        // Act
+        self.testSubject.updateFilterListsWhenOnline()
+        self.testSubject.onFilterListsUpdateFinished {
+            didFinish = true
+            updateFinished.fulfill()
+        }
+
+        // Verify
+        await self.fulfillment(of: [updateFinished], timeout: 1)
+        XCTAssertFalse(didFinishBeforeFetch)
+    }
+
+    @MainActor
+    func test_filterListsUpdate_offline_finishesImmediately() async {
+        // Prepare
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = { [] }
+        self.networkSyncManager.networkStatusClosure = { .offline }
+        let updateFinished = self.expectation(description: "updateFinished")
+
+        // Act
+        self.testSubject.updateFilterListsWhenOnline()
+        self.testSubject.onFilterListsUpdateFinished { updateFinished.fulfill() }
+
+        // Verify
+        await self.fulfillment(of: [updateFinished], timeout: 1)
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 0)
+    }
+
     private var testSubject: FilterListManagerProtocol = FilterListManager(persistenceManager: mock_PersistenceManager())
     private var filterListsUpdatedCount = 0
     private var filterListsUpdatedObserver: NSObjectProtocol?

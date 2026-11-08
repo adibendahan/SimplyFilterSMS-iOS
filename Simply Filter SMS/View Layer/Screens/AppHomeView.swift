@@ -154,7 +154,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         self.model.refresh()
 
                         if !isPreview {
-                            self.model.presentNextFlow()
+                            self.model.presentNextScreen()
                         }
                     }
                 }
@@ -172,12 +172,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
             self.model.requestSheet(.about)
         })
-        .modifier(EmbeddedNotificationView(model: self.model.notification))
+        .modifier(OverlayWindowModifier(model: self.model.overlayWindow))
         .modifier(persistentStoreReload)
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
             if !self.model.completeInterruptedSheet(), !isPreview {
-                self.model.presentNextFlow()
+                self.model.presentNextScreen()
             }
             if let pending = self.model.pendingScreenAfterDismiss {
                 self.model.pendingScreenAfterDismiss = nil
@@ -426,6 +426,18 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     Label("AI Refresh in 1m", systemImage: "arrow.clockwise")
                 }
 
+                Menu {
+                    ForEach(Array(ToastView.Toast.debugSamples.enumerated()), id: \.offset) { _, toast in
+                        Button {
+                            self.model.showDebugToast(toast)
+                        } label: {
+                            Label(toast.title, systemImage: toast.icon)
+                        }
+                    }
+                } label: {
+                    Label("Show Toast", systemImage: "rectangle.topthird.inset.filled")
+                }
+
                 Button(role: .destructive) {
                     self.model.reset()
                 } label: {
@@ -556,7 +568,7 @@ extension AppHomeView {
         @Published private(set) var subtitle: String
         @Published private(set) var selectedCountriesSummary: String
         @Published var rules: [StatefulItem<SmartFilterType>]
-        @Published var notification: NotificationView.ViewModel
+        let overlayWindow: OverlayWindowModifier.ViewModel
         @Published var navigationScreen: Screen? = nil {
             didSet {
                 if oldValue != nil,
@@ -571,7 +583,7 @@ extension AppHomeView {
             didSet {
                 if self.sheetScreen == nil, let dismissed = oldValue {
                     self.completeDismissedSheet(dismissed)
-                    self.showPendingNotification()
+                    self.appManager.flowManager.showWaitingNudge()
                 }
             }
         }
@@ -579,14 +591,14 @@ extension AppHomeView {
         @Published var showNothingToImportAlert = false {
             didSet {
                 if oldValue && !self.showNothingToImportAlert {
-                    self.showPendingNotification()
+                    self.appManager.flowManager.showWaitingNudge()
                 }
             }
         }
         @Published var showInactivityNotificationAlert = false {
             didSet {
                 if oldValue && !self.showInactivityNotificationAlert {
-                    self.showPendingNotification()
+                    self.appManager.flowManager.showWaitingNudge()
                 }
             }
         }
@@ -604,9 +616,15 @@ extension AppHomeView {
             self.shortSenderChoice = appManager.smartFilterManager.selectedChoice(for: .shortSender)
             self.filters = appManager.persistenceManager.fetchFilterRecords()
             self.rules = []
-            self.notification = NotificationView.ViewModel(notification: .offline)
+            self.overlayWindow = OverlayWindowModifier.ViewModel(appManager: appManager)
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
+            appManager.flowManager.setHomeIdleCheck { [weak self] in
+                return self?.isHomeIdle ?? false
+            }
+            appManager.flowManager.setScreenPresenter { [weak self] in
+                self?.presentNextScreen()
+            }
             self.customAccent = Color(accentRGB: appManager.defaultsManager.accentColorRGB)
             self.lastUIFingerprint = appManager.persistenceManager.fingerprint
 
@@ -637,7 +655,7 @@ extension AppHomeView {
             if self.sheetScreen != .chooseAccentColor {
                 self.customAccent = Color(accentRGB: self.appManager.defaultsManager.accentColorRGB)
             }
-            self.showPendingNotification()
+            self.appManager.flowManager.showWaitingNudge()
         }
         
         func setSelectedChoice(for rule: SmartFilterType, choice: Int) {
@@ -686,11 +704,11 @@ extension AppHomeView {
                     return
                 }
                 AppManager.logger.error("importFilters — picker failed: \(error.localizedDescription, privacy: .public)")
-                self.showNotification(.filterImportFailed)
+                self.appManager.flowManager.requestToast(.filterImportFailed)
 
             case .success(let urls):
                 guard let url = urls.first else {
-                    self.showNotification(.filterImportFailed)
+                    self.appManager.flowManager.requestToast(.filterImportFailed)
                     return
                 }
                 self.importFromFileURL(url)
@@ -698,8 +716,7 @@ extension AppHomeView {
         }
 
         func requestSheet(_ screen: Screen) {
-            self.appManager.flowManager.request(screen)
-            self.presentNextFlow()
+            self.appManager.flowManager.requestScreen(screen)
         }
 
         private func importFromFileURL(_ url: URL) {
@@ -711,12 +728,12 @@ extension AppHomeView {
                 }
             } catch {
                 AppManager.logger.error("importFilters — could not read file: \(url.lastPathComponent, privacy: .public)")
-                self.showNotification(.filterImportFailed)
+                self.appManager.flowManager.requestToast(.filterImportFailed)
             }
         }
 
         private func completeDismissedSheet(_ screen: Screen) {
-            self.appManager.flowManager.complete(screen)
+            self.appManager.flowManager.completeScreen(screen)
 
             if screen == .whatsNew && !self.isReplacingSheetForLaunch {
                 self.markWhatsNewSeen()
@@ -724,7 +741,7 @@ extension AppHomeView {
 
             if screen == .filterImport, !self.isReplacingSheetForLaunch {
                 if let result = self.appManager.filterTransferManager.clearPendingImport() {
-                    self.showNotification(.filtersImported(added: result.added, skipped: result.skippedCount))
+                    self.appManager.flowManager.requestToast(.filtersImported(added: result.added, skipped: result.skippedCount))
                 }
             }
 
@@ -737,16 +754,16 @@ extension AppHomeView {
             }
         }
 
-        func presentNextFlow() {
+        func presentNextScreen() {
             guard !self.isReplacingSheetForLaunch else { return }
-            guard let screen = self.appManager.flowManager.next() else {
-                self.showPendingNotification()
+            guard let screen = self.appManager.flowManager.nextScreen() else {
+                self.appManager.flowManager.showWaitingNudge()
                 return
             }
             if screen == .filterImport,
                self.appManager.filterTransferManager.pendingPreview.count == 0 {
                 _ = self.appManager.filterTransferManager.clearPendingImport()
-                self.appManager.flowManager.complete(.filterImport)
+                self.appManager.flowManager.completeScreen(.filterImport)
                 self.showNothingToImportAlert = true
                 return
             }
@@ -755,7 +772,7 @@ extension AppHomeView {
 
         func enableWhatsNewAndPresent() {
             self.appManager.flowManager.enableWhatsNew()
-            self.presentNextFlow()
+            self.presentNextScreen()
         }
 
         @MainActor
@@ -763,9 +780,7 @@ extension AppHomeView {
             self.appManager.schedulingManager.refreshInactivityReminder()
             let didStartNewSession = self.appManager.onAppBecameActive()
             guard didStartNewSession else { return }
-            self.didShowNotificationThisSession = false
-            self.tryShowTipPromotion()
-            self.tryShowReportingExtensionNudge()
+            self.appManager.flowManager.showSessionNudges()
         }
 
         private func runLaunchFlowIfNeeded() {
@@ -799,7 +814,7 @@ extension AppHomeView {
             guard self.isReplacingSheetForLaunch else { return false }
             self.isReplacingSheetForLaunch = false
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                self?.presentNextFlow()
+                self?.presentNextScreen()
             }
             return true
         }
@@ -813,7 +828,7 @@ extension AppHomeView {
             let hasSheet = self.sheetScreen != nil
 
             guard hasSheet, !isBlockingFirstRun else {
-                self.presentNextFlow()
+                self.presentNextScreen()
                 return
             }
 
@@ -821,127 +836,25 @@ extension AppHomeView {
             self.sheetScreen = nil
         }
 
-        private var isHomeUnobstructed: Bool {
+        private var isHomeIdle: Bool {
             return self.sheetScreen == nil
                 && self.pendingScreenAfterDismiss == nil
                 && !self.isAlertPresented
                 && !self.isReplacingSheetForLaunch
         }
 
-        private func hideOfflineNotification() {
-            if case .offline = self.pendingNotification {
-                self.pendingNotification = nil
-            }
-            guard case .offline = self.shownNotification else { return }
-            AppManager.logger.debug("AppHome — offline notification cancelled (back online)")
-            self.shownNotification = nil
-            self.notification.show = false
-        }
-
-        private func showPendingNotification() {
-            guard self.isHomeUnobstructed,
-                  let pendingNotification = self.pendingNotification else { return }
-            self.pendingNotification = nil
-            self.showNotification(pendingNotification)
-        }
-        
-        func showNotification(_ notification: NotificationView.Notification) {
-            let notificationName = String(describing: notification)
-
-            guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
-                let shownDescription = self.shownNotification.map { String(describing: $0) } ?? "nil"
-                let pendingDescription = self.pendingNotification.map { String(describing: $0) } ?? "nil"
-                AppManager.logger.debug("AppHome — notification dropped: \(notificationName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
-                return
-            }
-
-            guard self.isHomeUnobstructed else {
-                AppManager.logger.debug("AppHome — notification pending (Home obstructed): \(notificationName, privacy: .public)")
-                self.pendingNotification = notification
-                return
-            }
-
-            AppManager.logger.debug("AppHome — notification shown: \(notificationName, privacy: .public)")
-            self.didShowNotificationThisSession = true
-            self.shownNotification = notification
-            self.notification.onHide = { [weak self] in
-                AppManager.logger.debug("AppHome — notification hidden: \(notificationName, privacy: .public)")
-                self?.shownNotification = nil
-            }
-            self.notification.onTap = nil
-
-            switch notification {
-            case .enableReportingExtension:
-                let onTap = { [weak self] in
-                    guard let self = self else { return }
-                    self.appManager.defaultsManager.didDismissReportingExtensionNudge = true
-                    withAnimation { self.notification.show = false }
-                    self.requestSheet(.enableReportingExtension)
-                }
-                self.notification.onTap = onTap
-                self.notification.setOnButtonTap(onTap)
-
-            case .tipPromotion:
-                self.notification.onTap = { [weak self] in
-                    withAnimation { self?.notification.show = false }
-                    self?.requestSheet(.tipJar)
-                }
-                self.notification.setOnButtonTap(nil)
-
-            case .offline:
-                self.notification.setOnButtonTap {
-                    self.appManager.defaultsManager.lastOfflineNotificationDismiss = Date()
-                }
-
-            default:
-                self.notification.setOnButtonTap(nil)
-            }
-
-            if !self.notification.show {
-                self.notification.setNotification(notification)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    guard self.shownNotification != nil else { return }
-                    withAnimation {
-                        self.notification.show = true
-                    }
-                }
-            }
-            else {
-                withAnimation {
-                    self.notification.setNotification(notification)
-                }
-            }
-        }
-        
         func startMonitoring() {
-            if self.appManager.networkSyncManager.networkStatus == .offline,
-               !self.userIgnoresNetworkStatus {
-                self.showNotification(.offline)
-            }
+            self.appManager.flowManager.startAppEventToasts()
 
             if !didAddObservers {
                 self.didAddObservers = true
 
                 NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { _ in
                     self.refresh()
-                    self.showNotification(.cloudSyncOperationComplete)
                 }
 
                 NotificationCenter.default.addObserver(forName: .filtersSaveFailed, object: nil, queue: .main) { _ in
                     self.refresh()
-                    self.showNotification(.saveFailed)
-                }
-
-                NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { notification in
-                    guard let networkStatus = notification.object as? NetworkStatus else { return }
-                    if networkStatus == .online {
-                        self.hideOfflineNotification()
-                    }
-                    else {
-                        if !self.userIgnoresNetworkStatus {
-                            self.showNotification(.offline)
-                        }
-                    }
                 }
 
                 NotificationCenter.default.addObserver(forName: .filtersStateChanged, object: nil, queue: .main) { _ in
@@ -952,13 +865,11 @@ extension AppHomeView {
 
                 NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: .main) { _ in
                     self.refresh()
-                    guard self.hasActiveFilterLists else { return }
-                    self.showNotification(.filterListsUpdated)
                 }
             }
 
             self.catchUpFromStoreIfNeeded()
-            self.showPendingNotification()
+            self.appManager.flowManager.showWaitingNudge()
         }
 
         private func catchUpFromStoreIfNeeded() {
@@ -966,17 +877,6 @@ extension AppHomeView {
             guard currentFingerprint != self.lastUIFingerprint else { return }
             AppManager.logger.debug("AppHome — store ahead of UI, catching up")
             self.refresh()
-        }
-
-        func tryShowReportingExtensionNudge() {
-            let defaultsManager = self.appManager.defaultsManager
-            guard !defaultsManager.isAppFirstRun else { return }
-            guard !defaultsManager.didDismissReportingExtensionNudge else { return }
-            guard self.hasActiveFilterLists else { return }
-            guard defaultsManager.sessionCounter > 0 && defaultsManager.sessionCounter % 3 == 0 else { return }
-            guard !self.didShowNotificationThisSession else { return }
-
-            self.showNotification(.enableReportingExtension)
         }
 
         var inactivityNotificationDismissTitle: String {
@@ -989,7 +889,7 @@ extension AppHomeView {
             Task { @MainActor [weak self] in
                 guard let self,
                       await self.appManager.schedulingManager.shouldShowInactivityNotificationAlert(),
-                      self.isHomeUnobstructed else { return }
+                      self.isHomeIdle else { return }
 
                 self.showInactivityNotificationAlert = true
             }
@@ -1003,17 +903,6 @@ extension AppHomeView {
 
         func declineInactivityNotification() {
             self.appManager.schedulingManager.recordInactivityNotificationDecline()
-        }
-
-        func tryShowTipPromotion() {
-            let defaultsManager = self.appManager.defaultsManager
-            guard defaultsManager.sessionCounter % 5 == 0,
-                  defaultsManager.sessionCounter > 0,
-                  !defaultsManager.didTip else {
-                return
-            }
-
-            self.showNotification(.tipPromotion)
         }
 
         func tryRequestReview() -> Bool {
@@ -1039,7 +928,7 @@ extension AppHomeView {
         func reset() {
             self.appManager.reset()
             self.refresh()
-            self.presentNextFlow()
+            self.presentNextScreen()
         }
 
         func fireInactivityReminder() {
@@ -1050,21 +939,17 @@ extension AppHomeView {
             self.appManager.debugDataManager.expireFilterListsCache()
             self.appManager.schedulingManager.scheduleFilterListsProcessingSoon()
         }
+
+        func showDebugToast(_ toast: ToastView.Toast) {
+            self.appManager.flowManager.requestToast(toast)
+        }
         #endif // DEBUG
         
         private var lastUIFingerprint: String = ""
         private var didAddObservers = false
-        private var didShowNotificationThisSession = false
-        private var pendingNotification: NotificationView.Notification?
-        private var shownNotification: NotificationView.Notification?
         private var isReplacingSheetForLaunch = false
         private var isAlertPresented: Bool {
             return self.showNothingToImportAlert || self.showInactivityNotificationAlert
-        }
-        private var userIgnoresNetworkStatus: Bool {
-            guard let lastDismissDate = self.appManager.defaultsManager.lastOfflineNotificationDismiss,
-                  let snoozeDuration = NotificationView.Notification.offline.snoozeAfterHide else { return false }
-            return lastDismissDate.addingTimeInterval(snoozeDuration) > Date()
         }
         
         private func setSmartFilterActive(for rule: SmartFilterType, value: Bool) {

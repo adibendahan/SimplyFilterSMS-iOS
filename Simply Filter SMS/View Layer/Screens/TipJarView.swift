@@ -29,17 +29,13 @@ struct TipJarView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
-                ScrollView {
-                    VStack(spacing: isCompact ? 8 : 16) {
-                        headerSection
-                        tipCardsSection
-                        footerSection
-                    }
-                    .padding(.horizontal)
+            ScrollView {
+                VStack(spacing: isCompact ? 8 : 16) {
+                    headerSection
+                    tipCardsSection
+                    footerSection
                 }
-
-                confettiOverlay
+                .padding(.horizontal)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -59,7 +55,6 @@ struct TipJarView: View {
                 if shouldDismiss { dismiss() }
             }
         }
-        .modifier(EmbeddedNotificationView(model: model.notification))
     }
 
     @ViewBuilder
@@ -131,19 +126,6 @@ struct TipJarView: View {
             .frame(maxWidth: .infinity)
             .padding(.bottom, 16)
     }
-
-    @ViewBuilder
-    private var confettiOverlay: some View {
-        if case .success(let tier) = model.purchaseState {
-            ConfettiView(
-                birthRate: tier.confettiBirthRate,
-                lifetime: tier.confettiLifetime,
-                velocity: tier.confettiVelocity
-            )
-            .ignoresSafeArea()
-            .allowsHitTesting(false)
-        }
-    }
 }
 
 
@@ -154,7 +136,6 @@ extension TipJarView {
         @Published var products: [Product] = []
         @Published var isLoading: Bool = true
         @Published var purchaseState: PurchaseState = .idle
-        @Published var notification: NotificationView.ViewModel
         @Published var shouldDismiss: Bool = false
 
         enum PurchaseState: Equatable {
@@ -175,7 +156,6 @@ extension TipJarView {
         }
 
         override init(appManager: AppManagerProtocol = AppManager.shared) {
-            self.notification = NotificationView.ViewModel(notification: .tipSuccessful)
             super.init(appManager: appManager)
 
             Task { @MainActor [weak self] in
@@ -207,15 +187,8 @@ extension TipJarView {
             switch result {
             case .success(let tier):
                 purchaseState = .success(tier)
-                showThankYouToast()
-
-                let delay = Double(tier.confettiLifetime) + 0.5
-                Task { @MainActor [weak self] in
-                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
-                    if case .success = self?.purchaseState {
-                        self?.purchaseState = .idle
-                    }
-                }
+                self.appManager.flowManager.requestToast(.tipSuccessful(tier))
+                self.shouldDismiss = true
 
             case .userCancelled, .pending:
                 purchaseState = .idle
@@ -228,16 +201,6 @@ extension TipJarView {
                         self?.purchaseState = .idle
                     }
                 }
-            }
-        }
-
-        private func showThankYouToast() {
-            notification.setNotification(.tipSuccessful)
-            notification.onHide = { [weak self] in
-                self?.shouldDismiss = true
-            }
-            withAnimation {
-                notification.show = true
             }
         }
     }

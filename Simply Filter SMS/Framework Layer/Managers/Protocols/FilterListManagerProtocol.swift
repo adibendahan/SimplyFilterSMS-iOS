@@ -18,4 +18,10 @@ protocol FilterListManagerProtocol {
     func setFilterListActive(for language: NLLanguage, value: Bool)
     @MainActor func refreshFilterLists() async
     @MainActor func updateFilterListsWhenOnline()
+    func onFilterListsUpdateFinished(_ handler: @escaping () -> Void)
+}
+
+
+extension NSNotification.Name {
+    static let filterListsUpdated: NSNotification.Name = NSNotification.Name("FilterListsUpdated")
 }

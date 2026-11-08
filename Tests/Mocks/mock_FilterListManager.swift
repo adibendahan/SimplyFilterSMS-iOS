@@ -26,6 +26,8 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var updateFilterListsWhenOnlineCounter = 0
     
     var hasActiveFilterListsClosure: (() -> (Bool))?
+    var onFilterListsUpdateFinishedCounter = 0
+    var onFilterListsUpdateFinishedClosure: ((@escaping () -> Void) -> ())?
     var activeFilterListsTitleClosure: (() -> (String?))?
     var filterListsLastUpdatedClosure: (() -> (Date?))?
     var filterListLanguagesClosure: (() -> ([NLLanguage]))?
@@ -102,5 +104,15 @@ class mock_FilterListManager: FilterListManagerProtocol {
         self.setFilterListActiveCounter = 0
         self.refreshFilterListsCounter = 0
         self.updateFilterListsWhenOnlineCounter = 0
+        self.onFilterListsUpdateFinishedCounter = 0
+    }
+
+    func onFilterListsUpdateFinished(_ handler: @escaping () -> Void) {
+        self.onFilterListsUpdateFinishedCounter += 1
+        guard let onFilterListsUpdateFinishedClosure = self.onFilterListsUpdateFinishedClosure else {
+            handler()
+            return
+        }
+        onFilterListsUpdateFinishedClosure(handler)
     }
 }

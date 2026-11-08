@@ -1,5 +1,5 @@
 //
-//  NotificationView.swift
+//  ToastView.swift
 //  Simply Filter SMS
 //
 //  Created by Adi Ben-Dahan on 08/02/2022.
@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 import Foundation
 
-struct NotificationView: View {
+struct ToastView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.needsStackedLayout) private var needsStackedLayout
@@ -29,8 +29,13 @@ struct NotificationView: View {
         }
         .limitedDynamicTypeSize(.accessibility1)
         .accessibilityElement(children: .combine)
-        .modifier(NotificationGlassBackground())
+        .modifier(ToastGlassBackground())
         .gesture(dismissDragGesture)
+        .onGeometryChange(for: CGRect.self) { geometry in
+            geometry.frame(in: .global)
+        } action: { frame in
+            self.model.visibleFrame = frame
+        }
         .offset(y: self.offset)
         .accessibilityHidden(offset != kShowOffset)
         .animation(reduceMotion ? nil : .interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
@@ -69,7 +74,7 @@ struct NotificationView: View {
 
     private var compactLayout: some View {
         HStack(alignment: .center, spacing: 8) {
-            notificationIcon
+            toastIcon
             textColumn
             actionButton
         }
@@ -78,7 +83,7 @@ struct NotificationView: View {
     private var accessibilityLayout: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top, spacing: 8) {
-                notificationIcon
+                toastIcon
                 textColumn
             }
             actionButton
@@ -86,7 +91,7 @@ struct NotificationView: View {
         }
     }
 
-    private var notificationIcon: some View {
+    private var toastIcon: some View {
         Image(systemName: self.model.icon)
             .font(.body)
             .padding(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 0))
@@ -119,9 +124,9 @@ struct NotificationView: View {
                 .font(.caption.bold())
                 .foregroundColor(.primary)
                 .padding(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
-                .modifier(NotificationActionChipBackground())
+                .modifier(ToastActionChipBackground())
         }
-        .modifier(NotificationActionButtonStyle())
+        .modifier(ToastActionButtonStyle())
         .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
     }
 
@@ -164,17 +169,18 @@ struct NotificationView: View {
             }
         }
         var onHide: (() -> Void)?
+        var visibleFrame: CGRect = .zero
 
         private var currentTimeout: TimeInterval?
         private var autoHideWork: DispatchWorkItem?
 
-        init(notification: Notification) {
-            self.icon = notification.icon
-            self.iconColor = notification.iconColor
-            self.title = notification.title
-            self.subtitle = notification.subtitle
-            self.buttonTitle = notification.buttonTitle
-            self.currentTimeout = notification.timeout
+        init(toast: Toast) {
+            self.icon = toast.icon
+            self.iconColor = toast.iconColor
+            self.title = toast.title
+            self.subtitle = toast.subtitle
+            self.buttonTitle = toast.buttonTitle
+            self.currentTimeout = toast.timeout
             self.show = false
             self.onButtonTap = { [weak self] in
                 withAnimation {
@@ -183,13 +189,13 @@ struct NotificationView: View {
             }
         }
 
-        func setNotification(_ notification: Notification) {
-            self.icon = notification.icon
-            self.iconColor = notification.iconColor
-            self.title = notification.title
-            self.subtitle = notification.subtitle
-            self.buttonTitle = notification.buttonTitle
-            self.currentTimeout = notification.timeout
+        func setToast(_ toast: Toast) {
+            self.icon = toast.icon
+            self.iconColor = toast.iconColor
+            self.title = toast.title
+            self.subtitle = toast.subtitle
+            self.buttonTitle = toast.buttonTitle
+            self.currentTimeout = toast.timeout
         }
 
         func setOnButtonTap(_ newOnButtonTap: (() -> ())?) {
@@ -214,8 +220,8 @@ struct NotificationView: View {
         }
     }
 
-    enum Notification {
-        case offline, cloudSyncOperationComplete, filterListsUpdated, onClipboardSet(String), tipSuccessful, tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
+    enum Toast: Equatable {
+        case offline, cloudSyncOperationComplete, filterListsUpdated, onClipboardSet(String), tipSuccessful(TipTier), tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
 
         var icon: String {
             switch self {
@@ -346,6 +352,15 @@ struct NotificationView: View {
             }
         }
 
+        var showDelay: TimeInterval {
+            switch self {
+            case .onClipboardSet, .tipSuccessful, .filtersImported, .filterImportFailed, .filterExportFailed, .saveFailed:
+                return 0
+            case .offline, .cloudSyncOperationComplete, .filterListsUpdated, .tipPromotion, .enableReportingExtension:
+                return 1
+            }
+        }
+
         var snoozeAfterHide: TimeInterval? {
             switch self {
             case .offline:
@@ -355,9 +370,65 @@ struct NotificationView: View {
             }
         }
 
-        func isOutranked(by otherNotifications: Notification?...) -> Bool {
-            let competingNotifications = otherNotifications.compactMap { $0 }
-            return competingNotifications.contains { $0.priority < self.priority }
+        var isTappable: Bool {
+            switch self {
+            case .tipPromotion, .enableReportingExtension:
+                return true
+            default:
+                return false
+            }
+        }
+
+        var buttonActsAsTap: Bool {
+            switch self {
+            case .enableReportingExtension:
+                return true
+            default:
+                return false
+            }
+        }
+
+        var confettiTier: TipTier? {
+            switch self {
+            case .tipSuccessful(let tier):
+                return tier
+            default:
+                return nil
+            }
+        }
+
+        static let allNudges: [Toast] = [.tipPromotion, .enableReportingExtension]
+
+        var isNudge: Bool {
+            return Self.allNudges.contains(self)
+        }
+
+        var nudgeKey: String? {
+            switch self {
+            case .tipPromotion:
+                return "tipPromotion"
+            case .enableReportingExtension:
+                return "enableReportingExtension"
+            default:
+                return nil
+            }
+        }
+
+        var nudgeSessionInterval: Int? {
+            switch self {
+            case .tipPromotion:
+                return 5
+            case .enableReportingExtension:
+                return 3
+            default:
+                return nil
+            }
+        }
+
+
+        func isOutranked(by otherToasts: Toast?...) -> Bool {
+            let competingToasts = otherToasts.compactMap { $0 }
+            return competingToasts.contains { $0.priority < self.priority }
         }
 
         var priority: Int {
@@ -372,16 +443,32 @@ struct NotificationView: View {
                 return 3
             case .filterListsUpdated:
                 return 4
-            case .enableReportingExtension:
-                return 5
             case .tipPromotion:
+                return 5
+            case .enableReportingExtension:
                 return 6
             }
         }
+
+        #if DEBUG
+        static let debugSamples: [Toast] = [
+            .offline,
+            .cloudSyncOperationComplete,
+            .filterListsUpdated,
+            .onClipboardSet("support@example.com"),
+            .tipSuccessful(.large),
+            .tipPromotion,
+            .enableReportingExtension,
+            .filtersImported(added: 3, skipped: 1),
+            .filterImportFailed,
+            .filterExportFailed,
+            .saveFailed
+        ]
+        #endif // DEBUG
     }
 }
 
-private struct NotificationGlassBackground: ViewModifier {
+private struct ToastGlassBackground: ViewModifier {
     private let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
 
     func body(content: Content) -> some View {
@@ -397,7 +484,7 @@ private struct NotificationGlassBackground: ViewModifier {
     }
 }
 
-private struct NotificationActionChipBackground: ViewModifier {
+private struct ToastActionChipBackground: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
@@ -410,7 +497,7 @@ private struct NotificationActionChipBackground: ViewModifier {
     }
 }
 
-private struct NotificationActionButtonStyle: ViewModifier {
+private struct ToastActionButtonStyle: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
@@ -422,9 +509,9 @@ private struct NotificationActionButtonStyle: ViewModifier {
     }
 }
 
-struct NotificationView_Previews: PreviewProvider {
+struct ToastView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = NotificationView.ViewModel(notification: .filterListsUpdated)
+        let model = ToastView.ViewModel(toast: .filterListsUpdated)
         NavigationView {
             List {
                 Button("Tap me") {
@@ -434,7 +521,9 @@ struct NotificationView_Previews: PreviewProvider {
             .navigationTitle("Preview")
         }
         .preferredColorScheme(.dark)
-        .modifier(EmbeddedNotificationView(model: model))
+        .overlay(alignment: .top) {
+            ToastView(model: model)
+        }
     }
 }
 

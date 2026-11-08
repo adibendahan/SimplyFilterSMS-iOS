@@ -36,6 +36,9 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("didDismissReportingExtensionNudge", defaultValue: false)
     var didDismissReportingExtensionNudge: Bool
 
+    @StoredDefault("sessionNudgeLastShownSessions", defaultValue: [:])
+    var sessionNudgeLastShownSessions: [String: Int]
+
     @StoredDefault("inactivityNotificationDeclineCount", defaultValue: 0)
     var inactivityNotificationDeclineCount: Int
 
@@ -53,7 +56,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     //MARK: - Session Defaults -
     var sessionStartDate: Date?
-    var lastOfflineNotificationDismiss: Date?
+    var lastOfflineToastDismiss: Date?
     
     //MARK: - Stored Defaults Migration -
     init() {
@@ -87,7 +90,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isAddFilterExpanded", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "installDate", "didDismissReportingExtensionNudge", "inactivityNotificationDeclineCount", "inactivityNotificationLastDeclineSession", "inactivityNotificationWasGranted", "accentColorRGB"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isAddFilterExpanded", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "installDate", "didDismissReportingExtensionNudge", "sessionNudgeLastShownSessions", "inactivityNotificationDeclineCount", "inactivityNotificationLastDeclineSession", "inactivityNotificationWasGranted", "accentColorRGB"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)

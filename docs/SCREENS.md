@@ -24,7 +24,6 @@ FAQ, setup shortcuts and contact, as a sheet from the menu.
 ## AboutView
 App info, links and credits, as a sheet from the menu.
 - Email opens the Mail composer, or copies the address with a toast when Mail isn't set up (always on the simulator). Help does the same.
-- A screen that shows toasts owns its own `EmbeddedNotificationView`; About's is separate from Home's.
 
 ## ChooseAccentColorView
 The app tint picker, as a sheet from the Home menu only.
@@ -72,4 +71,4 @@ The shared picker for importing and exporting filters (`.filterImport` / `.filte
 - Export presents the share sheet on top of the picker; the temp file is deleted when the picker closes.
 
 ## TipJarView
-Optional tips through StoreKit, as a sheet from the menu, About, or a What's New entry; shows confetti after a purchase and closes after the thank-you toast.
+Optional tips through StoreKit, as a sheet from the menu, About, or a What's New entry.
