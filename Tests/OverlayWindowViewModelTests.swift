@@ -32,111 +32,111 @@ class OverlayWindowViewModelTests: XCTestCase {
     }
 
     //MARK: Tests
-    func test_requestNotification_presentsIt() {
+    func test_requestToast_presentsIt() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
 
         // Act
-        self.appManager.flowManager.requestNotification(.saveFailed)
+        self.appManager.flowManager.requestToast(.saveFailed)
 
         // Verify
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.saveFailed.title)
+        XCTAssertEqual(testSubject.toastViewModel.title, ToastView.Toast.saveFailed.title)
     }
 
-    func test_init_presentsNotificationRequestedBefore() {
+    func test_init_presentsToastRequestedBefore() {
         // Prepare
-        self.appManager.flowManager.requestNotification(.filterExportFailed)
+        self.appManager.flowManager.requestToast(.filterExportFailed)
 
         // Act
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
 
         // Verify
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.filterExportFailed.title)
+        XCTAssertEqual(testSubject.toastViewModel.title, ToastView.Toast.filterExportFailed.title)
     }
 
     func test_hide_hidesToast() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        self.appManager.flowManager.requestNotification(.offline)
-        testSubject.notification.show = true
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestToast(.offline)
+        testSubject.toastViewModel.show = true
 
         // Act
-        testSubject.hide()
+        testSubject.hideToast()
 
         // Verify
-        XCTAssertFalse(testSubject.notification.show)
+        XCTAssertFalse(testSubject.toastViewModel.show)
     }
 
     func test_tipPromotionTap_requestsTipJar() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        self.appManager.flowManager.requestNotification(.tipPromotion)
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestToast(.tipPromotion)
 
         // Act
-        testSubject.notification.onTap?()
+        testSubject.toastViewModel.onTap?()
 
         // Verify
-        XCTAssertEqual(self.appManager.flowManager.next(), .tipJar)
+        XCTAssertEqual(self.appManager.flowManager.nextScreen(), .tipJar)
     }
 
     func test_reportingExtensionTap_dismissesNudgeAndRequestsSheet() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        self.appManager.flowManager.requestNotification(.enableReportingExtension)
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestToast(.enableReportingExtension)
 
         // Act
-        testSubject.notification.onTap?()
+        testSubject.toastViewModel.onTap?()
 
         // Verify
-        XCTAssertEqual(self.appManager.flowManager.next(), .enableReportingExtension)
+        XCTAssertEqual(self.appManager.flowManager.nextScreen(), .enableReportingExtension)
         XCTAssertEqual(self.defaultsManager.didDismissReportingExtensionNudgeSetCounter, 1)
     }
 
     func test_offlineCancelled_hidesToast() {
         // Prepare
         self.networkSyncManager.networkStatusClosure = { .offline }
-        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date.distantPast }
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        self.appManager.flowManager.startMonitoring()
-        testSubject.notification.show = true
+        self.defaultsManager.lastOfflineToastDismissClosure = { Date.distantPast }
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.startAppEventToasts()
+        testSubject.toastViewModel.show = true
 
         // Act
         self.networkSyncManager.networkStatusClosure = { .online }
         NotificationCenter.default.post(name: .networkStatusChange, object: NetworkStatus.online)
 
         // Verify
-        XCTAssertFalse(testSubject.notification.show)
+        XCTAssertFalse(testSubject.toastViewModel.show)
     }
 
     func test_offlineHideButton_recordsDismiss() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        self.appManager.flowManager.requestNotification(.offline)
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestToast(.offline)
 
         // Act
-        testSubject.notification.onButtonTap?()
+        testSubject.toastViewModel.onButtonTap?()
 
         // Verify
-        XCTAssertEqual(self.defaultsManager.lastOfflineNotificationDismissSetCounter, 1)
+        XCTAssertEqual(self.defaultsManager.lastOfflineToastDismissSetCounter, 1)
     }
 
-    func test_requestNotification_showsAfterItsDelay() {
+    func test_requestToast_showsAfterItsDelay() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        let syncDelay = NotificationView.Notification.cloudSyncOperationComplete.showDelay
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        let syncDelay = ToastView.Toast.cloudSyncOperationComplete.showDelay
         let beforeDelay = expectation(description: "before the sync delay")
         let afterDelay = expectation(description: "after the sync delay")
         var shownBeforeDelay = true
         var shownAfterDelay = false
 
         // Act
-        self.appManager.flowManager.requestNotification(.cloudSyncOperationComplete)
+        self.appManager.flowManager.requestToast(.cloudSyncOperationComplete)
         DispatchQueue.main.asyncAfter(deadline: .now() + syncDelay / 2) {
-            shownBeforeDelay = testSubject.notification.show
+            shownBeforeDelay = testSubject.toastViewModel.show
             beforeDelay.fulfill()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + syncDelay + 0.5) {
-            shownAfterDelay = testSubject.notification.show
+            shownAfterDelay = testSubject.toastViewModel.show
             afterDelay.fulfill()
         }
         wait(for: [beforeDelay, afterDelay], timeout: syncDelay + 2)
@@ -146,17 +146,17 @@ class OverlayWindowViewModelTests: XCTestCase {
         XCTAssertTrue(shownAfterDelay)
     }
 
-    func test_requestNotification_noDelay_showsBeforeDelayedOnesWould() {
+    func test_requestToast_noDelay_showsBeforeDelayedOnesWould() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        let syncDelay = NotificationView.Notification.cloudSyncOperationComplete.showDelay
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        let syncDelay = ToastView.Toast.cloudSyncOperationComplete.showDelay
         let beforeSyncDelay = expectation(description: "before the sync delay")
         var shownBeforeSyncDelay = false
 
         // Act
-        self.appManager.flowManager.requestNotification(.onClipboardSet("Email"))
+        self.appManager.flowManager.requestToast(.onClipboardSet("Email"))
         DispatchQueue.main.asyncAfter(deadline: .now() + syncDelay / 2) {
-            shownBeforeSyncDelay = testSubject.notification.show
+            shownBeforeSyncDelay = testSubject.toastViewModel.show
             beforeSyncDelay.fulfill()
         }
         wait(for: [beforeSyncDelay], timeout: syncDelay + 2)
@@ -167,10 +167,10 @@ class OverlayWindowViewModelTests: XCTestCase {
 
     func test_tipSuccessful_playsConfettiForItsTier() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
 
         // Act
-        self.appManager.flowManager.requestNotification(.tipSuccessful(.large))
+        self.appManager.flowManager.requestToast(.tipSuccessful(.large))
 
         // Verify
         XCTAssertEqual(testSubject.confettiTier, .large)
@@ -178,11 +178,11 @@ class OverlayWindowViewModelTests: XCTestCase {
 
     func test_tipSuccessfulHidden_stopsConfetti() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        self.appManager.flowManager.requestNotification(.tipSuccessful(.small))
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestToast(.tipSuccessful(.small))
 
         // Act
-        testSubject.notification.onHide?()
+        testSubject.toastViewModel.onHide?()
 
         // Verify
         XCTAssertNil(testSubject.confettiTier)
@@ -190,10 +190,10 @@ class OverlayWindowViewModelTests: XCTestCase {
 
     func test_otherToast_noConfetti() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
 
         // Act
-        self.appManager.flowManager.requestNotification(.onClipboardSet("Email"))
+        self.appManager.flowManager.requestToast(.onClipboardSet("Email"))
 
         // Verify
         XCTAssertNil(testSubject.confettiTier)
@@ -201,15 +201,15 @@ class OverlayWindowViewModelTests: XCTestCase {
 
     func test_replacingShownToast_slidesOldOutThenNewIn() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        self.appManager.flowManager.requestNotification(.offline)
-        testSubject.notification.show = true
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestToast(.offline)
+        testSubject.toastViewModel.show = true
         let afterReplace = expectation(description: "after the replace delay")
 
         // Act
-        self.appManager.flowManager.requestNotification(.saveFailed)
-        let shownDuringExit = testSubject.notification.show
-        let titleDuringExit = testSubject.notification.title
+        self.appManager.flowManager.requestToast(.saveFailed)
+        let shownDuringExit = testSubject.toastViewModel.show
+        let titleDuringExit = testSubject.toastViewModel.title
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             afterReplace.fulfill()
         }
@@ -217,42 +217,42 @@ class OverlayWindowViewModelTests: XCTestCase {
 
         // Verify
         XCTAssertFalse(shownDuringExit)
-        XCTAssertEqual(titleDuringExit, NotificationView.Notification.offline.title)
-        XCTAssertTrue(testSubject.notification.show)
-        XCTAssertEqual(testSubject.notification.title, NotificationView.Notification.saveFailed.title)
+        XCTAssertEqual(titleDuringExit, ToastView.Toast.offline.title)
+        XCTAssertTrue(testSubject.toastViewModel.show)
+        XCTAssertEqual(testSubject.toastViewModel.title, ToastView.Toast.saveFailed.title)
     }
 
     func test_replacingShownToast_oldExitDoesNotFinishNew() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        self.appManager.flowManager.requestNotification(.offline)
-        testSubject.notification.show = true
-        self.appManager.flowManager.requestNotification(.saveFailed)
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestToast(.offline)
+        testSubject.toastViewModel.show = true
+        self.appManager.flowManager.requestToast(.saveFailed)
 
         // Act
-        testSubject.notification.onHide?()
-        self.appManager.flowManager.requestNotification(.tipPromotion)
+        testSubject.toastViewModel.onHide?()
+        self.appManager.flowManager.requestToast(.tipPromotion)
 
         // Verify
-        XCTAssertNil(self.appManager.flowManager.nextNotification())
+        XCTAssertNil(self.appManager.flowManager.nextToast())
     }
 
     func test_replacingShownToast_usesNewTimeout() {
         // Prepare
-        let testSubject = OverlayWindowView.ViewModel(appManager: self.appManager)
-        self.appManager.flowManager.requestNotification(.offline)
-        testSubject.notification.show = true
-        let clipboardTimeout = NotificationView.Notification.onClipboardSet("").timeout ?? 0
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestToast(.offline)
+        testSubject.toastViewModel.show = true
+        let clipboardTimeout = ToastView.Toast.onClipboardSet("").timeout ?? 0
         let afterTimeout = expectation(description: "after the clipboard timeout")
 
         // Act
-        self.appManager.flowManager.requestNotification(.onClipboardSet("Email"))
+        self.appManager.flowManager.requestToast(.onClipboardSet("Email"))
         DispatchQueue.main.asyncAfter(deadline: .now() + clipboardTimeout + 1) {
             afterTimeout.fulfill()
         }
         wait(for: [afterTimeout], timeout: clipboardTimeout + 3)
 
         // Verify
-        XCTAssertFalse(testSubject.notification.show)
+        XCTAssertFalse(testSubject.toastViewModel.show)
     }
 }

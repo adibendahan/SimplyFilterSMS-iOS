@@ -21,12 +21,6 @@ class FlowManager: FlowManagerProtocol {
 
 
     //MARK: - Public API (FlowManagerProtocol) -
-    private(set) var didShowNotificationThisSession = false
-
-    var isNotificationShowing: Bool {
-        return self.shownNotification != nil
-    }
-
     func recordLaunch(_ screen: Screen) -> Bool {
         if screen == .enableExtension && self.defaultsManager.isAppFirstRun {
             return false
@@ -37,16 +31,20 @@ class FlowManager: FlowManagerProtocol {
         return true
     }
 
-    func request(_ screen: Screen) {
+    func setScreenPresenter(_ presentNextScreen: @escaping () -> Void) {
+        self.presentNextScreen = presentNextScreen
+    }
+
+    func requestScreen(_ screen: Screen) {
         self.pendingUserRequest = screen
-        NotificationCenter.default.post(name: .flowRequested, object: nil)
+        self.presentNextScreen()
     }
 
     func enableWhatsNew() {
         self.whatsNewEnabled = true
     }
 
-    func next() -> Screen? {
+    func nextScreen() -> Screen? {
         if self.activeScreen != nil {
             return nil
         }
@@ -74,7 +72,7 @@ class FlowManager: FlowManagerProtocol {
         return nil
     }
 
-    func complete(_ screen: Screen) {
+    func completeScreen(_ screen: Screen) {
         if self.activeScreen == screen {
             self.activeScreen = nil
         }
@@ -95,27 +93,32 @@ class FlowManager: FlowManagerProtocol {
         self.launchActionClaimedSession = false
         self.whatsNewEnabled = false
         self.startedAsFirstRun = self.defaultsManager.isAppFirstRun
-        self.shownNotification = nil
-        self.pendingNotification = nil
-        self.waitingNotification = nil
-        self.didShowNotificationThisSession = false
-        self.isSessionNudgeWaitingForCheck = false
+        self.shownToast = nil
+        self.pendingToast = nil
+        self.waitingNudge = nil
+        self.didShowToastThisSession = false
     }
 
 
-    //MARK: - Notifications -
-    func startMonitoring() {
+    //MARK: - Toasts -
+    private(set) var didShowToastThisSession = false
+
+    var isToastShowing: Bool {
+        return self.shownToast != nil
+    }
+
+    func startAppEventToasts() {
         self.showOfflineIfStillOffline()
 
         guard !self.didAddObservers else { return }
         self.didAddObservers = true
 
         NotificationCenter.default.addObserver(forName: .cloudSyncOperationComplete, object: nil, queue: .main) { [weak self] _ in
-            self?.requestNotification(.cloudSyncOperationComplete)
+            self?.requestToast(.cloudSyncOperationComplete)
         }
 
         NotificationCenter.default.addObserver(forName: .filtersSaveFailed, object: nil, queue: .main) { [weak self] _ in
-            self?.requestNotification(.saveFailed)
+            self?.requestToast(.saveFailed)
         }
 
         NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { [weak self] notification in
@@ -125,77 +128,64 @@ class FlowManager: FlowManagerProtocol {
 
         NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: .main) { [weak self] _ in
             guard let self, self.filterListManager.hasActiveFilterLists else { return }
-            self.requestNotification(.filterListsUpdated)
-        }
-
-        NotificationCenter.default.addObserver(forName: .filterListsCheckFinished, object: nil, queue: .main) { [weak self] _ in
-            guard let self, self.isSessionNudgeWaitingForCheck else { return }
-            self.isSessionNudgeWaitingForCheck = false
-            self.tryShowSessionNudge()
+            self.requestToast(.filterListsUpdated)
         }
     }
 
-    func setHomeAvailability(_ isHomeUnobstructed: @escaping () -> Bool) {
-        self.isHomeUnobstructed = isHomeUnobstructed
+    func setToastPresenter(_ showNextToast: @escaping () -> Void) {
+        self.showNextToast = showNextToast
     }
 
-    func homeMayBeUnobstructed() {
-        guard self.isHomeUnobstructed(),
-              let waitingNotification = self.waitingNotification else { return }
-        self.waitingNotification = nil
-
-        guard !self.didShowNotificationThisSession else {
-            AppManager.logger.debug("FlowManager — nudge skipped, another toast showed this session: \(String(describing: waitingNotification), privacy: .public)")
-            return
-        }
-        self.enqueue(waitingNotification)
+    func setHomeIdleCheck(_ isHomeIdle: @escaping () -> Bool) {
+        self.isHomeIdle = isHomeIdle
     }
 
-    func requestNotification(_ notification: NotificationView.Notification) {
-        let mustWait = notification.isNudge && !self.isHomeUnobstructed()
+    func requestToast(_ toast: ToastView.Toast) {
+        let mustWait = toast.isNudge && !self.isHomeIdle()
         guard mustWait else {
-            self.enqueue(notification)
+            self.enqueue(toast)
             return
         }
 
-        guard !notification.isOutranked(by: self.waitingNotification) else { return }
-        let notificationName = String(describing: notification)
-        AppManager.logger.debug("FlowManager — notification waiting (Home obstructed): \(notificationName, privacy: .public)")
-        self.waitingNotification = notification
+        guard !toast.isOutranked(by: self.waitingNudge) else { return }
+        let toastName = String(describing: toast)
+        AppManager.logger.debug("FlowManager — toast waiting (Home busy): \(toastName, privacy: .public)")
+        self.waitingNudge = toast
     }
 
-    func nextNotification() -> NotificationView.Notification? {
-        guard let notification = self.pendingNotification else { return nil }
-        self.pendingNotification = nil
-        self.shownNotification = notification
-        self.didShowNotificationThisSession = true
-        self.recordShownNudge(notification)
-        return notification
+    func nextToast() -> ToastView.Toast? {
+        guard let toast = self.pendingToast else { return nil }
+        self.pendingToast = nil
+        self.shownToast = toast
+        self.didShowToastThisSession = true
+        self.recordShownNudge(toast)
+        return toast
     }
 
-    func completeNotification() {
-        self.shownNotification = nil
+    func completeToast(_ toast: ToastView.Toast) {
+        guard self.shownToast == toast else { return }
+        self.shownToast = nil
         self.showOfflineIfStillOffline()
     }
 
-    func didTapNotification(_ notification: NotificationView.Notification) {
-        switch notification {
+    func didTapToast(_ toast: ToastView.Toast) {
+        switch toast {
         case .enableReportingExtension:
             self.defaultsManager.didDismissReportingExtensionNudge = true
-            self.request(.enableReportingExtension)
+            self.requestScreen(.enableReportingExtension)
 
         case .tipPromotion:
-            self.request(.tipJar)
+            self.requestScreen(.tipJar)
 
         default:
             break
         }
     }
 
-    func didDismissNotification(_ notification: NotificationView.Notification) {
-        switch notification {
+    func didDismissToast(_ toast: ToastView.Toast) {
+        switch toast {
         case .offline:
-            self.defaultsManager.lastOfflineNotificationDismiss = Date()
+            self.defaultsManager.lastOfflineToastDismiss = Date()
 
         default:
             break
@@ -203,12 +193,21 @@ class FlowManager: FlowManagerProtocol {
     }
 
     func showSessionNudges() {
-        guard self.filterListManager.isCheckingFilterLists else {
-            self.tryShowSessionNudge()
+        self.filterListManager.onFilterListsUpdateFinished { [weak self] in
+            self?.tryShowSessionNudge()
+        }
+    }
+
+    func showWaitingNudge() {
+        guard self.isHomeIdle(),
+              let waitingNudge = self.waitingNudge else { return }
+        self.waitingNudge = nil
+
+        guard !self.didShowToastThisSession else {
+            AppManager.logger.debug("FlowManager — nudge skipped, another toast showed this session: \(String(describing: waitingNudge), privacy: .public)")
             return
         }
-        AppManager.logger.debug("FlowManager — session nudge waits for the filter lists check")
-        self.isSessionNudgeWaitingForCheck = true
+        self.enqueue(waitingNudge)
     }
 
 
@@ -222,11 +221,12 @@ class FlowManager: FlowManagerProtocol {
     private var activeScreen: Screen?
     private var pendingLaunchScreen: Screen?
     private var pendingUserRequest: Screen?
-    private var shownNotification: NotificationView.Notification?
-    private var pendingNotification: NotificationView.Notification?
-    private var waitingNotification: NotificationView.Notification?
-    private var isHomeUnobstructed: () -> Bool = { true }
-    private var isSessionNudgeWaitingForCheck = false
+    private var shownToast: ToastView.Toast?
+    private var pendingToast: ToastView.Toast?
+    private var waitingNudge: ToastView.Toast?
+    private var presentNextScreen: () -> Void = {}
+    private var showNextToast: () -> Void = {}
+    private var isHomeIdle: () -> Bool = { true }
     private var didAddObservers = false
 
     private var shouldShowWhatsNew: Bool {
@@ -237,39 +237,39 @@ class FlowManager: FlowManagerProtocol {
             && currentWhatsNewVersion > self.defaultsManager.lastSeenWhatsNewVersion
     }
 
-    private var userIgnoresNetworkStatus: Bool {
-        guard let lastDismissDate = self.defaultsManager.lastOfflineNotificationDismiss,
-              let snoozeDuration = NotificationView.Notification.offline.snoozeAfterHide else { return false }
+    private var isOfflineToastSnoozed: Bool {
+        guard let lastDismissDate = self.defaultsManager.lastOfflineToastDismiss,
+              let snoozeDuration = ToastView.Toast.offline.snoozeAfterHide else { return false }
         return lastDismissDate.addingTimeInterval(snoozeDuration) > Date()
     }
 
-    private func enqueue(_ notification: NotificationView.Notification) {
-        guard !notification.isOutranked(by: self.shownNotification, self.pendingNotification) else {
-            let notificationName = String(describing: notification)
-            let shownDescription = self.shownNotification.map { String(describing: $0) } ?? "nil"
-            let pendingDescription = self.pendingNotification.map { String(describing: $0) } ?? "nil"
-            AppManager.logger.debug("FlowManager — notification dropped: \(notificationName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
+    private func enqueue(_ toast: ToastView.Toast) {
+        guard !toast.isOutranked(by: self.shownToast, self.pendingToast) else {
+            let toastName = String(describing: toast)
+            let shownDescription = self.shownToast.map { String(describing: $0) } ?? "nil"
+            let pendingDescription = self.pendingToast.map { String(describing: $0) } ?? "nil"
+            AppManager.logger.debug("FlowManager — toast dropped: \(toastName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
             return
         }
-        self.pendingNotification = notification
-        NotificationCenter.default.post(name: .notificationSlotChanged, object: nil)
+        self.pendingToast = toast
+        self.showNextToast()
     }
 
-    private func cancel(_ notification: NotificationView.Notification) {
-        if self.pendingNotification == notification {
-            self.pendingNotification = nil
+    private func cancel(_ toast: ToastView.Toast) {
+        if self.pendingToast == toast {
+            self.pendingToast = nil
         }
 
-        guard self.shownNotification == notification else { return }
-        self.shownNotification = nil
-        AppManager.logger.debug("FlowManager — notification cancelled: \(String(describing: notification), privacy: .public)")
-        NotificationCenter.default.post(name: .notificationSlotChanged, object: nil)
+        guard self.shownToast == toast else { return }
+        self.shownToast = nil
+        AppManager.logger.debug("FlowManager — toast cancelled: \(String(describing: toast), privacy: .public)")
+        self.showNextToast()
     }
 
     private func networkStatusChanged(to networkStatus: NetworkStatus) {
         guard networkStatus == .online else {
-            guard !self.userIgnoresNetworkStatus else { return }
-            self.requestNotification(.offline)
+            guard !self.isOfflineToastSnoozed else { return }
+            self.requestToast(.offline)
             return
         }
         self.cancel(.offline)
@@ -277,13 +277,13 @@ class FlowManager: FlowManagerProtocol {
 
     private func showOfflineIfStillOffline() {
         guard self.networkSyncManager.networkStatus == .offline,
-              !self.userIgnoresNetworkStatus else { return }
-        self.requestNotification(.offline)
+              !self.isOfflineToastSnoozed else { return }
+        self.requestToast(.offline)
     }
 
-    private func isDue(_ nudge: NotificationView.Notification) -> Bool {
+    private func isDue(_ nudge: ToastView.Toast) -> Bool {
         guard let key = nudge.nudgeKey,
-              let interval = nudge.nudgeInterval else { return false }
+              let interval = nudge.nudgeSessionInterval else { return false }
         let lastShownSession = self.defaultsManager.sessionNudgeLastShownSessions[key] ?? 0
         let sessionsSinceShown = self.defaultsManager.sessionCounter - lastShownSession
         guard sessionsSinceShown >= interval else { return false }
@@ -303,19 +303,19 @@ class FlowManager: FlowManagerProtocol {
     }
 
     private func tryShowSessionNudge() {
-        guard !self.didShowNotificationThisSession else {
+        guard !self.didShowToastThisSession else {
             AppManager.logger.debug("FlowManager — session nudge skipped, another toast showed this session")
             return
         }
 
-        let dueNudges = NotificationView.Notification.allNudges.filter { self.isDue($0) }
+        let dueNudges = ToastView.Toast.allNudges.filter { self.isDue($0) }
         let mostUrgentNudge = dueNudges.min { $0.priority < $1.priority }
         guard let mostUrgentNudge else { return }
-        self.requestNotification(mostUrgentNudge)
+        self.requestToast(mostUrgentNudge)
     }
 
-    private func recordShownNudge(_ notification: NotificationView.Notification) {
-        guard let key = notification.nudgeKey else { return }
+    private func recordShownNudge(_ toast: ToastView.Toast) {
+        guard let key = toast.nudgeKey else { return }
         self.defaultsManager.sessionNudgeLastShownSessions[key] = self.defaultsManager.sessionCounter
     }
 }

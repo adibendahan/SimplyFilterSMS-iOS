@@ -9,17 +9,33 @@ import XCTest
 @testable import Simply_Filter_SMS
 
 class mock_DebugDataManager: DebugDataManagerProtocol {
-    var loadCallCount = 0
-    var loadLangCode: String?
+
+    var loadCounter = 0
+    var loadForLangCodeCounter = 0
+    var expireFilterListsCacheCounter = 0
+
+    var loadClosure: (() -> ())?
+    var loadForLangCodeClosure: ((String) -> ())?
+    var expireFilterListsCacheClosure: (() -> ())?
 
     func load() {
-        loadCallCount += 1
+        self.loadCounter += 1
+        self.loadClosure?()
     }
 
     func load(for langCode: String) {
-        loadCallCount += 1
-        loadLangCode = langCode
+        self.loadForLangCodeCounter += 1
+        self.loadForLangCodeClosure?(langCode)
     }
 
-    func expireFilterListsCache() { }
+    func expireFilterListsCache() {
+        self.expireFilterListsCacheCounter += 1
+        self.expireFilterListsCacheClosure?()
+    }
+
+    func resetCounters() {
+        self.loadCounter = 0
+        self.loadForLangCodeCounter = 0
+        self.expireFilterListsCacheCounter = 0
+    }
 }

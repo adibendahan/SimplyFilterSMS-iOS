@@ -154,7 +154,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         self.model.refresh()
 
                         if !isPreview {
-                            self.model.presentNextFlow()
+                            self.model.presentNextScreen()
                         }
                     }
                 }
@@ -172,12 +172,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
             self.model.requestSheet(.about)
         })
-        .modifier(OverlayWindowView(model: self.model.overlayWindow))
+        .modifier(OverlayWindowModifier(model: self.model.overlayWindow))
         .modifier(persistentStoreReload)
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
             if !self.model.completeInterruptedSheet(), !isPreview {
-                self.model.presentNextFlow()
+                self.model.presentNextScreen()
             }
             if let pending = self.model.pendingScreenAfterDismiss {
                 self.model.pendingScreenAfterDismiss = nil
@@ -427,11 +427,11 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 }
 
                 Menu {
-                    ForEach(Array(NotificationView.Notification.debugSamples.enumerated()), id: \.offset) { _, notification in
+                    ForEach(Array(ToastView.Toast.debugSamples.enumerated()), id: \.offset) { _, toast in
                         Button {
-                            self.model.showDebugNotification(notification)
+                            self.model.showDebugToast(toast)
                         } label: {
-                            Label(notification.title, systemImage: notification.icon)
+                            Label(toast.title, systemImage: toast.icon)
                         }
                     }
                 } label: {
@@ -568,7 +568,7 @@ extension AppHomeView {
         @Published private(set) var subtitle: String
         @Published private(set) var selectedCountriesSummary: String
         @Published var rules: [StatefulItem<SmartFilterType>]
-        let overlayWindow: OverlayWindowView.ViewModel
+        let overlayWindow: OverlayWindowModifier.ViewModel
         @Published var navigationScreen: Screen? = nil {
             didSet {
                 if oldValue != nil,
@@ -583,7 +583,7 @@ extension AppHomeView {
             didSet {
                 if self.sheetScreen == nil, let dismissed = oldValue {
                     self.completeDismissedSheet(dismissed)
-                    self.appManager.flowManager.homeMayBeUnobstructed()
+                    self.appManager.flowManager.showWaitingNudge()
                 }
             }
         }
@@ -591,14 +591,14 @@ extension AppHomeView {
         @Published var showNothingToImportAlert = false {
             didSet {
                 if oldValue && !self.showNothingToImportAlert {
-                    self.appManager.flowManager.homeMayBeUnobstructed()
+                    self.appManager.flowManager.showWaitingNudge()
                 }
             }
         }
         @Published var showInactivityNotificationAlert = false {
             didSet {
                 if oldValue && !self.showInactivityNotificationAlert {
-                    self.appManager.flowManager.homeMayBeUnobstructed()
+                    self.appManager.flowManager.showWaitingNudge()
                 }
             }
         }
@@ -616,14 +616,14 @@ extension AppHomeView {
             self.shortSenderChoice = appManager.smartFilterManager.selectedChoice(for: .shortSender)
             self.filters = appManager.persistenceManager.fetchFilterRecords()
             self.rules = []
-            self.overlayWindow = OverlayWindowView.ViewModel(appManager: appManager)
+            self.overlayWindow = OverlayWindowModifier.ViewModel(appManager: appManager)
             self.selectedCountriesSummary = Self.makeCountrySummary(appManager: appManager)
             super.init(appManager: appManager)
-            appManager.flowManager.setHomeAvailability { [weak self] in
-                return self?.isHomeUnobstructed ?? false
+            appManager.flowManager.setHomeIdleCheck { [weak self] in
+                return self?.isHomeIdle ?? false
             }
-            NotificationCenter.default.addObserver(forName: .flowRequested, object: nil, queue: .main) { [weak self] _ in
-                self?.presentNextFlow()
+            appManager.flowManager.setScreenPresenter { [weak self] in
+                self?.presentNextScreen()
             }
             self.customAccent = Color(accentRGB: appManager.defaultsManager.accentColorRGB)
             self.lastUIFingerprint = appManager.persistenceManager.fingerprint
@@ -655,7 +655,7 @@ extension AppHomeView {
             if self.sheetScreen != .chooseAccentColor {
                 self.customAccent = Color(accentRGB: self.appManager.defaultsManager.accentColorRGB)
             }
-            self.appManager.flowManager.homeMayBeUnobstructed()
+            self.appManager.flowManager.showWaitingNudge()
         }
         
         func setSelectedChoice(for rule: SmartFilterType, choice: Int) {
@@ -704,11 +704,11 @@ extension AppHomeView {
                     return
                 }
                 AppManager.logger.error("importFilters — picker failed: \(error.localizedDescription, privacy: .public)")
-                self.appManager.flowManager.requestNotification(.filterImportFailed)
+                self.appManager.flowManager.requestToast(.filterImportFailed)
 
             case .success(let urls):
                 guard let url = urls.first else {
-                    self.appManager.flowManager.requestNotification(.filterImportFailed)
+                    self.appManager.flowManager.requestToast(.filterImportFailed)
                     return
                 }
                 self.importFromFileURL(url)
@@ -716,7 +716,7 @@ extension AppHomeView {
         }
 
         func requestSheet(_ screen: Screen) {
-            self.appManager.flowManager.request(screen)
+            self.appManager.flowManager.requestScreen(screen)
         }
 
         private func importFromFileURL(_ url: URL) {
@@ -728,12 +728,12 @@ extension AppHomeView {
                 }
             } catch {
                 AppManager.logger.error("importFilters — could not read file: \(url.lastPathComponent, privacy: .public)")
-                self.appManager.flowManager.requestNotification(.filterImportFailed)
+                self.appManager.flowManager.requestToast(.filterImportFailed)
             }
         }
 
         private func completeDismissedSheet(_ screen: Screen) {
-            self.appManager.flowManager.complete(screen)
+            self.appManager.flowManager.completeScreen(screen)
 
             if screen == .whatsNew && !self.isReplacingSheetForLaunch {
                 self.markWhatsNewSeen()
@@ -741,7 +741,7 @@ extension AppHomeView {
 
             if screen == .filterImport, !self.isReplacingSheetForLaunch {
                 if let result = self.appManager.filterTransferManager.clearPendingImport() {
-                    self.appManager.flowManager.requestNotification(.filtersImported(added: result.added, skipped: result.skippedCount))
+                    self.appManager.flowManager.requestToast(.filtersImported(added: result.added, skipped: result.skippedCount))
                 }
             }
 
@@ -754,16 +754,16 @@ extension AppHomeView {
             }
         }
 
-        func presentNextFlow() {
+        func presentNextScreen() {
             guard !self.isReplacingSheetForLaunch else { return }
-            guard let screen = self.appManager.flowManager.next() else {
-                self.appManager.flowManager.homeMayBeUnobstructed()
+            guard let screen = self.appManager.flowManager.nextScreen() else {
+                self.appManager.flowManager.showWaitingNudge()
                 return
             }
             if screen == .filterImport,
                self.appManager.filterTransferManager.pendingPreview.count == 0 {
                 _ = self.appManager.filterTransferManager.clearPendingImport()
-                self.appManager.flowManager.complete(.filterImport)
+                self.appManager.flowManager.completeScreen(.filterImport)
                 self.showNothingToImportAlert = true
                 return
             }
@@ -772,7 +772,7 @@ extension AppHomeView {
 
         func enableWhatsNewAndPresent() {
             self.appManager.flowManager.enableWhatsNew()
-            self.presentNextFlow()
+            self.presentNextScreen()
         }
 
         @MainActor
@@ -814,7 +814,7 @@ extension AppHomeView {
             guard self.isReplacingSheetForLaunch else { return false }
             self.isReplacingSheetForLaunch = false
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                self?.presentNextFlow()
+                self?.presentNextScreen()
             }
             return true
         }
@@ -828,7 +828,7 @@ extension AppHomeView {
             let hasSheet = self.sheetScreen != nil
 
             guard hasSheet, !isBlockingFirstRun else {
-                self.presentNextFlow()
+                self.presentNextScreen()
                 return
             }
 
@@ -836,7 +836,7 @@ extension AppHomeView {
             self.sheetScreen = nil
         }
 
-        private var isHomeUnobstructed: Bool {
+        private var isHomeIdle: Bool {
             return self.sheetScreen == nil
                 && self.pendingScreenAfterDismiss == nil
                 && !self.isAlertPresented
@@ -844,7 +844,7 @@ extension AppHomeView {
         }
 
         func startMonitoring() {
-            self.appManager.flowManager.startMonitoring()
+            self.appManager.flowManager.startAppEventToasts()
 
             if !didAddObservers {
                 self.didAddObservers = true
@@ -869,7 +869,7 @@ extension AppHomeView {
             }
 
             self.catchUpFromStoreIfNeeded()
-            self.appManager.flowManager.homeMayBeUnobstructed()
+            self.appManager.flowManager.showWaitingNudge()
         }
 
         private func catchUpFromStoreIfNeeded() {
@@ -889,7 +889,7 @@ extension AppHomeView {
             Task { @MainActor [weak self] in
                 guard let self,
                       await self.appManager.schedulingManager.shouldShowInactivityNotificationAlert(),
-                      self.isHomeUnobstructed else { return }
+                      self.isHomeIdle else { return }
 
                 self.showInactivityNotificationAlert = true
             }
@@ -928,7 +928,7 @@ extension AppHomeView {
         func reset() {
             self.appManager.reset()
             self.refresh()
-            self.presentNextFlow()
+            self.presentNextScreen()
         }
 
         func fireInactivityReminder() {
@@ -940,8 +940,8 @@ extension AppHomeView {
             self.appManager.schedulingManager.scheduleFilterListsProcessingSoon()
         }
 
-        func showDebugNotification(_ notification: NotificationView.Notification) {
-            self.appManager.flowManager.requestNotification(notification)
+        func showDebugToast(_ toast: ToastView.Toast) {
+            self.appManager.flowManager.requestToast(toast)
         }
         #endif // DEBUG
         

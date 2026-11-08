@@ -247,7 +247,7 @@ extension AboutView {
 
         func setClipboard(content: String, displayName: String) {
             UIPasteboard.general.setValue(content, forPasteboardType: UTType.plainText.identifier)
-            self.appManager.flowManager.requestNotification(.onClipboardSet(displayName))
+            self.appManager.flowManager.requestToast(.onClipboardSet(displayName))
         }
     }
 }

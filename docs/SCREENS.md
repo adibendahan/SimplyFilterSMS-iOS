@@ -71,4 +71,4 @@ The shared picker for importing and exporting filters (`.filterImport` / `.filte
 - Export presents the share sheet on top of the picker; the temp file is deleted when the picker closes.
 
 ## TipJarView
-Optional tips through StoreKit, as a sheet from the menu, About, or a What's New entry; shows confetti after a purchase and closes after the thank-you toast.
+Optional tips through StoreKit, as a sheet from the menu, About, or a What's New entry.

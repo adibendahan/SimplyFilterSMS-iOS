@@ -524,7 +524,7 @@ class FilterListManagerTests: XCTestCase {
     }
 
     @MainActor
-    func test_checkFilterLists_checkedToday_neverChecking() {
+    func test_filterListsUpdate_updatedToday_finishesImmediately() {
         // Prepare
         self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
             let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
@@ -534,51 +534,54 @@ class FilterListManagerTests: XCTestCase {
             return [cacheRecord]
         }
         self.persistenceManager.cachedFilterListCatalogClosure = { self.catalog(["he"]) }
-        let checkFinished = XCTNSNotificationExpectation(name: .filterListsCheckFinished)
-        checkFinished.isInverted = true
+        var didFinish = false
 
         // Act
         self.testSubject.updateFilterListsWhenOnline()
+        self.testSubject.onFilterListsUpdateFinished { didFinish = true }
 
         // Verify
-        wait(for: [checkFinished], timeout: 0.1)
-        XCTAssertFalse(self.testSubject.isCheckingFilterLists)
+        XCTAssertTrue(didFinish)
     }
 
     @MainActor
-    func test_checkFilterLists_online_checkingUntilRefreshEnds() async {
+    func test_filterListsUpdate_online_finishesAfterRefresh() async {
         // Prepare
         self.persistenceManager.fetchFilterListsCacheRecordsClosure = { [] }
         self.networkSyncManager.networkStatusClosure = { .online }
-        var wasCheckingDuringFetch = false
+        var didFinish = false
+        var didFinishBeforeFetch = true
         self.filterListService.fetchFilterListCatalogClosure = { _ in
-            wasCheckingDuringFetch = self.testSubject.isCheckingFilterLists
+            didFinishBeforeFetch = didFinish
             return nil
         }
-        let checkFinished = XCTNSNotificationExpectation(name: .filterListsCheckFinished)
+        let updateFinished = self.expectation(description: "updateFinished")
 
         // Act
         self.testSubject.updateFilterListsWhenOnline()
+        self.testSubject.onFilterListsUpdateFinished {
+            didFinish = true
+            updateFinished.fulfill()
+        }
 
         // Verify
-        await self.fulfillment(of: [checkFinished], timeout: 1)
-        XCTAssertTrue(wasCheckingDuringFetch)
-        XCTAssertFalse(self.testSubject.isCheckingFilterLists)
+        await self.fulfillment(of: [updateFinished], timeout: 1)
+        XCTAssertFalse(didFinishBeforeFetch)
     }
 
     @MainActor
-    func test_checkFilterLists_offline_finishesImmediately() async {
+    func test_filterListsUpdate_offline_finishesImmediately() async {
         // Prepare
         self.persistenceManager.fetchFilterListsCacheRecordsClosure = { [] }
         self.networkSyncManager.networkStatusClosure = { .offline }
-        let checkFinished = XCTNSNotificationExpectation(name: .filterListsCheckFinished)
+        let updateFinished = self.expectation(description: "updateFinished")
 
         // Act
         self.testSubject.updateFilterListsWhenOnline()
+        self.testSubject.onFilterListsUpdateFinished { updateFinished.fulfill() }
 
         // Verify
-        await self.fulfillment(of: [checkFinished], timeout: 1)
-        XCTAssertFalse(self.testSubject.isCheckingFilterLists)
+        await self.fulfillment(of: [updateFinished], timeout: 1)
         XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 0)
     }
 

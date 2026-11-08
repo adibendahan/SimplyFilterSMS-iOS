@@ -30,7 +30,7 @@ class FlowManagerTests: XCTestCase {
         self.networkSyncManager.networkStatusClosure = { [unowned self] in
             return self.networkStatus
         }
-        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date.distantPast }
+        self.defaultsManager.lastOfflineToastDismissClosure = { Date.distantPast }
         self.defaultsManager.isAppFirstRunClosure = { [unowned self] in
             return self.isFirstRun
         }
@@ -63,20 +63,20 @@ class FlowManagerTests: XCTestCase {
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         self.testSubject.enableWhatsNew()
 
-        XCTAssertEqual(self.testSubject.next(), .enableExtension)
-        XCTAssertNil(self.testSubject.next())
+        XCTAssertEqual(self.testSubject.nextScreen(), .enableExtension)
+        XCTAssertNil(self.testSubject.nextScreen())
     }
 
     func test_importWaitsUntilFirstRunCompletes() {
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
 
-        XCTAssertEqual(self.testSubject.next(), .enableExtension)
+        XCTAssertEqual(self.testSubject.nextScreen(), .enableExtension)
 
         self.isFirstRun = false
-        XCTAssertNil(self.testSubject.next())
+        XCTAssertNil(self.testSubject.nextScreen())
 
-        self.testSubject.complete(.enableExtension)
-        XCTAssertEqual(self.testSubject.next(), .filterImport)
+        self.testSubject.completeScreen(.enableExtension)
+        XCTAssertEqual(self.testSubject.nextScreen(), .filterImport)
     }
 
     func test_afterFirstRun_fileBeatsWhatsNew() {
@@ -85,26 +85,26 @@ class FlowManagerTests: XCTestCase {
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         self.testSubject.enableWhatsNew()
 
-        XCTAssertEqual(self.testSubject.next(), .filterImport)
+        XCTAssertEqual(self.testSubject.nextScreen(), .filterImport)
     }
 
     func test_whatsNew_waitsUntilEnabled() {
         self.isFirstRun = false
         self.testSubject = self.makeTestSubject()
 
-        XCTAssertNil(self.testSubject.next())
+        XCTAssertNil(self.testSubject.nextScreen())
         self.testSubject.enableWhatsNew()
-        XCTAssertEqual(self.testSubject.next(), .whatsNew)
+        XCTAssertEqual(self.testSubject.nextScreen(), .whatsNew)
     }
 
     func test_whatsNew_skippedWhenLaunchClaimedSession() {
         self.isFirstRun = false
         self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
-        self.testSubject.complete(.filterImport)
+        self.testSubject.completeScreen(.filterImport)
         self.testSubject.enableWhatsNew()
 
-        XCTAssertNil(self.testSubject.next())
+        XCTAssertNil(self.testSubject.nextScreen())
     }
 
     func test_lastLaunchURLWins() {
@@ -113,41 +113,41 @@ class FlowManagerTests: XCTestCase {
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         XCTAssertTrue(self.testSubject.recordLaunch(.tipJar))
 
-        XCTAssertEqual(self.testSubject.next(), .tipJar)
+        XCTAssertEqual(self.testSubject.nextScreen(), .tipJar)
     }
 
     func test_userRequest_doesNotBeatFirstRun() {
-        self.testSubject.request(.about)
+        self.testSubject.requestScreen(.about)
 
-        XCTAssertEqual(self.testSubject.next(), .enableExtension)
+        XCTAssertEqual(self.testSubject.nextScreen(), .enableExtension)
     }
 
     func test_userRequest_afterFirstRun() {
         self.isFirstRun = false
         self.lastSeenWhatsNewVersion = currentWhatsNewVersion
         self.testSubject = self.makeTestSubject()
-        self.testSubject.request(.about)
+        self.testSubject.requestScreen(.about)
 
-        XCTAssertEqual(self.testSubject.next(), .about)
+        XCTAssertEqual(self.testSubject.nextScreen(), .about)
     }
 
     func test_userRequest_whatsNew_afterLaunchClaimedSession() {
         self.isFirstRun = false
         self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
-        self.testSubject.complete(.filterImport)
-        self.testSubject.request(.whatsNew)
+        self.testSubject.completeScreen(.filterImport)
+        self.testSubject.requestScreen(.whatsNew)
 
-        XCTAssertEqual(self.testSubject.next(), .whatsNew)
+        XCTAssertEqual(self.testSubject.nextScreen(), .whatsNew)
     }
 
     func test_enableExtensionDeepLink_ignoredDuringFirstRun() {
         XCTAssertFalse(self.testSubject.recordLaunch(.enableExtension))
-        XCTAssertEqual(self.testSubject.next(), .enableExtension)
+        XCTAssertEqual(self.testSubject.nextScreen(), .enableExtension)
 
         self.isFirstRun = false
-        self.testSubject.complete(.enableExtension)
-        XCTAssertNil(self.testSubject.next())
+        self.testSubject.completeScreen(.enableExtension)
+        XCTAssertNil(self.testSubject.nextScreen())
     }
 
     func test_recordLaunch_returnsTrueWhenQueued() {
@@ -156,176 +156,189 @@ class FlowManagerTests: XCTestCase {
         XCTAssertTrue(self.testSubject.recordLaunch(.tipJar))
     }
 
-    func test_notification_lowerPriorityWhilePending_keepsHigher() {
-        self.testSubject.requestNotification(.cloudSyncOperationComplete)
-        self.testSubject.requestNotification(.filterListsUpdated)
+    func test_toast_lowerPriorityWhilePending_keepsHigher() {
+        self.testSubject.requestToast(.cloudSyncOperationComplete)
+        self.testSubject.requestToast(.filterListsUpdated)
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .cloudSyncOperationComplete)
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertEqual(self.testSubject.nextToast(), .cloudSyncOperationComplete)
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
-    func test_notification_higherPriorityWhilePending_replaces() {
-        self.testSubject.requestNotification(.filterListsUpdated)
-        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
+    func test_toast_higherPriorityWhilePending_replaces() {
+        self.testSubject.requestToast(.filterListsUpdated)
+        self.testSubject.requestToast(.filtersImported(added: 1, skipped: 0))
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .filtersImported(added: 1, skipped: 0))
+        XCTAssertEqual(self.testSubject.nextToast(), .filtersImported(added: 1, skipped: 0))
     }
 
-    func test_notification_samePriority_newerReplaces() {
-        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
-        self.testSubject.requestNotification(.filtersImported(added: 2, skipped: 0))
+    func test_toast_samePriority_newerReplaces() {
+        self.testSubject.requestToast(.filtersImported(added: 1, skipped: 0))
+        self.testSubject.requestToast(.filtersImported(added: 2, skipped: 0))
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .filtersImported(added: 2, skipped: 0))
+        XCTAssertEqual(self.testSubject.nextToast(), .filtersImported(added: 2, skipped: 0))
     }
 
-    func test_notification_lowerPriorityWhileShown_dropped() {
-        self.testSubject.requestNotification(.offline)
-        _ = self.testSubject.nextNotification()
-        self.testSubject.requestNotification(.tipPromotion)
+    func test_toast_lowerPriorityWhileShown_dropped() {
+        self.testSubject.requestToast(.offline)
+        _ = self.testSubject.nextToast()
+        self.testSubject.requestToast(.tipPromotion)
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
-    func test_notification_failureWhileImportResultShown_replaces() {
-        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
-        _ = self.testSubject.nextNotification()
-        self.testSubject.requestNotification(.saveFailed)
+    func test_toast_failureWhileImportResultShown_replaces() {
+        self.testSubject.requestToast(.filtersImported(added: 1, skipped: 0))
+        _ = self.testSubject.nextToast()
+        self.testSubject.requestToast(.saveFailed)
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .saveFailed)
+        XCTAssertEqual(self.testSubject.nextToast(), .saveFailed)
     }
 
-    func test_notification_completed_freesSlot() {
-        self.testSubject.requestNotification(.offline)
-        _ = self.testSubject.nextNotification()
-        self.testSubject.completeNotification()
-        self.testSubject.requestNotification(.tipPromotion)
+    func test_toast_completed_freesSlot() {
+        self.testSubject.requestToast(.offline)
+        _ = self.testSubject.nextToast()
+        self.testSubject.completeToast(.offline)
+        self.testSubject.requestToast(.tipPromotion)
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+        XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
     }
 
     func test_backOnline_offlineShown_freesSlot() {
-        self.testSubject.startMonitoring()
+        self.testSubject.startAppEventToasts()
         self.postNetworkStatus(.offline)
-        _ = self.testSubject.nextNotification()
+        _ = self.testSubject.nextToast()
 
         self.postNetworkStatus(.online)
 
-        XCTAssertFalse(self.testSubject.isNotificationShowing)
-        self.testSubject.requestNotification(.tipPromotion)
-        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+        XCTAssertFalse(self.testSubject.isToastShowing)
+        self.testSubject.requestToast(.tipPromotion)
+        XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
     }
 
     func test_backOnline_offlinePending_dropsIt() {
-        self.testSubject.startMonitoring()
+        self.testSubject.startAppEventToasts()
         self.postNetworkStatus(.offline)
 
         self.postNetworkStatus(.online)
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
     func test_backOnline_otherShown_keepsIt() {
-        self.testSubject.startMonitoring()
-        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
-        _ = self.testSubject.nextNotification()
+        self.testSubject.startAppEventToasts()
+        self.testSubject.requestToast(.filtersImported(added: 1, skipped: 0))
+        _ = self.testSubject.nextToast()
 
         self.postNetworkStatus(.online)
 
-        XCTAssertTrue(self.testSubject.isNotificationShowing)
+        XCTAssertTrue(self.testSubject.isToastShowing)
     }
 
     func test_offline_snoozed_notShown() {
-        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date() }
-        self.testSubject.startMonitoring()
+        self.defaultsManager.lastOfflineToastDismissClosure = { Date() }
+        self.testSubject.startAppEventToasts()
 
         self.postNetworkStatus(.offline)
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
-    func test_startMonitoring_alreadyOffline_showsOffline() {
+    func test_startAppEventToasts_alreadyOffline_showsOffline() {
         self.networkStatus = .offline
 
-        self.testSubject.startMonitoring()
+        self.testSubject.startAppEventToasts()
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .offline)
+        XCTAssertEqual(self.testSubject.nextToast(), .offline)
+    }
+
+    func test_toast_staleCompletion_keepsNewerToast() {
+        self.testSubject.requestToast(.cloudSyncOperationComplete)
+        _ = self.testSubject.nextToast()
+        self.testSubject.requestToast(.saveFailed)
+        _ = self.testSubject.nextToast()
+
+        self.testSubject.completeToast(.cloudSyncOperationComplete)
+        self.testSubject.requestToast(.tipPromotion)
+
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
     func test_higherPriorityToastCompletes_stillOffline_showsOfflineAgain() {
         self.networkStatus = .offline
-        self.testSubject.requestNotification(.saveFailed)
-        _ = self.testSubject.nextNotification()
-        self.testSubject.requestNotification(.offline)
+        self.testSubject.requestToast(.saveFailed)
+        _ = self.testSubject.nextToast()
+        self.testSubject.requestToast(.offline)
 
-        self.testSubject.completeNotification()
+        self.testSubject.completeToast(.saveFailed)
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .offline)
+        XCTAssertEqual(self.testSubject.nextToast(), .offline)
     }
 
     func test_toastCompletes_online_showsNothing() {
-        self.testSubject.requestNotification(.saveFailed)
-        _ = self.testSubject.nextNotification()
+        self.testSubject.requestToast(.saveFailed)
+        _ = self.testSubject.nextToast()
 
-        self.testSubject.completeNotification()
+        self.testSubject.completeToast(.saveFailed)
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
     func test_appEvents_becomeToasts() {
         self.filterListManager.hasActiveFilterListsClosure = { true }
-        self.testSubject.startMonitoring()
+        self.testSubject.startAppEventToasts()
 
         NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
-        XCTAssertEqual(self.testSubject.nextNotification(), .filterListsUpdated)
-        self.testSubject.completeNotification()
+        XCTAssertEqual(self.testSubject.nextToast(), .filterListsUpdated)
+        self.testSubject.completeToast(.filterListsUpdated)
 
         NotificationCenter.default.post(name: .cloudSyncOperationComplete, object: nil)
-        XCTAssertEqual(self.testSubject.nextNotification(), .cloudSyncOperationComplete)
-        self.testSubject.completeNotification()
+        XCTAssertEqual(self.testSubject.nextToast(), .cloudSyncOperationComplete)
+        self.testSubject.completeToast(.cloudSyncOperationComplete)
 
         NotificationCenter.default.post(name: .filtersSaveFailed, object: nil)
-        XCTAssertEqual(self.testSubject.nextNotification(), .saveFailed)
+        XCTAssertEqual(self.testSubject.nextToast(), .saveFailed)
     }
 
-    func test_filterListsUpdated_aiFilteringOff_noToast() {
+    func test_filterListsUpdated_noActiveFilterLists_noToast() {
         self.filterListManager.hasActiveFilterListsClosure = { false }
-        self.testSubject.startMonitoring()
+        self.testSubject.startAppEventToasts()
 
         NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
-    func test_nudge_homeObstructed_waitsUntilUnobstructed() {
-        var isHomeUnobstructed = false
-        self.testSubject.setHomeAvailability { isHomeUnobstructed }
+    func test_nudge_homeBusy_waitsUntilIdle() {
+        var isHomeIdle = false
+        self.testSubject.setHomeIdleCheck { isHomeIdle }
 
-        self.testSubject.requestNotification(.tipPromotion)
-        XCTAssertNil(self.testSubject.nextNotification())
+        self.testSubject.requestToast(.tipPromotion)
+        XCTAssertNil(self.testSubject.nextToast())
 
-        isHomeUnobstructed = true
-        self.testSubject.homeMayBeUnobstructed()
-        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+        isHomeIdle = true
+        self.testSubject.showWaitingNudge()
+        XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
     }
 
-    func test_result_homeObstructed_showsImmediately() {
-        self.testSubject.setHomeAvailability { false }
+    func test_result_homeBusy_showsImmediately() {
+        self.testSubject.setHomeIdleCheck { false }
 
-        self.testSubject.requestNotification(.filtersImported(added: 1, skipped: 0))
+        self.testSubject.requestToast(.filtersImported(added: 1, skipped: 0))
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .filtersImported(added: 1, skipped: 0))
+        XCTAssertEqual(self.testSubject.nextToast(), .filtersImported(added: 1, skipped: 0))
     }
 
     func test_tapTipPromotion_requestsTipJar() {
         self.isFirstRun = false
         self.lastSeenWhatsNewVersion = currentWhatsNewVersion
         self.testSubject = self.makeTestSubject()
-        let flowRequested = XCTNSNotificationExpectation(name: .flowRequested)
+        var presentNextScreenCount = 0
+        self.testSubject.setScreenPresenter { presentNextScreenCount += 1 }
 
-        self.testSubject.didTapNotification(.tipPromotion)
+        self.testSubject.didTapToast(.tipPromotion)
 
-        wait(for: [flowRequested], timeout: 1)
-        XCTAssertEqual(self.testSubject.next(), .tipJar)
+        XCTAssertEqual(presentNextScreenCount, 1)
+        XCTAssertEqual(self.testSubject.nextScreen(), .tipJar)
     }
 
     func test_tapReportingNudge_dismissesItAndRequestsSheet() {
@@ -333,16 +346,16 @@ class FlowManagerTests: XCTestCase {
         self.lastSeenWhatsNewVersion = currentWhatsNewVersion
         self.testSubject = self.makeTestSubject()
 
-        self.testSubject.didTapNotification(.enableReportingExtension)
+        self.testSubject.didTapToast(.enableReportingExtension)
 
         XCTAssertEqual(self.defaultsManager.didDismissReportingExtensionNudgeSetCounter, 1)
-        XCTAssertEqual(self.testSubject.next(), .enableReportingExtension)
+        XCTAssertEqual(self.testSubject.nextScreen(), .enableReportingExtension)
     }
 
     func test_dismissOffline_recordsSnooze() {
-        self.testSubject.didDismissNotification(.offline)
+        self.testSubject.didDismissToast(.offline)
 
-        XCTAssertEqual(self.defaultsManager.lastOfflineNotificationDismissSetCounter, 1)
+        XCTAssertEqual(self.defaultsManager.lastOfflineToastDismissSetCounter, 1)
     }
 
     func test_showSessionNudges_tipDue_showsTip() {
@@ -351,18 +364,18 @@ class FlowManagerTests: XCTestCase {
 
         self.testSubject.showSessionNudges()
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+        XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
     }
 
     func test_showSessionNudges_offlineShowing_keepsOffline() {
         self.defaultsManager.sessionCounterClosure = { 5 }
         self.defaultsManager.didTipClosure = { false }
-        self.testSubject.requestNotification(.offline)
-        _ = self.testSubject.nextNotification()
+        self.testSubject.requestToast(.offline)
+        _ = self.testSubject.nextToast()
 
         self.testSubject.showSessionNudges()
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
     func test_sessionNudge_shown_recordsSession() {
@@ -370,7 +383,7 @@ class FlowManagerTests: XCTestCase {
         self.defaultsManager.didTipClosure = { false }
         self.testSubject.showSessionNudges()
 
-        _ = self.testSubject.nextNotification()
+        _ = self.testSubject.nextToast()
 
         XCTAssertEqual(self.defaultsManager.sessionNudgeLastShownSessions["tipPromotion"], 7)
     }
@@ -390,12 +403,12 @@ class FlowManagerTests: XCTestCase {
         self.defaultsManager.sessionCounterClosure = { 11 }
 
         self.testSubject.showSessionNudges()
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
 
         self.defaultsManager.sessionCounterClosure = { 12 }
         self.testSubject.resetSession()
         self.testSubject.showSessionNudges()
-        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+        XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
     }
 
     func test_tipPromotion_tipped_neverDue() {
@@ -404,23 +417,23 @@ class FlowManagerTests: XCTestCase {
 
         self.testSubject.showSessionNudges()
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
     func test_skippedNudge_dueNextSession() {
         self.defaultsManager.didTipClosure = { false }
         self.defaultsManager.sessionCounterClosure = { 5 }
-        self.testSubject.requestNotification(.filterListsUpdated)
-        _ = self.testSubject.nextNotification()
+        self.testSubject.requestToast(.filterListsUpdated)
+        _ = self.testSubject.nextToast()
         self.testSubject.showSessionNudges()
-        self.testSubject.completeNotification()
-        XCTAssertNil(self.testSubject.nextNotification())
+        self.testSubject.completeToast(.filterListsUpdated)
+        XCTAssertNil(self.testSubject.nextToast())
 
         self.defaultsManager.sessionCounterClosure = { 6 }
         self.testSubject.resetSession()
         self.testSubject.showSessionNudges()
 
-        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+        XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
     }
 
     func test_bothNudgesDue_tipFirstReportingNextSession() {
@@ -431,17 +444,17 @@ class FlowManagerTests: XCTestCase {
         self.defaultsManager.sessionCounterClosure = { 6 }
 
         self.testSubject.showSessionNudges()
-        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
-        self.testSubject.completeNotification()
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
+        self.testSubject.completeToast(.tipPromotion)
+        XCTAssertNil(self.testSubject.nextToast())
 
         self.defaultsManager.sessionCounterClosure = { 7 }
         self.testSubject.resetSession()
         self.testSubject.showSessionNudges()
-        XCTAssertEqual(self.testSubject.nextNotification(), .enableReportingExtension)
+        XCTAssertEqual(self.testSubject.nextToast(), .enableReportingExtension)
     }
 
-    func test_reportingNudge_aiFilteringOff_neverDue() {
+    func test_reportingNudge_noActiveFilterLists_neverDue() {
         self.isFirstRun = false
         self.testSubject = self.makeTestSubject()
         self.filterListManager.hasActiveFilterListsClosure = { false }
@@ -450,123 +463,122 @@ class FlowManagerTests: XCTestCase {
 
         self.testSubject.showSessionNudges()
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
-    func test_sessionNudge_checkRunning_waitsForIt() {
+    func test_sessionNudge_filterListsUpdateInProgress_waitsForIt() {
         self.defaultsManager.didTipClosure = { false }
         self.defaultsManager.sessionCounterClosure = { 5 }
-        var isChecking = true
-        self.filterListManager.isCheckingFilterListsClosure = { isChecking }
-        self.testSubject.startMonitoring()
+        var finishFilterListsUpdate: (() -> Void)?
+        self.filterListManager.onFilterListsUpdateFinishedClosure = { finishFilterListsUpdate = $0 }
+        self.testSubject.startAppEventToasts()
 
         self.testSubject.showSessionNudges()
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
 
-        isChecking = false
-        NotificationCenter.default.post(name: .filterListsCheckFinished, object: nil)
-        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+        finishFilterListsUpdate?()
+        XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
     }
 
-    func test_sessionNudge_checkShowedAIToast_skipsNudge() {
+    func test_sessionNudge_filterListsUpdateShowedToast_skipsNudge() {
         self.filterListManager.hasActiveFilterListsClosure = { true }
         self.defaultsManager.didTipClosure = { false }
         self.defaultsManager.sessionCounterClosure = { 5 }
-        var isChecking = true
-        self.filterListManager.isCheckingFilterListsClosure = { isChecking }
-        self.testSubject.startMonitoring()
+        var finishFilterListsUpdate: (() -> Void)?
+        self.filterListManager.onFilterListsUpdateFinishedClosure = { finishFilterListsUpdate = $0 }
+        self.testSubject.startAppEventToasts()
         self.testSubject.showSessionNudges()
 
         NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
-        XCTAssertEqual(self.testSubject.nextNotification(), .filterListsUpdated)
-        isChecking = false
-        NotificationCenter.default.post(name: .filterListsCheckFinished, object: nil)
-        self.testSubject.completeNotification()
+        XCTAssertEqual(self.testSubject.nextToast(), .filterListsUpdated)
+        finishFilterListsUpdate?()
+        self.testSubject.completeToast(.filterListsUpdated)
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
         XCTAssertNil(self.defaultsManager.sessionNudgeLastShownSessions["tipPromotion"])
     }
 
     func test_waitingNudge_otherToastShowedMeanwhile_skipped() {
-        var isHomeUnobstructed = false
-        self.testSubject.setHomeAvailability { isHomeUnobstructed }
-        self.testSubject.requestNotification(.tipPromotion)
-        self.testSubject.requestNotification(.cloudSyncOperationComplete)
-        _ = self.testSubject.nextNotification()
-        self.testSubject.completeNotification()
+        var isHomeIdle = false
+        self.testSubject.setHomeIdleCheck { isHomeIdle }
+        self.testSubject.requestToast(.tipPromotion)
+        self.testSubject.requestToast(.cloudSyncOperationComplete)
+        _ = self.testSubject.nextToast()
+        self.testSubject.completeToast(.cloudSyncOperationComplete)
 
-        isHomeUnobstructed = true
-        self.testSubject.homeMayBeUnobstructed()
+        isHomeIdle = true
+        self.testSubject.showWaitingNudge()
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
     func test_tipShown_reportingNudgeCannotReplaceIt() {
-        self.testSubject.requestNotification(.tipPromotion)
-        _ = self.testSubject.nextNotification()
+        self.testSubject.requestToast(.tipPromotion)
+        _ = self.testSubject.nextToast()
 
-        self.testSubject.requestNotification(.enableReportingExtension)
+        self.testSubject.requestToast(.enableReportingExtension)
 
-        XCTAssertNil(self.testSubject.nextNotification())
+        XCTAssertNil(self.testSubject.nextToast())
     }
 
     func test_dismissOtherToast_recordsNothing() {
-        self.testSubject.didDismissNotification(.saveFailed)
+        self.testSubject.didDismissToast(.saveFailed)
 
-        XCTAssertEqual(self.defaultsManager.lastOfflineNotificationDismissSetCounter, 0)
+        XCTAssertEqual(self.defaultsManager.lastOfflineToastDismissSetCounter, 0)
     }
 
-    func test_resetSession_clearsNotifications() {
-        self.testSubject.requestNotification(.offline)
-        _ = self.testSubject.nextNotification()
-        self.testSubject.requestNotification(.saveFailed)
+    func test_resetSession_clearsToasts() {
+        self.testSubject.requestToast(.offline)
+        _ = self.testSubject.nextToast()
+        self.testSubject.requestToast(.saveFailed)
         self.testSubject.resetSession()
 
-        XCTAssertNil(self.testSubject.nextNotification())
-        self.testSubject.requestNotification(.tipPromotion)
-        XCTAssertEqual(self.testSubject.nextNotification(), .tipPromotion)
+        XCTAssertNil(self.testSubject.nextToast())
+        self.testSubject.requestToast(.tipPromotion)
+        XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
     }
 
-    func test_requestNotification_accepted_postsSlotChanged() {
-        let slotChanged = XCTNSNotificationExpectation(name: .notificationSlotChanged)
+    func test_requestToast_accepted_showsNextToast() {
+        var showNextToastCount = 0
+        self.testSubject.setToastPresenter { showNextToastCount += 1 }
 
-        self.testSubject.requestNotification(.offline)
+        self.testSubject.requestToast(.offline)
 
-        wait(for: [slotChanged], timeout: 1)
+        XCTAssertEqual(showNextToastCount, 1)
     }
 
-    func test_requestNotification_dropped_doesNotPost() {
-        self.testSubject.requestNotification(.saveFailed)
-        let slotChanged = XCTNSNotificationExpectation(name: .notificationSlotChanged)
-        slotChanged.isInverted = true
+    func test_requestToast_dropped_doesNotShowNextToast() {
+        self.testSubject.requestToast(.saveFailed)
+        var showNextToastCount = 0
+        self.testSubject.setToastPresenter { showNextToastCount += 1 }
 
-        self.testSubject.requestNotification(.tipPromotion)
+        self.testSubject.requestToast(.tipPromotion)
 
-        wait(for: [slotChanged], timeout: 0.1)
+        XCTAssertEqual(showNextToastCount, 0)
     }
 
-    func test_didShowNotificationThisSession_requestedAndDropped_false() {
-        self.testSubject.requestNotification(.saveFailed)
+    func test_didShowToastThisSession_requestedAndDropped_false() {
+        self.testSubject.requestToast(.saveFailed)
 
-        self.testSubject.requestNotification(.filterListsUpdated)
+        self.testSubject.requestToast(.filterListsUpdated)
 
-        XCTAssertFalse(self.testSubject.didShowNotificationThisSession)
+        XCTAssertFalse(self.testSubject.didShowToastThisSession)
     }
 
-    func test_didShowNotificationThisSession_shown_true() {
-        self.testSubject.requestNotification(.onClipboardSet("Email"))
+    func test_didShowToastThisSession_shown_true() {
+        self.testSubject.requestToast(.onClipboardSet("Email"))
 
-        _ = self.testSubject.nextNotification()
+        _ = self.testSubject.nextToast()
 
-        XCTAssertTrue(self.testSubject.didShowNotificationThisSession)
+        XCTAssertTrue(self.testSubject.didShowToastThisSession)
     }
 
-    func test_resetSession_clearsDidShowNotification() {
-        self.testSubject.requestNotification(.onClipboardSet("Email"))
-        _ = self.testSubject.nextNotification()
+    func test_resetSession_clearsDidShowToast() {
+        self.testSubject.requestToast(.onClipboardSet("Email"))
+        _ = self.testSubject.nextToast()
 
         self.testSubject.resetSession()
 
-        XCTAssertFalse(self.testSubject.didShowNotificationThisSession)
+        XCTAssertFalse(self.testSubject.didShowToastThisSession)
     }
 }

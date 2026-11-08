@@ -56,7 +56,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     //MARK: - Session Defaults -
     var sessionStartDate: Date?
-    var lastOfflineNotificationDismiss: Date?
+    var lastOfflineToastDismiss: Date?
     
     //MARK: - Stored Defaults Migration -
     init() {

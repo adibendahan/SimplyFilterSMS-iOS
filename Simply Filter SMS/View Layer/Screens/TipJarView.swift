@@ -187,7 +187,7 @@ extension TipJarView {
             switch result {
             case .success(let tier):
                 purchaseState = .success(tier)
-                self.appManager.flowManager.requestNotification(.tipSuccessful(tier))
+                self.appManager.flowManager.requestToast(.tipSuccessful(tier))
                 self.shouldDismiss = true
 
             case .userCancelled, .pending:

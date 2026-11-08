@@ -15,9 +15,11 @@ class mock_NetworkSyncManager: NetworkSyncManagerProtocol {
     var syncStatusSetCounter = 0
     var networkStatusGetCounter = 0
     var networkStatusSetCounter = 0
+    var onFirstStatusKnownCounter = 0
     
     var syncStatusClosure: (() -> (SyncStatus))?
     var networkStatusClosure: (() -> (NetworkStatus))?
+    var onFirstStatusKnownClosure: ((@escaping () -> Void) -> ())?
     
     var syncStatus: SyncStatus {
         get {
@@ -40,6 +42,19 @@ class mock_NetworkSyncManager: NetworkSyncManagerProtocol {
     }
 
     func onFirstStatusKnown(_ handler: @escaping () -> Void) {
-        handler()
+        self.onFirstStatusKnownCounter += 1
+        guard let onFirstStatusKnownClosure = self.onFirstStatusKnownClosure else {
+            handler()
+            return
+        }
+        onFirstStatusKnownClosure(handler)
+    }
+
+    func resetCounters() {
+        self.syncStatusGetCounter = 0
+        self.syncStatusSetCounter = 0
+        self.networkStatusGetCounter = 0
+        self.networkStatusSetCounter = 0
+        self.onFirstStatusKnownCounter = 0
     }
 }

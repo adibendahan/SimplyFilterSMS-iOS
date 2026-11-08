@@ -39,13 +39,13 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.sheetScreen = .about
 
         // Act
-        self.appManager.flowManager.requestNotification(.tipPromotion)
-        let titleWhileSheetOpen = testSubject.overlayWindow.notification.title
+        self.appManager.flowManager.requestToast(.tipPromotion)
+        let titleWhileSheetOpen = testSubject.overlayWindow.toastViewModel.title
         testSubject.sheetScreen = nil
 
         // Verify
-        XCTAssertNotEqual(titleWhileSheetOpen, NotificationView.Notification.tipPromotion.title)
-        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.tipPromotion.title)
+        XCTAssertNotEqual(titleWhileSheetOpen, ToastView.Toast.tipPromotion.title)
+        XCTAssertEqual(testSubject.overlayWindow.toastViewModel.title, ToastView.Toast.tipPromotion.title)
     }
 
     func test_resultWhileSheetOpen_showsImmediately() {
@@ -55,19 +55,19 @@ class AppHomeViewModelTests: XCTestCase {
         testSubject.sheetScreen = .about
 
         // Act
-        self.appManager.flowManager.requestNotification(.filtersImported(added: 1, skipped: 0))
+        self.appManager.flowManager.requestToast(.filtersImported(added: 1, skipped: 0))
 
         // Verify
-        XCTAssertEqual(testSubject.overlayWindow.notification.title, NotificationView.Notification.filtersImported(added: 1, skipped: 0).title)
+        XCTAssertEqual(testSubject.overlayWindow.toastViewModel.title, ToastView.Toast.filtersImported(added: 1, skipped: 0).title)
     }
 
-    func test_flowRequest_presentsSheet() {
+    func test_screenRequest_presentsSheet() {
         // Prepare
         self.networkSyncManager.networkStatusClosure = { .online }
         let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
 
         // Act
-        self.appManager.flowManager.request(.tipJar)
+        self.appManager.flowManager.requestScreen(.tipJar)
 
         // Verify
         XCTAssertEqual(testSubject.sheetScreen, .tipJar)
@@ -76,28 +76,28 @@ class AppHomeViewModelTests: XCTestCase {
     func test_launch_offlineDismissedRecently_noOfflineToast() {
         // Prepare
         self.networkSyncManager.networkStatusClosure = { .offline }
-        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date().addingTimeInterval(-10 * 60) }
+        self.defaultsManager.lastOfflineToastDismissClosure = { Date().addingTimeInterval(-10 * 60) }
 
         // Act
         let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
 
         // Verify
         withExtendedLifetime(testSubject) {
-            XCTAssertFalse(self.appManager.flowManager.isNotificationShowing)
+            XCTAssertFalse(self.appManager.flowManager.isToastShowing)
         }
     }
 
     func test_launch_offlineDismissedOverAnHourAgo_showsOffline() {
         // Prepare
         self.networkSyncManager.networkStatusClosure = { .offline }
-        self.defaultsManager.lastOfflineNotificationDismissClosure = { Date().addingTimeInterval(-61 * 60) }
+        self.defaultsManager.lastOfflineToastDismissClosure = { Date().addingTimeInterval(-61 * 60) }
 
         // Act
         let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
 
         // Verify
         withExtendedLifetime(testSubject) {
-            XCTAssertTrue(self.appManager.flowManager.isNotificationShowing)
+            XCTAssertTrue(self.appManager.flowManager.isToastShowing)
         }
     }
 }

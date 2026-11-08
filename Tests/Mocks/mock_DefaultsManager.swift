@@ -18,8 +18,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var isAddFilterExpandedSetCounter = 0
     var isFilterOptionsCollapsedGetCounter = 0
     var isFilterOptionsCollapsedSetCounter = 0
-    var lastOfflineNotificationDismissGetCounter = 0
-    var lastOfflineNotificationDismissSetCounter = 0
+    var lastOfflineToastDismissGetCounter = 0
+    var lastOfflineToastDismissSetCounter = 0
     var sessionStartDateGetCounter = 0
     var sessionStartDateSetCounter = 0
     var sessionCounterGetCounter = 0
@@ -38,7 +38,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var isAppFirstRunClosure: (() -> (Bool))?
     var isAddFilterExpandedClosure: (() -> (Bool))?
     var isFilterOptionsCollapsedClosure: (() -> (Bool))?
-    var lastOfflineNotificationDismissClosure: (() -> (Date?))?
+    var lastOfflineToastDismissClosure: (() -> (Date?))?
     var sessionStartDateClosure: (() -> (Date?))?
     var sessionCounterClosure: (() -> (Int))?
     var didPromptForReviewClosure: (() -> (Bool))?
@@ -77,13 +77,13 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
         }
     }
     
-    var lastOfflineNotificationDismiss: Date? {
+    var lastOfflineToastDismiss: Date? {
         get {
-            self.lastOfflineNotificationDismissGetCounter += 1
-            return self.lastOfflineNotificationDismissClosure?() ?? Date()
+            self.lastOfflineToastDismissGetCounter += 1
+            return self.lastOfflineToastDismissClosure?() ?? Date()
         }
         set {
-            self.lastOfflineNotificationDismissSetCounter += 1
+            self.lastOfflineToastDismissSetCounter += 1
         }
     }
     

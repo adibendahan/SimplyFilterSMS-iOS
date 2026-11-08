@@ -26,7 +26,7 @@ protocol DefaultsManagerProtocol {
     var installDate: Date { get }
     
     // Session:
-    var lastOfflineNotificationDismiss: Date? { get set }
+    var lastOfflineToastDismiss: Date? { get set }
     var sessionStartDate: Date? { get set }
     
     #if DEBUG
