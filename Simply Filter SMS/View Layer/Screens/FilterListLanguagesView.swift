@@ -13,6 +13,7 @@ import NaturalLanguage
 struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
 
     @ScaledMetric(relativeTo: .title) private var errorIconSize: CGFloat = 30
+    @ScaledMetric(relativeTo: .body) private var footerIconSize: CGFloat = 20
 
     @ObservedObject var model: ViewModel
 
@@ -68,7 +69,7 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                         HStack {
                             Image(systemName: "wand.and.stars")
                                 .imageScale(.large)
-                                .font(.system(size: 20, weight: .bold))
+                                .font(.system(size: self.footerIconSize, weight: .bold))
                             Text("autoFilter_improveAIFiltering"~)
                                 .font(.body)
                         }
@@ -95,6 +96,7 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                     Image(systemName: "ellipsis.circle")
                 }
                 .tint(.primary)
+                .accessibilityLabel("a11y_home_menuButton"~)
             }
         }
         .sheet(item: $model.sheetScreen) { $0.build() }

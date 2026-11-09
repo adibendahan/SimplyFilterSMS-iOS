@@ -15,6 +15,7 @@ struct ToastView: View {
     @Environment(\.needsStackedLayout) private var needsStackedLayout
     @ObservedObject var model: ViewModel
     @State private var offset: CGFloat = -200
+    @State private var isVisible = false
 
     private let kHideOffset: CGFloat = -200
     private let kShowOffset: CGFloat = 25
@@ -29,6 +30,17 @@ struct ToastView: View {
         }
         .limitedDynamicTypeSize(.accessibility1)
         .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(self.model.onTap == nil ? [] : .isButton)
+        .accessibilityAction {
+            self.performTap()
+        }
+        .accessibilityActions {
+            if self.model.hasSeparateButtonAction {
+                Button(self.model.buttonTitle) {
+                    self.model.onButtonTap?()
+                }
+            }
+        }
         .modifier(ToastGlassBackground())
         .gesture(dismissDragGesture)
         .onGeometryChange(for: CGRect.self) { geometry in
@@ -37,14 +49,10 @@ struct ToastView: View {
             self.model.visibleFrame = frame
         }
         .offset(y: self.offset)
+        .opacity(self.isVisible ? 1 : 0)
         .accessibilityHidden(offset != kShowOffset)
-        .animation(reduceMotion ? nil : .interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: offset == kShowOffset ? 25 : 0), value: offset)
         .onTapGesture {
-            if let onTap = self.model.onTap {
-                onTap()
-            } else {
-                self.model.onButtonTap?()
-            }
+            self.performTap()
         }
         .onReceive(model.$show) { show in
             withAnimation {
@@ -53,19 +61,57 @@ struct ToastView: View {
         }
     }
 
+    private func announce() {
+        let announcement = NSAttributedString(
+            string: "\(self.model.title). \(self.model.subtitle)",
+            attributes: [.accessibilitySpeechAnnouncementPriority: UIAccessibilityPriority.high]
+        )
+        UIAccessibility.post(notification: .announcement, argument: announcement)
+    }
+
+    private func slideAnimation(initialVelocity: CGFloat) -> Animation? {
+        guard !self.reduceMotion else { return nil }
+        return .interpolatingSpring(mass: 1, stiffness: 200, damping: 30, initialVelocity: initialVelocity)
+    }
+
+    private func hideAfterSlideOut() {
+        guard self.offset == kHideOffset else { return }
+        self.setVisible(false)
+    }
+
+    private func setVisible(_ visible: Bool) {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            self.isVisible = visible
+        }
+    }
+
+    private func performTap() {
+        if let onTap = self.model.onTap {
+            onTap()
+        } else {
+            self.model.onButtonTap?()
+        }
+    }
+
     private func setShow(_ show: Bool) {
         if show && self.offset == kHideOffset {
-            self.offset = kShowOffset
+            self.setVisible(true)
+            withAnimation(self.slideAnimation(initialVelocity: 25)) {
+                self.offset = kShowOffset
+            }
             UINotificationFeedbackGenerator().notificationOccurred(.success)
             if UIAccessibility.isVoiceOverRunning {
-                UIAccessibility.post(
-                    notification: .announcement,
-                    argument: "\(self.model.title). \(self.model.subtitle)"
-                )
+                self.announce()
             }
         }
         else if !show && self.offset == kShowOffset {
-            self.offset = kHideOffset
+            withAnimation(self.slideAnimation(initialVelocity: 0), completionCriteria: .removed) {
+                self.offset = kHideOffset
+            } completion: {
+                self.hideAfterSlideOut()
+            }
             let callback = self.model.onHide
             self.model.onHide = nil
             callback?()
@@ -158,6 +204,7 @@ struct ToastView: View {
         @Published var buttonTitle: String
         @Published var onButtonTap: (() -> ())?
         var onTap: (() -> Void)?
+        private(set) var hasSeparateButtonAction: Bool
         @Published var show: Bool {
             didSet {
                 if show {
@@ -181,6 +228,7 @@ struct ToastView: View {
             self.subtitle = toast.subtitle
             self.buttonTitle = toast.buttonTitle
             self.currentTimeout = toast.timeout
+            self.hasSeparateButtonAction = toast.hasSeparateButtonAction
             self.show = false
             self.onButtonTap = { [weak self] in
                 withAnimation {
@@ -196,6 +244,7 @@ struct ToastView: View {
             self.subtitle = toast.subtitle
             self.buttonTitle = toast.buttonTitle
             self.currentTimeout = toast.timeout
+            self.hasSeparateButtonAction = toast.hasSeparateButtonAction
         }
 
         func setOnButtonTap(_ newOnButtonTap: (() -> ())?) {
@@ -343,9 +392,8 @@ struct ToastView: View {
                 return 3
             case .tipSuccessful:
                 return 6
-            case .tipPromotion:
-                return 10
-            case .enableReportingExtension:
+            case .tipPromotion, .enableReportingExtension:
+                guard !UIAccessibility.isVoiceOverRunning else { return 30 }
                 return 10
             case .filtersImported, .filterImportFailed, .filterExportFailed, .saveFailed:
                 return 6
@@ -386,6 +434,10 @@ struct ToastView: View {
             default:
                 return false
             }
+        }
+
+        var hasSeparateButtonAction: Bool {
+            return self.isTappable && !self.buttonActsAsTap
         }
 
         var confettiTier: TipTier? {

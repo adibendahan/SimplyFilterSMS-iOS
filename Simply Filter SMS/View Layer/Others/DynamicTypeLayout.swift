@@ -111,6 +111,7 @@ struct AdaptiveToggle<Label: View>: View {
                 Toggle(isOn: $isOn) { EmptyView() }
                     .labelsHidden()
             }
+            .accessibilityElement(children: .combine)
             .modifier(AdaptiveStackedRowPadding())
         } else {
             Toggle(isOn: $isOn, label: label)
