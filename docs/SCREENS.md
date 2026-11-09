@@ -8,7 +8,6 @@ One sentence per screen on what it's for and how it's reached, plus the traps th
 The main screen: AI Filtering, the smart rules, and the three user filter lists; everything else opens from its `•••` menu.
 - `refresh()` reloads everything from the managers, and runs on every pop, sheet dismiss and relevant notification.
 - `startMonitoring()` compares the store fingerprint with the UI once on its own, in case a CloudKit import finished before the observers were registered.
-- Notifications that arrive while a sheet is up wait in `pendingNotification`.
 - The What's New sheet is marked seen on any user dismiss, swipe included, but not when a file or deep link replaces it (`isReplacingSheetForLaunch`).
 
 ## EnableExtensionView
