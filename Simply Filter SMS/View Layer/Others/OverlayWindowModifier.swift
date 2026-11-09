@@ -182,11 +182,12 @@ private final class PassthroughWindow: UIWindow {
 }
 
 private struct OverlayWindowContent: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var model: OverlayWindowModifier.ViewModel
 
     var body: some View {
         ZStack(alignment: .top) {
-            if let confettiTier = self.model.confettiTier {
+            if !self.reduceMotion, let confettiTier = self.model.confettiTier {
                 ConfettiView(
                     birthRate: confettiTier.confettiBirthRate,
                     lifetime: confettiTier.confettiLifetime,
