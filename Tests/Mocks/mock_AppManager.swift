@@ -7,12 +7,9 @@
 
 import Foundation
 import XCTest
-import OSLog
 @testable import Simply_Filter_SMS
 
 class mock_AppManager: AppManagerProtocol {
-
-    static var logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "tests")
 
     var persistenceManager: PersistenceManagerProtocol = mock_PersistenceManager()
     var defaultsManager: DefaultsManagerProtocol = mock_DefaultsManager()

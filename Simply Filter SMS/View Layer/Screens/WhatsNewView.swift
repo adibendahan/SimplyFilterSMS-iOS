@@ -122,8 +122,10 @@ extension WhatsNewView {
 
         func markAsSeen() {
             var defaultsManager = self.appManager.defaultsManager
-            guard defaultsManager.lastSeenWhatsNewVersion < currentWhatsNewVersion else { return }
+            let lastSeenVersion = defaultsManager.lastSeenWhatsNewVersion
+            guard lastSeenVersion < currentWhatsNewVersion else { return }
             defaultsManager.lastSeenWhatsNewVersion = currentWhatsNewVersion
+            Log.debug("What's New seen, version: \(lastSeenVersion) → \(currentWhatsNewVersion)")
         }
     }
 }

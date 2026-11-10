@@ -286,6 +286,7 @@ extension AddFilterView {
         @Published var regexTestText = ""
         @Published var isExpanded: Bool {
             didSet {
+                Log.debug("add filter options, expanded: \(oldValue) → \(self.isExpanded)")
                 self.appManager.defaultsManager.isAddFilterExpanded = self.isExpanded
             }
         }

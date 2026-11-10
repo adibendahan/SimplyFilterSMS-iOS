@@ -8,7 +8,6 @@
 import Foundation
 import CoreData
 import IdentityLookup
-import OSLog
 
 enum MessageEvaluationMatch: Equatable {
     case none
@@ -68,5 +67,4 @@ struct MessageEvaluationResult: Equatable {
 protocol MessageEvaluationManagerProtocol {
     var context: NSManagedObjectContext { get }
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult
-    func setLogger(_ logger: Logger)
 }

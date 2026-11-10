@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum Screen: Int, Identifiable, Hashable {
+enum Screen: Int, CaseIterable, Identifiable, Hashable {
     var id: Self { self }
 
     case appHome, onboarding, help, about, enableExtension, filterTester,
@@ -27,10 +27,12 @@ enum Screen: Int, Identifiable, Hashable {
                     steps: Array(EnableFilterExtensionStep.allCases),
                     isInteractiveDismissDisabled: true,
                     onDismiss: {
+                        Log.debug("first run finished by dismissing")
                         var defaultsManager = AppManager.shared.defaultsManager
                         defaultsManager.isAppFirstRun = false
                     },
                     onCTA: {
+                        Log.debug("first run finished by opening Settings")
                         var defaultsManager = AppManager.shared.defaultsManager
                         defaultsManager.isAppFirstRun = false
                         UIApplication.shared.openSettings()

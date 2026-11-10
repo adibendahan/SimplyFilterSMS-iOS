@@ -31,7 +31,7 @@ class UserNotificationCenterService: UserNotificationCenterServiceProtocol {
             return try await self.notificationCenter.requestAuthorization(options: [.alert])
         }
         catch {
-            AppManager.logger.error("requestAlertAuthorization — failed: \(error.localizedDescription, privacy: .public)")
+            Log.error("alert authorization request failed", error: error)
             return false
         }
     }
@@ -39,15 +39,20 @@ class UserNotificationCenterService: UserNotificationCenterServiceProtocol {
     func schedule(_ request: UNNotificationRequest) async {
         do {
             try await self.notificationCenter.add(request)
-            AppManager.logger.debug("schedule — added \(request.identifier, privacy: .public)")
+            let trigger = request.trigger
+            let timeIntervalTrigger = trigger as? UNTimeIntervalNotificationTrigger
+            let calendarTrigger = trigger as? UNCalendarNotificationTrigger
+            let nextFire = timeIntervalTrigger?.nextTriggerDate() ?? calendarTrigger?.nextTriggerDate()
+            Log.debug("notification scheduled, identifier: \(request.identifier), nextFire: \(nextFire), interval: \(duration: timeIntervalTrigger?.timeInterval), repeats: \(trigger?.repeats)")
         }
         catch {
-            AppManager.logger.error("schedule — could not add \(request.identifier, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            Log.error("notification schedule failed, identifier: \(request.identifier)", error: error)
         }
     }
     
     func cancelPendingNotification(withIdentifier identifier: String) {
         self.notificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
+        Log.debug("pending notification cancelled, identifier: \(identifier)")
     }
     
     

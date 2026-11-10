@@ -4,7 +4,6 @@
 //
 
 import StoreKit
-import OSLog
 
 class TipJarManager: TipJarManagerProtocol {
 
@@ -19,11 +18,11 @@ class TipJarManager: TipJarManagerProtocol {
         updatesTask = Task(priority: .background) {
             for await verificationResult in Transaction.updates {
                 guard case .verified(let transaction) = verificationResult else {
-                    AppManager.logger.debug("TipJarManager — unverified transaction update received")
+                    Log.debug("unverified transaction update, product: \(verificationResult.unsafePayloadValue.productID) → skipped")
                     continue
                 }
                 await transaction.finish()
-                AppManager.logger.debug("TipJarManager — finished transaction from updates listener: \(transaction.productID, privacy: .public)")
+                Log.debug("transaction finished, source: 'updates', product: \(transaction.productID)")
             }
         }
 
@@ -38,31 +37,32 @@ class TipJarManager: TipJarManagerProtocol {
     }
 
     func purchase(_ product: Product) async -> TipPurchaseResult {
-        AppManager.logger.debug("TipJarManager — purchase started: \(product.id, privacy: .public)")
+        Log.debug("purchase started, product: \(product.id)")
         do {
             let result = try await product.purchase()
             switch result {
             case .success(let verificationResult):
                 guard case .verified(let transaction) = verificationResult else {
-                    AppManager.logger.error("TipJarManager — purchase verification failed: \(product.id, privacy: .public)")
+                    Log.error("purchase verification failed, product: \(product.id)")
                     return .failure(StoreKitError.notAvailableInStorefront)
                 }
                 await transaction.finish()
                 self.defaultsManager.didTip = true
                 let tier = TipTier(rawValue: product.id) ?? .small
-                AppManager.logger.debug("TipJarManager — purchase successful: \(product.id, privacy: .public)")
+                Log.debug("purchase succeeded, product: \(product.id)")
                 return .success(tier)
             case .userCancelled:
-                AppManager.logger.debug("TipJarManager — purchase cancelled: \(product.id, privacy: .public)")
+                Log.debug("purchase cancelled, product: \(product.id)")
                 return .userCancelled
             case .pending:
-                AppManager.logger.debug("TipJarManager — purchase pending: \(product.id, privacy: .public)")
+                Log.debug("purchase pending, product: \(product.id)")
                 return .pending
             @unknown default:
+                Log.debug("unknown purchase result, product: \(product.id) → treated as cancelled")
                 return .userCancelled
             }
         } catch {
-            AppManager.logger.error("TipJarManager — purchase error: \(error.localizedDescription, privacy: .public)")
+            Log.error("purchase failed, product: \(product.id)", error: error)
             return .failure(error)
         }
     }
@@ -71,9 +71,12 @@ class TipJarManager: TipJarManagerProtocol {
 
     private func finishUnfinishedTransactions() async {
         for await verificationResult in Transaction.unfinished {
-            guard case .verified(let transaction) = verificationResult else { continue }
+            guard case .verified(let transaction) = verificationResult else {
+                Log.debug("unverified unfinished transaction, product: \(verificationResult.unsafePayloadValue.productID) → skipped")
+                continue
+            }
             await transaction.finish()
-            AppManager.logger.debug("TipJarManager — finished unfinished transaction: \(transaction.productID, privacy: .public)")
+            Log.debug("transaction finished, source: 'unfinished', product: \(transaction.productID)")
         }
     }
 
@@ -84,9 +87,9 @@ class TipJarManager: TipJarManagerProtocol {
             await MainActor.run {
                 products = sorted
             }
-            AppManager.logger.debug("TipJarManager — fetched \(fetched.count, privacy: .public) products")
+            Log.debug("products fetched, products: \(sorted.map(\.id))")
         } catch {
-            AppManager.logger.error("TipJarManager — failed to fetch products: \(error.localizedDescription, privacy: .public)")
+            Log.error("products fetch failed", error: error)
         }
         await MainActor.run {
             isLoadingProducts = false

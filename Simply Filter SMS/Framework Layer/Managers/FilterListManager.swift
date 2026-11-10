@@ -120,8 +120,8 @@ class FilterListManager: FilterListManagerProtocol {
     
     func setFilterListActive(for language: NLLanguage, value: Bool) {
         guard let persistenceManager = self.persistenceManager else { return }
-        AppManager.logger.debug("setFilterListActive — '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(value, privacy: .public)")
         let automaticFiltersLanguage = persistenceManager.ensuredAutomaticFiltersLanguageRecord(for: language)
+        Log.debug("language changed, language: \(language.rawValue), active: \(automaticFiltersLanguage.isActive) → \(value)")
         automaticFiltersLanguage.isActive = value
         _ = persistenceManager.commitAndAnnounce()
     }
@@ -137,11 +137,11 @@ class FilterListManager: FilterListManagerProtocol {
     @MainActor
     func updateFilterListsWhenOnline() {
         guard !ProcessInfo.processInfo.isInTestingMode else {
-            AppManager.logger.debug("updateFilterListsWhenOnline — testing mode, keeping the seeded filter lists")
+            Log.debug("testing mode → skipped")
             return
         }
         guard !self.didCheckFilterListsToday else {
-            AppManager.logger.debug("updateFilterListsWhenOnline — today's check already succeeded")
+            Log.debug("already checked today, lastCheck: \(self.filterListsLastUpdated) → skipped")
             return
         }
         self.isFilterListsUpdateInProgress = true
@@ -149,7 +149,7 @@ class FilterListManager: FilterListManagerProtocol {
             MainActor.assumeIsolated {
                 guard let self else { return }
                 guard self.networkSyncManager?.networkStatus == .online else {
-                    AppManager.logger.debug("updateFilterListsWhenOnline — offline, checking once back online")
+                    Log.debug("offline → waiting to be back online")
                     self.finishFilterListsUpdate()
                     self.updateFilterListsOnNextOnline()
                     return
@@ -188,7 +188,7 @@ class FilterListManager: FilterListManagerProtocol {
                 guard let networkStatus = notification.object as? NetworkStatus, networkStatus == .online else { continue }
                 guard let self else { return }
                 self.networkStatusTask = nil
-                AppManager.logger.debug("updateFilterListsOnNextOnline — back online")
+                Log.debug("back online → refreshing")
                 self.updateFilterListsInBackground()
                 return
             }
@@ -206,7 +206,6 @@ class FilterListManager: FilterListManagerProtocol {
 
     @MainActor
     private func updateFilterListsInBackground() {
-        AppManager.logger.debug("updateFilterListsInBackground — triggering automatic filter update check")
         Task(priority: .background) {
             await self.refreshFilterLists()
         }
@@ -215,15 +214,12 @@ class FilterListManager: FilterListManagerProtocol {
     @MainActor
     func refreshFilterLists() async {
         if let refreshTask = self.refreshTask {
-            AppManager.logger.debug("refreshFilterLists — joining the refresh in progress")
+            Log.debug("refresh in progress → joining")
             await refreshTask.value
             return
         }
-        var cacheAgeDescription = "none"
-        if let cacheAge = self.filterListsLastUpdated {
-            cacheAgeDescription = "\(cacheAge.daysBetween(date: Date()))d"
-        }
-        AppManager.logger.debug("refreshFilterLists — fetching | cache age: \(cacheAgeDescription, privacy: .public)")
+        let cacheAgeDays = self.filterListsLastUpdated?.daysBetween(date: Date())
+        Log.debug("refreshing, cacheAgeDays: \(cacheAgeDays)")
         let refreshTask = Task { await self.performRefresh() }
         self.refreshTask = refreshTask
         await refreshTask.value
@@ -243,24 +239,23 @@ class FilterListManager: FilterListManagerProtocol {
         let refreshedSnapshot = FilterListsSnapshot(catalogETag: catalogETag, catalog: catalog, lists: revalidatedLists)
         let hasSnapshotChanged = refreshedSnapshot != cachedSnapshot
         let hasNewFilters = Self.hasNewFilters(from: cachedSnapshot, to: refreshedSnapshot)
-        AppManager.logger.debug("performRefresh — lists: \(revalidatedLists.count, privacy: .public), changed: \(hasSnapshotChanged, privacy: .public), new filters: \(hasNewFilters, privacy: .public), failures: \(hasFailedLists, privacy: .public)")
+        Log.debug("refreshed, lists: \(revalidatedLists.count), changed: \(hasSnapshotChanged), newFilters: \(hasNewFilters), failures: \(hasFailedLists)")
 
         guard hasSnapshotChanged else {
             if !hasFailedLists {
-                AppManager.logger.debug("performRefresh — no changes, touching the cache age")
+                Log.debug("no changes → cache age touched")
                 persistenceManager.touchCache()
             }
             else {
-                AppManager.logger.debug("performRefresh — no changes but some lists failed, leaving the cache age alone")
+                Log.debug("no changes, some lists failed → cache age kept")
             }
             return
         }
         guard persistenceManager.saveCache(refreshedSnapshot) else {
-            AppManager.logger.error("performRefresh — saving the cache failed")
+            Log.error("saving the cache failed")
             return
         }
         if hasNewFilters {
-            AppManager.logger.debug("performRefresh — posting filterListsUpdated")
             NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
         }
     }
@@ -273,17 +268,19 @@ class FilterListManager: FilterListManagerProtocol {
 
         switch catalogResponse {
         case .modified(let downloadedCatalog, let downloadedETag):
+            Log.debug("catalog downloaded, lists: \(downloadedCatalog.lists.count), sentETag: \(cachedSnapshot?.catalogETag), newETag: \(downloadedETag)")
             catalog = downloadedCatalog
             catalogETag = downloadedETag
         case .notModified:
             guard let cachedSnapshot = cachedSnapshot else {
-                AppManager.logger.debug("performRefresh — catalog not modified but there is no readable cache, stopping")
+                Log.debug("catalog not modified, cache unreadable → stopped")
                 return nil
             }
+            Log.debug("catalog not modified")
             catalog = cachedSnapshot.catalog
             catalogETag = cachedSnapshot.catalogETag
         case nil:
-            AppManager.logger.debug("performRefresh — catalog fetch failed, keeping the cache")
+            Log.debug("catalog fetch failed → kept the cache")
             return nil
         }
 
@@ -298,8 +295,14 @@ class FilterListManager: FilterListManagerProtocol {
         var hasFailedLists = false
 
         for catalogEntry in catalog.lists {
-            guard let listURL = catalogEntry.resolvedURL,
-                  !requestedURLs.contains(listURL) else { continue }
+            guard let listURL = catalogEntry.resolvedURL else {
+                Log.debug("catalog entry has no valid url, list: \(catalogEntry.id), url: \(catalogEntry.url) → skipped")
+                continue
+            }
+            guard !requestedURLs.contains(listURL) else {
+                Log.debug("catalog entry repeats a url, list: \(catalogEntry.id), url: \(listURL) → skipped")
+                continue
+            }
             requestedURLs.insert(listURL)
 
             let cachedSection = cachedSnapshot?.lists.first(where: { $0.url == listURL.absoluteString })
@@ -311,22 +314,18 @@ class FilterListManager: FilterListManagerProtocol {
             case .modified(let downloadedList, let downloadedETag):
                 let downloadedSection = FilterListsCacheSection(url: listURL.absoluteString, etag: downloadedETag, payload: downloadedList)
                 revalidatedLists.append(downloadedSection)
-                var revisionDescription = "none"
-                if let revision = downloadedList.revision {
-                    revisionDescription = "\(revision)"
-                }
-                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): downloaded | revision: \(revisionDescription, privacy: .public), records: \(downloadedList.filters.count, privacy: .public)")
+                Log.debug("list downloaded, list: \(listName), revision: \(downloadedList.revision), records: \(downloadedList.filters.count), sentETag: \(cachedSection?.etag), newETag: \(downloadedETag)")
             case .notModified:
                 if let cachedSection = cachedSection {
                     revalidatedLists.append(cachedSection)
                 }
-                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): not modified | kept cached: \(hasCachedSection, privacy: .public)")
+                Log.debug("list not modified, list: \(listName), cached: \(hasCachedSection)")
             case nil:
                 hasFailedLists = true
                 if let cachedSection = cachedSection {
                     revalidatedLists.append(cachedSection)
                 }
-                AppManager.logger.debug("performRefresh — \(listName, privacy: .public): failed | kept cached: \(hasCachedSection, privacy: .public)")
+                Log.debug("list fetch failed, list: \(listName), cached: \(hasCachedSection)")
             }
         }
 

@@ -151,7 +151,14 @@ extension ChooseAccentColorView {
             var blue: CGFloat = 0
             var alpha: CGFloat = 0
             if color.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
-                self.defaultsManager.accentColorRGB = ["red": Double(red), "green": Double(green), "blue": Double(blue)]
+                let pickedRGB = ["red": Double(red), "green": Double(green), "blue": Double(blue)]
+                if pickedRGB != self.defaultsManager.accentColorRGB {
+                    self.defaultsManager.accentColorRGB = pickedRGB
+                    Log.debug("accent color picked, red: \(Double(red)), green: \(Double(green)), blue: \(Double(blue))")
+                }
+            }
+            else {
+                Log.debug("accent color has no RGB components → not saved")
             }
             self.onAccentChanged?(Color(uiColor: color))
         }
@@ -160,6 +167,7 @@ extension ChooseAccentColorView {
             self.pickerColor = .systemBlue
             self.hasCustomColor = false
             self.defaultsManager.accentColorRGB = kNoColorDict
+            Log.debug("accent color reset")
             self.onAccentChanged?(nil)
         }
     }

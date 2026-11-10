@@ -26,16 +26,15 @@ class FilterListService: HTTPServiceBase, FilterListServiceProtocol {
         let request = FilterListRequest(url: url, etag: etag)
 
         return await self.fetch(request: request, decode: { data in
-            return try? FilterExportPayload(data: data)
+            return try FilterExportPayload(data: data)
         })
     }
 
     //MARK: - Private -
-    private func fetch<T>(request: URLRequestProtocol, decode: (Data) -> T?) async -> FetchResult<T>? {
+    private func fetch<T>(request: URLRequestProtocol, decode: (Data) throws -> T?) async -> FetchResult<T>? {
         let requestURL = request.url
-        let didSendETag = request.headers["If-None-Match"] != nil
         guard self.networkSyncManager?.networkStatus == .online else {
-            AppManager.logger.debug("fetch — skipped (offline): \(requestURL.lastPathComponent, privacy: .public)")
+            Log.debug("offline, url: \(requestURL.absoluteString) → skipped")
             return nil
         }
         do {
@@ -43,20 +42,17 @@ class FilterListService: HTTPServiceBase, FilterListServiceProtocol {
 
             switch fetchResult {
             case .notModified:
-                AppManager.logger.debug("fetch — not modified: \(requestURL.lastPathComponent, privacy: .public) | sent ETag: \(didSendETag, privacy: .public)")
                 return .notModified
 
             case .modified(let responseData, let newETag):
-                guard let decodedResponse = decode(responseData) else {
-                    AppManager.logger.error("ERROR! While decoding \(requestURL.absoluteString, privacy: .public)")
+                guard let decodedResponse = try decode(responseData) else {
+                    Log.error("response doesn't decode, url: \(requestURL.absoluteString), bytes: \(responseData.count)")
                     return nil
                 }
-                AppManager.logger.debug("fetch — modified: \(requestURL.lastPathComponent, privacy: .public) | sent ETag: \(didSendETag, privacy: .public), new ETag: \(newETag ?? "none", privacy: .public)")
                 return .modified(decodedResponse, etag: newETag)
             }
-        } catch (let error) {
-            let nsError = error as NSError
-            AppManager.logger.error("ERROR! While fetching \(requestURL.absoluteString, privacy: .public): \(nsError), \(nsError.userInfo)")
+        } catch {
+            Log.error("fetch failed, url: \(requestURL.absoluteString)", error: error)
             return nil
         }
     }

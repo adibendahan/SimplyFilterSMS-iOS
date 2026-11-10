@@ -8,12 +8,10 @@
 import Foundation
 import NaturalLanguage
 import Network
-import OSLog
 import UIKit
 
 class AppManager: AppManagerProtocol {
     static let shared: AppManagerProtocol = AppManager()
-    static let logger: Logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "main")
     
     var persistenceManager: PersistenceManagerProtocol
     var defaultsManager: DefaultsManagerProtocol
@@ -36,9 +34,7 @@ class AppManager: AppManagerProtocol {
         let networkSyncManager = NetworkSyncManager(persistenceManager: persistenceManager)
         let filterListService = FilterListService(networkSyncManager: networkSyncManager)
         let reportMessageService = ReportMessageService(networkSyncManager: networkSyncManager)
-        
-        messageEvaluationManager.setLogger(AppManager.logger)
-        
+
         let filterListManager = FilterListManager(persistenceManager: persistenceManager,
                                                   filterListService: filterListService,
                                                   networkSyncManager: networkSyncManager)
@@ -98,6 +94,7 @@ class AppManager: AppManagerProtocol {
                                                     lists: catalogEntries)
             let testingSnapshot = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: cacheSections)
             _ = persistenceManager.saveCache(testingSnapshot)
+            Log.debug("testing mode, emptyAIListsSeeded: \(cacheSections.count) → data reset")
             defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
         }
         #endif // DEBUG
@@ -106,7 +103,7 @@ class AppManager: AppManagerProtocol {
     @MainActor
     func onAppLaunch() {
         let _ = self.defaultsManager.installDate // make sure it's initialized
-        AppManager.logger.debug("onAppLaunch — session #\(self.defaultsManager.sessionCounter, privacy: .public), installDate: \(self.defaultsManager.installDate, privacy: .public)")
+        Log.debug("launched, version: \(appVersion), lastSession: \(self.defaultsManager.sessionCounter), installed: \(self.defaultsManager.installDate)")
         self.schedulingManager.scheduleFilterListsProcessing()
     }
 
@@ -114,18 +111,18 @@ class AppManager: AppManagerProtocol {
     func onAppBecameActive() -> Bool {
         if let sessionStartDate = self.defaultsManager.sessionStartDate {
             if sessionStartDate.daysBetween(date: Date()) != 0 {
-                AppManager.logger.debug("onAppBecameActive — new day detected, starting new session")
+                Log.debug("new day → new session")
                 self.onNewUserSession()
                 return true
             }
             else {
-                AppManager.logger.debug("onAppBecameActive — same day, skipping new session")
+                Log.debug("same day, session: \(self.defaultsManager.sessionCounter) → continues")
                 self.filterListManager.updateFilterListsWhenOnline()
                 return false
             }
         }
         else {
-            AppManager.logger.debug("onAppBecameActive — sessionStartDate not set, starting new session")
+            Log.debug("first activation since launch → new session")
             self.onNewUserSession()
             return true
         }
@@ -135,16 +132,18 @@ class AppManager: AppManagerProtocol {
     func onNewUserSession() {
         self.defaultsManager.sessionCounter += 1
         self.defaultsManager.sessionStartDate = Date()
-        AppManager.logger.debug("onNewUserSession — session #\(self.defaultsManager.sessionCounter, privacy: .public)")
+        Log.debug("session started, session: \(self.defaultsManager.sessionCounter)")
         self.filterListManager.updateFilterListsWhenOnline()
     }
     
     #if DEBUG
     func loadDebugData() {
+        Log.debug("loading debug data")
         debugDataManager.load()
     }
 
     func reset() {
+        Log.debug("resetting all data")
         self.defaultsManager.reset()
         self.persistenceManager.clearAllUserData()
         _ = self.filterTransferManager.clearPendingImport()

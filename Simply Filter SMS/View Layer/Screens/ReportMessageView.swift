@@ -196,8 +196,9 @@ extension ReportMessageView {
                                                            type: self.selectedReport.type)
                 async let apiCall = self.appManager.reportMessageService.reportMessage(reportMessageRequestBody: requestBody)
                 async let minDelay: Void = Task.sleep(nanoseconds: 1_500_000_000)
-                _ = await apiCall
+                let didSend = await apiCall
                 try? await minDelay
+                Log.debug("report finished, sent: \(didSend) → thank you shown")
                 DispatchQueue.main.async {
                     withAnimation {
                         self.state = .result("reportMessage_thankYou"~)

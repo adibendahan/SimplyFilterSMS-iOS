@@ -8,23 +8,14 @@
 import IdentityLookup
 import CoreData
 import NaturalLanguage
-import OSLog
 
 final class MessageFilterExtension: ILMessageFilterExtension {
-    lazy var logger: Logger = {
-        return Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "extension")
-    }()
-
     override init() {
         super.init()
-        logger.debug("Extension loaded")
+        Log.debug("loaded")
     }
 
-    lazy var extensionManager: MessageEvaluationManagerProtocol = {
-        let messageEvaluationManager = MessageEvaluationManager()
-        messageEvaluationManager.setLogger(self.logger)
-        return messageEvaluationManager
-    }()
+    lazy var extensionManager: MessageEvaluationManagerProtocol = MessageEvaluationManager()
 }
 
 extension MessageFilterExtension: ILMessageFilterCapabilitiesQueryHandling {
@@ -48,9 +39,8 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
     private func offlineAction(for queryRequest: ILMessageFilterQueryRequest) -> ILMessageFilterAction {
         let body = queryRequest.messageBody ?? ""
         let sender = queryRequest.sender ?? ""
-        logger.debug("▶▶▶ Query received | sender: '\(sender, privacy: .public)' | body: '\(body, privacy: .public)'")
+        Log.debug("query received from iOS")
         let result = self.extensionManager.evaluateMessage(body: body, sender: sender)
-        logger.debug("◀◀◀ Extension response: \(result.action.logName, privacy: .public) | reason: '\(result.reason ?? "none", privacy: .public)'")
         return result.action
     }
 }

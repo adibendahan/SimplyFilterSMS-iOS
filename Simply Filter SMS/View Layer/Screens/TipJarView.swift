@@ -177,6 +177,7 @@ extension TipJarView {
         @MainActor
         func purchase(_ product: Product) async {
             guard let tier = TipTier(rawValue: product.id) else {
+                Log.fault("product has no tip tier, product: \(product.id) → error shown")
                 purchaseState = .error
                 return
             }

@@ -33,25 +33,42 @@ extension FilterListsSnapshot {
     init?(encoded: String) {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        guard let jsonData = encoded.data(using: .utf8),
-              let snapshot = try? decoder.decode(Self.self, from: jsonData) else { return nil }
-
-        self = snapshot
+        let jsonData = Data(encoded.utf8)
+        do {
+            self = try decoder.decode(Self.self, from: jsonData)
+        } catch {
+            Log.error("snapshot doesn't decode, bytes: \(jsonData.count)", error: error)
+            return nil
+        }
     }
 
     var encoded: String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         encoder.dateEncodingStrategy = .iso8601
-        guard let jsonData = try? encoder.encode(self) else { return nil }
-        return String(data: jsonData, encoding: .utf8)
+        do {
+            let jsonData = try encoder.encode(self)
+            return String(decoding: jsonData, as: UTF8.self)
+        } catch {
+            Log.error("snapshot doesn't encode, lists: \(self.lists.count)", error: error)
+            return nil
+        }
     }
 }
 
 extension FilterListsSnapshot {
     init?(legacyEncoded: String) {
-        guard let legacyJSON = Data(base64Encoded: legacyEncoded, options: .ignoreUnknownCharacters),
-              let legacyFilterLists = try? JSONDecoder().decode(LegacyFilterLists.self, from: legacyJSON) else { return nil }
+        guard let legacyJSON = Data(base64Encoded: legacyEncoded, options: .ignoreUnknownCharacters) else {
+            Log.error("3.2 cache isn't base64, characters: \(legacyEncoded.count)")
+            return nil
+        }
+        let legacyFilterLists: LegacyFilterLists
+        do {
+            legacyFilterLists = try JSONDecoder().decode(LegacyFilterLists.self, from: legacyJSON)
+        } catch {
+            Log.error("3.2 cache doesn't decode, bytes: \(legacyJSON.count)", error: error)
+            return nil
+        }
 
         var catalogEntries: [FilterListCatalogEntry] = []
         var cacheSections: [FilterListsCacheSection] = []
@@ -83,17 +100,20 @@ extension FilterListsSnapshot {
 
 extension FilterListCatalogResponse {
     init?(encodedCache: String) {
-        guard let jsonData = encodedCache.data(using: .utf8),
-              let cachedCatalog = try? JSONDecoder().decode(CachedCatalog.self, from: jsonData) else { return nil }
-
-        self = cachedCatalog.catalog
+        let jsonData = Data(encodedCache.utf8)
+        do {
+            self = try JSONDecoder().decode(CachedCatalog.self, from: jsonData).catalog
+        } catch {
+            Log.error("cached catalog doesn't decode, bytes: \(jsonData.count)", error: error)
+            return nil
+        }
     }
 }
 
 extension ActiveFilterLists {
     init?(encoded: String, activeLanguages: Set<String>) {
-        guard let catalog = FilterListCatalogResponse(encodedCache: encoded),
-              let jsonData = encoded.data(using: .utf8) else { return nil }
+        guard let catalog = FilterListCatalogResponse(encodedCache: encoded) else { return nil }
+        let jsonData = Data(encoded.utf8)
 
         var namesByURL: [String: String] = [:]
         for catalogEntry in catalog.lists {
@@ -104,7 +124,13 @@ extension ActiveFilterLists {
 
         let decoder = JSONDecoder()
         decoder.userInfo[.activeURLs] = Set(namesByURL.keys)
-        guard let cachedLists = try? decoder.decode(CachedLists.self, from: jsonData) else { return nil }
+        let cachedLists: CachedLists
+        do {
+            cachedLists = try decoder.decode(CachedLists.self, from: jsonData)
+        } catch {
+            Log.error("cached lists don't decode, bytes: \(jsonData.count)", error: error)
+            return nil
+        }
 
         var activeLists: [ActiveFilterList] = []
         for cachedList in cachedLists.lists {

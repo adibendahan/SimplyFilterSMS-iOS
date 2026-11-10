@@ -571,6 +571,9 @@ extension AppHomeView {
         let overlayWindow: OverlayWindowModifier.ViewModel
         @Published var navigationScreen: Screen? = nil {
             didSet {
+                if oldValue != self.navigationScreen {
+                    Log.debug("navigation changed, screen: \(oldValue) → \(self.navigationScreen)")
+                }
                 if oldValue != nil,
                    self.navigationScreen == nil {
                     if !self.tryRequestReview() {
@@ -587,7 +590,12 @@ extension AppHomeView {
                 }
             }
         }
-        var pendingScreenAfterDismiss: Screen?
+        var pendingScreenAfterDismiss: Screen? {
+            didSet {
+                guard oldValue != self.pendingScreenAfterDismiss else { return }
+                Log.debug("screen after dismiss, screen: \(oldValue) → \(self.pendingScreenAfterDismiss)")
+            }
+        }
         @Published var showNothingToImportAlert = false {
             didSet {
                 if oldValue && !self.showNothingToImportAlert {
@@ -668,15 +676,19 @@ extension AppHomeView {
         }
 
         func handleDeepLink(url: URL) {
+            Log.debug("url opened, url: \(url)")
             if self.appManager.filterTransferManager.isExportFile(url) {
                 self.importFromFileURL(url)
                 return
             }
 
-            if url.scheme == "simplyfiltersms",
-               let host = url.host,
-               let screen = Screen.fromDeepLink(host: host),
-               self.appManager.flowManager.recordLaunch(screen) {
+            guard url.scheme == "simplyfiltersms",
+                  let host = url.host,
+                  let screen = Screen.fromDeepLink(host: host) else {
+                Log.debug("url not recognized, scheme: \(url.scheme), host: \(url.host) → ignored")
+                return
+            }
+            if self.appManager.flowManager.recordLaunch(screen) {
                 self.presentLaunch()
             }
         }
@@ -687,6 +699,7 @@ extension AppHomeView {
         }
 
         func beginFileImport() {
+            Log.debug("file picker opened")
             self.isImportingFile = false
             DispatchQueue.main.async {
                 self.isImportingFile = true
@@ -701,16 +714,19 @@ extension AppHomeView {
             case .failure(let error):
                 let nsError = error as NSError
                 if nsError.domain == NSCocoaErrorDomain && nsError.code == NSUserCancelledError {
+                    Log.debug("file picker cancelled")
                     return
                 }
-                AppManager.logger.error("importFilters — picker failed: \(error.localizedDescription, privacy: .public)")
+                Log.error("file picker failed", error: error)
                 self.appManager.flowManager.requestToast(.filterImportFailed)
 
             case .success(let urls):
                 guard let url = urls.first else {
+                    Log.error("file picker returned no file")
                     self.appManager.flowManager.requestToast(.filterImportFailed)
                     return
                 }
+                Log.debug("file picked, file: \(url.lastPathComponent)")
                 self.importFromFileURL(url)
             }
         }
@@ -720,6 +736,7 @@ extension AppHomeView {
         }
 
         private func importFromFileURL(_ url: URL) {
+            Log.debug("importing, file: \(url.lastPathComponent)")
             do {
                 let data = try self.appManager.filterTransferManager.readFile(at: url)
                 _ = try self.appManager.filterTransferManager.queueImport(data: data)
@@ -727,7 +744,7 @@ extension AppHomeView {
                     self.presentLaunch(preservingImportSession: true)
                 }
             } catch {
-                AppManager.logger.error("importFilters — could not read file: \(url.lastPathComponent, privacy: .public)")
+                Log.error("import failed, file: \(url.lastPathComponent)", error: error)
                 self.appManager.flowManager.requestToast(.filterImportFailed)
             }
         }
@@ -755,13 +772,17 @@ extension AppHomeView {
         }
 
         func presentNextScreen() {
-            guard !self.isReplacingSheetForLaunch else { return }
+            guard !self.isReplacingSheetForLaunch else {
+                Log.debug("sheet being replaced for launch → skipped")
+                return
+            }
             guard let screen = self.appManager.flowManager.nextScreen() else {
                 self.appManager.flowManager.showWaitingNudge()
                 return
             }
             if screen == .filterImport,
                self.appManager.filterTransferManager.pendingPreview.count == 0 {
+                Log.debug("import has no filters → nothing-to-import alert")
                 _ = self.appManager.filterTransferManager.clearPendingImport()
                 self.appManager.flowManager.completeScreen(.filterImport)
                 self.showNothingToImportAlert = true
@@ -795,8 +816,10 @@ extension AppHomeView {
 
         private func markWhatsNewSeen() {
             var defaultsManager = self.appManager.defaultsManager
-            guard defaultsManager.lastSeenWhatsNewVersion < currentWhatsNewVersion else { return }
+            let lastSeenVersion = defaultsManager.lastSeenWhatsNewVersion
+            guard lastSeenVersion < currentWhatsNewVersion else { return }
             defaultsManager.lastSeenWhatsNewVersion = currentWhatsNewVersion
+            Log.debug("What's New seen, version: \(lastSeenVersion) → \(currentWhatsNewVersion)")
         }
 
         private func presentLaunch(preservingImportSession: Bool = false) {
@@ -828,10 +851,12 @@ extension AppHomeView {
             let hasSheet = self.sheetScreen != nil
 
             guard hasSheet, !isBlockingFirstRun else {
+                Log.debug("launch, sheet: \(self.sheetScreen), blockingFirstRun: \(isBlockingFirstRun) → presenting next")
                 self.presentNextScreen()
                 return
             }
 
+            Log.debug("launch, sheet: \(self.sheetScreen) → replacing the sheet")
             self.isReplacingSheetForLaunch = true
             self.sheetScreen = nil
         }
@@ -875,7 +900,7 @@ extension AppHomeView {
         private func catchUpFromStoreIfNeeded() {
             let currentFingerprint = self.appManager.persistenceManager.fingerprint
             guard currentFingerprint != self.lastUIFingerprint else { return }
-            AppManager.logger.debug("AppHome — store ahead of UI, catching up")
+            Log.debug("store ahead of the UI → refreshing")
             self.refresh()
         }
 
@@ -888,9 +913,13 @@ extension AppHomeView {
         func tryShowInactivityNotification() {
             Task { @MainActor [weak self] in
                 guard let self,
-                      await self.appManager.schedulingManager.shouldShowInactivityNotificationAlert(),
-                      self.isHomeIdle else { return }
+                      await self.appManager.schedulingManager.shouldShowInactivityNotificationAlert() else { return }
+                guard self.isHomeIdle else {
+                    Log.debug("Home busy → inactivity alert skipped")
+                    return
+                }
 
+                Log.debug("inactivity alert shown")
                 self.showInactivityNotificationAlert = true
             }
         }
@@ -907,15 +936,24 @@ extension AppHomeView {
 
         func tryRequestReview() -> Bool {
             var defaultsManager = self.appManager.defaultsManager
-            guard !defaultsManager.didPromptForReview,
-                  defaultsManager.installDate.daysBetween(date: Date()) > 7,
-                  defaultsManager.sessionCounter > 5,
-                  let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else {
+            let didPrompt = defaultsManager.didPromptForReview
+            let daysSinceInstall = defaultsManager.installDate.daysBetween(date: Date())
+            let session = defaultsManager.sessionCounter
+            guard !didPrompt,
+                  daysSinceInstall > 7,
+                  session > 5 else {
+                Log.debug("not eligible, prompted: \(didPrompt), daysSinceInstall: \(daysSinceInstall), session: \(session) → skipped")
+                return false
+            }
+
+            guard let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else {
+                Log.debug("no active scene → skipped")
                 return false
             }
 
             SKStoreReviewController.requestReview(in: scene)
             defaultsManager.didPromptForReview = true
+            Log.debug("review requested, daysSinceInstall: \(daysSinceInstall), session: \(session)")
             return true
         }
         

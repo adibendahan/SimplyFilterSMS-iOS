@@ -16,6 +16,7 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - [docs/SCREENS.md](docs/SCREENS.md) — one sentence per screen, plus its traps
 - [docs/EXTENSION.md](docs/EXTENSION.md) — Message Filter and Reporting extension constraints
 - [docs/TESTS.md](docs/TESTS.md) — running tests, mock conventions, the screenshot target
+- [docs/LOGGING.md](docs/LOGGING.md) — the log line convention and the keep/drop checklist; every new code path follows it
 - [docs/DESIGN.md](docs/DESIGN.md) — design principles and the accent-color rules
 - [docs/AWS_SETUP.md](docs/AWS_SETUP.md) — the reporting backend and S3 hosting of the AI Filtering lists
 - [docs/localization/](docs/localization/) — per-language translation guides used by `/add-language`
@@ -50,7 +51,7 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - **Enums over structs for constant data:** `CaseIterable` enums with computed properties (see `FilterType`, `SmartFilterType`, `WhatsNewEntry`).
 - **Extensions over repeated conditionals:** e.g. `element.conditionalTap(!isPad)` instead of `if !isPad { element.tap() }` at every call site.
 - **Naming:** `*Protocol`, `mock_*` (one per protocol in `Tests/Mocks/`), `*Manager`, `*View`.
-- **Logging:** `AppManager.logger`; the extension has its own.
+- **Logging:** only `Log.debug` / `Log.error` / `Log.fault`, never `Logger` or `print`. Every new code path is logged by [docs/LOGGING.md](docs/LOGGING.md).
 - **Core Data model:** `Resources/Simply-Filter-SMS.xcdatamodeld`; Int64 raw values mapped to enums in `SharedExtensions.swift`. **After any model change, deploy the CloudKit schema to production** (CloudKit Console → Schema → Deploy to Production) before release: development auto-evolves, production doesn't, and a missing field silently stops syncing in TestFlight/App Store only. Check the diff first: a record type deployed to production can never be removed.
 - **In-memory stores never sync** (`cloudKitContainerOptions = nil`). With mirroring on, a save in an isolated test run throws `No eligible connection available`.
 - **Renames never touch stored names:** a Core Data entity or attribute (`AutomaticFiltersRule`, `age`…) and the background task identifier keep their strings when the Swift name around them changes; changing one loses users' data or breaks sync. A `@StoredDefault` key is renamed only by adding the old→new pair to `DefaultsManager.migrateRenamedKeys()`.

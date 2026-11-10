@@ -28,7 +28,6 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     func writeExportFile(candidates: [FilterTransferCandidate]) throws -> URL {
         let exportRecords = candidates.map({ self.record(from: $0) })
         let data = try self.encodePayload(records: exportRecords)
-        AppManager.logger.debug("writeExportFile — records: \(exportRecords.count, privacy: .public), size: \(data.count, privacy: .public) bytes")
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -37,6 +36,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         let filename = "SimplyFilterSMS-filters-\(formatter.string(from: Date())).\(kFilterExportFileExtension)"
         let url = self.fileManager.temporaryDirectory.appendingPathComponent(filename)
         try data.write(to: url, options: .atomic)
+        Log.debug("export file written, records: \(exportRecords.count), bytes: \(data.count), file: \(filename)")
         self.pendingExportURL = url
         return url
     }
@@ -47,7 +47,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                           duplicateCount: 0,
                                           invalidCount: 0,
                                           forceClearTypes: [])
-        AppManager.logger.debug("queueExport — exportable filters: \(preview.candidates.count, privacy: .public)")
+        Log.debug("export queued, filters: \(preview.candidates.count), storeFilters: \(self.persistenceManager.fetchFilterRecords().count)")
         self.pendingPreview = preview
         self.pendingKind = .exportFilters
         return preview
@@ -62,9 +62,18 @@ class FilterTransferManager: FilterTransferManagerProtocol {
     }
 
     func deleteExportFile(at url: URL) {
-        guard self.isExportFile(url) else { return }
-        guard url.path.hasPrefix(self.fileManager.temporaryDirectory.path) else { return }
-        try? self.fileManager.removeItem(at: url)
+        let isExportFile = self.isExportFile(url)
+        let isTemporary = url.path.hasPrefix(self.fileManager.temporaryDirectory.path)
+        guard isExportFile, isTemporary else {
+            Log.debug("export file kept, file: \(url.lastPathComponent), exportFile: \(isExportFile), temporary: \(isTemporary)")
+            return
+        }
+        do {
+            try self.fileManager.removeItem(at: url)
+            Log.debug("export file deleted, file: \(url.lastPathComponent)")
+        } catch {
+            Log.error("could not delete the export file, file: \(url.lastPathComponent)", error: error)
+        }
     }
 
     func isExportFile(_ url: URL) -> Bool {
@@ -82,6 +91,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         do {
             return try Data(contentsOf: url)
         } catch {
+            Log.error("could not read the file, file: \(url.lastPathComponent), securityScoped: \(accessed)", error: error)
             throw FilterTransferError.invalidFile
         }
     }
@@ -97,11 +107,13 @@ class FilterTransferManager: FilterTransferManagerProtocol {
 
         for record in payload.filters {
             if let recordType = FilterType(exportKey: record.type), !recordType.isTransferable {
+                Log.debug("record not transferable, text: \(record.text), type: \(record.type) → skipped")
                 skippedCount += 1
                 continue
             }
 
             guard let candidate = FilterTransferCandidate(record: record), candidate.isImportable else {
+                Log.debug("record invalid, text: \(record.text), type: \(record.type) → skipped")
                 invalidCount += 1
                 continue
             }
@@ -113,6 +125,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                                           filterMatching: candidate.filterMatching,
                                                           filterCase: candidate.filterCase)
             if seenKeys.contains(key) || isStoreDuplicate {
+                Log.debug("record duplicate, text: \(candidate.text), inFile: \(seenKeys.contains(key)), inStore: \(isStoreDuplicate) → skipped")
                 duplicateCount += 1
                 continue
             }
@@ -121,8 +134,8 @@ class FilterTransferManager: FilterTransferManagerProtocol {
             accepted.append(candidate)
         }
 
-        let forceClearDescription = typesToClear.map(\.exportKey).sorted().joined(separator: ", ")
-        AppManager.logger.debug("previewImport — appVersion: \(payload.appVersion, privacy: .public), records: \(payload.filters.count, privacy: .public), accepted: \(accepted.count, privacy: .public), duplicates: \(duplicateCount, privacy: .public), invalid: \(invalidCount, privacy: .public), skipped (not transferable): \(skippedCount, privacy: .public), force clear: [\(forceClearDescription, privacy: .public)]")
+        let forceClearKeys = typesToClear.map(\.exportKey)
+        Log.debug("import previewed, appVersion: \(payload.appVersion), version: \(payload.version), records: \(payload.filters.count), accepted: \(accepted.count), duplicates: \(duplicateCount), invalid: \(invalidCount), notTransferable: \(skippedCount), forceClear: \(forceClearKeys)")
 
         return FilterTransferPreview(candidates: accepted,
                                      duplicateCount: duplicateCount,
@@ -150,7 +163,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         for type in self.pendingPreview.forceClearTypes {
             let existing = self.persistenceManager.fetchFilterRecords(for: type)
             if !existing.isEmpty {
-                AppManager.logger.debug("importFilters — force clear \(type.exportKey, privacy: .public): deleting \(existing.count, privacy: .public)")
+                Log.debug("force clear, type: \(type), filters: \(existing.count) → deleting")
                 self.persistenceManager.deleteFilters(Set(existing))
             }
         }
@@ -171,7 +184,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         let result = FilterTransferResult(added: added,
                                         duplicateCount: self.pendingPreview.duplicateCount,
                                         invalidCount: self.pendingPreview.invalidCount)
-        AppManager.logger.debug("importFilters — selected: \(candidates.count, privacy: .public), added: \(added, privacy: .public)")
+        Log.debug("import finished, selected: \(candidates.count), added: \(added), duplicates: \(self.pendingPreview.duplicateCount), invalid: \(self.pendingPreview.invalidCount)")
         self.lastImportResult = result
         return result
     }
@@ -236,7 +249,10 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         var forceClearTypes: Set<FilterType> = []
 
         for exportKey in payload.forceClearBeforeImport ?? [] {
-            guard let filterType = FilterType(exportKey: exportKey), filterType.isTransferable else { continue }
+            guard let filterType = FilterType(exportKey: exportKey), filterType.isTransferable else {
+                Log.debug("force clear type not transferable, type: \(exportKey) → ignored")
+                continue
+            }
             forceClearTypes.insert(filterType)
         }
 

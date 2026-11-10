@@ -22,7 +22,7 @@ class SchedulingManager: SchedulingManagerProtocol {
                                                                           object: nil,
                                                                           queue: .main) { [weak self] _ in
             guard let self, !self.filterListManager.hasActiveFilterLists else { return }
-            AppManager.logger.debug("SchedulingManager — AI Filtering is off, dropping the inactivity reminder")
+            Log.debug("AI Filtering is off → inactivity reminder cancelled")
             self.cancelInactivityReminder()
         }
     }
@@ -47,25 +47,27 @@ class SchedulingManager: SchedulingManagerProtocol {
                                                          to: Date())
         do {
             try BGTaskScheduler.shared.submit(request)
-            AppManager.logger.debug("scheduleFilterListsProcessing — queued, not before \(request.earliestBeginDate?.description ?? "now", privacy: .public)")
+            Log.debug("background refresh queued, notBefore: \(request.earliestBeginDate)")
         }
         catch {
-            AppManager.logger.error("scheduleFilterListsProcessing — submit failed: \(error.localizedDescription, privacy: .public)")
+            Log.error("background refresh submit failed", error: error)
         }
     }
     
     func handleFilterListsProcessing(task: BGProcessingTask) {
-        AppManager.logger.debug("handleFilterListsProcessing — iOS granted a background window")
+        Log.debug("background refresh window granted")
         
         self.scheduleFilterListsProcessing()
         
         let refresh = Task {
             await self.filterListManager.refreshFilterLists()
-            task.setTaskCompleted(success: !Task.isCancelled)
+            let success = !Task.isCancelled
+            Log.debug("background refresh finished, success: \(success)")
+            task.setTaskCompleted(success: success)
         }
         
         task.expirationHandler = {
-            AppManager.logger.debug("handleFilterListsProcessing — window expired before the fetch finished")
+            Log.debug("background refresh window expired → cancelled")
             refresh.cancel()
         }
     }
@@ -77,36 +79,50 @@ class SchedulingManager: SchedulingManagerProtocol {
             let alertsAreAllowed = await self.alertsAreAllowed
             self.recordAlertPermission(alertsAreAllowed)
             
-            guard alertsAreAllowed,
-                  self.filterListManager.hasActiveFilterLists else { return }
+            let hasActiveFilterLists = self.filterListManager.hasActiveFilterLists
+            guard alertsAreAllowed, hasActiveFilterLists else {
+                Log.debug("inactivity reminder, alertsAllowed: \(alertsAreAllowed), aiFiltering: \(hasActiveFilterLists) → not armed")
+                return
+            }
             
             await self.userNotificationCenterService.schedule(self.inactivityReminderRequest)
         }
     }
     
     func shouldShowInactivityNotificationAlert() async -> Bool {
-        guard self.filterListManager.hasActiveFilterLists,
-              self.defaultsManager.sessionCounter > 1,
-              self.hasAsksLeft,
-              self.hasWaitedSinceLastDecline else { return false }
-        
-        return await self.alertsAreAllowed == false
+        let hasActiveFilterLists = self.filterListManager.hasActiveFilterLists
+        let sessionCounter = self.defaultsManager.sessionCounter
+        let hasAsksLeft = self.hasAsksLeft
+        let hasWaitedSinceLastDecline = self.hasWaitedSinceLastDecline
+        guard hasActiveFilterLists, sessionCounter > 1, hasAsksLeft, hasWaitedSinceLastDecline else {
+            Log.debug("not eligible, aiFiltering: \(hasActiveFilterLists), session: \(sessionCounter), declines: \(self.defaultsManager.inactivityNotificationDeclineCount), lastDeclineSession: \(self.defaultsManager.inactivityNotificationLastDeclineSession), asksLeft: \(hasAsksLeft), waitedSinceDecline: \(hasWaitedSinceLastDecline) → skipped")
+            return false
+        }
+
+        let alertsAreAllowed = await self.alertsAreAllowed
+        guard !alertsAreAllowed else {
+            Log.debug("eligible, alertsAllowed: \(alertsAreAllowed) → skipped")
+            return false
+        }
+        Log.debug("eligible, alertsAllowed: \(alertsAreAllowed) → ask")
+        return true
     }
     
     func requestInactivityNotificationPermission() async {
         guard await self.userNotificationCenterService.requestAlertAuthorization() else {
-            AppManager.logger.debug("requestInactivityNotificationPermission — iOS denied alerts, counting it as a decline")
+            Log.debug("alerts denied → counted as a decline")
             self.recordInactivityNotificationDecline()
             return
         }
         
-        AppManager.logger.debug("requestInactivityNotificationPermission — alerts allowed, arming the monthly reminder")
+        Log.debug("alerts allowed → arming the monthly reminder")
         self.refreshInactivityReminder()
     }
     
     func recordInactivityNotificationDecline() {
         self.defaultsManager.inactivityNotificationDeclineCount += 1
         self.defaultsManager.inactivityNotificationLastDeclineSession = self.defaultsManager.sessionCounter
+        Log.debug("decline recorded, declines: \(self.defaultsManager.inactivityNotificationDeclineCount), session: \(self.defaultsManager.sessionCounter)")
     }
     
     #if DEBUG
@@ -130,10 +146,10 @@ class SchedulingManager: SchedulingManagerProtocol {
         request.earliestBeginDate = Date().addingTimeInterval(60)
         do {
             try BGTaskScheduler.shared.submit(request)
-            AppManager.logger.debug("scheduleFilterListsProcessingSoon — queued, not before \(request.earliestBeginDate?.description ?? "now", privacy: .public)")
+            Log.debug("background refresh queued, notBefore: \(request.earliestBeginDate)")
         }
         catch {
-            AppManager.logger.error("scheduleFilterListsProcessingSoon — submit failed: \(error.localizedDescription, privacy: .public)")
+            Log.error("background refresh submit failed", error: error)
         }
     }
     #endif // DEBUG
@@ -174,22 +190,29 @@ class SchedulingManager: SchedulingManagerProtocol {
     
     private static var monthlyTrigger: UNNotificationTrigger {
         let calendar = Calendar.current
-        let nextMonth = calendar.date(byAdding: .month, value: 1, to: Date()) ?? Date()
-        let fireDate = calendar.date(bySettingHour: kInactivityReminderHour, minute: 0, second: 0, of: nextMonth) ?? nextMonth
-        
-        return UNTimeIntervalNotificationTrigger(timeInterval: fireDate.timeIntervalSinceNow, repeats: true)
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: Date()) ?? Date()
+        let yesterdayDay = calendar.component(.day, from: yesterday)
+        let fireDay = min(yesterdayDay, kInactivityReminderLatestDay)
+
+        var fireComponents = DateComponents()
+        fireComponents.day = fireDay
+        fireComponents.hour = kInactivityReminderHour
+        fireComponents.minute = 0
+        return UNCalendarNotificationTrigger(dateMatching: fireComponents, repeats: true)
     }
     
     private func recordAlertPermission(_ alertsAreAllowed: Bool) {
         guard alertsAreAllowed else {
             if self.defaultsManager.inactivityNotificationWasGranted {
-                AppManager.logger.debug("recordAlertPermission — alerts were revoked in Settings, forgetting the decline history")
+                Log.debug("alerts revoked in Settings → decline history forgotten")
                 self.forgetDeclineHistory()
             }
             return
         }
-        
+
+        guard !self.defaultsManager.inactivityNotificationWasGranted else { return }
         self.defaultsManager.inactivityNotificationWasGranted = true
+        Log.debug("alerts granted, wasGranted: \(false) → \(true)")
     }
     
     private func forgetDeclineHistory() {

@@ -48,7 +48,11 @@ extension URLRequest {
         case .requestParameters(let bodyParameters, let urlParameters):
             if let bodyParams = bodyParameters {
                 self.addValue("application/json", forHTTPHeaderField: "Content-Type")
-                self.httpBody = try? JSONSerialization.data(withJSONObject: bodyParams)
+                do {
+                    self.httpBody = try JSONSerialization.data(withJSONObject: bodyParams)
+                } catch {
+                    Log.error("request body doesn't encode, url: \(request.url), keys: \(bodyParams.keys.sorted())", error: error)
+                }
             }
             if let urlParams = urlParameters {
                 urlComponents?.queryItems = []

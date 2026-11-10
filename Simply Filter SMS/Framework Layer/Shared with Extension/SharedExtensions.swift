@@ -180,7 +180,13 @@ extension String {
     }
     
     var containsLink: Bool {
-        guard let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }
+        let detector: NSDataDetector
+        do {
+            detector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        } catch {
+            Log.fault("link detector unavailable → no link", error: error)
+            return false
+        }
         let matches = detector.matches(in: self, options: [], range: NSRange(location: 0, length: self.utf16.count))
         let filteredMatches = matches.filter({ $0.url?.isMailToScheme == false })
         

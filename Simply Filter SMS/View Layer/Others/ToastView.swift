@@ -260,6 +260,7 @@ struct ToastView: View {
             autoHideWork?.cancel()
             guard let timeout = currentTimeout else { return }
             let work = DispatchWorkItem { [weak self] in
+                Log.debug("toast timed out, timeout: \(duration: timeout) → hiding")
                 withAnimation {
                     self?.show = false
                 }
@@ -271,6 +272,12 @@ struct ToastView: View {
 
     enum Toast: Equatable {
         case offline, cloudSyncOperationComplete, filterListsUpdated, onClipboardSet(String), tipSuccessful(TipTier), tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
+
+        var logName: String {
+            let mirror = Mirror(reflecting: self)
+            guard let caseName = mirror.children.first?.label else { return "\(self)" }
+            return caseName
+        }
 
         var icon: String {
             switch self {

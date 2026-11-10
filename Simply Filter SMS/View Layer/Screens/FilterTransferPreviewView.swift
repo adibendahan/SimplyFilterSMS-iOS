@@ -311,7 +311,7 @@ extension FilterTransferPreviewView {
                     self.exportFile = ExportFile(url: url)
                     return false
                 } catch {
-                    AppManager.logger.error("exportFilters — failed: \(error.localizedDescription, privacy: .public)")
+                    Log.error("export failed, filters: \(selected.count)", error: error)
                     return false
                 }
             }

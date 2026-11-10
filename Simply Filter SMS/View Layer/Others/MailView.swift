@@ -48,12 +48,30 @@ struct MailView: UIViewControllerRepresentable {
                 isShowing = false
             }
             guard error == nil else {
+                Log.error("mail failed", error: error)
                 self.result = .failure(error!)
                 return
             }
+            Log.debug("mail finished, result: \(result.logName)")
             self.result = .success(result)
         }
     }
 }
 
 
+private extension MFMailComposeResult {
+    var logName: String {
+        switch self {
+        case .cancelled:
+            return "cancelled"
+        case .saved:
+            return "saved"
+        case .sent:
+            return "sent"
+        case .failed:
+            return "failed"
+        @unknown default:
+            return "unknown"
+        }
+    }
+}

@@ -255,7 +255,12 @@ extension HelpView {
 
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var expandedFAQ: HelpFAQ?
-        @Published var composeMailScreen: Bool = false
+        @Published var composeMailScreen: Bool = false {
+            didSet {
+                guard oldValue != self.composeMailScreen else { return }
+                Log.debug("mail compose, shown: \(oldValue) → \(self.composeMailScreen)")
+            }
+        }
         @Published var result: Result<MFMailComposeResult, Error>?
         var onRequestScreen: ((Screen) -> Void)?
 
@@ -267,6 +272,7 @@ extension HelpView {
 
         func setClipboard(content: String, displayName: String) {
             UIPasteboard.general.setValue(content, forPasteboardType: UTType.plainText.identifier)
+            Log.debug("copied to clipboard, item: \(displayName), content: \(content)")
             self.appManager.flowManager.requestToast(.onClipboardSet(displayName))
         }
     }
