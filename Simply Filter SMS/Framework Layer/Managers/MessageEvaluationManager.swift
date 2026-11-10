@@ -9,7 +9,6 @@ import Foundation
 import CoreData
 import IdentityLookup
 import NaturalLanguage
-import OSLog
 
 class MessageEvaluationManager: MessageEvaluationManagerProtocol {
 
@@ -29,8 +28,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             loadError = error
         }
         if let loadError {
-            let logger = Logger(subsystem: "com.grizz.apps.dev.Simply-Filter-SMS", category: "evaluation")
-            logger.error("Owned store load failed: \(loadError.localizedDescription, privacy: .public)")
+            Log.error("owned store load failed", error: loadError)
         }
         else {
             container.viewContext.stalenessInterval = 0
@@ -49,7 +47,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult {
         if case .owned(let container) = self.contextSource,
            container.persistentStoreCoordinator.persistentStores.isEmpty {
-            self.logger?.error("Owned store unavailable — skipping evaluation (allow)")
+            Log.error("owned store unavailable → allowed without evaluation")
             return MessageEvaluationResult(action: .allow, match: .storeUnavailable)
         }
 
@@ -59,61 +57,62 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     }
 
     private func evaluateRules(body: String, sender: String) -> MessageEvaluationResult {
-        logger?.debug("━━━━ Evaluating message | sender: '\(sender, privacy: .public)' | body: '\(body, privacy: .public)' ━━━━")
+        Log.debug("evaluating, sender: \(sender), body: \(body)")
         var result = MessageEvaluationResult(action: .none)
         defer {
-            logger?.debug("━━━━ Final decision: action=\(result.action.logName, privacy: .public), reason='\(result.reason ?? "", privacy: .public)' ━━━━")
+            Log.debug("evaluated, action: \(result.action.logName), reason: \(result.reason)")
         }
         result = self.runUserFilters(type: .allow, body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #1 (Allow Filters) → DECISION: \(result.action.logName, privacy: .public)")
+            Log.debug("#1 allow filters → \(result.action.logName)")
             return result
         }
-        logger?.debug("Priority #1 (Allow Filters) → no match, continuing")
+        Log.debug("#1 allow filters → no match")
+
         result = self.runAllUnknownRule()
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #2 (allUnknown) → DECISION: \(result.action.logName, privacy: .public)")
+            Log.debug("#2 all unknown senders → \(result.action.logName)")
             return result
         }
-        logger?.debug("Priority #2 (allUnknown) → not active, continuing")
+        Log.debug("#2 all unknown senders → no match")
+
         let activeFilterLists = self.loadActiveFilterLists()
         result = self.runFilterLists(type: .allow, activeFilterLists: activeFilterLists, body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #3 (Filter Lists Allow) → DECISION: \(result.action.logName, privacy: .public)")
+            Log.debug("#3 AI allow lists → \(result.action.logName)")
             return result
         }
-        logger?.debug("Priority #3 (Filter Lists Allow) → no match, continuing")
+        Log.debug("#3 AI allow lists → no match")
+
         result = self.runSmartFilters(body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #4 (Filter Rules) → DECISION: \(result.action.logName, privacy: .public)")
+            Log.debug("#4 filter rules → \(result.action.logName)")
             return result
         }
-        logger?.debug("Priority #4 (Filter Rules) → no match, continuing")
+        Log.debug("#4 filter rules → no match")
+
         result = self.runUserFilters(type: .deny, body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #5 (Deny Filters) → DECISION: \(result.action.logName, privacy: .public)")
+            Log.debug("#5 deny filters → \(result.action.logName)")
             return result
         }
-        logger?.debug("Priority #5 (Deny Filters) → no match, continuing")
+        Log.debug("#5 deny filters → no match")
+
         result = self.runUserFilters(type: .denyLanguage, body: body, sender: sender)
         guard !result.action.isFiltered else {
-            logger?.debug("Priority #6 (Deny Language Filters) → DECISION: \(result.action.logName, privacy: .public)")
+            Log.debug("#6 language filters → \(result.action.logName)")
             return result
         }
-        logger?.debug("Priority #6 (Deny Language Filters) → no match, continuing")
-        result = self.runFilterLists(type: .deny, activeFilterLists: activeFilterLists, body: body, sender: sender)
-        if !result.action.isFiltered {
-            result = MessageEvaluationResult(action: .allow, match: .noMatch)
-            logger?.debug("Priority #7 (Filter Lists Deny) → no match → fallthrough ALLOW")
-        }
-        else {
-            logger?.debug("Priority #7 (Filter Lists Deny) → DECISION: \(result.action.logName, privacy: .public)")
-        }
-        return result
-    }
+        Log.debug("#6 language filters → no match")
 
-    func setLogger(_ logger: Logger) {
-        self.logger = logger
+        result = self.runFilterLists(type: .deny, activeFilterLists: activeFilterLists, body: body, sender: sender)
+        guard !result.action.isFiltered else {
+            Log.debug("#7 AI deny lists → \(result.action.logName)")
+            return result
+        }
+        Log.debug("#7 AI deny lists → no match")
+        result = MessageEvaluationResult(action: .allow, match: .noMatch)
+        return result
     }
 
     var context: NSManagedObjectContext {
@@ -132,7 +131,6 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         case owned(NSPersistentCloudKitContainer)
     }
 
-    private var logger: Logger?
     private let contextSource: ContextSource
 
     private func runAllUnknownRule() -> MessageEvaluationResult {
@@ -140,10 +138,9 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         ruleRequest.predicate = NSPredicate(format: "ruleId == %ld AND isActive == %@",
                                             SmartFilterType.allUnknown.rawValue,
                                             NSNumber(value: true))
-        guard (try? self.context.fetch(ruleRequest))?.isEmpty == false else {
+        guard self.fetch(ruleRequest)?.isEmpty == false else {
             return MessageEvaluationResult(action: .none)
         }
-        logger?.debug("[allUnknown] rule is active")
         return MessageEvaluationResult(action: .junk, match: .smartFilter("testFilters_resultReason_unknownSender"~))
     }
 
@@ -151,43 +148,37 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         var result = MessageEvaluationResult(action: .none)
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Filter")
         fetchRequest.predicate = NSPredicate(format: "type == %ld", type.rawValue)
-        guard let filters = try? self.context.fetch(fetchRequest) else {
-            self.logger?.error("ERROR! While loading filters on MessageEvaluationManager.runUserFilters")
-            return result
-        }
-        logger?.debug("[\(type.logDescription, privacy: .public)] Loaded \(filters.count, privacy: .public) filter(s)")
+        guard let filters = self.fetch(fetchRequest) else { return result }
+
         switch type {
         case .allow:
             for filter in filters {
                 guard let filter = filter as? Filter else { continue }
                 let matched = self.isMatching(filter: filter, body: body, sender: sender)
-                logger?.debug("  Checking allow filter '\(filter.text ?? "?", privacy: .public)' [target: \(filter.filterTarget.logDescription, privacy: .public), matching: \(filter.filterMatching.logDescription, privacy: .public), case: \(filter.filterCase.logDescription, privacy: .public)] → \(matched ? "MATCH" : "no match", privacy: .public)")
+                Log.debug("filter checked, type: \(type), text: \(filter.text), target: \(filter.filterTarget), matching: \(filter.filterMatching), case: \(filter.filterCase) → \(matched: matched)")
                 guard matched else { continue }
                 result = MessageEvaluationResult(action: .allow, match: .userFilter(filter.text ?? ""))
-                logger?.debug("  → Returning ALLOW")
                 break
             }
         case .deny:
             for filter in filters {
                 guard let filter = filter as? Filter else { continue }
                 let matched = self.isMatching(filter: filter, body: body, sender: sender)
-                logger?.debug("  Checking deny filter '\(filter.text ?? "?", privacy: .public)' [target: \(filter.filterTarget.logDescription, privacy: .public), matching: \(filter.filterMatching.logDescription, privacy: .public), case: \(filter.filterCase.logDescription, privacy: .public), folder: \(filter.messageFolder.logDescription, privacy: .public)] → \(matched ? "MATCH" : "no match", privacy: .public)")
+                Log.debug("filter checked, type: \(type), text: \(filter.text), target: \(filter.filterTarget), matching: \(filter.filterMatching), case: \(filter.filterCase), folder: \(filter.messageFolder) → \(matched: matched)")
                 guard matched else { continue }
                 result = MessageEvaluationResult(action: filter.messageFolder.action, match: .userFilter(filter.text ?? ""))
-                logger?.debug("  → Returning \(result.action.logName, privacy: .public) (folder: \(filter.messageFolder.logDescription, privacy: .public))")
                 break
             }
         case .denyLanguage:
             let detectedLanguage = NLLanguage.dominantLanguage(for: body)
-            logger?.debug("  Detected message language: '\(detectedLanguage?.rawValue ?? "undetermined", privacy: .public)'")
+            let detectedDescription = detectedLanguage?.rawValue ?? "undetermined"
             for filter in filters {
                 guard let filter = filter as? Filter else { continue }
                 let language = NLLanguage(filterText: filter.text ?? "")
                 let matched = language != .undetermined && detectedLanguage == language
-                logger?.debug("  Checking language filter '\(language.localizedName ?? language.rawValue, privacy: .public)' → \(matched ? "MATCH" : "no match", privacy: .public)")
+                Log.debug("filter checked, type: \(type), language: \(language.rawValue), detected: \(detectedDescription), folder: \(filter.messageFolder) → \(matched: matched)")
                 guard matched else { continue }
                 result = MessageEvaluationResult(action: filter.messageFolder.action, match: .userFilter(language.localizedName ?? language.rawValue))
-                logger?.debug("  → Returning \(result.action.logName, privacy: .public) for language '\(language.localizedName ?? language.rawValue, privacy: .public)'")
                 break
             }
         }
@@ -196,7 +187,7 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
 
     private func loadActiveFilterLists() -> ActiveFilterLists? {
         let languageRequest: NSFetchRequest<AutomaticFiltersLanguage> = AutomaticFiltersLanguage.fetchRequest()
-        guard let languageRecords = try? self.context.fetch(languageRequest) else { return nil }
+        guard let languageRecords = self.fetch(languageRequest) else { return nil }
 
         var activeLanguages: Set<String> = []
         for languageRecord in languageRecords {
@@ -204,50 +195,49 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             activeLanguages.insert(lang)
         }
         guard !activeLanguages.isEmpty else {
-            self.logger?.debug("[Filter Lists] no active languages")
+            Log.debug("no active languages → AI lists skipped")
             return nil
         }
-        let activeLanguagesDescription = activeLanguages.sorted().joined(separator: ", ")
 
         guard let filtersData = self.loadCachedFilterLists() else {
-            self.logger?.debug("[Filter Lists] active languages: \(activeLanguagesDescription, privacy: .public) | no cache row")
+            Log.debug("no cache row, languages: \(activeLanguages) → AI lists skipped")
             return nil
         }
 
         guard let activeFilterLists = ActiveFilterLists(encoded: filtersData, activeLanguages: activeLanguages) else {
-            self.logger?.debug("[Filter Lists] active languages: \(activeLanguagesDescription, privacy: .public) | cache row doesn't decode")
+            Log.debug("cache row doesn't decode, languages: \(activeLanguages) → AI lists skipped")
             return nil
         }
-        let listNames = activeFilterLists.lists.map(\.name).joined(separator: ", ")
-        self.logger?.debug("[Filter Lists] active languages: \(activeLanguagesDescription, privacy: .public) | lists: \(listNames, privacy: .public)")
+        let listNames = activeFilterLists.lists.map(\.name)
+        Log.debug("AI lists loaded, languages: \(activeLanguages), lists: \(listNames)")
         return activeFilterLists
     }
 
     private func loadCachedFilterLists() -> String? {
         let cacheRequest: NSFetchRequest<FilterListsCache> = FilterListsCache.fetchRequest()
         cacheRequest.sortDescriptors = [NSSortDescriptor(keyPath: \FilterListsCache.age, ascending: false)]
-        if let encodedSnapshot = try? self.context.fetch(cacheRequest).first?.data {
+        if let encodedSnapshot = self.fetch(cacheRequest)?.first?.data {
             return encodedSnapshot
         }
 
         let legacyCacheRequest: NSFetchRequest<AutomaticFiltersCache> = AutomaticFiltersCache.fetchRequest()
         legacyCacheRequest.sortDescriptors = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
-        guard let encodedLegacyCache = try? self.context.fetch(legacyCacheRequest).first?.filtersData else { return nil }
-        self.logger?.debug("[Filter Lists] no 3.3 cache yet, reading the 3.2 cache")
+        guard let encodedLegacyCache = self.fetch(legacyCacheRequest)?.first?.filtersData else { return nil }
+        Log.debug("no 3.3 cache → reading the 3.2 cache")
         return FilterListsSnapshot(legacyEncoded: encodedLegacyCache)?.encoded
     }
 
     private func runFilterLists(type: FilterType, activeFilterLists: ActiveFilterLists?, body: String, sender: String) -> MessageEvaluationResult {
         var result = MessageEvaluationResult(action: .none)
-        guard let activeFilterLists = activeFilterLists else {
-            self.logger?.debug("[Filter Lists \(type.logDescription, privacy: .public)] no active lists, skipping")
-            return result
-        }
-        self.logger?.debug("[Filter Lists \(type.logDescription, privacy: .public)] \(activeFilterLists.lists.count, privacy: .public) active list(s)")
+        guard let activeFilterLists = activeFilterLists else { return result }
+
         for filterList in activeFilterLists.lists {
             for record in filterList.records {
-                guard FilterType(exportKey: record.type) == type,
-                      let listFilter = FilterTransferCandidate(record: record) else { continue }
+                guard FilterType(exportKey: record.type) == type else { continue }
+                guard let listFilter = FilterTransferCandidate(record: record) else {
+                    Log.debug("AI list record invalid, list: \(filterList.name), type: \(record.type), text: \(record.text) → skipped")
+                    continue
+                }
 
                 let matched = self.isMatching(text: listFilter.text,
                                               target: listFilter.filterTarget,
@@ -265,10 +255,12 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
                     action = listFilter.denyFolder.action
                 }
                 result = MessageEvaluationResult(action: action, match: .filterList(filterList.name))
-                self.logger?.debug("  → \(result.action.logName, privacy: .public): matched '\(listFilter.text, privacy: .public)' | target: \(listFilter.filterTarget.exportKey, privacy: .public), matching: \(listFilter.filterMatching.exportKey, privacy: .public), case: \(listFilter.filterCase.exportKey, privacy: .public) [\(filterList.name, privacy: .public)]")
+                Log.debug("AI list record checked, text: \(listFilter.text), type: \(type), list: \(filterList.name), target: \(listFilter.filterTarget), matching: \(listFilter.filterMatching), case: \(listFilter.filterCase) → match")
                 return result
             }
         }
+        let listNames = activeFilterLists.lists.map(\.name)
+        Log.debug("AI list records checked, type: \(type), lists: \(listNames) → no match")
         return result
     }
 
@@ -276,80 +268,91 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         var result = MessageEvaluationResult(action: .none)
         let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
         ruleRequest.predicate = NSPredicate(format: "isActive == %@", NSNumber(value: true))
-        guard let activeRules = try? self.context.fetch(ruleRequest) else {
-            self.logger?.error("ERROR! While loading rules on MessageEvaluationManager.runSmartFilters")
-            return result
-        }
-        logger?.debug("[Filter Rules] \(activeRules.count, privacy: .public) active rule(s)")
+        guard let activeRules = self.fetch(ruleRequest) else { return result }
+
         for activeRule in activeRules {
             guard let smartFilterType = activeRule.smartFilterType else { continue }
-            logger?.debug("  Checking rule: \(smartFilterType.logDescription, privacy: .public)")
             switch smartFilterType {
             case .allUnknown:
                 break
             case .links:
                 if body.containsLink {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(smartFilterType.shortTitle))
-                    logger?.debug("  → JUNK: links — body contains a link")
+                    Log.debug("rule checked, rule: \(smartFilterType), bodyHasLink: \(true) → match")
                 }
                 else {
-                    logger?.debug("  → no link detected in body")
+                    Log.debug("rule checked, rule: \(smartFilterType), bodyHasLink: \(false) → no match")
                 }
             case .numbersOnly:
                 if sender.rangeOfCharacter(from: .letters) != nil {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(smartFilterType.shortTitle))
-                    logger?.debug("  → JUNK: numbersOnly — sender '\(sender, privacy: .public)' triggered rule")
+                    Log.debug("rule checked, rule: \(smartFilterType), sender: \(sender), senderHasLetters: \(true) → match")
                 }
                 else {
-                    logger?.debug("  → sender '\(sender, privacy: .public)' did not trigger numbersOnly rule")
+                    Log.debug("rule checked, rule: \(smartFilterType), sender: \(sender), senderHasLetters: \(false) → no match")
                 }
             case .shortSender:
-                if sender.count <= Int(activeRule.selectedChoice) {
+                let threshold = Int(activeRule.selectedChoice)
+                if sender.count <= threshold {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(smartFilterType.shortTitle))
-                    logger?.debug("  → JUNK: shortSender — sender length \(sender.count, privacy: .public) ≤ threshold \(Int(activeRule.selectedChoice), privacy: .public)")
+                    Log.debug("rule checked, rule: \(smartFilterType), length: \(sender.count), threshold: \(threshold) → match")
                 }
                 else {
-                    logger?.debug("  → sender length \(sender.count, privacy: .public) > threshold \(Int(activeRule.selectedChoice), privacy: .public), not short")
+                    Log.debug("rule checked, rule: \(smartFilterType), length: \(sender.count), threshold: \(threshold) → no match")
                 }
             case .email:
                 if sender.containsEmail {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(smartFilterType.shortTitle))
-                    logger?.debug("  → JUNK: email — sender '\(sender, privacy: .public)' looks like an email address")
+                    Log.debug("rule checked, rule: \(smartFilterType), sender: \(sender), senderIsEmail: \(true) → match")
                 }
                 else {
-                    logger?.debug("  → sender '\(sender, privacy: .public)' is not an email address")
+                    Log.debug("rule checked, rule: \(smartFilterType), sender: \(sender), senderIsEmail: \(false) → no match")
                 }
             case .emojis:
                 if body.containsEmoji {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(smartFilterType.shortTitle))
-                    logger?.debug("  → JUNK: emojis — body contains emoji(s)")
+                    Log.debug("rule checked, rule: \(smartFilterType), bodyHasEmojis: \(true) → match")
                 }
                 else {
-                    logger?.debug("  → body contains no emojis")
+                    Log.debug("rule checked, rule: \(smartFilterType), bodyHasEmojis: \(false) → no match")
                 }
             case .countryAllowlist:
-                guard let json = activeRule.selectedCountries,
-                      let data = json.data(using: .utf8),
-                      let allowedCodes = try? JSONDecoder().decode([String].self, from: data),
-                      !allowedCodes.isEmpty else {
-                    logger?.debug("  → countryAllowlist: no allowed codes configured, skipping")
+                let json = activeRule.selectedCountries ?? "[]"
+                let allowedCodes: [String]
+                do {
+                    allowedCodes = try JSONDecoder().decode([String].self, from: Data(json.utf8))
+                } catch {
+                    Log.error("countries don't decode, rule: \(smartFilterType), json: \(json) → skipped", error: error)
+                    break
+                }
+                guard !allowedCodes.isEmpty else {
+                    Log.debug("rule checked, rule: \(smartFilterType), allowed: '[]' → skipped")
                     break
                 }
                 guard let entry = CallingCodes.callingCode(for: sender) else {
-                    logger?.debug("  → countryAllowlist: could not determine country for sender '\(sender, privacy: .public)', skipping")
+                    Log.debug("rule checked, rule: \(smartFilterType), sender: \(sender), country: nil → skipped")
                     break
                 }
                 if !allowedCodes.contains(entry.callingCode) {
                     result = MessageEvaluationResult(action: .junk, match: .smartFilter(smartFilterType.shortTitle))
-                    logger?.debug("  → JUNK: countryAllowlist — sender country '\(entry.callingCode, privacy: .public)' not in allowed list \(allowedCodes, privacy: .public)")
+                    Log.debug("rule checked, rule: \(smartFilterType), country: \(entry.callingCode), allowed: \(allowedCodes) → match")
                 }
                 else {
-                    logger?.debug("  → countryAllowlist: sender country '\(entry.callingCode, privacy: .public)' is allowed")
+                    Log.debug("rule checked, rule: \(smartFilterType), country: \(entry.callingCode), allowed: \(allowedCodes) → no match")
                 }
             }
             if result.action.isFiltered { break }
         }
         return result
+    }
+
+    private func fetch<T: NSFetchRequestResult>(_ request: NSFetchRequest<T>) -> [T]? {
+        do {
+            return try self.context.fetch(request)
+        } catch {
+            Log.error("fetch failed, entity: \(request.entityName)", error: error)
+            return nil
+        }
     }
 
     private func isMatching(filter: Filter, body: String, sender: String) -> Bool {
@@ -373,8 +376,13 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             messageForEvaluation = body
         }
         if matching == .regex {
-            guard let regex = try? Regex(textForEvaluation) else { return false }
-            return messageForEvaluation.contains(regex)
+            do {
+                let regex = try Regex(textForEvaluation)
+                return messageForEvaluation.contains(regex)
+            } catch {
+                Log.error("invalid regex, text: \(private: textForEvaluation) → no match", error: error)
+                return false
+            }
         }
         if filterCase == .caseInsensitive {
             messageForEvaluation = messageForEvaluation.lowercased()

@@ -20,6 +20,7 @@ let kUpdateFilterListsMinDays = 3
 let kFilterListsProcessingTaskIdentifier = "com.grizz.apps.dev.simply-filter-sms.process-automatic-filters"
 let kInactivityReminderNotificationIdentifier = "com.grizz.apps.dev.simply-filter-sms.inactivity-reminder"
 let kInactivityReminderHour = 19
+let kInactivityReminderLatestDay = 28
 let kInactivityNotificationMaxAsks = 3
 let kInactivityNotificationMinSessionsBetweenAsks = 3
 let kMinimumFilterLength = 1
@@ -99,8 +100,6 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     var allowedWhenAllSendersBlocked: Bool {
         return self == .allow
     }
-
-    var logDescription: String { String(describing: self) }
     
     var iconName: String {
         switch self {
@@ -177,8 +176,6 @@ enum MessageFolder: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_folder_caption"~
     }
-
-    var logDescription: String { String(describing: self) }
 }
 
 enum FilterTarget: Int64, CaseIterable, Identifiable {
@@ -220,8 +217,6 @@ enum FilterTarget: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_target_title"~
     }
-
-    var logDescription: String { String(describing: self) }
 }
 
 enum FilterMatching: Int64, CaseIterable, Identifiable {
@@ -274,8 +269,6 @@ enum FilterMatching: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_match_title"~
     }
-
-    var logDescription: String { String(describing: self) }
 }
 
 enum FilterCase: Int64, CaseIterable, Identifiable {
@@ -322,8 +315,6 @@ enum FilterCase: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_case_title"~
     }
-
-    var logDescription: String { String(describing: self) }
 }
 
 enum ReportType: Int64, CaseIterable, Identifiable {
@@ -508,8 +499,6 @@ enum SmartFilterType: Int64, CaseIterable, Equatable, Identifiable {
     var isDestructive: Bool {
         return self == .allUnknown
     }
-
-    var logDescription: String { String(describing: self) }
 }
 
 enum TipTier: String, CaseIterable {

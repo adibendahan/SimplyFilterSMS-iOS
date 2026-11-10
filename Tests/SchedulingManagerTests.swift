@@ -198,9 +198,15 @@ class SchedulingManagerTests: XCTestCase {
         XCTAssertEqual(request?.identifier, kInactivityReminderNotificationIdentifier)
         XCTAssertTrue(self.defaultsManager.inactivityNotificationWasGranted)
 
-        let trigger = request?.trigger as? UNTimeIntervalNotificationTrigger
+        let trigger = request?.trigger as? UNCalendarNotificationTrigger
         XCTAssertEqual(trigger?.repeats, true)
-        XCTAssertEqual(trigger?.timeInterval ?? 0, 30 * 24 * 60 * 60, accuracy: 2 * 24 * 60 * 60)
+        XCTAssertEqual(trigger?.dateComponents.hour, kInactivityReminderHour)
+        XCTAssertEqual(trigger?.dateComponents.minute, 0)
+        XCTAssertLessThanOrEqual(trigger?.dateComponents.day ?? 0, kInactivityReminderLatestDay)
+
+        let secondsUntilFirstFire = trigger?.nextTriggerDate()?.timeIntervalSinceNow ?? 0
+        XCTAssertGreaterThan(secondsUntilFirstFire, 26 * 24 * 60 * 60)
+        XCTAssertLessThan(secondsUntilFirstFire, 31 * 24 * 60 * 60)
     }
 
     func test_refreshOnlyCancelsWhenAlertsAreNotAllowed() async {

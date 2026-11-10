@@ -12,7 +12,7 @@ import UIKit
 
 class PersistenceManager: PersistenceManagerProtocol {
 
-    
+
     //MARK: - Initialization -
     required init(inMemory: Bool = false) {
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
@@ -25,17 +25,24 @@ class PersistenceManager: PersistenceManagerProtocol {
         else if let storeURL = self.container.persistentStoreDescriptions.first?.url?.deletingLastPathComponent(),
                 !FileManager.default.directoryExistsAtPath(storeURL.path) {
 
-            try? FileManager.default.createDirectory(at: storeURL,
-                                                     withIntermediateDirectories: true,
-                                                     attributes: nil)
+            do {
+                try FileManager.default.createDirectory(at: storeURL,
+                                                        withIntermediateDirectories: true,
+                                                        attributes: nil)
+            } catch {
+                Log.error("could not create the store directory, path: \(storeURL.path)", error: error)
+            }
         }
 
         container.persistentStoreDescriptions.first?.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
         container.persistentStoreDescriptions.first?.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                AppManager.logger.error("ERROR! While initializing PersistenceManager: \(error), \(error.userInfo)")
+            if let error {
+                Log.error("store load failed, path: \(storeDescription.url?.path)", error: error)
+            }
+            else {
+                Log.debug("store loaded, path: \(storeDescription.url?.path)")
             }
 
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
@@ -48,11 +55,11 @@ class PersistenceManager: PersistenceManagerProtocol {
     //MARK: - Public API (PersistenceManagerProtocol) -
     //MARK: Context
     private(set) var container: NSPersistentCloudKitContainer
-    
+
     var context: NSManagedObjectContext {
         return self.container.viewContext
     }
-    
+
     var fingerprint: String {
         var fingerprint = ""
         fingerprint.append(self.fetchFilterRecords().map({ "\($0.uuid?.uuidString ?? "")" }).joined())
@@ -60,40 +67,56 @@ class PersistenceManager: PersistenceManagerProtocol {
         fingerprint.append(self.fetchAutomaticFiltersLanguageRecords().map({ "\($0.lang ?? "")\($0.isActive)" }).joined())
         return fingerprint
     }
-    
+
     func commitContext() -> Bool {
         guard self.context.hasChanges else {
-            AppManager.logger.debug("commitContext — skipped, no changes")
+            Log.debug("no changes → skipped")
             return true
         }
-        
+
+        let inserted = self.context.insertedObjects.count
+        let updated = self.context.updatedObjects.count
+        let deleted = self.context.deletedObjects.count
+
         do {
             try self.context.save()
-            AppManager.logger.debug("commitContext — save succeeded")
+            Log.debug("saved, inserted: \(inserted), updated: \(updated), deleted: \(deleted)")
             return true
         } catch {
-            let nsError = error as NSError
-            AppManager.logger.error("ERROR! While commiting context: \(nsError), \(nsError.userInfo)")
+            Log.error("save failed, inserted: \(inserted), updated: \(updated), deleted: \(deleted) → rolled back", error: error)
             self.context.rollback()
             return false
         }
     }
-    
+
     func commitAndAnnounce() -> Bool {
         let saved = self.commitContext()
         NotificationCenter.default.post(name: saved ? .filtersStateChanged : .filtersSaveFailed, object: nil)
         return saved
     }
-    
+
     func reloadContainer() {
-        guard let storeURL = self.container.persistentStoreDescriptions.first?.url, storeURL != URL(fileURLWithPath: "/dev/null") else { return }
-        AppManager.logger.debug("reloadContainer — reloading persistent store")
+        guard let storeURL = self.container.persistentStoreDescriptions.first?.url else {
+            Log.debug("no store url → skipped")
+            return
+        }
+        guard storeURL != URL(fileURLWithPath: "/dev/null") else {
+            Log.debug("in-memory store → skipped")
+            return
+        }
+
+        Log.debug("reloading, path: \(storeURL.path)")
         if let loadedStore = self.container.persistentStoreCoordinator.persistentStore(for: storeURL) {
             _ = self.commitContext()
             self.container.viewContext.reset()
-            try? self.container.persistentStoreCoordinator.remove(loadedStore)
+
+            do {
+                try self.container.persistentStoreCoordinator.remove(loadedStore)
+            } catch {
+                Log.error("could not remove the loaded store", error: error)
+            }
         }
-        
+
         let container = AppPersistentCloudKitContainer(name: kAppWorkingDirectory)
         self.container = container
 
@@ -101,8 +124,11 @@ class PersistenceManager: PersistenceManagerProtocol {
         container.persistentStoreDescriptions.first?.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                AppManager.logger.error("ERROR! While initializing PersistenceManager: \(error), \(error.userInfo)")
+            if let error {
+                Log.error("store load failed, path: \(storeDescription.url?.path)", error: error)
+            }
+            else {
+                Log.debug("store loaded, path: \(storeDescription.url?.path)")
             }
 
             container.viewContext.mergePolicy = NSMergePolicy(merge: .overwriteMergePolicyType)
@@ -110,7 +136,6 @@ class PersistenceManager: PersistenceManagerProtocol {
             container.viewContext.stalenessInterval = 0
 
             DispatchQueue.main.async {
-                AppManager.logger.debug("reloadContainer — store loaded, posting persistentStoreReloaded")
                 NotificationCenter.default.post(name: .persistentStoreReloaded, object: nil)
             }
         })
@@ -121,48 +146,48 @@ class PersistenceManager: PersistenceManagerProtocol {
         let sortDescriptor = [NSSortDescriptor(keyPath: \Filter.type, ascending: false),
                               NSSortDescriptor(keyPath: \Filter.text, ascending: true)]
         var filters: [Filter] = []
-        
+
         self.fetch(Filter.self, sortDescriptor: sortDescriptor)?.forEach {
             filters.append($0)
         }
-        
+
         return filters
     }
-    
+
     func fetchFilterRecords(for filterType: FilterType) -> [Filter] {
         let sortDescriptor = [NSSortDescriptor(key: "text", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))]
         let predicate = NSPredicate(format: "type == %ld", filterType.rawValue)
         var filters: [Filter] = []
-        
+
         self.fetch(Filter.self, predicate: predicate, sortDescriptor: sortDescriptor)?.forEach {
             filters.append($0)
         }
-        
+
         return filters
     }
-    
+
     func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage] {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersLanguage.lang, ascending: true)]
         var automaticFiltersLanguageRecords: [AutomaticFiltersLanguage] = []
-        
+
         self.fetch(AutomaticFiltersLanguage.self, sortDescriptor: sortDescriptor)?.forEach {
             automaticFiltersLanguageRecords.append($0)
         }
-        
+
         return automaticFiltersLanguageRecords
     }
 
     func fetchAutomaticFiltersRuleRecords() -> [AutomaticFiltersRule] {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersRule.ruleId, ascending: true)]
         var automaticFiltersRuleRecords: [AutomaticFiltersRule] = []
-        
+
         self.fetch(AutomaticFiltersRule.self, sortDescriptor: sortDescriptor)?.forEach {
             automaticFiltersRuleRecords.append($0)
         }
-        
+
         return automaticFiltersRuleRecords
     }
-    
+
     func fetchFilterListsCacheRecords() -> [FilterListsCache] {
         let sortDescriptor = [NSSortDescriptor(keyPath: \FilterListsCache.age, ascending: false)]
         var filterListsCacheRecords: [FilterListsCache] = []
@@ -173,26 +198,27 @@ class PersistenceManager: PersistenceManagerProtocol {
 
         return filterListsCacheRecords
     }
-    
+
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage? {
         let predicate = NSPredicate(format: "lang == %@", language.rawValue)
         guard let automaticFiltersLanguageRecord =
                 self.fetch(AutomaticFiltersLanguage.self, predicate: predicate)?.first else { return nil }
         return automaticFiltersLanguageRecord
     }
-    
+
     func fetchAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule? {
         let predicate = NSPredicate(format: "ruleId == %ld", rule.rawValue)
         guard let automaticFiltersRuleRecord =
                 self.fetch(AutomaticFiltersRule.self, predicate: predicate)?.first else { return nil }
         return automaticFiltersRuleRecord
     }
-    
+
     func ensuredAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule {
         if let existing = self.fetchAutomaticFiltersRuleRecord(for: rule) {
             return existing
         }
         else {
+            Log.debug("no record, rule: \(rule) → created")
             let newRule = AutomaticFiltersRule(context: self.context)
             newRule.ruleId = rule.rawValue
             newRule.smartFilterType = rule
@@ -200,15 +226,15 @@ class PersistenceManager: PersistenceManagerProtocol {
             return newRule
         }
     }
-    
+
     func ensuredAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage {
         let predicate = NSPredicate(format: "lang == %@", language.rawValue)
         var isActive = false
         var ensuredAutomaticFiltersLanguage: AutomaticFiltersLanguage? = nil
-        
+
         if let automaticFiltersLanguageRecords = self.fetch(AutomaticFiltersLanguage.self, predicate: predicate),
             !automaticFiltersLanguageRecords.isEmpty {
-            
+
             if automaticFiltersLanguageRecords.count == 1, let automaticFiltersLanguageRecord = automaticFiltersLanguageRecords.first {
                 ensuredAutomaticFiltersLanguage = automaticFiltersLanguageRecord
             }
@@ -218,33 +244,35 @@ class PersistenceManager: PersistenceManagerProtocol {
                                                                                               language.rawValue,
                                                                                               NSNumber(booleanLiteral: true)))
                 isActive = (activeAutomaticFiltersLanguageRecords ?? []).count > 0
+                Log.debug("duplicate records, language: \(language.rawValue), count: \(automaticFiltersLanguageRecords.count), isActive: \(isActive) → deleted")
                 automaticFiltersLanguageRecords.forEach(self.context.delete)
             }
         }
-        
+
         guard let ensuredAutomaticFiltersLanguage = ensuredAutomaticFiltersLanguage else {
+            Log.debug("no record, language: \(language.rawValue), isActive: \(isActive) → created")
             let newLanguage = AutomaticFiltersLanguage(context: self.context)
             newLanguage.lang = language.rawValue
             newLanguage.isActive = isActive
             return newLanguage
         }
-        
+
         return ensuredAutomaticFiltersLanguage
     }
-    
+
 
     //MARK: Helpers
     func isDuplicateFilter(text: String,
                            filterTarget: FilterTarget = .all,
                            filterMatching: FilterMatching = .contains,
                            filterCase: FilterCase = .caseInsensitive) -> Bool {
-        
+
         let predicate = NSPredicate(format: "text == %@ AND targetValue == %ld AND matchingValue == %ld AND caseValue == %ld",
                                     text, filterTarget.rawValue, filterMatching.rawValue, filterCase.rawValue)
         guard let _ = self.fetch(Filter.self, predicate: predicate)?.first else { return false }
         return true
     }
-    
+
     func blockableLanguages() -> [NLLanguage] {
         return NLLanguage.allSupportedCases
             .filter({ !self.isDuplicateFilter(language: $0) })
@@ -256,7 +284,7 @@ class PersistenceManager: PersistenceManagerProtocol {
         guard let _ = self.fetch(Filter.self, predicate: predicate)?.first else { return false }
         return true
     }
-    
+
     @discardableResult
     func addFilter(text: String, type: FilterType,
                    denyFolder: MessageFolder = .junk,
@@ -268,7 +296,7 @@ class PersistenceManager: PersistenceManagerProtocol {
                                       filterTarget: filterTarget,
                                       filterMatching: filterMatching,
                                       filterCase: filterCase) else {
-            AppManager.logger.debug("addFilter — skipped duplicate: '\(text, privacy: .public)'")
+            Log.debug("duplicate, text: \(text), target: \(filterTarget), matching: \(filterMatching), case: \(filterCase) → skipped")
             return nil
         }
 
@@ -280,26 +308,33 @@ class PersistenceManager: PersistenceManagerProtocol {
         newFilter.filterTarget = filterTarget
         newFilter.filterCase = filterCase
         newFilter.text = text
-        AppManager.logger.debug("addFilter — '\(text, privacy: .public)' | type: \(type.logDescription, privacy: .public) | folder: \(denyFolder.logDescription, privacy: .public) | target: \(filterTarget.logDescription, privacy: .public) | matching: \(filterMatching.logDescription, privacy: .public) | case: \(filterCase.logDescription, privacy: .public)")
+        if type == .allow {
+            Log.debug("adding, text: \(text), type: \(type), target: \(filterTarget), matching: \(filterMatching), case: \(filterCase)")
+        }
+        else {
+            Log.debug("adding, text: \(text), type: \(type), folder: \(denyFolder), target: \(filterTarget), matching: \(filterMatching), case: \(filterCase)")
+        }
         guard self.commitAndAnnounce() else { return nil }
         return newFilter
     }
 
     func deleteFilters(withOffsets offsets: IndexSet, in filters: [Filter]) {
         let toDelete = offsets.map({ filters[$0] })
-        AppManager.logger.debug("deleteFilters — \(toDelete.count, privacy: .public) filter(s): \(toDelete.compactMap({ $0.text }).joined(separator: ", "), privacy: .public)")
+        let deletedTexts = toDelete.map({ $0.text ?? "nil" })
+        Log.debug("deleting, count: \(toDelete.count), texts: \(deletedTexts)")
         toDelete.forEach({ self.context.delete($0) })
         guard self.commitAndAnnounce() else { return }
     }
 
     func deleteFilters(_ filters: Set<Filter>) {
-        AppManager.logger.debug("deleteFilters — \(filters.count, privacy: .public) filter(s): \(filters.compactMap({ $0.text }).joined(separator: ", "), privacy: .public)")
+        let deletedTexts = filters.map({ $0.text ?? "nil" })
+        Log.debug("deleting, count: \(filters.count), texts: \(deletedTexts)")
         filters.forEach({ self.context.delete($0) })
         guard self.commitAndAnnounce() else { return }
     }
 
     func updateFilter(_ filter: Filter, denyFolder: MessageFolder) {
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' denyFolder → \(denyFolder.logDescription, privacy: .public)")
+        Log.debug("folder changed, text: \(filter.text), folder: \(filter.messageFolder) → \(denyFolder)")
         filter.messageFolder = denyFolder
         guard self.commitAndAnnounce() else { return }
     }
@@ -309,10 +344,10 @@ class PersistenceManager: PersistenceManagerProtocol {
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filterMatching,
                                       filterCase: filter.filterCase) else {
-            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' filterMatching → \(filterMatching.logDescription, privacy: .public)")
+            Log.debug("duplicate, text: \(filter.text), matching: \(filterMatching) → skipped")
             return
         }
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterMatching → \(filterMatching.logDescription, privacy: .public)")
+        Log.debug("matching changed, text: \(filter.text), matching: \(filter.filterMatching) → \(filterMatching)")
         filter.filterMatching = filterMatching
         guard self.commitAndAnnounce() else { return }
     }
@@ -322,10 +357,10 @@ class PersistenceManager: PersistenceManagerProtocol {
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filter.filterMatching,
                                       filterCase: filterCase) else {
-            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' filterCase → \(filterCase.logDescription, privacy: .public)")
+            Log.debug("duplicate, text: \(filter.text), case: \(filterCase) → skipped")
             return
         }
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterCase → \(filterCase.logDescription, privacy: .public)")
+        Log.debug("case changed, text: \(filter.text), case: \(filter.filterCase) → \(filterCase)")
         filter.filterCase = filterCase
         guard self.commitAndAnnounce() else { return }
     }
@@ -335,10 +370,10 @@ class PersistenceManager: PersistenceManagerProtocol {
                                       filterTarget: filterTarget,
                                       filterMatching: filter.filterMatching,
                                       filterCase: filter.filterCase) else {
-            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' filterTarget → \(filterTarget.logDescription, privacy: .public)")
+            Log.debug("duplicate, text: \(filter.text), target: \(filterTarget) → skipped")
             return
         }
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' filterTarget → \(filterTarget.logDescription, privacy: .public)")
+        Log.debug("target changed, text: \(filter.text), target: \(filter.filterTarget) → \(filterTarget)")
         filter.filterTarget = filterTarget
         guard self.commitAndAnnounce() else { return }
     }
@@ -348,43 +383,49 @@ class PersistenceManager: PersistenceManagerProtocol {
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filter.filterMatching,
                                       filterCase: filter.filterCase) else {
-            AppManager.logger.debug("updateFilter — skipped duplicate: '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)'")
+            Log.debug("duplicate, text: \(filterText) → skipped")
             return
         }
-        AppManager.logger.debug("updateFilter — '\(filter.text ?? "", privacy: .public)' text → '\(filterText, privacy: .public)', hasChangesBefore: \(self.context.hasChanges, privacy: .public)")
+        Log.debug("text changed, text: \(filter.text) → \(filterText)")
         filter.text = filterText
-        AppManager.logger.debug("updateFilter — after set text, hasChanges: \(self.context.hasChanges, privacy: .public)")
         guard self.commitAndAnnounce() else { return }
     }
-    
+
     func selectedCountries(for rule: SmartFilterType) -> [String] {
-        guard let record = self.fetchAutomaticFiltersRuleRecord(for: rule),
-              let json = record.selectedCountries,
-              let data = json.data(using: .utf8),
-              let countries = try? JSONDecoder().decode([String].self, from: data) else { return [] }
-        return countries
+        guard let json = self.fetchAutomaticFiltersRuleRecord(for: rule)?.selectedCountries else { return [] }
+
+        do {
+            return try JSONDecoder().decode([String].self, from: Data(json.utf8))
+        } catch {
+            Log.error("countries don't decode, rule: \(rule), json: \(json)", error: error)
+            return []
+        }
     }
 
     func setSelectedCountries(_ countries: [String], for rule: SmartFilterType) {
         let record = self.ensuredAutomaticFiltersRuleRecord(for: rule)
-        if let data = try? JSONEncoder().encode(countries),
-           let json = String(data: data, encoding: .utf8) {
-            record.selectedCountries = json
+
+        do {
+            let data = try JSONEncoder().encode(countries)
+            record.selectedCountries = String(decoding: data, as: UTF8.self)
+        } catch {
+            Log.error("countries don't encode, rule: \(rule), countries: \(countries)", error: error)
         }
+
         guard self.commitAndAnnounce() else { return }
     }
 
     func cachedFilterLists() -> FilterListsSnapshot? {
         let cacheRecords = self.fetchFilterListsCacheRecords()
         guard let encodedSnapshot = cacheRecords.first?.data else {
-            AppManager.logger.debug("cachedFilterLists — no cache row (rows: \(cacheRecords.count, privacy: .public)), reading the 3.2 cache")
+            Log.debug("no cache row, rows: \(cacheRecords.count) → reading the 3.2 cache")
             return self.legacyFilterLists()
         }
         guard let snapshot = FilterListsSnapshot(encoded: encodedSnapshot) else {
-            AppManager.logger.debug("cachedFilterLists — cache row doesn't decode | rows: \(cacheRecords.count, privacy: .public), size: \(encodedSnapshot.utf8.count, privacy: .public) bytes")
+            Log.debug("cache row doesn't decode, rows: \(cacheRecords.count), bytes: \(encodedSnapshot.utf8.count)")
             return nil
         }
-        AppManager.logger.debug("cachedFilterLists — rows: \(cacheRecords.count, privacy: .public), lists: \(snapshot.lists.count, privacy: .public), size: \(encodedSnapshot.utf8.count, privacy: .public) bytes")
+        Log.debug("cache read, rows: \(cacheRecords.count), lists: \(snapshot.lists.count), bytes: \(encodedSnapshot.utf8.count)")
         return snapshot
     }
 
@@ -396,10 +437,15 @@ class PersistenceManager: PersistenceManagerProtocol {
     }
 
     func saveCache(_ snapshot: FilterListsSnapshot) -> Bool {
-        guard let encodedSnapshot = snapshot.encoded else { return false }
+        guard let encodedSnapshot = snapshot.encoded else {
+            Log.error("snapshot doesn't encode, lists: \(snapshot.lists.count)")
+            return false
+        }
+
         let cacheRecords = self.fetchFilterListsCacheRecords()
-        AppManager.logger.debug("saveCache — saving \(snapshot.lists.count, privacy: .public) filter lists | existing rows: \(cacheRecords.count, privacy: .public), size: \(encodedSnapshot.utf8.count, privacy: .public) bytes")
-        for duplicateRecord in cacheRecords.dropFirst() {
+        let duplicateRecords = cacheRecords.dropFirst()
+        Log.debug("saving the cache, lists: \(snapshot.lists.count), bytes: \(encodedSnapshot.utf8.count), duplicateRowsDeleted: \(duplicateRecords.count)")
+        for duplicateRecord in duplicateRecords {
             self.context.delete(duplicateRecord)
         }
 
@@ -419,9 +465,13 @@ class PersistenceManager: PersistenceManagerProtocol {
     }
 
     func touchCache() {
-        guard let cacheRecord = self.fetchFilterListsCacheRecords().first else { return }
-        AppManager.logger.debug("touchCache — cache age set to now")
+        guard let cacheRecord = self.fetchFilterListsCacheRecords().first else {
+            Log.debug("no cache row → skipped")
+            return
+        }
+        let oldAge = cacheRecord.age
         cacheRecord.age = Date()
+        Log.debug("cache age reset, age: \(oldAge) → \(cacheRecord.age)")
         _ = self.commitContext()
     }
 
@@ -442,21 +492,25 @@ class PersistenceManager: PersistenceManagerProtocol {
     func resetContainer() {
         // Get a reference to a NSPersistentStoreCoordinator
         let storeContainer = self.container.persistentStoreCoordinator
-        
+
 
         // Delete each existing persistent store
         for store in storeContainer.persistentStores {
-            try? storeContainer.destroyPersistentStore(
-                at: store.url!,
-                ofType: store.type,
-                options: nil
-            )
+            do {
+                try storeContainer.destroyPersistentStore(
+                    at: store.url!,
+                    ofType: store.type,
+                    options: nil
+                )
+            } catch {
+                Log.error("could not destroy the store, path: \(store.url?.path)", error: error)
+            }
         }
 
         self.reloadContainer()
     }
     #endif // DEBUG
-    
+
     //MARK: - Private -
     private func legacyFilterLists() -> FilterListsSnapshot? {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
@@ -475,7 +529,7 @@ class PersistenceManager: PersistenceManagerProtocol {
 
         do {
             let searchResult = try self.context.fetch(fetchRequest)
-            
+
             if searchResult.count > 0 {
                 return searchResult
             } else {
@@ -483,7 +537,7 @@ class PersistenceManager: PersistenceManagerProtocol {
             }
 
         } catch {
-            AppManager.logger.error("ERROR! While fetching \(entity): \(error.localizedDescription)")
+            Log.error("fetch failed, entity: \(fetchRequest.entityName)", error: error)
             return nil
         }
     }

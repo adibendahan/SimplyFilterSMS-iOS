@@ -22,7 +22,12 @@ struct Simply_Filter_SMSApp: App {
         WindowGroup {
             AppHomeView(model: homeModel)
                 .adaptiveLayoutEnvironment()
-                .onChange(of: scenePhase) { _, phase in
+                .environment(\.openURL, OpenURLAction { url in
+                    Log.debug("link opened, url: \(url)")
+                    return .systemAction
+                })
+                .onChange(of: scenePhase) { oldPhase, phase in
+                    Log.debug("scene phase changed, phase: \(oldPhase.logName) → \(phase.logName)")
                     guard phase == .active else { return }
                     homeModel.appBecameActive()
                 }
@@ -39,6 +44,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: kFilterListsProcessingTaskIdentifier,
                                         using: nil) { task in
             guard let processingTask = task as? BGProcessingTask else {
+                Log.fault("unexpected background task type, identifier: \(task.identifier)")
                 task.setTaskCompleted(success: false)
                 return
             }
@@ -52,5 +58,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         AppManager.shared.onAppLaunch()
         return true
+    }
+}
+
+
+private extension ScenePhase {
+    var logName: String {
+        switch self {
+        case .active:
+            return "active"
+        case .inactive:
+            return "inactive"
+        case .background:
+            return "background"
+        @unknown default:
+            return "unknown"
+        }
     }
 }

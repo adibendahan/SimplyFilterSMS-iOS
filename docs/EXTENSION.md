@@ -9,7 +9,7 @@ The constraints and traps of the two app extensions. Which files each target com
 iOS calls it for every SMS from a sender not in Contacts; it returns allow, junk, transaction or promotion.
 
 - **Offline only.** It never defers to the network (`ILNetworkResponse`); all data comes from the shared store. Lists are downloaded by the app.
-- **No `AppManager`.** It builds its own `MessageEvaluationManager()`, with its own logger (category `extension`).
+- **No `AppManager`.** It builds its own `MessageEvaluationManager()`.
 - **Read-only, synchronous store.** It opens the App Group store read-only and loads it synchronously in `init`. If the load fails, every message is allowed (`storeUnavailable`) rather than evaluated against an empty store.
 - **Memory is tight.** The AI Filtering cache row is read once per message, and only the lists whose language is on are decoded (`ActiveFilterLists`).
 - The extension target also compiles `PersistenceManagerProtocol` so the shared `MessageEvaluationManager` type-checks; it only ever uses the owned-store path.

@@ -241,12 +241,23 @@ struct AboutView: View {
 extension AboutView {
 
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var composeMailScreen: Bool = false
-        @Published var showTipJar: Bool = false
+        @Published var composeMailScreen: Bool = false {
+            didSet {
+                guard oldValue != self.composeMailScreen else { return }
+                Log.debug("mail compose, shown: \(oldValue) → \(self.composeMailScreen)")
+            }
+        }
+        @Published var showTipJar: Bool = false {
+            didSet {
+                guard oldValue != self.showTipJar else { return }
+                Log.debug("tip jar sheet, shown: \(oldValue) → \(self.showTipJar)")
+            }
+        }
         @Published var result: Result<MFMailComposeResult, Error>?
 
         func setClipboard(content: String, displayName: String) {
             UIPasteboard.general.setValue(content, forPasteboardType: UTType.plainText.identifier)
+            Log.debug("copied to clipboard, item: \(displayName), content: \(content)")
             self.appManager.flowManager.requestToast(.onClipboardSet(displayName))
         }
     }

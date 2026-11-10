@@ -23,9 +23,11 @@ class FlowManager: FlowManagerProtocol {
     //MARK: - Public API (FlowManagerProtocol) -
     func recordLaunch(_ screen: Screen) -> Bool {
         if screen == .enableExtension && self.defaultsManager.isAppFirstRun {
+            Log.debug("launch screen, screen: \(screen), firstRun: \(true) → skipped")
             return false
         }
 
+        Log.debug("launch screen recorded, screen: \(screen)")
         self.pendingLaunchScreen = screen
         self.launchActionClaimedSession = true
         return true
@@ -36,6 +38,7 @@ class FlowManager: FlowManagerProtocol {
     }
 
     func requestScreen(_ screen: Screen) {
+        Log.debug("screen requested, screen: \(screen)")
         self.pendingUserRequest = screen
         self.presentNextScreen()
     }
@@ -50,29 +53,40 @@ class FlowManager: FlowManagerProtocol {
         }
 
         if self.defaultsManager.isAppFirstRun {
+            Log.debug("next screen, screen: \(Screen.enableExtension), reason: 'firstRun'")
             self.activeScreen = .enableExtension
             return .enableExtension
         }
 
         if let screen = self.pendingLaunchScreen {
+            Log.debug("next screen, screen: \(screen), reason: 'launch'")
             self.activeScreen = screen
             return screen
         }
 
         if self.whatsNewEnabled && self.shouldShowWhatsNew {
+            Log.debug("next screen, screen: \(Screen.whatsNew), reason: 'whatsNew', lastSeenVersion: \(self.defaultsManager.lastSeenWhatsNewVersion), currentVersion: \(currentWhatsNewVersion)")
             self.activeScreen = .whatsNew
             return .whatsNew
         }
 
         if let screen = self.pendingUserRequest {
+            Log.debug("next screen, screen: \(screen), reason: 'userRequest'")
             self.activeScreen = screen
             return screen
         }
 
+        let lastSeenVersion = self.defaultsManager.lastSeenWhatsNewVersion
+        guard lastSeenVersion < currentWhatsNewVersion else {
+            Log.debug("no screen due")
+            return nil
+        }
+        Log.debug("What's New held back, enabled: \(self.whatsNewEnabled), startedAsFirstRun: \(self.startedAsFirstRun), launchClaimedSession: \(self.launchActionClaimedSession), lastSeenVersion: \(lastSeenVersion), currentVersion: \(currentWhatsNewVersion)")
         return nil
     }
 
     func completeScreen(_ screen: Screen) {
+        Log.debug("screen completed, screen: \(screen)")
         if self.activeScreen == screen {
             self.activeScreen = nil
         }
@@ -87,6 +101,7 @@ class FlowManager: FlowManagerProtocol {
     }
 
     func resetSession() {
+        Log.debug("session reset")
         self.pendingLaunchScreen = nil
         self.pendingUserRequest = nil
         self.activeScreen = nil
@@ -127,7 +142,11 @@ class FlowManager: FlowManagerProtocol {
         }
 
         NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: .main) { [weak self] _ in
-            guard let self, self.filterListManager.hasActiveFilterLists else { return }
+            guard let self else { return }
+            guard self.filterListManager.hasActiveFilterLists else {
+                Log.debug("AI lists updated, aiFiltering: \(false) → no toast")
+                return
+            }
             self.requestToast(.filterListsUpdated)
         }
     }
@@ -147,9 +166,11 @@ class FlowManager: FlowManagerProtocol {
             return
         }
 
-        guard !toast.isOutranked(by: self.waitingNudge) else { return }
-        let toastName = String(describing: toast)
-        AppManager.logger.debug("FlowManager — toast waiting (Home busy): \(toastName, privacy: .public)")
+        guard !toast.isOutranked(by: self.waitingNudge) else {
+            Log.debug("Home busy, toast: \(toast.logName), waiting: \(self.waitingNudge?.logName) → dropped")
+            return
+        }
+        Log.debug("Home busy, toast: \(toast.logName) → waiting")
         self.waitingNudge = toast
     }
 
@@ -169,6 +190,7 @@ class FlowManager: FlowManagerProtocol {
     }
 
     func didTapToast(_ toast: ToastView.Toast) {
+        Log.debug("toast tapped, toast: \(toast.logName)")
         switch toast {
         case .enableReportingExtension:
             self.defaultsManager.didDismissReportingExtensionNudge = true
@@ -183,6 +205,7 @@ class FlowManager: FlowManagerProtocol {
     }
 
     func didDismissToast(_ toast: ToastView.Toast) {
+        Log.debug("toast dismissed, toast: \(toast.logName)")
         switch toast {
         case .offline:
             self.defaultsManager.lastOfflineToastDismiss = Date()
@@ -199,12 +222,15 @@ class FlowManager: FlowManagerProtocol {
     }
 
     func showWaitingNudge() {
-        guard self.isHomeIdle(),
-              let waitingNudge = self.waitingNudge else { return }
+        guard let waitingNudge = self.waitingNudge else { return }
+        guard self.isHomeIdle() else {
+            Log.debug("Home busy, nudge: \(waitingNudge.logName) → still waiting")
+            return
+        }
         self.waitingNudge = nil
 
         guard !self.didShowToastThisSession else {
-            AppManager.logger.debug("FlowManager — nudge skipped, another toast showed this session: \(String(describing: waitingNudge), privacy: .public)")
+            Log.debug("another toast showed this session, nudge: \(waitingNudge.logName) → skipped")
             return
         }
         self.enqueue(waitingNudge)
@@ -245,10 +271,7 @@ class FlowManager: FlowManagerProtocol {
 
     private func enqueue(_ toast: ToastView.Toast) {
         guard !toast.isOutranked(by: self.shownToast, self.pendingToast) else {
-            let toastName = String(describing: toast)
-            let shownDescription = self.shownToast.map { String(describing: $0) } ?? "nil"
-            let pendingDescription = self.pendingToast.map { String(describing: $0) } ?? "nil"
-            AppManager.logger.debug("FlowManager — toast dropped: \(toastName, privacy: .public) (shown: \(shownDescription, privacy: .public), pending: \(pendingDescription, privacy: .public))")
+            Log.debug("outranked, toast: \(toast.logName), shown: \(self.shownToast?.logName), pending: \(self.pendingToast?.logName) → dropped")
             return
         }
         self.pendingToast = toast
@@ -262,13 +285,16 @@ class FlowManager: FlowManagerProtocol {
 
         guard self.shownToast == toast else { return }
         self.shownToast = nil
-        AppManager.logger.debug("FlowManager — toast cancelled: \(String(describing: toast), privacy: .public)")
+        Log.debug("toast cancelled, toast: \(toast.logName)")
         self.showNextToast()
     }
 
     private func networkStatusChanged(to networkStatus: NetworkStatus) {
         guard networkStatus == .online else {
-            guard !self.isOfflineToastSnoozed else { return }
+            guard !self.isOfflineToastSnoozed else {
+                Log.debug("offline toast snoozed, lastDismiss: \(self.defaultsManager.lastOfflineToastDismiss) → skipped")
+                return
+            }
             self.requestToast(.offline)
             return
         }
@@ -276,8 +302,11 @@ class FlowManager: FlowManagerProtocol {
     }
 
     private func showOfflineIfStillOffline() {
-        guard self.networkSyncManager.networkStatus == .offline,
-              !self.isOfflineToastSnoozed else { return }
+        guard self.networkSyncManager.networkStatus == .offline else { return }
+        guard !self.isOfflineToastSnoozed else {
+            Log.debug("still offline, offline toast snoozed, lastDismiss: \(self.defaultsManager.lastOfflineToastDismiss) → skipped")
+            return
+        }
         self.requestToast(.offline)
     }
 
@@ -286,16 +315,24 @@ class FlowManager: FlowManagerProtocol {
               let interval = nudge.nudgeSessionInterval else { return false }
         let lastShownSession = self.defaultsManager.sessionNudgeLastShownSessions[key] ?? 0
         let sessionsSinceShown = self.defaultsManager.sessionCounter - lastShownSession
-        guard sessionsSinceShown >= interval else { return false }
+        guard sessionsSinceShown >= interval else {
+            Log.debug("nudge checked, nudge: \(nudge.logName), sessionsSinceShown: \(sessionsSinceShown), interval: \(interval) → not due")
+            return false
+        }
 
         switch nudge {
         case .tipPromotion:
-            return !self.defaultsManager.didTip
+            let didTip = self.defaultsManager.didTip
+            Log.debug("nudge checked, nudge: \(nudge.logName), sessionsSinceShown: \(sessionsSinceShown), didTip: \(didTip), due: \(!didTip)")
+            return !didTip
 
         case .enableReportingExtension:
-            return !self.defaultsManager.isAppFirstRun
-                && !self.defaultsManager.didDismissReportingExtensionNudge
-                && self.filterListManager.hasActiveFilterLists
+            let isFirstRun = self.defaultsManager.isAppFirstRun
+            let didDismiss = self.defaultsManager.didDismissReportingExtensionNudge
+            let hasActiveFilterLists = self.filterListManager.hasActiveFilterLists
+            let isDue = !isFirstRun && !didDismiss && hasActiveFilterLists
+            Log.debug("nudge checked, nudge: \(nudge.logName), sessionsSinceShown: \(sessionsSinceShown), firstRun: \(isFirstRun), dismissed: \(didDismiss), aiFiltering: \(hasActiveFilterLists), due: \(isDue)")
+            return isDue
 
         default:
             return false
@@ -304,13 +341,14 @@ class FlowManager: FlowManagerProtocol {
 
     private func tryShowSessionNudge() {
         guard !self.didShowToastThisSession else {
-            AppManager.logger.debug("FlowManager — session nudge skipped, another toast showed this session")
+            Log.debug("another toast showed this session → skipped")
             return
         }
 
         let dueNudges = ToastView.Toast.allNudges.filter { self.isDue($0) }
         let mostUrgentNudge = dueNudges.min { $0.priority < $1.priority }
         guard let mostUrgentNudge else { return }
+        Log.debug("nudges due, due: \(dueNudges.map(\.logName)), mostUrgent: \(mostUrgentNudge.logName)")
         self.requestToast(mostUrgentNudge)
     }
 

@@ -278,9 +278,28 @@ extension FiltersView {
         @Published var selectedFilters: Set<Filter> = Set()
         @Published var editMode: EditMode = .inactive
         @Published private(set) var isFilterOptionsCollapsed: Bool
-        @Published var sheetScreen: Screen? = nil
-        @Published var addFilterViewModel: AddFilterView.ViewModel? = nil
-        @Published var addLanguageViewModel: BlockLanguageView.ViewModel? = nil
+        @Published var sheetScreen: Screen? = nil {
+            didSet {
+                guard oldValue != self.sheetScreen else { return }
+                Log.debug("sheet changed, screen: \(oldValue) → \(self.sheetScreen)")
+            }
+        }
+        @Published var addFilterViewModel: AddFilterView.ViewModel? = nil {
+            didSet {
+                let wasShown = oldValue != nil
+                let isShown = self.addFilterViewModel != nil
+                guard wasShown != isShown else { return }
+                Log.debug("add filter sheet, shown: \(wasShown) → \(isShown)")
+            }
+        }
+        @Published var addLanguageViewModel: BlockLanguageView.ViewModel? = nil {
+            didSet {
+                let wasShown = oldValue != nil
+                let isShown = self.addLanguageViewModel != nil
+                guard wasShown != isShown else { return }
+                Log.debug("add language sheet, shown: \(wasShown) → \(isShown)")
+            }
+        }
         @Published private(set) var newlyAddedFilter: Filter? = nil
 
         var regularFilters: [Filter] { filters.filter { $0.filterMatching != .regex } }
@@ -319,6 +338,7 @@ extension FiltersView {
 
         func setFilterOptionsCollapsed(_ isCollapsed: Bool) {
             guard self.isFilterOptionsCollapsed != isCollapsed else { return }
+            Log.debug("filter options, collapsed: \(self.isFilterOptionsCollapsed) → \(isCollapsed)")
             self.isFilterOptionsCollapsed = isCollapsed
             self.appManager.defaultsManager.isFilterOptionsCollapsed = isCollapsed
         }

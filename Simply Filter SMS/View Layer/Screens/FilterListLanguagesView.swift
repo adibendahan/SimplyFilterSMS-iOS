@@ -117,7 +117,12 @@ extension FilterListLanguagesView {
         @Published private(set) var isLoading: Bool
         @Published private(set) var isOnline: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
-        @Published var sheetScreen: Screen? = nil
+        @Published var sheetScreen: Screen? = nil {
+            didSet {
+                guard oldValue != self.sheetScreen else { return }
+                Log.debug("sheet changed, screen: \(oldValue) → \(self.sheetScreen)")
+            }
+        }
         private var didAddObservers = false
 
         override init(appManager: AppManagerProtocol = AppManager.shared) {
@@ -136,10 +141,12 @@ extension FilterListLanguagesView {
             didAddObservers = true
 
             if !isOnline && self.languages.isEmpty {
+                Log.debug("offline with no languages → refresh when back online")
                 NotificationCenter.default.addObserver(forName: .networkStatusChange, object: nil, queue: .main) { [weak self] notification in
                     guard let networkStatus = notification.object as? NetworkStatus else { return }
 
                     if networkStatus == .online {
+                        Log.debug("back online → refreshing")
                         Task(priority: .background) {
                             await self?.appManager.filterListManager.refreshFilterLists()
                         }
@@ -168,6 +175,7 @@ extension FilterListLanguagesView {
         }
 
         @Sendable func updateFilters() async {
+            Log.debug("pull to refresh")
             try? await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
             await self.appManager.filterListManager.refreshFilterLists()
 

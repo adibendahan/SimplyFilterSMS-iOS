@@ -46,6 +46,7 @@ class ReportingExtensionViewController: ILClassificationUIExtensionViewControlle
             pendingBodies = messageRequest.messageCommunications.compactMap { $0.messageBody }.filter { !$0.isEmpty }
             confirmationViewModel.sender = pendingSender
             confirmationViewModel.bodies = pendingBodies
+            Log.debug("message report requested, sender: \(pendingSender), bodies: \(pendingBodies)")
         } else if let callRequest = classificationRequest as? ILCallClassificationRequest,
                   let first = callRequest.callCommunications.first {
             pendingSender = first.sender ?? ""
@@ -53,11 +54,15 @@ class ReportingExtensionViewController: ILClassificationUIExtensionViewControlle
             confirmationViewModel.sender = pendingSender
             confirmationViewModel.bodies = []
             confirmationViewModel.isCall = true
+            Log.debug("call report requested, sender: \(pendingSender)")
+        } else {
+            Log.fault("report request has no messages or calls → nothing to report")
         }
     }
 
     override func classificationResponse(for request: ILClassificationRequest) -> ILClassificationResponse {
         guard let reportType = confirmationViewModel.selectedReportType else {
+            Log.debug("responding, reportType: nil → not reported")
             return ILClassificationResponse(action: .none)
         }
 
@@ -71,6 +76,7 @@ class ReportingExtensionViewController: ILClassificationUIExtensionViewControlle
             action = .reportJunkAndBlockSender
         }
 
+        Log.debug("responding, reportType: \(reportType), type: \(reportType.type) → reported")
         let response = ILClassificationResponse(action: action)
         response.userInfo = [
             "sender": pendingSender,

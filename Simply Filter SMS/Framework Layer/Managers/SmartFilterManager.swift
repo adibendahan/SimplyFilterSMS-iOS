@@ -28,11 +28,13 @@ class SmartFilterManager: SmartFilterManagerProtocol {
 
     func setSmartFilterActive(for rule: SmartFilterType, value: Bool) {
         guard let persistenceManager = self.persistenceManager else { return }
-        AppManager.logger.debug("setSmartFilterActive — '\(rule.title, privacy: .public)' → \(value, privacy: .public)")
         let automaticFiltersRule = persistenceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
+        Log.debug("rule changed, rule: \(rule), active: \(automaticFiltersRule.isActive) → \(value)")
         automaticFiltersRule.isActive = value
         if automaticFiltersRule.smartFilterType == .shortSender && automaticFiltersRule.selectedChoice < 3 {
+            let oldChoice = automaticFiltersRule.selectedChoice
             automaticFiltersRule.selectedChoice = 6
+            Log.debug("choice below minimum, rule: \(rule), choice: \(oldChoice) → \(automaticFiltersRule.selectedChoice)")
         }
         _ = persistenceManager.commitAndAnnounce()
     }
@@ -45,8 +47,11 @@ class SmartFilterManager: SmartFilterManagerProtocol {
 
     func setSelectedChoice(for rule: SmartFilterType, choice: Int) {
         guard let persistenceManager = self.persistenceManager,
-              let automaticFiltersRule = persistenceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return }
-        AppManager.logger.debug("setSelectedChoice — '\(rule.title, privacy: .public)' → \(choice, privacy: .public)")
+              let automaticFiltersRule = persistenceManager.fetchAutomaticFiltersRuleRecord(for: rule) else {
+            Log.debug("no record, rule: \(rule), choice: \(choice) → skipped")
+            return
+        }
+        Log.debug("choice changed, rule: \(rule), choice: \(automaticFiltersRule.selectedChoice) → \(choice)")
         automaticFiltersRule.selectedChoice = Int64(choice)
         _ = persistenceManager.commitAndAnnounce()
     }
@@ -56,7 +61,7 @@ class SmartFilterManager: SmartFilterManagerProtocol {
     }
 
     func setSelectedCountries(_ countries: [String], for rule: SmartFilterType) {
-        AppManager.logger.debug("setSelectedCountries — \(countries, privacy: .public)")
+        Log.debug("countries changed, rule: \(rule), countries: \(self.selectedCountries(for: rule)) → \(countries)")
         self.persistenceManager?.setSelectedCountries(countries, for: rule)
     }
 

@@ -25,13 +25,15 @@ class HTTPService: HTTPServiceProtocol {
     func execute<T>(type: T.Type,
                     request: URLRequestProtocol) async throws -> T where T: Decodable {
         
-        let request = URLRequest(request: request)
-        let (data, _) = try await URLSession.shared.data(for: request)
-        
+        let urlRequest = URLRequest(request: request)
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+
         do {
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             return decodedData
         } catch {
+            let statusCode = (response as? HTTPURLResponse)?.statusCode
+            Log.error("response doesn't decode, url: \(request.url), statusCode: \(statusCode), bytes: \(data.count)", error: error)
             throw RequestError.noData
         }
     }

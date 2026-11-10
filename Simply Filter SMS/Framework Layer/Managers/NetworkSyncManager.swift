@@ -9,7 +9,6 @@ import Foundation
 import Combine
 import CoreData
 import Network
-import OSLog
 
 
 class NetworkSyncManager: NetworkSyncManagerProtocol {
@@ -30,7 +29,7 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
             guard let self, !self.firstStatusHandlers.isEmpty else { return }
-            AppManager.logger.debug("NetworkSyncManager — timeout reached, draining \(self.firstStatusHandlers.count, privacy: .public) firstStatusHandlers")
+            Log.debug("first network status timed out, handlers: \(self.firstStatusHandlers.count) → drained")
             let handlers = self.firstStatusHandlers
             self.firstStatusHandlers = []
             handlers.forEach { $0() }
@@ -48,40 +47,41 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
                     guard cloudEvent.endDate != nil else { return }
                     if cloudEvent.succeeded {
                         self.syncStatus = .active
-                        AppManager.logger.debug("CloudKit setup event ended — succeeded: true, syncStatus: \(self.syncStatus.name, privacy: .public)")
+                        Log.debug("CloudKit setup succeeded, syncStatus: \(self.syncStatus.name)")
                     }
                     else {
                         self.syncStatus = .failed
-                        let errorDescription = cloudEvent.error?.localizedDescription ?? "nil"
-                        AppManager.logger.debug("CloudKit setup event ended — succeeded: false, syncStatus: \(self.syncStatus.name, privacy: .public), error: \(errorDescription, privacy: .public)")
+                        Log.error("CloudKit setup failed, syncStatus: \(self.syncStatus.name)", error: cloudEvent.error)
                     }
                 case .import:
                     if cloudEvent.endDate == nil {
                         self.preSyncFingerprint = self.persistenceManager?.fingerprint ?? kNone
-                        AppManager.logger.debug("CloudKit import started — fingerprint: \(self.preSyncFingerprint, privacy: .public)")
+                        Log.debug("CloudKit import started, fingerprintLength: \(self.preSyncFingerprint.count)")
                     }
                     else if !cloudEvent.succeeded {
-                        let errorDescription = cloudEvent.error?.localizedDescription ?? "nil"
-                        AppManager.logger.debug("CloudKit import complete — failed, error: \(errorDescription, privacy: .public)")
+                        Log.error("CloudKit import failed", error: cloudEvent.error)
                     }
                     else {
                         let currentFingerprint = self.persistenceManager?.fingerprint ?? kNone
                         if self.preSyncFingerprint != currentFingerprint {
-                            AppManager.logger.debug("CloudKit import complete — data changed, posting cloudSyncOperationComplete")
+                            Log.debug("CloudKit import succeeded, dataChanged: \(true) → posting cloudSyncOperationComplete")
                             NotificationCenter.default.post(name: .cloudSyncOperationComplete, object: nil)
                         }
                         else {
-                            AppManager.logger.debug("CloudKit import complete — no data change detected")
+                            Log.debug("CloudKit import succeeded, dataChanged: \(false)")
                         }
                     }
                 case .export:
                     guard let endDate = cloudEvent.endDate else { return }
-                    let eventID = cloudEvent.identifier.uuidString.prefix(8)
+                    let eventID = cloudEvent.identifier
                     let duration = endDate.timeIntervalSince(cloudEvent.startDate)
-                    let errorDescription = cloudEvent.error.map { String(describing: $0) } ?? "nil"
-                    AppManager.logger.debug("CloudKit export ended — id: \(eventID, privacy: .public), succeeded: \(cloudEvent.succeeded, privacy: .public), duration: \(duration, format: .fixed(precision: 2), privacy: .public)s, error: \(errorDescription, privacy: .public)")
+                    guard cloudEvent.succeeded else {
+                        Log.error("CloudKit export failed, id: \(eventID), duration: \(duration: duration)", error: cloudEvent.error)
+                        return
+                    }
+                    Log.debug("CloudKit export succeeded, id: \(eventID), duration: \(duration: duration)")
                 @unknown default:
-                    break
+                    Log.debug("unknown CloudKit event, type: \(cloudEvent.type.rawValue) → ignored")
                 }
             })
             .store(in: &disposables)
@@ -107,10 +107,15 @@ class NetworkSyncManager: NetworkSyncManagerProtocol {
         let newStatus = newPath.status.networkStatus
         DispatchQueue.main.async {
             guard self.networkStatus != newStatus else { return }
-            AppManager.logger.debug("Network status changed — \(self.networkStatus.name, privacy: .public) → \(newStatus.name, privacy: .public)")
-            if newStatus.isReconnection(from: self.networkStatus), self.syncStatus == .failed {
-                AppManager.logger.debug("Network reconnected with failed sync — reloading CloudKit container")
-                self.persistenceManager?.reloadContainer()
+            Log.debug("network changed, status: \(self.networkStatus.name) → \(newStatus.name)")
+            if newStatus.isReconnection(from: self.networkStatus) {
+                if self.syncStatus == .failed {
+                    Log.debug("reconnected, syncStatus: \(self.syncStatus.name) → reloading the container")
+                    self.persistenceManager?.reloadContainer()
+                }
+                else {
+                    Log.debug("reconnected, syncStatus: \(self.syncStatus.name) → no reload")
+                }
             }
             self.networkStatus = newStatus
             NotificationCenter.default.post(name: .networkStatusChange, object: newStatus)

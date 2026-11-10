@@ -331,15 +331,14 @@ extension FilterRowView {
         @discardableResult
         func updateFilter(filterText: String) -> Bool {
             let current = self.filter.text ?? ""
-            AppManager.logger.debug("FilterRow.updateFilter(text) — proposed: '\(filterText, privacy: .public)', current: '\(current, privacy: .public)'")
 
             guard filterText != current else {
-                AppManager.logger.debug("FilterRow.updateFilter(text) — skipped, unchanged")
+                Log.debug("text unchanged, text: \(current) → skipped")
                 return false
             }
 
             if self.filter.filterMatching == .regex, (try? Regex(filterText)) == nil {
-                AppManager.logger.debug("FilterRow.updateFilter(text) — skipped, invalid regex")
+                Log.debug("invalid regex, text: \(filterText), current: \(current) → reverted")
                 self.text = current
                 return true
             }
@@ -349,16 +348,15 @@ extension FilterRowView {
                 filterTarget: self.filter.filterTarget,
                 filterMatching: self.filter.filterMatching,
                 filterCase: self.filter.filterCase) else {
-                AppManager.logger.debug("FilterRow.updateFilter(text) — skipped, duplicate")
+                Log.debug("duplicate, text: \(filterText), current: \(current) → reverted")
                 self.text = current
                 return true
             }
 
-            AppManager.logger.debug("FilterRow.updateFilter(text) — saving")
             self.appManager.persistenceManager.updateFilter(self.filter, filterText: filterText)
 
             guard self.filter.text == filterText else {
-                AppManager.logger.debug("FilterRow.updateFilter(text) — save failed, reverted")
+                Log.debug("save failed, text: \(filterText), current: \(current) → reverted")
                 self.text = self.filter.text ?? current
                 return true
             }

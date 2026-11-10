@@ -73,10 +73,12 @@ class DefaultsManager: DefaultsManagerProtocol {
         for (oldKey, newKey) in renamedKeys {
             guard let value = UserDefaults.standard.object(forKey: oldKey) else { continue }
 
-            if UserDefaults.standard.object(forKey: newKey) == nil {
+            let hasNewValue = UserDefaults.standard.object(forKey: newKey) != nil
+            if !hasNewValue {
                 UserDefaults.standard.set(value, forKey: newKey)
             }
             UserDefaults.standard.removeObject(forKey: oldKey)
+            Log.debug("key renamed, key: \(oldKey) → \(newKey), keptExisting: \(hasNewValue)")
         }
     }
     

@@ -9,18 +9,10 @@ import SwiftUI
 
 struct EditableText: View {
 
-    private enum EndReason {
+    private enum EndReason: CaseIterable {
         case onCommit
         case onEditingChanged
         case focusChanged
-
-        var logDescription: String {
-            switch self {
-            case .onCommit: return "onCommit"
-            case .onEditingChanged: return "onEditingChanged(false)"
-            case .focusChanged: return "focusChanged"
-            }
-        }
     }
 
     @Binding private var text: String
@@ -83,7 +75,6 @@ struct EditableText: View {
                 "",
                 text: $newValue,
                 onEditingChanged: { isEditing in
-                    AppManager.logger.debug("EditableText.onEditingChanged — isEditing: \(isEditing, privacy: .public), sessionActive: \(sessionActive, privacy: .public)")
                     if isEditing {
                         if !sessionActive {
                             beginEditing()
@@ -93,7 +84,6 @@ struct EditableText: View {
                     }
                 },
                 onCommit: {
-                    AppManager.logger.debug("EditableText.onCommit — sessionActive: \(sessionActive, privacy: .public)")
                     finishEditingIfNeeded(reason: .onCommit)
                 })
             .opacity(isEditorVisible ? 1 : 0)
@@ -131,21 +121,20 @@ struct EditableText: View {
         sessionActive = true
         focusedID.wrappedValue = focusID
         onEditingChanged?(true)
-        AppManager.logger.debug("EditableText.beginEditing — sessionActive: true")
+        Log.debug("editing began, text: \(text)")
     }
 
     private func finishEditingIfNeeded(reason: EndReason) {
-        guard sessionActive else {
-            AppManager.logger.debug("EditableText — finish ignored from \(reason.logDescription, privacy: .public) (no active session)")
-            return
-        }
+        guard sessionActive else { return }
 
         sessionActive = false
 
         let shouldCommit = minimumCharacters == 0 || newValue.count >= minimumCharacters
         if shouldCommit {
+            Log.debug("editing finished, reason: \(reason), text: \(newValue) → committed")
             text = newValue
         } else {
+            Log.debug("editing finished, reason: \(reason), characters: \(newValue.count), minimum: \(minimumCharacters) → reverted")
             newValue = text
         }
 
@@ -153,7 +142,6 @@ struct EditableText: View {
         let editingChanged = onEditingChanged
         let focus = focusedID
         let id = focusID
-        let reasonDescription = reason.logDescription
 
         DispatchQueue.main.async {
             if focus.wrappedValue == id {
@@ -161,12 +149,7 @@ struct EditableText: View {
             }
             editingChanged?(false)
 
-            if let commit {
-                AppManager.logger.debug("EditableText — invoking onCommit from \(reasonDescription, privacy: .public)")
-                commit()
-            } else {
-                AppManager.logger.debug("EditableText — skipped onCommit from \(reasonDescription, privacy: .public) (below minimumCharacters)")
-            }
+            commit?()
         }
     }
 }

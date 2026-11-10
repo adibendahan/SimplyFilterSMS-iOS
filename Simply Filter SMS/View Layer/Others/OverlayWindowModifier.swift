@@ -67,8 +67,7 @@ extension OverlayWindowModifier {
         }
 
         private func replaceToast(with toast: ToastView.Toast) {
-            let toastName = String(describing: toast)
-            AppManager.logger.debug("Toast — replacing with: \(toastName, privacy: .public)")
+            Log.debug("toast replaced, toast: \(toast.logName)")
             self.toastViewModel.onHide = nil
             withAnimation {
                 self.toastViewModel.show = false
@@ -93,10 +92,9 @@ extension OverlayWindowModifier {
         }
 
         private func configureToast(_ toast: ToastView.Toast) {
-            let toastName = String(describing: toast)
-            AppManager.logger.debug("Toast — shown: \(toastName, privacy: .public)")
+            Log.debug("toast shown, toast: \(toast.logName), delay: \(toast.showDelay)")
             self.toastViewModel.onHide = { [weak self] in
-                AppManager.logger.debug("Toast — hidden: \(toastName, privacy: .public)")
+                Log.debug("toast hidden, toast: \(toast.logName)")
                 self?.confettiTier = nil
                 self?.appManager.flowManager.completeToast(toast)
             }

@@ -6,11 +6,8 @@
 //
 
 import Foundation
-import OSLog
 
 protocol AppManagerProtocol {
-    static var logger: Logger { get }
-    
     var persistenceManager: PersistenceManagerProtocol { get }
     var defaultsManager: DefaultsManagerProtocol { get set }
     var filterListManager: FilterListManagerProtocol { get }

@@ -27,9 +27,21 @@ struct FilterListCatalogEntry: Codable, Equatable {
 
 extension FilterListCatalogResponse {
     init?(data: Data) {
-        guard let response = try? JSONDecoder().decode(Self.self, from: data) else { return nil }
-        guard response.format == Self.formatIdentifier, response.version >= 1 else { return nil }
-        guard response.version <= Self.currentVersion else { return nil }
+        let response: Self
+        do {
+            response = try JSONDecoder().decode(Self.self, from: data)
+        } catch {
+            Log.error("catalog doesn't decode, bytes: \(data.count)", error: error)
+            return nil
+        }
+        guard response.format == Self.formatIdentifier, response.version >= 1 else {
+            Log.error("catalog has the wrong format, format: \(response.format), version: \(response.version)")
+            return nil
+        }
+        guard response.version <= Self.currentVersion else {
+            Log.error("catalog version not supported, version: \(response.version), supported: \(Self.currentVersion)")
+            return nil
+        }
 
         self = response
     }
