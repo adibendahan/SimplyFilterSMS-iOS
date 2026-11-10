@@ -115,6 +115,23 @@ class FiltersViewModelTests: XCTestCase {
         XCTAssertTrue(self.testSubject.filters.isEmpty)
     }
     
+    func test_sectionSplit_keepsRegexRowAfterContextReset() throws {
+        // Prepare
+        let filter = self.makeFilter()
+        filter.filterMatching = .regex
+        try self.persistenceManager.context.save()
+        self.persistenceManager.fetchFilterRecordsForTypeClosure = { _ in [filter] }
+        self.testSubject.refresh()
+        XCTAssertEqual(self.testSubject.regexRowViewModels.count, 1)
+
+        // Act
+        self.persistenceManager.context.reset()
+
+        // Verify
+        XCTAssertEqual(self.testSubject.regexRowViewModels.count, 1)
+        XCTAssertEqual(self.testSubject.regularRowViewModels.count, 0)
+    }
+
     private func makeFilter() -> Filter {
         let filter = Filter(context: self.persistenceManager.context)
         filter.messageFolder = .junk

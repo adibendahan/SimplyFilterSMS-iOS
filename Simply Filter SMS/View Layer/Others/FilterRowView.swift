@@ -60,7 +60,7 @@ struct FilterRowView: View {
                     }
                 }
 
-            if self.model.filter.filterType == .denyLanguage,
+            if self.model.filterType == .denyLanguage,
                let filterText = self.model.filter.text {
                 let blockedLanguage = NLLanguage(filterText: filterText)
                 if blockedLanguage != .undetermined,
@@ -74,7 +74,7 @@ struct FilterRowView: View {
                     focusID: model.id,
                     focusedID: focusedFilterID,
                     minimumCharacters: kMinimumFilterLength,
-                    attributedText: self.model.filter.filterMatching == .regex ? { $0.highlightedAsRegex } : nil,
+                    attributedText: self.model.filterMatching == .regex ? { $0.highlightedAsRegex } : nil,
                     onCommit: {
                         self.model.updateFilter(filterText: self.model.text)
                         self.showDuplicateError = false
@@ -93,7 +93,7 @@ struct FilterRowView: View {
                         self.showDuplicateError = self.model.isLiveDuplicate(text: text)
                         self.showInvalidRegexError = self.model.isLiveInvalidRegex(text: text)
                     })
-                    .font(self.model.filter.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
+                    .font(self.model.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
                     .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                     .layoutPriority(1)
 
@@ -109,20 +109,20 @@ struct FilterRowView: View {
     @ViewBuilder
     private var optionButtons: some View {
         if isOptionsCollapsed {
-            if self.model.filter.filterType.supportsAdvancedOptions ||
-                self.model.filter.filterType.supportsFolders {
+            if self.model.filterType.supportsAdvancedOptions ||
+                self.model.filterType.supportsFolders {
                 collapsedOptionsMenu
             }
         } else {
             HStack(spacing: 8) {
-                if self.model.filter.filterType.supportsAdvancedOptions {
+                if self.model.filterType.supportsAdvancedOptions {
                     targetMenu
-                    if self.model.filter.filterMatching != .regex {
+                    if self.model.filterMatching != .regex {
                         matchingMenu
                         caseMenu
                     }
                 }
-                if self.model.filter.filterType.supportsFolders {
+                if self.model.filterType.supportsFolders {
                     folderMenu
                 }
             }
@@ -132,17 +132,17 @@ struct FilterRowView: View {
     @ViewBuilder
     private var collapsedOptionsMenu: some View {
         Menu {
-            if self.model.filter.filterType.supportsAdvancedOptions {
+            if self.model.filterType.supportsAdvancedOptions {
                 targetPicker
 
-                if self.model.filter.filterMatching != .regex {
+                if self.model.filterMatching != .regex {
                     Divider()
                     matchingPicker
                     Divider()
                     casePicker
                 }
             }
-            if self.model.filter.filterType.supportsFolders {
+            if self.model.filterType.supportsFolders {
                 Divider()
                 folderPicker
             }
@@ -158,13 +158,13 @@ struct FilterRowView: View {
         Menu {
             targetPicker
         } label: {
-            FilterRowOptionChip(systemName: self.model.filter.filterTarget.icon,
-                                isActive: self.model.filter.filterTarget != .all)
+            FilterRowOptionChip(systemName: self.model.filterTarget.icon,
+                                isActive: self.model.filterTarget != .all)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(self.model.filter.filterMatching == .regex
-            ? String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name) + ", " + String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name)
-            : String(format: "a11y_filterRow_targetLabel"~, self.model.filter.filterTarget.name))
+        .accessibilityLabel(self.model.filterMatching == .regex
+            ? String(format: "a11y_filterRow_targetLabel"~, self.model.filterTarget.name) + ", " + String(format: "a11y_filterRow_matchLabel"~, FilterMatching.regex.name)
+            : String(format: "a11y_filterRow_targetLabel"~, self.model.filterTarget.name))
     }
 
     @ViewBuilder
@@ -172,11 +172,11 @@ struct FilterRowView: View {
         Menu {
             matchingPicker
         } label: {
-            FilterRowOptionChip(systemName: self.model.filter.filterMatching.icon,
-                                isActive: self.model.filter.filterMatching == .exact)
+            FilterRowOptionChip(systemName: self.model.filterMatching.icon,
+                                isActive: self.model.filterMatching == .exact)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filter.filterMatching.name))
+        .accessibilityLabel(String(format: "a11y_filterRow_matchLabel"~, self.model.filterMatching.name))
     }
 
     @ViewBuilder
@@ -184,11 +184,11 @@ struct FilterRowView: View {
         Menu {
             casePicker
         } label: {
-            FilterRowOptionChip(systemName: self.model.filter.filterCase.icon,
-                                isActive: self.model.filter.filterCase == .caseSensitive)
+            FilterRowOptionChip(systemName: self.model.filterCase.icon,
+                                isActive: self.model.filterCase == .caseSensitive)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filter.filterCase.name))
+        .accessibilityLabel(String(format: "a11y_filterRow_caseLabel"~, self.model.filterCase.name))
     }
 
     @ViewBuilder
@@ -196,15 +196,15 @@ struct FilterRowView: View {
         Menu {
             folderPicker
         } label: {
-            FilterRowOptionChip(systemName: self.model.filter.messageFolder.iconName, isActive: true)
+            FilterRowOptionChip(systemName: self.model.messageFolder.iconName, isActive: true)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.filter.messageFolder.name))
+        .accessibilityLabel(String(format: "a11y_filterRow_folderLabel"~, self.model.messageFolder.name))
     }
 
     private var targetPicker: some View {
         Picker(selection: Binding(
-            get: { self.model.filter.filterTarget },
+            get: { self.model.filterTarget },
             set: { self.model.updateFilter(filterTarget: $0) }
         )) {
             ForEach(FilterTarget.allCases) { filterTarget in
@@ -218,7 +218,7 @@ struct FilterRowView: View {
 
     private var matchingPicker: some View {
         Picker(selection: Binding(
-            get: { self.model.filter.filterMatching },
+            get: { self.model.filterMatching },
             set: { self.model.updateFilter(filterMatching: $0) }
         )) {
             ForEach(FilterMatching.allCases.filter { $0 != .regex }) { filterMatching in
@@ -232,7 +232,7 @@ struct FilterRowView: View {
 
     private var casePicker: some View {
         Picker(selection: Binding(
-            get: { self.model.filter.filterCase },
+            get: { self.model.filterCase },
             set: { self.model.updateFilter(filterCase: $0) }
         )) {
             ForEach(FilterCase.allCases) { filterCase in
@@ -246,7 +246,7 @@ struct FilterRowView: View {
 
     private var folderPicker: some View {
         Picker(selection: Binding(
-            get: { self.model.filter.messageFolder },
+            get: { self.model.messageFolder },
             set: { self.model.updateFilter(denyFolder: $0) }
         )) {
             ForEach(MessageFolder.allCases) { folder in
@@ -267,6 +267,11 @@ extension FilterRowView {
         @Published private(set) var filter: Filter
         @Published private(set) var onUpdate: ((Bool) -> ())?
         @Published var text: String
+        @Published private(set) var filterType: FilterType
+        @Published private(set) var filterTarget: FilterTarget
+        @Published private(set) var filterMatching: FilterMatching
+        @Published private(set) var filterCase: FilterCase
+        @Published private(set) var messageFolder: MessageFolder
 
         init(filter: Filter,
              onUpdate: ((Bool) -> ())? = nil,
@@ -283,6 +288,11 @@ extension FilterRowView {
             self.filter = filter
             self.onUpdate = onUpdate
             self.text = filter.text ?? "general_null"~
+            self.filterType = filter.filterType
+            self.filterTarget = filter.filterTarget
+            self.filterMatching = filter.filterMatching
+            self.filterCase = filter.filterCase
+            self.messageFolder = filter.messageFolder
             super.init(appManager: appManager)
         }
 
@@ -292,6 +302,7 @@ extension FilterRowView {
             if self.text == previousText {
                 self.text = filter.text ?? "general_null"~
             }
+            self.cacheOptions()
         }
         
         func updateFilter(denyFolder: MessageFolder) {
@@ -318,13 +329,13 @@ extension FilterRowView {
             guard text != (self.filter.text ?? "") else { return false }
             return self.appManager.persistenceManager.isDuplicateFilter(
                 text: text,
-                filterTarget: self.filter.filterTarget,
-                filterMatching: self.filter.filterMatching,
-                filterCase: self.filter.filterCase)
+                filterTarget: self.filterTarget,
+                filterMatching: self.filterMatching,
+                filterCase: self.filterCase)
         }
 
         func isLiveInvalidRegex(text: String) -> Bool {
-            guard self.filter.filterMatching == .regex, !text.isEmpty else { return false }
+            guard self.filterMatching == .regex, !text.isEmpty else { return false }
             return (try? Regex(text)) == nil
         }
 
@@ -337,7 +348,7 @@ extension FilterRowView {
                 return false
             }
 
-            if self.filter.filterMatching == .regex, (try? Regex(filterText)) == nil {
+            if self.filterMatching == .regex, (try? Regex(filterText)) == nil {
                 Log.debug("invalid regex, text: \(filterText), current: \(current) → reverted")
                 self.text = current
                 return true
@@ -345,9 +356,9 @@ extension FilterRowView {
 
             guard !self.appManager.persistenceManager.isDuplicateFilter(
                 text: filterText,
-                filterTarget: self.filter.filterTarget,
-                filterMatching: self.filter.filterMatching,
-                filterCase: self.filter.filterCase) else {
+                filterTarget: self.filterTarget,
+                filterMatching: self.filterMatching,
+                filterCase: self.filterCase) else {
                 Log.debug("duplicate, text: \(filterText), current: \(current) → reverted")
                 self.text = current
                 return true
@@ -363,6 +374,14 @@ extension FilterRowView {
 
             self.onUpdate?(false)
             return false
+        }
+
+        private func cacheOptions() {
+            self.filterType = self.filter.filterType
+            self.filterTarget = self.filter.filterTarget
+            self.filterMatching = self.filter.filterMatching
+            self.filterCase = self.filter.filterCase
+            self.messageFolder = self.filter.messageFolder
         }
     }
 }

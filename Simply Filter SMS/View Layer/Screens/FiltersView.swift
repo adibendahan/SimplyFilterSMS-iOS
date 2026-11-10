@@ -50,19 +50,19 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                 }
                 .deleteDisabled(self.model.editMode.isEditing)
             } header: {
-                if self.model.regularFilters.count > 0 {
+                if !self.model.regularRowViewModels.isEmpty {
                     AdaptiveColumnHeader(
                         leading: self.model.filterType == .denyLanguage ? "general_lang"~ : "filterList_text"~,
                         trailing: self.model.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~,
                         trailingSecondary: false)
                 }
             } footer: {
-                if self.model.regexFilters.isEmpty {
+                if self.model.regexRowViewModels.isEmpty {
                     listFooter
                 }
             }
 
-            if !self.model.regexFilters.isEmpty {
+            if !self.model.regexRowViewModels.isEmpty {
                 Section {
                     ForEach(self.model.regexRowViewModels, id: \.id) { rowModel in
                         FilterRowView(
@@ -302,13 +302,11 @@ extension FiltersView {
         }
         @Published private(set) var newlyAddedFilter: Filter? = nil
 
-        var regularFilters: [Filter] { filters.filter { $0.filterMatching != .regex } }
-        var regexFilters: [Filter] { filters.filter { $0.filterMatching == .regex } }
         var regularRowViewModels: [FilterRowView.ViewModel] {
-            self.rowViewModels.filter({ $0.filter.filterMatching != .regex })
+            self.rowViewModels.filter({ $0.filterMatching != .regex })
         }
         var regexRowViewModels: [FilterRowView.ViewModel] {
-            self.rowViewModels.filter({ $0.filter.filterMatching == .regex })
+            self.rowViewModels.filter({ $0.filterMatching == .regex })
         }
         
         init(filterType: FilterType,
