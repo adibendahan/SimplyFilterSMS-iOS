@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import Combine
 
 
 //MARK: - View -
@@ -133,13 +134,26 @@ extension FilterTesterView {
     }
     
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var text: String = "" {
-            didSet { self.updateResult() }
-        }
-        @Published var sender: String = "" {
-            didSet { self.updateResult() }
-        }
+        @Published var text: String = ""
+        @Published var sender: String = ""
         @Published var result: MessageEvaluationResult?
+
+        override init(appManager: AppManagerProtocol = AppManager.shared) {
+            super.init(appManager: appManager)
+            let input = Publishers.CombineLatest(self.$text, self.$sender)
+
+            input
+                .filter { text, sender in text.isEmpty && sender.isEmpty }
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _, _ in self?.clearResult() }
+                .store(in: &self.disposables)
+
+            input
+                .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+                .filter { text, sender in !text.isEmpty || !sender.isEmpty }
+                .sink { [weak self] text, sender in self?.updateResult(text: text, sender: sender) }
+                .store(in: &self.disposables)
+        }
         
         private lazy var bodyOnlySender: String = {
             let evaluator = self.appManager.messageEvaluationManager
@@ -148,17 +162,17 @@ extension FilterTesterView {
                 ?? candidates[0]
         }()
         
-        func updateResult() {
-            guard !self.text.isEmpty || !self.sender.isEmpty else {
-                if self.result != nil {
-                    self.result = nil
-                }
-                return
-            }
+        private var disposables = Set<AnyCancellable>()
 
+        private func clearResult() {
+            guard self.result != nil else { return }
+            self.result = nil
+        }
+
+        private func updateResult(text: String, sender: String) {
             let next = self.appManager.messageEvaluationManager.evaluateMessage(
-                body: self.text,
-                sender: self.sender.isEmpty ? self.bodyOnlySender : self.sender
+                body: text,
+                sender: sender.isEmpty ? self.bodyOnlySender : sender
             )
             guard next != self.result else { return }
             self.result = next
