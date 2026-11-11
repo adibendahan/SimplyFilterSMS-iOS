@@ -35,9 +35,10 @@ Before writing anything, determine whether any of the new strings require plural
 
 - Do NOT add it to `Localizable.strings`. Plural strings live exclusively in `Localizable.stringsdict`.
 - Add the entry to `Simply Filter SMS/Resources/en.lproj/Localizable.stringsdict`, following the existing XML format exactly (copy an existing entry as template).
-- Then manually add the same entry to **every** other language's `Localizable.stringsdict` — BartyCrouch does **not** process `.stringsdict` files. The full list of language folders to update: `he`, `ar`, `es`, `fr`, `pt-BR`, `de`, `ja`, `ko`, `it` (verify against actual `.lproj` folders in Resources/).
+- Then manually add the same entry to **every** other language's `Localizable.stringsdict` — BartyCrouch does **not** process `.stringsdict` files. The full list of language folders to update: `he`, `ar`, `es`, `fr`, `pt-BR`, `de`, `ja`, `ko`, `it`, `zh-Hans` (verify against actual `.lproj` folders in Resources/).
 - Use the correct CLDR plural categories for each language:
-  - `one`/`other`: de, es, fr, pt-BR, it, ko, ja (ko and ja use `other` only)
+  - `one`/`other`: de, es, fr, pt-BR, it
+  - `other` only: ko, ja, zh-Hans
   - `one`/`two`/`many`/`other`: he
   - `zero`/`one`/`two`/`few`/`many`/`other`: ar
 - After adding stringsdict entries for all languages, skip Steps 3–5 for those keys (BartyCrouch must not be run on keys that only exist in stringsdict).
@@ -71,11 +72,13 @@ BartyCrouch will add each new key as `= ""` to all existing language files. Do n
 Read the Resources directory to find all existing `.lproj` folders (excluding `en.lproj` and `Base.lproj`). These are the languages to translate into.
 
 Current supported languages (verify against actual folders):
-`he`, `ar`, `es`, `fr`, `pt-BR`, `de`, `ja`, `ko`, `it`
+`he`, `ar`, `es`, `fr`, `pt-BR`, `de`, `ja`, `ko`, `it`, `zh-Hans`
 
 ---
 
 ## Step 5 — Translate into all supported languages
+
+Read `docs/localization/<code>.md` for each language first, and follow its grammar strategy, canonical terms and iOS system terms.
 
 For each language, translate every new key. Fill in the empty `""` values that BartyCrouch added.
 

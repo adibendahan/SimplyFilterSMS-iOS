@@ -67,7 +67,7 @@
 - `aboutView_appIconCredit` = "Vitali Levit" (proper name)
 - Developer name "Adi Ben-Dahan" in `aboutView_aboutText`
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
-- Brand names: Simply Filter SMS, iCloud, iOS, AppStore, VoiceOver, Dynamic Type
+- Brand names: Simply Filter SMS, iCloud, iOS, App Store, VoiceOver, Dynamic Type
 - All emoji kept exactly as in English
 
 ---

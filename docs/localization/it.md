@@ -72,7 +72,7 @@ Italian is LTR — no directional considerations needed.
 - `aboutView_appIconCredit` → keep "Vitali Levit"
 - "Adi Ben-Dahan" in `aboutView_aboutText` and `general_copyright` → keep as proper name
 - "Tel Aviv 🇮🇱" → keep
-- Brand names: "Simply Filter SMS", "iCloud", "iOS", "AppStore", "VoiceOver", "SimplyFilterSMS"
+- Brand names: "Simply Filter SMS", "iCloud", "iOS", "App Store", "VoiceOver", "SimplyFilterSMS"
 - **VoiceOver** → keep as brand name
 - **Voice Control** → translate as "Controllo vocale" (Apple's official Italian term)
 - **Dynamic Type** → translate as "Testo dinamico" (Apple's official Italian term in Settings > Accessibility)

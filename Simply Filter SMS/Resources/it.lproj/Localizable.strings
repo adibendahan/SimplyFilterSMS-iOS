@@ -142,7 +142,7 @@
 
 "aboutView_linksSection" = "Link";
 
-"aboutView_aboutText" = "**Fatto con ❤️ da Adi Ben-Dahan a Tel Aviv 🇮🇱**\n\nQuesto progetto è nato da una ricerca personale di uno strumento di messaggistica che rispettasse davvero la privacy.\n\nNessun cloud.\nNessuna analisi.\nNessun osservatore silenzioso.\n\nSolo un filtro veloce e affidabile che gira interamente sul tuo dispositivo senza che nulla esca dalle tue mani.\nE poiché molti strumenti in questo spazio si nascondono dietro un abbonamento o un paywall, ho pensato che fosse bello avere una versione che funziona senza condizioni. Questa app è **gratuita** da usare, e rimarrà **gratuita**.\n\n**Sarò molto felice di ricevere una valutazione di cinque stelle sull'AppStore ⭐️❤️.**\n\nSe qualcosa sembra strano o non si comporta come previsto, un breve messaggio sulla pagina delle issue di GitHub o un'email sono sempre ben accetti.";
+"aboutView_aboutText" = "**Fatto con ❤️ da Adi Ben-Dahan a Tel Aviv 🇮🇱**\n\nQuesto progetto è nato da una ricerca personale di uno strumento di messaggistica che rispettasse davvero la privacy.\n\nNessun cloud.\nNessuna analisi.\nNessun osservatore silenzioso.\n\nSolo un filtro veloce e affidabile che gira interamente sul tuo dispositivo senza che nulla esca dalle tue mani.\nE poiché molti strumenti in questo spazio si nascondono dietro un abbonamento o un paywall, ho pensato che fosse bello avere una versione che funziona senza condizioni. Questa app è **gratuita** da usare, e rimarrà **gratuita**.\n\n**Sarò molto felice di ricevere una valutazione di cinque stelle sull'App Store ⭐️❤️.**\n\nSe qualcosa sembra strano o non si comporta come previsto, un breve messaggio sulla pagina delle issue di GitHub o un'email sono sempre ben accetti.";
 
 "aboutView_twitter" = "a_bd";
 
@@ -200,7 +200,7 @@
 
 "faq_question_2" = "I miei messaggi sono visibili allo sviluppatore?";
 
-"faq_answer_2" = "No. Simply Filter SMS non raccoglie alcuna informazione, tutto il processo dei messaggi avviene localmente sul tuo dispositivo senza alcun log.";
+"faq_answer_2" = "No. Simply Filter SMS non raccoglie alcuna informazione e ogni messaggio viene elaborato sul tuo dispositivo. Nessun messaggio viene mai inviato da nessuna parte in automatico. L'unica eccezione è quando scegli tu di segnalare un messaggio specifico: viene inviato solo quel messaggio, e solo perché hai toccato Segnala.";
 
 "faq_question_3" = "E gli iMessage e i messaggi dai miei contatti?";
 
@@ -216,7 +216,7 @@
 
 "help_automaticFiltering_question" = "Come funziona il filtraggio AI?";
 
-"help_automaticFiltering" = "Il filtraggio AI usa liste di parole chiave generate dall'IA per rilevare spam e instradare i messaggi nella cartella Indesiderati. Le liste vengono aggiornate periodicamente. I tuoi filtri normali sono ancora attivi quando il filtraggio AI è acceso.";
+"help_automaticFiltering" = "Il filtraggio AI usa liste di parole chiave generate dall'IA per rilevare spam e instradare i messaggi nella cartella Indesiderati, Transazioni o Promozioni. Le liste vengono aggiornate periodicamente. I tuoi filtri normali sono ancora attivi quando il filtraggio AI è acceso.";
 
 "help_deny" = "Aggiungi testi che faranno sì che un messaggio venga contrassegnato come spam, puoi anche scegliere la cartella specifica in cui vuoi che il messaggio venga conservato.";
 

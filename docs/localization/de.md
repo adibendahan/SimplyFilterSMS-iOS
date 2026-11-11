@@ -83,7 +83,7 @@ Not applicable — German is LTR.
 - `aboutView_appIconCredit` = `"Vitali Levit"` — proper name
 - "Adi Ben-Dahan" in `aboutView_aboutText` — developer name
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
-- Brand names: Simply Filter SMS, iCloud, iOS, AppStore, VoiceOver, Dynamic Type
+- Brand names: Simply Filter SMS, iCloud, iOS, App Store, VoiceOver, Dynamic Type
 - All emoji — keep exactly as in English source
 
 ---

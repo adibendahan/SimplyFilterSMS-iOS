@@ -1,1 +1,1 @@
-SMS,Filtro,Spam,Mensagens,Bloqueador,Bloquear,IA,Idioma
+Filtro,Mensagens,Idioma,Lixo eletrônico,Golpe,Desconhecido,Remetente,Palavra-chave,Regex,Privacidade
