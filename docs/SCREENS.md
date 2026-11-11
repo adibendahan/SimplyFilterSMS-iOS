@@ -54,7 +54,7 @@ The add-filter sheet for allow and deny filters.
 ## FiltersView
 The list of one filter type (allow, deny or language), pushed from Home, with inline editing, swipe and bulk delete.
 - Regex filters get their own section.
-- **Reload trap:** section membership and row options come from the row ViewModel's cached values, never the live `Filter`. Right after `reloadContainer()` resets the context, a `Filter` reads default values, so a regex row would drop into the regular section.
+- **Reload trap:** section membership, row text and row options come from the row ViewModel's cached values, never the live `Filter`. Right after `reloadContainer()` resets the context, a `Filter` reads default values, so a regex row would drop into the regular section.
 - **`EditableText` crash trap:** after Return, ending the session, clearing focus and the business `onCommit` are deferred to the next main-loop turn. Return's `triggerPrimaryAction` still writes to the text field after `onCommit` returns, so rebuilding the `List` inside that callback crashes with `EXC_BAD_ACCESS`.
 - In `EditableText`, the idle `TextField` stays in the layout at opacity 0, which keeps right-to-left text from shifting.
 

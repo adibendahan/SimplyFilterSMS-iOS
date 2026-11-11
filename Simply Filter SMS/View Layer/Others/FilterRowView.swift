@@ -61,8 +61,8 @@ struct FilterRowView: View {
                 }
 
             if self.model.filterType == .denyLanguage,
-               let filterText = self.model.filter.text {
-                let blockedLanguage = NLLanguage(filterText: filterText)
+               !self.model.committedText.isEmpty {
+                let blockedLanguage = NLLanguage(filterText: self.model.committedText)
                 if blockedLanguage != .undetermined,
                    let localizedName = blockedLanguage.localizedName {
                     Text(localizedName)
@@ -267,6 +267,7 @@ extension FilterRowView {
         @Published private(set) var filter: Filter
         @Published private(set) var onUpdate: ((Bool) -> ())?
         @Published var text: String
+        @Published private(set) var committedText: String
         @Published private(set) var filterType: FilterType
         @Published private(set) var filterTarget: FilterTarget
         @Published private(set) var filterMatching: FilterMatching
@@ -288,6 +289,7 @@ extension FilterRowView {
             self.filter = filter
             self.onUpdate = onUpdate
             self.text = filter.text ?? "general_null"~
+            self.committedText = filter.text ?? ""
             self.filterType = filter.filterType
             self.filterTarget = filter.filterTarget
             self.filterMatching = filter.filterMatching
@@ -297,8 +299,9 @@ extension FilterRowView {
         }
 
         func updateFilter(_ filter: Filter) {
-            let previousText = self.filter.text ?? ""
+            let previousText = self.committedText
             self.filter = filter
+            self.committedText = filter.text ?? ""
             if self.text == previousText {
                 self.text = filter.text ?? "general_null"~
             }
@@ -326,7 +329,7 @@ extension FilterRowView {
         }
         
         func isLiveDuplicate(text: String) -> Bool {
-            guard text != (self.filter.text ?? "") else { return false }
+            guard text != self.committedText else { return false }
             return self.appManager.persistenceManager.isDuplicateFilter(
                 text: text,
                 filterTarget: self.filterTarget,
@@ -341,7 +344,7 @@ extension FilterRowView {
 
         @discardableResult
         func updateFilter(filterText: String) -> Bool {
-            let current = self.filter.text ?? ""
+            let current = self.committedText
 
             guard filterText != current else {
                 Log.debug("text unchanged, text: \(current) → skipped")
@@ -368,10 +371,11 @@ extension FilterRowView {
 
             guard self.filter.text == filterText else {
                 Log.debug("save failed, text: \(filterText), current: \(current) → reverted")
-                self.text = self.filter.text ?? current
+                self.text = current
                 return true
             }
 
+            self.committedText = filterText
             self.onUpdate?(false)
             return false
         }
