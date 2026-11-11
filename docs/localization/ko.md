@@ -64,7 +64,7 @@ Korean uses specific counter words (e.g. 개 for general objects). For `%ld filt
 - `aboutView_appIconCredit` = "Vitali Levit"
 - "Adi Ben-Dahan" in `aboutView_aboutText`
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
-- Brand names: "Simply Filter SMS", "iCloud", "iOS", "AppStore", "VoiceOver", "Dynamic Type", "SimplyFilterSMS"
+- Brand names: "Simply Filter SMS", "iCloud", "iOS", "App Store", "VoiceOver", "Dynamic Type", "SimplyFilterSMS"
 - All emoji — keep exactly as in English source
 
 ---

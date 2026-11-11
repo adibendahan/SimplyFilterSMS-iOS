@@ -1,1 +1,1 @@
-SMS,Filter,Spam,Nachrichten,Blocker,Blockieren,KI,Sprache
+Nachrichten,Blockieren,Sprache,Junk,Betrug,Unbekannt,Absender,Schlüsselwort,Regex,Datenschutz

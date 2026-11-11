@@ -232,7 +232,7 @@
 
 "faq_question_2" = "开发者会看到我的信息吗？";
 
-"faq_answer_2" = "不会。Simply Filter SMS 不会收集任何信息，所有信息处理都在你的设备上本地完成，也不会记录日志。";
+"faq_answer_2" = "不会。Simply Filter SMS 不会收集任何信息，每条信息都在你的设备上处理。任何信息都不会被自动发送到任何地方。唯一的例外是你自己选择报告某条特定信息：只有那条信息会被发送，而且只是因为你点按了“报告”。";
 
 "faq_question_3" = "iMessage 和来自联系人的信息呢？";
 
@@ -248,7 +248,7 @@
 
 "help_automaticFiltering_question" = "AI 过滤如何工作？";
 
-"help_automaticFiltering" = "AI 过滤使用 AI 生成的关键词列表来识别垃圾信息，并将其送到“垃圾短信”列表。列表会定期更新。启用 AI 过滤后，你的常规过滤器仍然会生效。";
+"help_automaticFiltering" = "AI 过滤使用 AI 生成的关键词列表来识别垃圾信息，并将信息送到“垃圾短信”“交易信息”或“推广信息”列表。列表会定期更新。启用 AI 过滤后，你的常规过滤器仍然会生效。";
 
 "faq_question_notFiltering" = "为什么我的信息没有被过滤？";
 

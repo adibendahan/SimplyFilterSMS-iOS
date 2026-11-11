@@ -142,7 +142,7 @@
 
 "aboutView_linksSection" = "Enlaces";
 
-"aboutView_aboutText" = "**Hecho con ❤️ por Adi Ben-Dahan en Tel Aviv 🇮🇱**\n\nEste proyecto nació de una búsqueda personal de una herramienta de filtrado de mensajes que respetara de verdad la privacidad.\n\nSin nubes.\nSin analíticas.\nSin observadores silenciosos.\n\nSolo un filtro rápido y fiable que funciona íntegramente en tu dispositivo sin que nada salga de tus manos.\nY como muchas herramientas en este ámbito requieren suscripción o pago, quise ofrecer una versión que simplemente funcione sin ataduras. Esta app es **gratuita** y lo **seguirá siendo**.\n\n**Me alegrará mucho recibir una calificación de cinco estrellas en el AppStore ⭐️❤️.**\n\nSi algo parece estar mal o no funciona como se espera, un comentario en GitHub Issues o un correo siempre es bienvenido.";
+"aboutView_aboutText" = "**Hecho con ❤️ por Adi Ben-Dahan en Tel Aviv 🇮🇱**\n\nEste proyecto nació de una búsqueda personal de una herramienta de filtrado de mensajes que respetara de verdad la privacidad.\n\nSin nubes.\nSin analíticas.\nSin observadores silenciosos.\n\nSolo un filtro rápido y fiable que funciona íntegramente en tu dispositivo sin que nada salga de tus manos.\nY como muchas herramientas en este ámbito requieren suscripción o pago, quise ofrecer una versión que simplemente funcione sin ataduras. Esta app es **gratuita** y lo **seguirá siendo**.\n\n**Me alegrará mucho recibir una calificación de cinco estrellas en el App Store ⭐️❤️.**\n\nSi algo parece estar mal o no funciona como se espera, un comentario en GitHub Issues o un correo siempre es bienvenido.";
 
 "aboutView_twitter" = "a_bd";
 
@@ -200,7 +200,7 @@
 
 "faq_question_2" = "¿Mis mensajes están expuestos al desarrollador?";
 
-"faq_answer_2" = "No. Simply Filter SMS no recopila ningún dato. Todo el procesamiento se realiza localmente en tu dispositivo sin ningún registro.";
+"faq_answer_2" = "No. Simply Filter SMS no recopila ningún dato y cada mensaje se procesa en tu dispositivo. Nunca se envía ningún mensaje a ninguna parte de forma automática. La única excepción es cuando decides reportar por tu cuenta un mensaje concreto: solo se envía ese mensaje, y solo porque has tocado Reportar.";
 
 "faq_question_3" = "¿Qué pasa con los iMessages y mensajes de mis contactos?";
 
@@ -216,7 +216,7 @@
 
 "help_automaticFiltering_question" = "¿Cómo funciona el Filtrado AI?";
 
-"help_automaticFiltering" = "El Filtrado AI usa listas de palabras clave generadas por IA para detectar spam y enviar mensajes a la carpeta de no deseados. Las listas se actualizan periódicamente. Tus filtros habituales siguen aplicándose cuando el Filtrado AI está activo.";
+"help_automaticFiltering" = "El Filtrado AI usa listas de palabras clave generadas por IA para detectar spam y enviar mensajes a la carpeta No deseado, Transacciones o Promociones. Las listas se actualizan periódicamente. Tus filtros habituales siguen aplicándose cuando el Filtrado AI está activo.";
 
 "help_deny" = "Añade textos que harán que un mensaje se marque como no deseado. También puedes elegir la carpeta específica.";
 

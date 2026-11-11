@@ -142,7 +142,7 @@
 
 "aboutView_linksSection" = "Links";
 
-"aboutView_aboutText" = "**Mit ❤️ von Adi Ben-Dahan in Tel Aviv 🇮🇱 gemacht**\n\nDieses Projekt begann als persönliche Suche nach einem Messaging-Tool, das die Privatsphäre wirklich respektiert.\n\nKeine Cloud.\nKeine Analysen.\nKeine stillen Beobachter.\n\nNur ein schneller, zuverlässiger Filter, der vollständig auf deinem Gerät läuft – ohne dass etwas deine Hände verlässt.\nUnd da viele Tools in diesem Bereich hinter einem Abo oder einer Bezahlschranke stecken, dachte ich, es wäre schön, eine Version zu haben, die einfach funktioniert – ohne Bedingungen. Diese App ist **kostenlos** und wird es **bleiben**.\n\n**Ich würde mich sehr über eine Fünf-Sterne-Bewertung im AppStore freuen ⭐️❤️.**\n\nWenn etwas nicht stimmt oder sich nicht wie erwartet verhält, ist eine kurze Nachricht auf der GitHub-Issues-Seite oder per E-Mail immer willkommen.";
+"aboutView_aboutText" = "**Mit ❤️ von Adi Ben-Dahan in Tel Aviv 🇮🇱 gemacht**\n\nDieses Projekt begann als persönliche Suche nach einem Messaging-Tool, das die Privatsphäre wirklich respektiert.\n\nKeine Cloud.\nKeine Analysen.\nKeine stillen Beobachter.\n\nNur ein schneller, zuverlässiger Filter, der vollständig auf deinem Gerät läuft – ohne dass etwas deine Hände verlässt.\nUnd da viele Tools in diesem Bereich hinter einem Abo oder einer Bezahlschranke stecken, dachte ich, es wäre schön, eine Version zu haben, die einfach funktioniert – ohne Bedingungen. Diese App ist **kostenlos** und wird es **bleiben**.\n\n**Ich würde mich sehr über eine Fünf-Sterne-Bewertung im App Store freuen ⭐️❤️.**\n\nWenn etwas nicht stimmt oder sich nicht wie erwartet verhält, ist eine kurze Nachricht auf der GitHub-Issues-Seite oder per E-Mail immer willkommen.";
 
 "aboutView_twitter" = "a_bd";
 
@@ -200,7 +200,7 @@
 
 "faq_question_2" = "Sind meine Nachrichten für den App-Entwickler einsehbar?";
 
-"faq_answer_2" = "Nein. Simply Filter SMS sammelt keinerlei Informationen. Die gesamte Nachrichtenverarbeitung erfolgt lokal auf deinem Gerät ohne jegliche Protokollierung.";
+"faq_answer_2" = "Nein. Simply Filter SMS sammelt keinerlei Informationen, und jede Nachricht wird auf deinem Gerät verarbeitet. Keine Nachricht wird jemals automatisch irgendwohin gesendet. Die einzige Ausnahme ist, wenn du selbst eine bestimmte Nachricht meldest: Nur diese Nachricht wird gesendet, und nur weil du auf Melden getippt hast.";
 
 "faq_question_3" = "Was ist mit iMessages und Nachrichten von meinen Kontakten?";
 
@@ -216,7 +216,7 @@
 
 "help_automaticFiltering_question" = "Wie funktioniert KI-Filterung?";
 
-"help_automaticFiltering" = "KI-Filterung nutzt KI-generierte Schlüsselwortlisten, um Spam zu erkennen und Nachrichten in den Junk-Ordner zu leiten. Die Listen werden regelmäßig aktualisiert. Deine eigenen Filter bleiben aktiv, wenn KI-Filterung eingeschaltet ist.";
+"help_automaticFiltering" = "KI-Filterung nutzt KI-generierte Schlüsselwortlisten, um Spam zu erkennen und Nachrichten in den Ordner Junk, Transaktionen oder Werbung zu leiten. Die Listen werden regelmäßig aktualisiert. Deine eigenen Filter bleiben aktiv, wenn KI-Filterung eingeschaltet ist.";
 
 "help_deny" = "Füge Texte hinzu, die eine Nachricht als Spam kennzeichnen. Du kannst auch den Zielordner auswählen.";
 

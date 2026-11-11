@@ -249,6 +249,7 @@ struct ToastView: View {
 
         func setOnButtonTap(_ newOnButtonTap: (() -> ())?) {
             self.onButtonTap = {
+                guard self.show else { return }
                 newOnButtonTap?()
                 withAnimation {
                     self.show = false

@@ -129,7 +129,7 @@
 //MARK: About View
 "aboutView_aboutSection" = "Developer Notes";
 "aboutView_linksSection" = "Links";
-"aboutView_aboutText" = "**Made with ❤️ by Adi Ben-Dahan in Tel Aviv 🇮🇱**\n\nThis project started as a personal quest for a messaging tool that truly respected privacy.\n\nNo clouds.\nNo analytics.\nNo silent observers.\n\nJust a fast, reliable filter running entirely on your device with nothing that leaves your hands.\nAnd since many tools in this space sit behind a subscription or paywall, I thought it’d be nice to have a version that just works with no strings attached. This app is **free** to use, and it will **stay free**.\n\n**I'll be very happy to recieve five star rating on the AppStore ⭐️❤️.**\n\nIf something feels off or isn’t behaving as expected, a quick note on the GitHub issues page or an email is always appreciated.";
+"aboutView_aboutText" = "**Made with ❤️ by Adi Ben-Dahan in Tel Aviv 🇮🇱**\n\nThis project started as a personal quest for a messaging tool that truly respected privacy.\n\nNo clouds.\nNo analytics.\nNo silent observers.\n\nJust a fast, reliable filter running entirely on your device with nothing that leaves your hands.\nAnd since many tools in this space sit behind a subscription or paywall, I thought it’d be nice to have a version that just works with no strings attached. This app is **free** to use, and it will **stay free**.\n\n**I'll be very happy to receive a five-star rating on the App Store ⭐️❤️.**\n\nIf something feels off or isn’t behaving as expected, a quick note on the GitHub issues page or an email is always appreciated.";
 "aboutView_twitter" = "a_bd";
 "aboutView_github" = "GitHub";
 "aboutView_sendMail" = "Email";
@@ -154,15 +154,15 @@
 "faq_question_1" = "How does message filtering work?";
 "faq_answer_1" = "When you get an SMS from a number that isn't in Contacts, Simply Filter SMS checks it in this order:\n\n• **Allowed Texts** always get through.\n• **Blocked Texts**, blocked languages, Smart Filters, Trusted Countries, and **AI Filtering** can send it to Junk, Transactions, or Promotions.\n• If nothing matches, the message is delivered normally.\n\niMessage and senders in Contacts are never sent to the app.";
 "faq_question_2" = "Are my messages exposed to the app developer?";
-"faq_answer_2" = "No. Simply Filter SMS does not collect any information whatsoever, all message processing is done locally on your device without any logging.";
+"faq_answer_2" = "No. Simply Filter SMS doesn't collect any information, and every message is processed on your device. A message is never sent anywhere automatically. The only exception is when you choose to report a specific message yourself: only that message is sent, and only because you tapped Report.";
 "faq_question_3" = "What about iMessages and messages from my contacts?";
-"faq_answer_3" = "Apple does not expose those messages to any developer, they remain completely private.";
+"faq_answer_3" = "Apple does not expose those messages to any developer. They remain completely private.";
 "faq_question_4" = "Where are the filtered messages?";
-"faq_answer_4" = "When a text message is tagged as junk it will still be available for reading on the Messages app under the Junk folder.";
+"faq_answer_4" = "When a text message is tagged as junk, it will still be available for reading in the Messages app under the Junk folder.";
 "faq_question_5" = "What's the difference between Junk/Transactions/Promotions folders?";
-"faq_answer_5" = "Not much, you can filter any word to any folder. Those folders are not customizable in any way. Only messages filtered to the Junk folder will be delivered silently.";
+"faq_answer_5" = "Not much. You can filter any word to any folder. Those folders are not customizable in any way. Only messages filtered to the Junk folder will be delivered silently.";
 "help_automaticFiltering_question" = "How does AI Filtering work?";
-"help_automaticFiltering" = "AI Filtering uses AI-generated keyword lists to detect spam and route messages to the junk folder. The lists are updated periodically. Your regular filters are still applied when AI Filtering is on.";
+"help_automaticFiltering" = "AI Filtering uses AI-generated keyword lists to detect spam and route messages to the Junk, Transactions or Promotions folder. The lists are updated periodically. Your regular filters are still applied when AI Filtering is on.";
 "faq_question_notFiltering" = "Why aren't my messages being filtered?";
 "faq_answer_notFiltering" = "Usually one of these:\n\n• Simply Filter SMS isn't selected as the filter in iOS Settings.\n• The thread is **iMessage** (blue bubbles), not SMS. Apple doesn't let any app filter those.\n• The sender is in **Contacts**. iOS skips filtering for them.\n\nOn the home screen, tap the ••• button at the top right, then **Filter Tools**, then **Test Your Filters**, and paste the sender and message. The test runs in the app even when filtering is off, so it can show filtered while Messages still delivers. If Simply Filter SMS is enabled in iOS Settings and the test still says it should have been filtered, email me.";
 "faq_question_smartFilters" = "What are Smart Filters?";
@@ -175,8 +175,8 @@
 "faq_answer_shareFilters" = "On the home screen, tap the ••• button at the top right, then **Filter Tools**, then **Export Filters**, and send the file. On the other device, use **Import Filters** to add them. Filters that already exist there are skipped. Nothing is overwritten or deleted.";
 "faq_question_report" = "How do I help improve AI Filtering?";
 "faq_answer_report" = "On the home screen, tap the ••• button at the top right, then **Filter Tools**. **Report Message** sends a message from this app. **Improve AI Filtering** turns on reporting from a thread in Messages. Reports train the AI lists. Filtering on your device still happens locally.";
-"help_deny" = "Add texts that will cause a message to be marked as spam, you can also choose the specific folder you want the message to be stored in.";
-"help_allow" = "Add texts that will cause a message to be marked as valid. It is recommended to add uniqe identifying texts like your name here. Text appear on this list have the highest priority when filtering a message.";
+"help_deny" = "Add texts that will cause a message to be marked as spam. You can also choose the specific folder you want the message to be stored in.";
+"help_allow" = "Add texts that will cause a message to be marked as valid. It is recommended to add unique identifying texts like your name here. Texts on this list have the highest priority when filtering a message.";
 
 //MARK: Automatic Filtering
 "autoFilter_title" = "AI Filtering";
@@ -192,7 +192,7 @@
 "autoFilter_shortSender_desc" = "At least %ld characters";
 "autoFilter_shortSender_change" = "Tap to change";
 "autoFilter_shortSender_action" = "Select new limit";
-"autoFilter_allUnknown_shortTitle" = "All unknwon senders (except Allowed Text)";
+"autoFilter_allUnknown_shortTitle" = "All unknown senders (except Allowed Text)";
 "autoFilter_links_shortTitle" = "Links";
 "autoFilter_numbersOnly_shortTitle" = "Numbers only";
 "autoFilter_shortSender_shortTitle" = "Short senders";
@@ -307,7 +307,7 @@
 
 //MARK: iPad Detail Placeholder
 "placeholder_choose_title" = "Select a category";
-"placeholder_choose_detail" = "Choose an category from the sidebar to view its details.";
+"placeholder_choose_detail" = "Choose a category from the sidebar to view its details.";
 "placeholder_choose_sub_detail1" = "If it's hidden press the";
 "placeholder_choose_sub_detail2" = "button at the top.";
 

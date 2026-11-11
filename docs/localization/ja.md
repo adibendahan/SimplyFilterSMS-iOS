@@ -81,7 +81,7 @@ Japanese is LTR. No RTL considerations.
 - `aboutView_appIconCredit` = `Vitali Levit`
 - Developer name "Adi Ben-Dahan" in `aboutView_aboutText`
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
-- Brand names: Simply Filter SMS, iCloud, iOS, AppStore, VoiceOver, Dynamic Type
+- Brand names: Simply Filter SMS, iCloud, iOS, App Store, VoiceOver, Dynamic Type
 - All emoji — keep exactly as in English
 
 ---

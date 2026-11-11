@@ -1,1 +1,1 @@
-SMS,Filter,Spam,Messages,Text,Blocker,Block,AI,Language,Auto
+Spam,Messages,Text,Blocker,Block,AI,Language,Auto,Junk,Scam,Unknown,Sender,Keyword,Regex,Privacy
