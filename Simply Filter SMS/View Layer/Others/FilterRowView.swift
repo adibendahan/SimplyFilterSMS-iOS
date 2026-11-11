@@ -16,6 +16,7 @@ struct FilterRowView: View {
     var focusedFilterID: FocusState<UUID?>.Binding
     @ObservedObject var model: ViewModel
     var isOptionsCollapsed: Bool = false
+    @Environment(\.editMode) private var editMode
     @State private var isEditingText = false
     @State private var showDuplicateError = false
     @State private var showInvalidRegexError = false
@@ -27,11 +28,17 @@ struct FilterRowView: View {
         } content: {
             filterTextColumn
         } trailing: {
-            if !self.isEditingText {
-                optionButtons
-            }
+            optionButtons
+                .opacity(self.isOptionsHidden ? 0 : 1)
+                .allowsHitTesting(!self.isOptionsHidden)
+                .accessibilityHidden(self.isOptionsHidden)
         }
         .accessibilityElement(children: .contain)
+    }
+
+    private var isOptionsHidden: Bool {
+        let isListEditing = self.editMode?.wrappedValue.isEditing ?? false
+        return self.isEditingText || isListEditing
     }
 
     @ViewBuilder
