@@ -112,12 +112,29 @@ class OverlayWindowViewModelTests: XCTestCase {
         // Prepare
         let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
         self.appManager.flowManager.requestToast(.offline)
+        testSubject.toastViewModel.show = true
 
         // Act
         testSubject.toastViewModel.onButtonTap?()
 
         // Verify
         XCTAssertEqual(self.defaultsManager.lastOfflineToastDismissSetCounter, 1)
+    }
+
+    func test_offlineHideButton_repeatedCalls_recordDismissOnce() {
+        // Prepare
+        let testSubject = OverlayWindowModifier.ViewModel(appManager: self.appManager)
+        self.appManager.flowManager.requestToast(.offline)
+        testSubject.toastViewModel.show = true
+
+        // Act
+        testSubject.toastViewModel.onButtonTap?()
+        testSubject.toastViewModel.onButtonTap?()
+        testSubject.toastViewModel.onButtonTap?()
+
+        // Verify
+        XCTAssertEqual(self.defaultsManager.lastOfflineToastDismissSetCounter, 1)
+        XCTAssertFalse(testSubject.toastViewModel.show)
     }
 
     func test_requestToast_showsAfterItsDelay() {
