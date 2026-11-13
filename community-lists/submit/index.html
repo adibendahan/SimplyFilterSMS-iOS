@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Check your Community List and propose it for Simply Filter SMS." data-i18n-attr="content:submit.metaDescription">
+<title data-i18n="submit.metaTitle">Submit a Community List</title>
+<script src="../assets/i18n-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="nav-title" href="../" data-i18n="app.communityLists">Community Lists</a>
+    <nav class="nav-links" data-i18n-attr="aria-label:nav.aria">
+      <a class="opt" href="../#make" data-i18n="nav.make"></a>
+      <a class="opt" href="../#host" data-i18n="nav.host"></a>
+      <a href="../#test" data-i18n="nav.test"></a>
+      <a class="opt" href="../#share" data-i18n="nav.share"></a>
+      <a class="pill" href="./" aria-current="page" data-i18n="app.submitList"></a>
+      <label class="language">
+        <svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M1.4 8h13.2M8 1.4c1.9 2 2.8 4.2 2.8 6.6S9.9 12.6 8 14.6M8 1.4C6.1 3.4 5.2 5.6 5.2 8s.9 4.6 2.8 6.6" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+        <select id="language-select" data-i18n-attr="aria-label:language">
+          <option value="en">English</option>
+          <option value="ar">العربية</option>
+          <option value="de">Deutsch</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="he">עברית</option>
+          <option value="it">Italiano</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="pt-BR">Português (Brasil)</option>
+          <option value="zh-Hans">简体中文</option>
+        </select>
+      </label>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="band page-intro" id="top">
+    <div class="wrap">
+      <div class="head">
+        <p class="step" data-i18n="app.communityLists"></p>
+        <h1 data-i18n="submit.title"></h1>
+        <p class="lede" data-i18n="submit.lede"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt submit-band" aria-labelledby="check-title">
+    <div class="wrap submit-grid">
+      <div class="tester">
+        <h2 class="card-title" id="check-title" data-i18n="submit.checkTitle"></h2>
+        <form class="url-form" id="submit-form">
+          <input id="submit-url" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-attr="placeholder:test.placeholder|aria-label:test.urlAria">
+          <button class="btn" id="submit-button" type="submit" data-i18n="submit.check"></button>
+        </form>
+        <label class="drop" id="submit-drop" hidden>
+          <input id="submit-file" type="file" accept=".sfsfilters,.json,application/json" hidden>
+          <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 22V6m0 0-6 6m6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 20v6a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <strong data-i18n="submit.dropTitle"></strong>
+          <span class="small" data-i18n="submit.dropText"></span>
+        </label>
+        <a class="more download" id="submit-download" target="_blank" rel="noopener" hidden></a>
+        <div class="result" id="submit-result" aria-live="polite"></div>
+      </div>
+
+      <aside class="proposal" aria-labelledby="proposal-title">
+        <h2 class="card-title" id="proposal-title" data-i18n="submit.proposalTitle"></h2>
+        <dl class="proposal-list">
+          <div><dt data-i18n="submit.fieldURL"></dt><dd class="empty" data-proposal="url">—</dd></div>
+          <div><dt data-i18n="submit.fieldName"></dt><dd class="empty" data-proposal="name">—</dd></div>
+          <div><dt data-i18n="submit.fieldDescription"></dt><dd class="empty" data-proposal="description">—</dd></div>
+          <div><dt data-i18n="submit.fieldAuthor"></dt><dd class="empty" data-proposal="author">—</dd></div>
+          <div><dt data-i18n="submit.fieldHomepage"></dt><dd class="empty" data-proposal="homepage">—</dd></div>
+          <div><dt data-i18n="submit.fieldLocale"></dt><dd class="empty" data-proposal="locale">—</dd></div>
+        </dl>
+        <p class="small proposal-status" id="proposal-status" data-i18n="submit.waiting"></p>
+        <a class="btn propose" id="propose" href="https://github.com/adibendahan/SimplyFilterSMS-iOS/issues/new?template=propose-community-list.yml" target="_blank" rel="noopener" aria-disabled="true" tabindex="-1" data-i18n="submit.propose"></a>
+        <p class="small" data-i18n="submit.proposeNote"></p>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Simply Filter SMS</span>
+    <span data-copyright></span>
+  </div>
+</footer>
+
+<script>
+window.I18N.apply();
+</script>
+<script src="../assets/list-check.js"></script>
+<script>
+(function () {
+  var ISSUE_FORM = 'https://github.com/adibendahan/SimplyFilterSMS-iOS/issues/new?template=propose-community-list.yml';
+  var FIELDS = ['url', 'name', 'description', 'author', 'homepage', 'locale'];
+  var t = window.I18N.t;
+  var check = window.ListCheck;
+  var form = document.getElementById('submit-form');
+  var input = document.getElementById('submit-url');
+  var button = document.getElementById('submit-button');
+  var drop = document.getElementById('submit-drop');
+  var download = document.getElementById('submit-download');
+  var resultEl = document.getElementById('submit-result');
+  var status = document.getElementById('proposal-status');
+  var propose = document.getElementById('propose');
+  var state = { url: null, urlResult: null, fileResult: null };
+
+  function currentResult() {
+    var result = state.urlResult;
+    if (result && result.needsFile && !state.fileResult) {
+      result = { checks: result.checks.filter(function (c) { return c.level !== 'info'; }), needsFile: true };
+    } else if (result && result.needsFile && state.fileResult) {
+      var urlChecks = result.checks.filter(function (c) { return c.level !== 'info'; });
+      result = {
+        checks: urlChecks.concat(state.fileResult.checks),
+        payload: state.fileResult.payload,
+        preview: state.fileResult.preview,
+        needsFile: false
+      };
+    }
+    return result;
+  }
+
+  function proposalValues(result) {
+    var payload = result && result.payload;
+    var values = { url: state.url };
+    FIELDS.slice(1).forEach(function (field) {
+      var value = payload && typeof payload[field] === 'string' ? payload[field].trim() : '';
+      values[field] = value;
+    });
+    return values;
+  }
+
+  function issueURL(values) {
+    var query = '&title=' + encodeURIComponent('[Community List] ' + values.name);
+    FIELDS.forEach(function (field) {
+      query += '&' + field + '=' + encodeURIComponent(values[field]);
+    });
+    return ISSUE_FORM + query;
+  }
+
+  function update() {
+    var result = currentResult();
+    if (result) {
+      check.render(result, resultEl);
+    } else {
+      resultEl.textContent = '';
+    }
+    var values = proposalValues(result);
+    FIELDS.forEach(function (field) {
+      var node = document.querySelector('[data-proposal="' + field + '"]');
+      var value = values[field];
+      node.textContent = value ? value : '—';
+      node.classList.toggle('empty', !value);
+      node.dir = 'auto';
+    });
+    var ready = Boolean(result && result.payload && !check.hasFailure(result));
+    var statusKey = ready ? null : (result && result.payload && check.hasFailure(result) ? 'submit.blocked' : 'submit.waiting');
+    status.hidden = !statusKey;
+    if (statusKey) status.textContent = t(statusKey);
+    propose.setAttribute('aria-disabled', String(!ready));
+    propose.tabIndex = ready ? 0 : -1;
+    propose.href = ready ? issueURL(values) : ISSUE_FORM;
+  }
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    var value = input.value.trim();
+    if (!value) return;
+    button.disabled = true;
+    button.textContent = t('submit.checking');
+    try {
+      state.url = value;
+      state.fileResult = null;
+      state.urlResult = await check.checkURL(value);
+      drop.hidden = !state.urlResult.needsFile;
+      download.hidden = !state.urlResult.needsFile;
+      if (state.urlResult.needsFile) {
+        download.href = state.urlResult.downloadURL;
+        download.textContent = t('url.download', [check.fileName(state.urlResult.downloadURL)]);
+      }
+      update();
+    } finally {
+      button.disabled = false;
+      button.textContent = t('submit.check');
+    }
+  });
+  check.bindDrop(drop, document.getElementById('submit-file'), async function (file) {
+    state.fileResult = await check.readFile(file);
+    update();
+  });
+  propose.addEventListener('click', function (event) {
+    if (propose.getAttribute('aria-disabled') === 'true') event.preventDefault();
+  });
+})();
+</script>
+</body>
+</html>

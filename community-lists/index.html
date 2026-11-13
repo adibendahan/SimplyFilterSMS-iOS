@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Make, host, test and share a Simply Filter SMS Community List." data-i18n-attr="content:meta.description">
+<title data-i18n="meta.title">Create a Community List</title>
+<script src="assets/i18n-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="nav-title" href="#top" data-i18n="app.communityLists">Community Lists</a>
+    <nav class="nav-links" data-i18n-attr="aria-label:nav.aria">
+      <a class="opt" href="#make" data-i18n="nav.make"></a>
+      <a class="opt" href="#host" data-i18n="nav.host"></a>
+      <a href="#test" data-i18n="nav.test"></a>
+      <a class="opt" href="#share" data-i18n="nav.share"></a>
+      <a class="pill" href="submit/" data-i18n="app.submitList"></a>
+      <label class="language">
+        <svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M1.4 8h13.2M8 1.4c1.9 2 2.8 4.2 2.8 6.6S9.9 12.6 8 14.6M8 1.4C6.1 3.4 5.2 5.6 5.2 8s.9 4.6 2.8 6.6" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+        <select id="language-select" data-i18n-attr="aria-label:language">
+          <option value="en">English</option>
+          <option value="ar">العربية</option>
+          <option value="de">Deutsch</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="he">עברית</option>
+          <option value="it">Italiano</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="pt-BR">Português (Brasil)</option>
+          <option value="zh-Hans">简体中文</option>
+        </select>
+      </label>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Simply Filter SMS</p>
+        <h1 data-i18n="hero.title"></h1>
+        <p class="lede" data-i18n="hero.lede"></p>
+        <div class="actions">
+          <a class="btn" href="#make" data-i18n="hero.start"></a>
+          <a class="more" href="#test" data-i18n="hero.test"></a>
+        </div>
+      </div>
+      <div class="phone-stage">
+        <div class="phone" role="img" data-i18n-attr="aria-label:hero.phoneAria">
+          <div class="island" aria-hidden="true"></div>
+          <div class="screen" aria-hidden="true">
+            <div class="app">
+              <div class="app-status" dir="ltr">
+                <span>9:41</span>
+                <span class="app-status-icons">
+                  <span class="app-dots"><i></i><i></i><i></i><i></i></span>
+                  <svg width="18" height="13" viewBox="0 0 18 13"><path d="M9 12.6 6.2 9.6a4 4 0 0 1 5.6 0Z" fill="currentColor"/><path d="M3.6 7a7.6 7.6 0 0 1 10.8 0l-1.5 1.6a5.4 5.4 0 0 0-7.8 0Z" fill="currentColor"/><path d="M1 4.3a11.4 11.4 0 0 1 16 0l-1.5 1.6a9.2 9.2 0 0 0-13 0Z" fill="currentColor"/></svg>
+                  <span class="app-battery"></span>
+                </span>
+              </div>
+              <div class="app-nav">
+                <span class="app-nav-button app-back"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M12.5 3.5 6 10l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="app-title" data-i18n="app.communityLists"></span>
+                <span class="app-nav-button"><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="7.6" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="16.4" cy="12" r="1.5" fill="currentColor"/></svg></span>
+              </div>
+              <div class="app-card">
+                <div class="app-row">
+                  <svg class="app-chev" width="14" height="14" viewBox="0 0 14 14"><path d="M2.5 4.8 7 9.3l4.5-4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <div class="app-head">
+                    <div class="app-name-line"><span class="app-name">Scam Guard</span><span class="app-author" data-author="Jane Doe"></span></div>
+                    <div class="app-info"><span data-language="en" data-flag="🇺🇸"></span><span>·</span><a>github.com</a></div>
+                  </div>
+                  <span class="switch on boot" id="hero-switch"></span>
+                  <p class="app-desc" data-i18n="hero.scamGuardDescription"></p>
+                </div>
+                <div class="app-row">
+                  <svg class="app-chev right" width="14" height="14" viewBox="0 0 14 14"><path d="M4.8 2.5 9.3 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <div class="app-head">
+                    <div class="app-name-line"><span class="app-name">Parcel Watch</span><span class="app-author" data-author="Sam Lee"></span></div>
+                    <div class="app-info"><span data-language="en" data-flag="🇬🇧"></span><span>·</span><a>example.org</a></div>
+                  </div>
+                  <span class="switch"></span>
+                </div>
+                <div class="app-row sep">
+                  <svg class="app-chev right" width="14" height="14" viewBox="0 0 14 14"><path d="M4.8 2.5 9.3 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <div class="app-head">
+                    <div class="app-name-line"><span class="app-name">Sin Spam</span><span class="app-author" data-author="Lucía Gómez"></span></div>
+                    <div class="app-info"><span data-language="es" data-flag="🇪🇸"></span><span>·</span><a>sinspam.es</a></div>
+                  </div>
+                  <span class="switch on"></span>
+                </div>
+              </div>
+              <div class="app-subscribe">
+                <svg width="26" height="26" viewBox="0 0 26 26"><path d="M11.2 14.8a4 4 0 0 1 0-5.6l3.4-3.4a4 4 0 0 1 5.6 5.6l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14.8 11.2a4 4 0 0 1 0 5.6l-3.4 3.4a4 4 0 0 1-5.6-5.6l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="19.5" cy="19.5" r="5" fill="var(--app-cell)" stroke="currentColor" stroke-width="1.6"/><path d="M19.5 17v5M17 19.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <span data-i18n="app.subscribeFromURL"></span>
+              </div>
+              <p class="app-footer"><span class="app-footer-text" data-updated></span><span class="link" data-i18n="app.createList"></span> · <span class="link" data-i18n="app.submitList"></span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt" id="make" aria-labelledby="make-title">
+    <div class="wrap">
+      <div class="head">
+        <p class="step" data-step="1"></p>
+        <h2 id="make-title" data-i18n="make.title"></h2>
+        <p class="lede" data-i18n="make.lede"></p>
+      </div>
+
+      <div class="make">
+        <div>
+          <div class="seg" role="tablist" data-i18n-attr="aria-label:make.tabsAria">
+            <button type="button" role="tab" id="tab-app" aria-selected="true" aria-controls="panel-app" data-i18n="make.tabApp"></button>
+            <button type="button" role="tab" id="tab-ai" aria-selected="false" aria-controls="panel-ai" tabindex="-1" data-i18n="make.tabAI"></button>
+          </div>
+          <div class="panel" role="tabpanel" id="panel-app" aria-labelledby="tab-app">
+            <ol class="howto">
+              <li><p data-i18n="make.app1"></p></li>
+              <li><p data-i18n="make.app2"></p></li>
+              <li><p data-i18n="make.app3"></p></li>
+              <li><p data-i18n="make.app4"></p></li>
+            </ol>
+          </div>
+          <div class="panel" role="tabpanel" id="panel-ai" aria-labelledby="tab-ai" hidden>
+            <p data-i18n="make.ai1"></p>
+            <p data-i18n="make.ai2"></p>
+            <a class="more" href="https://github.com/adibendahan/SimplyFilterSMS-iOS/tree/master/community-lists/community-list-formatter" target="_blank" rel="noopener" data-i18n="make.getSkill"></a>
+          </div>
+        </div>
+
+        <div class="file">
+          <div class="file-head">
+            <span class="file-name"><svg width="14" height="16" viewBox="0 0 14 16" aria-hidden="true"><path d="M2 1h6.5L13 5.5V14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8.5 1v4.5H13" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>scam-guard.sfsfilters</span>
+            <button class="copy" type="button" data-target="json" data-i18n="copy"></button>
+          </div>
+<pre id="json" dir="ltr"><span class="l">{</span><span class="l">  <span class="k">"format"</span>: <span class="s">"simply-filter-sms-filters"</span>,</span><span class="l">  <span class="k">"version"</span>: <span class="n">2</span>,</span><span class="l req">  <span class="k">"name"</span>: <span class="s">"Scam Guard"</span>,</span><span class="l req">  <span class="k">"description"</span>: <span class="s">"<bdi data-i18n="example.description"></bdi>"</span>,</span><span class="l req">  <span class="k">"author"</span>: <span class="s">"Jane Doe"</span>,</span><span class="l req">  <span class="k">"homepage"</span>: <span class="s">"https://github.com/you/scam-guard"</span>,</span><span class="l req">  <span class="k">"locale"</span>: <span class="s">"<span data-i18n="example.locale"></span>"</span>,</span><span class="l">  <span class="k">"filters"</span>: [ ... ]</span><span class="l">}</span></pre>
+        </div>
+      </div>
+
+      <div class="anatomy">
+        <div>
+          <div class="stage" id="stage">
+            <div class="cell">
+              <div class="lrow open">
+                <div class="lrow-main">
+                  <div class="lrow-title"><svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M3.5 1.5 7 5l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="p-name" data-part="name" dir="auto">Scam Guard</span><span class="p-author" data-part="author" data-author="Jane Doe"></span></div>
+                  <div class="lrow-info"><span data-part="locale" data-example-language></span><span>·</span><span class="p-home" data-part="homepage">github.com</span></div>
+                  <div class="p-desc" data-part="description" dir="auto" data-i18n="example.description"></div>
+                </div>
+                <span class="switch on" aria-hidden="true"></span>
+              </div>
+            </div>
+            <p class="small stage-cap" data-i18n="fields.caption"></p>
+          </div>
+        </div>
+        <div>
+          <div class="anatomy-intro">
+            <h3 data-i18n="fields.title"></h3>
+            <p class="small" data-i18n="fields.subtitle"></p>
+          </div>
+          <ul class="fields" id="fields">
+            <li tabindex="0" data-part="name"><code>name</code><p data-i18n="fields.name"></p></li>
+            <li tabindex="0" data-part="author"><code>author</code><p data-i18n="fields.author"></p></li>
+            <li tabindex="0" data-part="locale"><code>locale</code><p data-i18n="fields.locale"></p></li>
+            <li tabindex="0" data-part="homepage"><code>homepage</code><p data-i18n="fields.homepage"></p></li>
+            <li tabindex="0" data-part="description"><code>description</code><p data-i18n="fields.description"></p></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="host" aria-labelledby="host-title">
+    <div class="wrap">
+      <div class="head">
+        <p class="step" data-step="2"></p>
+        <h2 id="host-title" data-i18n="host.title"></h2>
+        <p class="lede" data-i18n="host.lede"></p>
+      </div>
+
+      <div class="url-card">
+        <p class="url" dir="ltr"><span class="dim">https://github.com/</span>you<span class="dim">/</span>scam-guard<span class="move">/releases/latest/download/</span>scam-guard.sfsfilters</p>
+        <ul class="legend">
+          <li><i></i><span data-i18n="host.legendNames"></span></li>
+          <li class="move"><i></i><span data-i18n="host.legendLatest"></span></li>
+        </ul>
+        <div class="url-foot">
+          <p class="small" data-i18n="host.copyHint"></p>
+          <button class="copy" type="button" data-target="release" data-i18n="host.copyURL"></button>
+          <span class="url-copy" id="release">https://github.com/&lt;you&gt;/&lt;repo&gt;/releases/latest/download/&lt;file&gt;.sfsfilters</span>
+        </div>
+      </div>
+
+      <div class="host">
+        <div>
+          <h3 data-i18n="host.publishTitle"></h3>
+          <ol class="howto">
+            <li><p data-i18n="host.publish1"></p></li>
+            <li><p data-i18n="host.publish2"></p></li>
+            <li><p data-i18n="host.publish3"></p></li>
+          </ol>
+        </div>
+        <div class="timeline-card">
+          <h3 data-i18n="host.updateTitle"></h3>
+          <ol class="releases" data-i18n-attr="aria-label:host.releasesAria">
+            <li><span class="node"></span><span class="tag">v1.0</span><span class="badge ghost">Latest</span></li>
+            <li><span class="node"></span><span class="tag">v1.1</span><span class="badge ghost">Latest</span></li>
+            <li class="latest"><span class="node"></span><span class="tag">v1.2</span><span class="badge">Latest</span></li>
+          </ol>
+          <p data-i18n="host.update"></p>
+          <div class="warning">
+            <svg width="22" height="20" viewBox="0 0 22 20" aria-hidden="true"><path d="M11 1.5 21 18.5H1Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M11 7.5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="11" cy="15.4" r="1.1" fill="currentColor"/></svg>
+            <p data-i18n="host.warning"></p>
+          </div>
+        </div>
+      </div>
+
+      <p class="small other-hosts" data-i18n="host.otherHosts"></p>
+    </div>
+  </section>
+
+  <section class="band alt" id="test" aria-labelledby="test-title">
+    <div class="wrap">
+      <div class="head">
+        <p class="step" data-step="3"></p>
+        <h2 id="test-title" data-i18n="test.title"></h2>
+        <p class="lede" data-i18n="test.lede"></p>
+      </div>
+
+      <div class="tester">
+        <form class="url-form" id="url-form">
+          <input id="url-input" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-attr="placeholder:test.placeholder|aria-label:test.urlAria">
+          <button class="btn" id="url-button" type="submit" data-i18n="test.button"></button>
+        </form>
+        <div class="or" data-i18n="test.or"></div>
+        <label class="drop" id="drop">
+          <input id="file-input" type="file" accept=".sfsfilters,.json,application/json" hidden>
+          <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 22V6m0 0-6 6m6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 20v6a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <strong data-i18n="test.drop"></strong>
+          <span class="small" data-i18n="test.choose"></span>
+        </label>
+        <div class="result" id="result" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="share" aria-labelledby="share-title">
+    <div class="wrap">
+      <div class="head">
+        <p class="step" data-step="4"></p>
+        <h2 id="share-title" data-i18n="share.title"></h2>
+      </div>
+      <div class="share">
+        <div class="tile">
+          <h3 data-i18n="share.urlTitle"></h3>
+          <p data-i18n="share.urlText"></p>
+        </div>
+        <div class="tile">
+          <h3 data-i18n="app.submitList"></h3>
+          <p data-i18n="share.submitText"></p>
+          <a class="more" href="submit/" data-i18n="app.submitList"></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt" id="holds" aria-labelledby="holds-title">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="holds-title" data-i18n="holds.title"></h2>
+      </div>
+      <ul class="specs">
+        <li><h3 data-i18n="holds.type"></h3><p><span class="chip block" data-i18n="holds.block"></span><span class="chip allow" data-i18n="holds.allow"></span></p></li>
+        <li><h3 data-i18n="holds.folder"></h3><p data-list="app.junk,app.transactions,app.promotions"></p></li>
+        <li><h3 data-i18n="holds.target"></h3><p data-i18n="holds.targetValues"></p></li>
+        <li><h3 data-i18n="holds.matching"></h3><p data-list="app.contains,app.exact,app.regex"></p></li>
+        <li><h3 data-i18n="holds.case"></h3><p data-list="app.caseSensitive,app.caseInsensitive"></p></li>
+      </ul>
+      <p class="small specs-note" data-i18n="holds.note"></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Simply Filter SMS</span>
+    <span data-copyright></span>
+  </div>
+</footer>
+
+<script>
+window.I18N.apply();
+(function () {
+  document.querySelectorAll('.copy').forEach(function (button) {
+    var label = button.textContent;
+    button.addEventListener('click', function () {
+      var source = document.getElementById(button.dataset.target);
+      var text = source.textContent;
+      var done = function () {
+        button.textContent = window.I18N.t('copied');
+        setTimeout(function () { button.textContent = label; }, 1500);
+      };
+      var fallback = function () {
+        var range = document.createRange();
+        range.selectNodeContents(source);
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+      };
+      try {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } catch (e) {
+        fallback();
+      }
+    });
+  });
+
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.seg [role="tab"]'));
+  function selectTab(tab) {
+    tabs.forEach(function (other) {
+      var isSelected = other === tab;
+      other.setAttribute('aria-selected', String(isSelected));
+      other.tabIndex = isSelected ? 0 : -1;
+      document.getElementById(other.getAttribute('aria-controls')).hidden = !isSelected;
+    });
+  }
+  tabs.forEach(function (tab, index) {
+    tab.addEventListener('click', function () { selectTab(tab); });
+    tab.addEventListener('keydown', function (event) {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      var next = tabs[(index + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      selectTab(next);
+      next.focus();
+    });
+  });
+
+  var stage = document.getElementById('stage');
+  var fieldRows = Array.prototype.slice.call(document.querySelectorAll('#fields li'));
+  function highlight(row) {
+    fieldRows.forEach(function (other) { other.classList.toggle('on', other === row); });
+    if (row) {
+      stage.dataset.active = row.dataset.part;
+    } else {
+      delete stage.dataset.active;
+    }
+  }
+  fieldRows.forEach(function (row) {
+    row.addEventListener('mouseenter', function () { highlight(row); });
+    row.addEventListener('focus', function () { highlight(row); });
+    row.addEventListener('click', function () { highlight(row); });
+  });
+  document.getElementById('fields').addEventListener('mouseleave', function () { highlight(null); });
+  document.getElementById('fields').addEventListener('focusout', function (event) {
+    if (!event.currentTarget.contains(event.relatedTarget)) highlight(null);
+  });
+
+  var heroSwitch = document.getElementById('hero-switch');
+  setTimeout(function () { heroSwitch.classList.remove('boot'); }, 700);
+})();
+</script>
+<script src="assets/list-check.js"></script>
+<script>
+(function () {
+  var t = window.I18N.t;
+  var resultEl = document.getElementById('result');
+  var urlForm = document.getElementById('url-form');
+  var urlInput = document.getElementById('url-input');
+  var urlButton = document.getElementById('url-button');
+
+  urlForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    if (!urlInput.value.trim()) return;
+    urlButton.disabled = true;
+    urlButton.textContent = t('test.testing');
+    try {
+      window.ListCheck.render(await window.ListCheck.checkURL(urlInput.value), resultEl);
+    } finally {
+      urlButton.disabled = false;
+      urlButton.textContent = t('test.button');
+    }
+  });
+  window.ListCheck.bindDrop(document.getElementById('drop'), document.getElementById('file-input'), async function (file) {
+    window.ListCheck.render(await window.ListCheck.readFile(file), resultEl);
+  });
+})();
+</script>
+</body>
+</html>
