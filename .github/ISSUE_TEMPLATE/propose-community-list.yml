@@ -1,0 +1,61 @@
+name: Propose a Community List
+description: Suggest a filter list for the Community Lists directory in Simply Filter SMS.
+title: "[Community List] "
+labels: ["community-list"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing your list! Before proposing it, check it follows the [guide](https://adibendahan.github.io/SimplyFilterSMS-iOS/). Listed lists appear for every user, so each one is reviewed first.
+  - type: input
+    id: url
+    attributes:
+      label: List URL
+      description: A public HTTPS URL that downloads the .sfsfilters file itself.
+      placeholder: https://github.com/you/repo/releases/latest/download/list.sfsfilters
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: The list's title, as in its "name" field.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What the list blocks or allows, and who it's for.
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      description: The person or project that maintains the list, as in its "author" field.
+    validations:
+      required: true
+  - type: input
+    id: homepage
+    attributes:
+      label: Homepage
+      description: The list's site or repository, as in its "homepage" field.
+      placeholder: https://github.com/you/repo
+    validations:
+      required: true
+  - type: input
+    id: locale
+    attributes:
+      label: Locale
+      description: The language and country of the messages it targets, as in its "locale" field.
+      placeholder: en-US
+    validations:
+      required: true
+  - type: checkboxes
+    id: maintenance
+    attributes:
+      label: Maintenance
+      options:
+        - label: I maintain this list and will keep the link working.
+          required: true
