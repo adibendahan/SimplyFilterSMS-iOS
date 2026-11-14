@@ -3,7 +3,7 @@ Reprends le contrôle de ta boîte de réception.
 Simply Filter SMS est un filtre de messages texte open-source et respectueux de la vie privée pour iPhone et iPad. Crée des règles de mots-clés et des filtres intelligents pour déplacer automatiquement les messages indésirables des expéditeurs inconnus vers Indésirables, Promotions ou Transactions, entièrement sur l'appareil. Tes filtres se synchronisent sur tous tes appareils via iCloud.
 
 Nouveautés de cette version:
-• Plusieurs corrections de bugs et améliorations des performances.
+• Listes communautaires - Abonne-toi à des listes de filtres partagées par d'autres personnes, ou partage la tienne. Les listes se mettent à jour toutes seules quand leurs auteurs publient une nouvelle version.
 
 Au cas où tu l'aurais manqué, voici ce qui a été mis à jour récemment:
 • Exporter et importer des filtres - partage tes filtres avec un ami. Exporte un fichier depuis Outils de filtrage dans le menu et envoie-le.

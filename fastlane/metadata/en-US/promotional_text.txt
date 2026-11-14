@@ -1,1 +1,1 @@
-Free & open-source SMS filter with AI-powered filtering in 10 languages. Block unknown senders with keywords, smart rules & country allowlist. Fully on-device.
+Private, free & open-source SMS filter with Community Lists and AI Filtering in 10 languages. Block unknown senders with keywords, smart rules & country allowlist.

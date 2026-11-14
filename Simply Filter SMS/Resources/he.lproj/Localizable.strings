@@ -356,17 +356,11 @@
 
 "whatsNew_aiFiltering_desc" = "הסינון האוטומטי מופעל כעת על ידי **בינה מלאכותית** - חכם, מהיר ומדויק יותר, עם תמיכה ב-**10 שפות** כולל ספרדית, צרפתית, גרמנית, ערבית ועוד.";
 
-"whatsNew_newLanguages_title" = "9 שפות חדשות";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** האפליקציה זמינה כעת ב-**9 שפות חדשות**, כולן תורגמו בעזרת **בינה מלאכותית**.";
 
-"whatsNew_trustedCountries_title" = "מדינות מהימנות";
 
-"whatsNew_trustedCountries_desc" = "אפשרו אוטומטית הודעות ממדינות **ספציפיות** לפי קידומת טלפון. הוסיפו את המדינות המהימנות עליכם וסננו את השאר.";
 
-"whatsNew_accessibility_title" = "תמיכה בנגישות";
 
-"whatsNew_accessibility_desc" = "שימוש מלא עם **VoiceOver** ו-**בקרה קולית**. הטקסט גדל עם **גודל טקסט**. האנימציות מכבדות את הגדרת **הפחת תנועה**.";
 
 "whatsNew_tipJar_title" = "תמכו במפתח";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "שתפו את הפילטרים שלכם עם חברים - ייצאו קובץ מ**כלי פילטור** בתפריט ושלחו אותו.";
 
-"whatsNew_appearanceTouchup_title" = "ליטוש מראה";
 
-"whatsNew_appearanceTouchup_desc" = "ל**עזרה** ול**בחנו את הפילטרים שלכם** יש מראה חדש. אפשר גם לבחור **צבע הדגשה** מהתפריט - כפתורים וסמלים יתאימו אליו.";
 
 "notification_saveFailed_title" = "אירעה שגיאה";
 

@@ -336,9 +336,7 @@
 
 "whatsNew_menuItem" = "Nouveautés";
 
-"whatsNew_accessibility_title" = "Support accessibilité";
 
-"whatsNew_accessibility_desc" = "Entièrement utilisable avec **VoiceOver** et **Contrôle vocal**. Le texte s'adapte avec **Taille du texte dynamique**. Les animations respectent ton réglage **Réduire les animations**.";
 
 "whatsNew_tipJar_title" = "Soutenir le développeur";
 
@@ -458,13 +456,9 @@
 
 "whatsNew_aiFiltering_desc" = "Le filtrage automatique est désormais **propulsé par l'IA** - plus intelligent, rapide et précis, avec support pour **10 langues** dont l'espagnol, le français, l'allemand, l'arabe et plus.";
 
-"whatsNew_newLanguages_title" = "9 Nouvelles Langues";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** L'app est maintenant disponible en **9 nouvelles langues**, toutes localisées à l'aide de l'**IA**.";
 
-"whatsNew_trustedCountries_title" = "Pays de Confiance";
 
-"whatsNew_trustedCountries_desc" = "Autorise automatiquement les messages de **pays spécifiques** par préfixe téléphonique. Ajoute tes pays de confiance et filtre le reste.";
 
 "reportMessage_junkAndBlockSender" = "Indésirables et bloquer l'expéditeur";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "Partage tes filtres avec un ami - exporte un fichier depuis **Outils de filtrage** dans le menu et envoie-le.";
 
-"whatsNew_appearanceTouchup_title" = "Retouche d'apparence";
 
-"whatsNew_appearanceTouchup_desc" = "**Aide** et **Tester tes filtres** ont un nouveau look. Tu peux aussi choisir une **Couleur d'accentuation** dans le menu - boutons et icônes la suivent.";
 
 "notification_saveFailed_title" = "Une erreur s'est produite";
 

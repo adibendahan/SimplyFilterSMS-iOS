@@ -354,9 +354,7 @@
 
 "whatsNew_menuItem" = "새로운 기능";
 
-"whatsNew_accessibility_title" = "접근성 지원";
 
-"whatsNew_accessibility_desc" = "**VoiceOver** 및 **음성 제어**로 완전히 사용 가능합니다. 텍스트는 **동적 서체**에 맞게 조정됩니다. 애니메이션은 **모션 줄이기** 설정을 따릅니다.";
 
 "whatsNew_tipJar_title" = "개발자 지원";
 
@@ -458,13 +456,9 @@
 
 "whatsNew_aiFiltering_desc" = "자동 필터링이 이제 **AI**로 구동됩니다 - 스페인어, 프랑스어, 독일어, 아랍어 등 **10개 언어**를 지원하며 더욱 스마트하고 빠르고 정확합니다.";
 
-"whatsNew_newLanguages_title" = "9개의 새로운 언어";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** 앱이 이제 **9개의 새로운 언어**로 제공됩니다. 모두 **AI**의 도움으로 현지화되었습니다.";
 
-"whatsNew_trustedCountries_title" = "신뢰할 수 있는 국가";
 
-"whatsNew_trustedCountries_desc" = "전화 번호 접두사로 **특정 국가**의 메시지를 자동으로 허용합니다. 신뢰할 수 있는 국가를 추가하고 나머지는 필터링하세요.";
 
 "reportMessage_junkAndBlockSender" = "스팸 및 발신자 차단";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "친구와 필터를 공유하세요 - 메뉴의 **필터 도구**에서 파일을 내보낸 뒤 보내세요.";
 
-"whatsNew_appearanceTouchup_title" = "모양 다듬기";
 
-"whatsNew_appearanceTouchup_desc" = "**도움말**과 **필터 테스트**가 새 모습입니다. 메뉴에서 **강조 색상**을 고르면 버튼과 아이콘에 적용됩니다.";
 
 "notification_saveFailed_title" = "오류가 발생했습니다";
 

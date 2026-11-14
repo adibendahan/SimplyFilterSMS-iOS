@@ -301,12 +301,6 @@
 "whatsNew_menuItem" = "What's New";
 "whatsNew_aiFiltering_title" = "AI Filtering";
 "whatsNew_aiFiltering_desc" = "Automatic filtering is now **AI-powered** - smarter, faster, and more accurate, with support for **10 languages** including Spanish, French, German, Arabic, and more.";
-"whatsNew_newLanguages_title" = "9 New Languages";
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** The app is now available in **9 new languages**, all localized with the help of **AI**.";
-"whatsNew_trustedCountries_title" = "Trusted Countries";
-"whatsNew_trustedCountries_desc" = "Automatically allow messages from **specific countries** by phone prefix. Add your trusted countries and filter out the rest.";
-"whatsNew_accessibility_title" = "Accessibility Support";
-"whatsNew_accessibility_desc" = "Fully usable with **VoiceOver** and **Voice Control**. Text scales with **Dynamic Type**. Animations respect your **Reduce Motion** setting.";
 "whatsNew_tipJar_title" = "Support the Developer";
 "whatsNew_tipJar_desc" = "A new **Tip Jar** lets you support the app's development. Simply Filter SMS is free forever - tips are just a way to say thanks! **Tap here to tip!**";
 
@@ -389,8 +383,6 @@
 "notification_saveFailed_subtitle" = "Changes not saved, please try again.";
 "whatsNew_filterTransfer_title" = "Export & Import Filters";
 "whatsNew_filterTransfer_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
-"whatsNew_appearanceTouchup_title" = "Appearance Touch-up";
-"whatsNew_appearanceTouchup_desc" = "**Help** and **Test Your Filters** have a new look. You can also pick an **Accent Color** from the menu - buttons and icons follow it.";
 "whatsNew_communityLists_title" = "Community Lists";
 "whatsNew_communityLists_desc" = "Subscribe to filter lists shared by other people, or share your own. Lists update themselves when their authors publish a new version - find them under **Your Filters**.";
 

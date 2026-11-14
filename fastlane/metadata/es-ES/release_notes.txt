@@ -1,1 +1,5 @@
-Pequeñas correcciones de errores y mejoras
+¡Simply Filter SMS 4.0.0 ya está aquí, con las Listas de la comunidad! 🎉
+
+Suscríbete a listas de filtros que comparten otras personas, o comparte la tuya. Las listas se actualizan solas cuando sus autores publican una versión nueva. Las encontrarás en 'Tus filtros'.
+
+Además, correcciones de errores y mejoras.

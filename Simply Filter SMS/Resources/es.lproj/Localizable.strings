@@ -336,9 +336,7 @@
 
 "whatsNew_menuItem" = "Novedades";
 
-"whatsNew_accessibility_title" = "Soporte de accesibilidad";
 
-"whatsNew_accessibility_desc" = "Totalmente usable con **VoiceOver** y **Control por voz**. El texto escala con **Tipo de texto dinámico**. Las animaciones respetan tu configuración de **Reducir movimiento**.";
 
 "whatsNew_tipJar_title" = "Apoya al desarrollador";
 
@@ -458,13 +456,9 @@
 
 "whatsNew_aiFiltering_desc" = "El filtrado automático ahora funciona con **IA** - más inteligente, rápido y preciso, con soporte para **10 idiomas** incluyendo español, francés, alemán, árabe y más.";
 
-"whatsNew_newLanguages_title" = "9 Nuevos Idiomas";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** La app ahora está disponible en **9 nuevos idiomas**, todos localizados con la ayuda de la **IA**.";
 
-"whatsNew_trustedCountries_title" = "Países de Confianza";
 
-"whatsNew_trustedCountries_desc" = "Permite automáticamente mensajes de **países específicos** por prefijo telefónico. Agrega tus países de confianza y filtra el resto.";
 
 "reportMessage_junkAndBlockSender" = "No deseado y bloquear remitente";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "Comparte tus filtros con un amigo - exporta un archivo desde **Herramientas de filtro** en el menú y envíalo.";
 
-"whatsNew_appearanceTouchup_title" = "Retoque de apariencia";
 
-"whatsNew_appearanceTouchup_desc" = "**Ayuda** y **Prueba tus filtros** tienen un aspecto nuevo. También puedes elegir un **Color de acento** en el menú - botones e iconos lo siguen.";
 
 "notification_saveFailed_title" = "Se produjo un error";
 

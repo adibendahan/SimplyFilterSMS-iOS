@@ -11,16 +11,16 @@ Hebrew is the app's second language and the reference the other gendered languag
 
 ## 4a. Grammar & Gender Strategy
 
-### The rule: always plural, never singular male or female
+### The rule: never a form that picks a gender
 
-Hebrew marks gender on almost every word that refers to the reader. The app never picks one. Every word that addresses or describes the user is **plural**:
+Hebrew marks gender on almost every word that refers to the reader. The app never picks one. A form written the same for both genders is never an issue and is encouraged. Where the written singular differs between male and female, use the **plural**. One sentence never mixes the two: if it addresses the reader in plural (`תמצאו`) and in a shared singular form (`שלך`), flag it and pick one (or go impersonal, below) so it reads as one voice. A quoted or bold UI name (`ב'הפילטרים שלך'`) is a label, not the sentence's voice, so it never counts:
 
 | Form | Use | Never |
 |---|---|---|
 | Imperative | הוסיפו, בחרו, לחצו, פתחו, גללו, הקלידו, השאירו, שלחו, נסו, עקבו | הוסף / הוסיפי, בחר / בחרי, לחץ / לחצי |
 | Pronoun | אתם | אתה, את |
-| Possessive | שלכם, -כם (תרומתכם, המכשיר שלכם) | שלך, -ך (תרומתך) |
-| Past tense | לחצתם, דיווחתם, בחרתם | לחצת, דיווחת |
+| Possessive | שלך, -ך (written the same for both: הפילטרים שלך, תרומתך) or שלכם, -כם | |
+| Past tense | לחצת, דיווחת (written the same for both) or לחצתם, דיווחתם | |
 | Future / modal | תרצו, תוכלו | תרצה, תרצי |
 | Present tense, adjectives about the user | מוכנים, נהנים, מקבלים (masculine plural is the inclusive plural) | מוכן / מוכנה, נהנה / נהנית |
 
@@ -187,7 +187,7 @@ Hebrew is usually shorter than English and is the baseline other guides measure 
 
 ## 4h. Plurals (stringsdict)
 
-Hebrew uses `one`, `two`, `many`, `other` (`zero` is allowed for "none" wording, as in `general_active_count`). Each form follows the always-plural rule too: `איך תרצו לסווג אותה?`, not `איך תרצה`.
+Hebrew uses `one`, `two`, `many`, `other` (`zero` is allowed for "none" wording, as in `general_active_count`). Each form follows the same gender rule: `איך תרצו לסווג אותה?`, not `איך תרצה`.
 
 ---
 
@@ -195,14 +195,11 @@ Hebrew uses `one`, `two`, `many`, `other` (`zero` is allowed for "none" wording,
 
 Existing strings that break this guide. Fix them when touching the area; renaming a UI label also means updating every FAQ answer that quotes it.
 
-**Singular address (the always-plural rule):**
+**Gendered singular address:**
 
 | Key | Now | Problem |
 |---|---|---|
-| `autoFilter_yourFilters` | הפילטרים שלך | `שלך` → `שלכם` |
-| `exportFilters_sectionTitle` | הפילטרים שלך | `שלך` → `שלכם` |
 | `autoFilter_countryAllowlist_explanation` | הוסף… שמהן אתה רוצה… | singular imperative and `אתה` |
-| `reportingExtension_footer` | הדיווחים שלך… תרומתך | `שלך`, `תרומתך` |
 | `enableReportingExtension_desc` | הפעל… עקוב… ולחץ… כשאתה מוכן | singular throughout |
 | `enableReportingExtension_step5_title` / `_desc` | לחץ לחיצה ארוכה… | singular imperative |
 | `enableReportingExtension_step6_title` / `_desc` | בחר הודעות / בחר… שברצונך | singular |
@@ -211,7 +208,7 @@ Existing strings that break this guide. Fix them when touching the area; renamin
 | `notification_reportingExtension_subtitle` | דווח על הודעות ספאם | singular imperative |
 | `notification_reportingExtension_button` | הצטרף | singular imperative |
 | `autoFilter_reportSpam` | דווח על ספאם | singular imperative |
-| `addFilter_regexTestCaption` | בדוק את הביטוי שלך: | singular |
+| `addFilter_regexTestCaption` | בדוק את הביטוי שלך: | `בדוק` is a masculine imperative |
 | `whatsNew_regexFilters_desc` | …סנן עם… | singular imperative |
 | `importFilters_selectAll` | בחר הכל | → `בחירת הכל` |
 | `inactivityNotification_stopAsking` | אל תשאל שוב | singular (the app is asking; → `לא לשאול שוב`) |

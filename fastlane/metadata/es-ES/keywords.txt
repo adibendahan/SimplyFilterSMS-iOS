@@ -1,1 +1,1 @@
-Filtro,Mensajes,Idioma,No deseado,Estafa,Desconocido,Remitente,Palabra clave,Regex,Privacidad
+Filtro,Mensajes,Idioma,No deseado,Estafa,Desconocido,Remitente,Regex,Privacidad,Comunidad,Listas

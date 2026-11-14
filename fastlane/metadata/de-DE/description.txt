@@ -3,7 +3,7 @@ Hol die Kontrolle über deinen Posteingang zurück.
 Simply Filter SMS ist ein datenschutzorientierter Open-Source-Textnachrichtenfilter für iPhone und iPad. Erstelle Schlüsselwortregeln und intelligente Filter, um unerwünschte Nachrichten von unbekannten Absendern automatisch in Junk, Werbung oder Transaktionen zu verschieben - vollständig auf dem Gerät. Deine Filter werden über iCloud auf all deinen Geräten synchronisiert.
 
 Was ist neu in dieser Version:
-• Mehrere Fehlerbehebungen und Leistungsverbesserungen.
+• Community-Listen - Abonniere Filterlisten, die andere teilen, oder teile deine eigene. Listen aktualisieren sich selbst, wenn ihre Autoren eine neue Version veröffentlichen.
 
 Falls du es verpasst hast, hier ist, was zuletzt aktualisiert wurde:
 • Filter exportieren & importieren - teile deine Filter mit einem Freund. Exportiere eine Datei aus Filter-Tools im Menü und sende sie.

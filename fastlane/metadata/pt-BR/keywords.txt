@@ -1,1 +1,1 @@
-Filtro,Mensagens,Idioma,Lixo eletrônico,Golpe,Desconhecido,Remetente,Palavra-chave,Regex,Privacidade
+Filtro,Mensagens,Lixo eletrônico,Golpe,Desconhecido,Remetente,Regex,Privacidade,Comunidade,Listas

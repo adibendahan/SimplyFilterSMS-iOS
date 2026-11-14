@@ -586,26 +586,18 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters, filterTransfer, appearanceTouchup, communityLists
+    case aiFiltering, tipJar, regexFilters, filterTransfer, communityLists
 
     var title: String {
         switch self {
         case .aiFiltering:
             return "whatsNew_aiFiltering_title"~
-        case .newLanguages:
-            return "whatsNew_newLanguages_title"~
-        case .trustedCountries:
-            return "whatsNew_trustedCountries_title"~
-        case .accessibility:
-            return "whatsNew_accessibility_title"~
         case .tipJar:
             return "whatsNew_tipJar_title"~
         case .regexFilters:
             return "whatsNew_regexFilters_title"~
         case .filterTransfer:
             return "whatsNew_filterTransfer_title"~
-        case .appearanceTouchup:
-            return "whatsNew_appearanceTouchup_title"~
         case .communityLists:
             return "whatsNew_communityLists_title"~
         }
@@ -615,20 +607,12 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .aiFiltering:
             return "whatsNew_aiFiltering_desc"~
-        case .newLanguages:
-            return "whatsNew_newLanguages_desc"~
-        case .trustedCountries:
-            return "whatsNew_trustedCountries_desc"~
-        case .accessibility:
-            return "whatsNew_accessibility_desc"~
         case .tipJar:
             return "whatsNew_tipJar_desc"~
         case .regexFilters:
             return "whatsNew_regexFilters_desc"~
         case .filterTransfer:
             return "whatsNew_filterTransfer_desc"~
-        case .appearanceTouchup:
-            return "whatsNew_appearanceTouchup_desc"~
         case .communityLists:
             return "whatsNew_communityLists_desc"~
         }
@@ -638,20 +622,12 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .aiFiltering:
             return "bolt.shield.fill"
-        case .newLanguages:
-            return "globe"
-        case .trustedCountries:
-            return "globe.americas"
-        case .accessibility:
-            return "accessibility"
         case .tipJar:
             return "heart.fill"
         case .regexFilters:
             return "chevron.left.forwardslash.chevron.right"
         case .filterTransfer:
             return "square.and.arrow.up.on.square"
-        case .appearanceTouchup:
-            return "paintpalette"
         case .communityLists:
             return "person.2.circle"
         }
@@ -661,20 +637,12 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .aiFiltering:
             return .indigo
-        case .newLanguages:
-            return .teal
-        case .trustedCountries:
-            return .green
-        case .accessibility:
-            return .blue
         case .tipJar:
             return .red
         case .regexFilters:
             return .orange
         case .filterTransfer:
             return .blue
-        case .appearanceTouchup:
-            return .purple
         case .communityLists:
             return .indigo
         }
@@ -686,20 +654,12 @@ enum WhatsNewEntry: String, CaseIterable {
             return 0
         case .filterTransfer:
             return 1
-        case .appearanceTouchup:
-            return 2
         case .tipJar:
-            return 3
+            return 2
         case .aiFiltering:
-            return 4
+            return 3
         case .regexFilters:
-            return 5
-        case .newLanguages:
-            return 6
-        case .trustedCountries:
-            return 7
-        case .accessibility:
-            return 8
+            return 4
         }
     }
 
