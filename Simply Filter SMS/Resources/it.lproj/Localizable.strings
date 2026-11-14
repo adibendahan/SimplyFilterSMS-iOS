@@ -615,3 +615,45 @@
 "inactivityNotification_reminder_title" = "Le tue liste di filtri basate su IA non si sono aggiornate";
 
 "inactivityNotification_reminder_body" = "Apri Simply Filter SMS per aggiornarle e continuare a filtrare i messaggi da mittenti sconosciuti.";
+
+"communityLists_title" = "Liste della community";
+
+"communityLists_lists" = "Liste";
+
+"communityLists_empty" = "Ancora nessuna lista. Aggiungine una con il suo link qui sotto.";
+
+"communityLists_addFromURL" = "Aggiungi lista da URL";
+
+"communityLists_footer" = "Gli aggiornamenti delle liste vengono controllati ogni giorno. Una lista attiva filtra i messaggi dei mittenti sconosciuti, proprio come il Filtraggio AI.";
+
+"communityLists_createList" = "Crea una lista";
+
+"communityLists_submitList" = "Invia una lista";
+
+"communityLists_urlPlaceholder" = "URL della lista";
+
+"communityLists_urlHint" = "Incolla il link al file .sfsfilters della lista, dalla sua pagina.";
+
+"communityLists_preview" = "Anteprima";
+
+"communityLists_trustNote" = "Le liste della community sono create da altre persone. Iscriviti solo a liste di cui ti fidi.";
+
+"communityLists_subscribe" = "Iscriviti";
+
+"communityLists_error_invalidLink" = "Inserisci un link che inizia con https://";
+
+"communityLists_error_alreadySubscribed" = "Questa lista è già tra le tue liste della community.";
+
+"communityLists_error_offline" = "Sei offline. Connettiti a Internet e riprova.";
+
+"communityLists_error_notAList" = "Questo link non apre una lista di Simply Filter SMS.";
+
+"communityLists_error_invalidLocale" = "Questa lista non indica per quale lingua e paese è pensata, quindi non può essere aggiunta.";
+
+"communityLists_error_subscribeFailed" = "Impossibile aggiungere la lista. Riprova più tardi.";
+
+"whatsNew_communityLists_title" = "Liste della community";
+
+"whatsNew_communityLists_desc" = "Iscriviti alle liste di filtri condivise da altre persone, o condividi la tua. Le liste si aggiornano da sole quando i loro autori pubblicano una nuova versione - le trovi in **I tuoi filtri**.";
+
+

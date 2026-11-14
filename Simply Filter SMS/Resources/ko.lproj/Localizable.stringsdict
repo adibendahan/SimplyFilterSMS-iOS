@@ -75,5 +75,21 @@
             <string>어떻게 분류하시겠습니까?</string>
         </dict>
     </dict>
+    <key>communityLists_active_count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@lists@</string>
+        <key>lists</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>끔</string>
+            <key>other</key>
+            <string>%ld개 켜짐</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

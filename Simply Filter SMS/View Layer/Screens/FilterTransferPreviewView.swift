@@ -28,9 +28,13 @@ struct FilterTransferPreviewView: View {
                         .sorted(by: { $0.sortIndex < $1.sortIndex })
                         .filter({ self.model.candidates(for: $0).isEmpty == false || self.model.willForceClear($0) }), id: \.self) { filterType in
                         NavigationLink {
-                            FilterTransferCandidateListView(model: self.model, filterType: filterType)
+                            FilterTransferCandidateListView(filterType: filterType,
+                                                            candidates: self.model.candidates(for: filterType),
+                                                            selection: self.model)
                         } label: {
-                            filterTypeRow(filterType)
+                            FilterTransferTypeRow(filterType: filterType,
+                                                  count: self.model.selectedCount(for: filterType),
+                                                  willClear: self.model.willForceClear(filterType))
                         }
                         .accentColor(Color.primary.opacity(0.35))
                         .disabled(self.model.candidates(for: filterType).isEmpty)
@@ -84,10 +88,18 @@ struct FilterTransferPreviewView: View {
             ShareSheet(items: [file.url])
         }
     }
+}
 
-    @ViewBuilder
-    private func filterTypeRow(_ filterType: FilterType) -> some View {
-        let activeCount = String.localizedStringWithFormat("general_active_count"~, self.model.selectedCount(for: filterType))
+
+//MARK: - Filter Type Row -
+struct FilterTransferTypeRow: View {
+
+    let filterType: FilterType
+    let count: Int
+    var willClear: Bool = false
+
+    var body: some View {
+        let activeCount = String.localizedStringWithFormat("general_active_count"~, self.count)
 
         AdaptiveRow {
             Image(systemName: filterType.iconName)
@@ -99,7 +111,7 @@ struct FilterTransferPreviewView: View {
                     .padding(.leading, 8)
                     .fixedSize(horizontal: false, vertical: true)
 
-                if self.model.willForceClear(filterType) {
+                if self.willClear {
                     Text("\(Image(systemName: "exclamationmark.triangle.fill")) \("importFilters_willClear"~)")
                         .font(.caption2)
                         .foregroundColor(.red)
@@ -108,6 +120,7 @@ struct FilterTransferPreviewView: View {
             }
         } trailing: {
             Text(activeCount)
+                .contentTransition(.numericText(value: Double(self.count)))
                 .textCase(.uppercase)
                 .foregroundColor(.secondary)
                 .font(Font.caption2)
@@ -120,53 +133,82 @@ struct FilterTransferPreviewView: View {
 //MARK: - Candidate List -
 struct FilterTransferCandidateListView: View {
 
-    @ObservedObject var model: FilterTransferPreviewView.ViewModel
     let filterType: FilterType
+    let candidates: [FilterTransferCandidate]
+    var selection: FilterTransferPreviewView.ViewModel? = nil
+
+    private var regularCandidates: [FilterTransferCandidate] {
+        return self.candidates.filter({ $0.filterMatching != .regex })
+    }
+
+    private var regexCandidates: [FilterTransferCandidate] {
+        return self.candidates.filter({ $0.filterMatching == .regex })
+    }
 
     var body: some View {
-        List(selection: self.$model.selectedIDs) {
+        if let selection = self.selection {
+            SelectableList(listView: self, model: selection)
+        } else {
+            self.list(selectedIDs: nil)
+        }
+    }
+
+    private struct SelectableList: View {
+        let listView: FilterTransferCandidateListView
+        @ObservedObject var model: FilterTransferPreviewView.ViewModel
+
+        var body: some View {
+            self.listView.list(selectedIDs: self.$model.selectedIDs)
+        }
+    }
+
+    private func list(selectedIDs: Binding<Set<UUID>>?) -> some View {
+        List(selection: selectedIDs) {
             Section {
-                ForEach(self.model.regularCandidates(for: self.filterType)) { candidate in
+                ForEach(self.regularCandidates) { candidate in
                     self.candidateRow(candidate)
                 }
             } header: {
-                if self.model.regularCandidates(for: self.filterType).count > 0 {
+                if self.regularCandidates.count > 0 {
                     AdaptiveColumnHeader(leadingAccessory: {
-                        self.sectionSelectAll(self.model.regularCandidates(for: self.filterType))
+                        self.sectionSelectAll(self.regularCandidates)
                     }, primary: "filterList_text"~,
                        secondary: self.filterType.supportsAdvancedOptions ? "filterList_options"~ : "filterList_folder"~,
                        secondaryIsMuted: false)
                 }
             }
 
-            if self.model.regexCandidates(for: self.filterType).count > 0 {
+            if self.regexCandidates.count > 0 {
                 Section {
-                    ForEach(self.model.regexCandidates(for: self.filterType)) { candidate in
+                    ForEach(self.regexCandidates) { candidate in
                         self.candidateRow(candidate)
                     }
                 } header: {
                     AdaptiveColumnHeader(leadingAccessory: {
-                        self.sectionSelectAll(self.model.regexCandidates(for: self.filterType))
+                        self.sectionSelectAll(self.regexCandidates)
                     }, primary: "addFilter_match_regex"~, secondary: "", secondaryIsMuted: false)
                 }
             }
         }
         .listStyle(.insetGrouped)
-        .environment(\.editMode, .constant(.active))
+        .environment(\.editMode, .constant(selectedIDs == nil ? .inactive : .active))
         .navigationTitle(self.filterType.name)
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    @ViewBuilder
     private func sectionSelectAll(_ candidates: [FilterTransferCandidate]) -> some View {
-        let state = self.model.selectionState(for: candidates)
-        return Button {
-            self.model.toggleSelection(for: candidates)
-        } label: {
-            Image(systemName: state == .all ? "checkmark.circle.fill" : (state == .some ? "minus.circle.fill" : "circle"))
-                .foregroundStyle(.tint)
+        if let selection = self.selection {
+            let state = selection.selectionState(for: candidates)
+            Button {
+                selection.toggleSelection(for: candidates)
+            } label: {
+                Image(systemName: state == .all ? "checkmark.circle.fill" : (state == .some ? "minus.circle.fill" : "circle"))
+                    .foregroundStyle(.tint)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(state == .all ? "importFilters_selectNone"~ : "importFilters_selectAll"~)
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel(state == .all ? "importFilters_selectNone"~ : "importFilters_selectAll"~)
     }
 
     @ViewBuilder
@@ -266,14 +308,6 @@ extension FilterTransferPreviewView {
 
         func candidates(for type: FilterType) -> [FilterTransferCandidate] {
             return self.preview.candidates.filter({ $0.type == type })
-        }
-
-        func regularCandidates(for type: FilterType) -> [FilterTransferCandidate] {
-            return self.candidates(for: type).filter({ $0.filterMatching != .regex })
-        }
-
-        func regexCandidates(for type: FilterType) -> [FilterTransferCandidate] {
-            return self.candidates(for: type).filter({ $0.filterMatching == .regex })
         }
 
         func selectedCount(for type: FilterType) -> Int {

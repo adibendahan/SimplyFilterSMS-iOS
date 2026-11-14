@@ -450,6 +450,36 @@ class FilterListManagerTests: XCTestCase {
     }
 
     @MainActor
+    func test_updateWhenOnline_checkedTodayOlderCatalog_fetches() async {
+        // Prepare
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
+            cacheRecord.uuid = UUID()
+            cacheRecord.age = Date()
+
+            return [cacheRecord]
+        }
+        self.persistenceManager.cachedFilterListCatalogClosure = {
+            FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                      version: FilterListCatalogResponse.currentVersion - 1,
+                                      lists: self.catalog(["he"]).lists)
+        }
+        self.networkSyncManager.networkStatusClosure = { .online }
+        let catalogRequested = self.expectation(description: "catalog requested")
+        self.filterListService.fetchFilterListCatalogClosure = { _ in
+            catalogRequested.fulfill()
+            return nil
+        }
+
+        // Act
+        self.testSubject.updateFilterListsWhenOnline()
+
+        // Verify
+        await self.fulfillment(of: [catalogRequested], timeout: 1)
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
+    }
+
+    @MainActor
     func test_updateWhenOnline_checkedTodayUnreadableCache_fetches() async {
         // Prepare
         self.persistenceManager.fetchFilterListsCacheRecordsClosure = {

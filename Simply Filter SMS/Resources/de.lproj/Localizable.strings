@@ -615,3 +615,45 @@
 "inactivityNotification_reminder_title" = "Deine KI-basierten Filterlisten wurden nicht aktualisiert";
 
 "inactivityNotification_reminder_body" = "Öffne Simply Filter SMS, um sie zu aktualisieren und Nachrichten unbekannter Absender weiter zu filtern.";
+
+"communityLists_title" = "Community-Listen";
+
+"communityLists_lists" = "Listen";
+
+"communityLists_empty" = "Noch keine Listen. Füge unten eine über ihren Link hinzu.";
+
+"communityLists_addFromURL" = "Liste von URL hinzufügen";
+
+"communityLists_footer" = "Listen werden täglich auf Updates geprüft. Eine aktivierte Liste filtert Nachrichten von unbekannten Absendern, genau wie die KI-Filterung.";
+
+"communityLists_createList" = "Liste erstellen";
+
+"communityLists_submitList" = "Liste einreichen";
+
+"communityLists_urlPlaceholder" = "URL der Liste";
+
+"communityLists_urlHint" = "Füge den Link zur .sfsfilters-Datei der Liste ein, von der Seite der Liste.";
+
+"communityLists_preview" = "Vorschau";
+
+"communityLists_trustNote" = "Community-Listen werden von anderen erstellt. Abonniere nur Listen, denen du vertraust.";
+
+"communityLists_subscribe" = "Abonnieren";
+
+"communityLists_error_invalidLink" = "Gib einen Link ein, der mit https:// beginnt.";
+
+"communityLists_error_alreadySubscribed" = "Diese Liste ist schon in deinen Community-Listen.";
+
+"communityLists_error_offline" = "Du bist offline. Verbinde dich mit dem Internet und versuche es erneut.";
+
+"communityLists_error_notAList" = "Dieser Link öffnet keine Simply Filter SMS-Liste.";
+
+"communityLists_error_invalidLocale" = "Diese Liste gibt nicht an, für welche Sprache und welches Land sie gedacht ist, daher kann sie nicht hinzugefügt werden.";
+
+"communityLists_error_subscribeFailed" = "Die Liste konnte nicht hinzugefügt werden. Versuche es später erneut.";
+
+"whatsNew_communityLists_title" = "Community-Listen";
+
+"whatsNew_communityLists_desc" = "Abonniere Filterlisten, die andere teilen, oder teile deine eigene. Listen aktualisieren sich selbst, wenn ihre Autoren eine neue Version veröffentlichen - du findest sie unter **Deine Filter**.";
+
+

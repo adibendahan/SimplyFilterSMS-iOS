@@ -42,6 +42,13 @@ Type a sender and a message and see the verdict live, as a sheet from the menu.
 Pushed from Home; toggles AI Filtering per language.
 - The view model is `@unchecked Sendable` because `.refreshable` needs a `@Sendable` action.
 
+## CommunityListsView
+Pushed from Home's first "Your filters" row; turns Community Lists on and off, removes the user's own lists, and opens Add List from URL.
+- Curated lists can't be swiped away: removing one would only bring it back from the catalog.
+
+## AddCommunityListView
+The Add List from URL sheet: typing or pasting a link previews the list, and Subscribe saves the previewed file and turns it on.
+
 ## BlockLanguageView
 A sheet that adds a "deny language" filter.
 - It wraps itself in a `NavigationView`; the pushed `FilterListLanguagesView` uses Home's.

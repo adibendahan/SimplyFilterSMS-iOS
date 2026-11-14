@@ -107,5 +107,29 @@
             <string>كيف تريد تصنيفها؟</string>
         </dict>
     </dict>
+    <key>communityLists_active_count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@lists@</string>
+        <key>lists</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>متوقف</string>
+            <key>one</key>
+            <string>قائمة واحدة مفعّلة</string>
+            <key>two</key>
+            <string>قائمتان مفعّلتان</string>
+            <key>few</key>
+            <string>%ld قوائم مفعّلة</string>
+            <key>many</key>
+            <string>%ld قائمة مفعّلة</string>
+            <key>other</key>
+            <string>%ld قائمة مفعّلة</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

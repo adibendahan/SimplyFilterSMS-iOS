@@ -615,3 +615,45 @@
 "inactivityNotification_reminder_title" = "قوائم التصفية المعتمدة على AI لم تتحدّث";
 
 "inactivityNotification_reminder_body" = "افتح Simply Filter SMS لتحديثها ومواصلة تصفية الرسائل من المرسلين غير المعروفين.";
+
+"communityLists_title" = "قوائم المجتمع";
+
+"communityLists_lists" = "القوائم";
+
+"communityLists_empty" = "لا توجد قوائم بعد. أضف قائمة عبر رابطها أدناه.";
+
+"communityLists_addFromURL" = "إضافة قائمة من رابط";
+
+"communityLists_footer" = "يتم التحقق من تحديثات القوائم كل يوم. القائمة المفعّلة تصفّي الرسائل من المرسلين غير المعروفين، تمامًا مثل تصفية AI.";
+
+"communityLists_createList" = "إنشاء قائمة";
+
+"communityLists_submitList" = "إرسال قائمة";
+
+"communityLists_urlPlaceholder" = "رابط القائمة";
+
+"communityLists_urlHint" = "الصق رابط ملف sfsfilters الخاص بالقائمة من صفحتها.";
+
+"communityLists_preview" = "معاينة";
+
+"communityLists_trustNote" = "قوائم المجتمع يُعدّها أشخاص آخرون. اشترك فقط في القوائم التي تثق بها.";
+
+"communityLists_subscribe" = "اشتراك";
+
+"communityLists_error_invalidLink" = "أدخل رابطًا يبدأ بـ https://";
+
+"communityLists_error_alreadySubscribed" = "هذه القائمة موجودة بالفعل في قوائم المجتمع لديك.";
+
+"communityLists_error_offline" = "أنت غير متصل بالإنترنت. اتصل وحاول مرة أخرى.";
+
+"communityLists_error_notAList" = "هذا الرابط لا يفتح قائمة Simply Filter SMS.";
+
+"communityLists_error_invalidLocale" = "لا تحدد هذه القائمة اللغة والبلد المخصصة لهما، لذا لا يمكن إضافتها.";
+
+"communityLists_error_subscribeFailed" = "تعذّرت إضافة القائمة. حاول مرة أخرى لاحقًا.";
+
+"whatsNew_communityLists_title" = "قوائم المجتمع";
+
+"whatsNew_communityLists_desc" = "اشترك في قوائم تصفية يشاركها أشخاص آخرون، أو شارك قائمتك. تتحدّث القوائم تلقائيًا عندما ينشر مؤلفوها نسخة جديدة - تجدها في **مرشّحاتك**.";
+
+

@@ -22,10 +22,7 @@ struct Simply_Filter_SMSApp: App {
         WindowGroup {
             AppHomeView(model: homeModel)
                 .adaptiveLayoutEnvironment()
-                .environment(\.openURL, OpenURLAction { url in
-                    Log.debug("link opened, url: \(url)")
-                    return .systemAction
-                })
+                .inAppBrowser()
                 .onChange(of: scenePhase) { oldPhase, phase in
                     Log.debug("scene phase changed, phase: \(oldPhase.logName) → \(phase.logName)")
                     guard phase == .active else { return }

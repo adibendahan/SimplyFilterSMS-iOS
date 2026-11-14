@@ -461,11 +461,15 @@ class PersistenceManager: PersistenceManagerProtocol {
             Log.debug("no cache row, rows: \(cacheRecords.count) → reading the 3.2 cache")
             return self.legacyFilterLists()
         }
+        if let decodedCache = self.decodedCache, decodedCache.encodedSnapshot == encodedSnapshot {
+            return decodedCache.snapshot
+        }
         guard let snapshot = FilterListsSnapshot(encoded: encodedSnapshot) else {
             Log.debug("cache row doesn't decode, rows: \(cacheRecords.count), bytes: \(encodedSnapshot.utf8.count)")
             return nil
         }
         Log.debug("cache read, rows: \(cacheRecords.count), lists: \(snapshot.lists.count), bytes: \(encodedSnapshot.utf8.count)")
+        self.decodedCache = (encodedSnapshot: encodedSnapshot, snapshot: snapshot)
         return snapshot
     }
 
@@ -574,6 +578,8 @@ class PersistenceManager: PersistenceManagerProtocol {
     #endif // DEBUG
 
     //MARK: - Private -
+    private var decodedCache: (encodedSnapshot: String, snapshot: FilterListsSnapshot)?
+
     private func legacyFilterLists() -> FilterListsSnapshot? {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
         guard let legacyData = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.first?.filtersData else { return nil }

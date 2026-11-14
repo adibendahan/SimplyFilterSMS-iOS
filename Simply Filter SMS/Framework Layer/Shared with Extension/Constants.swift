@@ -28,7 +28,7 @@ let kFilterExportFileExtension = "sfsfilters"
 let kFilterExportTypeIdentifier = "com.grizz.apps.dev.simply-filter-sms.filters"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
-let currentWhatsNewVersion = 6
+let currentWhatsNewVersion = 7
 
 
 // URLs
@@ -574,7 +574,7 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters, filterTransfer, appearanceTouchup
+    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters, filterTransfer, appearanceTouchup, communityLists
 
     var title: String {
         switch self {
@@ -594,6 +594,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_filterTransfer_title"~
         case .appearanceTouchup:
             return "whatsNew_appearanceTouchup_title"~
+        case .communityLists:
+            return "whatsNew_communityLists_title"~
         }
     }
 
@@ -615,6 +617,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_filterTransfer_desc"~
         case .appearanceTouchup:
             return "whatsNew_appearanceTouchup_desc"~
+        case .communityLists:
+            return "whatsNew_communityLists_desc"~
         }
     }
 
@@ -636,6 +640,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "square.and.arrow.up.on.square"
         case .appearanceTouchup:
             return "paintpalette"
+        case .communityLists:
+            return "person.2.circle"
         }
     }
 
@@ -657,33 +663,37 @@ enum WhatsNewEntry: String, CaseIterable {
             return .blue
         case .appearanceTouchup:
             return .purple
+        case .communityLists:
+            return .indigo
         }
     }
 
     var order: Int {
         switch self {
-        case .filterTransfer:
+        case .communityLists:
             return 0
-        case .appearanceTouchup:
+        case .filterTransfer:
             return 1
-        case .tipJar:
+        case .appearanceTouchup:
             return 2
-        case .aiFiltering:
+        case .tipJar:
             return 3
-        case .regexFilters:
+        case .aiFiltering:
             return 4
-        case .newLanguages:
+        case .regexFilters:
             return 5
-        case .trustedCountries:
+        case .newLanguages:
             return 6
-        case .accessibility:
+        case .trustedCountries:
             return 7
+        case .accessibility:
+            return 8
         }
     }
 
     var isActionable: Bool {
         switch self {
-        case .tipJar:
+        case .tipJar, .communityLists:
             return true
         default:
             return false

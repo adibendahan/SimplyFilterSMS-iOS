@@ -615,3 +615,45 @@
 "inactivityNotification_reminder_title" = "רשימות הסינון מבוססות AI לא התעדכנו";
 
 "inactivityNotification_reminder_body" = "פתחו את Simply Filter SMS כדי לעדכן אותן ולהמשיך לסנן הודעות ממספרים לא מוכרים.";
+
+"communityLists_title" = "רשימות קהילה";
+
+"communityLists_lists" = "רשימות";
+
+"communityLists_empty" = "אין רשימות עדיין. אפשר להוסיף רשימה לפי הקישור שלה למטה.";
+
+"communityLists_addFromURL" = "הוספת רשימה מקישור";
+
+"communityLists_footer" = "הרשימות נבדקות לעדכונים כל יום. רשימה פעילה מסננת הודעות משולחים לא מוכרים, בדיוק כמו סינון AI.";
+
+"communityLists_createList" = "יצירת רשימה";
+
+"communityLists_submitList" = "שליחת רשימה";
+
+"communityLists_urlPlaceholder" = "קישור לרשימה";
+
+"communityLists_urlHint" = "הדביקו את הקישור לקובץ sfsfilters של הרשימה, מהעמוד שלה.";
+
+"communityLists_preview" = "תצוגה מקדימה";
+
+"communityLists_trustNote" = "רשימות קהילה נוצרות על ידי אנשים אחרים. הירשמו רק לרשימות שאתם סומכים עליהן.";
+
+"communityLists_subscribe" = "הרשמה";
+
+"communityLists_error_invalidLink" = "יש להזין קישור שמתחיל ב-https://";
+
+"communityLists_error_alreadySubscribed" = "הרשימה הזו כבר נמצאת ברשימות הקהילה שלכם.";
+
+"communityLists_error_offline" = "אין חיבור לאינטרנט. התחברו ונסו שוב.";
+
+"communityLists_error_notAList" = "הקישור הזה לא מוביל לרשימה של Simply Filter SMS.";
+
+"communityLists_error_invalidLocale" = "ברשימה הזו לא מצוין לאיזו שפה ומדינה היא מיועדת, ולכן אי אפשר להוסיף אותה.";
+
+"communityLists_error_subscribeFailed" = "לא ניתן היה להוסיף את הרשימה. נסו שוב מאוחר יותר.";
+
+"whatsNew_communityLists_title" = "רשימות קהילה";
+
+"whatsNew_communityLists_desc" = "הירשמו לרשימות סינון שאנשים אחרים שיתפו, או שתפו רשימה משלכם. הרשימות מתעדכנות מעצמן כשהיוצרים שלהן מפרסמים גרסה חדשה - תמצאו אותן ב**הפילטרים שלך**.";
+
+

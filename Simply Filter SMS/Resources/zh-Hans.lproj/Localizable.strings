@@ -615,3 +615,45 @@
 "inactivityNotification_reminder_title" = "基于 AI 的过滤规则尚未更新";
 
 "inactivityNotification_reminder_body" = "打开 Simply Filter SMS 更新规则，继续过滤未知发件人的短信。";
+
+"communityLists_title" = "社区列表";
+
+"communityLists_lists" = "列表";
+
+"communityLists_empty" = "还没有列表。可以在下方通过链接添加。";
+
+"communityLists_addFromURL" = "通过 URL 添加列表";
+
+"communityLists_footer" = "每天检查列表更新。开启的列表会像 AI 过滤一样，过滤陌生发件人的短信。";
+
+"communityLists_createList" = "创建列表";
+
+"communityLists_submitList" = "提交列表";
+
+"communityLists_urlPlaceholder" = "列表 URL";
+
+"communityLists_urlHint" = "从列表页面粘贴该列表 .sfsfilters 文件的链接。";
+
+"communityLists_preview" = "预览";
+
+"communityLists_trustNote" = "社区列表由其他人制作。只订阅你信任的列表。";
+
+"communityLists_subscribe" = "订阅";
+
+"communityLists_error_invalidLink" = "请输入以 https:// 开头的链接。";
+
+"communityLists_error_alreadySubscribed" = "这个列表已在你的社区列表中。";
+
+"communityLists_error_offline" = "你当前处于离线状态。请连接互联网后重试。";
+
+"communityLists_error_notAList" = "这个链接打开的不是 Simply Filter SMS 列表。";
+
+"communityLists_error_invalidLocale" = "这个列表没有说明适用的语言和国家/地区，因此无法添加。";
+
+"communityLists_error_subscribeFailed" = "无法添加该列表。请稍后重试。";
+
+"whatsNew_communityLists_title" = "社区列表";
+
+"whatsNew_communityLists_desc" = "订阅其他人分享的过滤列表，或分享你自己的列表。作者发布新版本后，列表会自动更新 - 在**你的过滤器**中可以找到它们。";
+
+

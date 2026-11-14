@@ -219,3 +219,70 @@ extension NLLanguage {
         }
     }
 }
+
+extension CommunityListItem {
+    var localeName: String? {
+        guard let locale = self.locale else { return nil }
+        return Locale.current.localizedString(forIdentifier: locale.identifier)
+    }
+
+    var localeLabel: String? {
+        guard let languageCode = self.locale?.language.languageCode else { return nil }
+        let languageName = Locale.current.localizedString(forLanguageCode: languageCode.identifier) ?? languageCode.identifier
+        let capitalizedLanguageName = languageName.localizedCapitalized
+        guard let flag = self.locale?.region?.flagEmoji else { return capitalizedLanguageName }
+        return "\(flag) \(capitalizedLanguageName)"
+    }
+}
+
+extension Locale.Region {
+    private static let regionalIndicatorOffset: UInt32 = 0x1F1A5
+
+    var flagEmoji: String? {
+        let regionCode = self.identifier.uppercased()
+        guard regionCode.count == 2, regionCode.allSatisfy({ $0.isASCII && $0.isLetter }) else { return nil }
+
+        var flag = ""
+        for scalar in regionCode.unicodeScalars {
+            guard let flagScalar = Unicode.Scalar(Self.regionalIndicatorOffset + scalar.value) else { return nil }
+            flag.unicodeScalars.append(flagScalar)
+        }
+        return flag
+    }
+}
+
+extension URL {
+    var displayHost: String {
+        let host = self.host() ?? self.absoluteString
+        guard host.hasPrefix("www.") else { return host }
+        return String(host.dropFirst(4))
+    }
+
+    var opensInAppBrowser: Bool {
+        guard let scheme = self.scheme?.lowercased(), scheme == "https" || scheme == "http" else { return false }
+        return self.host() != "apps.apple.com"
+    }
+}
+
+extension View {
+    func inAppBrowser() -> some View {
+        self.modifier(InAppBrowserModifier())
+    }
+}
+
+extension CommunityListPreviewError {
+    var message: String {
+        switch self {
+        case .invalidLink:
+            return "communityLists_error_invalidLink"~
+        case .alreadySubscribed:
+            return "communityLists_error_alreadySubscribed"~
+        case .offline:
+            return "communityLists_error_offline"~
+        case .notAList:
+            return "communityLists_error_notAList"~
+        case .invalidLocale:
+            return "communityLists_error_invalidLocale"~
+        }
+    }
+}

@@ -130,7 +130,7 @@ class FilterListManager: FilterListManagerProtocol {
         guard let persistenceManager = self.persistenceManager else { return [] }
         let snapshot = persistenceManager.cachedFilterLists()
         let communityListRecords = persistenceManager.fetchCommunityListRecords()
-        let activeURLs = Set(communityListRecords.filter(\.isActive).compactMap(\.url))
+        let activeURLs = Self.activeURLs(in: communityListRecords)
         let curatedURLs = snapshot?.catalog.curatedCommunityListURLs ?? []
         let userURLs = communityListRecords.compactMap(\.url).filter { !curatedURLs.contains($0) }
 
@@ -146,8 +146,8 @@ class FilterListManager: FilterListManagerProtocol {
     }
 
     var activeCommunityListsCount: Int {
-        let activeCommunityLists = self.communityLists.filter(\.isActive)
-        return activeCommunityLists.count
+        let communityListRecords = self.persistenceManager?.fetchCommunityListRecords() ?? []
+        return Self.activeURLs(in: communityListRecords).count
     }
 
     func setCommunityListActive(_ communityList: CommunityListItem, value: Bool) {
@@ -262,7 +262,11 @@ class FilterListManager: FilterListManagerProtocol {
 
     @MainActor
     private var didCheckFilterListsToday: Bool {
-        guard self.persistenceManager?.cachedFilterListCatalog() != nil else { return false }
+        guard let cachedCatalog = self.persistenceManager?.cachedFilterListCatalog() else { return false }
+        guard cachedCatalog.version >= FilterListCatalogResponse.currentVersion else {
+            Log.debug("cached catalog is older, version: \(cachedCatalog.version), current: \(FilterListCatalogResponse.currentVersion) → not checked")
+            return false
+        }
         guard let lastCheckDate = self.filterListsLastUpdated else { return false }
         return lastCheckDate.daysBetween(date: Date()) == 0
     }
@@ -429,6 +433,10 @@ class FilterListManager: FilterListManagerProtocol {
         }
 
         return (revalidatedLists, hasFailedLists)
+    }
+
+    private static func activeURLs(in communityListRecords: [CommunityList]) -> Set<String> {
+        return Set(communityListRecords.filter(\.isActive).compactMap(\.url))
     }
 
     private static func hasNewFilters(from cachedSnapshot: FilterListsSnapshot?, to refreshedSnapshot: FilterListsSnapshot) -> Bool {

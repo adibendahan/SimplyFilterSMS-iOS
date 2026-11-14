@@ -615,3 +615,45 @@
 "inactivityNotification_reminder_title" = "AIベースのフィルタのリストが更新されていません";
 
 "inactivityNotification_reminder_body" = "Simply Filter SMSを開いてリストを更新し、不明な送信者からのメッセージをフィルタリングし続けましょう。";
+
+"communityLists_title" = "コミュニティリスト";
+
+"communityLists_lists" = "リスト";
+
+"communityLists_empty" = "まだリストがありません。下からリンクで追加できます。";
+
+"communityLists_addFromURL" = "URLでリストを追加";
+
+"communityLists_footer" = "リストのアップデートは毎日確認されます。オンのリストは、AIフィルタリングと同じように不明な送信者からのメッセージをフィルタします。";
+
+"communityLists_createList" = "リストを作成";
+
+"communityLists_submitList" = "リストを提出";
+
+"communityLists_urlPlaceholder" = "リストのURL";
+
+"communityLists_urlHint" = "リストのページから、.sfsfilters ファイルへのリンクをペーストしてください。";
+
+"communityLists_preview" = "プレビュー";
+
+"communityLists_trustNote" = "コミュニティリストは他の人が作成したものです。信頼できるリストだけを登録してください。";
+
+"communityLists_subscribe" = "登録";
+
+"communityLists_error_invalidLink" = "https:// で始まるリンクを入力してください。";
+
+"communityLists_error_alreadySubscribed" = "このリストはすでにコミュニティリストにあります。";
+
+"communityLists_error_offline" = "オフラインです。インターネットに接続してもう一度お試しください。";
+
+"communityLists_error_notAList" = "このリンクは Simply Filter SMS のリストではありません。";
+
+"communityLists_error_invalidLocale" = "このリストには対象の言語と国が指定されていないため、追加できません。";
+
+"communityLists_error_subscribeFailed" = "リストを追加できませんでした。後でもう一度お試しください。";
+
+"whatsNew_communityLists_title" = "コミュニティリスト";
+
+"whatsNew_communityLists_desc" = "ほかの人が共有したフィルタリストを登録したり、自分のリストを共有したりできます。作成者が新しいバージョンを公開すると、リストは自動で更新されます - **あなたのフィルター**にあります。";
+
+

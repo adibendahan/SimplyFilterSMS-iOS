@@ -14,7 +14,7 @@ enum Screen: Int, CaseIterable, Identifiable, Hashable {
          addLanguageFilter, addAllowFilter, addDenyFilter, filterLists,
          denyFilters, allowFilters, denyLanguageFilters, reportMessage,
          whatsNew, tipJar, countryList, enableReportingExtension, filterImport,
-         chooseAccentColor, filterExport
+         chooseAccentColor, filterExport, communityLists
 
     @ViewBuilder func build() -> some View {
         Group {
@@ -99,9 +99,25 @@ enum Screen: Int, CaseIterable, Identifiable, Hashable {
 
             case .filterExport:
                 FilterTransferPreviewView(model: FilterTransferPreviewView.ViewModel())
+
+            case .communityLists:
+                CommunityListsView(model: CommunityListsView.ViewModel())
             }
         }
         .adaptiveLayoutEnvironment()
+        .inAppBrowser()
+    }
+
+    var opensFromHomeList: Bool {
+        switch self {
+        case .filterLists, .communityLists, .denyFilters, .allowFilters, .denyLanguageFilters:
+            return true
+        case .appHome, .onboarding, .help, .about, .enableExtension, .filterTester,
+             .addLanguageFilter, .addAllowFilter, .addDenyFilter, .reportMessage,
+             .whatsNew, .tipJar, .countryList, .enableReportingExtension, .filterImport,
+             .chooseAccentColor, .filterExport:
+            return false
+        }
     }
 
     var tag: String {
@@ -148,6 +164,8 @@ enum Screen: Int, CaseIterable, Identifiable, Hashable {
             return "chooseAccentColor"
         case .filterExport:
             return "filterExport"
+        case .communityLists:
+            return "communityLists"
         }
     }
 }

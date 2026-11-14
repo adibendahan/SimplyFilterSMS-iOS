@@ -615,3 +615,45 @@
 "inactivityNotification_reminder_title" = "Vos listes de filtres basées sur l'IA ne se sont pas mises à jour";
 
 "inactivityNotification_reminder_body" = "Ouvrez Simply Filter SMS pour les mettre à jour et continuer à filtrer les messages d'expéditeurs inconnus.";
+
+"communityLists_title" = "Listes communautaires";
+
+"communityLists_lists" = "Listes";
+
+"communityLists_empty" = "Aucune liste pour l'instant. Ajoute-en une avec son lien ci-dessous.";
+
+"communityLists_addFromURL" = "Ajouter une liste depuis une URL";
+
+"communityLists_footer" = "Les mises à jour des listes sont vérifiées chaque jour. Une liste activée filtre les messages des expéditeurs inconnus, comme le Filtrage AI.";
+
+"communityLists_createList" = "Créer une liste";
+
+"communityLists_submitList" = "Soumettre une liste";
+
+"communityLists_urlPlaceholder" = "URL de la liste";
+
+"communityLists_urlHint" = "Colle le lien vers le fichier .sfsfilters de la liste, depuis sa page.";
+
+"communityLists_preview" = "Aperçu";
+
+"communityLists_trustNote" = "Les listes communautaires sont créées par d'autres personnes. Abonne-toi seulement aux listes de confiance.";
+
+"communityLists_subscribe" = "S'abonner";
+
+"communityLists_error_invalidLink" = "Saisis un lien qui commence par https://";
+
+"communityLists_error_alreadySubscribed" = "Cette liste fait déjà partie de tes listes communautaires.";
+
+"communityLists_error_offline" = "Tu es hors ligne. Connecte-toi à Internet et réessaie.";
+
+"communityLists_error_notAList" = "Ce lien n'ouvre pas une liste Simply Filter SMS.";
+
+"communityLists_error_invalidLocale" = "Cette liste n'indique pas à quelle langue et quel pays elle est destinée, elle ne peut donc pas être ajoutée.";
+
+"communityLists_error_subscribeFailed" = "Impossible d'ajouter la liste. Réessaie plus tard.";
+
+"whatsNew_communityLists_title" = "Listes communautaires";
+
+"whatsNew_communityLists_desc" = "Abonne-toi à des listes de filtres partagées par d'autres personnes, ou partage la tienne. Les listes se mettent à jour toutes seules quand leurs auteurs publient une nouvelle version - tu les trouveras dans **Tes filtres**.";
+
+

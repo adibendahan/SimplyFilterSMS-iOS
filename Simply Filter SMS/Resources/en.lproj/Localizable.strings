@@ -210,6 +210,24 @@
 "autoFilter_countryAllowlist_explanation" = "Add the countries you want to allow messages from. Messages sent from phone numbers registered in countries not on this list will be filtered. Only senders with a full international calling code (e.g. +1, +972) are checked - senders without one are not affected.";
 "autoFilter_reportSpam" = "Report Spam";
 "autoFilter_improveAIFiltering" = "Improve AI Filtering";
+"communityLists_title" = "Community Lists";
+"communityLists_lists" = "Lists";
+"communityLists_empty" = "No lists yet. Add one by its link below.";
+"communityLists_addFromURL" = "Add List from URL";
+"communityLists_footer" = "Lists are checked for updates every day. A list that's on filters messages from unknown senders, just like AI Filtering.";
+"communityLists_createList" = "Create a List";
+"communityLists_submitList" = "Submit a List";
+"communityLists_urlPlaceholder" = "List URL";
+"communityLists_urlHint" = "Paste the link to the list's .sfsfilters file, from the list's page.";
+"communityLists_preview" = "Preview";
+"communityLists_trustNote" = "Community Lists are made by other people. Subscribe only to lists you trust.";
+"communityLists_subscribe" = "Subscribe";
+"communityLists_error_invalidLink" = "Enter a link that starts with https://";
+"communityLists_error_alreadySubscribed" = "This list is already in your Community Lists.";
+"communityLists_error_offline" = "You're offline. Connect to the internet and try again.";
+"communityLists_error_notAList" = "This link doesn't open a Simply Filter SMS list.";
+"communityLists_error_invalidLocale" = "This list doesn't say which language and country it's for, so it can't be added.";
+"communityLists_error_subscribeFailed" = "The list couldn't be added. Try again later.";
 "inactivityNotification_title" = "Keep AI Filtering working";
 "inactivityNotification_message" = "Allow notifications and we'll remind you to open the app now and then. If you don't, the AI filter lists stop updating, and iOS may remove the app to free up space - then filtering stops until you open it again.";
 "inactivityNotification_continue" = "Continue";
@@ -362,6 +380,8 @@
 "whatsNew_filterTransfer_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
 "whatsNew_appearanceTouchup_title" = "Appearance Touch-up";
 "whatsNew_appearanceTouchup_desc" = "**Help** and **Test Your Filters** have a new look. You can also pick an **Accent Color** from the menu - buttons and icons follow it.";
+"whatsNew_communityLists_title" = "Community Lists";
+"whatsNew_communityLists_desc" = "Subscribe to filter lists shared by other people, or share your own. Lists update themselves when their authors publish a new version - find them under **Your Filters**.";
 
 // Country calling code groups
 "callingCode_+1" = "North America";
