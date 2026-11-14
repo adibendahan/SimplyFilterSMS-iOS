@@ -21,6 +21,15 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - [docs/AWS_SETUP.md](docs/AWS_SETUP.md) — the reporting backend and S3 hosting of the AI Filtering lists
 - [docs/localization/](docs/localization/) — per-language translation guides used by `/add-language`
 
+**Rules — imported into every session and binding on all work.** Other agents that don't resolve `@` imports must read these files before starting any work session:
+
+@docs/rules/CODE_STYLE.md
+@docs/rules/PROCESS.md
+@docs/rules/GIT.md
+@docs/rules/XCODE_AND_TESTS.md
+@docs/rules/DATA_SAFETY.md
+@docs/rules/COMMUNICATION.md
+
 ## Architecture
 
 - **Layers:** `Framework Layer/` (managers), `Services Layer/` (thin network gateways), `View Layer/` (screens and components). `AppManager.shared` creates and holds every manager and service; `AppManager(inMemory: true)` for tests and `AppManager.previews` for previews. Every manager has a `*Protocol` in `Managers/Protocols/`.

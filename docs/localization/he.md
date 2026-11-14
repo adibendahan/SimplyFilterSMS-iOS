@@ -39,6 +39,7 @@ Hebrew has neutral constructions that address nobody:
 
 - Verbal noun, never an imperative: `הוספה`, not `הוסף`; `הסתרה`, not `הסתר`; `בחירת הכל`, not `בחר הכל`.
 - A title that names a screen the user opens can be a plural imperative when it's an invitation (`בחנו את הפילטרים שלכם`), but a verbal noun is preferred for new titles.
+- Never open a title with `כדי ש…` or any subordinate clause; it reads as translated English. Use a verbal noun, a casual question (`נהנים מהאפליקציה?`) or a plain statement (`הסנכרון ל-iCloud מושהה`).
 
 ### Accessibility hints
 
@@ -80,6 +81,8 @@ Hebrew has neutral constructions that address nobody:
 | Block (action noun) | **חסימה** | `חסימת שפה` |
 | Allow (action noun) | **אישור / מתן אפשרות** | Avoid bare `אפשר`, which also reads as "possible" |
 | AI Filtering | **סינון AI** | In prose, `בינה מלאכותית` or `ה-AI` is fine |
+| AI-based (lists) | **מבוססות AI** | Not `של AI`: `רשימות סינון מבוססות AI` |
+| Allow notifications | **אפשרו התראות** | Apple's term is `לאפשר התראות`; not `אשרו` |
 | Smart Filters | **פילטרים חכמים** | |
 | Allow by Country | **אפשר לפי מדינה** | UI name of the rule. In What's New prose: `מדינות מהימנות` |
 | Filter Tools (menu) | **כלי פילטור** | |
@@ -182,6 +185,8 @@ Hebrew is usually shorter than English and is the baseline other guides measure 
 - Prefer everyday words (`לשנות`, `לבדוק`) over formal ones (`לבצע שינוי`, `הינן`).
 - `אנא` sparingly; `נסו שוב` is enough.
 - English loanwords where Israelis use them: פילטר, אפליקציה, ספאם, אימוג'ים, טיפ.
+- Present tense for general truths, not future; English "will" does not carry over: `כשלא פותחים, רשימות הסינון מפסיקות להתעדכן`, not `אם לא תפתחו… לא יתעדכנו`.
+- Name the noun when its antecedent is far away: `עלול להסיר את האפליקציה`, not `עלול להסיר אותה` when `אותה` could mean the app or the lists.
 
 ---
 
