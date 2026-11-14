@@ -11,7 +11,7 @@ import NaturalLanguage
 
 struct FilterListCatalogResponse: Codable, Equatable {
     static let formatIdentifier = "simply-filter-sms-catalog"
-    static let currentVersion = 1
+    static let currentVersion = 2
 
     let format: String
     let version: Int
@@ -23,6 +23,16 @@ struct FilterListCatalogEntry: Codable, Equatable {
     let name: String
     let url: String
     let language: String?
+    var type: String? = nil
+    var locale: String? = nil
+    var description: String? = nil
+    var author: String? = nil
+    var homepage: String? = nil
+}
+
+enum FilterListCatalogEntryType: String {
+    case aiFilteringLanguage = "ai-filtering-language"
+    case curatedCommunityList = "curated-community-list"
 }
 
 extension FilterListCatalogResponse {
@@ -45,9 +55,51 @@ extension FilterListCatalogResponse {
 
         self = response
     }
+
+    var curatedCommunityListURLs: [String] {
+        let curatedURLs = self.curatedCommunityListEntries.compactMap(\.resolvedURL?.absoluteString)
+        return curatedURLs.uniqued()
+    }
+
+    func curatedEntry(for url: String) -> FilterListCatalogEntry? {
+        return self.curatedCommunityListEntries.first { $0.resolvedURL?.absoluteString == url }
+    }
+
+    func aiFilteringEntriesByURL(activeLanguages: Set<String>) -> [String: FilterListCatalogEntry] {
+        var entriesByURL: [String: FilterListCatalogEntry] = [:]
+        for entry in self.lists {
+            guard entry.entryType == .aiFilteringLanguage,
+                  let language = entry.language,
+                  activeLanguages.contains(language),
+                  let listURL = entry.resolvedURL else { continue }
+            entriesByURL[listURL.absoluteString] = entry
+        }
+        return entriesByURL
+    }
+
+    private var curatedCommunityListEntries: [FilterListCatalogEntry] {
+        return self.lists.filter { $0.entryType == .curatedCommunityList }
+    }
 }
 
 extension FilterListCatalogEntry {
+    var entryType: FilterListCatalogEntryType? {
+        let declaredType = self.declaredType
+        switch declaredType {
+        case .aiFilteringLanguage:
+            return self.language == nil ? nil : .aiFilteringLanguage
+        case .curatedCommunityList:
+            return Locale.listLocale(from: self.locale) == nil ? nil : .curatedCommunityList
+        case nil:
+            return nil
+        }
+    }
+
+    private var declaredType: FilterListCatalogEntryType? {
+        guard let type = self.type else { return .aiFilteringLanguage }
+        return FilterListCatalogEntryType(rawValue: type)
+    }
+
     var resolvedURL: URL? {
         return URL(string: self.url, relativeTo: .filterListCatalogURL)?.absoluteURL
     }

@@ -143,7 +143,7 @@ Local state: `.claude/skills/review-reports/.review-state.json` (gitignored). Tr
 7. Repeat until pending is 0 or user stops.
 
 **End of session:**
-1. Bump `revision` (+1) and set `exportedAt` (now, ISO-8601 UTC) once in each list file changed this session.
+1. Set `exportedAt` (now, ISO-8601 UTC) once in each list file changed this session.
 2. Upload **only** when the user asks (`upload` / `finish` with upload), and only the changed files:
    ```bash
    aws s3 cp ai/he.sfsfilters s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/he.sfsfilters --content-type application/json
@@ -167,7 +167,7 @@ Local state: `.claude/skills/review-reports/.review-state.json` (gitignored). Tr
 
 ## List files
 
-Each `ai/<lang>.sfsfilters` is a `.sfsfilters` payload (`format`, `version: 2`, `name`, `revision`, `exportedAt`, `appVersion`, `filters`). Every record is decided on its own — there is no default shape:
+Each `ai/<lang>.sfsfilters` is a `.sfsfilters` payload (`format`, `version: 2`, `name`, `exportedAt`, `appVersion`, `filters`). Every record is decided on its own — there is no default shape:
 
 - **type:** `allow` / `deny`
 - **target:** `sender` / `body` / `all`
@@ -181,7 +181,7 @@ For each proposed record, the suggestions table shows the record, the archive hi
 
 - **Order matters:** the app stops at the first matching record. Keep `promotion` / `transaction` records after all `junk` records, so a message that also matches a junk entry still goes to junk. Add new junk records before them.
 
-Never write placeholder fields. Write with `json.dump(payload, f, ensure_ascii=False, indent=2, sort_keys=True)` (no trailing newline), so diffs stay small. Bump `revision` once per session per changed file (see **End of session**).
+Never write placeholder fields. Write with `json.dump(payload, f, ensure_ascii=False, indent=2, sort_keys=True)` (no trailing newline), so diffs stay small.
 
 ## Guardrails
 

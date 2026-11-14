@@ -102,6 +102,15 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 
                 //MARK: User Filters
                 Section {
+                    communityListsRow
+                        .sidebarNavigationRow(screen: .communityLists, isRegular: horizontalSizeClass == .regular) {
+                            model.navigationScreen = .communityLists
+                        }
+                        .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == .communityLists ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
+                        .disabled(self.model.isAllUnknownFilteringOn)
+                        .accessibilityIdentifier(TestIdentifier.communityListsLink.rawValue)
+                        .accentColor(Color.primary.opacity(0.35))
+
                     ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
                         userFilterRow(filterType: filterType)
                         .sidebarNavigationRow(screen: filterType.screen, isRegular: horizontalSizeClass == .regular) {
@@ -176,20 +185,35 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         .modifier(persistentStoreReload)
         .sheet(item: $model.sheetScreen) {
             self.model.refresh()
-            if !self.model.completeInterruptedSheet(), !isPreview {
+            let pending = self.model.pendingScreenAfterDismiss
+            let isPushPending = pending?.opensFromHomeList == true
+            if isPushPending {
+                Log.debug("push pending → next screen deferred, screen: \(pending)")
+            }
+            if !self.model.completeInterruptedSheet(), !isPreview, !isPushPending {
                 self.model.presentNextScreen()
             }
-            if let pending = self.model.pendingScreenAfterDismiss {
-                self.model.pendingScreenAfterDismiss = nil
+            if let pending {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.model.requestSheet(pending)
+                    guard self.model.pendingScreenAfterDismiss == pending else { return }
+                    self.model.pendingScreenAfterDismiss = nil
+                    if pending.opensFromHomeList {
+                        selectedScreen = pending
+                    } else {
+                        self.model.requestSheet(pending)
+                    }
                 }
             }
         } content: { sheetScreen in
             if sheetScreen == .whatsNew {
                 WhatsNewView(model: WhatsNewView.ViewModel(onActionableEntryTapped: { entry in
-                    if entry == .tipJar {
+                    switch entry {
+                    case .tipJar:
                         self.model.pendingScreenAfterDismiss = .tipJar
+                    case .communityLists:
+                        self.model.pendingScreenAfterDismiss = .communityLists
+                    default:
+                        break
                     }
                 }))
             } else if sheetScreen == .help {
@@ -382,6 +406,26 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     }
 
     @ViewBuilder
+    private var communityListsRow: some View {
+        let activeCount = String.localizedStringWithFormat("communityLists_active_count"~, self.model.activeCommunityListsCount)
+
+        AdaptiveRow {
+            Image(systemName: "person.2.circle")
+                .foregroundColor(.indigo)
+                .adaptiveIconColumn()
+        } content: {
+            Text("communityLists_title"~)
+                .fixedSize(horizontal: false, vertical: true)
+        } trailing: {
+            Text(activeCount)
+                .textCase(.uppercase)
+                .foregroundColor(.secondary)
+                .font(.caption2)
+                .limitedDynamicTypeSize()
+        }
+    }
+
+    @ViewBuilder
     private func userFilterRow(filterType: FilterType) -> some View {
         let activeCount = String.localizedStringWithFormat("general_active_count"~, self.model.activeCount(for: filterType))
 
@@ -563,6 +607,7 @@ extension AppHomeView {
         @Published private(set) var filters: [Filter]
         @Published private(set) var title: String
         @Published private(set) var hasActiveFilterLists: Bool
+        @Published private(set) var activeCommunityListsCount: Int
         @Published private(set) var isAllUnknownFilteringOn: Bool
         @Published private(set) var shortSenderChoice: Int
         @Published private(set) var subtitle: String
@@ -620,6 +665,7 @@ extension AppHomeView {
             self.title = "filterList_filters"~
             self.subtitle = hasActiveFilterLists ? appManager.filterListManager.activeFilterListsTitle ?? "" : ""
             self.hasActiveFilterLists = hasActiveFilterLists
+            self.activeCommunityListsCount = appManager.filterListManager.activeCommunityListsCount
             self.isAllUnknownFilteringOn = appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.shortSenderChoice = appManager.smartFilterManager.selectedChoice(for: .shortSender)
             self.filters = appManager.persistenceManager.fetchFilterRecords()
@@ -652,6 +698,7 @@ extension AppHomeView {
             self.title = "filterList_filters"~
             self.subtitle = hasActiveFilterLists ? self.appManager.filterListManager.activeFilterListsTitle ?? "" : ""
             self.hasActiveFilterLists = hasActiveFilterLists
+            self.activeCommunityListsCount = self.appManager.filterListManager.activeCommunityListsCount
             self.isAllUnknownFilteringOn = self.appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.shortSenderChoice = self.appManager.smartFilterManager.selectedChoice(for: .shortSender)
             self.filters = self.appManager.persistenceManager.fetchFilterRecords()

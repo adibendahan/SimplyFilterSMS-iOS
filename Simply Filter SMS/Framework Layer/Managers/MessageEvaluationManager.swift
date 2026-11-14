@@ -194,22 +194,30 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
             guard let lang = languageRecord.lang, languageRecord.isActive else { continue }
             activeLanguages.insert(lang)
         }
-        guard !activeLanguages.isEmpty else {
-            Log.debug("no active languages → AI lists skipped")
+
+        let communityListRequest: NSFetchRequest<CommunityList> = CommunityList.fetchRequest()
+        communityListRequest.predicate = NSPredicate(format: "isActive == %@", NSNumber(value: true))
+        let communityListRecords = self.fetch(communityListRequest) ?? []
+        let activeCommunityURLs = Set(communityListRecords.compactMap(\.url))
+
+        guard !activeLanguages.isEmpty || !activeCommunityURLs.isEmpty else {
+            Log.debug("no active languages or community lists → lists skipped")
             return nil
         }
 
         guard let filtersData = self.loadCachedFilterLists() else {
-            Log.debug("no cache row, languages: \(activeLanguages) → AI lists skipped")
+            Log.debug("no cache row, languages: \(activeLanguages), communityLists: \(activeCommunityURLs.count) → lists skipped")
             return nil
         }
 
-        guard let activeFilterLists = ActiveFilterLists(encoded: filtersData, activeLanguages: activeLanguages) else {
-            Log.debug("cache row doesn't decode, languages: \(activeLanguages) → AI lists skipped")
+        guard let activeFilterLists = ActiveFilterLists(encoded: filtersData,
+                                                        activeLanguages: activeLanguages,
+                                                        activeCommunityURLs: activeCommunityURLs) else {
+            Log.debug("cache row doesn't decode, languages: \(activeLanguages), communityLists: \(activeCommunityURLs.count) → lists skipped")
             return nil
         }
         let listNames = activeFilterLists.lists.map(\.name)
-        Log.debug("AI lists loaded, languages: \(activeLanguages), lists: \(listNames)")
+        Log.debug("lists loaded, languages: \(activeLanguages), lists: \(listNames)")
         return activeFilterLists
     }
 

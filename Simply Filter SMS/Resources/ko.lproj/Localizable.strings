@@ -354,9 +354,7 @@
 
 "whatsNew_menuItem" = "새로운 기능";
 
-"whatsNew_accessibility_title" = "접근성 지원";
 
-"whatsNew_accessibility_desc" = "**VoiceOver** 및 **음성 제어**로 완전히 사용 가능합니다. 텍스트는 **동적 서체**에 맞게 조정됩니다. 애니메이션은 **모션 줄이기** 설정을 따릅니다.";
 
 "whatsNew_tipJar_title" = "개발자 지원";
 
@@ -458,13 +456,9 @@
 
 "whatsNew_aiFiltering_desc" = "자동 필터링이 이제 **AI**로 구동됩니다 - 스페인어, 프랑스어, 독일어, 아랍어 등 **10개 언어**를 지원하며 더욱 스마트하고 빠르고 정확합니다.";
 
-"whatsNew_newLanguages_title" = "9개의 새로운 언어";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** 앱이 이제 **9개의 새로운 언어**로 제공됩니다. 모두 **AI**의 도움으로 현지화되었습니다.";
 
-"whatsNew_trustedCountries_title" = "신뢰할 수 있는 국가";
 
-"whatsNew_trustedCountries_desc" = "전화 번호 접두사로 **특정 국가**의 메시지를 자동으로 허용합니다. 신뢰할 수 있는 국가를 추가하고 나머지는 필터링하세요.";
 
 "reportMessage_junkAndBlockSender" = "스팸 및 발신자 차단";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "친구와 필터를 공유하세요 - 메뉴의 **필터 도구**에서 파일을 내보낸 뒤 보내세요.";
 
-"whatsNew_appearanceTouchup_title" = "모양 다듬기";
 
-"whatsNew_appearanceTouchup_desc" = "**도움말**과 **필터 테스트**가 새 모습입니다. 메뉴에서 **강조 색상**을 고르면 버튼과 아이콘에 적용됩니다.";
 
 "notification_saveFailed_title" = "오류가 발생했습니다";
 
@@ -615,3 +607,67 @@
 "inactivityNotification_reminder_title" = "AI 기반 필터 목록이 업데이트되지 않았습니다";
 
 "inactivityNotification_reminder_body" = "Simply Filter SMS를 열어 목록을 업데이트하고 알 수 없는 발신자의 메시지를 계속 필터링하세요.";
+
+"communityLists_title" = "커뮤니티 목록";
+
+"communityLists_empty" = "아직 목록이 없어요";
+
+"communityLists_subscribeFromURL" = "URL로 구독";
+
+"communityLists_footer" = "커뮤니티 목록은 다른 사람들이 만들어 공유한 필터 목록이에요. 켜진 목록은 알 수 없는 발신자의 메시지를 스팸, 거래 또는 프로모션 폴더로 보내고, 주기적으로 업데이트돼요. 기존 필터는 계속 적용돼요.";
+
+"communityLists_createList" = "목록 만들기";
+
+"communityLists_submitList" = "목록 제출하기";
+
+"a11y_communityLists_urlField" = "목록 URL";
+
+"communityLists_urlHint" = "목록 URL을 붙여넣으세요.";
+
+"communityLists_preview" = "미리보기";
+
+"communityLists_trustNote" = "커뮤니티 목록은 다른 사람들이 만든 것이에요. 신뢰할 수 있는 목록만 구독하세요.";
+
+"communityLists_subscribe" = "구독";
+
+"communityLists_error_invalidURL" = "https://로 시작하는 URL을 입력하세요.";
+
+"communityLists_error_alreadySubscribed" = "이 목록은 이미 커뮤니티 목록에 있어요.";
+
+"communityLists_error_offline" = "오프라인 상태예요. 인터넷에 연결한 후 다시 시도하세요.";
+
+"communityLists_error_notAList" = "이 URL은 Simply Filter SMS 목록이 아니에요.";
+
+"communityLists_error_invalidLocale" = "이 목록에는 언어와 국가가 없어서 구독할 수 없어요.";
+
+"communityLists_error_subscribeFailed" = "목록을 구독할 수 없어요. 나중에 다시 시도하세요.";
+
+"a11y_communityLists_showDescription" = "설명 보기";
+
+"a11y_communityLists_hideDescription" = "설명 숨기기";
+
+"autoFilter_errorTitle" = "목록을 사용할 수 없어요";
+
+"autoFilter_offlineTitle" = "오프라인 상태예요";
+
+"filterList_empty_denied" = "차단 텍스트 없음";
+
+"filterList_empty_allowed" = "허용 텍스트 없음";
+
+"filterList_empty_deniedLanguage" = "차단된 언어 없음";
+
+"communityLists_error_missingName" = "이 목록에는 이름이 없어서 구독할 수 없어요.";
+
+"communityLists_error_missingDescription" = "이 목록에는 설명이 없어서 구독할 수 없어요.";
+
+"communityLists_error_missingAuthor" = "이 목록에는 작성자가 없어서 구독할 수 없어요.";
+
+"communityLists_error_invalidHomepage" = "이 목록에는 https:// 홈페이지가 없어서 구독할 수 없어요.";
+
+"communityLists_byAuthor" = "%@ 제작";
+
+"whatsNew_communityLists_title" = "커뮤니티 목록";
+
+"whatsNew_communityLists_desc" = "다른 사람들이 공유한 필터 목록을 구독하거나, 내 목록을 공유하세요. 작성자가 새 버전을 게시하면 목록이 자동으로 업데이트돼요 - **내 필터**에서 찾을 수 있어요.";
+
+

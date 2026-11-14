@@ -1,1 +1,1 @@
-Filtro,Messaggi,Blocco,Lingua,Indesiderati,Truffa,Sconosciuto,Mittente,Parola chiave,Regex,Privacy
+Filtro,Messaggi,Blocco,Lingua,Indesiderati,Truffa,Sconosciuto,Mittente,Regex,Privacy,Community,Liste

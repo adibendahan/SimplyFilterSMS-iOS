@@ -1,1 +1,5 @@
-Kleinere Fehlerbehebungen und Verbesserungen
+Simply Filter SMS 4.0.0 ist da, mit Community-Listen! 🎉
+
+Abonniere Filterlisten, die andere teilen, oder teile deine eigene. Listen aktualisieren sich selbst, wenn ihre Autoren eine neue Version veröffentlichen. Du findest sie unter „Deine Filter“.
+
+Dazu Fehlerbehebungen und Verbesserungen.

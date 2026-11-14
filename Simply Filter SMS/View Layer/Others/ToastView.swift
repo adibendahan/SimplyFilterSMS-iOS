@@ -272,7 +272,7 @@ struct ToastView: View {
     }
 
     enum Toast: Equatable {
-        case offline, cloudSyncOperationComplete, filterListsUpdated, onClipboardSet(String), tipSuccessful(TipTier), tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
+        case offline, cloudSyncOperationComplete, filterListsUpdated(FilterListCatalogEntryType), onClipboardSet(String), tipSuccessful(TipTier), tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
 
         var logName: String {
             let mirror = Mirror(reflecting: self)
@@ -333,8 +333,13 @@ struct ToastView: View {
                 return "notification_offline_title"~
             case .cloudSyncOperationComplete:
                 return "notification_sync_title"~
-            case .filterListsUpdated:
-                return "notification_automatic_title"~
+            case .filterListsUpdated(let entryType):
+                switch entryType {
+                case .aiFilteringLanguage:
+                    return "notification_automatic_title"~
+                case .curatedCommunityList:
+                    return "communityLists_title"~
+                }
             case .onClipboardSet(let contentDescription):
                 return contentDescription
             case .tipSuccessful:
@@ -514,7 +519,8 @@ struct ToastView: View {
         static let debugSamples: [Toast] = [
             .offline,
             .cloudSyncOperationComplete,
-            .filterListsUpdated,
+            .filterListsUpdated(.aiFilteringLanguage),
+            .filterListsUpdated(.curatedCommunityList),
             .onClipboardSet("support@example.com"),
             .tipSuccessful(.large),
             .tipPromotion,
@@ -571,7 +577,7 @@ private struct ToastActionButtonStyle: ViewModifier {
 
 struct ToastView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = ToastView.ViewModel(toast: .filterListsUpdated)
+        let model = ToastView.ViewModel(toast: .filterListsUpdated(.aiFilteringLanguage))
         NavigationView {
             List {
                 Button("Tap me") {

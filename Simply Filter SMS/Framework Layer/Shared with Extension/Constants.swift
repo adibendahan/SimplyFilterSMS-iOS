@@ -28,13 +28,16 @@ let kFilterExportFileExtension = "sfsfilters"
 let kFilterExportTypeIdentifier = "com.grizz.apps.dev.simply-filter-sms.filters"
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "#ERROR#"
 let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "#ERROR#"
-let currentWhatsNewVersion = 6
+let currentWhatsNewVersion = 7
 
 
 // URLs
 extension URL {
     static let appBaseURL = URL(string: "https://grizz-apps-dev.s3.us-east-2.amazonaws.com")!
-    static let filterListCatalogURL = URL.appBaseURL.appendingPathComponent("simply-filter-sms/3.3.0/ai/catalog.json")
+    static let filterListCatalogURL = URL.appBaseURL.appendingPathComponent("simply-filter-sms/4.0.0/catalog.json")
+    static let pagesBaseURL = URL(string: "https://adibendahan.github.io")!
+    static let communityListGuideURL = URL.pagesBaseURL.appendingPathComponent("SimplyFilterSMS-iOS/", isDirectory: true)
+    static let communityListProposalURL = URL.pagesBaseURL.appendingPathComponent("SimplyFilterSMS-iOS/submit/", isDirectory: true)
     static let reportMessageURL = URL(string: "https://api.ben-dahan.com")!
     static let appReviewURL = URL(string: "https://apps.apple.com/app/id1603222959?action=write-review")!
     static let appTwitterURL = URL(string: "https://twitter.com/a_bd")!
@@ -69,7 +72,18 @@ enum FilterType: Int64, CaseIterable, Identifiable {
             return "filterList_deniedLanguage"~
         }
     }
-    
+
+    var emptyTitle: String {
+        switch self {
+        case .deny:
+            return "filterList_empty_denied"~
+        case .allow:
+            return "filterList_empty_allowed"~
+        case .denyLanguage:
+            return "filterList_empty_deniedLanguage"~
+        }
+    }
+
     var supportsFolders: Bool {
         switch self {
         case .allow:
@@ -572,26 +586,20 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, newLanguages, trustedCountries, accessibility, tipJar, regexFilters, filterTransfer, appearanceTouchup
+    case aiFiltering, tipJar, regexFilters, filterTransfer, communityLists
 
     var title: String {
         switch self {
         case .aiFiltering:
             return "whatsNew_aiFiltering_title"~
-        case .newLanguages:
-            return "whatsNew_newLanguages_title"~
-        case .trustedCountries:
-            return "whatsNew_trustedCountries_title"~
-        case .accessibility:
-            return "whatsNew_accessibility_title"~
         case .tipJar:
             return "whatsNew_tipJar_title"~
         case .regexFilters:
             return "whatsNew_regexFilters_title"~
         case .filterTransfer:
             return "whatsNew_filterTransfer_title"~
-        case .appearanceTouchup:
-            return "whatsNew_appearanceTouchup_title"~
+        case .communityLists:
+            return "whatsNew_communityLists_title"~
         }
     }
 
@@ -599,20 +607,14 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .aiFiltering:
             return "whatsNew_aiFiltering_desc"~
-        case .newLanguages:
-            return "whatsNew_newLanguages_desc"~
-        case .trustedCountries:
-            return "whatsNew_trustedCountries_desc"~
-        case .accessibility:
-            return "whatsNew_accessibility_desc"~
         case .tipJar:
             return "whatsNew_tipJar_desc"~
         case .regexFilters:
             return "whatsNew_regexFilters_desc"~
         case .filterTransfer:
             return "whatsNew_filterTransfer_desc"~
-        case .appearanceTouchup:
-            return "whatsNew_appearanceTouchup_desc"~
+        case .communityLists:
+            return "whatsNew_communityLists_desc"~
         }
     }
 
@@ -620,20 +622,14 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .aiFiltering:
             return "bolt.shield.fill"
-        case .newLanguages:
-            return "globe"
-        case .trustedCountries:
-            return "globe.americas"
-        case .accessibility:
-            return "accessibility"
         case .tipJar:
             return "heart.fill"
         case .regexFilters:
             return "chevron.left.forwardslash.chevron.right"
         case .filterTransfer:
             return "square.and.arrow.up.on.square"
-        case .appearanceTouchup:
-            return "paintpalette"
+        case .communityLists:
+            return "person.2.circle"
         }
     }
 
@@ -641,28 +637,22 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .aiFiltering:
             return .indigo
-        case .newLanguages:
-            return .teal
-        case .trustedCountries:
-            return .green
-        case .accessibility:
-            return .blue
         case .tipJar:
             return .red
         case .regexFilters:
             return .orange
         case .filterTransfer:
             return .blue
-        case .appearanceTouchup:
-            return .purple
+        case .communityLists:
+            return .indigo
         }
     }
 
     var order: Int {
         switch self {
-        case .filterTransfer:
+        case .communityLists:
             return 0
-        case .appearanceTouchup:
+        case .filterTransfer:
             return 1
         case .tipJar:
             return 2
@@ -670,18 +660,12 @@ enum WhatsNewEntry: String, CaseIterable {
             return 3
         case .regexFilters:
             return 4
-        case .newLanguages:
-            return 5
-        case .trustedCountries:
-            return 6
-        case .accessibility:
-            return 7
         }
     }
 
     var isActionable: Bool {
         switch self {
-        case .tipJar:
+        case .tipJar, .communityLists:
             return true
         default:
             return false

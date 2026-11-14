@@ -22,7 +22,10 @@ struct FilterExportPayload: Codable, Equatable {
     let exportedAt: Date
     let appVersion: String
     let name: String?
-    let revision: Int?
+    let description: String?
+    let author: String?
+    let homepage: String?
+    let locale: String?
     let filters: [FilterExportRecord]
     let forceClearBeforeImport: [String]?
 }

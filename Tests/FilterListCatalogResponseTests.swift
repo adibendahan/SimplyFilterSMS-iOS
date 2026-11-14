@@ -23,7 +23,7 @@ class FilterListCatalogResponseTests: XCTestCase {
         XCTAssertEqual(response.version, 1)
         XCTAssertEqual(response.lists, [
             FilterListCatalogEntry(id: "ai-he", name: "Hebrew", url: "he.sfsfilters", language: "he"),
-            FilterListCatalogEntry(id: "community", name: "Community", url: "https://example.com/list.sfsfilters", language: nil)
+            FilterListCatalogEntry(id: "community", name: "Community", url: "https://example.com/list.sfsfilters", language: nil, type: "curated-community-list", locale: "en-US")
         ])
     }
 
@@ -72,7 +72,7 @@ class FilterListCatalogResponseTests: XCTestCase {
             "version": version,
             "lists": [
                 ["id": "ai-he", "name": "Hebrew", "url": "he.sfsfilters", "language": "he"],
-                ["id": "community", "name": "Community", "url": "https://example.com/list.sfsfilters"]
+                ["id": "community", "name": "Community", "url": "https://example.com/list.sfsfilters", "type": "curated-community-list", "locale": "en-US"]
             ]
         ]
         return try! JSONSerialization.data(withJSONObject: object)

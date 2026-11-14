@@ -336,9 +336,7 @@
 
 "whatsNew_menuItem" = "Was ist neu";
 
-"whatsNew_accessibility_title" = "Bedienungshilfen";
 
-"whatsNew_accessibility_desc" = "Vollständig nutzbar mit **VoiceOver** und **Sprachsteuerung**. Text skaliert mit **Dynamischer Schriftgröße**. Animationen berücksichtigen die Einstellung **Bewegung reduzieren**.";
 
 "whatsNew_tipJar_title" = "Entwickler unterstützen";
 
@@ -458,13 +456,9 @@
 
 "whatsNew_aiFiltering_desc" = "Die automatische Filterung wird jetzt von **KI** unterstützt - intelligenter, schneller und genauer, mit Unterstützung für **10 Sprachen** einschließlich Spanisch, Französisch, Deutsch, Arabisch und mehr.";
 
-"whatsNew_newLanguages_title" = "9 Neue Sprachen";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** Die App ist jetzt in **9 neuen Sprachen** verfügbar, alle mit Hilfe von **KI** lokalisiert.";
 
-"whatsNew_trustedCountries_title" = "Vertrauenswürdige Länder";
 
-"whatsNew_trustedCountries_desc" = "Nachrichten aus **bestimmten Ländern** automatisch anhand der Telefonvorwahl zulassen. Füge deine vertrauenswürdigen Länder hinzu und filtere den Rest heraus.";
 
 "reportMessage_junkAndBlockSender" = "Junk & Absender sperren";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "Teile deine Filter mit einem Freund - exportiere eine Datei aus **Filter-Tools** im Menü und sende sie.";
 
-"whatsNew_appearanceTouchup_title" = "Optik-Feinschliff";
 
-"whatsNew_appearanceTouchup_desc" = "**Hilfe** und **Filter testen** haben ein neues Aussehen. Du kannst auch eine **Akzentfarbe** im Menü wählen - Schaltflächen und Symbole folgen ihr.";
 
 "notification_saveFailed_title" = "Fehler aufgetreten";
 
@@ -615,3 +607,67 @@
 "inactivityNotification_reminder_title" = "Deine KI-basierten Filterlisten wurden nicht aktualisiert";
 
 "inactivityNotification_reminder_body" = "Öffne Simply Filter SMS, um sie zu aktualisieren und Nachrichten unbekannter Absender weiter zu filtern.";
+
+"communityLists_title" = "Community-Listen";
+
+"communityLists_empty" = "Noch keine Listen";
+
+"communityLists_subscribeFromURL" = "Von URL abonnieren";
+
+"communityLists_footer" = "Community-Listen sind Filterlisten, die andere erstellt und geteilt haben. Aktivierte Listen leiten Nachrichten von unbekannten Absendern in den Ordner Junk, Transaktionen oder Werbung und werden regelmäßig aktualisiert. Deine eigenen Filter bleiben aktiv.";
+
+"communityLists_createList" = "Liste erstellen";
+
+"communityLists_submitList" = "Liste einreichen";
+
+"a11y_communityLists_urlField" = "URL der Liste";
+
+"communityLists_urlHint" = "Füge die URL der Liste ein.";
+
+"communityLists_preview" = "Vorschau";
+
+"communityLists_trustNote" = "Community-Listen werden von anderen erstellt. Abonniere nur Listen, denen du vertraust.";
+
+"communityLists_subscribe" = "Abonnieren";
+
+"communityLists_error_invalidURL" = "Gib eine URL ein, die mit https:// beginnt.";
+
+"communityLists_error_alreadySubscribed" = "Diese Liste ist schon in deinen Community-Listen.";
+
+"communityLists_error_offline" = "Du bist offline. Verbinde dich mit dem Internet und versuche es erneut.";
+
+"communityLists_error_notAList" = "Diese URL ist keine Simply Filter SMS-Liste.";
+
+"communityLists_error_invalidLocale" = "Dieser Liste fehlen Sprache und Land, daher kannst du sie nicht abonnieren.";
+
+"communityLists_error_subscribeFailed" = "Die Liste konnte nicht abonniert werden. Versuche es später erneut.";
+
+"a11y_communityLists_showDescription" = "Beschreibung einblenden";
+
+"a11y_communityLists_hideDescription" = "Beschreibung ausblenden";
+
+"autoFilter_errorTitle" = "Listen nicht verfügbar";
+
+"autoFilter_offlineTitle" = "Du bist offline";
+
+"filterList_empty_denied" = "Keine blockierten Texte";
+
+"filterList_empty_allowed" = "Keine erlaubten Texte";
+
+"filterList_empty_deniedLanguage" = "Keine blockierten Sprachen";
+
+"communityLists_error_missingName" = "Dieser Liste fehlt der Name, daher kannst du sie nicht abonnieren.";
+
+"communityLists_error_missingDescription" = "Dieser Liste fehlt die Beschreibung, daher kannst du sie nicht abonnieren.";
+
+"communityLists_error_missingAuthor" = "Dieser Liste fehlt der Autor, daher kannst du sie nicht abonnieren.";
+
+"communityLists_error_invalidHomepage" = "Dieser Liste fehlt eine Homepage mit https://, daher kannst du sie nicht abonnieren.";
+
+"communityLists_byAuthor" = "von %@";
+
+"whatsNew_communityLists_title" = "Community-Listen";
+
+"whatsNew_communityLists_desc" = "Abonniere Filterlisten, die andere teilen, oder teile deine eigene. Listen aktualisieren sich selbst, wenn ihre Autoren eine neue Version veröffentlichen - du findest sie unter **Deine Filter**.";
+
+

@@ -85,5 +85,23 @@
             <string>¿Cómo te gustaría clasificarlos?</string>
         </dict>
     </dict>
+    <key>communityLists_active_count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@lists@</string>
+        <key>lists</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>Ninguna activa</string>
+            <key>one</key>
+            <string>1 lista activa</string>
+            <key>other</key>
+            <string>%ld listas activas</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

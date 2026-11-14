@@ -84,7 +84,10 @@ extension FilterListsSnapshot {
                                                   exportedAt: Date(timeIntervalSince1970: 0),
                                                   appVersion: "3.2",
                                                   name: language,
-                                                  revision: nil,
+                                                  description: nil,
+                                                  author: nil,
+                                                  homepage: nil,
+                                                  locale: nil,
                                                   filters: languageLists.records,
                                                   forceClearBeforeImport: nil)
             catalogEntries.append(catalogEntry)
@@ -95,6 +98,22 @@ extension FilterListsSnapshot {
                                                 version: FilterListCatalogResponse.currentVersion,
                                                 lists: catalogEntries)
         self.init(catalogETag: nil, catalog: catalog, lists: cacheSections)
+    }
+}
+
+extension FilterListsSnapshot {
+    func cacheSection(for url: String) -> FilterListsCacheSection? {
+        return self.lists.first { $0.url == url }
+    }
+}
+
+extension FilterExportPayload {
+    static func displayName(name: String?, url: String) -> String {
+        if let name, !name.isEmpty {
+            return name
+        }
+        guard let listURL = URL(string: url), !listURL.lastPathComponent.isEmpty else { return url }
+        return listURL.deletingPathExtension().lastPathComponent
     }
 }
 
@@ -111,19 +130,14 @@ extension FilterListCatalogResponse {
 }
 
 extension ActiveFilterLists {
-    init?(encoded: String, activeLanguages: Set<String>) {
+    init?(encoded: String, activeLanguages: Set<String>, activeCommunityURLs: Set<String> = []) {
         guard let catalog = FilterListCatalogResponse(encodedCache: encoded) else { return nil }
         let jsonData = Data(encoded.utf8)
 
-        var namesByURL: [String: String] = [:]
-        for catalogEntry in catalog.lists {
-            guard let language = catalogEntry.language, activeLanguages.contains(language) else { continue }
-            guard let listURL = catalogEntry.resolvedURL else { continue }
-            namesByURL[listURL.absoluteString] = catalogEntry.displayName
-        }
+        let namesByURL = catalog.aiFilteringEntriesByURL(activeLanguages: activeLanguages).mapValues(\.displayName)
 
         let decoder = JSONDecoder()
-        decoder.userInfo[.activeURLs] = Set(namesByURL.keys)
+        decoder.userInfo[.activeURLs] = Set(namesByURL.keys).union(activeCommunityURLs)
         let cachedLists: CachedLists
         do {
             cachedLists = try decoder.decode(CachedLists.self, from: jsonData)
@@ -132,13 +146,21 @@ extension ActiveFilterLists {
             return nil
         }
 
-        var activeLists: [ActiveFilterList] = []
+        var aiLists: [ActiveFilterList] = []
+        var communityLists: [ActiveFilterList] = []
         for cachedList in cachedLists.lists {
-            guard let listName = namesByURL[cachedList.url], let listRecords = cachedList.records else { continue }
-            activeLists.append(ActiveFilterList(name: listName, records: listRecords))
+            guard let listRecords = cachedList.records else { continue }
+            if let listName = namesByURL[cachedList.url] {
+                aiLists.append(ActiveFilterList(name: listName, records: listRecords))
+            }
+            else if activeCommunityURLs.contains(cachedList.url) {
+                let curatedEntry = catalog.curatedEntry(for: cachedList.url)
+                let listName = curatedEntry?.name ?? FilterExportPayload.displayName(name: cachedList.name, url: cachedList.url)
+                communityLists.append(ActiveFilterList(name: listName, records: listRecords))
+            }
         }
 
-        self.lists = activeLists
+        self.lists = aiLists + communityLists
     }
 }
 
@@ -153,6 +175,7 @@ private struct CachedLists: Decodable {
 
 private struct CachedList: Decodable {
     let url: String
+    let name: String?
     let records: [FilterExportRecord]?
 
     init(from decoder: Decoder) throws {
@@ -161,14 +184,17 @@ private struct CachedList: Decodable {
         self.url = try container.decode(String.self, forKey: .url)
 
         guard activeURLs.contains(self.url) else {
+            self.name = nil
             self.records = nil
             return
         }
         let payload = try container.decode(Payload.self, forKey: .payload)
+        self.name = payload.name
         self.records = payload.filters
     }
 
     private struct Payload: Decodable {
+        let name: String?
         let filters: [FilterExportRecord]
     }
 

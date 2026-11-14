@@ -141,13 +141,13 @@ class FlowManager: FlowManagerProtocol {
             self?.networkStatusChanged(to: networkStatus)
         }
 
-        NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: .main) { [weak self] _ in
+        NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: .main) { [weak self] notification in
             guard let self else { return }
-            guard self.filterListManager.hasActiveFilterLists else {
-                Log.debug("AI lists updated, aiFiltering: \(false) → no toast")
+            guard let entryType = notification.object as? FilterListCatalogEntryType else {
+                Log.debug("filter lists updated, active lists updated: \(false) → no toast")
                 return
             }
-            self.requestToast(.filterListsUpdated)
+            self.requestToast(.filterListsUpdated(entryType))
         }
     }
 

@@ -202,7 +202,10 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                                           exportedAt: Date(),
                                           appVersion: appVersion,
                                           name: nil,
-                                          revision: nil,
+                                          description: nil,
+                                          author: nil,
+                                          homepage: nil,
+                                          locale: nil,
                                           filters: records,
                                           forceClearBeforeImport: nil)
         let encoder = JSONEncoder()

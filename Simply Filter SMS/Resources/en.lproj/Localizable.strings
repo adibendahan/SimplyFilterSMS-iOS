@@ -42,6 +42,9 @@
 "menu_addFilter" = "Add Filter";
 "filterList_menu_debug" = "Load Debug Data";
 "filterList_deniedLanguage" = "Blocked Languages";
+"filterList_empty_denied" = "No Blocked Texts";
+"filterList_empty_allowed" = "No Allowed Texts";
+"filterList_empty_deniedLanguage" = "No Blocked Languages";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
 "filterList_folder" = "Folder";
 "filterList_text" = "Text";
@@ -202,6 +205,8 @@
 "autoFilter_email" = "Block Email Senders";
 "autoFilter_empty" = "Go online while the app is open at least once to download the AI Filtering lists.";
 "autoFilter_error" = "It seems there is a problem downloading the AI Filtering lists. Please try again later.";
+"autoFilter_errorTitle" = "Lists Unavailable";
+"autoFilter_offlineTitle" = "You're Offline";
 "autoFilter_emojis" = "Block Emojis";
 "autoFilter_emojis_shortTitle" = "Emojis";
 "autoFilter_countryAllowlist" = "Allow by Country";
@@ -210,6 +215,28 @@
 "autoFilter_countryAllowlist_explanation" = "Add the countries you want to allow messages from. Messages sent from phone numbers registered in countries not on this list will be filtered. Only senders with a full international calling code (e.g. +1, +972) are checked - senders without one are not affected.";
 "autoFilter_reportSpam" = "Report Spam";
 "autoFilter_improveAIFiltering" = "Improve AI Filtering";
+"communityLists_title" = "Community Lists";
+"communityLists_byAuthor" = "by %@";
+"communityLists_empty" = "No Lists Yet";
+"communityLists_subscribeFromURL" = "Subscribe from URL";
+"communityLists_footer" = "Community Lists are filter lists made and shared by other people. Turned-on lists route messages from unknown senders to your Junk, Transactions or Promotions folder, and are updated periodically. Your regular filters are still applied.";
+"communityLists_createList" = "Create a List";
+"communityLists_submitList" = "Submit a List";
+"a11y_communityLists_urlField" = "List URL";
+"communityLists_urlHint" = "Paste the list's URL.";
+"communityLists_preview" = "Preview";
+"communityLists_trustNote" = "Community Lists are made by other people. Subscribe only to lists you trust.";
+"communityLists_subscribe" = "Subscribe";
+"communityLists_error_invalidURL" = "Enter a URL that starts with https://";
+"communityLists_error_alreadySubscribed" = "This list is already in your Community Lists.";
+"communityLists_error_offline" = "You're offline. Connect to the internet and try again.";
+"communityLists_error_notAList" = "This URL isn't a Simply Filter SMS list.";
+"communityLists_error_missingName" = "This list is missing its name, so you can't subscribe to it.";
+"communityLists_error_missingDescription" = "This list is missing its description, so you can't subscribe to it.";
+"communityLists_error_missingAuthor" = "This list is missing its author, so you can't subscribe to it.";
+"communityLists_error_invalidHomepage" = "This list is missing an https:// homepage, so you can't subscribe to it.";
+"communityLists_error_invalidLocale" = "This list is missing its language and country, so you can't subscribe to it.";
+"communityLists_error_subscribeFailed" = "Couldn't subscribe to the list. Try again later.";
 "inactivityNotification_title" = "Keep AI Filtering working";
 "inactivityNotification_message" = "Allow notifications and we'll remind you to open the app now and then. If you don't, the AI filter lists stop updating, and iOS may remove the app to free up space - then filtering stops until you open it again.";
 "inactivityNotification_continue" = "Continue";
@@ -274,12 +301,6 @@
 "whatsNew_menuItem" = "What's New";
 "whatsNew_aiFiltering_title" = "AI Filtering";
 "whatsNew_aiFiltering_desc" = "Automatic filtering is now **AI-powered** - smarter, faster, and more accurate, with support for **10 languages** including Spanish, French, German, Arabic, and more.";
-"whatsNew_newLanguages_title" = "9 New Languages";
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** The app is now available in **9 new languages**, all localized with the help of **AI**.";
-"whatsNew_trustedCountries_title" = "Trusted Countries";
-"whatsNew_trustedCountries_desc" = "Automatically allow messages from **specific countries** by phone prefix. Add your trusted countries and filter out the rest.";
-"whatsNew_accessibility_title" = "Accessibility Support";
-"whatsNew_accessibility_desc" = "Fully usable with **VoiceOver** and **Voice Control**. Text scales with **Dynamic Type**. Animations respect your **Reduce Motion** setting.";
 "whatsNew_tipJar_title" = "Support the Developer";
 "whatsNew_tipJar_desc" = "A new **Tip Jar** lets you support the app's development. Simply Filter SMS is free forever - tips are just a way to say thanks! **Tap here to tip!**";
 
@@ -332,6 +353,8 @@
 "a11y_help_faqHint" = "Double tap to show or hide the answer";
 "a11y_help_emailHint" = "Double tap to send email. Copies the address if Mail is not set up";
 "a11y_accentColor_resetHint" = "Double tap to restore the default color";
+"a11y_communityLists_showDescription" = "Show description";
+"a11y_communityLists_hideDescription" = "Hide description";
 
 //MARK: Filter Import / Export
 "menu_exportFilters" = "Export Filters";
@@ -360,8 +383,8 @@
 "notification_saveFailed_subtitle" = "Changes not saved, please try again.";
 "whatsNew_filterTransfer_title" = "Export & Import Filters";
 "whatsNew_filterTransfer_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
-"whatsNew_appearanceTouchup_title" = "Appearance Touch-up";
-"whatsNew_appearanceTouchup_desc" = "**Help** and **Test Your Filters** have a new look. You can also pick an **Accent Color** from the menu - buttons and icons follow it.";
+"whatsNew_communityLists_title" = "Community Lists";
+"whatsNew_communityLists_desc" = "Subscribe to filter lists shared by other people, or share your own. Lists update themselves when their authors publish a new version - find them under **Your Filters**.";
 
 // Country calling code groups
 "callingCode_+1" = "North America";

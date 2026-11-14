@@ -336,9 +336,7 @@
 
 "whatsNew_menuItem" = "Nouveautés";
 
-"whatsNew_accessibility_title" = "Support accessibilité";
 
-"whatsNew_accessibility_desc" = "Entièrement utilisable avec **VoiceOver** et **Contrôle vocal**. Le texte s'adapte avec **Taille du texte dynamique**. Les animations respectent ton réglage **Réduire les animations**.";
 
 "whatsNew_tipJar_title" = "Soutenir le développeur";
 
@@ -458,13 +456,9 @@
 
 "whatsNew_aiFiltering_desc" = "Le filtrage automatique est désormais **propulsé par l'IA** - plus intelligent, rapide et précis, avec support pour **10 langues** dont l'espagnol, le français, l'allemand, l'arabe et plus.";
 
-"whatsNew_newLanguages_title" = "9 Nouvelles Langues";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** L'app est maintenant disponible en **9 nouvelles langues**, toutes localisées à l'aide de l'**IA**.";
 
-"whatsNew_trustedCountries_title" = "Pays de Confiance";
 
-"whatsNew_trustedCountries_desc" = "Autorise automatiquement les messages de **pays spécifiques** par préfixe téléphonique. Ajoute tes pays de confiance et filtre le reste.";
 
 "reportMessage_junkAndBlockSender" = "Indésirables et bloquer l'expéditeur";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "Partage tes filtres avec un ami - exporte un fichier depuis **Outils de filtrage** dans le menu et envoie-le.";
 
-"whatsNew_appearanceTouchup_title" = "Retouche d'apparence";
 
-"whatsNew_appearanceTouchup_desc" = "**Aide** et **Tester tes filtres** ont un nouveau look. Tu peux aussi choisir une **Couleur d'accentuation** dans le menu - boutons et icônes la suivent.";
 
 "notification_saveFailed_title" = "Une erreur s'est produite";
 
@@ -615,3 +607,67 @@
 "inactivityNotification_reminder_title" = "Vos listes de filtres basées sur l'IA ne se sont pas mises à jour";
 
 "inactivityNotification_reminder_body" = "Ouvrez Simply Filter SMS pour les mettre à jour et continuer à filtrer les messages d'expéditeurs inconnus.";
+
+"communityLists_title" = "Listes communautaires";
+
+"communityLists_empty" = "Aucune liste pour l'instant";
+
+"communityLists_subscribeFromURL" = "S'abonner depuis une URL";
+
+"communityLists_footer" = "Les Listes communautaires sont des listes de filtres créées et partagées par d'autres personnes. Les listes activées acheminent les messages des expéditeurs inconnus vers le dossier Indésirables, Transactions ou Promotions, et sont mises à jour régulièrement. Tes filtres habituels s'appliquent toujours.";
+
+"communityLists_createList" = "Créer une liste";
+
+"communityLists_submitList" = "Soumettre une liste";
+
+"a11y_communityLists_urlField" = "URL de la liste";
+
+"communityLists_urlHint" = "Colle l'URL de la liste.";
+
+"communityLists_preview" = "Aperçu";
+
+"communityLists_trustNote" = "Les listes communautaires sont créées par d'autres personnes. Abonne-toi seulement aux listes de confiance.";
+
+"communityLists_subscribe" = "S'abonner";
+
+"communityLists_error_invalidURL" = "Saisis une URL qui commence par https://";
+
+"communityLists_error_alreadySubscribed" = "Cette liste fait déjà partie de tes listes communautaires.";
+
+"communityLists_error_offline" = "Tu es hors ligne. Connecte-toi à Internet et réessaie.";
+
+"communityLists_error_notAList" = "Cette URL n'est pas une liste Simply Filter SMS.";
+
+"communityLists_error_invalidLocale" = "Il manque la langue et le pays de cette liste, tu ne peux donc pas t'y abonner.";
+
+"communityLists_error_subscribeFailed" = "Impossible de s'abonner à la liste. Réessaie plus tard.";
+
+"a11y_communityLists_showDescription" = "Afficher la description";
+
+"a11y_communityLists_hideDescription" = "Masquer la description";
+
+"autoFilter_errorTitle" = "Listes indisponibles";
+
+"autoFilter_offlineTitle" = "Tu es hors ligne";
+
+"filterList_empty_denied" = "Aucun texte bloqué";
+
+"filterList_empty_allowed" = "Aucun texte autorisé";
+
+"filterList_empty_deniedLanguage" = "Aucune langue bloquée";
+
+"communityLists_error_missingName" = "Il manque le nom de cette liste, tu ne peux donc pas t'y abonner.";
+
+"communityLists_error_missingDescription" = "Il manque la description de cette liste, tu ne peux donc pas t'y abonner.";
+
+"communityLists_error_missingAuthor" = "Il manque l'auteur de cette liste, tu ne peux donc pas t'y abonner.";
+
+"communityLists_error_invalidHomepage" = "Il manque une page d'accueil en https:// à cette liste, tu ne peux donc pas t'y abonner.";
+
+"communityLists_byAuthor" = "par %@";
+
+"whatsNew_communityLists_title" = "Listes communautaires";
+
+"whatsNew_communityLists_desc" = "Abonne-toi à des listes de filtres partagées par d'autres personnes, ou partage la tienne. Les listes se mettent à jour toutes seules quand leurs auteurs publient une nouvelle version - tu les trouveras dans **Tes filtres**.";
+
+

@@ -1,1 +1,5 @@
-Minor bug fixes and improvements
+Simply Filter SMS 4.0.0 is here, with Community Lists! 🎉
+
+Subscribe to filter lists shared by other people, or share your own. Lists update automatically when their authors publish a new version. Find them under Your Filters.
+
+Plus bug fixes and improvements.

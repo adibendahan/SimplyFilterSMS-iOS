@@ -5,7 +5,7 @@ category: Localization
 tags: [localization, filters, spam]
 ---
 
-Add a new AI Filtering list: `ai/<code>.sfsfilters`, listed in `ai/catalog.json` (both at the repo root, gitignored). `3.0.0/automatic_filters.json` is frozen for apps 3.0–3.2: **never edit or upload it.**
+Add a new AI Filtering list: `ai/<code>.sfsfilters`, listed in `ai/catalog.json` (3.3) and `ai/catalog-4.0.0.json` (4.0 and later), all at the repo root, gitignored. `3.0.0/automatic_filters.json` is frozen for apps 3.0–3.2: **never edit or upload it.**
 
 **Input**: The argument after `/add-filter-language` is the BCP-47 language code (e.g. `fr`, `de`, `pt`), OR a language name. If omitted, ask.
 
@@ -24,9 +24,10 @@ Confirm: language name, BCP-47 code, and the primary country/region this list ta
 
 ## Step 2 — Load the catalog
 
-Read `ai/catalog.json`. If it's missing, fetch it from:
+Read `ai/catalog.json` and `ai/catalog-4.0.0.json`. If either is missing, fetch it from:
 ```
 https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/3.3.0/ai/catalog.json
+https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/4.0.0/catalog.json
 ```
 
 Verify no entry already has `"language": "<code>"` and `ai/<code>.sfsfilters` doesn't exist. If either does, inform the user and stop.
@@ -173,7 +174,6 @@ Write `ai/<code>.sfsfilters` with the approved records in `filters`:
   "filters": [ ... ],
   "format": "simply-filter-sms-filters",
   "name": "AI Filtering · <English language name>",
-  "revision": 1,
   "version": 2
 }
 ```
@@ -182,10 +182,16 @@ Never write placeholder fields.
 
 - **Order matters:** the app stops at the first matching record. Keep `promotion` / `transaction` records after all `junk` records, so a message that also matches a junk entry still goes to junk. Add new junk records before them.
 
-Add the entry to `ai/catalog.json`, keeping `lists` sorted by `id`:
+Add the entry to both catalogs, keeping `lists` sorted by `id`. `ai/catalog.json`:
 
 ```json
 { "id": "ai-<code>", "name": "<English language name>", "url": "<code>.sfsfilters", "language": "<code>" }
+```
+
+`ai/catalog-4.0.0.json` (same list file, resolved from the 4.0.0 folder):
+
+```json
+{ "id": "ai-<code>", "name": "<English language name>", "url": "../3.3.0/ai/<code>.sfsfilters", "language": "<code>", "type": "ai-filtering-language" }
 ```
 
 Write both files with `json.dump(..., ensure_ascii=False, indent=2, sort_keys=True)`, no trailing newline (catalog: same, without `sort_keys`, keeping the existing key order).
@@ -193,19 +199,20 @@ Write both files with `json.dump(..., ensure_ascii=False, indent=2, sort_keys=Tr
 After writing, verify:
 1. Both files are valid JSON, and the other list files are unchanged.
 2. The record count matches the approved table.
-3. The catalog has exactly one entry for `<code>`.
+3. Each catalog has exactly one entry for `<code>`.
 
 ---
 
 ## Step 7 — Upload to S3 (optional)
 
 Use **AskUserQuestion** to ask:
-> "Upload `ai/<code>.sfsfilters` and `ai/catalog.json` to S3 now?"
+> "Upload `ai/<code>.sfsfilters` and both catalogs to S3 now?"
 
 If yes, upload the list **before** the catalog, so the catalog never points at a missing file:
 ```bash
 aws s3 cp ai/<code>.sfsfilters s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/<code>.sfsfilters --content-type application/json
 aws s3 cp ai/catalog.json s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/catalog.json --content-type application/json
+aws s3 cp ai/catalog-4.0.0.json s3://grizz-apps-dev/simply-filter-sms/4.0.0/catalog.json --content-type application/json
 ```
 
 The bucket is world-readable: never upload anything else. Report success or failure.

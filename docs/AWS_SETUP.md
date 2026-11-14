@@ -136,5 +136,5 @@ iOS wraps userInfo under `classification` key: `{"classification": {"sender":...
 ## S3 — AI Filtering lists
 
 - **Bucket:** `grizz-apps-dev` (`us-east-2`). **World-readable:** never upload user data or report archives.
-- **Lists:** `simply-filter-sms/3.3.0/ai/` — `catalog.json` plus `<lang>.sfsfilters`. Local copies are in `ai/` (gitignored). Upload a list before the catalog that points to it, and only when asked.
+- **Lists:** `simply-filter-sms/3.3.0/ai/` — `catalog.json` (3.3) plus `<lang>.sfsfilters`. `simply-filter-sms/4.0.0/catalog.json` (version 2, from 4.0) lists the same files and the curated Community Lists. Local copies are in `ai/` (gitignored); the 4.0 catalog is `ai/catalog-4.0.0.json`. Upload a list before the catalog that points to it, and only when asked.
 - **`simply-filter-sms/3.0.0/automatic_filters.json`** is frozen for apps 3.0–3.2. Never edit or upload it.

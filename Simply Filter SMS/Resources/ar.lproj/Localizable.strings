@@ -336,9 +336,7 @@
 
 "whatsNew_menuItem" = "الجديد";
 
-"whatsNew_accessibility_title" = "دعم إمكانية الوصول";
 
-"whatsNew_accessibility_desc" = "قابل للاستخدام الكامل مع **VoiceOver** و**التحكم الصوتي**. يتوسع النص مع **الحجم الديناميكي**. الحركات تحترم إعداد **تقليل الحركة**.";
 
 "whatsNew_tipJar_title" = "ادعم المطور";
 
@@ -458,13 +456,9 @@
 
 "whatsNew_aiFiltering_desc" = "أصبح الفلتر التلقائي مدعوماً الآن بـ**الذكاء الاصطناعي** - أذكى وأسرع وأكثر دقة، مع دعم **10 لغات** بما فيها الإسبانية والفرنسية والألمانية والعربية والمزيد.";
 
-"whatsNew_newLanguages_title" = "9 لغات جديدة";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** التطبيق متاح الآن بـ**9 لغات جديدة**، كلها مترجمة بمساعدة **الذكاء الاصطناعي**.";
 
-"whatsNew_trustedCountries_title" = "دول موثوقة";
 
-"whatsNew_trustedCountries_desc" = "السماح تلقائياً بالرسائل من **دول محددة** بناءً على رمز الهاتف. أضف الدول الموثوقة لديك وقم بتصفية الباقي.";
 
 "reportMessage_junkAndBlockSender" = "غير مرغوب وحظر المرسل";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "شارك فلاترك مع صديق - صدّر ملفًا من **أدوات المرشحات** في القائمة وأرسله.";
 
-"whatsNew_appearanceTouchup_title" = "لمسة على المظهر";
 
-"whatsNew_appearanceTouchup_desc" = "**مساعدة** و**اختبر مرشّحاتك** بمظهر جديد. يمكنك أيضاً اختيار **لون التمييز** من القائمة - تتبعه الأزرار والأيقونات.";
 
 "notification_saveFailed_title" = "حدث خطأ";
 
@@ -615,3 +607,67 @@
 "inactivityNotification_reminder_title" = "قوائم التصفية المعتمدة على AI لم تتحدّث";
 
 "inactivityNotification_reminder_body" = "افتح Simply Filter SMS لتحديثها ومواصلة تصفية الرسائل من المرسلين غير المعروفين.";
+
+"communityLists_title" = "قوائم المجتمع";
+
+"communityLists_empty" = "لا توجد قوائم بعد";
+
+"communityLists_subscribeFromURL" = "اشتراك من رابط";
+
+"communityLists_footer" = "قوائم المجتمع هي قوائم تصفية أنشأها أشخاص آخرون وشاركوها. توجّه القوائم المفعّلة الرسائل من المرسلين غير المعروفين إلى مجلد غير مرغوب فيه أو المعاملات أو العروض الترويجية، ويتم تحديثها بشكل دوري. لا تزال مرشّحاتكم المعتادة مُطبَّقة.";
+
+"communityLists_createList" = "إنشاء قائمة";
+
+"communityLists_submitList" = "إرسال قائمة";
+
+"a11y_communityLists_urlField" = "رابط القائمة";
+
+"communityLists_urlHint" = "الصق رابط القائمة.";
+
+"communityLists_preview" = "معاينة";
+
+"communityLists_trustNote" = "قوائم المجتمع يُعدّها أشخاص آخرون. اشترك فقط في القوائم التي تثق بها.";
+
+"communityLists_subscribe" = "اشتراك";
+
+"communityLists_error_invalidURL" = "أدخل رابطًا يبدأ بـ https://";
+
+"communityLists_error_alreadySubscribed" = "هذه القائمة موجودة بالفعل في قوائم المجتمع لديك.";
+
+"communityLists_error_offline" = "أنت غير متصل بالإنترنت. اتصل وحاول مرة أخرى.";
+
+"communityLists_error_notAList" = "هذا الرابط ليس قائمة Simply Filter SMS.";
+
+"communityLists_error_invalidLocale" = "هذه القائمة لا تحدد لغتها وبلدها، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_error_subscribeFailed" = "تعذّر الاشتراك في القائمة. حاول مرة أخرى لاحقًا.";
+
+"a11y_communityLists_showDescription" = "إظهار الوصف";
+
+"a11y_communityLists_hideDescription" = "إخفاء الوصف";
+
+"autoFilter_errorTitle" = "القوائم غير متاحة";
+
+"autoFilter_offlineTitle" = "أنت غير متصل بالإنترنت";
+
+"filterList_empty_denied" = "لا توجد نصوص محظورة";
+
+"filterList_empty_allowed" = "لا توجد نصوص مسموحة";
+
+"filterList_empty_deniedLanguage" = "لا توجد لغات محظورة";
+
+"communityLists_error_missingName" = "هذه القائمة لا تحدد اسمها، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_error_missingDescription" = "هذه القائمة لا تحدد وصفها، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_error_missingAuthor" = "هذه القائمة لا تحدد مؤلفها، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_error_invalidHomepage" = "هذه القائمة لا تحدد صفحة رئيسية تبدأ بـ https://، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_byAuthor" = "بواسطة %@";
+
+"whatsNew_communityLists_title" = "قوائم المجتمع";
+
+"whatsNew_communityLists_desc" = "اشترك في قوائم تصفية يشاركها أشخاص آخرون، أو شارك قائمتك. تتحدّث القوائم تلقائيًا عندما ينشر مؤلفوها نسخة جديدة - تجدها في **مرشّحاتك**.";
+
+

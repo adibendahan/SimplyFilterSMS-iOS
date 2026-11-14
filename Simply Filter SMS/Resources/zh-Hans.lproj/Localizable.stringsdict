@@ -84,5 +84,23 @@
             <string>你想如何给它们分类？</string>
         </dict>
     </dict>
+    <key>communityLists_active_count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@lists@</string>
+        <key>lists</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>关闭</string>
+            <key>one</key>
+            <string>已开启 1 个</string>
+            <key>other</key>
+            <string>已开启 %ld 个</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

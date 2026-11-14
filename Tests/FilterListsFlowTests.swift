@@ -82,7 +82,7 @@ class FilterListsFlowTests: XCTestCase {
     private var catalog: FilterListCatalogResponse {
         let hebrew = FilterListCatalogEntry(id: "ai-he",
                                             name: "Hebrew",
-                                            url: "he.sfsfilters",
+                                            url: "../3.3.0/ai/he.sfsfilters",
                                             language: "he")
         let english = FilterListCatalogEntry(id: "ai-en",
                                              name: "English",
@@ -131,7 +131,10 @@ class FilterListsFlowTests: XCTestCase {
                                    exportedAt: Date(),
                                    appVersion: "3.3.0",
                                    name: nil,
-                                   revision: 1,
+                                   description: nil,
+                                   author: nil,
+                                   homepage: nil,
+                                   locale: nil,
                                    filters: filters,
                                    forceClearBeforeImport: nil)
     }

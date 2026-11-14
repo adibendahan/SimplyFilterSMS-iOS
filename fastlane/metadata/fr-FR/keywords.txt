@@ -1,1 +1,1 @@
-Filtre,Messages,Bloquer,Langue,Indésirable,Arnaque,Inconnu,Expéditeur,Mot-clé,Regex,Confidentialité
+Filtre,Messages,Bloquer,Langue,Indésirable,Arnaque,Inconnu,Expéditeur,Regex,Communauté,Listes

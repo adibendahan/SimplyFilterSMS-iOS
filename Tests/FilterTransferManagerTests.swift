@@ -353,15 +353,30 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertNil(exported?["name"])
     }
 
-    func test_revision_decodedWhenPresent_omittedFromExports() throws {
-        let managed = try FilterExportPayload(data: self.payload(revision: 3, filters: []))
+    func test_revision_inOlderFiles_stillDecodes() throws {
+        let payload = try FilterExportPayload(data: self.payload(revision: 3, filters: [self.record(text: "spam", type: "deny")]))
+
+        XCTAssertEqual(payload.filters.count, 1)
+    }
+
+    func test_descriptionAuthorHomepageAndLocale_decodedWhenPresent_omittedFromExports() throws {
+        let described = try FilterExportPayload(data: self.payload(description: "Scam senders", author: "Jane Doe", homepage: "https://example.com", locale: "en-US", filters: []))
         let plain = try FilterExportPayload(data: self.payload(filters: []))
         let exported = try JSONSerialization.jsonObject(with: self.testSubject.exportPayload()) as? [String: Any]
 
-        XCTAssertEqual(managed.revision, 3)
-        XCTAssertNil(plain.revision)
+        XCTAssertEqual(described.description, "Scam senders")
+        XCTAssertEqual(described.author, "Jane Doe")
+        XCTAssertEqual(described.homepage, "https://example.com")
+        XCTAssertEqual(described.locale, "en-US")
+        XCTAssertNil(plain.description)
+        XCTAssertNil(plain.author)
+        XCTAssertNil(plain.homepage)
+        XCTAssertNil(plain.locale)
         XCTAssertNotNil(exported)
-        XCTAssertNil(exported?["revision"])
+        XCTAssertNil(exported?["description"])
+        XCTAssertNil(exported?["author"])
+        XCTAssertNil(exported?["homepage"])
+        XCTAssertNil(exported?["locale"])
     }
 
     func test_importFilters_selectedSubsetOnly() throws {
@@ -498,6 +513,10 @@ class FilterTransferManagerTests: XCTestCase {
                          version: Int = FilterExportPayload.currentVersion,
                          name: String? = nil,
                          revision: Int? = nil,
+                         description: String? = nil,
+                         author: String? = nil,
+                         homepage: String? = nil,
+                         locale: String? = nil,
                          filters: [[String: String]],
                          forceClearBeforeImport: [String]? = nil) throws -> Data {
         var object: [String: Any] = [
@@ -509,6 +528,10 @@ class FilterTransferManagerTests: XCTestCase {
         ]
         object["name"] = name
         object["revision"] = revision
+        object["description"] = description
+        object["author"] = author
+        object["homepage"] = homepage
+        object["locale"] = locale
         object["forceClearBeforeImport"] = forceClearBeforeImport
         return try JSONSerialization.data(withJSONObject: object)
     }

@@ -29,8 +29,10 @@ class FilterListManagerTests: XCTestCase {
         self.persistenceManager.resetCounters()
         self.filterListService.resetCounters()
         self.filterListsUpdatedCount = 0
-        self.filterListsUpdatedObserver = NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: nil) { [weak self] _ in
+        self.filterListsUpdatedEntryType = nil
+        self.filterListsUpdatedObserver = NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: nil) { [weak self] notification in
             self?.filterListsUpdatedCount += 1
+            self?.filterListsUpdatedEntryType = notification.object as? FilterListCatalogEntryType
         }
     }
     
@@ -329,6 +331,52 @@ class FilterListManagerTests: XCTestCase {
         XCTAssertEqual(self.filterListsUpdatedCount, 1)
     }
 
+    func test_update_activeLanguageChanged_namesAIFiltering() async {
+        // Prepare
+        self.persistenceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
+        self.persistenceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
+            let automaticFiltersLanguage = AutomaticFiltersLanguage(context: self.persistenceManager.context)
+            automaticFiltersLanguage.lang = NLLanguage.hebrew.rawValue
+            automaticFiltersLanguage.isActive = true
+            return [automaticFiltersLanguage]
+        }
+        self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
+        self.filterListService.fetchFilterListClosure = { url, _ in
+            guard url.lastPathComponent == "he.sfsfilters" else { return .notModified }
+            return .modified(self.payload(text: "new"), etag: "he-2")
+        }
+
+        // Act
+        await self.testSubject.refreshFilterLists()
+
+        // Verify
+        XCTAssertEqual(self.filterListsUpdatedCount, 1)
+        XCTAssertEqual(self.filterListsUpdatedEntryType, .aiFilteringLanguage)
+    }
+
+    func test_update_inactiveLanguageChanged_namesNothing() async {
+        // Prepare
+        self.persistenceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
+        self.persistenceManager.fetchAutomaticFiltersLanguageRecordsClosure = {
+            let automaticFiltersLanguage = AutomaticFiltersLanguage(context: self.persistenceManager.context)
+            automaticFiltersLanguage.lang = NLLanguage.english.rawValue
+            automaticFiltersLanguage.isActive = true
+            return [automaticFiltersLanguage]
+        }
+        self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
+        self.filterListService.fetchFilterListClosure = { url, _ in
+            guard url.lastPathComponent == "he.sfsfilters" else { return .notModified }
+            return .modified(self.payload(text: "new"), etag: "he-2")
+        }
+
+        // Act
+        await self.testSubject.refreshFilterLists()
+
+        // Verify
+        XCTAssertEqual(self.filterListsUpdatedCount, 1)
+        XCTAssertNil(self.filterListsUpdatedEntryType)
+    }
+
     func test_update_listFails_keepsSectionAndDoesNotTouch() async {
         // Prepare
         self.persistenceManager.cachedFilterListsClosure = { self.cache(["he", "en"]) }
@@ -377,15 +425,15 @@ class FilterListManagerTests: XCTestCase {
         XCTAssertEqual(self.filterListsUpdatedCount, 1)
     }
 
-    func test_update_sameRevision_savesWithoutNotification() async {
+    func test_update_filtersUnchanged_savesWithoutNotification() async {
         // Prepare
         self.persistenceManager.cachedFilterListsClosure = {
             FilterListsSnapshot(catalogETag: "catalog-1",
                              catalog: self.catalog(["he"]),
-                             lists: [self.section("he", etag: "he-1", text: "he", revision: 2)])
+                             lists: [self.section("he", etag: "he-1", text: "he")])
         }
         self.filterListService.fetchFilterListCatalogClosure = { _ in .notModified }
-        self.filterListService.fetchFilterListClosure = { _, _ in .modified(self.payload(text: "typo fix", revision: 2), etag: "he-2") }
+        self.filterListService.fetchFilterListClosure = { _, _ in .modified(self.payload(text: "he"), etag: "he-2") }
 
         // Act
         await self.testSubject.refreshFilterLists()
@@ -447,6 +495,66 @@ class FilterListManagerTests: XCTestCase {
         // Verify
         XCTAssertEqual(self.networkSyncManager.networkStatusGetCounter, 0)
         XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 0)
+    }
+
+    @MainActor
+    func test_updateWhenOnline_checkedTodayOlderCatalog_fetches() async {
+        // Prepare
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
+            cacheRecord.uuid = UUID()
+            cacheRecord.age = Date()
+
+            return [cacheRecord]
+        }
+        self.persistenceManager.cachedFilterListCatalogClosure = {
+            FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                      version: FilterListCatalogResponse.currentVersion - 1,
+                                      lists: self.catalog(["he"]).lists)
+        }
+        self.networkSyncManager.networkStatusClosure = { .online }
+        let catalogRequested = self.expectation(description: "catalog requested")
+        self.filterListService.fetchFilterListCatalogClosure = { _ in
+            catalogRequested.fulfill()
+            return nil
+        }
+
+        // Act
+        self.testSubject.updateFilterListsWhenOnline()
+
+        // Verify
+        await self.fulfillment(of: [catalogRequested], timeout: 1)
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
+    }
+
+    @MainActor
+    func test_updateWhenOnline_checkedTodayEmptyCatalog_fetches() async {
+        // Prepare
+        self.persistenceManager.fetchFilterListsCacheRecordsClosure = {
+            let cacheRecord = FilterListsCache(context: self.persistenceManager.context)
+            cacheRecord.uuid = UUID()
+            cacheRecord.age = Date()
+
+            return [cacheRecord]
+        }
+        self.persistenceManager.cachedFilterListCatalogClosure = {
+            FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                      version: FilterListCatalogResponse.currentVersion,
+                                      lists: [])
+        }
+        self.networkSyncManager.networkStatusClosure = { .online }
+        let catalogRequested = self.expectation(description: "catalog requested")
+        self.filterListService.fetchFilterListCatalogClosure = { _ in
+            catalogRequested.fulfill()
+            return nil
+        }
+
+        // Act
+        self.testSubject.updateFilterListsWhenOnline()
+
+        // Verify
+        await self.fulfillment(of: [catalogRequested], timeout: 1)
+        XCTAssertEqual(self.filterListService.fetchFilterListCatalogCounter, 1)
     }
 
     @MainActor
@@ -588,6 +696,7 @@ class FilterListManagerTests: XCTestCase {
     private var testSubject: FilterListManagerProtocol = FilterListManager(persistenceManager: mock_PersistenceManager())
     private var filterListsUpdatedCount = 0
     private var filterListsUpdatedObserver: NSObjectProtocol?
+    private var filterListsUpdatedEntryType: FilterListCatalogEntryType?
 
     private func catalog(_ languages: [String]) -> FilterListCatalogResponse {
         var entries: [FilterListCatalogEntry] = []
@@ -605,21 +714,24 @@ class FilterListManagerTests: XCTestCase {
                                          lists: entries)
     }
 
-    private func payload(text: String, revision: Int? = nil) -> FilterExportPayload {
+    private func payload(text: String) -> FilterExportPayload {
         return FilterExportPayload(format: FilterExportPayload.formatIdentifier,
                                    version: FilterExportPayload.currentVersion,
                                    exportedAt: Date(timeIntervalSince1970: 1_800_000_000),
                                    appVersion: "3.3.0",
                                    name: nil,
-                                   revision: revision,
+                                   description: nil,
+                                   author: nil,
+                                   homepage: nil,
+                                   locale: nil,
                                    filters: [FilterExportRecord(text: text, type: "deny", folder: "junk", target: "all", matching: "contains", caseSensitivity: "insensitive")],
                                    forceClearBeforeImport: nil)
     }
 
-    private func section(_ language: String, etag: String, text: String, revision: Int? = nil) -> FilterListsCacheSection {
+    private func section(_ language: String, etag: String, text: String) -> FilterListsCacheSection {
         return FilterListsCacheSection(url: URL(string: "\(language).sfsfilters", relativeTo: .filterListCatalogURL)!.absoluteString,
                                        etag: etag,
-                                       payload: self.payload(text: text, revision: revision))
+                                       payload: self.payload(text: text))
     }
 
     private func cache(_ languages: [String]) -> FilterListsSnapshot {

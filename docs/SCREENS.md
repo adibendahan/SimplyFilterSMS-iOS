@@ -42,6 +42,13 @@ Type a sender and a message and see the verdict live, as a sheet from the menu.
 Pushed from Home; toggles AI Filtering per language.
 - The view model is `@unchecked Sendable` because `.refreshable` needs a `@Sendable` action.
 
+## CommunityListsView
+Pushed from Home's first "Your filters" row; turns Community Lists on and off, removes the user's own lists, and opens Subscribe from URL.
+- Curated lists can't be swiped away: removing one would only bring it back from the catalog.
+
+## AddCommunityListView
+The Subscribe from URL sheet: typing or pasting a link previews the list, and Subscribe saves the previewed file and turns it on.
+
 ## BlockLanguageView
 A sheet that adds a "deny language" filter.
 - It wraps itself in a `NavigationView`; the pushed `FilterListLanguagesView` uses Home's.
@@ -64,7 +71,7 @@ Reports a message as junk or not junk to the backend, as a sheet from the menu; 
 
 ## WhatsNewView
 The release notes sheet, shown automatically once per What's New version (never in the first session) or from the menu.
-- An actionable entry closes the sheet and lets the presenting screen open something, e.g. the Tip Jar via `pendingScreenAfterDismiss`.
+- An actionable entry closes the sheet and lets the presenting screen open something, e.g. the Tip Jar or Community Lists via `pendingScreenAfterDismiss`.
 
 ## FilterTransferPreviewView
 The shared picker for importing and exporting filters (`.filterImport` / `.filterExport`).

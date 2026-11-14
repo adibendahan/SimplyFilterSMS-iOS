@@ -24,6 +24,12 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var setFilterListActiveCounter = 0
     var refreshFilterListsCounter = 0
     var updateFilterListsWhenOnlineCounter = 0
+    var communityListsGetCounter = 0
+    var activeCommunityListsCountGetCounter = 0
+    var setCommunityListActiveCounter = 0
+    var removeCommunityListCounter = 0
+    var previewCommunityListCounter = 0
+    var subscribeCommunityListCounter = 0
     
     var hasActiveFilterListsClosure: (() -> (Bool))?
     var onFilterListsUpdateFinishedCounter = 0
@@ -35,6 +41,12 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var setFilterListActiveClosure: ((NLLanguage, Bool) -> ())?
     var refreshFilterListsClosure: (() -> ())?
     var updateFilterListsWhenOnlineClosure: (() -> ())?
+    var communityListsClosure: (() -> ([CommunityListItem]))?
+    var activeCommunityListsCountClosure: (() -> (Int))?
+    var setCommunityListActiveClosure: ((CommunityListItem, Bool) -> ())?
+    var removeCommunityListClosure: ((CommunityListItem) -> ())?
+    var previewCommunityListClosure: ((URL) async -> (Result<CommunityListItem, CommunityListPreviewError>))?
+    var subscribeCommunityListClosure: ((CommunityListItem) -> (Bool))?
     
     var hasActiveFilterLists: Bool {
         get {
@@ -71,6 +83,36 @@ class mock_FilterListManager: FilterListManagerProtocol {
         return self.filterListLanguagesClosure?() ?? []
     }
     
+    var communityLists: [CommunityListItem] {
+        self.communityListsGetCounter += 1
+        return self.communityListsClosure?() ?? []
+    }
+
+    var activeCommunityListsCount: Int {
+        self.activeCommunityListsCountGetCounter += 1
+        return self.activeCommunityListsCountClosure?() ?? 0
+    }
+
+    func setCommunityListActive(_ communityList: CommunityListItem, value: Bool) {
+        self.setCommunityListActiveCounter += 1
+        self.setCommunityListActiveClosure?(communityList, value)
+    }
+
+    func removeCommunityList(_ communityList: CommunityListItem) {
+        self.removeCommunityListCounter += 1
+        self.removeCommunityListClosure?(communityList)
+    }
+
+    func previewCommunityList(at url: URL) async -> Result<CommunityListItem, CommunityListPreviewError> {
+        self.previewCommunityListCounter += 1
+        return await self.previewCommunityListClosure?(url) ?? .failure(.notAList)
+    }
+
+    func subscribeCommunityList(_ communityList: CommunityListItem) async -> Bool {
+        self.subscribeCommunityListCounter += 1
+        return self.subscribeCommunityListClosure?(communityList) ?? false
+    }
+
     func isFilterListActive(for language: NLLanguage) -> Bool {
         self.isFilterListActiveCounter += 1
         return self.isFilterListActiveClosure?(language) ?? false
@@ -105,6 +147,12 @@ class mock_FilterListManager: FilterListManagerProtocol {
         self.refreshFilterListsCounter = 0
         self.updateFilterListsWhenOnlineCounter = 0
         self.onFilterListsUpdateFinishedCounter = 0
+        self.communityListsGetCounter = 0
+        self.activeCommunityListsCountGetCounter = 0
+        self.setCommunityListActiveCounter = 0
+        self.removeCommunityListCounter = 0
+        self.previewCommunityListCounter = 0
+        self.subscribeCommunityListCounter = 0
     }
 
     func onFilterListsUpdateFinished(_ handler: @escaping () -> Void) {

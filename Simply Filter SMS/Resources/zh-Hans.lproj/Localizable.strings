@@ -434,17 +434,11 @@
 
 "whatsNew_aiFiltering_desc" = "自动过滤现已由 **AI 驱动** - 更智能、更快速、更准确，并支持包括西班牙语、法语、德语、阿拉伯语等在内的 **10 种语言**。";
 
-"whatsNew_newLanguages_title" = "新增 9 种语言";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** App 现已支持 **9 种新语言**，全部在 **AI** 的帮助下完成本地化。";
 
-"whatsNew_trustedCountries_title" = "受信任的国家/地区";
 
-"whatsNew_trustedCountries_desc" = "根据电话号码前缀自动允许来自**特定国家/地区**的信息。添加受信任的国家/地区，过滤其余信息。";
 
-"whatsNew_accessibility_title" = "辅助功能支持";
 
-"whatsNew_accessibility_desc" = "完全支持 **旁白** 和 **语音控制**。文本会随 **动态字体** 缩放。动画会遵循你的 **减弱动态效果** 设置。";
 
 "whatsNew_tipJar_title" = "支持开发者";
 
@@ -582,9 +576,7 @@
 
 "whatsNew_filterTransfer_desc" = "与朋友分享你的过滤器 - 从菜单的**过滤工具**中导出文件并发送。";
 
-"whatsNew_appearanceTouchup_title" = "外观微调";
 
-"whatsNew_appearanceTouchup_desc" = "**帮助**和**测试过滤器**焕然一新。你还可以从菜单中选择**强调色** - 按钮和图标会使用该颜色。";
 
 "callingCode_+1" = "北美";
 
@@ -615,3 +607,67 @@
 "inactivityNotification_reminder_title" = "基于 AI 的过滤规则尚未更新";
 
 "inactivityNotification_reminder_body" = "打开 Simply Filter SMS 更新规则，继续过滤未知发件人的短信。";
+
+"communityLists_title" = "社区列表";
+
+"communityLists_empty" = "还没有列表";
+
+"communityLists_subscribeFromURL" = "通过 URL 订阅";
+
+"communityLists_footer" = "社区列表是由其他人创建并分享的过滤列表。开启的列表会将陌生发件人的信息送到“垃圾短信”“交易信息”或“推广信息”列表，并会定期更新。你的常规过滤器仍然会生效。";
+
+"communityLists_createList" = "创建列表";
+
+"communityLists_submitList" = "提交列表";
+
+"a11y_communityLists_urlField" = "列表 URL";
+
+"communityLists_urlHint" = "粘贴列表的 URL。";
+
+"communityLists_preview" = "预览";
+
+"communityLists_trustNote" = "社区列表由其他人制作。只订阅你信任的列表。";
+
+"communityLists_subscribe" = "订阅";
+
+"communityLists_error_invalidURL" = "请输入以 https:// 开头的 URL。";
+
+"communityLists_error_alreadySubscribed" = "这个列表已在你的社区列表中。";
+
+"communityLists_error_offline" = "你当前处于离线状态。请连接互联网后重试。";
+
+"communityLists_error_notAList" = "这个 URL 不是 Simply Filter SMS 列表。";
+
+"communityLists_error_invalidLocale" = "这个列表缺少语言和国家/地区，因此无法订阅。";
+
+"communityLists_error_subscribeFailed" = "无法订阅该列表。请稍后重试。";
+
+"a11y_communityLists_showDescription" = "显示描述";
+
+"a11y_communityLists_hideDescription" = "隐藏描述";
+
+"autoFilter_errorTitle" = "列表不可用";
+
+"autoFilter_offlineTitle" = "你当前处于离线状态";
+
+"filterList_empty_denied" = "没有已屏蔽的文本";
+
+"filterList_empty_allowed" = "没有允许的文本";
+
+"filterList_empty_deniedLanguage" = "没有已屏蔽的语言";
+
+"communityLists_error_missingName" = "这个列表缺少名称，因此无法订阅。";
+
+"communityLists_error_missingDescription" = "这个列表缺少描述，因此无法订阅。";
+
+"communityLists_error_missingAuthor" = "这个列表缺少作者，因此无法订阅。";
+
+"communityLists_error_invalidHomepage" = "这个列表缺少以 https:// 开头的主页，因此无法订阅。";
+
+"communityLists_byAuthor" = "作者：%@";
+
+"whatsNew_communityLists_title" = "社区列表";
+
+"whatsNew_communityLists_desc" = "订阅其他人分享的过滤列表，或分享你自己的列表。作者发布新版本后，列表会自动更新 - 在**你的过滤器**中可以找到它们。";
+
+

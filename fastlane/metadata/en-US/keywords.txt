@@ -1,1 +1,1 @@
-Spam,Messages,Text,Blocker,Block,AI,Language,Auto,Junk,Scam,Unknown,Sender,Keyword,Regex,Privacy
+Messages,Block,Junk,Scam,Unknown,Sender,Keyword,Regex,Privacy,Language,Community,Lists,Shared,Auto

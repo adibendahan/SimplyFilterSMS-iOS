@@ -485,7 +485,10 @@ class PersistenceManagerTests: XCTestCase {
                                           exportedAt: Date(timeIntervalSince1970: 1_800_000_000),
                                           appVersion: "3.3.0",
                                           name: "Hebrew",
-                                          revision: 1,
+                                          description: nil,
+                                          author: nil,
+                                          homepage: nil,
+                                          locale: nil,
                                           filters: records,
                                           forceClearBeforeImport: nil)
         let entry = FilterListCatalogEntry(id: "ai-he",

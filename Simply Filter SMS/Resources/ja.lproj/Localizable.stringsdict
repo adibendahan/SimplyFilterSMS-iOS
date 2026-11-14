@@ -75,5 +75,21 @@
             <string>どのように分類しますか?</string>
         </dict>
     </dict>
+    <key>communityLists_active_count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@lists@</string>
+        <key>lists</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>オフ</string>
+            <key>other</key>
+            <string>%ld件オン</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

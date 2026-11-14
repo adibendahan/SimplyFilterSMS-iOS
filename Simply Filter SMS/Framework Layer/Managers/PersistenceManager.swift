@@ -199,6 +199,17 @@ class PersistenceManager: PersistenceManagerProtocol {
         return filterListsCacheRecords
     }
 
+    func fetchCommunityListRecords() -> [CommunityList] {
+        let sortDescriptor = [NSSortDescriptor(keyPath: \CommunityList.url, ascending: true)]
+        var communityListRecords: [CommunityList] = []
+
+        self.fetch(CommunityList.self, sortDescriptor: sortDescriptor)?.forEach {
+            communityListRecords.append($0)
+        }
+
+        return communityListRecords
+    }
+
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage? {
         let predicate = NSPredicate(format: "lang == %@", language.rawValue)
         guard let automaticFiltersLanguageRecord =
@@ -258,6 +269,35 @@ class PersistenceManager: PersistenceManagerProtocol {
         }
 
         return ensuredAutomaticFiltersLanguage
+    }
+
+    func ensuredCommunityListRecord(for url: String) -> CommunityList {
+        let predicate = NSPredicate(format: "url == %@", url)
+        let communityListRecords = self.fetch(CommunityList.self, predicate: predicate) ?? []
+
+        guard let firstRecord = communityListRecords.first else {
+            Log.debug("no record, url: \(url) → created")
+            let newRecord = CommunityList(context: self.context)
+            newRecord.url = url
+            newRecord.isActive = false
+            return newRecord
+        }
+
+        let duplicateRecords = communityListRecords.dropFirst()
+        guard !duplicateRecords.isEmpty else { return firstRecord }
+
+        let isActive = communityListRecords.contains(where: \.isActive)
+        Log.debug("duplicate records, url: \(url), count: \(communityListRecords.count), isActive: \(isActive) → merged")
+        duplicateRecords.forEach(self.context.delete)
+        firstRecord.isActive = isActive
+        return firstRecord
+    }
+
+    func deleteCommunityListRecords(for url: String) {
+        let predicate = NSPredicate(format: "url == %@", url)
+        let communityListRecords = self.fetch(CommunityList.self, predicate: predicate) ?? []
+        Log.debug("deleting, url: \(url), records: \(communityListRecords.count)")
+        communityListRecords.forEach(self.context.delete)
     }
 
 
@@ -421,11 +461,15 @@ class PersistenceManager: PersistenceManagerProtocol {
             Log.debug("no cache row, rows: \(cacheRecords.count) → reading the 3.2 cache")
             return self.legacyFilterLists()
         }
+        if let decodedCache = self.decodedCache, decodedCache.encodedSnapshot == encodedSnapshot {
+            return decodedCache.snapshot
+        }
         guard let snapshot = FilterListsSnapshot(encoded: encodedSnapshot) else {
             Log.debug("cache row doesn't decode, rows: \(cacheRecords.count), bytes: \(encodedSnapshot.utf8.count)")
             return nil
         }
         Log.debug("cache read, rows: \(cacheRecords.count), lists: \(snapshot.lists.count), bytes: \(encodedSnapshot.utf8.count)")
+        self.decodedCache = (encodedSnapshot: encodedSnapshot, snapshot: snapshot)
         return snapshot
     }
 
@@ -464,6 +508,25 @@ class PersistenceManager: PersistenceManagerProtocol {
         return self.commitContext()
     }
 
+    func saveCachedList(_ cacheSection: FilterListsCacheSection) -> Bool {
+        guard let cacheRecord = self.fetchFilterListsCacheRecords().first,
+              let cachedSnapshot = self.cachedFilterLists() else {
+            Log.debug("no cache row → skipped, url: \(cacheSection.url)")
+            return false
+        }
+        let otherSections = cachedSnapshot.lists.filter { $0.url != cacheSection.url }
+        let snapshot = FilterListsSnapshot(catalogETag: cachedSnapshot.catalogETag,
+                                           catalog: cachedSnapshot.catalog,
+                                           lists: otherSections + [cacheSection])
+        guard let encodedSnapshot = snapshot.encoded else {
+            Log.error("snapshot doesn't encode, lists: \(snapshot.lists.count)")
+            return false
+        }
+        Log.debug("saving a cached list, url: \(cacheSection.url), lists: \(snapshot.lists.count), bytes: \(encodedSnapshot.utf8.count)")
+        cacheRecord.data = encodedSnapshot
+        return self.commitContext()
+    }
+
     func touchCache() {
         guard let cacheRecord = self.fetchFilterListsCacheRecords().first else {
             Log.debug("no cache row → skipped")
@@ -485,6 +548,9 @@ class PersistenceManager: PersistenceManagerProtocol {
         }
         for rule in fetchAutomaticFiltersRuleRecords() {
             self.context.delete(rule)
+        }
+        for communityList in fetchCommunityListRecords() {
+            self.context.delete(communityList)
         }
         _ = commitContext()
     }
@@ -512,6 +578,8 @@ class PersistenceManager: PersistenceManagerProtocol {
     #endif // DEBUG
 
     //MARK: - Private -
+    private var decodedCache: (encodedSnapshot: String, snapshot: FilterListsSnapshot)?
+
     private func legacyFilterLists() -> FilterListsSnapshot? {
         let sortDescriptor = [NSSortDescriptor(keyPath: \AutomaticFiltersCache.age, ascending: false)]
         guard let legacyData = self.fetch(AutomaticFiltersCache.self, sortDescriptor: sortDescriptor)?.first?.filtersData else { return nil }

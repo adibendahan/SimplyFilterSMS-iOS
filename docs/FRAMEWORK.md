@@ -10,14 +10,14 @@ What the code doesn't tell you: ordering, rules and the reasons behind them. For
 
 1. **Allow filters** → `.allow`.
 2. **All Unknown** rule → `.junk`. An absolute gate: only the user's own allows beat it.
-3. **AI list allow records** → `.allow`. Before the rules, so an allow-listed sender (e.g. a bank) isn't blocked by "links".
+3. **AI list, then Community List, allow records** → `.allow`. Before the rules, so an allow-listed sender (e.g. a bank) isn't blocked by "links".
 4. **Smart rules** (links, numbers-only, short sender, email, emojis, country allowlist).
 5. **Deny filters** → the filter's folder.
 6. **Language deny** (dominant body language via `NLLanguageRecognizer`).
-7. **AI list deny records** → the record's folder. Records are checked in file order and the first match wins, so list files keep `promotion` / `transaction` records after `junk` ones.
+7. **AI list, then Community List, deny records** → the record's folder. Records are checked in file order and the first match wins, so list files keep `promotion` / `transaction` records after `junk` ones.
 8. **No match** → `.allow`.
 
-- The cache row is read once per message, before step 3, and only the lists whose language is on are decoded (`ActiveFilterLists`). Step 7 reuses it.
+- The cache row is read once per message, before step 3, and only the lists whose language or `CommunityList` switch is on are decoded (`ActiveFilterLists`). Step 7 reuses it.
 - A list record whose settings don't convert is skipped; a regex that doesn't compile doesn't match. Lists are stored as downloaded, so this is the only validation they get.
 - If the extension's store fails to load, the message is allowed with `storeUnavailable`: never block on our own failure.
 
@@ -46,12 +46,13 @@ Filter UUIDs + rule states + language rows. It deliberately **excludes** `Filter
 
 ### Refresh
 
-- **When:** the first launch of each calendar day. Offline, it waits for the device to come online, and later launches that day retry until a check reaches every list. Pull-to-refresh works at any time, and the background task runs when iOS decides, no earlier than `kUpdateFilterListsMinDays` apart. A readable cache's `age` marks the day done and syncs through iCloud, so a check on another device counts for this one.
+- **When:** the first launch of each calendar day. Offline, it waits for the device to come online, and later launches that day retry until a check reaches every list. Pull-to-refresh works at any time, and the background task runs when iOS decides, no earlier than `kUpdateFilterListsMinDays` apart. A readable cache's `age` marks the day done and syncs through iCloud, so a check on another device counts for this one. A cached catalog with no lists doesn't mark it done.
 - **Never:** the extension, or turning a language on. Every list in the catalog is cached, so a language works immediately and offline, and a switch synced from another device works before this app runs.
-- Catalog first, then each list with its stored ETag: `304` keeps the section, `200` replaces it, a failure keeps the old one. Lists that left the catalog are dropped.
+- Catalog first, then each list with its stored ETag: `304` keeps the section, `200` replaces it, a failure keeps the old one. Lists that left the catalog, and have no `CommunityList` row, are dropped. A curated list that leaves the catalog is dropped with its row, even when it's on.
 - Saves once if anything changed. Otherwise `touchCache()`, except when a list failed, so the next launch retries instead of waiting days.
 - Runs on the **main actor** (Core Data view context). A second caller joins the running refresh (`refreshTask`), so pull-to-refresh waits for the real result.
-- Posts `.filterListsUpdated` only for a real change: a list added or removed, a higher `revision`, or different filters when there's no `revision`. Re-uploading the same file doesn't notify anyone.
+- **Community Lists** are the catalog's `curated-community-list` entries plus the URLs in `CommunityList` rows (added by the user). 4.0 reads its own catalog (`4.0.0/catalog.json`, `version` `2`); 3.3 keeps reading `3.3.0/ai/catalog.json`. An entry's `type` is `ai-filtering-language` (requires `language`) or `curated-community-list` (requires a valid `locale`, e.g. `en-US`); an entry missing its field is skipped. An untyped entry is AI Filtering, because a 3.3 device on the same Apple ID writes its untyped catalog into the shared cache row. A curated list's `name`, `description`, `author`, `homepage` and `locale` come only from its catalog entry, never from the file, so the list's author can't change how it's shown. Both kinds are cached and refreshed like AI lists; a `CommunityList` row only holds the URL and the switch. A 3.3 refresh drops Community Lists from the shared cache row until a 4.0 device refreshes again; a cached catalog older than `currentVersion` counts as not checked today, so that happens on the 4.0 device's next launch.
+- Posts `.filterListsUpdated` only for a real change: a list added or removed, or different filters.
 
 ---
 
@@ -78,11 +79,11 @@ Filter UUIDs + rule states + language rows. It deliberately **excludes** `Filter
 
 ### `.sfsfilters` rules
 
-One format for exports, AI Filtering lists and (later) subscribed lists.
+One format for exports, AI Filtering lists and Community Lists.
 
 - **Compatibility:** exports and AI lists are `version` `2`, which 3.2 refuses as a whole: it requires `case` and `folder` on every record and would otherwise drop every allow and regex filter. 3.3 reads `1` and `2`. Further changes are additive and optional.
 - **Omitted fields:** regex records have no `case` (the pattern decides) and allow records have no `folder`. Import fills in `.caseInsensitive` / `.junk`. Older files that still have them import fine.
-- **`name` / `revision`** are for published lists. Exports never write them; list creators add them by hand.
+- **`name` / `description` / `author` / `homepage` / `locale`** are for published lists. Exports never write them; list creators add them by hand. A list added by URL needs all five (an `https` homepage and a valid `locale`); a curated list's file needs none. A Community List ignores `forceClearBeforeImport`.
 - **Language blocks (`denyLanguage`) aren't transferred.** They're a preference, not a filter (`FilterType.isTransferable`). Exports leave them out. Imports skip them silently: they aren't counted as invalid, because a 3.2 export legitimately contains them. A `forceClearBeforeImport` entry for them is ignored, so a file can't wipe them.
 - **Validation:** `FilterTransferCandidate.init?(record:)` is the only path, for imports and for AI list records in the extension alike. It drops bad records one at a time. Imports also require `isImportable` (the regex compiles). The extension skips that: a bad regex simply doesn't match, and checking it would compile every pattern twice per message. The extension checks a record's `type` before converting it, because it scans the lists twice per message (allow, then deny).
 

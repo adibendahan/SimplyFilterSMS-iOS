@@ -97,5 +97,27 @@
             <string>איך תרצה לסווג אותן?</string>
         </dict>
     </dict>
+    <key>communityLists_active_count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@lists@</string>
+        <key>lists</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>כבוי</string>
+            <key>one</key>
+            <string>רשימה אחת פעילה</string>
+            <key>two</key>
+            <string>2 רשימות פעילות</string>
+            <key>many</key>
+            <string>%ld רשימות פעילות</string>
+            <key>other</key>
+            <string>%ld רשימות פעילות</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

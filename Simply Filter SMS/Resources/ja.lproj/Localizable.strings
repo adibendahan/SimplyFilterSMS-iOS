@@ -354,9 +354,7 @@
 
 "whatsNew_menuItem" = "新着情報";
 
-"whatsNew_accessibility_title" = "アクセシビリティ対応";
 
-"whatsNew_accessibility_desc" = "**VoiceOver**と**音声コントロール**で完全に使用できます。テキストは**ダイナミックタイプ**に対応します。アニメーションは**視差効果を減らす**設定に従います。";
 
 "whatsNew_tipJar_title" = "開発者を支援";
 
@@ -458,13 +456,9 @@
 
 "whatsNew_aiFiltering_desc" = "自動フィルタリングが**AI**で動作するようになりました - スペイン語、フランス語、ドイツ語、アラビア語など**10言語**に対応し、より賢く、速く、正確に。";
 
-"whatsNew_newLanguages_title" = "9つの新言語";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** アプリが**9つの新しい言語**で利用可能になりました。すべて**AI**の助けでローカライズされています。";
 
-"whatsNew_trustedCountries_title" = "信頼できる国";
 
-"whatsNew_trustedCountries_desc" = "電話番号の国番号で**特定の国**からのメッセージを自動的に許可。信頼できる国を追加して、それ以外をフィルタリングしましょう。";
 
 "reportMessage_junkAndBlockSender" = "迷惑メール & 送信者をブロック";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "友だちとフィルタを共有 - メニューの**フィルタツール**からファイルを書き出して送信できます。";
 
-"whatsNew_appearanceTouchup_title" = "外観の仕上げ";
 
-"whatsNew_appearanceTouchup_desc" = "**ヘルプ**と**フィルターをテスト**のデザインを一新。メニューから**アクセントカラー**を選ぶと、ボタンとアイコンに反映されます。";
 
 "notification_saveFailed_title" = "エラーが発生しました";
 
@@ -615,3 +607,67 @@
 "inactivityNotification_reminder_title" = "AIベースのフィルタのリストが更新されていません";
 
 "inactivityNotification_reminder_body" = "Simply Filter SMSを開いてリストを更新し、不明な送信者からのメッセージをフィルタリングし続けましょう。";
+
+"communityLists_title" = "コミュニティリスト";
+
+"communityLists_empty" = "まだリストがありません";
+
+"communityLists_subscribeFromURL" = "URLで登録";
+
+"communityLists_footer" = "コミュニティリストは、ほかの人が作成して共有したフィルタリストです。オンのリストは不明な送信者からのメッセージを迷惑メール、トランザクション、プロモーションのいずれかのフォルダに振り分け、定期的に更新されます。通常のフィルターは引き続き適用されます。";
+
+"communityLists_createList" = "リストを作成";
+
+"communityLists_submitList" = "リストを提出";
+
+"a11y_communityLists_urlField" = "リストのURL";
+
+"communityLists_urlHint" = "リストのURLをペーストしてください。";
+
+"communityLists_preview" = "プレビュー";
+
+"communityLists_trustNote" = "コミュニティリストは他の人が作成したものです。信頼できるリストだけを登録してください。";
+
+"communityLists_subscribe" = "登録";
+
+"communityLists_error_invalidURL" = "https:// で始まるURLを入力してください。";
+
+"communityLists_error_alreadySubscribed" = "このリストはすでにコミュニティリストにあります。";
+
+"communityLists_error_offline" = "オフラインです。インターネットに接続してもう一度お試しください。";
+
+"communityLists_error_notAList" = "このURLは Simply Filter SMS のリストではありません。";
+
+"communityLists_error_invalidLocale" = "このリストには言語と国が指定されていないため、登録できません。";
+
+"communityLists_error_subscribeFailed" = "リストを登録できませんでした。後でもう一度お試しください。";
+
+"a11y_communityLists_showDescription" = "説明を表示";
+
+"a11y_communityLists_hideDescription" = "説明を隠す";
+
+"autoFilter_errorTitle" = "リストを利用できません";
+
+"autoFilter_offlineTitle" = "オフラインです";
+
+"filterList_empty_denied" = "ブロックテキストはありません";
+
+"filterList_empty_allowed" = "許可テキストはありません";
+
+"filterList_empty_deniedLanguage" = "ブロック言語はありません";
+
+"communityLists_error_missingName" = "このリストには名前が指定されていないため、登録できません。";
+
+"communityLists_error_missingDescription" = "このリストには説明が指定されていないため、登録できません。";
+
+"communityLists_error_missingAuthor" = "このリストには作成者が指定されていないため、登録できません。";
+
+"communityLists_error_invalidHomepage" = "このリストには https:// のホームページが指定されていないため、登録できません。";
+
+"communityLists_byAuthor" = "作成：%@";
+
+"whatsNew_communityLists_title" = "コミュニティリスト";
+
+"whatsNew_communityLists_desc" = "ほかの人が共有したフィルタリストを登録したり、自分のリストを共有したりできます。作成者が新しいバージョンを公開すると、リストは自動で更新されます - **あなたのフィルター**にあります。";
+
+

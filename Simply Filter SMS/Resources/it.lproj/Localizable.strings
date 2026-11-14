@@ -354,9 +354,7 @@
 
 "whatsNew_menuItem" = "Novità";
 
-"whatsNew_accessibility_title" = "Supporto accessibilità";
 
-"whatsNew_accessibility_desc" = "Completamente utilizzabile con **VoiceOver** e **Controllo vocale**. Il testo si scala con **Testo dinamico**. Le animazioni rispettano l'impostazione **Riduci movimento**.";
 
 "whatsNew_tipJar_title" = "Supporta lo sviluppatore";
 
@@ -458,13 +456,9 @@
 
 "whatsNew_aiFiltering_desc" = "Il filtro automatico è ora **basato sull'AI** - più intelligente, veloce e preciso, con supporto per **10 lingue** tra cui spagnolo, francese, tedesco, arabo e altro.";
 
-"whatsNew_newLanguages_title" = "9 Nuove Lingue";
 
-"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** L'app è ora disponibile in **9 nuove lingue**, tutte localizzate con l'aiuto dell'**AI**.";
 
-"whatsNew_trustedCountries_title" = "Paesi Fidati";
 
-"whatsNew_trustedCountries_desc" = "Consenti automaticamente i messaggi da **paesi specifici** in base al prefisso telefonico. Aggiungi i tuoi paesi fidati e filtra il resto.";
 
 "reportMessage_junkAndBlockSender" = "Indesiderati e blocca mittente";
 
@@ -594,9 +588,7 @@
 
 "whatsNew_filterTransfer_desc" = "Condividi i tuoi filtri con un amico - esporta un file da **Strumenti filtro** nel menu e invialo.";
 
-"whatsNew_appearanceTouchup_title" = "Ritocco dell'aspetto";
 
-"whatsNew_appearanceTouchup_desc" = "**Aiuto** e **Testa i tuoi filtri** hanno un nuovo aspetto. Puoi anche scegliere un **Colore di accento** dal menu - pulsanti e icone lo seguono.";
 
 "notification_saveFailed_title" = "Si è verificato un errore";
 
@@ -615,3 +607,67 @@
 "inactivityNotification_reminder_title" = "Le tue liste di filtri basate su IA non si sono aggiornate";
 
 "inactivityNotification_reminder_body" = "Apri Simply Filter SMS per aggiornarle e continuare a filtrare i messaggi da mittenti sconosciuti.";
+
+"communityLists_title" = "Liste della community";
+
+"communityLists_empty" = "Ancora nessuna lista";
+
+"communityLists_subscribeFromURL" = "Iscriviti da URL";
+
+"communityLists_footer" = "Le Liste della community sono liste di filtri create e condivise da altre persone. Le liste attive instradano i messaggi dei mittenti sconosciuti nella cartella Indesiderati, Transazioni o Promozioni e vengono aggiornate periodicamente. I tuoi filtri normali sono ancora attivi.";
+
+"communityLists_createList" = "Crea una lista";
+
+"communityLists_submitList" = "Invia una lista";
+
+"a11y_communityLists_urlField" = "URL della lista";
+
+"communityLists_urlHint" = "Incolla l'URL della lista.";
+
+"communityLists_preview" = "Anteprima";
+
+"communityLists_trustNote" = "Le liste della community sono create da altre persone. Iscriviti solo a liste di cui ti fidi.";
+
+"communityLists_subscribe" = "Iscriviti";
+
+"communityLists_error_invalidURL" = "Inserisci un URL che inizia con https://";
+
+"communityLists_error_alreadySubscribed" = "Questa lista è già tra le tue liste della community.";
+
+"communityLists_error_offline" = "Sei offline. Connettiti a Internet e riprova.";
+
+"communityLists_error_notAList" = "Questo URL non è una lista di Simply Filter SMS.";
+
+"communityLists_error_invalidLocale" = "A questa lista mancano lingua e paese, quindi non puoi iscriverti.";
+
+"communityLists_error_subscribeFailed" = "Impossibile iscriversi alla lista. Riprova più tardi.";
+
+"a11y_communityLists_showDescription" = "Mostra descrizione";
+
+"a11y_communityLists_hideDescription" = "Nascondi descrizione";
+
+"autoFilter_errorTitle" = "Liste non disponibili";
+
+"autoFilter_offlineTitle" = "Sei offline";
+
+"filterList_empty_denied" = "Nessun testo bloccato";
+
+"filterList_empty_allowed" = "Nessun testo consentito";
+
+"filterList_empty_deniedLanguage" = "Nessuna lingua bloccata";
+
+"communityLists_error_missingName" = "A questa lista manca il nome, quindi non puoi iscriverti.";
+
+"communityLists_error_missingDescription" = "A questa lista manca la descrizione, quindi non puoi iscriverti.";
+
+"communityLists_error_missingAuthor" = "A questa lista manca l'autore, quindi non puoi iscriverti.";
+
+"communityLists_error_invalidHomepage" = "A questa lista manca una homepage con https://, quindi non puoi iscriverti.";
+
+"communityLists_byAuthor" = "di %@";
+
+"whatsNew_communityLists_title" = "Liste della community";
+
+"whatsNew_communityLists_desc" = "Iscriviti alle liste di filtri condivise da altre persone, o condividi la tua. Le liste si aggiornano da sole quando i loro autori pubblicano una nuova versione - le trovi in **I tuoi filtri**.";
+
+
