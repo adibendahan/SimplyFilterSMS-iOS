@@ -25,10 +25,13 @@ protocol PersistenceManagerProtocol: AnyObject {
     func fetchAutomaticFiltersLanguageRecords() -> [AutomaticFiltersLanguage]
     func fetchAutomaticFiltersRuleRecords() -> [AutomaticFiltersRule]
     func fetchFilterListsCacheRecords() -> [FilterListsCache]
+    func fetchCommunityListRecords() -> [CommunityList]
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage?
     func fetchAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule?
     func ensuredAutomaticFiltersRuleRecord(for rule: SmartFilterType) -> AutomaticFiltersRule
     func ensuredAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage
+    func ensuredCommunityListRecord(for url: String) -> CommunityList
+    func deleteCommunityListRecords(for url: String)
     
     
     //MARK: - Helpers -
@@ -56,6 +59,7 @@ protocol PersistenceManagerProtocol: AnyObject {
     func cachedFilterLists() -> FilterListsSnapshot?
     func cachedFilterListCatalog() -> FilterListCatalogResponse?
     func saveCache(_ cache: FilterListsSnapshot) -> Bool
+    func saveCachedList(_ cacheSection: FilterListsCacheSection) -> Bool
     func touchCache()
     func selectedCountries(for rule: SmartFilterType) -> [String]
     func setSelectedCountries(_ countries: [String], for rule: SmartFilterType)

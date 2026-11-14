@@ -39,7 +39,7 @@ class FilterListServiceTests: XCTestCase {
         let response = await self.testSubject.fetchFilterListCatalog(etag: "old-etag")
 
         // Verify
-        XCTAssertEqual(requestedURL?.absoluteString, "https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/3.3.0/ai/catalog.json")
+        XCTAssertEqual(requestedURL?.absoluteString, "https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/4.0.0/catalog.json")
         XCTAssertEqual(sentETag, "old-etag")
         XCTAssertEqual(response, .modified(FilterListCatalogResponse(data: self.catalogData())!, etag: "new-etag"))
     }

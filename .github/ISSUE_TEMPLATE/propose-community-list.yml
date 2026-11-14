@@ -6,12 +6,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for sharing your list! Before proposing it, check it follows the [guide](https://adibendahan.github.io/SimplyFilterSMS-iOS/). Listed lists appear for every user, so each one is reviewed first.
+        Thanks for sharing your list! Before proposing it, check it follows the [guide](https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/develop/docs/COMMUNITY_LISTS_GUIDE.md). Listed lists appear for every user, so each one is reviewed first.
   - type: input
     id: url
     attributes:
       label: List URL
-      description: A public HTTPS URL that downloads the .sfsfilters file itself.
+      description: A public HTTPS link that downloads the .sfsfilters file itself.
       placeholder: https://github.com/you/repo/releases/latest/download/list.sfsfilters
     validations:
       required: true
@@ -27,21 +27,6 @@ body:
     attributes:
       label: Description
       description: What the list blocks or allows, and who it's for.
-    validations:
-      required: true
-  - type: input
-    id: author
-    attributes:
-      label: Author
-      description: The person or project that maintains the list, as in its "author" field.
-    validations:
-      required: true
-  - type: input
-    id: homepage
-    attributes:
-      label: Homepage
-      description: The list's site or repository, as in its "homepage" field.
-      placeholder: https://github.com/you/repo
     validations:
       required: true
   - type: input

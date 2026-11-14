@@ -612,6 +612,9 @@ class FilterListManagerTests: XCTestCase {
                                    appVersion: "3.3.0",
                                    name: nil,
                                    revision: revision,
+                                   description: nil,
+                                   homepage: nil,
+                                   locale: nil,
                                    filters: [FilterExportRecord(text: text, type: "deny", folder: "junk", target: "all", matching: "contains", caseSensitivity: "insensitive")],
                                    forceClearBeforeImport: nil)
     }

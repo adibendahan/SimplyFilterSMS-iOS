@@ -717,6 +717,9 @@ class MessageEvaluationManagerTests: XCTestCase {
                                               appVersion: "3.3.0",
                                               name: language,
                                               revision: nil,
+                                              description: nil,
+                                              homepage: nil,
+                                              locale: nil,
                                               filters: records,
                                               forceClearBeforeImport: nil)
             let section = FilterListsCacheSection(url: entry.resolvedURL!.absoluteString,

@@ -335,6 +335,9 @@ struct FilterTransferPreviewView_Previews: PreviewProvider {
             appVersion: appVersion,
             name: nil,
             revision: nil,
+            description: nil,
+            homepage: nil,
+            locale: nil,
             filters: [
                 FilterExportRecord(text: "promo",
                                    type: FilterType.deny.exportKey,

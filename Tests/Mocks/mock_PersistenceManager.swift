@@ -26,6 +26,7 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
     var updateFilterTextCounter = 0
     var fetchFilterRecordsCounter = 0
     var saveCacheCounter = 0
+    var saveCachedListCounter = 0
     var cachedFilterListsCounter = 0
     var cachedFilterListCatalogCounter = 0
     var touchCacheCounter = 0
@@ -34,6 +35,9 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
     var fetchAutomaticFiltersLanguageRecordsCounter = 0
     var fetchAutomaticFiltersRuleRecordsCounter = 0
     var fetchFilterListsCacheRecordsCounter = 0
+    var fetchCommunityListRecordsCounter = 0
+    var ensuredCommunityListRecordCounter = 0
+    var deleteCommunityListRecordsCounter = 0
     var fetchAutomaticFiltersLanguageRecordCounter = 0
     var fetchAutomaticFiltersRuleRecordCounter = 0
     var ensuredAutomaticFiltersLanguageRecordCounter = 0
@@ -57,6 +61,7 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
     var updateFilterTextClosure: ((Filter, String) -> ())?
     var fetchFilterRecordsClosure: (() -> ([Filter]))?
     var saveCacheClosure: ((FilterListsSnapshot) -> ())?
+    var saveCachedListClosure: ((FilterListsCacheSection) -> (Bool))?
     var cachedFilterListsClosure: (() -> (FilterListsSnapshot?))?
     var cachedFilterListCatalogClosure: (() -> (FilterListCatalogResponse?))?
     var touchCacheClosure: (() -> ())?
@@ -65,6 +70,9 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
     var fetchAutomaticFiltersLanguageRecordsClosure: (() -> ([AutomaticFiltersLanguage]))?
     var fetchAutomaticFiltersRuleRecordsClosure: (() -> ([AutomaticFiltersRule]))?
     var fetchFilterListsCacheRecordsClosure: (() -> ([FilterListsCache]))?
+    var fetchCommunityListRecordsClosure: (() -> ([CommunityList]))?
+    var ensuredCommunityListRecordClosure: ((String) -> (CommunityList))?
+    var deleteCommunityListRecordsClosure: ((String) -> ())?
     var fetchAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage?))?
     var fetchAutomaticFiltersRuleRecordClosure: ((SmartFilterType) -> (AutomaticFiltersRule?))?
     var ensuredAutomaticFiltersLanguageRecordClosure: ((NLLanguage) -> (AutomaticFiltersLanguage))?
@@ -178,6 +186,11 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
         return true
     }
 
+    func saveCachedList(_ cacheSection: FilterListsCacheSection) -> Bool {
+        self.saveCachedListCounter += 1
+        return self.saveCachedListClosure?(cacheSection) ?? false
+    }
+
     func touchCache() {
         self.touchCacheCounter += 1
         self.touchCacheClosure?()
@@ -210,6 +223,21 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
         return self.fetchFilterListsCacheRecordsClosure?() ?? []
     }
     
+    func fetchCommunityListRecords() -> [CommunityList] {
+        self.fetchCommunityListRecordsCounter += 1
+        return self.fetchCommunityListRecordsClosure?() ?? []
+    }
+
+    func ensuredCommunityListRecord(for url: String) -> CommunityList {
+        self.ensuredCommunityListRecordCounter += 1
+        return self.ensuredCommunityListRecordClosure?(url) ?? CommunityList(context: self.context)
+    }
+
+    func deleteCommunityListRecords(for url: String) {
+        self.deleteCommunityListRecordsCounter += 1
+        self.deleteCommunityListRecordsClosure?(url)
+    }
+
     func fetchAutomaticFiltersLanguageRecord(for language: NLLanguage) -> AutomaticFiltersLanguage? {
         self.fetchAutomaticFiltersLanguageRecordCounter += 1
         return self.fetchAutomaticFiltersLanguageRecordClosure?(language) ?? nil
@@ -268,6 +296,7 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
         self.updateFilterTargetCounter = 0
         self.fetchFilterRecordsCounter = 0
         self.saveCacheCounter = 0
+        self.saveCachedListCounter = 0
         self.cachedFilterListsCounter = 0
         self.cachedFilterListCatalogCounter = 0
         self.touchCacheCounter = 0
@@ -276,6 +305,9 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
         self.fetchAutomaticFiltersLanguageRecordsCounter = 0
         self.fetchAutomaticFiltersRuleRecordsCounter = 0
         self.fetchFilterListsCacheRecordsCounter = 0
+        self.fetchCommunityListRecordsCounter = 0
+        self.ensuredCommunityListRecordCounter = 0
+        self.deleteCommunityListRecordsCounter = 0
         self.fetchAutomaticFiltersLanguageRecordCounter = 0
         self.fetchAutomaticFiltersRuleRecordCounter = 0
         self.ensuredAutomaticFiltersRuleRecordCounter = 0

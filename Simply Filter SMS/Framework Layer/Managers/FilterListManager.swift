@@ -100,7 +100,7 @@ class FilterListManager: FilterListManagerProtocol {
         var filterListLanguages: [NLLanguage] = []
 
         for entry in catalog.lists {
-            guard let langRawValue = entry.language else { continue }
+            guard entry.entryType == .aiFilteringLanguage, let langRawValue = entry.language else { continue }
             let language = NLLanguage(langRawValue)
 
             if language != .undetermined,
@@ -126,6 +126,94 @@ class FilterListManager: FilterListManagerProtocol {
         _ = persistenceManager.commitAndAnnounce()
     }
     
+    var communityLists: [CommunityListItem] {
+        guard let persistenceManager = self.persistenceManager else { return [] }
+        let snapshot = persistenceManager.cachedFilterLists()
+        let communityListRecords = persistenceManager.fetchCommunityListRecords()
+        let activeURLs = Set(communityListRecords.filter(\.isActive).compactMap(\.url))
+        let curatedURLs = snapshot?.catalog.curatedCommunityListURLs ?? []
+        let userURLs = communityListRecords.compactMap(\.url).filter { !curatedURLs.contains($0) }
+
+        var communityLists: [CommunityListItem] = []
+        for url in curatedURLs + userURLs.uniqued() {
+            let communityList = CommunityListItem(url: url,
+                                                  catalogEntry: snapshot?.catalog.curatedEntry(for: url),
+                                                  cacheSection: snapshot?.cacheSection(for: url),
+                                                  isActive: activeURLs.contains(url))
+            communityLists.append(communityList)
+        }
+        return communityLists
+    }
+
+    var activeCommunityListsCount: Int {
+        let activeCommunityLists = self.communityLists.filter(\.isActive)
+        return activeCommunityLists.count
+    }
+
+    func setCommunityListActive(_ communityList: CommunityListItem, value: Bool) {
+        guard let persistenceManager = self.persistenceManager else { return }
+        let communityListRecord = persistenceManager.ensuredCommunityListRecord(for: communityList.url)
+        Log.debug("community list changed, url: \(communityList.url), active: \(communityListRecord.isActive) → \(value)")
+        communityListRecord.isActive = value
+        _ = persistenceManager.commitAndAnnounce()
+    }
+
+    func removeCommunityList(_ communityList: CommunityListItem) {
+        guard let persistenceManager = self.persistenceManager else { return }
+        Log.debug("community list removed, url: \(communityList.url), curated: \(communityList.isCurated)")
+        persistenceManager.deleteCommunityListRecords(for: communityList.url)
+        _ = persistenceManager.commitAndAnnounce()
+    }
+
+    func previewCommunityList(at url: URL) async -> Result<CommunityListItem, CommunityListPreviewError> {
+        guard url.scheme?.lowercased() == "https", url.host != nil else {
+            Log.debug("community list link isn't https, url: \(url.absoluteString) → refused")
+            return .failure(.invalidLink)
+        }
+        let isListed = self.communityLists.contains(where: { $0.url == url.absoluteString })
+        guard !isListed else {
+            Log.debug("community list already listed, url: \(url.absoluteString) → refused")
+            return .failure(.alreadySubscribed)
+        }
+        guard self.networkSyncManager?.networkStatus == .online else {
+            Log.debug("offline, url: \(url.absoluteString) → refused")
+            return .failure(.offline)
+        }
+
+        let listResponse = await self.filterListService?.fetchFilterList(at: url, etag: nil)
+        guard case .modified(let downloadedList, let downloadedETag) = listResponse else {
+            Log.debug("community list preview failed, url: \(url.absoluteString)")
+            return .failure(.notAList)
+        }
+        guard Locale.listLocale(from: downloadedList.locale) != nil else {
+            Log.debug("community list has no valid locale, url: \(url.absoluteString), locale: \(downloadedList.locale ?? "nil") → refused")
+            return .failure(.invalidLocale)
+        }
+        Log.debug("community list previewed, url: \(url.absoluteString), records: \(downloadedList.filters.count)")
+        let cacheSection = FilterListsCacheSection(url: url.absoluteString, etag: downloadedETag, payload: downloadedList)
+        let communityList = CommunityListItem(url: url.absoluteString, catalogEntry: nil, cacheSection: cacheSection, isActive: false)
+        return .success(communityList)
+    }
+
+    @MainActor
+    func subscribeCommunityList(_ communityList: CommunityListItem) async -> Bool {
+        if let refreshTask = self.refreshTask {
+            Log.debug("refresh in progress → waiting, url: \(communityList.url)")
+            await refreshTask.value
+        }
+        guard let persistenceManager = self.persistenceManager, let cacheSection = communityList.cacheSection else {
+            Log.error("community list has no file, url: \(communityList.url)")
+            return false
+        }
+        guard persistenceManager.saveCachedList(cacheSection) else {
+            Log.error("community list not cached, url: \(communityList.url)")
+            return false
+        }
+        self.setCommunityListActive(communityList, value: true)
+        Log.debug("community list subscribed, url: \(communityList.url), records: \(cacheSection.payload.filters.count), etag: \(cacheSection.etag ?? "nil")")
+        return true
+    }
+
     func onFilterListsUpdateFinished(_ handler: @escaping () -> Void) {
         guard self.isFilterListsUpdateInProgress else {
             handler()
@@ -234,7 +322,11 @@ class FilterListManager: FilterListManagerProtocol {
         let cachedSnapshot = persistenceManager.cachedFilterLists()
         guard let revalidatedCatalog = await self.fetchCatalog(revalidating: cachedSnapshot, service: filterListService) else { return }
         let (catalog, catalogETag) = revalidatedCatalog
-        let (revalidatedLists, hasFailedLists) = await self.fetchLists(in: catalog, revalidating: cachedSnapshot, service: filterListService)
+        let communityURLs = persistenceManager.fetchCommunityListRecords().compactMap(\.url)
+        let (revalidatedLists, hasFailedLists) = await self.fetchLists(in: catalog,
+                                                                       communityURLs: communityURLs,
+                                                                       revalidating: cachedSnapshot,
+                                                                       service: filterListService)
 
         let refreshedSnapshot = FilterListsSnapshot(catalogETag: catalogETag, catalog: catalog, lists: revalidatedLists)
         let hasSnapshotChanged = refreshedSnapshot != cachedSnapshot
@@ -288,10 +380,11 @@ class FilterListManager: FilterListManagerProtocol {
     }
 
     private func fetchLists(in catalog: FilterListCatalogResponse,
+                            communityURLs: [String],
                             revalidating cachedSnapshot: FilterListsSnapshot?,
                             service: FilterListServiceProtocol) async -> (lists: [FilterListsCacheSection], hasFailedLists: Bool) {
         var revalidatedLists: [FilterListsCacheSection] = []
-        var requestedURLs: Set<URL> = []
+        var listURLs: [URL] = []
         var hasFailedLists = false
 
         for catalogEntry in catalog.lists {
@@ -299,12 +392,18 @@ class FilterListManager: FilterListManagerProtocol {
                 Log.debug("catalog entry has no valid url, list: \(catalogEntry.id), url: \(catalogEntry.url) → skipped")
                 continue
             }
-            guard !requestedURLs.contains(listURL) else {
+            guard !listURLs.contains(listURL) else {
                 Log.debug("catalog entry repeats a url, list: \(catalogEntry.id), url: \(listURL) → skipped")
                 continue
             }
-            requestedURLs.insert(listURL)
+            listURLs.append(listURL)
+        }
+        for communityURL in communityURLs {
+            guard let listURL = URL(string: communityURL), !listURLs.contains(listURL) else { continue }
+            listURLs.append(listURL)
+        }
 
+        for listURL in listURLs {
             let cachedSection = cachedSnapshot?.lists.first(where: { $0.url == listURL.absoluteString })
             let listResponse = await service.fetchFilterList(at: listURL, etag: cachedSection?.etag)
 

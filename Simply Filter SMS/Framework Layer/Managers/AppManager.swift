@@ -80,6 +80,9 @@ class AppManager: AppManagerProtocol {
                                                       appVersion: appVersion,
                                                       name: language,
                                                       revision: nil,
+                                                      description: nil,
+                                                      homepage: nil,
+                                                      locale: nil,
                                                       filters: [],
                                                       forceClearBeforeImport: nil)
                 let cacheSection = FilterListsCacheSection(url: listURL.absoluteString,

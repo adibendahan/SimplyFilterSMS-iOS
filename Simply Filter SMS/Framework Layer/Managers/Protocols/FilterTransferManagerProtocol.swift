@@ -23,6 +23,9 @@ struct FilterExportPayload: Codable, Equatable {
     let appVersion: String
     let name: String?
     let revision: Int?
+    let description: String?
+    let homepage: String?
+    let locale: String?
     let filters: [FilterExportRecord]
     let forceClearBeforeImport: [String]?
 }

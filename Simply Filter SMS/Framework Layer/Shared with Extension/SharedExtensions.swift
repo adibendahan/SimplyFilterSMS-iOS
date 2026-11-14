@@ -16,6 +16,25 @@ extension Collection {
     }
 }
 
+extension Locale {
+    static func listLocale(from identifier: String?) -> Locale? {
+        guard let identifier else { return nil }
+        let locale = Locale(identifier: identifier)
+        guard let languageCode = locale.language.languageCode, languageCode.isISOLanguage else { return nil }
+        if let region = locale.region, !region.isISORegion {
+            return nil
+        }
+        return locale
+    }
+}
+
+extension Sequence where Element: Hashable {
+    func uniqued() -> [Element] {
+        var seenElements: Set<Element> = []
+        return self.filter { seenElements.insert($0).inserted }
+    }
+}
+
 #if !REPORTING_EXTENSION
 extension Filter {
 

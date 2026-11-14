@@ -78,6 +78,7 @@
 		698322832F50AD35008FFD1D /* XCUIElementExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698322822F50AD2C008FFD1D /* XCUIElementExtensions.swift */; };
 		6987D7FF27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6987D7FE27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift */; };
 		6987D80227AAD9E400B3DB84 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6987D80127AAD9E400B3DB84 /* ViewModifiers.swift */; };
+		698811AA30A5358100CE2BFF /* CommunityListsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698811A930A5358100CE2BFF /* CommunityListsTests.swift */; };
 		698FBAFE27B44A0700435699 /* NetworkSyncManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698FBAFD27B44A0700435699 /* NetworkSyncManagerProtocol.swift */; };
 		698FBB0027B4629800435699 /* mock_NetworkSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698FBAFF27B4629800435699 /* mock_NetworkSyncManager.swift */; };
 		699F55802778BB3100AD7C64 /* AddFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699F557F2778BB3100AD7C64 /* AddFilterView.swift */; };
@@ -308,6 +309,7 @@
 		698322822F50AD2C008FFD1D /* XCUIElementExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUIElementExtensions.swift; sourceTree = "<group>"; };
 		6987D7FE27AACA9100B3DB84 /* mock_MessageEvaluationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_MessageEvaluationManager.swift; sourceTree = "<group>"; };
 		6987D80127AAD9E400B3DB84 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
+		698811A930A5358100CE2BFF /* CommunityListsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityListsTests.swift; sourceTree = "<group>"; };
 		698FBAFD27B44A0700435699 /* NetworkSyncManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSyncManagerProtocol.swift; sourceTree = "<group>"; };
 		698FBAFF27B4629800435699 /* mock_NetworkSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_NetworkSyncManager.swift; sourceTree = "<group>"; };
 		699F557F2778BB3100AD7C64 /* AddFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFilterView.swift; sourceTree = "<group>"; };
@@ -365,6 +367,7 @@
 		69F7655A304C499300CF046E /* NetworkStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStatusTests.swift; sourceTree = "<group>"; };
 		69FAA7A92F4FB4E90022C033 /* TipCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipCardView.swift; sourceTree = "<group>"; };
 		69FF9C8727933CE9007FA2DB /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
+		69FFD81330A534340000688D /* Simply_Filter_SMS 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Simply_Filter_SMS 6.xcdatamodel"; sourceTree = "<group>"; };
 		6C2217AE047F148D8D0D9052 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		76CE78982A134F52B1487E949E3617F9 /* DebugDataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugDataManagerProtocol.swift; sourceTree = "<group>"; };
 		80E2346BDC734C15A77001BC /* ReportSubmitCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSubmitCard.swift; sourceTree = "<group>"; };
@@ -529,6 +532,7 @@
 				69D87EB8309A4F2E00C733E6 /* AppHomeViewModelTests.swift */,
 				69373C59309FC3E700AAF96A /* SmartFilterManagerTests.swift */,
 				40E511FE309E28CF00E009FF /* OverlayWindowViewModelTests.swift */,
+				698811A930A5358100CE2BFF /* CommunityListsTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1040,6 +1044,7 @@
 				694E53EA27A4A106009A7E0E /* mock_PersistenceManager.swift in Sources */,
 				69F3D32B27B9824B00D7DDA7 /* mock_FilterListService.swift in Sources */,
 				690F09C927AC310600BA481F /* mock_FilterListManager.swift in Sources */,
+				698811AA30A5358100CE2BFF /* CommunityListsTests.swift in Sources */,
 				3E71FB36F8B1A765DE7AD92F /* mock_TipJarManager.swift in Sources */,
 				A1B2C3D4E5F60718293A1005 /* mock_FilterTransferManager.swift in Sources */,
 				A1B2C3D4E5F60718293A1004 /* FilterTransferManagerTests.swift in Sources */,
@@ -1675,13 +1680,14 @@
 		69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				69FFD81330A534340000688D /* Simply_Filter_SMS 6.xcdatamodel */,
 				69D87EBA309A628F00C733E6 /* Simply_Filter_SMS 5.xcdatamodel */,
 				6916BE7427A176650096CC8D /* Simply_Filter_SMS 3.xcdatamodel */,
 				6973D025278CE89800A173CD /* Simply_Filter_SMS 2.xcdatamodel */,
 				69CD70D52770D4D100F91A2F /* Simply_Filter_SMS.xcdatamodel */,
 				AA8BCED7D8924F6E9A3B5C08 /* Simply_Filter_SMS 4.xcdatamodel */,
 			);
-			currentVersion = 69D87EBA309A628F00C733E6 /* Simply_Filter_SMS 5.xcdatamodel */;
+			currentVersion = 69FFD81330A534340000688D /* Simply_Filter_SMS 6.xcdatamodel */;
 			path = "Simply-Filter-SMS.xcdatamodeld";
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

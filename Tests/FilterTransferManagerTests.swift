@@ -364,6 +364,23 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertNil(exported?["revision"])
     }
 
+    func test_descriptionHomepageAndLocale_decodedWhenPresent_omittedFromExports() throws {
+        let described = try FilterExportPayload(data: self.payload(description: "Scam senders", homepage: "https://example.com", locale: "en-US", filters: []))
+        let plain = try FilterExportPayload(data: self.payload(filters: []))
+        let exported = try JSONSerialization.jsonObject(with: self.testSubject.exportPayload()) as? [String: Any]
+
+        XCTAssertEqual(described.description, "Scam senders")
+        XCTAssertEqual(described.homepage, "https://example.com")
+        XCTAssertEqual(described.locale, "en-US")
+        XCTAssertNil(plain.description)
+        XCTAssertNil(plain.homepage)
+        XCTAssertNil(plain.locale)
+        XCTAssertNotNil(exported)
+        XCTAssertNil(exported?["description"])
+        XCTAssertNil(exported?["homepage"])
+        XCTAssertNil(exported?["locale"])
+    }
+
     func test_importFilters_selectedSubsetOnly() throws {
         let data = try self.payload(filters: [
             record(text: "one", type: "deny"),
@@ -498,6 +515,9 @@ class FilterTransferManagerTests: XCTestCase {
                          version: Int = FilterExportPayload.currentVersion,
                          name: String? = nil,
                          revision: Int? = nil,
+                         description: String? = nil,
+                         homepage: String? = nil,
+                         locale: String? = nil,
                          filters: [[String: String]],
                          forceClearBeforeImport: [String]? = nil) throws -> Data {
         var object: [String: Any] = [
@@ -509,6 +529,9 @@ class FilterTransferManagerTests: XCTestCase {
         ]
         object["name"] = name
         object["revision"] = revision
+        object["description"] = description
+        object["homepage"] = homepage
+        object["locale"] = locale
         object["forceClearBeforeImport"] = forceClearBeforeImport
         return try JSONSerialization.data(withJSONObject: object)
     }

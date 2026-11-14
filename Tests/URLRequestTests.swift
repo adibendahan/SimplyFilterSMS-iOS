@@ -35,7 +35,7 @@ class URLRequestTests: XCTestCase {
         let request = URLRequest(request: FilterListCatalogRequest(etag: "catalog-etag"))
 
         // Verify
-        XCTAssertEqual(request.url?.absoluteString, "https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/3.3.0/ai/catalog.json")
+        XCTAssertEqual(request.url?.absoluteString, "https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/4.0.0/catalog.json")
         XCTAssertEqual(request.httpMethod, "GET")
         XCTAssertEqual(request.value(forHTTPHeaderField: "If-None-Match"), "catalog-etag")
     }
