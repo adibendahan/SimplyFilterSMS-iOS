@@ -84,8 +84,8 @@ extension FilterListsSnapshot {
                                                   exportedAt: Date(timeIntervalSince1970: 0),
                                                   appVersion: "3.2",
                                                   name: language,
-                                                  revision: nil,
                                                   description: nil,
+                                                  author: nil,
                                                   homepage: nil,
                                                   locale: nil,
                                                   filters: languageLists.records,
@@ -134,12 +134,7 @@ extension ActiveFilterLists {
         guard let catalog = FilterListCatalogResponse(encodedCache: encoded) else { return nil }
         let jsonData = Data(encoded.utf8)
 
-        var namesByURL: [String: String] = [:]
-        for catalogEntry in catalog.lists {
-            guard catalogEntry.entryType == .aiFilteringLanguage, let listURL = catalogEntry.resolvedURL else { continue }
-            guard let language = catalogEntry.language, activeLanguages.contains(language) else { continue }
-            namesByURL[listURL.absoluteString] = catalogEntry.displayName
-        }
+        let namesByURL = catalog.aiFilteringEntriesByURL(activeLanguages: activeLanguages).mapValues(\.displayName)
 
         let decoder = JSONDecoder()
         decoder.userInfo[.activeURLs] = Set(namesByURL.keys).union(activeCommunityURLs)

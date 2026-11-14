@@ -26,6 +26,7 @@ struct FilterListCatalogEntry: Codable, Equatable {
     var type: String? = nil
     var locale: String? = nil
     var description: String? = nil
+    var author: String? = nil
     var homepage: String? = nil
 }
 
@@ -62,6 +63,18 @@ extension FilterListCatalogResponse {
 
     func curatedEntry(for url: String) -> FilterListCatalogEntry? {
         return self.curatedCommunityListEntries.first { $0.resolvedURL?.absoluteString == url }
+    }
+
+    func aiFilteringEntriesByURL(activeLanguages: Set<String>) -> [String: FilterListCatalogEntry] {
+        var entriesByURL: [String: FilterListCatalogEntry] = [:]
+        for entry in self.lists {
+            guard entry.entryType == .aiFilteringLanguage,
+                  let language = entry.language,
+                  activeLanguages.contains(language),
+                  let listURL = entry.resolvedURL else { continue }
+            entriesByURL[listURL.absoluteString] = entry
+        }
+        return entriesByURL
     }
 
     private var curatedCommunityListEntries: [FilterListCatalogEntry] {

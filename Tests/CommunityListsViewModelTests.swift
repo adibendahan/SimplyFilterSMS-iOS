@@ -51,7 +51,7 @@ class CommunityListsViewModelTests: XCTestCase {
         // Prepare
         let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)
         let curatedRow = viewModel.rowViewModels[0]
-        let switchedOn = CommunityListItem(url: self.curatedList.url, name: self.curatedList.name, description: nil, homepage: nil,
+        let switchedOn = CommunityListItem(url: self.curatedList.url, name: self.curatedList.name, description: nil, author: nil, homepage: nil,
                                            locale: nil, cacheSection: nil, isActive: true, isCurated: true)
         self.filterListManager.communityListsClosure = { [switchedOn] }
 
@@ -115,8 +115,8 @@ class CommunityListsViewModelTests: XCTestCase {
                                           exportedAt: Date(),
                                           appVersion: "4.0.0",
                                           name: "New",
-                                          revision: nil,
                                           description: nil,
+                                          author: nil,
                                           homepage: nil,
                                           locale: "he-IL",
                                           filters: [denyLoan, allowBank, denyPrize, invalid],
@@ -125,6 +125,7 @@ class CommunityListsViewModelTests: XCTestCase {
         let listWithFilters = CommunityListItem(url: self.previewedList.url,
                                                 name: "New",
                                                 description: nil,
+                                                author: nil,
                                                 homepage: nil,
                                                 locale: Locale(identifier: "he-IL"),
                                                 cacheSection: section,
@@ -228,7 +229,7 @@ class CommunityListsViewModelTests: XCTestCase {
     func test_localeLabel_showsTheFlagOnlyWithARegion() {
         // Prepare
         let withRegion = self.curatedList
-        let withoutRegion = CommunityListItem(url: self.userURL, name: "Mine", description: nil, homepage: nil,
+        let withoutRegion = CommunityListItem(url: self.userURL, name: "Mine", description: nil, author: nil, homepage: nil,
                                               locale: Locale(identifier: "he"), cacheSection: nil, isActive: false, isCurated: false)
 
         // Act
@@ -252,6 +253,7 @@ class CommunityListsViewModelTests: XCTestCase {
     private let curatedList = CommunityListItem(url: "https://lists.example.com/curated.sfsfilters",
                                                 name: "Curated",
                                                 description: "Blocks scams",
+                                                author: "Jane Doe",
                                                 homepage: URL(string: "https://example.com"),
                                                 locale: Locale(identifier: "en-US"),
                                                 cacheSection: nil,
@@ -263,6 +265,7 @@ class CommunityListsViewModelTests: XCTestCase {
     private let userList = CommunityListItem(url: "https://lists.example.com/mine.sfsfilters",
                                              name: "Mine",
                                              description: nil,
+                                             author: nil,
                                              homepage: nil,
                                              locale: nil,
                                              cacheSection: nil,
@@ -272,6 +275,7 @@ class CommunityListsViewModelTests: XCTestCase {
     private let previewedList = CommunityListItem(url: "https://lists.example.com/new.sfsfilters",
                                                   name: "New",
                                                   description: nil,
+                                                  author: nil,
                                                   homepage: nil,
                                                   locale: Locale(identifier: "he-IL"),
                                                   cacheSection: nil,

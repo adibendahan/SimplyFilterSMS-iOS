@@ -618,21 +618,19 @@
 
 "communityLists_title" = "Listes communautaires";
 
-"communityLists_lists" = "Listes";
+"communityLists_empty" = "Aucune liste pour l'instant";
 
-"communityLists_empty" = "Aucune liste pour l'instant. Ajoute-en une avec son lien ci-dessous.";
+"communityLists_subscribeFromURL" = "S'abonner depuis une URL";
 
-"communityLists_addFromURL" = "Ajouter une liste depuis une URL";
-
-"communityLists_footer" = "Les mises à jour des listes sont vérifiées chaque jour. Une liste activée filtre les messages des expéditeurs inconnus, comme le Filtrage AI.";
+"communityLists_footer" = "Les Listes communautaires sont des listes de filtres créées et partagées par d'autres personnes. Les listes activées acheminent les messages des expéditeurs inconnus vers le dossier Indésirables, Transactions ou Promotions, et sont mises à jour régulièrement. Tes filtres habituels s'appliquent toujours.";
 
 "communityLists_createList" = "Créer une liste";
 
 "communityLists_submitList" = "Soumettre une liste";
 
-"communityLists_urlPlaceholder" = "URL de la liste";
+"a11y_communityLists_urlField" = "URL de la liste";
 
-"communityLists_urlHint" = "Colle le lien vers le fichier .sfsfilters de la liste, depuis sa page.";
+"communityLists_urlHint" = "Colle l'URL de la liste.";
 
 "communityLists_preview" = "Aperçu";
 
@@ -640,17 +638,41 @@
 
 "communityLists_subscribe" = "S'abonner";
 
-"communityLists_error_invalidLink" = "Saisis un lien qui commence par https://";
+"communityLists_error_invalidURL" = "Saisis une URL qui commence par https://";
 
 "communityLists_error_alreadySubscribed" = "Cette liste fait déjà partie de tes listes communautaires.";
 
 "communityLists_error_offline" = "Tu es hors ligne. Connecte-toi à Internet et réessaie.";
 
-"communityLists_error_notAList" = "Ce lien n'ouvre pas une liste Simply Filter SMS.";
+"communityLists_error_notAList" = "Cette URL n'est pas une liste Simply Filter SMS.";
 
-"communityLists_error_invalidLocale" = "Cette liste n'indique pas à quelle langue et quel pays elle est destinée, elle ne peut donc pas être ajoutée.";
+"communityLists_error_invalidLocale" = "Il manque la langue et le pays de cette liste, tu ne peux donc pas t'y abonner.";
 
-"communityLists_error_subscribeFailed" = "Impossible d'ajouter la liste. Réessaie plus tard.";
+"communityLists_error_subscribeFailed" = "Impossible de s'abonner à la liste. Réessaie plus tard.";
+
+"a11y_communityLists_showDescription" = "Afficher la description";
+
+"a11y_communityLists_hideDescription" = "Masquer la description";
+
+"autoFilter_errorTitle" = "Listes indisponibles";
+
+"autoFilter_offlineTitle" = "Tu es hors ligne";
+
+"filterList_empty_denied" = "Aucun texte bloqué";
+
+"filterList_empty_allowed" = "Aucun texte autorisé";
+
+"filterList_empty_deniedLanguage" = "Aucune langue bloquée";
+
+"communityLists_error_missingName" = "Il manque le nom de cette liste, tu ne peux donc pas t'y abonner.";
+
+"communityLists_error_missingDescription" = "Il manque la description de cette liste, tu ne peux donc pas t'y abonner.";
+
+"communityLists_error_missingAuthor" = "Il manque l'auteur de cette liste, tu ne peux donc pas t'y abonner.";
+
+"communityLists_error_invalidHomepage" = "Il manque une page d'accueil en https:// à cette liste, tu ne peux donc pas t'y abonner.";
+
+"communityLists_byAuthor" = "par %@";
 
 "whatsNew_communityLists_title" = "Listes communautaires";
 

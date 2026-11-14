@@ -158,14 +158,14 @@ class FlowManagerTests: XCTestCase {
 
     func test_toast_lowerPriorityWhilePending_keepsHigher() {
         self.testSubject.requestToast(.cloudSyncOperationComplete)
-        self.testSubject.requestToast(.filterListsUpdated)
+        self.testSubject.requestToast(.filterListsUpdated(.aiFilteringLanguage))
 
         XCTAssertEqual(self.testSubject.nextToast(), .cloudSyncOperationComplete)
         XCTAssertNil(self.testSubject.nextToast())
     }
 
     func test_toast_higherPriorityWhilePending_replaces() {
-        self.testSubject.requestToast(.filterListsUpdated)
+        self.testSubject.requestToast(.filterListsUpdated(.aiFilteringLanguage))
         self.testSubject.requestToast(.filtersImported(added: 1, skipped: 0))
 
         XCTAssertEqual(self.testSubject.nextToast(), .filtersImported(added: 1, skipped: 0))
@@ -284,12 +284,11 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_appEvents_becomeToasts() {
-        self.filterListManager.hasActiveFilterListsClosure = { true }
         self.testSubject.startAppEventToasts()
 
-        NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
-        XCTAssertEqual(self.testSubject.nextToast(), .filterListsUpdated)
-        self.testSubject.completeToast(.filterListsUpdated)
+        NotificationCenter.default.post(name: .filterListsUpdated, object: FilterListCatalogEntryType.aiFilteringLanguage)
+        XCTAssertEqual(self.testSubject.nextToast(), .filterListsUpdated(.aiFilteringLanguage))
+        self.testSubject.completeToast(.filterListsUpdated(.aiFilteringLanguage))
 
         NotificationCenter.default.post(name: .cloudSyncOperationComplete, object: nil)
         XCTAssertEqual(self.testSubject.nextToast(), .cloudSyncOperationComplete)
@@ -299,13 +298,21 @@ class FlowManagerTests: XCTestCase {
         XCTAssertEqual(self.testSubject.nextToast(), .saveFailed)
     }
 
-    func test_filterListsUpdated_noActiveFilterLists_noToast() {
-        self.filterListManager.hasActiveFilterListsClosure = { false }
+    func test_filterListsUpdated_noActiveListUpdated_noToast() {
         self.testSubject.startAppEventToasts()
 
         NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
 
         XCTAssertNil(self.testSubject.nextToast())
+    }
+
+    func test_filterListsUpdated_communityList_namesCommunityLists() {
+        self.testSubject.startAppEventToasts()
+
+        NotificationCenter.default.post(name: .filterListsUpdated, object: FilterListCatalogEntryType.curatedCommunityList)
+
+        XCTAssertEqual(self.testSubject.nextToast(), .filterListsUpdated(.curatedCommunityList))
+        XCTAssertEqual(ToastView.Toast.filterListsUpdated(.curatedCommunityList).title, "communityLists_title"~)
     }
 
     func test_nudge_homeBusy_waitsUntilIdle() {
@@ -423,10 +430,10 @@ class FlowManagerTests: XCTestCase {
     func test_skippedNudge_dueNextSession() {
         self.defaultsManager.didTipClosure = { false }
         self.defaultsManager.sessionCounterClosure = { 5 }
-        self.testSubject.requestToast(.filterListsUpdated)
+        self.testSubject.requestToast(.filterListsUpdated(.aiFilteringLanguage))
         _ = self.testSubject.nextToast()
         self.testSubject.showSessionNudges()
-        self.testSubject.completeToast(.filterListsUpdated)
+        self.testSubject.completeToast(.filterListsUpdated(.aiFilteringLanguage))
         XCTAssertNil(self.testSubject.nextToast())
 
         self.defaultsManager.sessionCounterClosure = { 6 }
@@ -489,10 +496,10 @@ class FlowManagerTests: XCTestCase {
         self.testSubject.startAppEventToasts()
         self.testSubject.showSessionNudges()
 
-        NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
-        XCTAssertEqual(self.testSubject.nextToast(), .filterListsUpdated)
+        NotificationCenter.default.post(name: .filterListsUpdated, object: FilterListCatalogEntryType.aiFilteringLanguage)
+        XCTAssertEqual(self.testSubject.nextToast(), .filterListsUpdated(.aiFilteringLanguage))
         finishFilterListsUpdate?()
-        self.testSubject.completeToast(.filterListsUpdated)
+        self.testSubject.completeToast(.filterListsUpdated(.aiFilteringLanguage))
 
         XCTAssertNil(self.testSubject.nextToast())
         XCTAssertNil(self.defaultsManager.sessionNudgeLastShownSessions["tipPromotion"])
@@ -560,7 +567,7 @@ class FlowManagerTests: XCTestCase {
     func test_didShowToastThisSession_requestedAndDropped_false() {
         self.testSubject.requestToast(.saveFailed)
 
-        self.testSubject.requestToast(.filterListsUpdated)
+        self.testSubject.requestToast(.filterListsUpdated(.aiFilteringLanguage))
 
         XCTAssertFalse(self.testSubject.didShowToastThisSession)
     }

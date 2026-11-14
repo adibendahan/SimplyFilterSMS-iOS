@@ -41,10 +41,19 @@ struct CommunityListRow: View {
                     if let isExpanded = self.isExpanded {
                         self.chevron(isExpanded: isExpanded)
                     }
-                    Text(self.communityList.name)
-                        .font(.body.weight(.semibold))
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text(self.communityList.name)
+                            .font(.body.weight(.semibold))
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                            .layoutPriority(1)
+                        if let author = self.communityList.author {
+                            Text(String(format: "communityLists_byAuthor"~, author))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
                 }
 
                 self.infoLine
@@ -82,6 +91,7 @@ struct CommunityListRow: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.borderless)
+            .accessibilityLabel(isExpanded.wrappedValue ? "a11y_communityLists_hideDescription"~ : "a11y_communityLists_showDescription"~)
         } else {
             Color.clear
                 .frame(width: self.chevronColumnWidth, height: 1)
@@ -148,6 +158,7 @@ struct CommunityListRowView_Previews: PreviewProvider {
     static let communityList = CommunityListItem(url: "https://lists.example.com/sample.sfsfilters",
                                                  name: "Sample List",
                                                  description: "A sample list for previews.",
+                                                 author: "Jane Doe",
                                                  homepage: URL(string: "https://lists.example.com"),
                                                  locale: Locale(identifier: "en-US"),
                                                  cacheSection: nil,

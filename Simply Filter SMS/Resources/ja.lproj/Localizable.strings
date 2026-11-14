@@ -618,21 +618,19 @@
 
 "communityLists_title" = "コミュニティリスト";
 
-"communityLists_lists" = "リスト";
+"communityLists_empty" = "まだリストがありません";
 
-"communityLists_empty" = "まだリストがありません。下からリンクで追加できます。";
+"communityLists_subscribeFromURL" = "URLで登録";
 
-"communityLists_addFromURL" = "URLでリストを追加";
-
-"communityLists_footer" = "リストのアップデートは毎日確認されます。オンのリストは、AIフィルタリングと同じように不明な送信者からのメッセージをフィルタします。";
+"communityLists_footer" = "コミュニティリストは、ほかの人が作成して共有したフィルタリストです。オンのリストは不明な送信者からのメッセージを迷惑メール、トランザクション、プロモーションのいずれかのフォルダに振り分け、定期的に更新されます。通常のフィルターは引き続き適用されます。";
 
 "communityLists_createList" = "リストを作成";
 
 "communityLists_submitList" = "リストを提出";
 
-"communityLists_urlPlaceholder" = "リストのURL";
+"a11y_communityLists_urlField" = "リストのURL";
 
-"communityLists_urlHint" = "リストのページから、.sfsfilters ファイルへのリンクをペーストしてください。";
+"communityLists_urlHint" = "リストのURLをペーストしてください。";
 
 "communityLists_preview" = "プレビュー";
 
@@ -640,17 +638,41 @@
 
 "communityLists_subscribe" = "登録";
 
-"communityLists_error_invalidLink" = "https:// で始まるリンクを入力してください。";
+"communityLists_error_invalidURL" = "https:// で始まるURLを入力してください。";
 
 "communityLists_error_alreadySubscribed" = "このリストはすでにコミュニティリストにあります。";
 
 "communityLists_error_offline" = "オフラインです。インターネットに接続してもう一度お試しください。";
 
-"communityLists_error_notAList" = "このリンクは Simply Filter SMS のリストではありません。";
+"communityLists_error_notAList" = "このURLは Simply Filter SMS のリストではありません。";
 
-"communityLists_error_invalidLocale" = "このリストには対象の言語と国が指定されていないため、追加できません。";
+"communityLists_error_invalidLocale" = "このリストには言語と国が指定されていないため、登録できません。";
 
-"communityLists_error_subscribeFailed" = "リストを追加できませんでした。後でもう一度お試しください。";
+"communityLists_error_subscribeFailed" = "リストを登録できませんでした。後でもう一度お試しください。";
+
+"a11y_communityLists_showDescription" = "説明を表示";
+
+"a11y_communityLists_hideDescription" = "説明を隠す";
+
+"autoFilter_errorTitle" = "リストを利用できません";
+
+"autoFilter_offlineTitle" = "オフラインです";
+
+"filterList_empty_denied" = "ブロックテキストはありません";
+
+"filterList_empty_allowed" = "許可テキストはありません";
+
+"filterList_empty_deniedLanguage" = "ブロック言語はありません";
+
+"communityLists_error_missingName" = "このリストには名前が指定されていないため、登録できません。";
+
+"communityLists_error_missingDescription" = "このリストには説明が指定されていないため、登録できません。";
+
+"communityLists_error_missingAuthor" = "このリストには作成者が指定されていないため、登録できません。";
+
+"communityLists_error_invalidHomepage" = "このリストには https:// のホームページが指定されていないため、登録できません。";
+
+"communityLists_byAuthor" = "作成：%@";
 
 "whatsNew_communityLists_title" = "コミュニティリスト";
 

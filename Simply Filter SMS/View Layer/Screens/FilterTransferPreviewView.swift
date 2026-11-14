@@ -368,8 +368,8 @@ struct FilterTransferPreviewView_Previews: PreviewProvider {
             exportedAt: Date(),
             appVersion: appVersion,
             name: nil,
-            revision: nil,
             description: nil,
+            author: nil,
             homepage: nil,
             locale: nil,
             filters: [

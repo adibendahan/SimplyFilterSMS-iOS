@@ -49,6 +49,10 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                     self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regularRowViewModels)
                 }
                 .deleteDisabled(self.model.editMode.isEditing)
+
+                if self.model.filters.isEmpty {
+                    ContentUnavailableView(self.model.filterType.emptyTitle, systemImage: self.model.filterType.iconName)
+                }
             } header: {
                 if !self.model.regularRowViewModels.isEmpty {
                     AdaptiveColumnHeader(
@@ -152,7 +156,6 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
 
             AddFilterButton()
         }
-        .padding(.top, self.model.filters.count == 0 ? 40 : 0)
     }
     
     @ViewBuilder

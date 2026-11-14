@@ -618,21 +618,19 @@
 
 "communityLists_title" = "Listas de la comunidad";
 
-"communityLists_lists" = "Listas";
+"communityLists_empty" = "Aún no hay listas";
 
-"communityLists_empty" = "Aún no hay listas. Añade una con su enlace abajo.";
+"communityLists_subscribeFromURL" = "Suscribirse desde URL";
 
-"communityLists_addFromURL" = "Añadir lista desde URL";
-
-"communityLists_footer" = "Las listas se revisan cada día en busca de actualizaciones. Una lista activada filtra los mensajes de remitentes desconocidos, igual que el Filtrado AI.";
+"communityLists_footer" = "Las Listas de la comunidad son listas de filtros creadas y compartidas por otras personas. Las listas activadas envían los mensajes de remitentes desconocidos a la carpeta No deseado, Transacciones o Promociones, y se actualizan periódicamente. Tus filtros habituales siguen aplicándose.";
 
 "communityLists_createList" = "Crear una lista";
 
 "communityLists_submitList" = "Enviar una lista";
 
-"communityLists_urlPlaceholder" = "URL de la lista";
+"a11y_communityLists_urlField" = "URL de la lista";
 
-"communityLists_urlHint" = "Pega el enlace al archivo .sfsfilters de la lista, desde su página.";
+"communityLists_urlHint" = "Pega la URL de la lista.";
 
 "communityLists_preview" = "Vista previa";
 
@@ -640,17 +638,41 @@
 
 "communityLists_subscribe" = "Suscribirse";
 
-"communityLists_error_invalidLink" = "Introduce un enlace que empiece por https://";
+"communityLists_error_invalidURL" = "Introduce una URL que empiece por https://";
 
 "communityLists_error_alreadySubscribed" = "Esta lista ya está en tus listas de la comunidad.";
 
 "communityLists_error_offline" = "No tienes conexión. Conéctate a internet e inténtalo de nuevo.";
 
-"communityLists_error_notAList" = "Este enlace no abre una lista de Simply Filter SMS.";
+"communityLists_error_notAList" = "Esta URL no es una lista de Simply Filter SMS.";
 
-"communityLists_error_invalidLocale" = "Esta lista no indica para qué idioma y país es, así que no se puede añadir.";
+"communityLists_error_invalidLocale" = "A esta lista le faltan el idioma y el país, así que no puedes suscribirte.";
 
-"communityLists_error_subscribeFailed" = "No se pudo añadir la lista. Inténtalo más tarde.";
+"communityLists_error_subscribeFailed" = "No se pudo suscribir a la lista. Inténtalo más tarde.";
+
+"a11y_communityLists_showDescription" = "Mostrar descripción";
+
+"a11y_communityLists_hideDescription" = "Ocultar descripción";
+
+"autoFilter_errorTitle" = "Listas no disponibles";
+
+"autoFilter_offlineTitle" = "No tienes conexión";
+
+"filterList_empty_denied" = "No hay textos bloqueados";
+
+"filterList_empty_allowed" = "No hay textos permitidos";
+
+"filterList_empty_deniedLanguage" = "No hay idiomas bloqueados";
+
+"communityLists_error_missingName" = "A esta lista le falta el nombre, así que no puedes suscribirte.";
+
+"communityLists_error_missingDescription" = "A esta lista le falta la descripción, así que no puedes suscribirte.";
+
+"communityLists_error_missingAuthor" = "A esta lista le falta el autor, así que no puedes suscribirte.";
+
+"communityLists_error_invalidHomepage" = "A esta lista le falta una página web con https://, así que no puedes suscribirte.";
+
+"communityLists_byAuthor" = "de %@";
 
 "whatsNew_communityLists_title" = "Listas de la comunidad";
 

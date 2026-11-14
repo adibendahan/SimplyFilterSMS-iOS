@@ -618,21 +618,19 @@
 
 "communityLists_title" = "Community-Listen";
 
-"communityLists_lists" = "Listen";
+"communityLists_empty" = "Noch keine Listen";
 
-"communityLists_empty" = "Noch keine Listen. Füge unten eine über ihren Link hinzu.";
+"communityLists_subscribeFromURL" = "Von URL abonnieren";
 
-"communityLists_addFromURL" = "Liste von URL hinzufügen";
-
-"communityLists_footer" = "Listen werden täglich auf Updates geprüft. Eine aktivierte Liste filtert Nachrichten von unbekannten Absendern, genau wie die KI-Filterung.";
+"communityLists_footer" = "Community-Listen sind Filterlisten, die andere erstellt und geteilt haben. Aktivierte Listen leiten Nachrichten von unbekannten Absendern in den Ordner Junk, Transaktionen oder Werbung und werden regelmäßig aktualisiert. Deine eigenen Filter bleiben aktiv.";
 
 "communityLists_createList" = "Liste erstellen";
 
 "communityLists_submitList" = "Liste einreichen";
 
-"communityLists_urlPlaceholder" = "URL der Liste";
+"a11y_communityLists_urlField" = "URL der Liste";
 
-"communityLists_urlHint" = "Füge den Link zur .sfsfilters-Datei der Liste ein, von der Seite der Liste.";
+"communityLists_urlHint" = "Füge die URL der Liste ein.";
 
 "communityLists_preview" = "Vorschau";
 
@@ -640,17 +638,41 @@
 
 "communityLists_subscribe" = "Abonnieren";
 
-"communityLists_error_invalidLink" = "Gib einen Link ein, der mit https:// beginnt.";
+"communityLists_error_invalidURL" = "Gib eine URL ein, die mit https:// beginnt.";
 
 "communityLists_error_alreadySubscribed" = "Diese Liste ist schon in deinen Community-Listen.";
 
 "communityLists_error_offline" = "Du bist offline. Verbinde dich mit dem Internet und versuche es erneut.";
 
-"communityLists_error_notAList" = "Dieser Link öffnet keine Simply Filter SMS-Liste.";
+"communityLists_error_notAList" = "Diese URL ist keine Simply Filter SMS-Liste.";
 
-"communityLists_error_invalidLocale" = "Diese Liste gibt nicht an, für welche Sprache und welches Land sie gedacht ist, daher kann sie nicht hinzugefügt werden.";
+"communityLists_error_invalidLocale" = "Dieser Liste fehlen Sprache und Land, daher kannst du sie nicht abonnieren.";
 
-"communityLists_error_subscribeFailed" = "Die Liste konnte nicht hinzugefügt werden. Versuche es später erneut.";
+"communityLists_error_subscribeFailed" = "Die Liste konnte nicht abonniert werden. Versuche es später erneut.";
+
+"a11y_communityLists_showDescription" = "Beschreibung einblenden";
+
+"a11y_communityLists_hideDescription" = "Beschreibung ausblenden";
+
+"autoFilter_errorTitle" = "Listen nicht verfügbar";
+
+"autoFilter_offlineTitle" = "Du bist offline";
+
+"filterList_empty_denied" = "Keine blockierten Texte";
+
+"filterList_empty_allowed" = "Keine erlaubten Texte";
+
+"filterList_empty_deniedLanguage" = "Keine blockierten Sprachen";
+
+"communityLists_error_missingName" = "Dieser Liste fehlt der Name, daher kannst du sie nicht abonnieren.";
+
+"communityLists_error_missingDescription" = "Dieser Liste fehlt die Beschreibung, daher kannst du sie nicht abonnieren.";
+
+"communityLists_error_missingAuthor" = "Dieser Liste fehlt der Autor, daher kannst du sie nicht abonnieren.";
+
+"communityLists_error_invalidHomepage" = "Dieser Liste fehlt eine Homepage mit https://, daher kannst du sie nicht abonnieren.";
+
+"communityLists_byAuthor" = "von %@";
 
 "whatsNew_communityLists_title" = "Community-Listen";
 

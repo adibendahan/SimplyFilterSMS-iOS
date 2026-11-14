@@ -42,6 +42,9 @@
 "menu_addFilter" = "Add Filter";
 "filterList_menu_debug" = "Load Debug Data";
 "filterList_deniedLanguage" = "Blocked Languages";
+"filterList_empty_denied" = "No Blocked Texts";
+"filterList_empty_allowed" = "No Allowed Texts";
+"filterList_empty_deniedLanguage" = "No Blocked Languages";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
 "filterList_folder" = "Folder";
 "filterList_text" = "Text";
@@ -202,6 +205,8 @@
 "autoFilter_email" = "Block Email Senders";
 "autoFilter_empty" = "Go online while the app is open at least once to download the AI Filtering lists.";
 "autoFilter_error" = "It seems there is a problem downloading the AI Filtering lists. Please try again later.";
+"autoFilter_errorTitle" = "Lists Unavailable";
+"autoFilter_offlineTitle" = "You're Offline";
 "autoFilter_emojis" = "Block Emojis";
 "autoFilter_emojis_shortTitle" = "Emojis";
 "autoFilter_countryAllowlist" = "Allow by Country";
@@ -211,23 +216,27 @@
 "autoFilter_reportSpam" = "Report Spam";
 "autoFilter_improveAIFiltering" = "Improve AI Filtering";
 "communityLists_title" = "Community Lists";
-"communityLists_lists" = "Lists";
-"communityLists_empty" = "No lists yet. Add one by its link below.";
-"communityLists_addFromURL" = "Add List from URL";
-"communityLists_footer" = "Lists are checked for updates every day. A list that's on filters messages from unknown senders, just like AI Filtering.";
+"communityLists_byAuthor" = "by %@";
+"communityLists_empty" = "No Lists Yet";
+"communityLists_subscribeFromURL" = "Subscribe from URL";
+"communityLists_footer" = "Community Lists are filter lists made and shared by other people. Turned-on lists route messages from unknown senders to your Junk, Transactions or Promotions folder, and are updated periodically. Your regular filters are still applied.";
 "communityLists_createList" = "Create a List";
 "communityLists_submitList" = "Submit a List";
-"communityLists_urlPlaceholder" = "List URL";
-"communityLists_urlHint" = "Paste the link to the list's .sfsfilters file, from the list's page.";
+"a11y_communityLists_urlField" = "List URL";
+"communityLists_urlHint" = "Paste the list's URL.";
 "communityLists_preview" = "Preview";
 "communityLists_trustNote" = "Community Lists are made by other people. Subscribe only to lists you trust.";
 "communityLists_subscribe" = "Subscribe";
-"communityLists_error_invalidLink" = "Enter a link that starts with https://";
+"communityLists_error_invalidURL" = "Enter a URL that starts with https://";
 "communityLists_error_alreadySubscribed" = "This list is already in your Community Lists.";
 "communityLists_error_offline" = "You're offline. Connect to the internet and try again.";
-"communityLists_error_notAList" = "This link doesn't open a Simply Filter SMS list.";
-"communityLists_error_invalidLocale" = "This list doesn't say which language and country it's for, so it can't be added.";
-"communityLists_error_subscribeFailed" = "The list couldn't be added. Try again later.";
+"communityLists_error_notAList" = "This URL isn't a Simply Filter SMS list.";
+"communityLists_error_missingName" = "This list is missing its name, so you can't subscribe to it.";
+"communityLists_error_missingDescription" = "This list is missing its description, so you can't subscribe to it.";
+"communityLists_error_missingAuthor" = "This list is missing its author, so you can't subscribe to it.";
+"communityLists_error_invalidHomepage" = "This list is missing an https:// homepage, so you can't subscribe to it.";
+"communityLists_error_invalidLocale" = "This list is missing its language and country, so you can't subscribe to it.";
+"communityLists_error_subscribeFailed" = "Couldn't subscribe to the list. Try again later.";
 "inactivityNotification_title" = "Keep AI Filtering working";
 "inactivityNotification_message" = "Allow notifications and we'll remind you to open the app now and then. If you don't, the AI filter lists stop updating, and iOS may remove the app to free up space - then filtering stops until you open it again.";
 "inactivityNotification_continue" = "Continue";
@@ -350,6 +359,8 @@
 "a11y_help_faqHint" = "Double tap to show or hide the answer";
 "a11y_help_emailHint" = "Double tap to send email. Copies the address if Mail is not set up";
 "a11y_accentColor_resetHint" = "Double tap to restore the default color";
+"a11y_communityLists_showDescription" = "Show description";
+"a11y_communityLists_hideDescription" = "Hide description";
 
 //MARK: Filter Import / Export
 "menu_exportFilters" = "Export Filters";

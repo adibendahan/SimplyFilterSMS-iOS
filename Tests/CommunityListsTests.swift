@@ -71,7 +71,7 @@ class CommunityListsTests: XCTestCase {
         // Prepare
         await self.filterListManager.refreshFilterLists()
         let allowSender = FilterExportRecord(text: "MyBank", type: "allow", folder: nil, target: "sender", matching: "exact", caseSensitivity: "insensitive")
-        self.listsByURL[self.userURL] = self.payload(name: nil, filters: [self.denyRecord("loan"), allowSender])
+        self.listsByURL[self.userURL] = self.payload(name: "Mine", filters: [self.denyRecord("loan"), allowSender])
 
         // Act
         await self.subscribe(self.userURL)
@@ -79,7 +79,7 @@ class CommunityListsTests: XCTestCase {
         // Verify
         let blocked = self.evaluate(body: "fast loan")
         XCTAssertEqual(blocked.action, .junk)
-        XCTAssertEqual(blocked.match, .filterList("mine"), "an unnamed list is named after its file")
+        XCTAssertEqual(blocked.match, .filterList("Mine"))
         XCTAssertEqual(self.evaluate(body: "loan approved", sender: "MyBank").action, .allow)
         XCTAssertEqual(self.filterListManager.communityLists.first?.isCurated, false)
         XCTAssertEqual(self.filterListManager.communityLists.first?.locale?.identifier, "he-IL")
@@ -147,6 +147,26 @@ class CommunityListsTests: XCTestCase {
     }
 
     @MainActor
+    func test_refresh_activeListUpdated_namesCommunityLists() async {
+        // Prepare
+        await self.filterListManager.refreshFilterLists()
+        self.listsByURL[self.userURL] = self.payload(filters: [self.denyRecord("loan")])
+        await self.subscribe(self.userURL)
+        var updatedEntryType: FilterListCatalogEntryType?
+        let observer = NotificationCenter.default.addObserver(forName: .filterListsUpdated, object: nil, queue: nil) { notification in
+            updatedEntryType = notification.object as? FilterListCatalogEntryType
+        }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        // Act
+        self.listsByURL[self.userURL] = self.payload(filters: [self.denyRecord("casino")])
+        await self.filterListManager.refreshFilterLists()
+
+        // Verify
+        XCTAssertEqual(updatedEntryType, .curatedCommunityList)
+    }
+
+    @MainActor
     func test_removeCuratedList_onlyTurnsItOff() async {
         // Prepare
         self.catalogEntries = [self.curatedEntry]
@@ -159,6 +179,24 @@ class CommunityListsTests: XCTestCase {
 
         // Verify
         XCTAssertEqual(self.filterListManager.communityLists.map(\.isActive), [false])
+    }
+
+    @MainActor
+    func test_curatedListLeavesCatalog_removedEvenWhenOn() async {
+        // Prepare
+        self.catalogEntries = [self.curatedEntry]
+        self.listsByURL[self.curatedURL] = self.payload(filters: [self.denyRecord("loan")])
+        await self.filterListManager.refreshFilterLists()
+        self.filterListManager.setCommunityListActive(self.communityList(self.curatedURL), value: true)
+
+        // Act
+        self.catalogEntries = []
+        await self.filterListManager.refreshFilterLists()
+
+        // Verify
+        XCTAssertTrue(self.filterListManager.communityLists.isEmpty)
+        XCTAssertTrue(self.persistenceManager.fetchCommunityListRecords().isEmpty)
+        XCTAssertEqual(self.evaluate(body: "fast loan").action, .allow)
     }
 
     @MainActor
@@ -206,6 +244,14 @@ class CommunityListsTests: XCTestCase {
         let httpLink = await self.filterListManager.previewCommunityList(at: URL(string: "http://lists.example.com/a.sfsfilters")!)
         let listed = await self.filterListManager.previewCommunityList(at: URL(string: self.userURL)!)
         let notAList = await self.filterListManager.previewCommunityList(at: URL(string: "https://lists.example.com/page.html")!)
+        self.listsByURL[self.curatedURL] = self.payload(name: nil, filters: [])
+        let noName = await self.filterListManager.previewCommunityList(at: URL(string: self.curatedURL)!)
+        self.listsByURL[self.curatedURL] = self.payload(description: "  ", filters: [])
+        let blankDescription = await self.filterListManager.previewCommunityList(at: URL(string: self.curatedURL)!)
+        self.listsByURL[self.curatedURL] = self.payload(author: nil, filters: [])
+        let noAuthor = await self.filterListManager.previewCommunityList(at: URL(string: self.curatedURL)!)
+        self.listsByURL[self.curatedURL] = self.payload(homepage: "http://example.com", filters: [])
+        let httpHomepage = await self.filterListManager.previewCommunityList(at: URL(string: self.curatedURL)!)
         self.listsByURL[self.curatedURL] = self.payload(locale: nil, filters: [])
         let noLocale = await self.filterListManager.previewCommunityList(at: URL(string: self.curatedURL)!)
         self.listsByURL[self.otherURL] = self.payload(name: "Fresh", filters: [])
@@ -214,16 +260,39 @@ class CommunityListsTests: XCTestCase {
         let offline = await self.filterListManager.previewCommunityList(at: URL(string: "https://lists.example.com/b.sfsfilters")!)
 
         // Verify
-        XCTAssertEqual(httpLink.failure, .invalidLink)
+        XCTAssertEqual(httpLink.failure, .invalidURL)
         XCTAssertEqual(listed.failure, .alreadySubscribed)
         XCTAssertEqual(notAList.failure, .notAList)
+        XCTAssertEqual(noName.failure, .missingName)
+        XCTAssertEqual(blankDescription.failure, .missingDescription)
+        XCTAssertEqual(noAuthor.failure, .missingAuthor)
+        XCTAssertEqual(httpHomepage.failure, .invalidHomepage)
         XCTAssertEqual(noLocale.failure, .invalidLocale)
         let previewed = try? valid.get()
         XCTAssertEqual(previewed?.name, "Fresh")
+        XCTAssertEqual(previewed?.author, "Jane Doe")
         XCTAssertEqual(previewed?.locale?.identifier, "he-IL")
         XCTAssertEqual(previewed?.isActive, false)
         XCTAssertEqual(previewed?.isCurated, false)
         XCTAssertEqual(offline.failure, .offline)
+    }
+
+    @MainActor
+    func test_curatedEntry_bareFile_usesTheCatalog() async {
+        // Prepare
+        self.catalogEntries = [self.curatedEntry]
+        self.listsByURL[self.curatedURL] = self.payload(name: nil, description: nil, author: nil, homepage: nil, locale: nil, filters: [self.denyRecord("loan")])
+
+        // Act
+        await self.filterListManager.refreshFilterLists()
+        self.filterListManager.setCommunityListActive(self.communityList(self.curatedURL), value: true)
+
+        // Verify
+        let communityList = self.filterListManager.communityLists.first
+        XCTAssertEqual(communityList?.name, "Scam Guard")
+        XCTAssertEqual(communityList?.author, "Scam Guard Team")
+        XCTAssertEqual(communityList?.locale?.identifier, "en-US")
+        XCTAssertEqual(self.evaluate(body: "fast loan").match, .filterList("Scam Guard"))
     }
 
     @MainActor
@@ -236,8 +305,9 @@ class CommunityListsTests: XCTestCase {
                                                       type: FilterListCatalogEntryType.curatedCommunityList.rawValue,
                                                       locale: "en-US",
                                                       description: "Our subtitle",
+                                                      author: "Our Team",
                                                       homepage: "https://ours.example.com")]
-        self.listsByURL[self.curatedURL] = self.payload(name: "Their Title", filters: [self.denyRecord("loan")])
+        self.listsByURL[self.curatedURL] = self.payload(name: "Their Title", author: "Their Author", filters: [self.denyRecord("loan")])
 
         // Act
         await self.filterListManager.refreshFilterLists()
@@ -247,6 +317,7 @@ class CommunityListsTests: XCTestCase {
         let communityList = self.filterListManager.communityLists.first
         XCTAssertEqual(communityList?.name, "Our Title")
         XCTAssertEqual(communityList?.description, "Our subtitle")
+        XCTAssertEqual(communityList?.author, "Our Team")
         XCTAssertEqual(communityList?.homepage, URL(string: "https://ours.example.com"))
         XCTAssertEqual(self.evaluate(body: "fast loan").match, .filterList("Our Title"))
     }
@@ -336,7 +407,10 @@ class CommunityListsTests: XCTestCase {
                                       url: self.curatedURL,
                                       language: nil,
                                       type: FilterListCatalogEntryType.curatedCommunityList.rawValue,
-                                      locale: "en-US")
+                                      locale: "en-US",
+                                      description: "Blocks scams",
+                                      author: "Scam Guard Team",
+                                      homepage: "https://example.com")
     }
 
     private let curatedURL = "https://github.com/example/rules/releases/latest/download/simply.sfsfilters"
@@ -344,15 +418,20 @@ class CommunityListsTests: XCTestCase {
     private let userURL = "https://lists.example.com/mine.sfsfilters"
     private let otherURL = "https://lists.example.com/other.sfsfilters"
 
-    private func payload(name: String? = nil, locale: String? = "he-IL", filters: [FilterExportRecord]) -> FilterExportPayload {
+    private func payload(name: String? = "Test List",
+                         description: String? = "Blocks scams",
+                         author: String? = "Jane Doe",
+                         homepage: String? = "https://example.com",
+                         locale: String? = "he-IL",
+                         filters: [FilterExportRecord]) -> FilterExportPayload {
         return FilterExportPayload(format: FilterExportPayload.formatIdentifier,
                                    version: FilterExportPayload.currentVersion,
                                    exportedAt: Date(timeIntervalSince1970: 0),
                                    appVersion: "4.0.0",
                                    name: name,
-                                   revision: nil,
-                                   description: "Blocks scams",
-                                   homepage: "https://example.com",
+                                   description: description,
+                                   author: author,
+                                   homepage: homepage,
                                    locale: locale,
                                    filters: filters,
                                    forceClearBeforeImport: nil)

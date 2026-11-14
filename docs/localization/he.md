@@ -17,7 +17,7 @@ Hebrew marks gender on almost every word that refers to the reader. The app neve
 
 | Form | Use | Never |
 |---|---|---|
-| Imperative | הוסיפו, בחרו, הקישו, פתחו, גללו, הקלידו, השאירו, שלחו, נסו, עקבו | הוסף / הוסיפי, בחר / בחרי, לחץ / לחצי |
+| Imperative | הוסיפו, בחרו, לחצו, פתחו, גללו, הקלידו, השאירו, שלחו, נסו, עקבו | הוסף / הוסיפי, בחר / בחרי, לחץ / לחצי |
 | Pronoun | אתם | אתה, את |
 | Possessive | שלכם, -כם (תרומתכם, המכשיר שלכם) | שלך, -ך (תרומתך) |
 | Past tense | לחצתם, דיווחתם, בחרתם | לחצת, דיווחת |
@@ -91,7 +91,7 @@ Hebrew has neutral constructions that address nobody:
 | Sender | **שולח** | Unknown sender: `שולח לא מוכר` |
 | Body (filter target) | **הודעה** on the target picker, **גוף ההודעה** in prose | |
 | Folder | **תיקייה** | Full spelling, two yods |
-| Tap | **הקישו** | New strings use `הקישו`. Older strings use `לחצו`; don't mix both in one string |
+| Tap | **לחצו** | `לחצו על`. VoiceOver hints keep `הקשה כפולה` |
 | Long press | **לחיצה ארוכה** | |
 | Double tap (a11y) | **הקשה כפולה** | |
 | Email | **מייל** in prose, **אימייל** on the button | Not `דואר אלקטרוני`, except the Smart Filter for email senders |
@@ -233,4 +233,3 @@ Existing strings that break this guide. Fix them when touching the area; renamin
 | `lang_how` | תחסם | תיחסם |
 | `aboutView_aboutText` | מאד | מאוד |
 | `faq_answer_shareFilters` | ב-**ייבוא פילטרים** | ב**ייבוא פילטרים** (no hyphen before a Hebrew word) |
-| Tap verb | `לחצו` in older strings, `הקישו` in newer | Use `הקישו` in new and edited strings |

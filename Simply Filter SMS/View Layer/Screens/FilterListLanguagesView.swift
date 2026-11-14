@@ -12,7 +12,6 @@ import NaturalLanguage
 //MARK: - View -
 struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
 
-    @ScaledMetric(relativeTo: .title) private var errorIconSize: CGFloat = 30
     @ScaledMetric(relativeTo: .body) private var footerIconSize: CGFloat = 20
 
     @ObservedObject var model: ViewModel
@@ -32,20 +31,15 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
 
                 if self.model.languages.isEmpty {
                     if !self.model.isLoading {
-                        AdaptiveRow {
-                            Image(systemName: "wifi.exclamationmark")
-                                .font(.system(size: errorIconSize))
-                                .foregroundColor(.red)
-                                .accessibilityHidden(true)
-                                .adaptiveIconColumn()
-                        } content: {
-                            if self.model.isOnline {
-                                Text(.init("autoFilter_error"~))
-                            } else {
-                                Text(.init("autoFilter_empty"~))
-                            }
+                        if self.model.isOnline {
+                            ContentUnavailableView("autoFilter_errorTitle"~,
+                                                   systemImage: "wifi.exclamationmark",
+                                                   description: Text("autoFilter_error"~))
+                        } else {
+                            ContentUnavailableView("autoFilter_offlineTitle"~,
+                                                   systemImage: "wifi.slash",
+                                                   description: Text("autoFilter_empty"~))
                         }
-                        .padding(.vertical, 16)
                     }
                     else {
                         ProgressView()
@@ -128,7 +122,7 @@ extension FilterListLanguagesView {
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             let lastUpdated = appManager.filterListManager.filterListsLastUpdated
 
-            self.footer = ViewModel.makeFooter(lastUpdated: lastUpdated)
+            self.footer = lastUpdated?.lastUpdatedText ?? ""
             self.isLoading = false
             self.isOnline = appManager.networkSyncManager.networkStatus == .online
             self.languages = ViewModel.makeLanguages(appManager: appManager)
@@ -170,7 +164,7 @@ extension FilterListLanguagesView {
         func refresh() {
             let lastUpdated = self.appManager.filterListManager.filterListsLastUpdated
 
-            self.footer = ViewModel.makeFooter(lastUpdated: lastUpdated)
+            self.footer = lastUpdated?.lastUpdatedText ?? ""
             self.languages = ViewModel.makeLanguages(appManager: self.appManager)
         }
 
@@ -193,15 +187,6 @@ extension FilterListLanguagesView {
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: filterListManager.isFilterListActive,
                                                 setter: filterListManager.setFilterListActive) })
-        }
-
-        private static func makeFooter(lastUpdated: Date?) -> String {
-            guard let lastUpdated else { return "" }
-
-            let formatter = DateFormatter()
-            formatter.locale = Locale.current
-            formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ddMMyyyy HHmm", options: 0, locale: Locale.current)
-            return String(format: "autoFilter_lastUpdated"~, formatter.string(from: lastUpdated))
         }
     }
 }

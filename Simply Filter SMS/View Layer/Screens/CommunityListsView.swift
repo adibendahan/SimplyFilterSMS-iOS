@@ -13,7 +13,6 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .caption2) private var descriptionIndent = CommunityListRow.chevronColumnBaseWidth
-
     @StateObject var model: ViewModel
 
     init(model: ViewModel) {
@@ -40,12 +39,8 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                 .onDelete(perform: self.model.removeCommunityLists)
 
                 if self.model.rowViewModels.isEmpty {
-                    Text("communityLists_empty"~)
-                        .foregroundColor(.secondary)
-                        .padding(.vertical, 8)
+                    ContentUnavailableView("communityLists_empty"~, systemImage: "person.3")
                 }
-            } header: {
-                Text("communityLists_lists"~)
             } // Section
             .transaction { transaction in
                 if self.reduceMotion {
@@ -57,7 +52,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                 Button {
                     self.model.presentAddCommunityList()
                 } label: {
-                    Label("communityLists_addFromURL"~, systemImage: "link.badge.plus")
+                    Label("communityLists_subscribeFromURL"~, systemImage: "link.badge.plus")
                 }
                 .foregroundStyle(.primary)
                 .accessibilityIdentifier(TestIdentifier.addCommunityListButton.rawValue)
@@ -182,7 +177,12 @@ extension CommunityListsView {
             var proposalLink = AttributedString("communityLists_submitList"~)
             proposalLink.link = .communityListProposalURL
 
-            var footer = AttributedString("communityLists_footer"~ + " ")
+            var footerText = "communityLists_footer"~ + " "
+            if let lastUpdated = self.appManager.filterListManager.filterListsLastUpdated {
+                footerText = lastUpdated.lastUpdatedText + ". " + footerText
+            }
+
+            var footer = AttributedString(footerText)
             footer.append(guideLink)
             footer.append(AttributedString(" · "))
             footer.append(proposalLink)

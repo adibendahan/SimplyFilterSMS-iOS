@@ -174,7 +174,6 @@ Write `ai/<code>.sfsfilters` with the approved records in `filters`:
   "filters": [ ... ],
   "format": "simply-filter-sms-filters",
   "name": "AI Filtering · <English language name>",
-  "revision": 1,
   "version": 2
 }
 ```

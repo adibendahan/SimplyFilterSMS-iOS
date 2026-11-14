@@ -618,21 +618,19 @@
 
 "communityLists_title" = "قوائم المجتمع";
 
-"communityLists_lists" = "القوائم";
+"communityLists_empty" = "لا توجد قوائم بعد";
 
-"communityLists_empty" = "لا توجد قوائم بعد. أضف قائمة عبر رابطها أدناه.";
+"communityLists_subscribeFromURL" = "اشتراك من رابط";
 
-"communityLists_addFromURL" = "إضافة قائمة من رابط";
-
-"communityLists_footer" = "يتم التحقق من تحديثات القوائم كل يوم. القائمة المفعّلة تصفّي الرسائل من المرسلين غير المعروفين، تمامًا مثل تصفية AI.";
+"communityLists_footer" = "قوائم المجتمع هي قوائم تصفية أنشأها أشخاص آخرون وشاركوها. توجّه القوائم المفعّلة الرسائل من المرسلين غير المعروفين إلى مجلد غير مرغوب فيه أو المعاملات أو العروض الترويجية، ويتم تحديثها بشكل دوري. لا تزال مرشّحاتكم المعتادة مُطبَّقة.";
 
 "communityLists_createList" = "إنشاء قائمة";
 
 "communityLists_submitList" = "إرسال قائمة";
 
-"communityLists_urlPlaceholder" = "رابط القائمة";
+"a11y_communityLists_urlField" = "رابط القائمة";
 
-"communityLists_urlHint" = "الصق رابط ملف sfsfilters الخاص بالقائمة من صفحتها.";
+"communityLists_urlHint" = "الصق رابط القائمة.";
 
 "communityLists_preview" = "معاينة";
 
@@ -640,17 +638,41 @@
 
 "communityLists_subscribe" = "اشتراك";
 
-"communityLists_error_invalidLink" = "أدخل رابطًا يبدأ بـ https://";
+"communityLists_error_invalidURL" = "أدخل رابطًا يبدأ بـ https://";
 
 "communityLists_error_alreadySubscribed" = "هذه القائمة موجودة بالفعل في قوائم المجتمع لديك.";
 
 "communityLists_error_offline" = "أنت غير متصل بالإنترنت. اتصل وحاول مرة أخرى.";
 
-"communityLists_error_notAList" = "هذا الرابط لا يفتح قائمة Simply Filter SMS.";
+"communityLists_error_notAList" = "هذا الرابط ليس قائمة Simply Filter SMS.";
 
-"communityLists_error_invalidLocale" = "لا تحدد هذه القائمة اللغة والبلد المخصصة لهما، لذا لا يمكن إضافتها.";
+"communityLists_error_invalidLocale" = "هذه القائمة لا تحدد لغتها وبلدها، لذا لا يمكنك الاشتراك فيها.";
 
-"communityLists_error_subscribeFailed" = "تعذّرت إضافة القائمة. حاول مرة أخرى لاحقًا.";
+"communityLists_error_subscribeFailed" = "تعذّر الاشتراك في القائمة. حاول مرة أخرى لاحقًا.";
+
+"a11y_communityLists_showDescription" = "إظهار الوصف";
+
+"a11y_communityLists_hideDescription" = "إخفاء الوصف";
+
+"autoFilter_errorTitle" = "القوائم غير متاحة";
+
+"autoFilter_offlineTitle" = "أنت غير متصل بالإنترنت";
+
+"filterList_empty_denied" = "لا توجد نصوص محظورة";
+
+"filterList_empty_allowed" = "لا توجد نصوص مسموحة";
+
+"filterList_empty_deniedLanguage" = "لا توجد لغات محظورة";
+
+"communityLists_error_missingName" = "هذه القائمة لا تحدد اسمها، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_error_missingDescription" = "هذه القائمة لا تحدد وصفها، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_error_missingAuthor" = "هذه القائمة لا تحدد مؤلفها، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_error_invalidHomepage" = "هذه القائمة لا تحدد صفحة رئيسية تبدأ بـ https://، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_byAuthor" = "بواسطة %@";
 
 "whatsNew_communityLists_title" = "قوائم المجتمع";
 

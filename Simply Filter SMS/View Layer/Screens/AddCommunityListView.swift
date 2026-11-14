@@ -26,7 +26,8 @@ struct AddCommunityListView: View {
                 if !self.isPreviewRevealed {
                     Section {
                         HStack(spacing: 8) {
-                            TextField("communityLists_urlPlaceholder"~, text: $model.urlText)
+                            TextField("https://", text: $model.urlText)
+                                .accessibilityLabel("a11y_communityLists_urlField"~)
                                 .keyboardType(.URL)
                                 .textContentType(.URL)
                                 .textInputAutocapitalization(.never)
@@ -97,7 +98,7 @@ struct AddCommunityListView: View {
             .onChange(of: self.model.previewState) { oldState, newState in
                 self.previewStateChanged(from: oldState, to: newState)
             }
-            .navigationTitle("communityLists_addFromURL"~)
+            .navigationTitle("communityLists_subscribeFromURL"~)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -292,7 +293,7 @@ extension AddCommunityListView {
             let trimmedText = self.urlText.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmedText.isEmpty else { return }
             guard let url = URL(string: trimmedText) else {
-                self.previewState = .failed(.invalidLink)
+                self.previewState = .failed(.invalidURL)
                 return
             }
 

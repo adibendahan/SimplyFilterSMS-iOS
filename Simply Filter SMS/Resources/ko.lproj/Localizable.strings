@@ -618,21 +618,19 @@
 
 "communityLists_title" = "커뮤니티 목록";
 
-"communityLists_lists" = "목록";
+"communityLists_empty" = "아직 목록이 없어요";
 
-"communityLists_empty" = "아직 목록이 없어요. 아래에서 링크로 추가할 수 있어요.";
+"communityLists_subscribeFromURL" = "URL로 구독";
 
-"communityLists_addFromURL" = "URL로 목록 추가";
-
-"communityLists_footer" = "목록은 매일 업데이트를 확인해요. 켜진 목록은 AI 필터링처럼 알 수 없는 발신자의 메시지를 필터링해요.";
+"communityLists_footer" = "커뮤니티 목록은 다른 사람들이 만들어 공유한 필터 목록이에요. 켜진 목록은 알 수 없는 발신자의 메시지를 스팸, 거래 또는 프로모션 폴더로 보내고, 주기적으로 업데이트돼요. 기존 필터는 계속 적용돼요.";
 
 "communityLists_createList" = "목록 만들기";
 
 "communityLists_submitList" = "목록 제출하기";
 
-"communityLists_urlPlaceholder" = "목록 URL";
+"a11y_communityLists_urlField" = "목록 URL";
 
-"communityLists_urlHint" = "목록 페이지에서 .sfsfilters 파일 링크를 붙여넣으세요.";
+"communityLists_urlHint" = "목록 URL을 붙여넣으세요.";
 
 "communityLists_preview" = "미리보기";
 
@@ -640,17 +638,41 @@
 
 "communityLists_subscribe" = "구독";
 
-"communityLists_error_invalidLink" = "https://로 시작하는 링크를 입력하세요.";
+"communityLists_error_invalidURL" = "https://로 시작하는 URL을 입력하세요.";
 
 "communityLists_error_alreadySubscribed" = "이 목록은 이미 커뮤니티 목록에 있어요.";
 
 "communityLists_error_offline" = "오프라인 상태예요. 인터넷에 연결한 후 다시 시도하세요.";
 
-"communityLists_error_notAList" = "이 링크는 Simply Filter SMS 목록이 아니에요.";
+"communityLists_error_notAList" = "이 URL은 Simply Filter SMS 목록이 아니에요.";
 
-"communityLists_error_invalidLocale" = "이 목록에는 대상 언어와 국가가 지정되어 있지 않아 추가할 수 없어요.";
+"communityLists_error_invalidLocale" = "이 목록에는 언어와 국가가 없어서 구독할 수 없어요.";
 
-"communityLists_error_subscribeFailed" = "목록을 추가할 수 없어요. 나중에 다시 시도하세요.";
+"communityLists_error_subscribeFailed" = "목록을 구독할 수 없어요. 나중에 다시 시도하세요.";
+
+"a11y_communityLists_showDescription" = "설명 보기";
+
+"a11y_communityLists_hideDescription" = "설명 숨기기";
+
+"autoFilter_errorTitle" = "목록을 사용할 수 없어요";
+
+"autoFilter_offlineTitle" = "오프라인 상태예요";
+
+"filterList_empty_denied" = "차단 텍스트 없음";
+
+"filterList_empty_allowed" = "허용 텍스트 없음";
+
+"filterList_empty_deniedLanguage" = "차단된 언어 없음";
+
+"communityLists_error_missingName" = "이 목록에는 이름이 없어서 구독할 수 없어요.";
+
+"communityLists_error_missingDescription" = "이 목록에는 설명이 없어서 구독할 수 없어요.";
+
+"communityLists_error_missingAuthor" = "이 목록에는 작성자가 없어서 구독할 수 없어요.";
+
+"communityLists_error_invalidHomepage" = "이 목록에는 https:// 홈페이지가 없어서 구독할 수 없어요.";
+
+"communityLists_byAuthor" = "%@ 제작";
 
 "whatsNew_communityLists_title" = "커뮤니티 목록";
 

@@ -89,6 +89,11 @@ extension Date {
         let a = calendar.dateComponents([.day], from: date1, to: date2)
         return a.value(for: .day)!
     }
+
+    var lastUpdatedText: String {
+        let updatedDate = self.formatted(date: .numeric, time: .shortened)
+        return String(format: "autoFilter_lastUpdated"~, updatedDate)
+    }
 }
 
 extension FileManager {
@@ -100,6 +105,10 @@ extension FileManager {
 }
 
 extension String {
+    var isBlank: Bool {
+        return self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     var highlightedAsRegex: AttributedString {
         let nsAttr = NSMutableAttributedString(string: self)
         let nsLen = (self as NSString).length
@@ -273,14 +282,22 @@ extension View {
 extension CommunityListPreviewError {
     var message: String {
         switch self {
-        case .invalidLink:
-            return "communityLists_error_invalidLink"~
+        case .invalidURL:
+            return "communityLists_error_invalidURL"~
         case .alreadySubscribed:
             return "communityLists_error_alreadySubscribed"~
         case .offline:
             return "communityLists_error_offline"~
         case .notAList:
             return "communityLists_error_notAList"~
+        case .missingName:
+            return "communityLists_error_missingName"~
+        case .missingDescription:
+            return "communityLists_error_missingDescription"~
+        case .missingAuthor:
+            return "communityLists_error_missingAuthor"~
+        case .invalidHomepage:
+            return "communityLists_error_invalidHomepage"~
         case .invalidLocale:
             return "communityLists_error_invalidLocale"~
         }

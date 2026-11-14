@@ -32,6 +32,7 @@ struct CommunityListItem: Identifiable, Equatable {
     let url: String
     let name: String
     let description: String?
+    let author: String?
     let homepage: URL?
     let locale: Locale?
     let cacheSection: FilterListsCacheSection?
@@ -39,20 +40,28 @@ struct CommunityListItem: Identifiable, Equatable {
     let isCurated: Bool
 }
 
-enum CommunityListPreviewError: Error, Equatable {
-    case invalidLink, alreadySubscribed, offline, notAList, invalidLocale
+enum CommunityListPreviewError: Error, Equatable, CaseIterable {
+    case invalidURL, alreadySubscribed, offline, notAList, missingName, missingDescription, missingAuthor, invalidHomepage, invalidLocale
 }
 
 extension CommunityListItem {
     init(url: String, catalogEntry: FilterListCatalogEntry?, cacheSection: FilterListsCacheSection?, isActive: Bool) {
         let payload = cacheSection?.payload
-        let homepage = catalogEntry?.homepage ?? payload?.homepage
-        let locale = catalogEntry?.locale ?? payload?.locale
         self.url = url
-        self.name = catalogEntry?.name ?? FilterExportPayload.displayName(name: payload?.name, url: url)
-        self.description = catalogEntry?.description ?? payload?.description
-        self.homepage = Self.homepageURL(from: homepage)
-        self.locale = Locale.listLocale(from: locale)
+        if let catalogEntry {
+            self.name = catalogEntry.name
+            self.description = catalogEntry.description
+            self.author = catalogEntry.author
+            self.homepage = Self.homepageURL(from: catalogEntry.homepage)
+            self.locale = Locale.listLocale(from: catalogEntry.locale)
+        }
+        else {
+            self.name = FilterExportPayload.displayName(name: payload?.name, url: url)
+            self.description = payload?.description
+            self.author = payload?.author
+            self.homepage = Self.homepageURL(from: payload?.homepage)
+            self.locale = Locale.listLocale(from: payload?.locale)
+        }
         self.cacheSection = cacheSection
         self.isActive = isActive
         self.isCurated = catalogEntry != nil

@@ -168,7 +168,7 @@ class FilterListManager: FilterListManagerProtocol {
     func previewCommunityList(at url: URL) async -> Result<CommunityListItem, CommunityListPreviewError> {
         guard url.scheme?.lowercased() == "https", url.host != nil else {
             Log.debug("community list link isn't https, url: \(url.absoluteString) → refused")
-            return .failure(.invalidLink)
+            return .failure(.invalidURL)
         }
         let isListed = self.communityLists.contains(where: { $0.url == url.absoluteString })
         guard !isListed else {
@@ -185,9 +185,9 @@ class FilterListManager: FilterListManagerProtocol {
             Log.debug("community list preview failed, url: \(url.absoluteString)")
             return .failure(.notAList)
         }
-        guard Locale.listLocale(from: downloadedList.locale) != nil else {
-            Log.debug("community list has no valid locale, url: \(url.absoluteString), locale: \(downloadedList.locale ?? "nil") → refused")
-            return .failure(.invalidLocale)
+        if let missingField = Self.missingField(in: downloadedList) {
+            Log.debug("community list is missing a field, url: \(url.absoluteString), field: \(missingField) → refused")
+            return .failure(missingField)
         }
         Log.debug("community list previewed, url: \(url.absoluteString), records: \(downloadedList.filters.count)")
         let cacheSection = FilterListsCacheSection(url: url.absoluteString, etag: downloadedETag, payload: downloadedList)
@@ -267,6 +267,10 @@ class FilterListManager: FilterListManagerProtocol {
             Log.debug("cached catalog is older, version: \(cachedCatalog.version), current: \(FilterListCatalogResponse.currentVersion) → not checked")
             return false
         }
+        guard !cachedCatalog.lists.isEmpty else {
+            Log.debug("cached catalog has no lists → not checked")
+            return false
+        }
         guard let lastCheckDate = self.filterListsLastUpdated else { return false }
         return lastCheckDate.daysBetween(date: Date()) == 0
     }
@@ -326,6 +330,15 @@ class FilterListManager: FilterListManagerProtocol {
         let cachedSnapshot = persistenceManager.cachedFilterLists()
         guard let revalidatedCatalog = await self.fetchCatalog(revalidating: cachedSnapshot, service: filterListService) else { return }
         let (catalog, catalogETag) = revalidatedCatalog
+        let cachedCuratedURLs = cachedSnapshot?.catalog.curatedCommunityListURLs ?? []
+        let removedCuratedURLs = cachedCuratedURLs.filter { !catalog.curatedCommunityListURLs.contains($0) }
+        if !removedCuratedURLs.isEmpty {
+            for url in removedCuratedURLs {
+                Log.debug("curated list left the catalog, url: \(url) → removed")
+                persistenceManager.deleteCommunityListRecords(for: url)
+            }
+            _ = persistenceManager.commitAndAnnounce()
+        }
         let communityURLs = persistenceManager.fetchCommunityListRecords().compactMap(\.url)
         let (revalidatedLists, hasFailedLists) = await self.fetchLists(in: catalog,
                                                                        communityURLs: communityURLs,
@@ -334,8 +347,10 @@ class FilterListManager: FilterListManagerProtocol {
 
         let refreshedSnapshot = FilterListsSnapshot(catalogETag: catalogETag, catalog: catalog, lists: revalidatedLists)
         let hasSnapshotChanged = refreshedSnapshot != cachedSnapshot
-        let hasNewFilters = Self.hasNewFilters(from: cachedSnapshot, to: refreshedSnapshot)
-        Log.debug("refreshed, lists: \(revalidatedLists.count), changed: \(hasSnapshotChanged), newFilters: \(hasNewFilters), failures: \(hasFailedLists)")
+        let updatedListURLs = Self.updatedListURLs(from: cachedSnapshot, to: refreshedSnapshot)
+        let hasRemovedLists = Self.hasRemovedLists(from: cachedSnapshot, to: refreshedSnapshot)
+        let updatedActiveEntryType = self.updatedActiveEntryType(for: updatedListURLs, in: catalog)
+        Log.debug("refreshed, lists: \(revalidatedLists.count), changed: \(hasSnapshotChanged), updated: \(updatedListURLs.count), removed: \(hasRemovedLists), updatedActive: \(updatedActiveEntryType?.rawValue ?? "none"), failures: \(hasFailedLists)")
 
         guard hasSnapshotChanged else {
             if !hasFailedLists {
@@ -351,9 +366,22 @@ class FilterListManager: FilterListManagerProtocol {
             Log.error("saving the cache failed")
             return
         }
-        if hasNewFilters {
-            NotificationCenter.default.post(name: .filterListsUpdated, object: nil)
+        if !updatedListURLs.isEmpty || hasRemovedLists {
+            NotificationCenter.default.post(name: .filterListsUpdated, object: updatedActiveEntryType)
         }
+    }
+
+    private func updatedActiveEntryType(for updatedListURLs: Set<String>, in catalog: FilterListCatalogResponse) -> FilterListCatalogEntryType? {
+        guard let persistenceManager = self.persistenceManager, !updatedListURLs.isEmpty else { return nil }
+
+        let activeLanguageRecords = persistenceManager.fetchAutomaticFiltersLanguageRecords().filter(\.isActive)
+        let activeLanguages = Set(activeLanguageRecords.compactMap(\.lang))
+        let activeAIFilteringURLs = Set(catalog.aiFilteringEntriesByURL(activeLanguages: activeLanguages).keys)
+        let activeCommunityURLs = Self.activeURLs(in: persistenceManager.fetchCommunityListRecords())
+        let hasUpdatedAIFilteringList = !updatedListURLs.intersection(activeAIFilteringURLs).isEmpty
+        let hasUpdatedCommunityList = !updatedListURLs.intersection(activeCommunityURLs).isEmpty
+
+        return hasUpdatedAIFilteringList ? .aiFilteringLanguage : hasUpdatedCommunityList ? .curatedCommunityList : nil
     }
 
     private func fetchCatalog(revalidating cachedSnapshot: FilterListsSnapshot?,
@@ -417,7 +445,7 @@ class FilterListManager: FilterListManagerProtocol {
             case .modified(let downloadedList, let downloadedETag):
                 let downloadedSection = FilterListsCacheSection(url: listURL.absoluteString, etag: downloadedETag, payload: downloadedList)
                 revalidatedLists.append(downloadedSection)
-                Log.debug("list downloaded, list: \(listName), revision: \(downloadedList.revision), records: \(downloadedList.filters.count), sentETag: \(cachedSection?.etag), newETag: \(downloadedETag)")
+                Log.debug("list downloaded, list: \(listName), records: \(downloadedList.filters.count), sentETag: \(cachedSection?.etag), newETag: \(downloadedETag)")
             case .notModified:
                 if let cachedSection = cachedSection {
                     revalidatedLists.append(cachedSection)
@@ -435,29 +463,40 @@ class FilterListManager: FilterListManagerProtocol {
         return (revalidatedLists, hasFailedLists)
     }
 
+    private static func missingField(in payload: FilterExportPayload) -> CommunityListPreviewError? {
+        guard payload.name?.isBlank == false else { return .missingName }
+        guard payload.description?.isBlank == false else { return .missingDescription }
+        guard payload.author?.isBlank == false else { return .missingAuthor }
+        guard CommunityListItem.homepageURL(from: payload.homepage) != nil else { return .invalidHomepage }
+        guard Locale.listLocale(from: payload.locale) != nil else { return .invalidLocale }
+        return nil
+    }
+
     private static func activeURLs(in communityListRecords: [CommunityList]) -> Set<String> {
         return Set(communityListRecords.filter(\.isActive).compactMap(\.url))
     }
 
-    private static func hasNewFilters(from cachedSnapshot: FilterListsSnapshot?, to refreshedSnapshot: FilterListsSnapshot) -> Bool {
+    private static func updatedListURLs(from cachedSnapshot: FilterListsSnapshot?, to refreshedSnapshot: FilterListsSnapshot) -> Set<String> {
         let cachedLists = cachedSnapshot?.lists ?? []
-        guard cachedLists.count == refreshedSnapshot.lists.count else { return true }
+        var updatedListURLs: Set<String> = []
 
         for refreshedList in refreshedSnapshot.lists {
-            guard let cachedList = cachedLists.first(where: { $0.url == refreshedList.url }) else { return true }
-
-            if let refreshedRevision = refreshedList.payload.revision,
-               let cachedRevision = cachedList.payload.revision {
-
-                if refreshedRevision > cachedRevision {
-                    return true
-                }
+            guard let cachedList = cachedLists.first(where: { $0.url == refreshedList.url }) else {
+                updatedListURLs.insert(refreshedList.url)
+                continue
             }
-            else if refreshedList.payload.filters != cachedList.payload.filters {
-                return true
+
+            if refreshedList.payload.filters != cachedList.payload.filters {
+                updatedListURLs.insert(refreshedList.url)
             }
         }
 
-        return false
+        return updatedListURLs
+    }
+
+    private static func hasRemovedLists(from cachedSnapshot: FilterListsSnapshot?, to refreshedSnapshot: FilterListsSnapshot) -> Bool {
+        let cachedListURLs = Set((cachedSnapshot?.lists ?? []).map(\.url))
+        let refreshedListURLs = Set(refreshedSnapshot.lists.map(\.url))
+        return !cachedListURLs.isSubset(of: refreshedListURLs)
     }
 }
