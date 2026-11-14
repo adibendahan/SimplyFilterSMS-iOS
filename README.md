@@ -39,6 +39,9 @@ Create powerful pattern-matching filters using regular expressions for precise, 
 ### AI Filtering
 AI-built filter lists for 10 languages: English, Hebrew, Spanish, French, German, Italian, Portuguese, Arabic, Japanese and Korean. The lists update automatically.
 
+### Community Lists
+Subscribe to filter lists made by the community, or to any list by its URL. Lists update automatically. Learn how to [create and submit a list](https://adibendahan.github.io/SimplyFilterSMS-iOS/).
+
 ### Smart Filters
 Easily filter messages from short/email/all unknown senders, containing links or emojis, or allow senders with phone numbers only.
 
@@ -123,7 +126,7 @@ On the home screen, tap the ••• button at the top right, then **Filter Too
 When you get an SMS from a number that isn't in Contacts, Simply Filter SMS checks it in this order:
 
 * **Allowed Texts** always get through.
-* **Blocked Texts**, blocked languages, Smart Filters, Trusted Countries, and **AI Filtering** can send it to Junk, Transactions, or Promotions.
+* **Blocked Texts**, blocked languages, Smart Filters, Trusted Countries, **AI Filtering** and **Community Lists** can send it to Junk, Transactions, or Promotions.
 * If nothing matches, the message is delivered normally.
 
 iMessage and senders in Contacts are never sent to the app.
