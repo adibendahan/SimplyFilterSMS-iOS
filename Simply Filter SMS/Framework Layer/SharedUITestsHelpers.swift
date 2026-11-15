@@ -11,6 +11,10 @@ extension ProcessInfo {
     var isInTestingMode: Bool {
         return arguments.contains("-Testing")
     }
+
+    var isUsingUITestData: Bool {
+        return arguments.contains("-UITestData")
+    }
 }
 
 #if DEBUG
@@ -51,4 +55,16 @@ enum TestIdentifier: String {
     case testBodyInput = "testBodyInput"
     case countryAllowlistButton = "countryAllowlistButton"
     case countryRow = "countryRow"
+    case allUnknownToggle = "allUnknownToggle"
+    case linksToggle = "linksToggle"
+    case numbersOnlyToggle = "numbersOnlyToggle"
+    case shortSenderToggle = "shortSenderToggle"
+    case emailToggle = "emailToggle"
+    case emojisToggle = "emojisToggle"
+    case countryAllowlistToggle = "countryAllowlistToggle"
+    case testResultAllowed = "testResultAllowed"
+    case testResultJunk = "testResultJunk"
+    case testResultPromotion = "testResultPromotion"
+    case testResultTransaction = "testResultTransaction"
+    case transferConfirmButton = "transferConfirmButton"
 }

@@ -1,0 +1,20 @@
+{
+  "appVersion": "4.0.0",
+  "author": "Simply Filter SMS UI Tests",
+  "description": "Always allows SchoolOffice.",
+  "exportedAt": "2026-11-15T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "matching": "exact",
+      "target": "sender",
+      "text": "SchoolOffice",
+      "type": "allow"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://adibendahan.github.io/SimplyFilterSMS-iOS/",
+  "locale": "en-US",
+  "name": "UI Test Trusted Senders",
+  "version": 2
+}

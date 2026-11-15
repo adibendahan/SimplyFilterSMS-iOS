@@ -79,6 +79,7 @@ struct FilterTransferPreviewView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(self.model.selectedCount == 0 || self.model.exportFile != nil)
+                    .accessibilityIdentifier(TestIdentifier.transferConfirmButton.rawValue)
                 }
             }
         }

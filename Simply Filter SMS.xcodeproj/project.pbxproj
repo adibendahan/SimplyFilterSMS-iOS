@@ -84,6 +84,11 @@
 		698811B030A62DC300CE2BFF /* CommunityListsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698811AF30A62DC300CE2BFF /* CommunityListsViewModelTests.swift */; };
 		698811B230A6708900CE2BFF /* CommunityListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698811B130A6708900CE2BFF /* CommunityListRowView.swift */; };
 		698811B430A67F3300CE2BFF /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698811B330A67F3300CE2BFF /* SafariView.swift */; };
+		698D9A2130A9126900B06561 /* FiltersTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698D9A2030A9126900B06561 /* FiltersTestCase.swift */; };
+		698D9A2330A91BCF00B06561 /* SmartFiltersTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698D9A2230A91BCF00B06561 /* SmartFiltersTestCase.swift */; };
+		698D9A2530A91D3400B06561 /* AIFilteringTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698D9A2430A91D3400B06561 /* AIFilteringTestCase.swift */; };
+		698D9A2730A91E4F00B06561 /* CommunityListsTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698D9A2630A91E4F00B06561 /* CommunityListsTestCase.swift */; };
+		698D9A2930A9202B00B06561 /* FilterTransferTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698D9A2830A9202B00B06561 /* FilterTransferTestCase.swift */; };
 		698FBAFE27B44A0700435699 /* NetworkSyncManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698FBAFD27B44A0700435699 /* NetworkSyncManagerProtocol.swift */; };
 		698FBB0027B4629800435699 /* mock_NetworkSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698FBAFF27B4629800435699 /* mock_NetworkSyncManager.swift */; };
 		699F55802778BB3100AD7C64 /* AddFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699F557F2778BB3100AD7C64 /* AddFilterView.swift */; };
@@ -320,6 +325,11 @@
 		698811AF30A62DC300CE2BFF /* CommunityListsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityListsViewModelTests.swift; sourceTree = "<group>"; };
 		698811B130A6708900CE2BFF /* CommunityListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityListRowView.swift; sourceTree = "<group>"; };
 		698811B330A67F3300CE2BFF /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
+		698D9A2030A9126900B06561 /* FiltersTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersTestCase.swift; sourceTree = "<group>"; };
+		698D9A2230A91BCF00B06561 /* SmartFiltersTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFiltersTestCase.swift; sourceTree = "<group>"; };
+		698D9A2430A91D3400B06561 /* AIFilteringTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIFilteringTestCase.swift; sourceTree = "<group>"; };
+		698D9A2630A91E4F00B06561 /* CommunityListsTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityListsTestCase.swift; sourceTree = "<group>"; };
+		698D9A2830A9202B00B06561 /* FilterTransferTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTransferTestCase.swift; sourceTree = "<group>"; };
 		698FBAFD27B44A0700435699 /* NetworkSyncManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSyncManagerProtocol.swift; sourceTree = "<group>"; };
 		698FBAFF27B4629800435699 /* mock_NetworkSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mock_NetworkSyncManager.swift; sourceTree = "<group>"; };
 		699F557F2778BB3100AD7C64 /* AddFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFilterView.swift; sourceTree = "<group>"; };
@@ -514,6 +524,11 @@
 				696398DD285D308300FCE865 /* TestApplication.swift */,
 				696398DF285D30C300FCE865 /* UITestsHelpers.swift */,
 				691AA73D2855174500FCA4AF /* SnapshotHelper.swift */,
+				698D9A2030A9126900B06561 /* FiltersTestCase.swift */,
+				698D9A2230A91BCF00B06561 /* SmartFiltersTestCase.swift */,
+				698D9A2430A91D3400B06561 /* AIFilteringTestCase.swift */,
+				698D9A2630A91E4F00B06561 /* CommunityListsTestCase.swift */,
+				698D9A2830A9202B00B06561 /* FilterTransferTestCase.swift */,
 			);
 			path = "UI Tests";
 			sourceTree = "<group>";
@@ -1024,9 +1039,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				698322832F50AD35008FFD1D /* XCUIElementExtensions.swift in Sources */,
+				698D9A2530A91D3400B06561 /* AIFilteringTestCase.swift in Sources */,
+				698D9A2330A91BCF00B06561 /* SmartFiltersTestCase.swift in Sources */,
 				696398E0285D30C300FCE865 /* UITestsHelpers.swift in Sources */,
+				698D9A2130A9126900B06561 /* FiltersTestCase.swift in Sources */,
 				696398DE285D308300FCE865 /* TestApplication.swift in Sources */,
 				696398E2285D311700FCE865 /* ApplicationTestCase.swift in Sources */,
+				698D9A2930A9202B00B06561 /* FilterTransferTestCase.swift in Sources */,
+				698D9A2730A91E4F00B06561 /* CommunityListsTestCase.swift in Sources */,
 				691AA733285508EC00FCA4AF /* SnapshotsTestCase.swift in Sources */,
 				691AA73E2855174500FCA4AF /* SnapshotHelper.swift in Sources */,
 				26CEB1BC9A69CF65DC2CCE90 /* Constants.swift in Sources */,

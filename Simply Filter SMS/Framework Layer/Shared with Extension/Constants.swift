@@ -34,7 +34,14 @@ let currentWhatsNewVersion = 7
 // URLs
 extension URL {
     static let appBaseURL = URL(string: "https://grizz-apps-dev.s3.us-east-2.amazonaws.com")!
-    static let filterListCatalogURL = URL.appBaseURL.appendingPathComponent("simply-filter-sms/4.0.0/catalog.json")
+    static let filterListCatalogURL: URL = {
+        #if DEBUG
+        guard !ProcessInfo.processInfo.isUsingUITestData else {
+            return URL.appBaseURL.appendingPathComponent("simply-filter-sms/ui-tests/catalog.json")
+        }
+        #endif // DEBUG
+        return URL.appBaseURL.appendingPathComponent("simply-filter-sms/4.0.0/catalog.json")
+    }()
     static let pagesBaseURL = URL(string: "https://adibendahan.github.io")!
     static let communityListGuideURL = URL.pagesBaseURL.appendingPathComponent("SimplyFilterSMS-iOS/", isDirectory: true)
     static let communityListProposalURL = URL.pagesBaseURL.appendingPathComponent("SimplyFilterSMS-iOS/submit/", isDirectory: true)
@@ -512,6 +519,25 @@ enum SmartFilterType: Int64, CaseIterable, Equatable, Identifiable {
 
     var isDestructive: Bool {
         return self == .allUnknown
+    }
+
+    var testIdentifier: TestIdentifier {
+        switch self {
+        case .allUnknown:
+            return .allUnknownToggle
+        case .links:
+            return .linksToggle
+        case .numbersOnly:
+            return .numbersOnlyToggle
+        case .shortSender:
+            return .shortSenderToggle
+        case .email:
+            return .emailToggle
+        case .emojis:
+            return .emojisToggle
+        case .countryAllowlist:
+            return .countryAllowlistToggle
+        }
     }
 }
 

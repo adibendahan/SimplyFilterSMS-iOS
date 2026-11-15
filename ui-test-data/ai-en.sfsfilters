@@ -1,0 +1,31 @@
+{
+  "appVersion": "4.0.0",
+  "exportedAt": "2026-11-15T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "junk",
+      "matching": "contains",
+      "target": "body",
+      "text": "winner prize",
+      "type": "deny"
+    },
+    {
+      "folder": "transaction",
+      "matching": "regex",
+      "target": "body",
+      "text": "(?i)verification code \\d{6}",
+      "type": "deny"
+    },
+    {
+      "case": "insensitive",
+      "matching": "exact",
+      "target": "sender",
+      "text": "TrustedBank",
+      "type": "allow"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "name": "AI Filtering · English",
+  "version": 2
+}

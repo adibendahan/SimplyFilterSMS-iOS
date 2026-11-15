@@ -1,0 +1,38 @@
+{
+  "format": "simply-filter-sms-catalog",
+  "version": 2,
+  "lists": [
+    {
+      "id": "ai-en",
+      "name": "English",
+      "url": "ai-en.sfsfilters",
+      "language": "en",
+      "type": "ai-filtering-language"
+    },
+    {
+      "id": "ai-he",
+      "name": "Hebrew",
+      "url": "ai-he.sfsfilters",
+      "language": "he",
+      "type": "ai-filtering-language"
+    },
+    {
+      "id": "ui-test-promotions",
+      "name": "UI Test Promotions",
+      "url": "https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/ui-tests/community-deny.sfsfilters",
+      "type": "curated-community-list",
+      "locale": "en-US",
+      "description": "Sends crypto bonus offers to Promotions.",
+      "author": "Simply Filter SMS UI Tests"
+    },
+    {
+      "id": "ui-test-trusted",
+      "name": "UI Test Trusted Senders",
+      "url": "https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/ui-tests/community-allow.sfsfilters",
+      "type": "curated-community-list",
+      "locale": "en-US",
+      "description": "Always allows SchoolOffice.",
+      "author": "Simply Filter SMS UI Tests"
+    }
+  ]
+}

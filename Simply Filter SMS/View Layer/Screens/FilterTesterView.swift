@@ -118,6 +118,7 @@ struct FilterTesterView: View {
                     }
                     .tint(.primary)
                     .accessibilityLabel("general_close"~)
+                    .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
                     .contentShape(Rectangle())
                 }
             }

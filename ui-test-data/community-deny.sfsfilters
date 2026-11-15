@@ -1,0 +1,21 @@
+{
+  "appVersion": "4.0.0",
+  "author": "Simply Filter SMS UI Tests",
+  "description": "Sends crypto bonus offers to Promotions.",
+  "exportedAt": "2026-11-15T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "promotion",
+      "matching": "contains",
+      "target": "body",
+      "text": "crypto bonus",
+      "type": "deny"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://adibendahan.github.io/SimplyFilterSMS-iOS/",
+  "locale": "en-US",
+  "name": "UI Test Promotions",
+  "version": 2
+}

@@ -63,42 +63,13 @@ class AppManager: AppManagerProtocol {
         if UIApplication.shared.isInTestingMode {
             defaultsManager.reset()
             persistenceManager.resetContainer()
-            let testingLanguages = ["en", "he", "ar", "es", "fr", "pt", "de", "ja", "ko", "it"]
-            var catalogEntries: [FilterListCatalogEntry] = []
-            var cacheSections: [FilterListsCacheSection] = []
-
-            for language in testingLanguages {
-                let fileName = "\(language).sfsfilters"
-                let catalogEntry = FilterListCatalogEntry(id: "ai-\(language)",
-                                                          name: language,
-                                                          url: fileName,
-                                                          language: language)
-                guard let listURL = catalogEntry.resolvedURL else { continue }
-                let listPayload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
-                                                      version: FilterExportPayload.currentVersion,
-                                                      exportedAt: Date(),
-                                                      appVersion: appVersion,
-                                                      name: language,
-                                                      description: nil,
-                                                      author: nil,
-                                                      homepage: nil,
-                                                      locale: nil,
-                                                      filters: [],
-                                                      forceClearBeforeImport: nil)
-                let cacheSection = FilterListsCacheSection(url: listURL.absoluteString,
-                                                           etag: nil,
-                                                           payload: listPayload)
-                catalogEntries.append(catalogEntry)
-                cacheSections.append(cacheSection)
-            }
-
-            let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
-                                                    version: FilterListCatalogResponse.currentVersion,
-                                                    lists: catalogEntries)
-            let testingSnapshot = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: cacheSections)
-            _ = persistenceManager.saveCache(testingSnapshot)
-            Log.debug("testing mode, emptyAIListsSeeded: \(cacheSections.count) → data reset")
             defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
+            if ProcessInfo.processInfo.isUsingUITestData {
+                Log.debug("testing mode, uiTestData: \(URL.filterListCatalogURL) → data reset")
+            }
+            else {
+                self.seedEmptyAIListsForTesting()
+            }
         }
         #endif // DEBUG
     }
@@ -155,6 +126,49 @@ class AppManager: AppManagerProtocol {
         self.schedulingManager.reset()
     }
     #endif // DEBUG
+
+
+    //MARK: - Private -
+    #if DEBUG
+    private func seedEmptyAIListsForTesting() {
+        let testingLanguages = ["en", "he", "ar", "es", "fr", "pt", "de", "ja", "ko", "it"]
+        var catalogEntries: [FilterListCatalogEntry] = []
+        var cacheSections: [FilterListsCacheSection] = []
+
+        for language in testingLanguages {
+            let fileName = "\(language).sfsfilters"
+            let catalogEntry = FilterListCatalogEntry(id: "ai-\(language)",
+                                                      name: language,
+                                                      url: fileName,
+                                                      language: language)
+            guard let listURL = catalogEntry.resolvedURL else { continue }
+            let listPayload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                                  version: FilterExportPayload.currentVersion,
+                                                  exportedAt: Date(),
+                                                  appVersion: appVersion,
+                                                  name: language,
+                                                  description: nil,
+                                                  author: nil,
+                                                  homepage: nil,
+                                                  locale: nil,
+                                                  filters: [],
+                                                  forceClearBeforeImport: nil)
+            let cacheSection = FilterListsCacheSection(url: listURL.absoluteString,
+                                                       etag: nil,
+                                                       payload: listPayload)
+            catalogEntries.append(catalogEntry)
+            cacheSections.append(cacheSection)
+        }
+
+        let catalog = FilterListCatalogResponse(format: FilterListCatalogResponse.formatIdentifier,
+                                                version: FilterListCatalogResponse.currentVersion,
+                                                lists: catalogEntries)
+        let testingSnapshot = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: cacheSections)
+        _ = self.persistenceManager.saveCache(testingSnapshot)
+        Log.debug("testing mode, emptyAIListsSeeded: \(cacheSections.count) → data reset")
+    }
+    #endif // DEBUG
+
 
     //MARK: - Previews -
     static private var inMemoryManager = AppManager(inMemory: true)

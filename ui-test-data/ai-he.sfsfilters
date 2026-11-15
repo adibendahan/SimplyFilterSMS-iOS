@@ -1,0 +1,17 @@
+{
+  "appVersion": "4.0.0",
+  "exportedAt": "2026-11-15T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "junk",
+      "matching": "contains",
+      "target": "body",
+      "text": "הלוואה מיידית",
+      "type": "deny"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "name": "AI Filtering · Hebrew",
+  "version": 2
+}

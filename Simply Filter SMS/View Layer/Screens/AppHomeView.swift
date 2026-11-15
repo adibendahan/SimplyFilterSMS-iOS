@@ -302,6 +302,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         AdaptiveToggle(isOn: $model.rules[index].state) {
             smartFilterLabel(index: index, rule: rule, isDisabled: isDisabled)
         }
+        .accessibilityIdentifier(rule.testIdentifier.rawValue)
     }
 
     @ViewBuilder
