@@ -10,8 +10,6 @@ import XCTest
 struct FilterTransferScreen: Screen {
     let app: XCUIApplication
 
-    private let exportTitle = "Export Filters"
-    private let importTitle = "Import Filters"
     private let saveToFiles = "Save to Files"
 
     private var confirmButton: XCUIElement {
@@ -20,7 +18,7 @@ struct FilterTransferScreen: Screen {
 
     func exportToFiles(named fileName: String) {
         self.step("Export all filters to \(fileName)") {
-            self.openFilterTool(self.exportTitle)
+            self.openFilterTool(.exportFilters)
             self.confirmButton.tap()
             let saveToFiles = self.app.cells[self.saveToFiles].firstMatch
             let fileNameField = self.app.textFields["DOCPicker.filenameTextField"].firstMatch
@@ -44,7 +42,7 @@ struct FilterTransferScreen: Screen {
 
     func importFromFiles(named fileName: String) {
         self.step("Import all filters from \(fileName)") {
-            self.openFilterTool(self.importTitle)
+            self.openFilterTool(.importFilters)
             let file = self.app.cells.matching(NSPredicate(format: "identifier BEGINSWITH %@", fileName)).firstMatch
             XCTAssertTrue(file.waitForExistence(timeout: 10), "\(fileName) is not in the file picker")
             file.tap()

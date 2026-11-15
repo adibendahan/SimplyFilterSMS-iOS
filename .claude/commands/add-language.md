@@ -325,23 +325,11 @@ The site deploys from `master`, so the language goes live when this reaches `mas
 
 ---
 
-## Step 8 — Update snapshot tests
+## Step 8 — Update the App Store screenshots
 
-### 9a. SnapshotsTestCase.swift
-
-Edit `Screenshots Automation/SnapshotsTestCase.swift`. The `addFilter` section uses a `switch langCode` to pick locale-appropriate spam sample text. Add a `case` for the new language:
-
-```swift
-case "<langCode>":
-    addFilterText = "<sample spam word in that language>"
-    addFilterScreenshot = "05.addFilter"
-```
-
-Use a realistic short word that would appear in SMS spam in that locale (e.g. a word for "loan", "promo", "credit", or "win"). `langCode` comes from `Locale.current.languageCode` — use the language portion only (e.g. `"pt"` for `pt-BR`, `"fr"` for `fr`, `"ar"` for `ar`).
-
-### 9b. Fastfile
-
-Edit `fastlane/Fastfile`. Both the `iphone_screenshots` and `ipad_screenshots` lanes have a `languages:` array. Add the BCP-47 code exactly as passed to this skill (e.g. `"fr"`, `"ar"`, `"pt-BR"`) to both lanes.
+1. `Screenshots Automation/Support/StudioLanguage.swift`: add a case with the language's code, its `blockedText` (a short word that appears in SMS spam in that language, e.g. "loan", "promo", "credit") and, if it differs from the code, its `aiFilteringLanguage`.
+2. `screenshots.sh`: add a `LANGUAGES` row: code, `AppleLocale`, App Store Connect folder, English name.
+3. `screenshot-data/<code>/`: copy `parcel.sfsfilters` and `deals.sfsfilters` from `en`, translate `name` and `description`, set `locale`, and give `author` a local name with a hidden wink like the others ("Phil Ter", "Mark.D"; a real-looking name, never an obvious joke). Upload them to `simply-filter-sms/screenshots/<code>/` only when asked.
 
 ---
 

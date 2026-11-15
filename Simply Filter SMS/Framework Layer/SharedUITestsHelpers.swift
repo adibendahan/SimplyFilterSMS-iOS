@@ -15,6 +15,14 @@ extension ProcessInfo {
     var isUsingUITestData: Bool {
         return arguments.contains("-UITestData")
     }
+
+    var isUsingScreenshotData: Bool {
+        return arguments.contains("-ScreenshotData")
+    }
+
+    var shouldSkipFilterListsUpdate: Bool {
+        return self.isInTestingMode && !self.isUsingUITestData && !self.isUsingScreenshotData
+    }
 }
 
 #if DEBUG
@@ -83,4 +91,6 @@ enum TestIdentifier: String {
     case caseInsensitiveOption = "caseInsensitiveOption"
     case caseSensitiveOption = "caseSensitiveOption"
     case filterListLanguageToggle = "filterListLanguageToggle"
+    case communityListExpandButton = "communityListExpandButton"
+    case communityListToggle = "communityListToggle"
 }

@@ -10,12 +10,11 @@ import XCTest
 struct FilterTesterScreen: Screen {
     let app: XCUIApplication
 
-    private let title = "Test Your Filters"
     private let debounce: TimeInterval = 1.5
 
     func expect(_ message: Message, toBe verdict: Verdict, file: StaticString, line: UInt) {
         self.step("\(message) is \(verdict.rawValue)") {
-            self.openFilterTool(self.title)
+            self.openFilterTool(.testYourFilters)
             let bodyInput = self.app.textViews[.testBodyInput]
             self.type(message.body, into: bodyInput)
             self.type(message.sender + "\n", into: self.app.textFields[.testSenderInput])

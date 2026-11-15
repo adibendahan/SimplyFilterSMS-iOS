@@ -1,0 +1,21 @@
+{
+  "appVersion": "4.0.0",
+  "author": "Mark.D",
+  "description": "将商店促销和优惠券短信移至推广信息。",
+  "exportedAt": "2026-11-16T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "promotion",
+      "matching": "contains",
+      "target": "body",
+      "text": "coupon",
+      "type": "deny"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://github.com/markd-deals/store-deals",
+  "locale": "zh-CN",
+  "name": "商店优惠",
+  "version": 2
+}

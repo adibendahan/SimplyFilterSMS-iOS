@@ -1,0 +1,21 @@
+{
+  "appVersion": "4.0.0",
+  "author": "Phil Ter",
+  "description": "拦截冒充包裹、派送和关税的虚假短信。",
+  "exportedAt": "2026-11-16T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "junk",
+      "matching": "contains",
+      "target": "body",
+      "text": "customs fee",
+      "type": "deny"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://github.com/philter-lists/parcel-scams",
+  "locale": "zh-CN",
+  "name": "快递诈骗拦截",
+  "version": 2
+}

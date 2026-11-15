@@ -7,7 +7,7 @@ Guidance for Claude Code in this repository. Only what the code doesn't say; for
 Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with Apple's IdentityLookup. Targets: the app, a Message Filter Extension (allow / junk / transaction / promotion), a Reporting Extension (report from iOS Messages), `Tests`, `Screenshots Automation`, and `Scenario Tests`. Data syncs through Core Data + CloudKit, shared with the extension through the App Group `group.com.grizz.apps.dev.simply-filter-sms`. No package managers.
 
 - **Build and test through Xcode.** New files are added with Xcode's MCP so they join their targets; an existing file's target membership has no MCP tool and is changed by hand in Xcode. Running tests: [docs/TESTS.md](docs/TESTS.md).
-- **`Screenshots Automation` is the App Store screenshot generator** for Fastlane (`testCreateSnapshots`, disabled in the test plan). Don't run it as testing.
+- **`Screenshots Automation` is the App Store screenshot generator,** run only through `./screenshots.sh` (`--help`). Don't run it as testing. It and `Scenario Tests` share `UI Test Kit/`.
 - **Zero flaky or broken tests.** Every unit test passes on every run. A test that fails intermittently or for an environmental reason is fixed or deleted the day it's found, never documented as "known" or left disabled.
 - **Localization:** BartyCrouch normalizes the `.strings` files (`.bartycrouch.toml`).
 

@@ -72,6 +72,7 @@ struct CommunityListRow: View {
             if let isActive = self.isActive {
                 Toggle(self.communityList.name, isOn: isActive)
                     .labelsHidden()
+                    .accessibilityIdentifier(TestIdentifier.communityListToggle.rawValue)
             }
         }
         .padding(.vertical, 6)
@@ -92,6 +93,7 @@ struct CommunityListRow: View {
             }
             .buttonStyle(.borderless)
             .accessibilityLabel(isExpanded.wrappedValue ? "a11y_communityLists_hideDescription"~ : "a11y_communityLists_showDescription"~)
+            .accessibilityIdentifier(TestIdentifier.communityListExpandButton.rawValue)
         } else {
             Color.clear
                 .frame(width: self.chevronColumnWidth, height: 1)

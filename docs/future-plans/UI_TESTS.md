@@ -19,15 +19,16 @@ Done: each test passes on iPhone 18 Pro and iPad Pro 13-inch (M5), iOS 27.2, and
 Not done: Tip Jar, relaunch persistence (`-KeepData` was written and removed again unused), first run, Home counts.
 
 **Layout:** the suite is its own target, `Scenario Tests`, with its own scheme of the same name. It shares nothing with the screenshot target and scheme, `Screenshots Automation`.
-- `Support/`: `ScenarioTestCase` (`launchApp(remoteLists:)`), `SimplyFilterApp` (one property per screen, plus `expect(_:toBe:)`), `Screen` (the shared moves), `XCUIElementQuery+TestIdentifier` (`app.buttons[.addFilterButton]`), `Vocabulary` (`Message`, `Verdict`, `SmartFilter`, `Language`, the Add Filter options, `TestLists`).
+- `UI Test Kit/` (shared with `Screenshots Automation`): `Screen` (the shared moves), `FilterTool`, `Vocabulary` (`Message`, `Verdict`, `SmartFilter`, `Language`, the Add Filter options), the launch and the waits.
+- `Support/`: `ScenarioTestCase` (`launchApp(remoteLists:)`), `SimplyFilterApp` (one property per screen, plus `expect(_:toBe:)`), `Screen+Scenario` (the moves that tap English iOS buttons), `TestLists`.
 - `Screens/`: one type per app screen. Every action starts on Home and ends on Home, and runs as a named step in the test report.
 - `Scenarios/`: the tests, written only against `SimplyFilterApp`.
 
 **Traps found while building:**
 - The Xcode MCP can't set a UI test target's Target Application (`TEST_TARGET_NAME` is rejected) or add a target dependency. The suite launches the app by bundle identifier, and the `Scenario Tests` scheme builds the app and installs it before testing (checked by removing the app from the simulator first). Setting Target Application in Xcode would make this explicit.
-- The only app file the target compiles is `SharedUITestsHelpers.swift`, for `TestIdentifier` (membership ticked by hand in Xcode). `Vocabulary` repeats the English labels the tests tap. The app is launched with `-AppleLanguages (en)`, so the labels hold whatever the simulator's language. A reworded label fails the test that taps it.
+- The only app file the target compiles is `SharedUITestsHelpers.swift`, for `TestIdentifier` (membership ticked by hand in Xcode). The only labels tapped are iOS's own ("Delete", "Done", "Save to Files"), so the app is launched with `-AppleLanguages (en)`.
 - The Filter Tester updates its result 1 s after the last keystroke, so the result for the body alone can show before the sender is typed. A verdict counts only if it's still there 1.5 s after it appears.
-- iOS 27 drops identifiers on submenu buttons (known). Submenu items are tapped by their English label ("Test Your Filters", "Export Filters").
+- iOS 27 drops identifiers on submenu buttons. Submenu items are tapped by their SF Symbol (`FilterTool`).
 - `XCUIApplication.open(_:)` relaunches the app, so a deep link can't be used mid-scenario.
 - A SwiftUI `Toggle` row is a `Switch` containing a smaller `Switch` (the knob). Tap the inner one; a coordinate near the trailing edge misses on iPad.
 - `wait(for:toEqual:timeout:)` fails immediately on an element that doesn't exist yet; `waitForExistence` first.

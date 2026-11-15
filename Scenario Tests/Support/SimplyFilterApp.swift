@@ -23,12 +23,11 @@ final class SimplyFilterApp {
     private let filterTester: FilterTesterScreen
 
     init(remoteLists: RemoteLists) {
-        let app = XCUIApplication(bundleIdentifier: "com.grizz.apps.dev.Simply-Filter-SMS")
-        app.launchArguments = ["-Testing", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        var arguments = ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         if remoteLists == .testCatalog {
-            app.launchArguments.append("-UITestData")
+            arguments.append("-UITestData")
         }
-        app.launch()
+        let app = XCUIApplication.launchSimplyFilter(arguments: arguments)
 
         self.home = HomeScreen(app: app)
         self.allowList = FilterListScreen(app: app, kind: .allow)
@@ -37,7 +36,6 @@ final class SimplyFilterApp {
         self.communityLists = CommunityListsScreen(app: app)
         self.filterTransfer = FilterTransferScreen(app: app)
         self.filterTester = FilterTesterScreen(app: app)
-        self.home.waitUntilReady()
     }
 
     func expect(_ message: Message, toBe verdict: Verdict, file: StaticString = #filePath, line: UInt = #line) {

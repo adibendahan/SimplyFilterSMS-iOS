@@ -335,6 +335,7 @@
 		698D9A7D30AA58C400B06561 /* Screenshots Automation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Screenshots Automation"; sourceTree = "<group>"; };
 		698D9AB730AA58FC00B06561 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		69AC922E30AA1BD400043F04 /* Scenario Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Scenario Tests"; sourceTree = "<group>"; };
+		69EEDB5F30AA6BCD007C4758 /* UI Test Kit */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "UI Test Kit"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -500,6 +501,7 @@
 				E0A81E8001FDB42EF8F1EAF5 /* Reporting Extension */,
 				407284392F6C92D50044C403 /* Classification Report Lambda */,
 				698D9AB730AA58FC00B06561 /* Tests */,
+				69EEDB5F30AA6BCD007C4758 /* UI Test Kit */,
 				698D9A7D30AA58C400B06561 /* Screenshots Automation */,
 				69AC922E30AA1BD400043F04 /* Scenario Tests */,
 				69CD70C72770D4D100F91A2F /* Products */,
@@ -702,6 +704,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				698D9A7D30AA58C400B06561 /* Screenshots Automation */,
+				69EEDB5F30AA6BCD007C4758 /* UI Test Kit */,
 			);
 			name = "Screenshots Automation";
 			productName = "UI Tests";
@@ -743,6 +746,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				69AC922E30AA1BD400043F04 /* Scenario Tests */,
+				69EEDB5F30AA6BCD007C4758 /* UI Test Kit */,
 			);
 			name = "Scenario Tests";
 			packageProductDependencies = (

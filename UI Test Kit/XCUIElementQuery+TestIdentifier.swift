@@ -1,6 +1,6 @@
 //
 //  Element.swift
-//  Scenario Tests
+//  UI Test Kit
 //
 //  Created by Adi Ben-Dahan on 15/11/2026.
 //

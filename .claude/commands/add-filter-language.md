@@ -219,16 +219,9 @@ The bucket is world-readable: never upload anything else. Report success or fail
 
 ---
 
-## Step 8 — Update Fastfile
+## Step 8 — Update the App Store screenshots
 
-Add the new language's locale code to the `languages` array in **both** the `iphone_screenshots` and `ipad_screenshots` lanes in `fastlane/Fastfile`.
-
-**`en-US` must always be last** — this ensures the simulator is left in English after a screenshot run, preventing locale bleed into subsequent test runs.
-
-Example: adding German (`de`) → append `"de"` before `"en-US"`:
-```ruby
-languages: ["he-IL", "ar", "es", "pt-BR", "fr", "de", "en-US"],
-```
+Only if the app is already translated into this language (it's a case in `Screenshots Automation/Support/StudioLanguage.swift`): make that case's `aiFilteringLanguage` return the new list's code. Until then it falls back to `"en"`, and shot 02 would wait for English to be on instead of this language.
 
 ---
 

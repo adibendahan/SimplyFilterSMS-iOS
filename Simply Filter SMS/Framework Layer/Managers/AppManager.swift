@@ -70,6 +70,11 @@ class AppManager: AppManagerProtocol {
             else {
                 self.seedEmptyAIListsForTesting()
             }
+            if ProcessInfo.processInfo.isUsingScreenshotData {
+                Log.debug("testing mode, screenshotData: \(Bundle.main.preferredLocalizations[0]) → debug data loaded")
+                self.debugDataManager.load()
+                self.debugDataManager.expireFilterListsCache()
+            }
             self.flowManager.resetSession()
         }
         #endif // DEBUG

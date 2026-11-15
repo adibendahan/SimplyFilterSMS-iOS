@@ -1,0 +1,21 @@
+{
+  "appVersion": "4.0.0",
+  "author": "מ. מבצעי",
+  "description": "מעבירה מבצעים וקופונים מחנויות לתיקיית קידומי מכירות.",
+  "exportedAt": "2026-11-16T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "promotion",
+      "matching": "contains",
+      "target": "body",
+      "text": "coupon",
+      "type": "deny"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://github.com/markd-deals/store-deals",
+  "locale": "he-IL",
+  "name": "מבצעים בחנויות",
+  "version": 2
+}
