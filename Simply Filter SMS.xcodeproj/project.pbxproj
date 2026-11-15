@@ -11,7 +11,6 @@
 		024A2AE0066259370C23062C /* EnableExtensionStepProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC977832345515DCFE3C478 /* EnableExtensionStepProtocol.swift */; };
 		03418F10C75ED980A337BD31 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constants.swift */; };
 		12227A4C1D1A26B024EE6B90 /* SharedUITestsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696398D6285917D700FCE865 /* SharedUITestsHelpers.swift */; };
-		26CEB1BC9A69CF65DC2CCE90 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DB7013277A1F0200245DBA /* Constants.swift */; };
 		2DCEE00FC930434394E8E9C9 /* ReportSubmitCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80E2346BDC734C15A77001BC /* ReportSubmitCard.swift */; };
 		34A2FE52B4B2F54879E8532B /* SharedExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC2278E01C00037C926 /* SharedExtensions.swift */; };
 		35B7864D116243E34AC005DC /* TipJarManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986FCD84F7D2AE7EDB341A2D /* TipJarManagerProtocol.swift */; };
@@ -48,7 +47,6 @@
 		694A073227760E5800C92D78 /* Simply-Filter-SMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 69CD70D42770D4D100F91A2F /* Simply-Filter-SMS.xcdatamodeld */; };
 		694E1E8B27AEE16D00264524 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694E1E8A27AEE16D00264524 /* Screen.swift */; };
 		695D5BC1278DE4B50037C926 /* FilterListLanguagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D5BC0278DE4B50037C926 /* FilterListLanguagesView.swift */; };
-		696398DA285BBF1C00FCE865 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6941FE15277DE78B00B99539 /* Localizable.strings */; };
 		696B011127A822BE0061FE15 /* AppHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696B011027A822BE0061FE15 /* AppHomeView.swift */; };
 		6973D01D278B537300A173CD /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6973D01C278B537300A173CD /* CloudKit.framework */; };
 		697979A9302E68E5000260F0 /* PersistenceManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AA2C51279D755200CEABE5 /* PersistenceManagerProtocol.swift */; };
@@ -867,7 +865,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				696398DA285BBF1C00FCE865 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -925,7 +922,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				26CEB1BC9A69CF65DC2CCE90 /* Constants.swift in Sources */,
 				48AC7E6DAD727BDDB0387677 /* SharedUITestsHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1231,10 +1227,12 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 202611141433;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 4.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Scenario-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1254,10 +1252,12 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 202611141433;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 4.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.grizz.apps.dev.Simply-Filter-SMS.Scenario-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

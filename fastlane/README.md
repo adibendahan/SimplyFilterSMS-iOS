@@ -15,38 +15,6 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
-### ios iphone_screenshots
-
-```sh
-[bundle exec] fastlane ios iphone_screenshots
-```
-
-Take iPhone screenshots
-
-### ios ipad_screenshots
-
-```sh
-[bundle exec] fastlane ios ipad_screenshots
-```
-
-Take iPad screenshots
-
-### ios screenshots
-
-```sh
-[bundle exec] fastlane ios screenshots
-```
-
-Take all screenshots (iPhone + iPad)
-
-### ios zh_hans_screenshots
-
-```sh
-[bundle exec] fastlane ios zh_hans_screenshots
-```
-
-Take Simplified Chinese screenshots only (iPhone + iPad)
-
 ### ios upload_screenshots
 
 ```sh

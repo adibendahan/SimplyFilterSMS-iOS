@@ -5,17 +5,23 @@ category: Release
 tags: [release, archive, version]
 ---
 
-Prepare a release build: bump version, update build number, archive, and open Xcode Organizer.
+Prepare a release build: run the UI scenarios, bump version, update build number, archive, and open Xcode Organizer.
 
 **Steps**
 
-1. **Read current version**
+1. **Run the UI scenarios**
 
-   Use Grep to find `MARKETING_VERSION` in `Simply Filter SMS.xcodeproj/project.pbxproj`. Identify the current app version (the one matching `X.Y.Z` format like `2.2.0`, NOT the `1.0` used by test targets).
+   Run every test in the `Scenario Tests` scheme through the Xcode MCP (`RunAllTests`, in the background) on the iPhone 18 Pro simulator, then on the iPad Pro 13-inch (M5) simulator. Never on a real device: check the run destination before each run.
+
+   Report the counts from each run's `.xcresult`. If any test fails, stop: show the failures and don't change anything. A failure is a possible bug to report, never a reason to change the app or loosen the test.
+
+2. **Read current version**
+
+   Every target carries the app's version. List the targets with the Xcode MCP's `XcodeListTargets`, then read `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` for each with `GetTargetBuildSettings`. Show the values.
 
    Parse the version into major, minor, and patch components.
 
-2. **Ask for version bump**
+3. **Ask for version bump**
 
    Use the **AskUserQuestion tool** to ask what version to release. Calculate the bumped values from the current version and present these options:
 
@@ -26,7 +32,7 @@ Prepare a release build: bump version, update build number, archive, and open Xc
 
    Show the current version in the question text so the user knows what they're bumping from.
 
-3. **Confirm the change**
+4. **Confirm the change**
 
    Display a clear summary to the user:
 
@@ -36,33 +42,27 @@ Prepare a release build: bump version, update build number, archive, and open Xc
 
    Ask for confirmation before proceeding. If the user declines, stop.
 
-4. **Update MARKETING_VERSION in pbxproj**
+5. **Set MARKETING_VERSION**
 
-   Use the **Edit tool** with `replace_all: true` to replace `MARKETING_VERSION = <old>;` with `MARKETING_VERSION = <new>;` in the pbxproj file.
+   Set `MARKETING_VERSION` to the new version with the Xcode MCP's `UpdateTargetBuildSetting` on every target from step 2. Never edit `project.pbxproj` by hand.
 
-   **IMPORTANT:** Only replace the app/extension version (e.g., `MARKETING_VERSION = 2.2.0;`). Do NOT replace `MARKETING_VERSION = 1.0;` — those belong to test targets. The old version will be in `X.Y.Z` format (3 components) so it won't match `1.0` (2 components).
+   Verify with `GetTargetBuildSettings` that every target reports the new version.
 
-   Verify with Grep that exactly 4 occurrences were updated (Debug + Release for both app and extension targets).
-
-5. **Generate and set CURRENT_PROJECT_VERSION**
+6. **Generate and set CURRENT_PROJECT_VERSION**
 
    Generate a timestamp build number using the format `YYYYMMDDHHmm` (e.g., `202602171430`). Do NOT include seconds.
 
-   Use Grep to find the current `CURRENT_PROJECT_VERSION` value for the app/extension targets (the one with a long numeric timestamp, NOT the `1` used by test targets).
+   Set `CURRENT_PROJECT_VERSION` to it with `UpdateTargetBuildSetting` on every target, then verify each with `GetTargetBuildSettings`.
 
-   Use the **Edit tool** with `replace_all: true` to replace `CURRENT_PROJECT_VERSION = <old>;` with `CURRENT_PROJECT_VERSION = <new>;` in the pbxproj file.
+7. **Archive the build**
 
-   Verify with Grep that exactly 4 occurrences were updated.
-
-6. **Archive the build**
-
-   Use the build number generated in step 5 to create a unique archive name. The archive path format is:
+   Use the build number generated in step 6 to create a unique archive name. The archive path format is:
 
    `~/Library/Developer/Xcode/Archives/YYYY-MM-DD/Simply Filter SMS <version> (<build>).xcarchive`
 
    For example: `Simply Filter SMS 2.2.0 (202602170118).xcarchive`
 
-   Run `xcodebuild archive` via **Bash tool** with a 10-minute timeout:
+   Run `xcodebuild archive` via **Bash tool** with a 10-minute timeout. This is one of the two allowed uses of `xcodebuild` (see `docs/rules/XCODE_AND_TESTS.md`); the Xcode MCP has no archive action:
 
    ```bash
    xcodebuild archive \
@@ -76,9 +76,9 @@ Prepare a release build: bump version, update build number, archive, and open Xc
 
    If the archive fails, show the error output to the user and stop.
 
-7. **Open Xcode Organizer**
+8. **Open Xcode Organizer**
 
-   Run via **Bash tool**, using the same archive path from step 6:
+   Run via **Bash tool**, using the same archive path from step 7:
 
    ```bash
    open "$HOME/Library/Developer/Xcode/Archives/YYYY-MM-DD/Simply Filter SMS <version> (<build>).xcarchive"
@@ -86,7 +86,7 @@ Prepare a release build: bump version, update build number, archive, and open Xc
 
    This opens the archive in Xcode's Organizer window where the user can distribute to App Store Connect.
 
-8. **Generate "What's New" text**
+9. **Generate "What's New" text**
 
    Run `git log develop..HEAD --oneline` via **Bash tool** to get all commits on the current branch since it diverged from `develop`.
 
@@ -97,7 +97,7 @@ Prepare a release build: bump version, update build number, archive, and open Xc
    - Skip commits that are purely internal (planning, CI, refactoring) unless they resulted in a user-visible change.
    - Hebrew text should be natural, right-to-left friendly, and not a word-for-word translation.
 
-9. **Show summary**
+10. **Show summary**
 
    Display a clear summary:
 
@@ -120,9 +120,9 @@ Prepare a release build: bump version, update build number, archive, and open Xc
    ```
 
 **Guardrails**
+- Run the UI scenarios on iPhone and iPad first; a failure stops the release
 - Always confirm version change before modifying files
-- Never modify test target versions (`MARKETING_VERSION = 1.0` and `CURRENT_PROJECT_VERSION = 1`)
-- Verify correct number of replacements (4 each) after editing pbxproj
+- Set versions only through the Xcode MCP, on every target, and verify each after the change
 - Use 10-minute timeout for the archive command
 - If archive fails, do NOT retry — show the error and stop
 - Do NOT commit or push — the user will do that after verifying

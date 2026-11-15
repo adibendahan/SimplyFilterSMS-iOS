@@ -53,16 +53,6 @@
                ReferencedContainer = "container:Simply Filter SMS.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "691AA72D285508EC00FCA4AF"
-               BuildableName = "Screenshots Automation.xctest"
-               BlueprintName = "Screenshots Automation"
-               ReferencedContainer = "container:Simply Filter SMS.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
