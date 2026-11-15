@@ -1,6 +1,6 @@
 # Xcode and Test Rules
 
-- **Drive Xcode only through Apple's Xcode MCP.** Never shell out to `xcodebuild` and never hand-edit `project.pbxproj`. Open the workspace first (`XcodeOpenWorkspace`); create files with `XcodeWrite` so they join their targets, rename with `XcodeMV`, remove with `XcodeRM`. If the MCP isn't connected, stop and ask; don't fall back to `xcodebuild`.
+- **Drive Xcode only through Apple's Xcode MCP.** Never shell out to `xcodebuild` and never hand-edit `project.pbxproj`. One exception: the App Store screenshot runner script may be run, and it calls `xcodebuild` itself; `xcodebuild` is never called directly, for anything else. Open the workspace first (`XcodeOpenWorkspace`); create files with `XcodeWrite` so they join their targets, rename with `XcodeMV`, remove with `XcodeRM`. If the MCP isn't connected, stop and ask; don't fall back to `xcodebuild`.
 - **Long runs go in the background** with a log, and progress is reported from that log. Never block silently in the foreground.
 - **Never run tests on a real device.** Before any test run or build-for-testing, check the run destination and switch to a simulator.
 - **Run unit tests with `RunSomeTests` on the `Tests` target.** Never run `UI Tests` as testing.
