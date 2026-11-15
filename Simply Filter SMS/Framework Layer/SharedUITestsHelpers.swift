@@ -26,6 +26,10 @@ extension UIApplication {
 #endif // DEBUG
 
 
+protocol TestIdentifiable {
+    var testIdentifier: TestIdentifier { get }
+}
+
 enum TestIdentifier: String {
     case callToActionButton = "callToActionButton"
     case cancelButton = "cancelButton"
@@ -67,4 +71,16 @@ enum TestIdentifier: String {
     case testResultPromotion = "testResultPromotion"
     case testResultTransaction = "testResultTransaction"
     case transferConfirmButton = "transferConfirmButton"
+    case folderJunkOption = "folderJunkOption"
+    case folderTransactionsOption = "folderTransactionsOption"
+    case folderPromotionsOption = "folderPromotionsOption"
+    case targetAllOption = "targetAllOption"
+    case targetSenderOption = "targetSenderOption"
+    case targetBodyOption = "targetBodyOption"
+    case matchingContainsOption = "matchingContainsOption"
+    case matchingExactOption = "matchingExactOption"
+    case matchingRegexOption = "matchingRegexOption"
+    case caseInsensitiveOption = "caseInsensitiveOption"
+    case caseSensitiveOption = "caseSensitiveOption"
+    case filterListLanguageToggle = "filterListLanguageToggle"
 }

@@ -18,9 +18,6 @@ class ApplicationTestCase: XCTestCase {
     override func setUp() {
         super.setUp()
         self.continueAfterFailure = false
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            XCUIDevice.shared.orientation = .landscapeRight
-        }
     }
 
     func sleep(seconds: Double) {

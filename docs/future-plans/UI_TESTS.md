@@ -8,22 +8,30 @@ Done: each test passes on iPhone 18 Pro and iPad Pro 13-inch (M5), iOS 27.2, and
 
 | Test | Features working together | Break that made it fail |
 |---|---|---|
-| `FiltersTestCase/testAllowedSenderPassesWhenAllUnknownSendersAreBlocked` | Block all unknown + allow filter on the sender + Filter Tester | filter target saved as All |
-| `FiltersTestCase/testDenyFilterSendsMatchingMessagesToItsFolderUntilDeleted` | deny filter folder + case sensitivity + swipe delete | folder saved as Junk |
-| `SmartFiltersTestCase/testSmartFiltersJunkOnlyWhatTheyTarget` | links, numbers only, emojis on and off | toggle not saved |
-| `AIFilteringTestCase/testLanguageListAppliesItsRulesOnlyWhileTheLanguageIsOn` | test catalog download + language toggle + deny, regex folder, allow | production catalog |
-| `CommunityListsTestCase/testCuratedAndSubscribedListsFilterUntilRemoved` | curated list on + Subscribe from URL + swipe remove | removal not deleting |
-| `CommunityListsTestCase/testSubscribeRefusesAFileThatIsNotAFilterListUntilTheLinkIsFixed` | link validation + recovery | (validation path; not broken separately) |
-| `FilterTransferTestCase/testExportedFiltersComeBackWithTheirOptionsAfterImport` | export + Save to Files + delete + import from Files | export drops case |
+| `FilterScenarios/testAllowedSenderPassesWhenAllUnknownSendersAreBlocked` | Block all unknown + allow filter on the sender + Filter Tester | filter target saved as All |
+| `FilterScenarios/testDenyFilterSendsMatchingMessagesToItsFolderUntilDeleted` | deny filter folder + case sensitivity + swipe delete | folder saved as Junk |
+| `SmartFilterScenarios/testSmartFiltersJunkOnlyWhatTheyTarget` | links, numbers only, emojis on and off | toggle not saved |
+| `AIFilteringScenarios/testLanguageListAppliesItsRulesOnlyWhileTheLanguageIsOn` | test catalog download + language toggle + deny, regex folder, allow | production catalog |
+| `CommunityListScenarios/testCuratedAndSubscribedListsFilterUntilRemoved` | curated list on + Subscribe from URL + swipe remove | removal not deleting |
+| `CommunityListScenarios/testSubscribeRefusesAFileThatIsNotAFilterListUntilTheLinkIsFixed` | link validation + recovery | (validation path; not broken separately) |
+| `FilterTransferScenarios/testExportedFiltersComeBackWithTheirOptionsAfterImport` | export + Save to Files + delete + import from Files | export drops case |
 
 Not done: Tip Jar, relaunch persistence (`-KeepData` was written and removed again unused), first run, Home counts.
 
+**Layout:** the suite is its own target, `Scenario Tests`, with its own scheme of the same name. It shares nothing with the screenshot target and scheme, `Screenshots Automation`.
+- `Support/`: `ScenarioTestCase` (`launchApp(remoteLists:)`), `SimplyFilterApp` (one property per screen, plus `expect(_:toBe:)`), `Screen` (the shared moves), `XCUIElementQuery+TestIdentifier` (`app.buttons[.addFilterButton]`), `Vocabulary` (`Message`, `Verdict`, `SmartFilter`, `Language`, the Add Filter options, `TestLists`).
+- `Screens/`: one type per app screen. Every action starts on Home and ends on Home, and runs as a named step in the test report.
+- `Scenarios/`: the tests, written only against `SimplyFilterApp`.
+
 **Traps found while building:**
-- iOS 27 drops identifiers on submenu buttons (known). Submenu items are tapped by label through `~` (`"testFilters_title"~`, `"menu_exportFilters"~`).
+- The Xcode MCP can't set a UI test target's Target Application (`TEST_TARGET_NAME` is rejected) or add a target dependency. The suite launches the app by bundle identifier, and the `Scenario Tests` scheme builds the app and installs it before testing (checked by removing the app from the simulator first). Setting Target Application in Xcode would make this explicit.
+- The only app file the target compiles is `SharedUITestsHelpers.swift`, for `TestIdentifier` (membership ticked by hand in Xcode). `Vocabulary` repeats the English labels the tests tap. The app is launched with `-AppleLanguages (en)`, so the labels hold whatever the simulator's language. A reworded label fails the test that taps it.
+- The Filter Tester updates its result 1 s after the last keystroke, so the result for the body alone can show before the sender is typed. A verdict counts only if it's still there 1.5 s after it appears.
+- iOS 27 drops identifiers on submenu buttons (known). Submenu items are tapped by their English label ("Test Your Filters", "Export Filters").
 - `XCUIApplication.open(_:)` relaunches the app, so a deep link can't be used mid-scenario.
 - A SwiftUI `Toggle` row is a `Switch` containing a smaller `Switch` (the knob). Tap the inner one; a coordinate near the trailing edge misses on iPad.
 - `wait(for:toEqual:timeout:)` fails immediately on an element that doesn't exist yet; `waitForExistence` first.
-- The swipe-to-delete button is a system "Delete" label outside the cell (English only).
+- The swipe-to-delete button is a system "Delete" label outside the cell.
 - Files: Save to Files uses `DOCPicker.filenameTextField` and `DOCPicker.actionButton`; the import picker's cells have `identifier` "`<name>.sfsfilters, sfsfilters`". Exports are saved under a unique name per run, so files left in "On My iPhone" never collide. On iPad, Save must be hittable before the tap.
 - A Community List file needs `name`, `description`, `author`, an https `homepage` and `locale`, or the preview refuses it.
 
@@ -137,7 +145,7 @@ Each test is seen failing once, by breaking the code it covers, before it's kept
 
 ## Running
 
-- The shared `UI Tests [Pre Release]` scheme runs the `UI Tests` target with `SnapshotsTestCase` skipped. Fastlane keeps the `UI Tests` scheme with `only_testing:`.
+- The shared `Scenario Tests` scheme runs the suite. Fastlane runs the screenshots through `Screenshots Automation`.
 - iPhone simulator only at first (iPhone 18 Pro); iPad split view later as its own decision.
 - About 35 tests at 15–25 s each, so a full run is 10–15 minutes: background run with a log, counts from the `.xcresult`.
 - The AI and Community suites need S3. A failure names the URL it was loading, so a bug can be told from S3 being down.
@@ -147,6 +155,6 @@ Each test is seen failing once, by breaking the code it covers, before it's kept
 
 ## Docs and rules to change when it lands
 
-- `CLAUDE.md`, `docs/TESTS.md`, `docs/rules/XCODE_AND_TESTS.md`: they say `UI Tests` is only the screenshot generator and must not be run as testing.
+- `CLAUDE.md`, `docs/TESTS.md`, `docs/rules/XCODE_AND_TESTS.md`: they say `Screenshots Automation` is only the screenshot generator and must not be run as testing.
 - `docs/TESTS.md`: how to run the UI suite, `-UITestData` and `-KeepData`, the identifier-only rule, the strict-tap rule, and the "seen failing once" rule.
 - `docs/AWS_SETUP.md`: the `ui-tests/` path and that it's rebuilt from `ui-test-data/`.

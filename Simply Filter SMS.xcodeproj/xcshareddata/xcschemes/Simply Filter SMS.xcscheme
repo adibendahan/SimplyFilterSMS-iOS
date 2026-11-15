@@ -43,8 +43,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "691AA72D285508EC00FCA4AF"
-               BuildableName = "UI Tests.xctest"
-               BlueprintName = "UI Tests"
+               BuildableName = "Screenshots Automation.xctest"
+               BlueprintName = "Screenshots Automation"
                ReferencedContainer = "container:Simply Filter SMS.xcodeproj">
             </BuildableReference>
          </TestableReference>

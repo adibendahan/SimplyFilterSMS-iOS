@@ -156,7 +156,7 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     }
 }
 
-enum MessageFolder: Int64, CaseIterable, Identifiable {
+enum MessageFolder: Int64, CaseIterable, Identifiable, TestIdentifiable {
     var id: Int64 { return self.rawValue }
     
     case junk=0, transaction, promotion
@@ -197,9 +197,20 @@ enum MessageFolder: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_folder_caption"~
     }
+
+    var testIdentifier: TestIdentifier {
+        switch self {
+        case .junk:
+            return .folderJunkOption
+        case .transaction:
+            return .folderTransactionsOption
+        case .promotion:
+            return .folderPromotionsOption
+        }
+    }
 }
 
-enum FilterTarget: Int64, CaseIterable, Identifiable {
+enum FilterTarget: Int64, CaseIterable, Identifiable, TestIdentifiable {
     var id: Int64 { return self.rawValue }
     
     case all=0, sender, body
@@ -238,9 +249,20 @@ enum FilterTarget: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_target_title"~
     }
+
+    var testIdentifier: TestIdentifier {
+        switch self {
+        case .all:
+            return .targetAllOption
+        case .sender:
+            return .targetSenderOption
+        case .body:
+            return .targetBodyOption
+        }
+    }
 }
 
-enum FilterMatching: Int64, CaseIterable, Identifiable {
+enum FilterMatching: Int64, CaseIterable, Identifiable, TestIdentifiable {
     var id: Int64 { return self.rawValue }
 
     case contains=0, exact, regex=2
@@ -290,9 +312,20 @@ enum FilterMatching: Int64, CaseIterable, Identifiable {
     static var title: String {
         return "addFilter_match_title"~
     }
+
+    var testIdentifier: TestIdentifier {
+        switch self {
+        case .contains:
+            return .matchingContainsOption
+        case .exact:
+            return .matchingExactOption
+        case .regex:
+            return .matchingRegexOption
+        }
+    }
 }
 
-enum FilterCase: Int64, CaseIterable, Identifiable {
+enum FilterCase: Int64, CaseIterable, Identifiable, TestIdentifiable {
     var id: Int64 { return self.rawValue }
     
     case caseInsensitive=0, caseSensitive
@@ -335,6 +368,15 @@ enum FilterCase: Int64, CaseIterable, Identifiable {
     
     static var title: String {
         return "addFilter_case_title"~
+    }
+
+    var testIdentifier: TestIdentifier {
+        switch self {
+        case .caseInsensitive:
+            return .caseInsensitiveOption
+        case .caseSensitive:
+            return .caseSensitiveOption
+        }
     }
 }
 

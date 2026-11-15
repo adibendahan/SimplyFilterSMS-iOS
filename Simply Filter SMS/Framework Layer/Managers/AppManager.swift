@@ -70,6 +70,7 @@ class AppManager: AppManagerProtocol {
             else {
                 self.seedEmptyAIListsForTesting()
             }
+            self.flowManager.resetSession()
         }
         #endif // DEBUG
     }

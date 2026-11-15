@@ -329,7 +329,7 @@ The site deploys from `master`, so the language goes live when this reaches `mas
 
 ### 9a. SnapshotsTestCase.swift
 
-Edit `UI Tests/SnapshotsTestCase.swift`. The `addFilter` section uses a `switch langCode` to pick locale-appropriate spam sample text. Add a `case` for the new language:
+Edit `Screenshots Automation/SnapshotsTestCase.swift`. The `addFilter` section uses a `switch langCode` to pick locale-appropriate spam sample text. Add a `case` for the new language:
 
 ```swift
 case "<langCode>":

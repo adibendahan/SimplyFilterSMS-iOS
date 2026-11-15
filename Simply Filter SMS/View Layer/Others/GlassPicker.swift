@@ -21,7 +21,7 @@ private struct GlassPickerLabelStyle: LabelStyle {
     }
 }
 
-struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable & Equatable & Hashable, T.AllCases: RandomAccessCollection {
+struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable & Equatable & Hashable & TestIdentifiable, T.AllCases: RandomAccessCollection {
     @Binding var selection: T
     let content: (T) -> Content
 
@@ -62,7 +62,9 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
         .accessibilityRepresentation {
             Picker("", selection: $selection) {
                 ForEach(allCases) { option in
-                    content(option).tag(option)
+                    content(option)
+                        .tag(option)
+                        .accessibilityIdentifier(option.testIdentifier.rawValue)
                 }
             }
             .pickerStyle(.segmented)

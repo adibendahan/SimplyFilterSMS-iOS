@@ -8,9 +8,9 @@ How tests are written here and the traps around them. The test names say what ea
 
 ## Running
 
-- Unit tests: the `Tests` target. Through Xcode's MCP, run the test classes with `RunSomeTests`; `RunAllTests` would also pick up the UI target.
+- Unit tests: the `Tests` target. Through Xcode's MCP, run the test classes with `RunSomeTests`; `RunAllTests` would also pick up the `Screenshots Automation` target.
 - From the command line, use the `Tests` scheme. Running the app scheme's test action can fail to load an unsigned `Tests.xctest`.
-- The UI target is not a test suite: it's the App Store screenshot generator, run only through Fastlane (`fastlane screenshots`, or the `iphone_` / `ipad_` lanes).
+- The `Screenshots Automation` target is not a test suite: it's the App Store screenshot generator, run only through Fastlane (`fastlane screenshots`, or the `iphone_` / `ipad_` lanes).
 
 ---
 
@@ -25,10 +25,10 @@ How tests are written here and the traps around them. The test names say what ea
 
 ---
 
-## Screenshots (UI target)
+## Screenshots (`Screenshots Automation` target)
 
 - `SnapshotsTestCase/testCreateSnapshots` walks the app and captures Fastlane screenshots. It's disabled in the test plan.
 - The `-Testing` launch argument makes `AppManager` reset defaults and the store, seed empty AI lists for all 10 languages, and silence the inactivity notification ask.
-- In the UI target, `~` loads strings from the **test bundle** for the current locale, not the app bundle.
+- In the `Screenshots Automation` target, `~` loads strings from the **test bundle** for the current locale, not the app bundle.
 - `forceTap()` taps by coordinate where `isHittable` is unreliable for some SwiftUI controls.
 - On iPad, the flow skips back-button taps and swipes that split view doesn't need, and runs in landscape.
