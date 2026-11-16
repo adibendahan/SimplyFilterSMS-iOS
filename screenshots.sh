@@ -18,7 +18,9 @@ readonly WORK="${TMPDIR:-/tmp}/simply-filter-sms-screenshots"
 readonly DERIVED_DATA="${WORK}/DerivedData"
 readonly LOGS="${WORK}/logs"
 readonly LOCK="${WORK}/lock"
-readonly STATUS_BAR_DATE="1985-10-02 09:41"
+readonly ATTEMPTS=2
+readonly STALL_SECONDS=300
+readonly TEST_TIME_ALLOWANCE=180
 
 readonly EXIT_FAILED_LANGUAGE=1
 readonly EXIT_USAGE=2
@@ -77,6 +79,7 @@ fi
 step()    { printf '%s▸ %s%s\n' "${bold}" "$1" "${reset}"; }
 ok()      { printf '  %s✓%s %s\n' "${green}" "${reset}" "$1"; }
 fail()    { printf '  %s✗%s %s\n' "${red}" "${reset}" "$1"; }
+warn()    { printf '  %s!%s %s\n' "${yellow}" "${reset}" "$1"; }
 note()    { printf '  %s%s%s\n' "${dim}" "$1" "${reset}"; }
 die()     { printf '%s%s: %s%s\n' "${red}" "${PROGRAM}" "$1" "${reset}" >&2; exit "${2:-${EXIT_ENVIRONMENT}}"; }
 elapsed() { local seconds=$(( $(date +%s) - $1 )); printf '%dm%02ds' $((seconds / 60)) $((seconds % 60)); }
@@ -100,6 +103,10 @@ Each language is written to DIR/<App Store Connect locale>/ only after all of
 its shots were captured, so a failed language keeps its previous screenshots.
 A run of every shot on both devices replaces the whole language folder; any
 narrower run replaces only the shots it captured.
+
+A shot that runs longer than ${TEST_TIME_ALLOWANCE} seconds fails, and a test run that prints
+nothing for $((STALL_SECONDS / 60)) minutes is stopped. Either way the language is tried
+again on restarted simulators, up to ${ATTEMPTS} attempts in all.
 
 Examples:
   ${PROGRAM}                          Every shot, every language, both devices.
@@ -291,10 +298,6 @@ ensure_simulator() {
     echo "${udid}"
 }
 
-status_bar_time() {
-    python3 -I -c 'import datetime, sys; print(datetime.datetime.strptime(sys.argv[1], "%Y-%m-%d %H:%M").astimezone().isoformat(timespec="milliseconds"))' "${STATUS_BAR_DATE}"
-}
-
 prepare_simulator() {
     local udid="$1" key="$2" language="$3" locale="$4"
     xcrun simctl shutdown "${udid}" >/dev/null 2>&1 || true
@@ -310,7 +313,8 @@ prepare_simulator() {
     xcrun simctl boot "${udid}"
     xcrun simctl bootstatus "${udid}" >/dev/null
     xcrun simctl ui "${udid}" appearance light
-    xcrun simctl status_bar "${udid}" override --time "$(status_bar_time)" --dataNetwork wifi --wifiMode active --wifiBars 3 \
+    xcrun simctl status_bar "${udid}" clear
+    xcrun simctl status_bar "${udid}" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 \
         --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
 }
 
@@ -374,51 +378,121 @@ for test in json.load(open(f"{export}/manifest.json")):
 PYTHON
 }
 
-capture_language() {
-    local entry="$1" code locale folder name
-    IFS='|' read -r code locale folder name <<<"${entry}"
-    local started log="${LOGS}/${code}.log" bundle="${WORK}/results/${code}.xcresult" staging="${WORK}/staging/${folder}"
-    started=$(date +%s)
-    step "${name}"
+file_size() {
+    stat -f %z "$1" 2>/dev/null || echo 0
+}
 
-    local index pids=()
+stop_process() {
+    local pid="$1"
+    kill "${pid}" 2>/dev/null || return 0
+    for _ in 1 2 3 4 5 6 7 8 9 10; do
+        kill -0 "${pid}" 2>/dev/null || return 0
+        sleep 1
+    done
+    kill -9 "${pid}" 2>/dev/null || true
+}
+
+# Returns 0 when every test passed, 1 when one failed, 2 when the run stalled.
+run_tests() {
+    local bundle="$1" log="$2"
+    shift 2
+    rm -rf "${bundle}"
+    xcodebuild test-without-building -project "${PROJECT}" -scheme "${SCHEME}" "$@" \
+        -derivedDataPath "${DERIVED_DATA}" -resultBundlePath "${bundle}" \
+        -test-timeouts-enabled YES -default-test-execution-time-allowance "${TEST_TIME_ALLOWANCE}" \
+        -maximum-test-execution-time-allowance "${TEST_TIME_ALLOWANCE}" >>"${log}" 2>&1 &
+    local pid=$! size last_size=-1 quiet_since
+    quiet_since=$(date +%s)
+    while kill -0 "${pid}" 2>/dev/null; do
+        sleep 5
+        size=$(file_size "${log}")
+        if [[ "${size}" != "${last_size}" ]]; then
+            last_size="${size}"
+            quiet_since=$(date +%s)
+        elif [[ $(( $(date +%s) - quiet_since )) -ge ${STALL_SECONDS} ]]; then
+            stop_process "${pid}"
+            wait "${pid}" 2>/dev/null || true
+            return 2
+        fi
+    done
+    wait "${pid}" || return 1
+}
+
+prepare_language() {
+    local code="$1" locale="$2" log="$3"
+    local index pid pids=() status=0
     for index in "${!device_ids[@]}"; do
         prepare_simulator "${device_ids[${index}]}" "${device_keys[${index}]}" "${code}" "${locale}" >>"${log}" 2>&1 &
         pids+=($!)
     done
-    local pid
     for pid in "${pids[@]}"; do
-        wait "${pid}" || { fail "could not set the simulators to ${name}"; note "${log}"; return 1; }
+        wait "${pid}" || status=1
     done
+    return "${status}"
+}
 
-    local args=()
-    while IFS= read -r line; do args+=("${line}"); done < <(destinations; test_filters)
-    rm -rf "${bundle}"
-    if ! xcodebuild test-without-building -project "${PROJECT}" -scheme "${SCHEME}" "${args[@]}" \
-        -derivedDataPath "${DERIVED_DATA}" -resultBundlePath "${bundle}" >>"${log}" 2>&1; then
-        fail "a shot failed"
-        note "${bundle}"
-        return 1
+# Prints why an attempt failed, or nothing when every shot was captured.
+attempt_language() {
+    local code="$1" locale="$2" name="$3" log="$4" bundle="$5" staging="$6"
+    if ! prepare_language "${code}" "${locale}" "${log}"; then
+        echo "could not set the simulators to ${name}"
+        return
     fi
 
+    local args=() line status=0
+    while IFS= read -r line; do args+=("${line}"); done < <(destinations; test_filters)
+    run_tests "${bundle}" "${log}" "${args[@]}" || status=$?
+    case "${status}" in
+        0) ;;
+        2) echo "the test run printed nothing for $((STALL_SECONDS / 60)) minutes and was stopped"; return ;;
+        *) echo "a shot failed"; return ;;
+    esac
+
     collect "${bundle}" "${staging}"
-    local device key shots captured complete=true
+    local device key shots captured missing=()
     for device in "${selected_devices[@]}"; do
         key="${device%%|*}"
         shots=$(shot_count "${key}" "${selected_shots[@]}")
         [[ ${shots} -gt 0 ]] || continue
         captured=$(find "${staging}" -name "${key}-*.png" | wc -l | tr -d ' ')
-        if [[ "${captured}" -eq "${shots}" ]]; then
-            ok "${key} ${captured}/${shots}"
+        [[ "${captured}" -eq "${shots}" ]] || missing+=("${key} ${captured}/${shots}")
+    done
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        echo "shots missing: ${missing[*]}"
+    fi
+}
+
+capture_language() {
+    local entry="$1" code locale folder name
+    IFS='|' read -r code locale folder name <<<"${entry}"
+    local started log="${LOGS}/${code}.log" staging="${WORK}/staging/${folder}"
+    started=$(date +%s)
+    step "${name}"
+    rm -rf "${WORK}/results/${code}".*xcresult
+
+    local attempt reason bundle
+    for (( attempt = 1; attempt <= ATTEMPTS; attempt++ )); do
+        bundle="${WORK}/results/${code}.${attempt}.xcresult"
+        printf '\n=== attempt %d of %d ===\n' "${attempt}" "${ATTEMPTS}" >>"${log}"
+        reason=$(attempt_language "${code}" "${locale}" "${name}" "${log}" "${bundle}" "${staging}")
+        [[ -n "${reason}" ]] || break
+        if [[ ${attempt} -lt ${ATTEMPTS} ]]; then
+            warn "${reason}; trying again on restarted simulators"
+            note "${bundle}"
         else
-            fail "${key} ${captured}/${shots}"
-            complete=false
+            fail "${reason}"
+            note "${log}"
+            note "${bundle}"
+            return 1
         fi
     done
-    if ! ${complete}; then
-        note "${bundle}"
-        return 1
-    fi
+
+    local device key
+    for device in "${selected_devices[@]}"; do
+        key="${device%%|*}"
+        [[ $(shot_count "${key}" "${selected_shots[@]}") -gt 0 ]] || continue
+        ok "${key} $(find "${staging}" -name "${key}-*.png" | wc -l | tr -d ' ')/$(shot_count "${key}" "${selected_shots[@]}")"
+    done
 
     mkdir -p "${output_dir}/${folder}"
     if is_full_run; then

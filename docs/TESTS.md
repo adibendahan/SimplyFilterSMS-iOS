@@ -42,4 +42,4 @@ How tests are written here and the traps around them. The test names say what ea
 - Shot 09 subscribes to two made-up lists per language from `simply-filter-sms/screenshots/<language>/` on S3, rebuilt from `screenshot-data/`.
 - The keyboard closes with Return (`"\n"`); tapping elsewhere doesn't.
 - iPadOS 26+ simulators start in windowed mode (a resize grabber, the app name in the status bar). The script turns off `SBChamoisWindowingEnabled` and `SBMedusaMultitaskingEnabled` on the iPad.
-- `simctl status_bar --time` takes a date only as ISO with milliseconds, and the weekday shown is always the day of the run.
+- Never pass a date to `simctl status_bar --time`: the status bar then shows that date in English in every language, and it sticks until `status_bar clear`. The script clears it and sets only `9:41`, so the date is the day of the run, in the simulator's language.
