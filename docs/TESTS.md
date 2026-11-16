@@ -11,7 +11,7 @@ How tests are written here and the traps around them. The test names say what ea
 - Unit tests: the `Tests` target, through the app scheme with Xcode's MCP.
 - From the command line, use the `Tests` scheme. Running the app scheme's test action can fail to load an unsigned `Tests.xctest`.
 - UI scenarios: the `Scenario Tests` scheme, only before a release or when asked.
-- App Store screenshots: `./screenshots.sh`; `fastlane upload_screenshots` uploads `.screenshots/`.
+- App Store screenshots: `./screenshots.sh` writes to `Screenshots/<version>/`; `fastlane upload_screenshots path:Screenshots/<version>` uploads it.
 
 ---
 
@@ -43,3 +43,6 @@ How tests are written here and the traps around them. The test names say what ea
 - The keyboard closes with Return (`"\n"`); tapping elsewhere doesn't.
 - iPadOS 26+ simulators start in windowed mode (a resize grabber, the app name in the status bar). The script turns off `SBChamoisWindowingEnabled` and `SBMedusaMultitaskingEnabled` on the iPad.
 - Never pass a date to `simctl status_bar --time`: the status bar then shows that date in English in every language, and it sticks until `status_bar clear`. The script clears it and sets only `9:41`, so the date is the day of the run, in the simulator's language.
+- On the iPad simulator, `app.keyboards` doesn't see the on-screen keyboard. Close it by pressing Return in the focused field and checking the field lost focus (`hideKeyboard(from:)`), never by looking for the keyboard.
+- A tap that lands while a view animates in can be dropped and leave the field without focus. `type(_:into:)` waits for focus and taps again; on Test Your Filters, wait for the verdict before moving to the next field.
+- The iPad simulator sometimes never reports the app idle while the keyboard is up, and every such step then waits 60 seconds. That's why a shot is allowed 5 minutes.

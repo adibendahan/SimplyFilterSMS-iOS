@@ -40,6 +40,7 @@ struct FilterTesterView: View {
 
                             TextField("", text: $model.sender)
                                 .focused($focusedField, equals: .sender)
+                                .autocorrectionDisabled()
                                 .padding(.top, 18)
                                 .accessibilityLabel("testFilters_senderTitle"~)
                                 .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
@@ -60,6 +61,7 @@ struct FilterTesterView: View {
 
                             TextEditor(text: $model.text)
                                 .scrollContentBackground(.hidden)
+                                .autocorrectionDisabled()
                                 .frame(minHeight: 80, idealHeight: 80, alignment: .top)
                                 .focused($focusedField, equals: .text)
                                 .multilineTextAlignment(.leading)

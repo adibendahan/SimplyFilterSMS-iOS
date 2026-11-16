@@ -4,7 +4,7 @@
 #
 # Runs the Screenshots Automation tests once per language on two dedicated
 # simulators, with the simulator's system language switched for each run, and
-# writes the shots to <output>/<App Store Connect locale>/.
+# writes the shots to <output>/<app version>/<App Store Connect locale>/.
 #
 set -Eeuo pipefail
 
@@ -19,8 +19,9 @@ readonly DERIVED_DATA="${WORK}/DerivedData"
 readonly LOGS="${WORK}/logs"
 readonly LOCK="${WORK}/lock"
 readonly ATTEMPTS=2
-readonly STALL_SECONDS=300
-readonly TEST_TIME_ALLOWANCE=180
+readonly STALL_SECONDS=420
+readonly TEST_TIME_ALLOWANCE=300
+readonly APP_INFO_PLIST="${DERIVED_DATA}/Build/Products/Debug-iphonesimulator/Simply Filter SMS.app/Info.plist"
 
 readonly EXIT_FAILED_LANGUAGE=1
 readonly EXIT_USAGE=2
@@ -60,7 +61,8 @@ readonly SHOTS=(
     "9|community-lists|testCommunityLists|iphone ipad"
 )
 
-output_dir="${ROOT}/.screenshots"
+output_root="${ROOT}/Screenshots"
+version_dir=""
 skip_build=false
 selected_languages=()
 selected_devices=()
@@ -94,15 +96,16 @@ Options:
   -l, --language CODE   Capture only this language. Repeat for more. Default: all.
   -d, --device DEVICE   iphone or ipad. Repeat for both. Default: both.
   -s, --shot NUMBER     Capture only this shot (1-9). Repeat for more. Default: all.
-  -o, --output DIR      Where the screenshots are written. Default: .screenshots
+  -o, --output DIR      The folder that keeps every app version. Default: Screenshots
       --skip-build      Reuse the previous build instead of building again.
       --list            List the languages, devices and shots, then exit.
   -h, --help            Show this help, then exit.
 
-Each language is written to DIR/<App Store Connect locale>/ only after all of
-its shots were captured, so a failed language keeps its previous screenshots.
-A run of every shot on both devices replaces the whole language folder; any
-narrower run replaces only the shots it captured.
+Each app version has its own folder, DIR/<app version>/<App Store Connect locale>/.
+A language is written there only after all of its shots were captured, so a
+failed language keeps its previous screenshots. A run of every shot on both
+devices replaces that version's whole language folder; any narrower run
+replaces only the shots it captured.
 
 A shot that runs longer than ${TEST_TIME_ALLOWANCE} seconds fails, and a test run that prints
 nothing for $((STALL_SECONDS / 60)) minutes is stopped. Either way the language is tried
@@ -207,7 +210,7 @@ parse_arguments() {
                 shift 2 ;;
             -o|--output)
                 [[ $# -ge 2 ]] || die "$1 needs a directory" "${EXIT_USAGE}"
-                output_dir="$2"
+                output_root="$2"
                 shift 2 ;;
             --skip-build)
                 skip_build=true
@@ -361,6 +364,13 @@ build() {
     fi
 }
 
+choose_version_dir() {
+    local version
+    version=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "${APP_INFO_PLIST}" 2>/dev/null) \
+        || die "could not read the app version from ${APP_INFO_PLIST}"
+    version_dir="${output_root}/${version}"
+}
+
 collect() {
     local bundle="$1" staging="$2"
     local export="${WORK}/export"
@@ -494,17 +504,17 @@ capture_language() {
         ok "${key} $(find "${staging}" -name "${key}-*.png" | wc -l | tr -d ' ')/$(shot_count "${key}" "${selected_shots[@]}")"
     done
 
-    mkdir -p "${output_dir}/${folder}"
+    mkdir -p "${version_dir}/${folder}"
     if is_full_run; then
-        rm -f "${output_dir}/${folder}"/*.png
+        rm -f "${version_dir}/${folder}"/*.png
     else
         local file
         for file in "${staging}"/*.png; do
-            rm -f "${output_dir}/${folder}/${file##*/}"
+            rm -f "${version_dir}/${folder}/${file##*/}"
         done
     fi
-    mv "${staging}"/*.png "${output_dir}/${folder}/"
-    note "${output_dir}/${folder} ($(elapsed "${started}"))"
+    mv "${staging}"/*.png "${version_dir}/${folder}/"
+    note "${version_dir}/${folder} ($(elapsed "${started}"))"
 }
 
 #MARK: - Main -
@@ -521,6 +531,7 @@ main() {
     started=$(date +%s)
     prepare_simulators
     build
+    choose_version_dir
     local entry
     for entry in "${selected_languages[@]}"; do
         capture_language "${entry}" || failed+=("${entry%%|*}")
@@ -531,7 +542,7 @@ main() {
         printf '%s%d of %d languages failed:%s %s\n' "${red}" ${#failed[@]} ${#selected_languages[@]} "${reset}" "${failed[*]}"
         exit "${EXIT_FAILED_LANGUAGE}"
     fi
-    printf '%sAll %d languages captured in %s%s → %s\n' "${green}" ${#selected_languages[@]} "$(elapsed "${started}")" "${reset}" "${output_dir}"
+    printf '%sAll %d languages captured in %s%s → %s\n' "${green}" ${#selected_languages[@]} "$(elapsed "${started}")" "${reset}" "${version_dir}"
 }
 
 main "$@"

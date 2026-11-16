@@ -17,11 +17,10 @@ extension Screen {
         XCTAssertTrue(element.exists && element.isHittable, "\(element) is not reachable")
     }
 
-    func hideKeyboard() {
-        let keyboard = self.app.keyboards.firstMatch
-        guard keyboard.exists else { return }
-        self.app.typeText("\n")
-        XCTAssertTrue(keyboard.waitForNonExistence(timeout: 5), "The keyboard did not close")
+    func hideKeyboard(from field: XCUIElement) {
+        field.typeText("\n")
+        let unfocused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == false"), object: field)
+        XCTAssertEqual(XCTWaiter.wait(for: [unfocused], timeout: 5), .completed, "\(field) kept the keyboard open")
     }
 
     //MARK: - Private -
