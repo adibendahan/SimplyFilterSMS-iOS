@@ -54,14 +54,14 @@ Not done: Tip Jar, relaunch persistence (`-KeepData` was written and removed aga
 ## Test data
 
 - **S3 path:** `grizz-apps-dev/simply-filter-sms/ui-tests/`. Test data only, never user data: the bucket is world-readable.
-- **Source in the repo:** `ui-test-data/`, committed (unlike `ai/`), so the files on S3 can always be rebuilt and reviewed.
+- **Source in the repo:** `Extras/test-data/ui-tests/`, committed (unlike `Extras/local/ai/`), so the files on S3 can always be rebuilt and reviewed.
 - **Contents:**
   - `catalog.json`: catalog version 2, shaped like `4.0.0/catalog.json`, listing only test lists.
   - `ai-en.sfsfilters`, `ai-he.sfsfilters`: AI Filtering lists with a few known records each: a deny on the body, an allow on the sender, one regex.
   - Two curated Community Lists in the catalog with known names: one deny list, one allow list.
   - `subscribe.sfsfilters`: a list that isn't in the catalog, for Subscribe from URL.
   - `invalid.sfsfilters`: a file the app must refuse, for the error case.
-- Every record and expected verdict is listed in `ui-test-data/README.md`, so a test's expectation can be traced to the record that causes it.
+- Every record and expected verdict is listed in `Extras/test-data/ui-tests/README.md`, so a test's expectation can be traced to the record that causes it.
 - Lists are uploaded before the catalog that points to them.
 
 **Wiring:** a DEBUG-only `-UITestData` launch argument, passed by the new suites with `-Testing`:
@@ -136,7 +136,7 @@ One app launch per test, from a fresh state: isolation is worth the run time. Id
    - New `TestIdentifier` cases: each smart filter toggle (by `SmartFilterType`); the Filter Tester result with the verdict as its value; the filter list's Edit, menu and bulk delete buttons; each Add Filter option; each AI Filtering language toggle.
    - No fixed sleeps: wait on a state with `waitForExistence`, `waitForNonExistence`, `wait(for:toEqual:timeout:)`.
 2. **`FiltersTestCase` and `FilterTesterTestCase`.** No network, no new launch arguments.
-3. **Test data and `-UITestData`.** Write `ui-test-data/`, upload it, wire the argument, then `AIFilteringTestCase` and `CommunityListsTestCase`.
+3. **Test data and `-UITestData`.** Write `Extras/test-data/ui-tests/`, upload it, wire the argument, then `AIFilteringTestCase` and `CommunityListsTestCase`.
 4. **One export/import round trip proven by hand-run first** (the share sheet and Files picker are system screens), then `FilterTransferTestCase`.
 5. **`-KeepData`, then the P2 suites.**
 
@@ -158,4 +158,4 @@ Each test is seen failing once, by breaking the code it covers, before it's kept
 
 - `CLAUDE.md`, `docs/TESTS.md`, `docs/rules/XCODE_AND_TESTS.md`: they say `Screenshots Automation` is only the screenshot generator and must not be run as testing.
 - `docs/TESTS.md`: how to run the UI suite, `-UITestData` and `-KeepData`, the identifier-only rule, the strict-tap rule, and the "seen failing once" rule.
-- `docs/AWS_SETUP.md`: the `ui-tests/` path and that it's rebuilt from `ui-test-data/`.
+- `docs/AWS_SETUP.md`: the `ui-tests/` path and that it's rebuilt from `Extras/test-data/ui-tests/`.

@@ -11,7 +11,7 @@ How tests are written here and the traps around them. The test names say what ea
 - Unit tests: the `Tests` target, through the app scheme with Xcode's MCP.
 - From the command line, use the `Tests` scheme. Running the app scheme's test action can fail to load an unsigned `Tests.xctest`.
 - UI scenarios: the `Scenario Tests` scheme, only before a release or when asked.
-- App Store screenshots: `./screenshots.sh` writes to `Screenshots/<version>/`; `fastlane upload_screenshots path:Screenshots/<version>` uploads it.
+- App Store screenshots: `Extras/screenshots.sh` writes to `Extras/Screenshots/<version>/`; `fastlane upload_screenshots path:Extras/Screenshots/<version>` uploads it.
 
 ---
 
@@ -36,10 +36,10 @@ How tests are written here and the traps around them. The test names say what ea
 
 ## Screenshots (`Screenshots Automation`)
 
-- `./screenshots.sh` sets each simulator's **system** language and reboots it, so the status bar and right-to-left layout match a real device. An app-only language (`-AppleLanguages`, test plan languages) leaves the status bar left-to-right.
+- `Extras/screenshots.sh` sets each simulator's **system** language and reboots it, so the status bar and right-to-left layout match a real device. An app-only language (`-AppleLanguages`, test plan languages) leaves the status bar left-to-right.
 - One test per shot in `AppStoreShots`, each from a fresh launch with `-Testing -ScreenshotData`, finding elements by identifier only: the shots run in 11 languages. A new shot is a test, a `Shot` case and a row in the script's `SHOTS`.
 - `-ScreenshotData` (debug only) loads the sample data, downloads the production catalog and drops every toast. The seeded lists are marked a week old, or the download is skipped as already done today.
-- Shot 09 subscribes to two made-up lists per language from `simply-filter-sms/screenshots/<language>/` on S3, rebuilt from `screenshot-data/`.
+- Shot 09 subscribes to two made-up lists per language from `simply-filter-sms/screenshots/<language>/` on S3, rebuilt from `Extras/test-data/screenshots/`.
 - The keyboard closes with Return (`"\n"`); tapping elsewhere doesn't.
 - iPadOS 26+ simulators start in windowed mode (a resize grabber, the app name in the status bar). The script turns off `SBChamoisWindowingEnabled` and `SBMedusaMultitaskingEnabled` on the iPad.
 - Never pass a date to `simctl status_bar --time`: the status bar then shows that date in English in every language, and it sticks until `status_bar clear`. The script clears it and sets only `9:41`, so the date is the day of the run, in the simulator's language.

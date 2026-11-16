@@ -1,6 +1,6 @@
 ---
 name: review-reports
-description: Review user-reported messages from DynamoDB, compile filter suggestions for the AI Filtering lists (ai/<lang>.sfsfilters), confirm with user, apply approved changes. Always archive raw reports locally before any DynamoDB deletion.
+description: Review user-reported messages from DynamoDB, compile filter suggestions for the AI Filtering lists (Extras/local/ai/<lang>.sfsfilters), confirm with user, apply approved changes. Always archive raw reports locally before any DynamoDB deletion.
 license: MIT
 metadata:
   author: SimplyFilterSMS
@@ -12,14 +12,14 @@ Review user-reported messages and turn them into automatic filter suggestions.
 **Context**
 - DynamoDB table: `reported_messages`, region: `us-east-1`
 - Record fields: `uuid` (S), `timestamp` (S), `sender` (S), `body` (S), `type` (S — "deny" or "allow")
-- Filter lists: `ai/<lang>.sfsfilters` (repo root, gitignored), one per language, listed in `ai/catalog.json`
+- Filter lists: `Extras/local/ai/<lang>.sfsfilters` (gitignored), one per language, listed in `Extras/local/ai/catalog.json`
 - S3 path: `s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/`
 - `3.0.0/automatic_filters.json` is frozen for apps 3.0–3.2. **Never edit or upload it.**
-- Supported languages: the `language` values in `ai/catalog.json` — always target the matching language
+- Supported languages: the `language` values in `Extras/local/ai/catalog.json` — always target the matching language
 - Record shapes and file rules: see **List files** below
 - Batch helper: `.claude/skills/review-reports/report_batch.py`
 - Python venv: `.claude/skills/review-reports/.venv/` (run `python3 -m venv .venv && .venv/bin/pip install boto3` if missing)
-- Archive path: `data/reported_messages_archive.json` (+ dated copy). Gitignored — contains user SMS content.
+- Archive path: `Extras/local/reports/reported_messages_archive.json` (+ dated copy). Gitignored — contains user SMS content.
 
 ## CRITICAL — no irreversible deletes without archive
 
@@ -58,7 +58,7 @@ SCRIPT=".claude/skills/review-reports/report_batch.py"
 
 # Full-table archive (required before any deletes)
 $PY $SCRIPT archive
-# → writes data/reported_messages_archive_<timestamp>.json AND data/reported_messages_archive.json
+# → writes Extras/local/reports/reported_messages_archive_<timestamp>.json AND Extras/local/reports/reported_messages_archive.json
 ```
 
 After archiving, print: path, record count, file size. Compare count to live table.
@@ -133,7 +133,7 @@ Local state: `.claude/skills/review-reports/.review-state.json` (gitignored). Tr
 2. Summary table for the batch.
 3. Compile suggestions (all languages; dedup vs existing + shorter-filter rule).
 4. Bulk Yes/Skip table (one row per proposed record: text, target, matching, case, folder, hits, reason); user replies `all` / `all except …`.
-5. Apply approved entries to the local `ai/<lang>.sfsfilters` files only — **no S3 yet**.
+5. Apply approved entries to the local `Extras/local/ai/<lang>.sfsfilters` files only — **no S3 yet**.
 6. **Local cleanup only:**
    - Processed (filter applied or already covered) → mark dismissed/processed in local state (**do not DynamoDB-delete**)
    - Skipped / noise → dismiss locally
@@ -146,19 +146,19 @@ Local state: `.claude/skills/review-reports/.review-state.json` (gitignored). Tr
 1. Set `exportedAt` (now, ISO-8601 UTC) once in each list file changed this session.
 2. Upload **only** when the user asks (`upload` / `finish` with upload), and only the changed files:
    ```bash
-   aws s3 cp ai/he.sfsfilters s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/he.sfsfilters --content-type application/json
+   aws s3 cp Extras/local/ai/he.sfsfilters s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/he.sfsfilters --content-type application/json
    ```
-   Upload `ai/catalog.json` too only if it changed. The bucket is world-readable: never upload anything else.
+   Upload `Extras/local/ai/catalog.json` too only if it changed. The bucket is world-readable: never upload anything else.
 3. **Table cleanup / wipe** — only when the user explicitly asks to clear DynamoDB:
    - Re-run `archive` (or confirm existing archive is complete and current).
    - Verify archive `count` == live table count.
-   - Ask: "Archive has N records at `data/…`. Delete all N from DynamoDB?"
+   - Ask: "Archive has N records at `Extras/local/reports/…`. Delete all N from DynamoDB?"
    - Only then run deletes (batch helper or boto3, max 25 per `batch_write_item`).
    - Re-scan to confirm table is empty.
 
 ## Compile suggestions
 
-- Route to the correct language file (`ai/<lang>.sfsfilters`).
+- Route to the correct language file (`Extras/local/ai/<lang>.sfsfilters`).
 - Layered suggestions: specific domain/sender **plus** a broader but non-vague phrase.
 - Don't deny legitimate business names; prefer promo/domain signals.
 - Each suggestion is a full record (target, matching, case, folder) chosen for that entry, with a reason. See **List files**.
@@ -167,7 +167,7 @@ Local state: `.claude/skills/review-reports/.review-state.json` (gitignored). Tr
 
 ## List files
 
-Each `ai/<lang>.sfsfilters` is a `.sfsfilters` payload (`format`, `version: 2`, `name`, `exportedAt`, `appVersion`, `filters`). Every record is decided on its own — there is no default shape:
+Each `Extras/local/ai/<lang>.sfsfilters` is a `.sfsfilters` payload (`format`, `version: 2`, `name`, `exportedAt`, `appVersion`, `filters`). Every record is decided on its own — there is no default shape:
 
 - **type:** `allow` / `deny`
 - **target:** `sender` / `body` / `all`

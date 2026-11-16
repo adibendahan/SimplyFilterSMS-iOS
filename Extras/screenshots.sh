@@ -9,9 +9,9 @@
 set -Eeuo pipefail
 
 readonly PROGRAM="${0##*/}"
-ROOT="$(cd "$(dirname "$0")" && pwd)"
-readonly ROOT
-readonly PROJECT="${ROOT}/Simply Filter SMS.xcodeproj"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+readonly HERE
+readonly PROJECT="${HERE}/../Simply Filter SMS.xcodeproj"
 readonly SCHEME="Screenshots Automation"
 readonly TEST_CLASS="Screenshots Automation/AppStoreShots"
 readonly WORK="${TMPDIR:-/tmp}/simply-filter-sms-screenshots"
@@ -61,7 +61,7 @@ readonly SHOTS=(
     "9|community-lists|testCommunityLists|iphone ipad"
 )
 
-output_root="${ROOT}/Screenshots"
+output_root="${HERE}/Screenshots"
 version_dir=""
 skip_build=false
 selected_languages=()
@@ -96,7 +96,7 @@ Options:
   -l, --language CODE   Capture only this language. Repeat for more. Default: all.
   -d, --device DEVICE   iphone or ipad. Repeat for both. Default: both.
   -s, --shot NUMBER     Capture only this shot (1-9). Repeat for more. Default: all.
-  -o, --output DIR      The folder that keeps every app version. Default: Screenshots
+  -o, --output DIR      The folder that keeps every app version. Default: Extras/Screenshots
       --skip-build      Reuse the previous build instead of building again.
       --list            List the languages, devices and shots, then exit.
   -h, --help            Show this help, then exit.

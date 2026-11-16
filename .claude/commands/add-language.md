@@ -279,9 +279,9 @@ If all keys are present: confirm and move to the next step.
 
 ## Step 7b — Translate the Community Lists site
 
-The Community Lists guide, its list tester and the submit page (`community-lists/`, published to GitHub Pages) carry their own text, one file per language in `community-lists/strings/`.
+The Community Lists guide, its list tester and the submit page (`Extras/community-lists/`, published to GitHub Pages) carry their own text, one file per language in `Extras/community-lists/strings/`.
 
-1. Create `community-lists/strings/<code>.js` with the same keys as `community-lists/strings/en.js`, in this shape:
+1. Create `Extras/community-lists/strings/<code>.js` with the same keys as `Extras/community-lists/strings/en.js`, in this shape:
    ```js
    window.STRINGS["<code>"] = {
      "key": "value",
@@ -316,10 +316,10 @@ The Community Lists guide, its list tester and the submit page (`community-lists
    - `example.locale` is the language's main locale (e.g. `ru-RU`); `example.description` is "Blocks loan and prize scams in <language>." in the target language.
    - Plurals: keys ending in `.one` / `.other` (`check.filterCount`, `check.skipped`, `check.duplicates`) follow `Intl.PluralRules` for the language. `.other` is required; add only the categories the language uses (`.two`, `.few`, `.many`), or phrase the string as a count label when every form would be awkward (as Arabic does).
 4. **Register the language:**
-   - Add `<code>` to `SUPPORTED` in `community-lists/assets/i18n-boot.js`. If the browser reports a different tag (e.g. `pt` for `pt-BR`, `zh` for `zh-Hans`), add the mapping to `supportedLanguage` there.
-   - Add an `<option value="<code>">` with the language's name in its own language to the language menu in both `community-lists/index.html` and `community-lists/submit/index.html`, in the same order as the others.
-   - For an RTL language, add `<code>` to `RTL` in `community-lists/assets/i18n.js`.
-5. **Verify:** the new file has every key `en.js` has (plural categories aside), and each value uses the same placeholders as its English value. Open `community-lists/index.html?lang=<code>` and `community-lists/submit/index.html?lang=<code>` in a browser and check the text, the layout, and (for RTL) the mirroring.
+   - Add `<code>` to `SUPPORTED` in `Extras/community-lists/assets/i18n-boot.js`. If the browser reports a different tag (e.g. `pt` for `pt-BR`, `zh` for `zh-Hans`), add the mapping to `supportedLanguage` there.
+   - Add an `<option value="<code>">` with the language's name in its own language to the language menu in both `Extras/community-lists/index.html` and `Extras/community-lists/submit/index.html`, in the same order as the others.
+   - For an RTL language, add `<code>` to `RTL` in `Extras/community-lists/assets/i18n.js`.
+5. **Verify:** the new file has every key `en.js` has (plural categories aside), and each value uses the same placeholders as its English value. Open `Extras/community-lists/index.html?lang=<code>` and `Extras/community-lists/submit/index.html?lang=<code>` in a browser and check the text, the layout, and (for RTL) the mirroring.
 
 The site deploys from `master`, so the language goes live when this reaches `master`.
 
@@ -328,8 +328,8 @@ The site deploys from `master`, so the language goes live when this reaches `mas
 ## Step 8 — Update the App Store screenshots
 
 1. `Screenshots Automation/Support/StudioLanguage.swift`: add a case with the language's code, its `blockedText` (a short word that appears in SMS spam in that language, e.g. "loan", "promo", "credit") and, if it differs from the code, its `aiFilteringLanguage`.
-2. `screenshots.sh`: add a `LANGUAGES` row: code, `AppleLocale`, App Store Connect folder, English name.
-3. `screenshot-data/<code>/`: copy `parcel.sfsfilters` and `deals.sfsfilters` from `en`, translate `name` and `description`, set `locale`, and give `author` a local name with a hidden wink like the others ("Phil Ter", "Mark.D"; a real-looking name, never an obvious joke). Upload them to `simply-filter-sms/screenshots/<code>/` only when asked.
+2. `Extras/screenshots.sh`: add a `LANGUAGES` row: code, `AppleLocale`, App Store Connect folder, English name.
+3. `Extras/test-data/screenshots/<code>/`: copy `parcel.sfsfilters` and `deals.sfsfilters` from `en`, translate `name` and `description`, set `locale`, and give `author` a local name with a hidden wink like the others ("Phil Ter", "Mark.D"; a real-looking name, never an obvious joke). Upload them to `simply-filter-sms/screenshots/<code>/` only when asked.
 
 ---
 
@@ -372,7 +372,7 @@ At the end, report:
 - Strings file: `Simply Filter SMS/Resources/<code>.lproj/Localizable.strings`
 - Plural `.stringsdict`: created (3 entries: `general_active_count`, `autoFilter_countryAllowlist_section_allowed`, `autoFilter_countryAllowlist_section_blocked`)
 - Key count (must match English)
-- Community Lists site: `community-lists/strings/<code>.js` created and the language registered (key count matches `en.js`)
+- Community Lists site: `Extras/community-lists/strings/<code>.js` created and the language registered (key count matches `en.js`)
 - Xcode project updated: yes/no
 - Strings that exceeded the length constraint (flagged for layout review)
 - Test launch argument: `-AppleLanguages (<code>)`

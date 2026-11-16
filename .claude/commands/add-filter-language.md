@@ -1,11 +1,11 @@
 ---
 name: "Add Filter Language"
-description: Add a new AI Filtering language — generates locale-appropriate spam keywords and allow-lists, lets you review, then writes ai/<lang>.sfsfilters and adds it to ai/catalog.json
+description: Add a new AI Filtering language — generates locale-appropriate spam keywords and allow-lists, lets you review, then writes Extras/local/ai/<lang>.sfsfilters and adds it to Extras/local/ai/catalog.json
 category: Localization
 tags: [localization, filters, spam]
 ---
 
-Add a new AI Filtering list: `ai/<code>.sfsfilters`, listed in `ai/catalog.json` (3.3) and `ai/catalog-4.0.0.json` (4.0 and later), all at the repo root, gitignored. `3.0.0/automatic_filters.json` is frozen for apps 3.0–3.2: **never edit or upload it.**
+Add a new AI Filtering list: `Extras/local/ai/<code>.sfsfilters`, listed in `Extras/local/ai/catalog.json` (3.3) and `Extras/local/ai/catalog-4.0.0.json` (4.0 and later), all in `Extras/local/ai/`, gitignored. `3.0.0/automatic_filters.json` is frozen for apps 3.0–3.2: **never edit or upload it.**
 
 **Input**: The argument after `/add-filter-language` is the BCP-47 language code (e.g. `fr`, `de`, `pt`), OR a language name. If omitted, ask.
 
@@ -24,13 +24,13 @@ Confirm: language name, BCP-47 code, and the primary country/region this list ta
 
 ## Step 2 — Load the catalog
 
-Read `ai/catalog.json` and `ai/catalog-4.0.0.json`. If either is missing, fetch it from:
+Read `Extras/local/ai/catalog.json` and `Extras/local/ai/catalog-4.0.0.json`. If either is missing, fetch it from:
 ```
 https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/3.3.0/ai/catalog.json
 https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/4.0.0/catalog.json
 ```
 
-Verify no entry already has `"language": "<code>"` and `ai/<code>.sfsfilters` doesn't exist. If either does, inform the user and stop.
+Verify no entry already has `"language": "<code>"` and `Extras/local/ai/<code>.sfsfilters` doesn't exist. If either does, inform the user and stop.
 
 ---
 
@@ -40,7 +40,7 @@ Before writing anything, reason carefully about the target language and region. 
 
 > **Search budget:** Use your built-in knowledge first. You may perform **at most 2-3 web/agent searches** for genuinely unknown facts (e.g. an obscure local sender ID, a current politician's name, a rare iOS system term). If you believe more than 2-3 searches are needed, **ask the user for permission before searching**. Never launch a broad research agent just to be thorough — it wastes the session token budget.
 
-### Key principles (learned from the `en` and `he` lists — always use `ai/en.sfsfilters` and `ai/he.sfsfilters` as your reference examples when researching format and scope)
+### Key principles (learned from the `en` and `he` lists — always use `Extras/local/ai/en.sfsfilters` and `Extras/local/ai/he.sfsfilters` as your reference examples when researching format and scope)
 
 **Phrase clusters, not bare words.** A single word like "free" or "gratis" will match legitimate messages. Instead generate clusters of 4–8 variations per concept:
 - "Free" → "Free gift", "Free trial", "Free offer", "Free access", "100% free", "Completely free", "For free", "At no cost"
@@ -165,7 +165,7 @@ Then use **AskUserQuestion** to ask:
 
 ## Step 6 — Write the list and the catalog
 
-Write `ai/<code>.sfsfilters` with the approved records in `filters`:
+Write `Extras/local/ai/<code>.sfsfilters` with the approved records in `filters`:
 
 ```json
 {
@@ -182,13 +182,13 @@ Never write placeholder fields.
 
 - **Order matters:** the app stops at the first matching record. Keep `promotion` / `transaction` records after all `junk` records, so a message that also matches a junk entry still goes to junk. Add new junk records before them.
 
-Add the entry to both catalogs, keeping `lists` sorted by `id`. `ai/catalog.json`:
+Add the entry to both catalogs, keeping `lists` sorted by `id`. `Extras/local/ai/catalog.json`:
 
 ```json
 { "id": "ai-<code>", "name": "<English language name>", "url": "<code>.sfsfilters", "language": "<code>" }
 ```
 
-`ai/catalog-4.0.0.json` (same list file, resolved from the 4.0.0 folder):
+`Extras/local/ai/catalog-4.0.0.json` (same list file, resolved from the 4.0.0 folder):
 
 ```json
 { "id": "ai-<code>", "name": "<English language name>", "url": "../3.3.0/ai/<code>.sfsfilters", "language": "<code>", "type": "ai-filtering-language" }
@@ -206,13 +206,13 @@ After writing, verify:
 ## Step 7 — Upload to S3 (optional)
 
 Use **AskUserQuestion** to ask:
-> "Upload `ai/<code>.sfsfilters` and both catalogs to S3 now?"
+> "Upload `Extras/local/ai/<code>.sfsfilters` and both catalogs to S3 now?"
 
 If yes, upload the list **before** the catalog, so the catalog never points at a missing file:
 ```bash
-aws s3 cp ai/<code>.sfsfilters s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/<code>.sfsfilters --content-type application/json
-aws s3 cp ai/catalog.json s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/catalog.json --content-type application/json
-aws s3 cp ai/catalog-4.0.0.json s3://grizz-apps-dev/simply-filter-sms/4.0.0/catalog.json --content-type application/json
+aws s3 cp Extras/local/ai/<code>.sfsfilters s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/<code>.sfsfilters --content-type application/json
+aws s3 cp Extras/local/ai/catalog.json s3://grizz-apps-dev/simply-filter-sms/3.3.0/ai/catalog.json --content-type application/json
+aws s3 cp Extras/local/ai/catalog-4.0.0.json s3://grizz-apps-dev/simply-filter-sms/4.0.0/catalog.json --content-type application/json
 ```
 
 The bucket is world-readable: never upload anything else. Report success or failure.
@@ -229,5 +229,5 @@ Only if the app is already translated into this language (it's a case in `Screen
 
 Report:
 - Language added: name + NLLanguage key + primary target country
-- Files written: `ai/<code>.sfsfilters`, `ai/catalog.json`
+- Files written: `Extras/local/ai/<code>.sfsfilters`, `Extras/local/ai/catalog.json`
 - record counts per type + dominant categories covered

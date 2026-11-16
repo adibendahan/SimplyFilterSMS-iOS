@@ -17,7 +17,7 @@ TABLE = "reported_messages"
 REGION = "us-east-1"
 STATE_FILE = Path(__file__).parent / ".review-state.json"
 REPO_ROOT = Path(__file__).resolve().parents[3]
-ARCHIVE_DIR = REPO_ROOT / "data"
+ARCHIVE_DIR = REPO_ROOT / "Extras" / "local" / "reports"
 ARCHIVE_LATEST = ARCHIVE_DIR / "reported_messages_archive.json"
 
 
@@ -177,7 +177,7 @@ def _require_archive_or_exit(force: bool) -> dict:
         return {}
     if not ARCHIVE_LATEST.exists():
         print(
-            "REFUSING TO DELETE: no archive at data/reported_messages_archive.json\n"
+            "REFUSING TO DELETE: no archive at Extras/local/reports/reported_messages_archive.json\n"
             "Run: report_batch.py archive\n"
             "Then re-run delete with --i-know-this-is-permanent",
             file=sys.stderr,
@@ -244,7 +244,7 @@ def cmd_delete(args: argparse.Namespace) -> None:
 def cmd_reset(_: argparse.Namespace) -> None:
     if STATE_FILE.exists():
         STATE_FILE.unlink()
-    print("Local review state cleared. (Archive files under data/ were not touched.)")
+    print("Local review state cleared. (Archive files under Extras/local/reports/ were not touched.)")
 
 
 def main() -> None:
@@ -268,7 +268,7 @@ def main() -> None:
     p_dismiss.add_argument("--file", help="Path to JSON file with keys array")
     p_dismiss.set_defaults(func=cmd_dismiss)
 
-    p_archive = sub.add_parser("archive", help="Export full table to data/reported_messages_archive.json")
+    p_archive = sub.add_parser("archive", help="Export full table to Extras/local/reports/reported_messages_archive.json")
     p_archive.add_argument(
         "--force",
         action="store_true",

@@ -3,8 +3,8 @@
 Served from `s3://grizz-apps-dev/simply-filter-sms/ui-tests/` to the app when it's launched with `-Testing -UITestData` (DEBUG only). World-readable: test data only, never user data. Upload lists before `catalog.json`:
 
 ```
-aws s3 cp ui-test-data/ s3://grizz-apps-dev/simply-filter-sms/ui-tests/ --recursive --exclude "README.md" --exclude "catalog.json" --content-type application/json
-aws s3 cp ui-test-data/catalog.json s3://grizz-apps-dev/simply-filter-sms/ui-tests/catalog.json --content-type application/json
+aws s3 cp Extras/test-data/ui-tests/ s3://grizz-apps-dev/simply-filter-sms/ui-tests/ --recursive --exclude "README.md" --exclude "catalog.json" --content-type application/json
+aws s3 cp Extras/test-data/ui-tests/catalog.json s3://grizz-apps-dev/simply-filter-sms/ui-tests/catalog.json --content-type application/json
 ```
 
 A test's expectation traces to one record here; change a record and its test together.

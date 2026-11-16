@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://github.com/adibendahan/SimplyFilterSMS-iOS"><img src="_screenshots/logo.png" width="256" height="256"></a>
+  <a href="https://github.com/adibendahan/SimplyFilterSMS-iOS"><img src="docs/images/logo.png" width="256" height="256"></a>
   <h1>Simply Filter SMS</h1>
   <p>
     <b>Filter text messages from unknown senders using keywords, regex, and AI</b>
@@ -90,14 +90,14 @@ Simply Filter SMS is written in Apple's latest programming paradigm SwiftUI.
 ## Screenshots
 
 <p float="left">
-<img width="250" src="_screenshots/01.png">
-<img width="250" src="_screenshots/02.png">
-<img width="250" src="_screenshots/03.png">
-<img width="250" src="_screenshots/04.png">
-<img width="250" src="_screenshots/05.png">
-<img width="250" src="_screenshots/06.png">
-<img width="250" src="_screenshots/07.png">
-<img width="250" src="_screenshots/08.png">
+<img width="250" src="docs/images/01.png">
+<img width="250" src="docs/images/02.png">
+<img width="250" src="docs/images/03.png">
+<img width="250" src="docs/images/04.png">
+<img width="250" src="docs/images/05.png">
+<img width="250" src="docs/images/06.png">
+<img width="250" src="docs/images/07.png">
+<img width="250" src="docs/images/08.png">
 </p>
 
 

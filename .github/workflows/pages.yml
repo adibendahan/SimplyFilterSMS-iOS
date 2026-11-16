@@ -3,7 +3,7 @@ name: Publish Community Lists site
 on:
   push:
     branches: [master]
-    paths: ["community-lists/**", ".github/workflows/pages.yml"]
+    paths: ["Extras/community-lists/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -26,6 +26,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: community-lists
+          path: Extras/community-lists
       - id: deployment
         uses: actions/deploy-pages@v4
