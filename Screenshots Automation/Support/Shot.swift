@@ -5,7 +5,7 @@
 //  Created by Adi Ben-Dahan on 16/11/2026.
 //
 
-import UIKit
+import Foundation
 
 enum Shot: Int, CaseIterable {
     case home = 1
@@ -18,10 +18,9 @@ enum Shot: Int, CaseIterable {
     case countries
     case communityLists
 
-    var attachmentName: String {
-        let device = UIDevice.current.userInterfaceIdiom == .pad ? "ipad" : "iphone"
+    func attachmentName(on device: ShotDevice) -> String {
         let number = String(format: "%02d", self.rawValue)
-        return "screenshot~\(StudioLanguage.current.rawValue)~\(device)~\(number)-\(self.slug)"
+        return "screenshot~\(StudioLanguage.current.rawValue)~\(device.rawValue)~\(number)-\(self.slug)"
     }
 
     //MARK: - Private -

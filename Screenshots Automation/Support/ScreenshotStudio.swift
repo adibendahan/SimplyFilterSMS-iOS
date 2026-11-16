@@ -9,6 +9,7 @@ import XCTest
 
 @MainActor
 final class ScreenshotStudio {
+    let device: ShotDevice
     let aiFiltering: AIFilteringScreen
     let blockedTexts: FilterListScreen
     let allowedTexts: FilterListScreen
@@ -19,6 +20,7 @@ final class ScreenshotStudio {
 
     init() {
         let app = XCUIApplication.launchSimplyFilter(arguments: ["-ScreenshotData"])
+        self.device = ShotDevice(app: app)
         self.aiFiltering = AIFilteringScreen(app: app)
         self.blockedTexts = FilterListScreen(app: app, link: .denyFiltersLink)
         self.allowedTexts = FilterListScreen(app: app, link: .allowFiltersLink)
@@ -26,5 +28,10 @@ final class ScreenshotStudio {
         self.filterTester = FilterTesterScreen(app: app)
         self.countries = CountriesScreen(app: app)
         self.communityLists = CommunityListsScreen(app: app)
+    }
+
+    func fillDetailPane() {
+        guard self.device.usesSplitLayout else { return }
+        self.aiFiltering.show(activeLanguage: .current)
     }
 }

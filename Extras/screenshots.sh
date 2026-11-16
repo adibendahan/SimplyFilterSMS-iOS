@@ -2,9 +2,11 @@
 #
 # screenshots.sh — capture the App Store screenshots of Simply Filter SMS.
 #
-# Runs the Screenshots Automation tests once per language on two dedicated
+# Runs the Screenshots Automation tests once per language on dedicated
 # simulators, with the simulator's system language switched for each run, and
 # writes the shots to <output>/<app version>/<App Store Connect locale>/.
+# The iPhone Duo is shot folded and unfolded; hinge
+# (brew install artemnovichkov/tap/hinge) folds it between the two runs.
 #
 set -Eeuo pipefail
 
@@ -42,23 +44,24 @@ readonly LANGUAGES=(
     "zh-Hans|zh_CN|zh-Hans|Chinese (Simplified)"
 )
 
-# key | simulator name | device type
+# key | simulator name | device type | screens (file name prefixes)
 readonly DEVICES=(
-    "iphone|Screenshots iPhone|com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro-Max"
-    "ipad|Screenshots iPad|com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB"
+    "iphone|Screenshots iPhone|com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro-Max|iphone"
+    "ipad|Screenshots iPad|com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB|ipad"
+    "duo|Screenshots Duo|com.apple.CoreSimulator.SimDeviceType.iPhone-Duo|duo-outer duo-inner"
 )
 
-# number | file name | test | devices
+# number | file name | test | screens
 readonly SHOTS=(
-    "1|home|testHome|iphone"
-    "2|ai-filtering|testAIFiltering|iphone ipad"
-    "3|blocked-texts|testBlockedTexts|iphone ipad"
-    "4|allowed-texts|testAllowedTexts|iphone ipad"
-    "5|add-filter|testAddFilter|iphone ipad"
-    "6|blocked-languages|testBlockedLanguages|iphone ipad"
-    "7|test-your-filters|testFilterTester|iphone ipad"
-    "8|countries|testCountries|iphone ipad"
-    "9|community-lists|testCommunityLists|iphone ipad"
+    "1|home|testHome|iphone duo-outer"
+    "2|ai-filtering|testAIFiltering|iphone ipad duo-outer duo-inner"
+    "3|blocked-texts|testBlockedTexts|iphone ipad duo-outer duo-inner"
+    "4|allowed-texts|testAllowedTexts|iphone ipad duo-outer duo-inner"
+    "5|add-filter|testAddFilter|iphone ipad duo-outer duo-inner"
+    "6|blocked-languages|testBlockedLanguages|iphone ipad duo-outer duo-inner"
+    "7|test-your-filters|testFilterTester|iphone ipad duo-outer duo-inner"
+    "8|countries|testCountries|iphone ipad duo-outer duo-inner"
+    "9|community-lists|testCommunityLists|iphone ipad duo-outer duo-inner"
 )
 
 output_root="${HERE}/Screenshots"
@@ -90,11 +93,12 @@ usage() {
     cat <<EOF
 Usage: ${PROGRAM} [options]
 
-Capture the App Store screenshots for every language on iPhone and iPad.
+Capture the App Store screenshots for every language on iPhone, iPad and
+iPhone Duo (folded and unfolded).
 
 Options:
   -l, --language CODE   Capture only this language. Repeat for more. Default: all.
-  -d, --device DEVICE   iphone or ipad. Repeat for both. Default: both.
+  -d, --device DEVICE   iphone, ipad or duo. Repeat for more. Default: all.
   -s, --shot NUMBER     Capture only this shot (1-9). Repeat for more. Default: all.
   -o, --output DIR      The folder that keeps every app version. Default: Extras/Screenshots
       --skip-build      Reuse the previous build instead of building again.
@@ -103,8 +107,8 @@ Options:
 
 Each app version has its own folder, DIR/<app version>/<App Store Connect locale>/.
 A language is written there only after all of its shots were captured, so a
-failed language keeps its previous screenshots. A run of every shot on both
-devices replaces that version's whole language folder; any narrower run
+failed language keeps its previous screenshots. A run of every shot on every
+device replaces that version's whole language folder; any narrower run
 replaces only the shots it captured.
 
 A shot that runs longer than ${TEST_TIME_ALLOWANCE} seconds fails, and a test run that prints
@@ -112,9 +116,9 @@ nothing for $((STALL_SECONDS / 60)) minutes is stopped. Either way the language 
 again on restarted simulators, up to ${ATTEMPTS} attempts in all.
 
 Examples:
-  ${PROGRAM}                          Every shot, every language, both devices.
+  ${PROGRAM}                          Every shot, every language, every device.
   ${PROGRAM} -l he -l ar              Hebrew and Arabic only.
-  ${PROGRAM} -l en -d ipad -s 9       One shot, to check a change.
+  ${PROGRAM} -l en -d ipad -s 8       One shot, to check a change.
 
 Exit status:
   0  every language was captured
@@ -132,16 +136,20 @@ list() {
         printf '  %-8s %-22s → %s\n' "${code}" "${name}" "${folder}"
     done
     printf '%sDevices%s\n' "${bold}" "${reset}"
-    local key sim_name
+    local key sim_name screens screen counts
     for entry in "${DEVICES[@]}"; do
-        IFS='|' read -r key sim_name _ <<<"${entry}"
-        printf '  %-8s %-22s %s shots\n' "${key}" "${sim_name}" "$(shot_count "${key}" "${SHOTS[@]}")"
+        IFS='|' read -r key sim_name _ screens <<<"${entry}"
+        counts=""
+        for screen in ${screens}; do
+            counts="${counts:+${counts}, }${screen} $(shot_count "${screen}" "${SHOTS[@]}") shots"
+        done
+        printf '  %-8s %-22s %s\n' "${key}" "${sim_name}" "${counts}"
     done
     printf '%sShots%s\n' "${bold}" "${reset}"
-    local number file devices
+    local number file
     for entry in "${SHOTS[@]}"; do
-        IFS='|' read -r number file _ devices <<<"${entry}"
-        printf '  %-8s %-22s %s\n' "${number}" "${file}" "${devices}"
+        IFS='|' read -r number file _ screens <<<"${entry}"
+        printf '  %-8s %-22s %s\n' "${number}" "${file}" "${screens}"
     done
 }
 
@@ -170,13 +178,22 @@ shot_entry() {
 }
 
 shot_count() {
-    local key="$1" entry devices count=0
+    local screen="$1" entry screens count=0
     shift
     for entry in "$@"; do
-        IFS='|' read -r _ _ _ devices <<<"${entry}"
-        [[ " ${devices} " = *" ${key} "* ]] && count=$((count + 1))
+        IFS='|' read -r _ _ _ screens <<<"${entry}"
+        [[ " ${screens} " = *" ${screen} "* ]] && count=$((count + 1))
     done
     echo "${count}"
+}
+
+selected_screens() {
+    local entry screens
+    for entry in "${selected_devices[@]}"; do
+        IFS='|' read -r _ _ _ screens <<<"${entry}"
+        read -ra screens <<<"${screens}"
+        printf '%s\n' "${screens[@]}"
+    done
 }
 
 device_entry() {
@@ -199,8 +216,8 @@ parse_arguments() {
                 selected_languages+=("$(language_entry "$2")")
                 shift 2 ;;
             -d|--device)
-                [[ $# -ge 2 ]] || die "$1 needs iphone or ipad" "${EXIT_USAGE}"
-                device_entry "$2" >/dev/null || die "unknown device '$2' (use iphone or ipad)" "${EXIT_USAGE}"
+                [[ $# -ge 2 ]] || die "$1 needs iphone, ipad or duo" "${EXIT_USAGE}"
+                device_entry "$2" >/dev/null || die "unknown device '$2' (use iphone, ipad or duo)" "${EXIT_USAGE}"
                 selected_devices+=("$(device_entry "$2")")
                 shift 2 ;;
             -s|--shot)
@@ -228,10 +245,9 @@ parse_arguments() {
     [[ ${#selected_languages[@]} -gt 0 ]] || selected_languages=("${LANGUAGES[@]}")
     [[ ${#selected_devices[@]} -gt 0 ]] || selected_devices=("${DEVICES[@]}")
     [[ ${#selected_shots[@]} -gt 0 ]] || selected_shots=("${SHOTS[@]}")
-    local device key total=0
-    for device in "${selected_devices[@]}"; do
-        key="${device%%|*}"
-        total=$((total + $(shot_count "${key}" "${selected_shots[@]}")))
+    local screen total=0
+    for screen in $(selected_screens); do
+        total=$((total + $(shot_count "${screen}" "${selected_shots[@]}")))
     done
     [[ ${total} -gt 0 ]] || die "the selected shots don't exist on the selected devices (see --list)" "${EXIT_USAGE}"
 }
@@ -240,15 +256,21 @@ is_full_run() {
     [[ ${#selected_devices[@]} -eq ${#DEVICES[@]} ]] && [[ ${#selected_shots[@]} -eq ${#SHOTS[@]} ]]
 }
 
+# The tests for the given screens: the whole class when every shot is selected.
 test_filters() {
     if [[ ${#selected_shots[@]} -eq ${#SHOTS[@]} ]]; then
         printf -- '-only-testing\n%s\n' "${TEST_CLASS}"
         return
     fi
-    local entry test
+    local entry test screens screen
     for entry in "${selected_shots[@]}"; do
-        IFS='|' read -r _ _ test _ <<<"${entry}"
-        printf -- '-only-testing\n%s/%s\n' "${TEST_CLASS}" "${test}"
+        IFS='|' read -r _ _ test screens <<<"${entry}"
+        for screen in "$@"; do
+            if [[ " ${screens} " = *" ${screen} "* ]]; then
+                printf -- '-only-testing\n%s/%s\n' "${TEST_CLASS}" "${test}"
+                break
+            fi
+        done
     done
 }
 
@@ -283,17 +305,32 @@ preflight() {
         command -v "${tool}" >/dev/null || die "${tool} not found; install Xcode and its command line tools"
     done
     [[ -d "${PROJECT}" ]] || die "project not found at ${PROJECT}"
-    runtime=$(xcrun simctl list runtimes ios | grep -oE 'com\.apple\.CoreSimulator\.SimRuntime\.iOS-[0-9-]+$' | tail -1 || true)
-    [[ -n "${runtime}" ]] || die "no iOS simulator runtime installed (Xcode ▸ Settings ▸ Components)"
-    local entry type
+    local entry key type
     for entry in "${selected_devices[@]}"; do
-        IFS='|' read -r _ _ type <<<"${entry}"
+        IFS='|' read -r key _ type _ <<<"${entry}"
         xcrun simctl list devicetypes | grep -q "(${type})" || die "this Xcode has no simulator type ${type}"
+        [[ -n "$(runtime_for "${type}")" ]] || die "no installed iOS runtime runs ${type} (Xcode ▸ Settings ▸ Components)"
+        if [[ "${key}" = "duo" ]]; then
+            command -v hinge >/dev/null || die "the iPhone Duo needs hinge to fold it: brew install artemnovichkov/tap/hinge"
+        fi
     done
 }
 
+# The newest installed iOS runtime that runs the device type. The iPhone Duo has
+# a runtime build of its own that runs no other device.
+runtime_for() {
+    xcrun simctl list runtimes -j | python3 -I -c '
+import json, sys
+runtimes = [r for r in json.load(sys.stdin)["runtimes"]
+            if r.get("isAvailable") and r["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-")
+            and any(d["identifier"] == sys.argv[1] for d in r.get("supportedDeviceTypes", []))]
+if runtimes:
+    print(runtimes[-1]["identifier"])
+' "$1"
+}
+
 ensure_simulator() {
-    local name="$1" type="$2" udid
+    local name="$1" type="$2" runtime="$3" udid
     udid=$(xcrun simctl list devices | grep -F "    ${name} (" | grep -oE '[0-9A-F-]{36}' | head -1 || true)
     if [[ -z "${udid}" ]]; then
         udid=$(xcrun simctl create "${name}" "${type}" "${runtime}") || die "could not create the simulator '${name}'"
@@ -321,26 +358,56 @@ prepare_simulator() {
         --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
 }
 
+# Destinations for the given device keys, or for every selected device.
 destinations() {
-    local udid
-    for udid in "${device_ids[@]}"; do
-        printf -- '-destination\nid=%s\n' "${udid}"
+    local index
+    for index in "${!device_ids[@]}"; do
+        if [[ $# -eq 0 ]] || [[ " $* " = *" ${device_keys[${index}]} "* ]]; then
+            printf -- '-destination\nid=%s\n' "${device_ids[${index}]}"
+        fi
     done
+}
+
+udid_for() {
+    local index
+    for index in "${!device_keys[@]}"; do
+        if [[ "${device_keys[${index}]}" = "$1" ]]; then
+            echo "${device_ids[${index}]}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Folds (close) or unfolds (open) the iPhone Duo, then waits until the screen
+# that goes with it hosts the UI: the outer one is the primary display.
+fold() {
+    local udid="$1" pose="$2" expected primary attempt
+    hinge -d "${udid}" -t 5 "${pose}" || return 1
+    [[ "${pose}" = "close" ]] && expected=true || expected=false
+    for (( attempt = 0; attempt < 20; attempt++ )); do
+        primary=$(hinge -d "${udid}" posture --json | python3 -I -c '
+import json, sys
+print(str(next((d["primary"] for d in json.load(sys.stdin)["displays"] if d["active"]), "")).lower())')
+        [[ "${primary}" = "${expected}" ]] && return 0
+        sleep 0.5
+    done
+    return 1
 }
 
 #MARK: - Steps -
 
 prepare_simulators() {
     step "Simulators"
-    local entry key sim_name type udid
+    local entry key sim_name type runtime udid
     for entry in "${selected_devices[@]}"; do
-        IFS='|' read -r key sim_name type <<<"${entry}"
-        udid=$(ensure_simulator "${sim_name}" "${type}") || exit "${EXIT_ENVIRONMENT}"
+        IFS='|' read -r key sim_name type _ <<<"${entry}"
+        runtime=$(runtime_for "${type}")
+        udid=$(ensure_simulator "${sim_name}" "${type}" "${runtime}") || exit "${EXIT_ENVIRONMENT}"
         device_ids+=("${udid}")
         device_keys+=("${key}")
-        ok "${sim_name} ${dim}(${udid})${reset}"
+        ok "${sim_name} ${dim}(${udid}, ${runtime##*.})${reset}"
     done
-    note "${runtime##*.}"
 }
 
 build() {
@@ -374,7 +441,7 @@ choose_version_dir() {
 collect() {
     local bundle="$1" staging="$2"
     local export="${WORK}/export"
-    rm -rf "${export}" "${staging}" && mkdir -p "${export}" "${staging}"
+    rm -rf "${export}" && mkdir -p "${export}" "${staging}"
     xcrun xcresulttool export attachments --path "${bundle}" --output-path "${export}" >/dev/null
     python3 -I - "${export}" "${staging}" <<'PYTHON'
 import json, shutil, sys
@@ -441,31 +508,64 @@ prepare_language() {
     return "${status}"
 }
 
+# Runs the tests for the given screens on the given devices into one bundle.
+# Prints why it failed, or nothing.
+run_screens() {
+    local bundle="$1" log="$2" devices="$3"
+    shift 3
+    local args=() line status=0
+    while IFS= read -r line; do args+=("${line}"); done < <(test_filters "$@")
+    [[ ${#args[@]} -gt 0 ]] || return 0
+    local device_list
+    read -ra device_list <<<"${devices}"
+    while IFS= read -r line; do args+=("${line}"); done < <(destinations "${device_list[@]}")
+    run_tests "${bundle}" "${log}" "${args[@]}" || status=$?
+    case "${status}" in
+        0) collect "${bundle}" "${WORK}/staging/current" ;;
+        2) echo "the test run printed nothing for $((STALL_SECONDS / 60)) minutes and was stopped" ;;
+        *) echo "a shot failed on $*" ;;
+    esac
+}
+
 # Prints why an attempt failed, or nothing when every shot was captured.
 attempt_language() {
     local code="$1" locale="$2" name="$3" log="$4" bundle="$5" staging="$6"
+    rm -rf "${staging}" "${WORK}/staging/current"
     if ! prepare_language "${code}" "${locale}" "${log}"; then
         echo "could not set the simulators to ${name}"
         return
     fi
 
-    local args=() line status=0
-    while IFS= read -r line; do args+=("${line}"); done < <(destinations; test_filters)
-    run_tests "${bundle}" "${log}" "${args[@]}" || status=$?
-    case "${status}" in
-        0) ;;
-        2) echo "the test run printed nothing for $((STALL_SECONDS / 60)) minutes and was stopped"; return ;;
-        *) echo "a shot failed"; return ;;
-    esac
+    local flat=() screens=() reason
+    udid_for iphone >/dev/null && flat+=(iphone) && screens+=(iphone)
+    udid_for ipad >/dev/null && flat+=(ipad) && screens+=(ipad)
+    if [[ ${#flat[@]} -gt 0 ]]; then
+        reason=$(run_screens "${bundle}" "${log}" "${flat[*]}" "${screens[@]}")
+        [[ -z "${reason}" ]] || { echo "${reason}"; return; }
+    fi
 
-    collect "${bundle}" "${staging}"
-    local device key shots captured missing=()
-    for device in "${selected_devices[@]}"; do
-        key="${device%%|*}"
-        shots=$(shot_count "${key}" "${selected_shots[@]}")
+    local duo pose screen
+    if duo=$(udid_for duo); then
+        for pose in close open; do
+            [[ "${pose}" = "close" ]] && screen="duo-outer" || screen="duo-inner"
+            [[ $(shot_count "${screen}" "${selected_shots[@]}") -gt 0 ]] || continue
+            if ! fold "${duo}" "${pose}" >>"${log}" 2>&1; then
+                echo "hinge could not ${pose} the iPhone Duo"
+                return
+            fi
+            reason=$(run_screens "${bundle%.xcresult}.${screen}.xcresult" "${log}" duo "${screen}")
+            [[ -z "${reason}" ]] || { echo "${reason}"; return; }
+        done
+    fi
+
+    mkdir -p "${WORK}/staging/current"
+    mv "${WORK}/staging/current" "${staging}"
+    local shots captured missing=()
+    for screen in $(selected_screens); do
+        shots=$(shot_count "${screen}" "${selected_shots[@]}")
         [[ ${shots} -gt 0 ]] || continue
-        captured=$(find "${staging}" -name "${key}-*.png" | wc -l | tr -d ' ')
-        [[ "${captured}" -eq "${shots}" ]] || missing+=("${key} ${captured}/${shots}")
+        captured=$(find "${staging}" -name "${screen}-*.png" | wc -l | tr -d ' ')
+        [[ "${captured}" -eq "${shots}" ]] || missing+=("${screen} ${captured}/${shots}")
     done
     if [[ ${#missing[@]} -gt 0 ]]; then
         echo "shots missing: ${missing[*]}"
@@ -497,11 +597,10 @@ capture_language() {
         fi
     done
 
-    local device key
-    for device in "${selected_devices[@]}"; do
-        key="${device%%|*}"
-        [[ $(shot_count "${key}" "${selected_shots[@]}") -gt 0 ]] || continue
-        ok "${key} $(find "${staging}" -name "${key}-*.png" | wc -l | tr -d ' ')/$(shot_count "${key}" "${selected_shots[@]}")"
+    local screen
+    for screen in $(selected_screens); do
+        [[ $(shot_count "${screen}" "${selected_shots[@]}") -gt 0 ]] || continue
+        ok "${screen} $(find "${staging}" -name "${screen}-*.png" | wc -l | tr -d ' ')/$(shot_count "${screen}" "${selected_shots[@]}")"
     done
 
     mkdir -p "${version_dir}/${folder}"

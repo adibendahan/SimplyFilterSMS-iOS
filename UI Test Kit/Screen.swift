@@ -13,8 +13,8 @@ protocol Screen {
 }
 
 extension Screen {
-    var isPad: Bool {
-        return UIDevice.current.userInterfaceIdiom == .pad
+    var usesSplitLayout: Bool {
+        return self.app.hasWideWindow
     }
 
     func step(_ name: String, _ actions: () -> Void) {
@@ -28,7 +28,7 @@ extension Screen {
     }
 
     func backToHome() {
-        guard !self.isPad else { return }
+        guard !self.usesSplitLayout else { return }
         self.app.buttons["BackButton"].firstMatch.tap()
     }
 

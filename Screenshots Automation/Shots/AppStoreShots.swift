@@ -10,8 +10,8 @@ import XCTest
 final class AppStoreShots: ScreenshotTestCase {
 
     func testHome() throws {
-        try XCTSkipIf(self.isPad, "iPad shows Home next to every other shot")
-        self.launchStudio()
+        let studio = self.launchStudio()
+        try XCTSkipIf(studio.device.usesSplitLayout, "The split layout shows Home next to every other shot")
         self.capture(.home)
     }
 
@@ -47,12 +47,14 @@ final class AppStoreShots: ScreenshotTestCase {
 
     func testFilterTester() {
         let studio = self.launchStudio()
+        studio.fillDetailPane()
         studio.filterTester.show(Message(from: "Apple", "Your Apple ID Code is: 444291. Don't share it with anyone."))
         self.capture(.testYourFilters)
     }
 
     func testCountries() {
         let studio = self.launchStudio()
+        studio.fillDetailPane()
         studio.countries.show()
         self.capture(.countries)
     }

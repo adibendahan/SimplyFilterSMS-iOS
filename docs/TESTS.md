@@ -36,6 +36,7 @@ How tests are written here and the traps around them. The test names say what ea
 
 ## Screenshots (`Screenshots Automation`)
 
+- **Temporary workaround, re-check on every new Xcode:** XCUITest captures the unfolded iPhone Duo one pixel short (2852 × 2006, Xcode 27.2), while App Store Connect requires exactly 2853 × 2007, so `ShotDevice.stretchedPixelSize` stretches it. After each Xcode update, run one unfolded Duo shot with the stretch removed; once it comes out 2853 × 2007, delete the stretch.
 - `Extras/screenshots.sh` sets each simulator's **system** language and reboots it, so the status bar and right-to-left layout match a real device. An app-only language (`-AppleLanguages`, test plan languages) leaves the status bar left-to-right.
 - One test per shot in `AppStoreShots`, each from a fresh launch with `-Testing -ScreenshotData`, finding elements by identifier only: the shots run in 11 languages. A new shot is a test, a `Shot` case and a row in the script's `SHOTS`.
 - `-ScreenshotData` (debug only) loads the sample data, downloads the production catalog and drops every toast. The seeded lists are marked a week old, or the download is skipped as already done today.

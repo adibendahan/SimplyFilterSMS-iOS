@@ -17,6 +17,11 @@ extension XCUIApplication {
         return app
     }
 
+    var hasWideWindow: Bool {
+        let frame = self.windows.firstMatch.frame
+        return frame.width > frame.height
+    }
+
     //MARK: - Private -
     @MainActor
     private func dismissLaunchScreens() {
