@@ -36,7 +36,7 @@ struct CommunityListRow: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .center, spacing: 0) {
                     if let isExpanded = self.isExpanded {
                         self.chevron(isExpanded: isExpanded)
@@ -102,6 +102,13 @@ struct CommunityListRow: View {
 
     private var infoLine: some View {
         HStack(spacing: 5) {
+            if self.communityList.isCurated {
+                self.featuredBadge
+                if self.communityList.localeLabel != nil || self.communityList.homepage != nil {
+                    Text("·")
+                        .accessibilityHidden(true)
+                }
+            }
             if let localeLabel = self.communityList.localeLabel {
                 Text(localeLabel)
                     .accessibilityLabel(self.communityList.localeName ?? localeLabel)
@@ -119,6 +126,21 @@ struct CommunityListRow: View {
         .font(.caption)
         .foregroundColor(.secondary)
         .lineLimit(1)
+    }
+
+    private var featuredBadge: some View {
+        HStack(spacing: 3) {
+            Image(systemName: "star.fill")
+                .imageScale(.small)
+                .accessibilityHidden(true)
+            Text("communityLists_featured"~)
+        }
+        .font(.caption2.weight(.semibold))
+        .foregroundStyle(.tint)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 1)
+        .background(Capsule().fill(.tint.opacity(0.15)))
+        .fixedSize()
     }
 }
 

@@ -217,6 +217,7 @@
 "autoFilter_improveAIFiltering" = "Improve AI Filtering";
 "communityLists_title" = "Community Lists";
 "communityLists_byAuthor" = "by %@";
+"communityLists_featured" = "Featured";
 "communityLists_empty" = "No Lists Yet";
 "communityLists_subscribeFromURL" = "Subscribe from URL";
 "communityLists_footer" = "Community Lists are filter lists made and shared by other people. Turned-on lists route messages from unknown senders to your Junk, Transactions or Promotions folder, and are updated periodically. Your regular filters are still applied.";

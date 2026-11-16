@@ -354,8 +354,6 @@
 
 "whatsNew_menuItem" = "새로운 기능";
 
-
-
 "whatsNew_tipJar_title" = "개발자 지원";
 
 "whatsNew_tipJar_desc" = "새로운 **팁 저금통**으로 앱 개발을 지원할 수 있습니다. Simply Filter SMS는 영원히 무료입니다 - 팁은 감사 표시일 뿐입니다! **여기를 탭하여 팁을 남겨주세요!**";
@@ -455,10 +453,6 @@
 "whatsNew_aiFiltering_title" = "AI 필터링";
 
 "whatsNew_aiFiltering_desc" = "자동 필터링이 이제 **AI**로 구동됩니다 - 스페인어, 프랑스어, 독일어, 아랍어 등 **10개 언어**를 지원하며 더욱 스마트하고 빠르고 정확합니다.";
-
-
-
-
 
 "reportMessage_junkAndBlockSender" = "스팸 및 발신자 차단";
 
@@ -588,8 +582,6 @@
 
 "whatsNew_filterTransfer_desc" = "친구와 필터를 공유하세요 - 메뉴의 **필터 도구**에서 파일을 내보낸 뒤 보내세요.";
 
-
-
 "notification_saveFailed_title" = "오류가 발생했습니다";
 
 "notification_saveFailed_subtitle" = "변경사항이 저장되지 않았습니다. 다시 시도해 주세요.";
@@ -669,5 +661,7 @@
 "whatsNew_communityLists_title" = "커뮤니티 목록";
 
 "whatsNew_communityLists_desc" = "다른 사람들이 공유한 필터 목록을 구독하거나, 내 목록을 공유하세요. 작성자가 새 버전을 게시하면 목록이 자동으로 업데이트돼요 - **내 필터**에서 찾을 수 있어요.";
+
+"communityLists_featured" = "추천";
 
 

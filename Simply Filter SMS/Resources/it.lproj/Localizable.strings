@@ -354,8 +354,6 @@
 
 "whatsNew_menuItem" = "Novità";
 
-
-
 "whatsNew_tipJar_title" = "Supporta lo sviluppatore";
 
 "whatsNew_tipJar_desc" = "Un nuovo **Barattolo delle mance** ti permette di supportare lo sviluppo dell'app. Simply Filter SMS è gratuita per sempre - le mance sono solo un modo per dire grazie! **Tocca qui per dare una mancia!**";
@@ -455,10 +453,6 @@
 "whatsNew_aiFiltering_title" = "Filtro AI";
 
 "whatsNew_aiFiltering_desc" = "Il filtro automatico è ora **basato sull'AI** - più intelligente, veloce e preciso, con supporto per **10 lingue** tra cui spagnolo, francese, tedesco, arabo e altro.";
-
-
-
-
 
 "reportMessage_junkAndBlockSender" = "Indesiderati e blocca mittente";
 
@@ -588,8 +582,6 @@
 
 "whatsNew_filterTransfer_desc" = "Condividi i tuoi filtri con un amico - esporta un file da **Strumenti filtro** nel menu e invialo.";
 
-
-
 "notification_saveFailed_title" = "Si è verificato un errore";
 
 "notification_saveFailed_subtitle" = "Modifiche non salvate, riprova.";
@@ -669,5 +661,7 @@
 "whatsNew_communityLists_title" = "Liste della community";
 
 "whatsNew_communityLists_desc" = "Iscriviti alle liste di filtri condivise da altre persone, o condividi la tua. Le liste si aggiornano da sole quando i loro autori pubblicano una nuova versione - le trovi in **I tuoi filtri**.";
+
+"communityLists_featured" = "In evidenza";
 
 

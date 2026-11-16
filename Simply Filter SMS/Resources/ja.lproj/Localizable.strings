@@ -354,8 +354,6 @@
 
 "whatsNew_menuItem" = "新着情報";
 
-
-
 "whatsNew_tipJar_title" = "開発者を支援";
 
 "whatsNew_tipJar_desc" = "新しい**チップ機能**でアプリの開発を支援できます。Simply Filter SMSは永久無料 - チップはありがとうの気持ちを伝える方法です! **ここをタップしてチップを送る!**";
@@ -455,10 +453,6 @@
 "whatsNew_aiFiltering_title" = "AIフィルタリング";
 
 "whatsNew_aiFiltering_desc" = "自動フィルタリングが**AI**で動作するようになりました - スペイン語、フランス語、ドイツ語、アラビア語など**10言語**に対応し、より賢く、速く、正確に。";
-
-
-
-
 
 "reportMessage_junkAndBlockSender" = "迷惑メール & 送信者をブロック";
 
@@ -588,8 +582,6 @@
 
 "whatsNew_filterTransfer_desc" = "友だちとフィルタを共有 - メニューの**フィルタツール**からファイルを書き出して送信できます。";
 
-
-
 "notification_saveFailed_title" = "エラーが発生しました";
 
 "notification_saveFailed_subtitle" = "変更は保存されませんでした。もう一度お試しください。";
@@ -669,5 +661,7 @@
 "whatsNew_communityLists_title" = "コミュニティリスト";
 
 "whatsNew_communityLists_desc" = "ほかの人が共有したフィルタリストを登録したり、自分のリストを共有したりできます。作成者が新しいバージョンを公開すると、リストは自動で更新されます - **あなたのフィルター**にあります。";
+
+"communityLists_featured" = "おすすめ";
 
 

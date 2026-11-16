@@ -336,8 +336,6 @@
 
 "whatsNew_menuItem" = "الجديد";
 
-
-
 "whatsNew_tipJar_title" = "ادعم المطور";
 
 "whatsNew_tipJar_desc" = "يتيح لك **صندوق الإكراميات** الجديد دعم تطوير التطبيق. Simply Filter SMS مجاني للأبد - الإكراميات مجرد طريقة لقول شكرًا! **اضغط هنا للإكرامية!**";
@@ -455,10 +453,6 @@
 "whatsNew_aiFiltering_title" = "فلترة بالذكاء الاصطناعي";
 
 "whatsNew_aiFiltering_desc" = "أصبح الفلتر التلقائي مدعوماً الآن بـ**الذكاء الاصطناعي** - أذكى وأسرع وأكثر دقة، مع دعم **10 لغات** بما فيها الإسبانية والفرنسية والألمانية والعربية والمزيد.";
-
-
-
-
 
 "reportMessage_junkAndBlockSender" = "غير مرغوب وحظر المرسل";
 
@@ -588,8 +582,6 @@
 
 "whatsNew_filterTransfer_desc" = "شارك فلاترك مع صديق - صدّر ملفًا من **أدوات المرشحات** في القائمة وأرسله.";
 
-
-
 "notification_saveFailed_title" = "حدث خطأ";
 
 "notification_saveFailed_subtitle" = "لم يتم حفظ التغييرات، يُرجى المحاولة مرة أخرى.";
@@ -669,5 +661,7 @@
 "whatsNew_communityLists_title" = "قوائم المجتمع";
 
 "whatsNew_communityLists_desc" = "اشترك في قوائم تصفية يشاركها أشخاص آخرون، أو شارك قائمتك. تتحدّث القوائم تلقائيًا عندما ينشر مؤلفوها نسخة جديدة - تجدها في **مرشّحاتك**.";
+
+"communityLists_featured" = "مميزة";
 
 
