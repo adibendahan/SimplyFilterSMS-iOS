@@ -10,10 +10,6 @@ Found along the way; each is fixed in its own change.
 - **Block short senders shows "at least 0 characters" on a fresh install** until it's enabled for the first time.
 - **Encourage people to allow their first name and address.** A new experience shown the first time someone adds a block or allow filter or turns on a list, inviting them to add allow filters for their first name and address.
 
-## Project
-
-- **Convert every remaining Xcode group to a folder.** The test targets and `UI Test Kit/` are already folders; the rest of the project should match.
-
 ## App Store
 
 - **Make the screenshots look nice in the App Store.** Today they're plain captures; design store-ready images around them.
