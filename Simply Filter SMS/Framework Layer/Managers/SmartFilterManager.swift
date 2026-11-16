@@ -31,26 +31,23 @@ class SmartFilterManager: SmartFilterManagerProtocol {
         let automaticFiltersRule = persistenceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
         Log.debug("rule changed, rule: \(rule), active: \(automaticFiltersRule.isActive) → \(value)")
         automaticFiltersRule.isActive = value
-        if automaticFiltersRule.smartFilterType == .shortSender && automaticFiltersRule.selectedChoice < 3 {
-            let oldChoice = automaticFiltersRule.selectedChoice
-            automaticFiltersRule.selectedChoice = 6
-            Log.debug("choice below minimum, rule: \(rule), choice: \(oldChoice) → \(automaticFiltersRule.selectedChoice)")
+        let oldChoice = Int(automaticFiltersRule.selectedChoice)
+        let choice = self.validChoice(oldChoice, for: rule)
+        if choice != oldChoice {
+            automaticFiltersRule.selectedChoice = Int64(choice)
+            Log.debug("choice out of range, rule: \(rule), choice: \(oldChoice) → \(choice)")
         }
         _ = persistenceManager.commitAndAnnounce()
     }
 
     func selectedChoice(for rule: SmartFilterType) -> Int {
-        guard let persistenceManager = self.persistenceManager,
-              let automaticFiltersRule = persistenceManager.fetchAutomaticFiltersRuleRecord(for: rule) else { return 0 }
-        return Int(automaticFiltersRule.selectedChoice)
+        let automaticFiltersRule = self.persistenceManager?.fetchAutomaticFiltersRuleRecord(for: rule)
+        return self.validChoice(Int(automaticFiltersRule?.selectedChoice ?? 0), for: rule)
     }
 
     func setSelectedChoice(for rule: SmartFilterType, choice: Int) {
-        guard let persistenceManager = self.persistenceManager,
-              let automaticFiltersRule = persistenceManager.fetchAutomaticFiltersRuleRecord(for: rule) else {
-            Log.debug("no record, rule: \(rule), choice: \(choice) → skipped")
-            return
-        }
+        guard let persistenceManager = self.persistenceManager else { return }
+        let automaticFiltersRule = persistenceManager.ensuredAutomaticFiltersRuleRecord(for: rule)
         Log.debug("choice changed, rule: \(rule), choice: \(automaticFiltersRule.selectedChoice) → \(choice)")
         automaticFiltersRule.selectedChoice = Int64(choice)
         _ = persistenceManager.commitAndAnnounce()
@@ -68,4 +65,10 @@ class SmartFilterManager: SmartFilterManagerProtocol {
 
     //MARK: - Private  -
     private weak var persistenceManager: PersistenceManagerProtocol?
+    private let shortSenderLengths = 3...6
+
+    private func validChoice(_ choice: Int, for rule: SmartFilterType) -> Int {
+        guard rule == .shortSender, !self.shortSenderLengths.contains(choice) else { return choice }
+        return self.shortSenderLengths.upperBound
+    }
 }
