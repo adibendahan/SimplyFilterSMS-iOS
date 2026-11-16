@@ -592,10 +592,9 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             }
 
         } label: {
-            Image(systemName: "ellipsis.circle")
+            Label("a11y_home_menuButton"~, systemImage: "ellipsis.circle")
         }
         .tint(.primary)
-        .accessibilityLabel("a11y_home_menuButton"~)
         .accessibilityIdentifier(TestIdentifier.appMenuButton.rawValue)
     }
 }
