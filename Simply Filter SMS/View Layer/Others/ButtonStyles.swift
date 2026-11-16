@@ -7,18 +7,12 @@
 
 import SwiftUI
 
-struct FilledButton: ButtonStyle {
-    
-    @Environment(\.isEnabled)
-    private var isEnabled
-    
+struct FilledButton: PrimitiveButtonStyle {
+
     func makeBody(configuration: Configuration) -> some View {
-        configuration
-            .label
-            .foregroundColor(configuration.isPressed ? .gray : .white)
-            .padding()
-            .background(isEnabled ? AnyShapeStyle(.tint) : AnyShapeStyle(.gray))
-            .cornerRadius(8)
+        Button(configuration)
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
     }
 }
 
