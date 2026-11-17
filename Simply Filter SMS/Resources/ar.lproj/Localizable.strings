@@ -664,4 +664,10 @@
 
 "communityLists_featured" = "مميزة";
 
+"communityLists_addedByYou" = "قوائمك";
+
+"communityLists_error_nameTooLong" = "اسم هذه القائمة أطول من %d حرفًا، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_error_authorTooLong" = "اسم مؤلف هذه القائمة أطول من %d حرفًا، لذا لا يمكنك الاشتراك فيها.";
+
 

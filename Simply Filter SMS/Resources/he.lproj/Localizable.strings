@@ -662,6 +662,12 @@
 
 "whatsNew_communityLists_desc" = "הירשמו לרשימות סינון שאנשים אחרים שיתפו, או שתפו רשימה משלכם. הרשימות מתעדכנות מעצמן כשהיוצרים שלהן מפרסמים גרסה חדשה - תמצאו אותן ב**הפילטרים שלך**.";
 
-"communityLists_featured" = "מומלצת";
+"communityLists_featured" = "מומלצות";
+
+"communityLists_addedByYou" = "הרשימות שלכם";
+
+"communityLists_error_nameTooLong" = "שם הרשימה הזו ארוך מ-%d תווים, ולכן אי אפשר להירשם אליה.";
+
+"communityLists_error_authorTooLong" = "שם היוצר של הרשימה הזו ארוך מ-%d תווים, ולכן אי אפשר להירשם אליה.";
 
 

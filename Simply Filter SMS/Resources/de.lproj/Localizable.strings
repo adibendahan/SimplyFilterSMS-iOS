@@ -664,4 +664,10 @@
 
 "communityLists_featured" = "Empfohlen";
 
+"communityLists_addedByYou" = "Von dir hinzugefügt";
+
+"communityLists_error_nameTooLong" = "Der Name dieser Liste ist länger als %d Zeichen, daher kannst du sie nicht abonnieren.";
+
+"communityLists_error_authorTooLong" = "Der Autorname dieser Liste ist länger als %d Zeichen, daher kannst du sie nicht abonnieren.";
+
 

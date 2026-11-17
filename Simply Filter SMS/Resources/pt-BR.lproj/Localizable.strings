@@ -662,6 +662,12 @@
 
 "whatsNew_communityLists_desc" = "Assine listas de filtros compartilhadas por outras pessoas, ou compartilhe a sua. As listas se atualizam sozinhas quando os autores publicam uma nova versão - elas ficam em **Seus filtros**.";
 
-"communityLists_featured" = "Destaque";
+"communityLists_featured" = "Destaques";
+
+"communityLists_addedByYou" = "Adicionadas por você";
+
+"communityLists_error_nameTooLong" = "O nome desta lista tem mais de %d caracteres, então você não pode assiná-la.";
+
+"communityLists_error_authorTooLong" = "O autor desta lista tem mais de %d caracteres, então você não pode assiná-la.";
 
 

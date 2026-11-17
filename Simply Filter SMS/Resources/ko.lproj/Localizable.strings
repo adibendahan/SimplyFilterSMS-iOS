@@ -664,4 +664,10 @@
 
 "communityLists_featured" = "추천";
 
+"communityLists_addedByYou" = "내가 추가한 목록";
+
+"communityLists_error_nameTooLong" = "이 목록의 이름이 너무 길어서 구독할 수 없어요.";
+
+"communityLists_error_authorTooLong" = "이 목록의 작성자 이름이 너무 길어서 구독할 수 없어요.";
+
 

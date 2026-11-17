@@ -218,6 +218,7 @@
 "communityLists_title" = "Community Lists";
 "communityLists_byAuthor" = "by %@";
 "communityLists_featured" = "Featured";
+"communityLists_addedByYou" = "Added by You";
 "communityLists_empty" = "No Lists Yet";
 "communityLists_subscribeFromURL" = "Subscribe from URL";
 "communityLists_footer" = "Community Lists are filter lists made and shared by other people. Turned-on lists route messages from unknown senders to your Junk, Transactions or Promotions folder, and are updated periodically. Your regular filters are still applied.";
@@ -233,8 +234,10 @@
 "communityLists_error_offline" = "You're offline. Connect to the internet and try again.";
 "communityLists_error_notAList" = "This URL isn't a Simply Filter SMS list.";
 "communityLists_error_missingName" = "This list is missing its name, so you can't subscribe to it.";
+"communityLists_error_nameTooLong" = "This list's name is longer than %d characters, so you can't subscribe to it.";
 "communityLists_error_missingDescription" = "This list is missing its description, so you can't subscribe to it.";
 "communityLists_error_missingAuthor" = "This list is missing its author, so you can't subscribe to it.";
+"communityLists_error_authorTooLong" = "This list's author is longer than %d characters, so you can't subscribe to it.";
 "communityLists_error_invalidHomepage" = "This list is missing an https:// homepage, so you can't subscribe to it.";
 "communityLists_error_invalidLocale" = "This list is missing its language and country, so you can't subscribe to it.";
 "communityLists_error_subscribeFailed" = "Couldn't subscribe to the list. Try again later.";

@@ -664,4 +664,10 @@
 
 "communityLists_featured" = "In evidenza";
 
+"communityLists_addedByYou" = "Aggiunte da te";
+
+"communityLists_error_nameTooLong" = "Il nome di questa lista supera i %d caratteri, quindi non puoi iscriverti.";
+
+"communityLists_error_authorTooLong" = "Il nome dell'autore di questa lista supera i %d caratteri, quindi non puoi iscriverti.";
+
 

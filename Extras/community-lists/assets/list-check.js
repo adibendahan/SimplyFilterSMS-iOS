@@ -1,4 +1,4 @@
-/* Mirrors the app's checks: FilterExportPayload(data:), FilterListManager.missingField(in:), FilterTransferCandidate(record:). Change them together. */
+/* Mirrors the app's checks: FilterExportPayload(data:), FilterListManager.invalidField(in:), String.listTextWidth, FilterTransferCandidate(record:). Change them together. */
 (function () {
   var FORMAT = 'simply-filter-sms-filters';
   var CURRENT_VERSION = 2;
@@ -8,6 +8,10 @@
   var MATCHINGS = ['contains', 'exact', 'regex'];
   var CASES = ['insensitive', 'sensitive'];
   var RECORD_KEYS = ['text', 'type', 'folder', 'target', 'matching', 'case'];
+  var MAX_NAME_WIDTH = 28;
+  var MAX_AUTHOR_WIDTH = 25;
+  var WIDE_RANGES = [[0x1100, 0x115F], [0x2E80, 0xA4CF], [0xAC00, 0xD7A3], [0xF900, 0xFAFF], [0xFE30, 0xFE4F], [0xFF00, 0xFF60], [0xFFE0, 0xFFE6], [0x1F300, 0x1FAFF], [0x20000, 0x3FFFD]];
+  var segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
   var t = window.I18N.t;
   var plural = window.I18N.plural;
   var languageNames = new Intl.DisplayNames(['en'], { type: 'language', fallback: 'none' });
@@ -27,6 +31,19 @@
 
   function isBlank(value) {
     return typeof value !== 'string' || value.trim() === '';
+  }
+
+  function isWideCodePoint(codePoint) {
+    return WIDE_RANGES.some(function (range) { return codePoint >= range[0] && codePoint <= range[1]; });
+  }
+
+  function textWidth(value) {
+    var width = 0;
+    Array.from(segmenter.segment(value.trim())).forEach(function (part) {
+      var isWide = Array.from(part.segment).some(function (character) { return isWideCodePoint(character.codePointAt(0)); });
+      width += isWide ? 2 : 1;
+    });
+    return width;
   }
 
   function isOptionalString(value) {
@@ -128,8 +145,10 @@
     var homepage = homepageURL(payload.homepage);
     var fields = [
       ['name', !isBlank(payload.name), t('check.fieldMissing', ['name'])],
+      ['name', isBlank(payload.name) || textWidth(payload.name) <= MAX_NAME_WIDTH, t('check.nameTooLong', [MAX_NAME_WIDTH])],
       ['description', !isBlank(payload.description), t('check.fieldMissing', ['description'])],
       ['author', !isBlank(payload.author), t('check.fieldMissing', ['author'])],
+      ['author', isBlank(payload.author) || textWidth(payload.author) <= MAX_AUTHOR_WIDTH, t('check.authorTooLong', [MAX_AUTHOR_WIDTH])],
       ['homepage', homepage != null, payload.homepage == null ? t('check.fieldMissing', ['homepage']) : t('check.homepageInvalid')],
       ['locale', locale != null, payload.locale == null ? t('check.fieldMissing', ['locale']) : t('check.localeInvalid')]
     ];
@@ -181,6 +200,17 @@
     };
   }
 
+  var GITHUB_MARK = '<svg class="gh" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>';
+
+  function displayLink(url) {
+    return url.href.replace(/^[a-z]+:\/\//i, '').replace(/^www\./, '').replace(/\/$/, '');
+  }
+
+  function isGitHubLink(url) {
+    var host = url.hostname.toLowerCase();
+    return host === 'github.com' || host === 'www.github.com' || /\.github\.io$/.test(host);
+  }
+
   var CHEVRON = '<svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M3.5 1.5 7 5l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function renderPreview(preview) {
@@ -190,20 +220,22 @@
     var title = el('div', 'lrow-title');
     title.insertAdjacentHTML('beforeend', CHEVRON);
     title.appendChild(isBlank(preview.name) ? el('span', 'p-name missing', t('result.noName')) : withAutoDirection(el('span', 'p-name', preview.name.trim())));
-    if (!isBlank(preview.author)) title.appendChild(el('span', 'p-author', t('app.byAuthor', [preview.author.trim()])));
     main.appendChild(title);
     var info = el('div', 'lrow-info');
     if (preview.locale) info.appendChild(el('span', null, preview.locale.label));
-    if (preview.locale && preview.homepage) info.appendChild(el('span', null, '·'));
+    if (preview.locale && !isBlank(preview.author)) info.appendChild(el('span', null, '·'));
+    if (!isBlank(preview.author)) info.appendChild(el('span', 'p-author', t('app.byAuthor', [preview.author.trim()])));
+    if (info.childNodes.length) main.appendChild(info);
+    main.appendChild(isBlank(preview.description) ? el('div', 'p-desc missing', t('result.noDescription')) : withAutoDirection(el('div', 'p-desc', preview.description.trim())));
     if (preview.homepage) {
-      var link = el('a', 'p-home', preview.homepage.hostname.replace(/^www\./, ''));
+      var link = el('a', 'p-home');
+      if (isGitHubLink(preview.homepage)) link.insertAdjacentHTML('beforeend', GITHUB_MARK);
+      link.appendChild(document.createTextNode(displayLink(preview.homepage)));
       link.href = preview.homepage.href;
       link.target = '_blank';
       link.rel = 'noopener';
-      info.appendChild(link);
+      main.appendChild(link);
     }
-    if (info.childNodes.length) main.appendChild(info);
-    main.appendChild(isBlank(preview.description) ? el('div', 'p-desc missing', t('result.noDescription')) : withAutoDirection(el('div', 'p-desc', preview.description.trim())));
     row.appendChild(main);
     row.appendChild(el('span', 'switch on'));
     stageEl.appendChild(row);

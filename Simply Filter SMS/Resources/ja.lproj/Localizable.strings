@@ -664,4 +664,10 @@
 
 "communityLists_featured" = "おすすめ";
 
+"communityLists_addedByYou" = "追加したリスト";
+
+"communityLists_error_nameTooLong" = "このリストの名前が長すぎるため、登録できません。";
+
+"communityLists_error_authorTooLong" = "このリストの作成者名が長すぎるため、登録できません。";
+
 

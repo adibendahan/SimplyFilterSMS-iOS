@@ -41,10 +41,13 @@ struct CommunityListItem: Identifiable, Equatable {
 }
 
 enum CommunityListPreviewError: Error, Equatable, CaseIterable {
-    case invalidURL, alreadySubscribed, offline, notAList, missingName, missingDescription, missingAuthor, invalidHomepage, invalidLocale
+    case invalidURL, alreadySubscribed, offline, notAList, missingName, nameTooLong, missingDescription, missingAuthor, authorTooLong, invalidHomepage, invalidLocale
 }
 
 extension CommunityListItem {
+    static let maxNameWidth = 28
+    static let maxAuthorWidth = 25
+
     init(url: String, catalogEntry: FilterListCatalogEntry?, cacheSection: FilterListsCacheSection?, isActive: Bool) {
         let payload = cacheSection?.payload
         self.url = url

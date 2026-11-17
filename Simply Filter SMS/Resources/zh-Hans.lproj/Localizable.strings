@@ -664,4 +664,10 @@
 
 "communityLists_featured" = "精选";
 
+"communityLists_addedByYou" = "你添加的";
+
+"communityLists_error_nameTooLong" = "这个列表的名称太长，因此无法订阅。";
+
+"communityLists_error_authorTooLong" = "这个列表的作者名称太长，因此无法订阅。";
+
 

@@ -662,6 +662,12 @@
 
 "whatsNew_communityLists_desc" = "Suscríbete a listas de filtros que comparten otras personas, o comparte la tuya. Las listas se actualizan solas cuando sus autores publican una versión nueva - las encontrarás en **Tus filtros**.";
 
-"communityLists_featured" = "Destacada";
+"communityLists_featured" = "Destacadas";
+
+"communityLists_addedByYou" = "Añadidas por ti";
+
+"communityLists_error_nameTooLong" = "El nombre de esta lista tiene más de %d caracteres, así que no puedes suscribirte.";
+
+"communityLists_error_authorTooLong" = "El autor de esta lista tiene más de %d caracteres, así que no puedes suscribirte.";
 
 
