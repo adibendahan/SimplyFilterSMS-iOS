@@ -11,7 +11,7 @@ How tests are written here and the traps around them. The test names say what ea
 - Unit tests: the `Tests` target, through the app scheme with Xcode's MCP.
 - From the command line, use the `Tests` scheme. Running the app scheme's test action can fail to load an unsigned `Tests.xctest`.
 - UI scenarios: the `Scenario Tests` scheme, only before a release or when asked.
-- App Store screenshots: `Extras/screenshots.sh` writes to `Extras/Screenshots/<version>/`; `fastlane upload_screenshots path:Extras/Screenshots/<version>` uploads it.
+- App Store screenshots: `Extras/screenshots.sh` writes to `Extras/Screenshots/<version>/`; `cd Extras && fastlane upload_screenshots path:Screenshots/<version>` uploads it (fastlane runs from `Extras/`, where its folder is).
 
 ---
 

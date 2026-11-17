@@ -12,7 +12,7 @@ platform :ios do
 
   desc "Upload screenshots to App Store Connect"
   lane :upload_screenshots do |options|
-    UI.user_error!("Pass the version to upload: fastlane upload_screenshots path:Extras/Screenshots/<version>") unless options[:path]
+    UI.user_error!("Pass the version to upload: fastlane upload_screenshots path:Screenshots/<version> (run from Extras/)") unless options[:path]
     upload_to_app_store(
       api_key: api_key,
       screenshots_path: options[:path],

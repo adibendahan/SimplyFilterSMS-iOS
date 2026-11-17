@@ -53,7 +53,7 @@ Once approved, add each non-plural key/value pair to `Simply Filter SMS/Resource
 
 Run:
 ```bash
-bartycrouch update
+cd Extras && bartycrouch update
 ```
 
 BartyCrouch will add each new key as `= ""` to all existing language files. Do not manually edit any other language file before this step.

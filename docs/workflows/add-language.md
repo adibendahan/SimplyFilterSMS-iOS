@@ -165,7 +165,7 @@ Create `Simply Filter SMS/Resources/<code>.lproj/Localizable.stringsdict` with a
 
 2. Run BartyCrouch to populate all current keys as empty strings:
    ```bash
-   bartycrouch update
+   cd Extras && bartycrouch update
    ```
    BartyCrouch will find the new file and add every key from the English source with `= ""` values.
 
