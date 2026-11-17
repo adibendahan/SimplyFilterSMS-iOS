@@ -670,4 +670,18 @@
 
 "communityLists_error_authorTooLong" = "这个列表的作者名称太长，因此无法订阅。";
 
+"filterList_empty_denied_caption" = "添加只有垃圾短信才会用的词，这类信息就不会进入你的收件箱。";
+
+"filterList_empty_denied_sample" = "您的包裹已被扣留，请支付费用：bit.ly/…";
+
+"filterList_empty_allowed_caption" = "添加你的名字，提到它的信息总会进入你的收件箱。";
+
+"filterList_empty_allowed_sample" = "王女士您好，您明天上午10:00有预约。回复1确认。";
+
+"filterList_empty_deniedLanguage_caption" = "收到看不懂的语言的垃圾信息？直接屏蔽整种语言。";
+
+"filterList_empty_deniedLanguage_sample" = "Поздравляем! Вы выиграли приз";
+
+"communityLists_empty_caption" = "有别人分享的列表链接？订阅后它会自动保持更新。";
+
 

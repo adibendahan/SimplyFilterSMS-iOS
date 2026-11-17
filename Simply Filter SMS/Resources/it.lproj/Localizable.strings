@@ -670,4 +670,18 @@
 
 "communityLists_error_authorTooLong" = "Il nome dell'autore di questa lista supera i %d caratteri, quindi non puoi iscriverti.";
 
+"filterList_empty_denied_caption" = "Aggiungi una parola che usa solo lo spam, e quei messaggi restano fuori dalla tua posta in arrivo.";
+
+"filterList_empty_denied_sample" = "Il tuo pacco è in giacenza. Paga la tassa: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "Aggiungi il tuo nome, e i messaggi che lo citano arrivano sempre nella tua posta in arrivo.";
+
+"filterList_empty_allowed_sample" = "Ciao Giulia, il tuo appuntamento è domani alle 10:00. Rispondi SI per confermare.";
+
+"filterList_empty_deniedLanguage_caption" = "Ricevi spam in una lingua che non leggi? Blocca l'intera lingua.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "Hai il link di una lista condivisa da qualcuno? Iscriviti e si aggiornerà da sola.";
+
 

@@ -670,4 +670,18 @@
 
 "communityLists_error_authorTooLong" = "שם היוצר של הרשימה הזו ארוך מ-%d תווים, ולכן אי אפשר להירשם אליה.";
 
+"filterList_empty_denied_caption" = "הוסיפו מילה שמופיעה רק בספאם, והודעות שמכילות אותה נשארות מחוץ לתיבת ההודעות.";
+
+"filterList_empty_denied_sample" = "החבילה שלך מעוכבת במכס. לתשלום: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "הוסיפו את השם הפרטי שלכם, והודעות שמזכירות אותו תמיד מגיעות לתיבת ההודעות.";
+
+"filterList_empty_allowed_sample" = "שלום דנה, התור שלך נקבע למחר ב-10:00. לאישור השיבו 1";
+
+"filterList_empty_deniedLanguage_caption" = "מקבלים ספאם בשפה שאתם לא קוראים? חסמו את השפה כולה.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "קיבלתם קישור לרשימה שמישהו שיתף? הירשמו, והיא מתעדכנת מעצמה.";
+
 

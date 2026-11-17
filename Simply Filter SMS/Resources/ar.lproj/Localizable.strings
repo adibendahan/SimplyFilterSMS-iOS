@@ -670,4 +670,18 @@
 
 "communityLists_error_authorTooLong" = "اسم مؤلف هذه القائمة أطول من %d حرفًا، لذا لا يمكنك الاشتراك فيها.";
 
+"filterList_empty_denied_caption" = "أضيفوا كلمة لا ترد إلا في الرسائل المزعجة، فتبقى تلك الرسائل خارج صندوق الوارد.";
+
+"filterList_empty_denied_sample" = "شحنتك معلّقة. ادفع الرسوم: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "أضيفوا اسمكم الأول، فتصل الرسائل التي تذكره دائمًا إلى صندوق الوارد.";
+
+"filterList_empty_allowed_sample" = "مرحبًا سارة، موعدك غدًا الساعة 10:00 صباحًا. للتأكيد ردّي بـ 1";
+
+"filterList_empty_deniedLanguage_caption" = "تصلكم رسائل مزعجة بلغة لا تقرؤونها؟ احظروا اللغة بأكملها.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "وصلكم رابط لقائمة شاركها أحدهم؟ اشتركوا فيها، وستبقى محدّثة تلقائيًا.";
+
 

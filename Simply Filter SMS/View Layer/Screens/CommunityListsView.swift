@@ -43,7 +43,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                 .onDelete(perform: self.model.removeCommunityLists)
 
                 if self.model.userRowViewModels.isEmpty {
-                    ContentUnavailableView("communityLists_empty"~, systemImage: "person.3")
+                    ListEmptyStateView(kind: .communityLists)
                 }
             } header: {
                 Text("communityLists_addedByYou"~)

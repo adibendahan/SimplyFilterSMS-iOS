@@ -670,4 +670,18 @@
 
 "communityLists_error_authorTooLong" = "이 목록의 작성자 이름이 너무 길어서 구독할 수 없어요.";
 
+"filterList_empty_denied_caption" = "스팸에만 쓰이는 단어를 추가하면 그런 메시지는 받은 편지함에 오지 않아요.";
+
+"filterList_empty_denied_sample" = "고객님의 택배가 보류 중입니다. 수수료 결제: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "이름을 추가하면 이름이 들어간 메시지는 항상 받은 편지함에 와요.";
+
+"filterList_empty_allowed_sample" = "지수님, 내일 오전 10:00 예약이 있습니다. 확인하시려면 1을 회신해 주세요.";
+
+"filterList_empty_deniedLanguage_caption" = "읽지 못하는 언어로 스팸이 오나요? 그 언어를 통째로 차단하세요.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "누군가 공유한 목록 링크가 있나요? 구독하면 자동으로 최신 상태가 유지돼요.";
+
 

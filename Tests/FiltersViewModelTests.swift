@@ -68,6 +68,31 @@ class FiltersViewModelTests: XCTestCase {
         XCTAssertEqual(self.testSubject.canBlockAnotherLanguage, true)
     }
 
+    func test_canAddFilter_textListsIgnoreBlockableLanguages() {
+        // Prepare
+        self.persistenceManager.blockableLanguagesClosure = { return [] }
+
+        // Act
+        let testSubject = FiltersView.ViewModel(filterType: .deny, appManager: self.appManager)
+
+        // Verify
+        XCTAssertTrue(testSubject.canAddFilter)
+    }
+
+    func test_canAddFilter_languageListNeedsABlockableLanguage() {
+        // Prepare
+        self.persistenceManager.blockableLanguagesClosure = { return [] }
+        let testSubject = FiltersView.ViewModel(filterType: .denyLanguage, appManager: self.appManager)
+        XCTAssertFalse(testSubject.canAddFilter)
+        self.persistenceManager.blockableLanguagesClosure = { return [.hebrew] }
+
+        // Act
+        testSubject.refresh()
+
+        // Verify
+        XCTAssertTrue(testSubject.canAddFilter)
+    }
+
     func test_setFilterOptionsCollapsed_persistsPreference() {
         // Act
         self.testSubject.setFilterOptionsCollapsed(true)

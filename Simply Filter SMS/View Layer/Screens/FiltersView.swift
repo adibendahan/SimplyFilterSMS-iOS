@@ -51,7 +51,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                 .deleteDisabled(self.model.editMode.isEditing)
 
                 if self.model.filters.isEmpty {
-                    ContentUnavailableView(self.model.filterType.emptyTitle, systemImage: self.model.filterType.iconName)
+                    self.emptyState
                 }
             } header: {
                 if !self.model.regularRowViewModels.isEmpty {
@@ -61,7 +61,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                         trailingSecondary: false)
                 }
             } footer: {
-                if self.model.regexRowViewModels.isEmpty {
+                if !self.model.filters.isEmpty && self.model.regexRowViewModels.isEmpty {
                     listFooter
                 }
             }
@@ -204,14 +204,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                 Button(action: {
                     self.model.showAddFilter()
                 }) {
-                    Label({
-                        switch self.model.filterType {
-                        case .deny, .allow:
-                            return self.model.filterType == .deny ? ("addFilter_addFilter_deny"~) : ("addFilter_addFilter_allow"~)
-                        case .denyLanguage:
-                            return ("addFilter_addLanguage"~)
-                        }
-                    }(), systemImage: self.model.filterType == .denyLanguage ? "globe" : "plus.message")
+                    Label(self.model.filterType.addFilterTitle, systemImage: self.model.filterType.addFilterIconName)
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -221,34 +214,34 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
         }
     }
     
+    private var emptyState: some View {
+        return ListEmptyStateView(kind: .filterList(self.model.filterType), action: self.emptyStateAction)
+    }
+
+    private var emptyStateAction: ListEmptyStateView.Action? {
+        guard self.model.canAddFilter else { return nil }
+        return ListEmptyStateView.Action(
+            title: self.model.filterType.addFilterTitle,
+            iconName: self.model.filterType.addFilterIconName,
+            testIdentifier: .addFilterButton,
+            perform: self.model.showAddFilter)
+    }
+
     @ViewBuilder
     private func AddFilterButton() -> some View {
         
-        if (self.model.filterType == .denyLanguage &&
-            self.model.canBlockAnotherLanguage) ||
-            self.model.filterType != .denyLanguage {
+        if self.model.canAddFilter {
             
             Button(action: {
                 self.model.showAddFilter()
             }) {
                 HStack {
-                    switch self.model.filterType {
-                    case .deny, .allow:
-                        Image(systemName: "plus.message")
-                            .imageScale(.large)
-                            .font(.system(size: addFilterIconSize, weight: .bold))
-                        
-                        Text(self.model.filterType == .deny ? "addFilter_addFilter_deny"~ : "addFilter_addFilter_allow"~)
-                            .font(.body)
-                        
-                    case .denyLanguage:
-                        Image(systemName: "globe")
-                            .imageScale(.large)
-                            .font(.system(size: addFilterIconSize, weight: .bold))
-                        
-                        Text("addFilter_addLanguage"~)
-                            .font(.body)
-                    }
+                    Image(systemName: self.model.filterType.addFilterIconName)
+                        .imageScale(.large)
+                        .font(.system(size: addFilterIconSize, weight: .bold))
+                    
+                    Text(self.model.filterType.addFilterTitle)
+                        .font(.body)
                 }
             }
             .buttonStyle(AccessibleTextButtonStyle())
@@ -379,6 +372,10 @@ extension FiltersView {
             }
 
             self.rowViewModels = updatedViewModels
+        }
+
+        var canAddFilter: Bool {
+            return self.filterType != .denyLanguage || self.canBlockAnotherLanguage
         }
 
         func showAddFilter() {

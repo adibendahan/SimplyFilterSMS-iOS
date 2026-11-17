@@ -45,6 +45,12 @@
 "filterList_empty_denied" = "No Blocked Texts";
 "filterList_empty_allowed" = "No Allowed Texts";
 "filterList_empty_deniedLanguage" = "No Blocked Languages";
+"filterList_empty_denied_caption" = "Add a word that only spam uses, and those texts skip your inbox.";
+"filterList_empty_denied_sample" = "Your package is on hold. Pay the fee: bit.ly/…";
+"filterList_empty_allowed_caption" = "Add your first name, and texts that mention it always reach your inbox.";
+"filterList_empty_allowed_sample" = "Hi Dana, your appointment is tomorrow at 10:00 AM. Reply C to confirm.";
+"filterList_empty_deniedLanguage_caption" = "Getting spam in a language you don't read? Block the whole language.";
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
 "filterList_folder" = "Folder";
 "filterList_text" = "Text";
@@ -220,6 +226,7 @@
 "communityLists_featured" = "Featured";
 "communityLists_addedByYou" = "Added by You";
 "communityLists_empty" = "No Lists Yet";
+"communityLists_empty_caption" = "Got a link to a list someone shared? Subscribe, and it stays up to date by itself.";
 "communityLists_subscribeFromURL" = "Subscribe from URL";
 "communityLists_footer" = "Community Lists are filter lists made and shared by other people. Turned-on lists route messages from unknown senders to your Junk, Transactions or Promotions folder, and are updated periodically. Your regular filters are still applied.";
 "communityLists_createList" = "Create a List";

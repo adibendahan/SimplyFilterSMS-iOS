@@ -670,4 +670,18 @@
 
 "communityLists_error_authorTooLong" = "O autor desta lista tem mais de %d caracteres, então você não pode assiná-la.";
 
+"filterList_empty_denied_caption" = "Adicione uma palavra que só o spam usa, e essas mensagens ficam fora da sua caixa de entrada.";
+
+"filterList_empty_denied_sample" = "Sua encomenda está retida. Pague a taxa: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "Adicione seu primeiro nome, e mensagens que o mencionam sempre chegam à sua caixa de entrada.";
+
+"filterList_empty_allowed_sample" = "Olá Ana, sua consulta é amanhã às 10:00. Responda SIM para confirmar.";
+
+"filterList_empty_deniedLanguage_caption" = "Recebe spam em um idioma que você não lê? Bloqueie o idioma inteiro.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "Tem o link de uma lista que alguém compartilhou? Assine, e ela se atualiza sozinha.";
+
 

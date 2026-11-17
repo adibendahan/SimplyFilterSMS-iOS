@@ -670,4 +670,18 @@
 
 "communityLists_error_authorTooLong" = "Der Autorname dieser Liste ist länger als %d Zeichen, daher kannst du sie nicht abonnieren.";
 
+"filterList_empty_denied_caption" = "Füge ein Wort hinzu, das nur in Spam vorkommt, und solche Nachrichten bleiben aus deinem Posteingang.";
+
+"filterList_empty_denied_sample" = "Dein Paket wird zurückgehalten. Zahle die Gebühr: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "Füge deinen Vornamen hinzu, und Nachrichten, die ihn erwähnen, kommen immer in deinem Posteingang an.";
+
+"filterList_empty_allowed_sample" = "Hallo Anna, dein Termin ist morgen um 10:00 Uhr. Antworte mit J zur Bestätigung.";
+
+"filterList_empty_deniedLanguage_caption" = "Spam in einer Sprache, die du nicht liest? Sperre die ganze Sprache.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "Hast du einen Link zu einer geteilten Liste? Abonniere sie, und sie bleibt von selbst aktuell.";
+
 
