@@ -39,6 +39,7 @@ Hebrew has neutral constructions that address nobody:
 
 - Verbal noun, never an imperative: `הוספה`, not `הוסף`; `הסתרה`, not `הסתר`; `בחירת הכל`, not `בחר הכל`.
 - A title that names a screen the user opens can be a plural imperative when it's an invitation (`בחנו את הפילטרים שלכם`), but a verbal noun is preferred for new titles.
+- **Smart Filter names stay singular imperatives** (`חסום קישורים`, `אפשר מספרים בלבד`): they sit in narrow rows, and the verbal noun (`חסימת…`) is longer.
 - Never open a title with `כדי ש…` or any subordinate clause; it reads as translated English. Use a verbal noun, a casual question (`נהנים מהאפליקציה?`) or a plain statement (`הסנכרון ל-iCloud מושהה`).
 
 ### Accessibility hints
@@ -97,7 +98,7 @@ Hebrew has neutral constructions that address nobody:
 | Tap | **לחצו** | `לחצו על`. VoiceOver hints keep `הקשה כפולה` |
 | Long press | **לחיצה ארוכה** | |
 | Double tap (a11y) | **הקשה כפולה** | |
-| Email | **מייל** in prose, **אימייל** on the button | Not `דואר אלקטרוני`, except the Smart Filter for email senders |
+| Email | **מייל** in prose, **אימייל** on the button | Not `דואר אלקטרוני`. The Smart Filter and lists use the plural **מיילים** |
 | Optional | **אופציונלי** | Not `אופציונאלי` |
 | Settings | **הגדרות iOS** | `הגדרות מערכת ההפעלה` also appears; prefer `הגדרות iOS` in new strings |
 | Messages app | **אפליקציית ההודעות** | |
@@ -223,7 +224,6 @@ Existing strings that break this guide. Fix them when touching the area; renamin
 | `reportMessage_junkAndBlockSender` | זבל וחסום שולח | singular imperative |
 | `reportingExtension_classify` (stringsdict) | איך תרצה לסווג… | → `תרצו` |
 | `general_allow` / `general_deny` | אפשר / חסום | singular imperatives |
-| Smart Filter names: `autoFilter_allUnknown`, `_links`, `_numbersOnly`, `_shortSender`, `_email`, `_emojis`, `autoFilter_countryAllowlist` | חסום… / אפשר… | singular imperatives; the FAQ answers quote these names |
 
 **Spelling and consistency:**
 

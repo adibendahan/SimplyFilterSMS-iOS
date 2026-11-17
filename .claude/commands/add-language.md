@@ -239,7 +239,7 @@ After the length review, do one final read-through checking for these three issu
 
 **1. Pronoun/register consistency.** If the language distinguishes formal vs informal address (tu/vous, tú/usted, du/Sie, etc.), verify that every string — including long body strings like `autoFilter_countryAllowlist_explanation`, all `faq_answer_*`, and `enableExtension_welcome_desc` — uses the same register as the short UI strings. Long strings are easy to draft in a different register by accident.
 
-**2. Verb preservation in action labels.** English button and menu labels that start with a verb ("See more options", "Tap to change", "Select a target") should stay verb-led in translation. A noun-phrase reduction (e.g. "Plus d'options" instead of "Voir plus d'options") is a mistranslation — flag and fix it.
+**2. Verb preservation in action labels.** English button and menu labels that start with a verb ("See more options", "Change", "Select a target") should stay verb-led in translation. A noun-phrase reduction (e.g. "Plus d'options" instead of "Voir plus d'options") is a mistranslation — flag and fix it.
 
 **3. Localize example values in `autoFilter_countryAllowlist_explanation`.** This string contains example calling codes `+1, +972`. Replace `+972` with the primary calling code of the target country/region (e.g. `+82` for Korean, `+81` for Japanese, `+49` for German). `+1` is universally recognized and can stay.
 

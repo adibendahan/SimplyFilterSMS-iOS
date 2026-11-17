@@ -1,1 +1,1 @@
-Privater, kostenloser Open-Source-SMS-Filter mit Community-Listen und KI-Filterung in 10 Sprachen. Blockiere Absender mit Schlüsselwörtern, Regeln und Länderliste.
+Privater, kostenloser Open-Source-SMS-Filter mit Community-Listen und KI-Filterung in 10 Sprachen. Sperre Absender mit Schlüsselwörtern, Regeln und Länderliste.

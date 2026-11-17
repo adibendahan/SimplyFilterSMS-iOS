@@ -176,7 +176,7 @@
 
 "faq_question_smartFilters" = "Cosa sono i Filtri intelligenti?";
 
-"faq_answer_smartFilters" = "I **Filtri intelligenti** nella schermata Home intercettano lo spam comune: link, e-mail, emoji, mittenti brevi, mittenti solo numeri o tutti gli sconosciuti. Funzionano insieme ai tuoi filtri. **Blocca tutti gli sconosciuti** è il più forte e spegne gli altri Filtri intelligenti.";
+"faq_answer_smartFilters" = "I **Filtri intelligenti** nella schermata Home intercettano lo spam comune: link, e-mail, emoji, mittenti brevi, mittenti solo numeri o tutti gli sconosciuti. Funzionano insieme ai tuoi filtri. **Blocca sconosciuti** è il più forte e spegne gli altri Filtri intelligenti.";
 
 "faq_question_trustedCountries" = "Cos'è Consenti per paese?";
 
@@ -234,7 +234,7 @@
 
 "autoFilter_OFF" = "OFF";
 
-"autoFilter_allUnknown" = "Blocca tutti gli sconosciuti";
+"autoFilter_allUnknown" = "Blocca sconosciuti";
 
 "autoFilter_links" = "Blocca link";
 
@@ -244,7 +244,7 @@
 
 "autoFilter_shortSender_desc" = "Almeno %ld caratteri";
 
-"autoFilter_shortSender_change" = "Tocca per cambiare";
+"autoFilter_shortSender_change" = "Cambia";
 
 "autoFilter_shortSender_action" = "Seleziona nuovo limite";
 

@@ -193,7 +193,7 @@
 "autoFilter_numbersOnly" = "Allow Numbers Only";
 "autoFilter_shortSender" = "Block Short Senders";
 "autoFilter_shortSender_desc" = "At least %ld characters";
-"autoFilter_shortSender_change" = "Tap to change";
+"autoFilter_shortSender_change" = "Change";
 "autoFilter_shortSender_action" = "Select new limit";
 "autoFilter_allUnknown_shortTitle" = "All unknown senders (except Allowed Text)";
 "autoFilter_links_shortTitle" = "Links";

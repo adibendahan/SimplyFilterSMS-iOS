@@ -16,6 +16,7 @@ struct FilterListScreen: Screen {
         self.reveal(link)
         link.tap()
         XCTAssertTrue(self.app.buttons[.addFilterButton].waitForExistence(timeout: 5), "\(self.link.rawValue) did not open")
+        self.revealTopOfHome()
     }
 
     func showAddFilter(_ text: String, folder: Folder, target: Target, matching: Matching, letterCase: LetterCase) {
@@ -52,6 +53,7 @@ struct BlockedLanguagesScreen: Screen {
         let link = self.app.buttons[.denyLanguageLink]
         self.reveal(link)
         link.tap()
+        self.revealTopOfHome()
         self.app.buttons[.addFilterButton].tap()
         XCTAssertTrue(self.app.buttons[.closeButton].waitForExistence(timeout: 5), "The language picker did not open")
     }

@@ -25,6 +25,7 @@ struct CommunityListsScreen: Screen {
     let app: XCUIApplication
 
     func show(subscribingTo urls: [String]) {
+        self.reveal(self.app.buttons[.communityListsLink])
         self.open(.communityListsLink)
         let downloaded = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in self.listNames.count == 1 }, object: nil)
         XCTAssertEqual(XCTWaiter.wait(for: [downloaded], timeout: self.downloadTimeout), .completed, "The curated list did not download")
@@ -37,6 +38,7 @@ struct CommunityListsScreen: Screen {
             self.setSwitch(toggle, isOn: curated.contains(name))
         }
         self.app.buttons[.communityListExpandButton].tap()
+        self.revealTopOfHome()
     }
 
     //MARK: - Private -
@@ -48,7 +50,7 @@ struct CommunityListsScreen: Screen {
 
     private func subscribe(to url: String) {
         self.app.buttons[.addCommunityListButton].tap()
-        self.type(url, into: self.app.textFields[.communityListURLField])
+        self.type(url + "\n", into: self.app.textFields[.communityListURLField])
         let subscribe = self.app.buttons[.subscribeCommunityListButton]
         XCTAssertTrue(subscribe.waitUntil(\.isEnabled, timeout: self.downloadTimeout), "\(url) was not accepted")
         subscribe.tap()

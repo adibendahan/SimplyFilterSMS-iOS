@@ -176,7 +176,7 @@
 
 "faq_question_smartFilters" = "Que sont les Filtres intelligents ?";
 
-"faq_answer_smartFilters" = "Les **Filtres intelligents** sur l'écran d'accueil attrapent le spam courant : liens, e-mails, emojis, expéditeurs courts, expéditeurs chiffres seuls, ou tous les inconnus. Ils fonctionnent avec tes propres filtres. **Bloquer tous les inconnus** est le plus fort et désactive les autres Filtres intelligents.";
+"faq_answer_smartFilters" = "Les **Filtres intelligents** sur l'écran d'accueil attrapent le spam courant : liens, e-mails, emojis, expéditeurs courts, expéditeurs chiffres seuls, ou tous les inconnus. Ils fonctionnent avec tes propres filtres. **Bloquer les inconnus** est le plus fort et désactive les autres Filtres intelligents.";
 
 "faq_question_trustedCountries" = "Qu'est-ce qu'Autoriser par pays ?";
 
@@ -234,7 +234,7 @@
 
 "autoFilter_OFF" = "OFF";
 
-"autoFilter_allUnknown" = "Bloquer tous les inconnus";
+"autoFilter_allUnknown" = "Bloquer les inconnus";
 
 "autoFilter_links" = "Bloquer les liens";
 
@@ -244,7 +244,7 @@
 
 "autoFilter_shortSender_desc" = "Au moins %ld caractères";
 
-"autoFilter_shortSender_change" = "Toucher pour modifier";
+"autoFilter_shortSender_change" = "Modifier";
 
 "autoFilter_shortSender_action" = "Sélectionner nouvelle limite";
 
@@ -262,7 +262,7 @@
 
 "autoFilter_email_shortTitle" = "E-mail";
 
-"autoFilter_email" = "Bloquer expéditeurs e-mail";
+"autoFilter_email" = "Bloquer les e-mails";
 
 "autoFilter_empty" = "Ouvre l'app au moins une fois avec internet pour télécharger les listes de Filtrage AI.";
 

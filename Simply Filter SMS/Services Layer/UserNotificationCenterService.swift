@@ -10,7 +10,7 @@ protocol UserNotificationCenterServiceProtocol: AnyObject {
     func authorizationStatus() async -> UNAuthorizationStatus
     func requestAlertAuthorization() async -> Bool
     func schedule(_ request: UNNotificationRequest) async
-    func cancelPendingNotification(withIdentifier identifier: String)
+    func cancelPendingNotification(withIdentifier identifier: String) async
 }
 
 class UserNotificationCenterService: UserNotificationCenterServiceProtocol {
@@ -50,7 +50,7 @@ class UserNotificationCenterService: UserNotificationCenterServiceProtocol {
         }
     }
     
-    func cancelPendingNotification(withIdentifier identifier: String) {
+    @concurrent func cancelPendingNotification(withIdentifier identifier: String) async {
         self.notificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
         Log.debug("pending notification cancelled, identifier: \(identifier)")
     }

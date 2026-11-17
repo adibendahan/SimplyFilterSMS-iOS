@@ -16,17 +16,17 @@
 
 "lang_supported" = "Unterstützte Sprachen";
 
-"lang_allBlocked" = "Du hast alle unterstützten Sprachen blockiert!";
+"lang_allBlocked" = "Du hast alle unterstützten Sprachen gesperrt!";
 
-"lang_how" = "Spracherkennung und -verarbeitung erfolgt **lokal** durch das Sprachverarbeitungssystem von iOS. Eine Nachricht wird nur gefiltert, wenn die **dominante Sprache** des Textes auf der Liste der blockierten Sprachen steht.";
+"lang_how" = "Spracherkennung und -verarbeitung erfolgt **lokal** durch das Sprachverarbeitungssystem von iOS. Eine Nachricht wird nur gefiltert, wenn die **dominante Sprache** des Textes auf der Liste der gesperrten Sprachen steht.";
 
 "filterList_filters" = "Filter";
 
 "filterList_allowed" = "Erlaubte Texte";
 
-"filterList_denied" = "Blockierte Texte";
+"filterList_denied" = "Gesperrte Texte";
 
-"filterList_menu_filterLanguage" = "Sprache blockieren";
+"filterList_menu_filterLanguage" = "Sprache sperren";
 
 "filterList_menu_enableExtension" = "Hilfe";
 
@@ -42,7 +42,7 @@
 
 "filterList_menu_debug" = "Debugdaten laden";
 
-"filterList_deniedLanguage" = "Blockierte Sprachen";
+"filterList_deniedLanguage" = "Gesperrte Sprachen";
 
 "filterList_deleteFiltersCount" = "Löschen (%ld)";
 
@@ -60,9 +60,9 @@
 
 "addFilter_addFilter_allow" = "Erlaubt hinzufügen";
 
-"addFilter_addFilter_deny" = "Blockiert hinzufügen";
+"addFilter_addFilter_deny" = "Gesperrt hinzufügen";
 
-"addFilter_addLanguage" = "Blockierte Sprache hinzufügen";
+"addFilter_addLanguage" = "Gesperrte Sprache hinzufügen";
 
 "addFilter_text" = "Wort/Buchstabe eingeben";
 
@@ -176,7 +176,7 @@
 
 "faq_question_smartFilters" = "Was sind Smarte Filter?";
 
-"faq_answer_smartFilters" = "**Smarte Filter** auf dem Startbildschirm fangen häufigen Spam: Links, E-Mails, Emojis, kurze Absender, Absender nur aus Zahlen oder alle unbekannten Absender. Sie arbeiten mit deinen eigenen Filtern. **Alle Unbekannten blockieren** ist am stärksten und schaltet die anderen Smarten Filter aus.";
+"faq_answer_smartFilters" = "**Smarte Filter** auf dem Startbildschirm fangen häufigen Spam: Links, E-Mails, Emojis, kurze Absender, Absender nur aus Zahlen oder alle unbekannten Absender. Sie arbeiten mit deinen eigenen Filtern. **Alle Unbekannten sperren** ist am stärksten und schaltet die anderen Smarten Filter aus.";
 
 "faq_question_trustedCountries" = "Was ist Nach Land erlauben?";
 
@@ -196,7 +196,7 @@
 
 "faq_question_1" = "Wie funktioniert die Nachrichtenfilterung?";
 
-"faq_answer_1" = "Wenn du eine SMS von einer Nummer bekommst, die nicht in Kontakten ist, prüft Simply Filter SMS sie in dieser Reihenfolge:\n\n• **Erlaubte Texte** kommen immer durch.\n• **Blockierte Texte**, blockierte Sprachen, Smarte Filter, Nach Land erlauben und **KI-Filterung** können sie nach Junk, Transaktionen oder Werbung schicken.\n• Gibt es keine Übereinstimmung, wird die Nachricht normal zugestellt.\n\niMessage und Absender in Kontakten werden der App nie übergeben.";
+"faq_answer_1" = "Wenn du eine SMS von einer Nummer bekommst, die nicht in Kontakten ist, prüft Simply Filter SMS sie in dieser Reihenfolge:\n\n• **Erlaubte Texte** kommen immer durch.\n• **Gesperrte Texte**, gesperrte Sprachen, Smarte Filter, Nach Land erlauben und **KI-Filterung** können sie nach Junk, Transaktionen oder Werbung schicken.\n• Gibt es keine Übereinstimmung, wird die Nachricht normal zugestellt.\n\niMessage und Absender in Kontakten werden der App nie übergeben.";
 
 "faq_question_2" = "Sind meine Nachrichten für den App-Entwickler einsehbar?";
 
@@ -234,17 +234,17 @@
 
 "autoFilter_OFF" = "AUS";
 
-"autoFilter_allUnknown" = "Alle Unbekannten blockieren";
+"autoFilter_allUnknown" = "Alle Unbekannten sperren";
 
-"autoFilter_links" = "Links blockieren";
+"autoFilter_links" = "Links sperren";
 
 "autoFilter_numbersOnly" = "Nur Nummern erlauben";
 
-"autoFilter_shortSender" = "Kurze Absender blockieren";
+"autoFilter_shortSender" = "Kurze Absender sperren";
 
 "autoFilter_shortSender_desc" = "Mindestens %ld Zeichen";
 
-"autoFilter_shortSender_change" = "Zum Ändern tippen";
+"autoFilter_shortSender_change" = "Ändern";
 
 "autoFilter_shortSender_action" = "Neues Limit auswählen";
 
@@ -262,13 +262,13 @@
 
 "autoFilter_email_shortTitle" = "E-Mail";
 
-"autoFilter_email" = "E-Mail-Absender blockieren";
+"autoFilter_email" = "E-Mail-Absender sperren";
 
 "autoFilter_empty" = "Öffne die App mindestens einmal online, um die KI-Filterlisten herunterzuladen.";
 
 "autoFilter_error" = "Beim Herunterladen der KI-Filterlisten ist ein Problem aufgetreten. Bitte versuche es später erneut.";
 
-"autoFilter_emojis" = "Emojis blockieren";
+"autoFilter_emojis" = "Emojis sperren";
 
 "autoFilter_emojis_shortTitle" = "Emojis";
 
@@ -532,7 +532,7 @@
 
 "whatsNew_regexFilters_title" = "Regex-Filter";
 
-"whatsNew_regexFilters_desc" = "Für fortgeschrittene Nutzer - filtere mit **regulären Ausdrücken** für volle Kontrolle über was blockiert oder erlaubt wird. Ein Muster kann Dutzende von Filtern ersetzen.";
+"whatsNew_regexFilters_desc" = "Für fortgeschrittene Nutzer - filtere mit **regulären Ausdrücken** für volle Kontrolle über was gesperrt oder erlaubt wird. Ein Muster kann Dutzende von Filtern ersetzen.";
 
 "menu_exportFilters" = "Filter exportieren";
 
@@ -642,11 +642,11 @@
 
 "autoFilter_offlineTitle" = "Du bist offline";
 
-"filterList_empty_denied" = "Keine blockierten Texte";
+"filterList_empty_denied" = "Keine gesperrten Texte";
 
 "filterList_empty_allowed" = "Keine erlaubten Texte";
 
-"filterList_empty_deniedLanguage" = "Keine blockierten Sprachen";
+"filterList_empty_deniedLanguage" = "Keine gesperrten Sprachen";
 
 "communityLists_error_missingName" = "Dieser Liste fehlt der Name, daher kannst du sie nicht abonnieren.";
 

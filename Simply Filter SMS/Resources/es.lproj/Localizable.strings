@@ -176,7 +176,7 @@
 
 "faq_question_smartFilters" = "¿Qué son los Filtros inteligentes?";
 
-"faq_answer_smartFilters" = "Los **Filtros inteligentes** de la pantalla de inicio pillan spam habitual: enlaces, correos, emojis, remitentes cortos, remitentes solo de números o todos los desconocidos. Funcionan junto con tus propios filtros. **Bloquear todos los desconocidos** es el más fuerte y apaga el resto de Filtros inteligentes.";
+"faq_answer_smartFilters" = "Los **Filtros inteligentes** de la pantalla de inicio pillan spam habitual: enlaces, correos, emojis, remitentes cortos, remitentes solo de números o todos los desconocidos. Funcionan junto con tus propios filtros. **Bloquear desconocidos** es el más fuerte y apaga el resto de Filtros inteligentes.";
 
 "faq_question_trustedCountries" = "¿Qué es Permitir por país?";
 
@@ -234,7 +234,7 @@
 
 "autoFilter_OFF" = "OFF";
 
-"autoFilter_allUnknown" = "Bloquear todos los desconocidos";
+"autoFilter_allUnknown" = "Bloquear desconocidos";
 
 "autoFilter_links" = "Bloquear enlaces";
 
@@ -244,7 +244,7 @@
 
 "autoFilter_shortSender_desc" = "Mínimo %ld caracteres";
 
-"autoFilter_shortSender_change" = "Toca para cambiar";
+"autoFilter_shortSender_change" = "Cambiar";
 
 "autoFilter_shortSender_action" = "Seleccionar nuevo límite";
 
@@ -260,9 +260,9 @@
 
 "autoFilter_yourFilters" = "Tus filtros";
 
-"autoFilter_email" = "Bloquear correo electrónico";
+"autoFilter_email" = "Bloquear correos";
 
-"autoFilter_email_shortTitle" = "Email";
+"autoFilter_email_shortTitle" = "Correos";
 
 "autoFilter_empty" = "Conéctate a Internet con la app abierta al menos una vez para descargar las listas de Filtrado AI.";
 
