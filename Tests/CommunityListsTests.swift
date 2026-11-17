@@ -353,11 +353,14 @@ class CommunityListsTests: XCTestCase {
 
     func test_ensuredRecord_mergesDuplicates() {
         // Prepare
+        let earlierDate = Date(timeIntervalSince1970: 100)
         let first = CommunityList(context: self.persistenceManager.context)
         first.url = self.userURL
+        first.subscribedDate = Date(timeIntervalSince1970: 200)
         let second = CommunityList(context: self.persistenceManager.context)
         second.url = self.userURL
         second.isActive = true
+        second.subscribedDate = earlierDate
 
         // Act
         let ensured = self.persistenceManager.ensuredCommunityListRecord(for: self.userURL)
@@ -365,7 +368,25 @@ class CommunityListsTests: XCTestCase {
 
         // Verify
         XCTAssertTrue(ensured.isActive)
+        XCTAssertEqual(ensured.subscribedDate, earlierDate)
         XCTAssertEqual(self.persistenceManager.fetchCommunityListRecords().count, 1)
+    }
+
+    func test_userLists_listedInSubscriptionOrder() {
+        // Prepare
+        let firstURL = "https://lists.example.com/zeta.sfsfilters"
+        let secondURL = "https://lists.example.com/alpha.sfsfilters"
+        let firstRecord = self.persistenceManager.ensuredCommunityListRecord(for: firstURL)
+        firstRecord.subscribedDate = Date(timeIntervalSince1970: 100)
+        let secondRecord = self.persistenceManager.ensuredCommunityListRecord(for: secondURL)
+        secondRecord.subscribedDate = Date(timeIntervalSince1970: 200)
+        _ = self.persistenceManager.commitContext()
+
+        // Act
+        let communityLists = self.filterListManager.communityLists
+
+        // Verify
+        XCTAssertEqual(communityLists.map(\.url), [firstURL, secondURL])
     }
 
     func test_displayName_fallsBackToFileName() {

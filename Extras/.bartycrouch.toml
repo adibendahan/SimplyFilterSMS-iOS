@@ -1,0 +1,13 @@
+[update]
+tasks = ["normalize"]
+
+[update.normalize]
+paths = ["../Simply Filter SMS/Resources"]
+sourceLocale = "en"
+harmonizeWithSource = true
+sortByKeys = false
+
+[lint]
+paths = ["../Simply Filter SMS/Resources"]
+duplicateKeys = true
+emptyValues = true

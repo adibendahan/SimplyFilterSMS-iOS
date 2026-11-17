@@ -72,11 +72,35 @@ class SmartFilterManagerTests: XCTestCase {
         XCTAssertEqual(self.persistenceManager.fetchAutomaticFiltersRuleRecordCounter, 2)
     }
     
+    func test_selectedChoice_shortSenderWithoutRecord_isTheDefault() {
+        // Act
+        let result = self.testSubject.selectedChoice(for: .shortSender)
+
+        // Verify
+        XCTAssertEqual(result, 6)
+    }
+
+    func test_selectedChoice_shortSenderOutOfRange_isTheDefault() {
+        // Prepare
+        self.persistenceManager.fetchAutomaticFiltersRuleRecordClosure = { rule in
+            let automaticFiltersRuleRecord = AutomaticFiltersRule(context: self.persistenceManager.context)
+            automaticFiltersRuleRecord.ruleId = rule.rawValue
+            automaticFiltersRuleRecord.selectedChoice = 0
+            return automaticFiltersRuleRecord
+        }
+
+        // Act
+        let result = self.testSubject.selectedChoice(for: .shortSender)
+
+        // Verify
+        XCTAssertEqual(result, 6)
+    }
+
     func test_setSelectedChoice() {
         // Prepare
         var numbersOnlyRule: AutomaticFiltersRule?
         
-        self.persistenceManager.fetchAutomaticFiltersRuleRecordClosure = { rule in
+        self.persistenceManager.ensuredAutomaticFiltersRuleRecordClosure = { rule in
             let automaticFiltersRuleRecord = AutomaticFiltersRule(context: self.persistenceManager.context)
             automaticFiltersRuleRecord.ruleId = rule.rawValue
             automaticFiltersRuleRecord.isActive = rule == .numbersOnly
@@ -93,7 +117,7 @@ class SmartFilterManagerTests: XCTestCase {
         self.testSubject.setSelectedChoice(for: .numbersOnly, choice: 4)
         
         // Verify
-        XCTAssertEqual(self.persistenceManager.fetchAutomaticFiltersRuleRecordCounter, 1)
+        XCTAssertEqual(self.persistenceManager.ensuredAutomaticFiltersRuleRecordCounter, 1)
         XCTAssertEqual(self.persistenceManager.commitContextCounter, 1)
         XCTAssertEqual(numbersOnlyRule?.selectedChoice, 4)
     }

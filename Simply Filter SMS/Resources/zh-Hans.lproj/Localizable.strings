@@ -434,12 +434,6 @@
 
 "whatsNew_aiFiltering_desc" = "自动过滤现已由 **AI 驱动** - 更智能、更快速、更准确，并支持包括西班牙语、法语、德语、阿拉伯语等在内的 **10 种语言**。";
 
-
-
-
-
-
-
 "whatsNew_tipJar_title" = "支持开发者";
 
 "whatsNew_tipJar_desc" = "新增 **小费罐**，你可以用它支持 App 开发。Simply Filter SMS 永远免费 - 小费只是表达感谢的一种方式！**轻点此处留下小费！**";
@@ -576,8 +570,6 @@
 
 "whatsNew_filterTransfer_desc" = "与朋友分享你的过滤器 - 从菜单的**过滤工具**中导出文件并发送。";
 
-
-
 "callingCode_+1" = "北美";
 
 "callingCode_+7" = "俄罗斯和哈萨克斯坦";
@@ -669,5 +661,7 @@
 "whatsNew_communityLists_title" = "社区列表";
 
 "whatsNew_communityLists_desc" = "订阅其他人分享的过滤列表，或分享你自己的列表。作者发布新版本后，列表会自动更新 - 在**你的过滤器**中可以找到它们。";
+
+"communityLists_featured" = "精选";
 
 

@@ -1,0 +1,21 @@
+{
+  "appVersion": "4.0.0",
+  "author": "Jan Siebert",
+  "description": "Blockiert gefälschte SMS zu Paketen, Lieferungen und Zollgebühren.",
+  "exportedAt": "2026-11-16T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "junk",
+      "matching": "contains",
+      "target": "body",
+      "text": "customs fee",
+      "type": "deny"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://github.com/philter-lists/parcel-scams",
+  "locale": "de-DE",
+  "name": "Paketschutz",
+  "version": 2
+}

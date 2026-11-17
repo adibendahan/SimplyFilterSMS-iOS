@@ -29,9 +29,9 @@
             <key>NSStringFormatValueTypeKey</key>
             <string>ld</string>
             <key>one</key>
-            <string>Blockiertes Land</string>
+            <string>Gesperrtes Land</string>
             <key>other</key>
-            <string>Blockierte Länder</string>
+            <string>Gesperrte Länder</string>
         </dict>
     </dict>
     <key>general_active_count</key>

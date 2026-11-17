@@ -200,7 +200,8 @@ class PersistenceManager: PersistenceManagerProtocol {
     }
 
     func fetchCommunityListRecords() -> [CommunityList] {
-        let sortDescriptor = [NSSortDescriptor(keyPath: \CommunityList.url, ascending: true)]
+        let sortDescriptor = [NSSortDescriptor(keyPath: \CommunityList.subscribedDate, ascending: true),
+                              NSSortDescriptor(keyPath: \CommunityList.url, ascending: true)]
         var communityListRecords: [CommunityList] = []
 
         self.fetch(CommunityList.self, sortDescriptor: sortDescriptor)?.forEach {
@@ -280,6 +281,7 @@ class PersistenceManager: PersistenceManagerProtocol {
             let newRecord = CommunityList(context: self.context)
             newRecord.url = url
             newRecord.isActive = false
+            newRecord.subscribedDate = Date()
             return newRecord
         }
 
@@ -287,9 +289,11 @@ class PersistenceManager: PersistenceManagerProtocol {
         guard !duplicateRecords.isEmpty else { return firstRecord }
 
         let isActive = communityListRecords.contains(where: \.isActive)
-        Log.debug("duplicate records, url: \(url), count: \(communityListRecords.count), isActive: \(isActive) → merged")
+        let subscribedDate = communityListRecords.compactMap(\.subscribedDate).min()
+        Log.debug("duplicate records, url: \(url), count: \(communityListRecords.count), isActive: \(isActive), subscribedDate: \(String(describing: subscribedDate)) → merged")
         duplicateRecords.forEach(self.context.delete)
         firstRecord.isActive = isActive
+        firstRecord.subscribedDate = subscribedDate
         return firstRecord
     }
 

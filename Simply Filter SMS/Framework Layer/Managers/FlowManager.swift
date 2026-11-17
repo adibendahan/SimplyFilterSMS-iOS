@@ -160,6 +160,12 @@ class FlowManager: FlowManagerProtocol {
     }
 
     func requestToast(_ toast: ToastView.Toast) {
+        #if DEBUG
+        guard !ProcessInfo.processInfo.isUsingScreenshotData else {
+            Log.debug("screenshot mode, toast: \(toast.logName) → dropped")
+            return
+        }
+        #endif // DEBUG
         let mustWait = toast.isNudge && !self.isHomeIdle()
         guard mustWait else {
             self.enqueue(toast)

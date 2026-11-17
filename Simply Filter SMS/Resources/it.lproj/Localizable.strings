@@ -176,7 +176,7 @@
 
 "faq_question_smartFilters" = "Cosa sono i Filtri intelligenti?";
 
-"faq_answer_smartFilters" = "I **Filtri intelligenti** nella schermata Home intercettano lo spam comune: link, e-mail, emoji, mittenti brevi, mittenti solo numeri o tutti gli sconosciuti. Funzionano insieme ai tuoi filtri. **Blocca tutti gli sconosciuti** è il più forte e spegne gli altri Filtri intelligenti.";
+"faq_answer_smartFilters" = "I **Filtri intelligenti** nella schermata Home intercettano lo spam comune: link, e-mail, emoji, mittenti brevi, mittenti solo numeri o tutti gli sconosciuti. Funzionano insieme ai tuoi filtri. **Blocca sconosciuti** è il più forte e spegne gli altri Filtri intelligenti.";
 
 "faq_question_trustedCountries" = "Cos'è Consenti per paese?";
 
@@ -234,7 +234,7 @@
 
 "autoFilter_OFF" = "OFF";
 
-"autoFilter_allUnknown" = "Blocca tutti gli sconosciuti";
+"autoFilter_allUnknown" = "Blocca sconosciuti";
 
 "autoFilter_links" = "Blocca link";
 
@@ -244,7 +244,7 @@
 
 "autoFilter_shortSender_desc" = "Almeno %ld caratteri";
 
-"autoFilter_shortSender_change" = "Tocca per cambiare";
+"autoFilter_shortSender_change" = "Cambia";
 
 "autoFilter_shortSender_action" = "Seleziona nuovo limite";
 
@@ -354,8 +354,6 @@
 
 "whatsNew_menuItem" = "Novità";
 
-
-
 "whatsNew_tipJar_title" = "Supporta lo sviluppatore";
 
 "whatsNew_tipJar_desc" = "Un nuovo **Barattolo delle mance** ti permette di supportare lo sviluppo dell'app. Simply Filter SMS è gratuita per sempre - le mance sono solo un modo per dire grazie! **Tocca qui per dare una mancia!**";
@@ -455,10 +453,6 @@
 "whatsNew_aiFiltering_title" = "Filtro AI";
 
 "whatsNew_aiFiltering_desc" = "Il filtro automatico è ora **basato sull'AI** - più intelligente, veloce e preciso, con supporto per **10 lingue** tra cui spagnolo, francese, tedesco, arabo e altro.";
-
-
-
-
 
 "reportMessage_junkAndBlockSender" = "Indesiderati e blocca mittente";
 
@@ -588,8 +582,6 @@
 
 "whatsNew_filterTransfer_desc" = "Condividi i tuoi filtri con un amico - esporta un file da **Strumenti filtro** nel menu e invialo.";
 
-
-
 "notification_saveFailed_title" = "Si è verificato un errore";
 
 "notification_saveFailed_subtitle" = "Modifiche non salvate, riprova.";
@@ -669,5 +661,7 @@
 "whatsNew_communityLists_title" = "Liste della community";
 
 "whatsNew_communityLists_desc" = "Iscriviti alle liste di filtri condivise da altre persone, o condividi la tua. Le liste si aggiornano da sole quando i loro autori pubblicano una nuova versione - le trovi in **I tuoi filtri**.";
+
+"communityLists_featured" = "In evidenza";
 
 

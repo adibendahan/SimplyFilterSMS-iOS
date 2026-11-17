@@ -1,0 +1,21 @@
+{
+  "appVersion": "4.0.0",
+  "author": "Mark.D",
+  "description": "쇼핑몰 할인과 쿠폰 문자를 프로모션으로 옮깁니다.",
+  "exportedAt": "2026-11-16T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "promotion",
+      "matching": "contains",
+      "target": "body",
+      "text": "coupon",
+      "type": "deny"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://github.com/markd-deals/store-deals",
+  "locale": "ko-KR",
+  "name": "쇼핑 혜택",
+  "version": 2
+}

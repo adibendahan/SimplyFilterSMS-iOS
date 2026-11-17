@@ -77,11 +77,12 @@ Dependencies/
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
 
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-.screenshots/
+Extras/fastlane/report.xml
+Extras/fastlane/Preview.html
+Extras/fastlane/screenshots/**/*.png
+Extras/fastlane/test_output
+/Extras/Screenshots/
+/Extras/local/
 
 # Code Injection
 #
@@ -92,11 +93,8 @@ iOSInjectionProject/
 *.xcbkptlist
 *.xcconfig
 .DS_Store
-automatic_filters.json
-/ai/
-.claude/skills/review-reports/.review-state.json
-.claude/skills/review-reports/.venv/
-data/reported_messages_archive*.json
+Extras/review-reports/.review-state.json
+Extras/review-reports/.venv/
 
 # Xcode Cloud
 #

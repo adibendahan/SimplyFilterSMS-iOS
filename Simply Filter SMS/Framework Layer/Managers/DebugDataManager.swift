@@ -83,17 +83,11 @@ class DebugDataManager: DebugDataManagerProtocol {
             smartFilterManager.setSmartFilterActive(for: rule, value: true)
         }
 
-        // Prefer the full BCP-47 tag (zh-Hans), then the language code. Script-only
-        // locales like Simplified Chinese are not in the AI filter lists — fall back
-        // to English so Load Debug Data still turns AI Filtering ON for screenshots.
         let normalizedCode = String(langCode.split(separator: "-").first ?? Substring(langCode))
         let supported = Set(filterListManager.filterListLanguages)
-        let preferred = [NLLanguage(langCode), NLLanguage(normalizedCode)].first { $0 != .undetermined }
-        if let preferred, supported.contains(preferred) {
-            filterListManager.setFilterListActive(for: preferred, value: true)
-        } else {
-            filterListManager.setFilterListActive(for: .english, value: true)
-        }
+        let candidates = [NLLanguage(langCode), NLLanguage(normalizedCode)]
+        let preferred = candidates.first { supported.contains($0) } ?? .english
+        filterListManager.setFilterListActive(for: preferred, value: true)
     }
 
     // MARK: - Language Data

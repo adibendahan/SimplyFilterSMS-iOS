@@ -1,0 +1,21 @@
+{
+  "appVersion": "4.0.0",
+  "author": "Mark.D",
+  "description": "تنقل عروض المتاجر وقسائمها إلى العروض الترويجية.",
+  "exportedAt": "2026-11-16T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "promotion",
+      "matching": "contains",
+      "target": "body",
+      "text": "coupon",
+      "type": "deny"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://github.com/markd-deals/store-deals",
+  "locale": "ar-SA",
+  "name": "عروض المتاجر",
+  "version": 2
+}

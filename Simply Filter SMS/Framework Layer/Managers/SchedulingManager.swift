@@ -23,7 +23,9 @@ class SchedulingManager: SchedulingManagerProtocol {
                                                                           queue: .main) { [weak self] _ in
             guard let self, !self.filterListManager.hasActiveFilterLists else { return }
             Log.debug("AI Filtering is off → inactivity reminder cancelled")
-            self.cancelInactivityReminder()
+            Task {
+                await self.cancelInactivityReminder()
+            }
         }
     }
     
@@ -73,9 +75,9 @@ class SchedulingManager: SchedulingManagerProtocol {
     }
     
     func refreshInactivityReminder() {
-        self.cancelInactivityReminder()
-        
         Task { @MainActor in
+            await self.cancelInactivityReminder()
+            
             let alertsAreAllowed = await self.alertsAreAllowed
             self.recordAlertPermission(alertsAreAllowed)
             
@@ -127,7 +129,9 @@ class SchedulingManager: SchedulingManagerProtocol {
     
     #if DEBUG
     func reset() {
-        self.cancelInactivityReminder()
+        Task {
+            await self.cancelInactivityReminder()
+        }
     }
 
     func scheduleInactivityReminderSoon() {
@@ -221,7 +225,7 @@ class SchedulingManager: SchedulingManagerProtocol {
         self.defaultsManager.inactivityNotificationLastDeclineSession = 0
     }
     
-    private func cancelInactivityReminder() {
-        self.userNotificationCenterService.cancelPendingNotification(withIdentifier: kInactivityReminderNotificationIdentifier)
+    private func cancelInactivityReminder() async {
+        await self.userNotificationCenterService.cancelPendingNotification(withIdentifier: kInactivityReminderNotificationIdentifier)
     }
 }

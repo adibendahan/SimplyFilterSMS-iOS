@@ -47,7 +47,7 @@ Not applicable — German is LTR.
 
 | Concept | Canonical Term | Notes |
 |---|---|---|
-| Block / Deny (verb) | **Blockieren** | Past participle: "Blockiert"; adjective label: "Blockierte" |
+| Block / Deny (verb) | **Sperren** | Past participle: "Gesperrt"; adjective label: "Gesperrte". Never "blockieren": it runs long in narrow rows. |
 | Allow / Permit (verb) | **Erlauben** | Past participle/adjective: "Erlaubte" |
 | Filter / Filters (noun) | **Filter** | Same word in German, plural is also "Filter" (no -s) |
 | Sender | **Absender** | Masculine: der Absender |

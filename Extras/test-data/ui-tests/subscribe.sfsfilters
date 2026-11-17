@@ -1,0 +1,36 @@
+{
+  "appVersion": "4.0.0",
+  "author": "Simply Filter SMS UI Tests",
+  "description": "Blocks parking fine and toll overdue scams, allows CityHall.",
+  "exportedAt": "2026-11-15T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "junk",
+      "matching": "contains",
+      "target": "body",
+      "text": "parking fine",
+      "type": "deny"
+    },
+    {
+      "case": "insensitive",
+      "folder": "junk",
+      "matching": "contains",
+      "target": "body",
+      "text": "toll overdue",
+      "type": "deny"
+    },
+    {
+      "case": "insensitive",
+      "matching": "exact",
+      "target": "sender",
+      "text": "CityHall",
+      "type": "allow"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://adibendahan.github.io/SimplyFilterSMS-iOS/",
+  "locale": "en-US",
+  "name": "UI Test Subscription",
+  "version": 2
+}

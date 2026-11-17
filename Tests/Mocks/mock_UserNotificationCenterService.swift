@@ -37,7 +37,7 @@ class mock_UserNotificationCenterService: UserNotificationCenterServiceProtocol 
         self.scheduleClosure?(request)
     }
 
-    func cancelPendingNotification(withIdentifier identifier: String) {
+    func cancelPendingNotification(withIdentifier identifier: String) async {
         self.cancelPendingNotificationCounter += 1
         self.scheduledRequest = nil
         self.cancelPendingNotificationClosure?(identifier)

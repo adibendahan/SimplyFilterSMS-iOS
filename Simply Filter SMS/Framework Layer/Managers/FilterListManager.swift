@@ -224,7 +224,7 @@ class FilterListManager: FilterListManagerProtocol {
 
     @MainActor
     func updateFilterListsWhenOnline() {
-        guard !ProcessInfo.processInfo.isInTestingMode else {
+        guard !ProcessInfo.processInfo.shouldSkipFilterListsUpdate else {
             Log.debug("testing mode → skipped")
             return
         }

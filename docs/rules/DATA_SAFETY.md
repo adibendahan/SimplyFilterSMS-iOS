@@ -2,7 +2,7 @@
 
 Reported messages and filter archives are irreplaceable user content. Treat every delete as permanent.
 
-- **Archive, verify, confirm, then delete.** Never delete from DynamoDB (single, batch or wipe) without a verified full-table local archive first, and never without the maintainer's confirmation. See `.claude/skills/review-reports/SKILL.md`.
+- **Archive, verify, confirm, then delete.** Never delete from DynamoDB (single, batch or wipe) without a verified full-table local archive first, and never without the maintainer's confirmation. See `docs/workflows/review-reports.md`.
 - **Never delete mid-review.** Dismiss or process locally until a clear is explicitly asked for.
 - **Never overwrite an archive with a smaller or empty dump.** Use dated, unique filenames.
 - **If an archive write fails or its count doesn't match live data, stop and delete nothing.**

@@ -18,6 +18,7 @@
     </entity>
     <entity name="CommunityList" representedClassName="CommunityList" syncable="YES" codeGenerationType="class">
         <attribute name="isActive" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="subscribedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="url" optional="YES" attributeType="String"/>
     </entity>
     <entity name="FilterListsCache" representedClassName="FilterListsCache" syncable="YES" codeGenerationType="class">

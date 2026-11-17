@@ -176,7 +176,7 @@
 
 "faq_question_smartFilters" = "O que são Filtros inteligentes?";
 
-"faq_answer_smartFilters" = "Os **Filtros inteligentes** na tela inicial pegam spam comum: links, e-mails, emojis, remetentes curtos, remetentes só de números ou todos os desconhecidos. Eles funcionam junto com os seus filtros. **Bloquear Todos Desconhecidos** é o mais forte e desliga os outros Filtros inteligentes.";
+"faq_answer_smartFilters" = "Os **Filtros inteligentes** na tela inicial pegam spam comum: links, e-mails, emojis, remetentes curtos, remetentes só de números ou todos os desconhecidos. Eles funcionam junto com os seus filtros. **Bloquear Desconhecidos** é o mais forte e desliga os outros Filtros inteligentes.";
 
 "faq_question_trustedCountries" = "O que é Permitir por país?";
 
@@ -234,7 +234,7 @@
 
 "autoFilter_OFF" = "OFF";
 
-"autoFilter_allUnknown" = "Bloquear Todos Desconhecidos";
+"autoFilter_allUnknown" = "Bloquear Desconhecidos";
 
 "autoFilter_links" = "Bloquear Links";
 
@@ -244,7 +244,7 @@
 
 "autoFilter_shortSender_desc" = "Mínimo de %ld caracteres";
 
-"autoFilter_shortSender_change" = "Toque para alterar";
+"autoFilter_shortSender_change" = "Alterar";
 
 "autoFilter_shortSender_action" = "Selecione novo limite";
 
@@ -262,7 +262,7 @@
 
 "autoFilter_email_shortTitle" = "E-mail";
 
-"autoFilter_email" = "Bloquear Remetentes de E-mail";
+"autoFilter_email" = "Bloquear E-mails";
 
 "autoFilter_empty" = "Abra o app pelo menos uma vez com internet para baixar as listas de Filtro AI.";
 
@@ -335,8 +335,6 @@
 "whatsNew_continue" = "Continuar";
 
 "whatsNew_menuItem" = "Novidades";
-
-
 
 "whatsNew_tipJar_title" = "Apoie o Desenvolvedor";
 
@@ -455,10 +453,6 @@
 "whatsNew_aiFiltering_title" = "Filtragem com IA";
 
 "whatsNew_aiFiltering_desc" = "A filtragem automática agora é **impulsionada por IA** - mais inteligente, rápida e precisa, com suporte para **10 idiomas** incluindo espanhol, francês, alemão, árabe e mais.";
-
-
-
-
 
 "reportMessage_junkAndBlockSender" = "Lixo Eletrônico e bloquear remetente";
 
@@ -588,8 +582,6 @@
 
 "whatsNew_filterTransfer_desc" = "Compartilhe seus filtros com um amigo - exporte um arquivo em **Ferramentas de filtro** no menu e envie.";
 
-
-
 "notification_saveFailed_title" = "Ocorreu um erro";
 
 "notification_saveFailed_subtitle" = "As alterações não foram salvas, tente novamente.";
@@ -669,5 +661,7 @@
 "whatsNew_communityLists_title" = "Listas da comunidade";
 
 "whatsNew_communityLists_desc" = "Assine listas de filtros compartilhadas por outras pessoas, ou compartilhe a sua. As listas se atualizam sozinhas quando os autores publicam uma nova versão - elas ficam em **Seus filtros**.";
+
+"communityLists_featured" = "Destaque";
 
 

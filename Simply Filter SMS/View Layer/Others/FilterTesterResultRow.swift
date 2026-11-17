@@ -39,6 +39,7 @@ struct FilterTesterResultRow: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Self.accessibilityText(for: result))
+        .accessibilityIdentifier(style.testIdentifier.rawValue)
     }
 
     private var style: TestResultStyle { TestResultStyle(action: result.action) }
@@ -65,6 +66,7 @@ private struct TestResultStyle {
     let title: String
     let color: Color
     let icon: String
+    let testIdentifier: TestIdentifier
 
     init(action: ILMessageFilterAction) {
         switch action {
@@ -72,22 +74,27 @@ private struct TestResultStyle {
             self.title = "testFilters_resultAllowed"~
             self.color = .green
             self.icon = "checkmark.circle.fill"
+            self.testIdentifier = .testResultAllowed
         case .junk, .filter:
             self.title = "testFilters_resultJunk"~
             self.color = .red
             self.icon = "xmark.bin"
+            self.testIdentifier = .testResultJunk
         case .promotion:
             self.title = "testFilters_resultPromotion"~
             self.color = .orange
             self.icon = "megaphone"
+            self.testIdentifier = .testResultPromotion
         case .transaction:
             self.title = "testFilters_resultTransaction"~
             self.color = .brown
             self.icon = "arrow.left.arrow.right"
+            self.testIdentifier = .testResultTransaction
         @unknown default:
             self.title = "testFilters_resultAllowed"~
             self.color = .secondary
             self.icon = "questionmark.circle"
+            self.testIdentifier = .testResultAllowed
         }
     }
 }

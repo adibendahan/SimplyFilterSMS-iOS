@@ -1,0 +1,21 @@
+{
+  "appVersion": "4.0.0",
+  "author": "Luc Tamisier",
+  "description": "Bloque les faux SMS de colis, de livraison et de frais de douane.",
+  "exportedAt": "2026-11-16T00:00:00Z",
+  "filters": [
+    {
+      "case": "insensitive",
+      "folder": "junk",
+      "matching": "contains",
+      "target": "body",
+      "text": "customs fee",
+      "type": "deny"
+    }
+  ],
+  "format": "simply-filter-sms-filters",
+  "homepage": "https://github.com/philter-lists/parcel-scams",
+  "locale": "fr-FR",
+  "name": "Anti-arnaques colis",
+  "version": 2
+}

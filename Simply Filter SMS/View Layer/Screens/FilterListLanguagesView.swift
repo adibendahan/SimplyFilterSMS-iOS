@@ -26,6 +26,7 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                         AdaptiveToggle(isOn: $model.languages[index].state) {
                             Text(localizedName)
                         }
+                        .accessibilityIdentifier("\(TestIdentifier.filterListLanguageToggle.rawValue)-\(language.rawValue)")
                     }
                 }
 
