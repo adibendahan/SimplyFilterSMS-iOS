@@ -16,7 +16,7 @@ except ImportError:
 TABLE = "reported_messages"
 REGION = "us-east-1"
 STATE_FILE = Path(__file__).parent / ".review-state.json"
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 ARCHIVE_DIR = REPO_ROOT / "Extras" / "local" / "reports"
 ARCHIVE_LATEST = ARCHIVE_DIR / "reported_messages_archive.json"
 

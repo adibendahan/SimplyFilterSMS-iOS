@@ -20,6 +20,7 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - [docs/DESIGN.md](docs/DESIGN.md) — design principles and the accent-color rules
 - [docs/AWS_SETUP.md](docs/AWS_SETUP.md) — the reporting backend and S3 hosting of the AI Filtering lists
 - [docs/localization/](docs/localization/) — per-language translation guides used by `/add-language`
+- [docs/workflows/](docs/workflows/) — the steps behind each `/` command and the review-reports skill; `.claude/` only points here
 
 **Rules — imported into every session and binding on all work.** Other agents that don't resolve `@` imports must read these files before starting any work session:
 

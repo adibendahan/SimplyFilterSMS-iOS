@@ -93,8 +93,8 @@ iOSInjectionProject/
 *.xcbkptlist
 *.xcconfig
 .DS_Store
-.claude/skills/review-reports/.review-state.json
-.claude/skills/review-reports/.venv/
+Extras/review-reports/.review-state.json
+Extras/review-reports/.venv/
 
 # Xcode Cloud
 #
