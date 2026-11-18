@@ -143,29 +143,93 @@ struct ListEmptyStateView: View {
         let perform: () -> Void
     }
 
+    struct Presence: Equatable {
+        var isShown = false
+        var appearance = UUID()
+        var pendingArrival: UUID? = nil
+
+        var isActive: Bool {
+            return self.isShown || self.pendingArrival != nil
+        }
+    }
+
+    struct PresenceTracker: ViewModifier {
+        let isEmpty: Bool
+        @Binding var presence: Presence
+
+        func body(content: Content) -> some View {
+            content
+                .onAppear {
+                    guard self.presence.isActive != self.isEmpty else { return }
+                    self.presence = Presence(isShown: self.isEmpty)
+                }
+                .onChange(of: self.isEmpty) { _, isEmpty in
+                    self.update(isEmpty: isEmpty)
+                }
+        }
+
+        private func update(isEmpty: Bool) {
+            if isEmpty {
+                self.arrive()
+            } else {
+                self.leave()
+            }
+        }
+
+        private func arrive() {
+            let arrival = UUID()
+            withAnimation(.easeOut(duration: Motion.footerFadeDuration)) {
+                self.presence = Presence(isShown: false, pendingArrival: arrival)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + Motion.arrivalDelay) {
+                guard self.presence.pendingArrival == arrival else { return }
+                withAnimation {
+                    self.presence = Presence(isShown: true)
+                }
+            }
+        }
+
+        private func leave() {
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                self.presence = Presence()
+            }
+        }
+    }
+
     let kind: Kind
     var action: Action? = nil
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isPreview) private var isPreview
 
     @ScaledMetric(relativeTo: .body) private var regularIllustrationHeight: CGFloat = 124
     @ScaledMetric(relativeTo: .body) private var compactIllustrationHeight: CGFloat = 84
     @ScaledMetric(relativeTo: .subheadline) private var twoCaptionLinesHeight: CGFloat = 40
+
+    @State private var hasAppeared = false
+    @State private var badgeBounce = 0
 
     var body: some View {
         VStack(spacing: self.kind.style.spacing) {
             self.illustrationContent
                 .frame(minHeight: self.illustrationHeight)
                 .padding(.bottom, self.kind.style.illustrationSpacing)
+                .modifier(self.entrance(delay: 0, distance: Motion.illustrationRise, scale: Motion.illustrationStartScale))
                 .accessibilityHidden(true)
 
             Text(self.kind.title)
                 .font(self.kind.style.titleFont)
                 .multilineTextAlignment(.center)
+                .modifier(self.entrance(delay: Motion.titleDelay))
 
             Text(self.kind.caption)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(minHeight: self.captionMinHeight, alignment: .top)
+                .modifier(self.entrance(delay: Motion.captionDelay))
 
             if let action = self.action {
                 Button {
@@ -180,15 +244,22 @@ struct ListEmptyStateView: View {
                 .buttonStyle(FilledButton())
                 .padding(.top, 10)
                 .accessibilityIdentifier(action.testIdentifier.rawValue)
+                .modifier(self.entrance(delay: Motion.buttonDelay))
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, self.kind.style.verticalPadding)
+        .onAppear {
+            self.playEntrance()
+        }
     }
 
     @ViewBuilder
     private var illustrationContent: some View {
-        let badge = IllustrationBadge(iconName: self.kind.badgeIconName, color: self.kind.color)
+        let badge = IllustrationBadge(iconName: self.kind.badgeIconName,
+                                      color: self.kind.color,
+                                      isShown: self.isRevealed || self.reduceMotion,
+                                      bounce: self.badgeBounce)
 
         switch self.kind.illustration {
         case .message(let sample):
@@ -215,6 +286,74 @@ struct ListEmptyStateView: View {
             return nil
         }
     }
+
+    private var isRevealed: Bool {
+        return self.hasAppeared || self.isPreview
+    }
+
+    private func entrance(delay: Double, distance: CGFloat = Motion.textRise, scale: CGFloat = 1) -> Entrance {
+        return Entrance(isShown: self.isRevealed,
+                        delay: delay,
+                        distance: distance,
+                        scale: scale,
+                        reduceMotion: self.reduceMotion)
+    }
+
+    private func playEntrance() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Motion.entranceDelay) {
+            self.hasAppeared = true
+            guard !self.reduceMotion else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + Motion.badgeBounceDelay) {
+                self.badgeBounce += 1
+            }
+        }
+    }
+}
+
+
+//MARK: - Motion -
+private enum Motion {
+    static let entranceDelay: TimeInterval = 0.25
+    static let arrivalDelay: TimeInterval = 0.35
+    static let footerFadeDuration: TimeInterval = 0.15
+    static let titleDelay: TimeInterval = 0.3
+    static let captionDelay: TimeInterval = 0.36
+    static let buttonDelay: TimeInterval = 0.42
+    static let badgePopDelay: TimeInterval = 0.22
+    static let badgeBounceDelay: TimeInterval = 0.45
+    static let illustrationRise: CGFloat = 28
+    static let illustrationStartScale: CGFloat = 0.6
+    static let textRise: CGFloat = 12
+    static let fadeDuration: TimeInterval = 0.3
+    static let spring = Animation.spring(response: 0.55, dampingFraction: 0.62)
+    static let badgeSpring = Animation.spring(response: 0.42, dampingFraction: 0.45)
+}
+
+private struct Entrance: ViewModifier {
+    let isShown: Bool
+    let delay: Double
+    let distance: CGFloat
+    let scale: CGFloat
+    let reduceMotion: Bool
+
+    func body(content: Content) -> some View {
+        let isAtRest = self.isShown || self.reduceMotion
+        return content
+            .opacity(self.isShown ? 1 : 0)
+            .scaleEffect(isAtRest ? 1 : self.scale)
+            .offset(y: isAtRest ? 0 : self.distance)
+            .animation(self.animation, value: self.isShown)
+    }
+
+    private var animation: Animation {
+        let animation: Animation
+        if self.reduceMotion {
+            animation = .easeOut(duration: Motion.fadeDuration)
+        } else {
+            animation = Motion.spring.delay(self.delay)
+        }
+        return animation
+    }
 }
 
 
@@ -229,6 +368,8 @@ private enum IllustrationColor {
 private struct IllustrationBadge: ViewModifier {
     let iconName: String
     let color: Color
+    let isShown: Bool
+    let bounce: Int
 
     @ScaledMetric(relativeTo: .body) private var badgeSize: CGFloat = 30
     private let ringWidth: CGFloat = 3
@@ -243,10 +384,13 @@ private struct IllustrationBadge: ViewModifier {
             Image(systemName: self.iconName)
                 .font(.footnote.weight(.bold))
                 .foregroundStyle(.white)
+                .symbolEffect(.bounce, value: self.bounce)
                 .frame(width: self.badgeSize, height: self.badgeSize)
                 .background(self.color, in: Circle())
                 .padding(self.ringWidth)
                 .background(IllustrationColor.rowBackground, in: Circle())
+                .scaleEffect(self.isShown ? 1 : 0.01)
+                .animation(Motion.badgeSpring.delay(Motion.badgePopDelay), value: self.isShown)
         }
     }
 

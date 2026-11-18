@@ -120,16 +120,26 @@ struct StayReachableView: View {
                 .foregroundColor(.primary)
                 .accessibilityAddTraits(.isHeader)
 
-            if let attributed = try? AttributedString(markdown: "stayReachable_description"~, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) {
-                Text(attributed)
+            if let description = self.description {
+                Text(description)
                     .font(.subheadline)
-                    .foregroundColor(.primary)
+                    .foregroundColor(Color(.secondaryLabel))
             }
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
         .textCase(nil)
         .padding(.bottom, 8)
+    }
+
+    private var description: AttributedString? {
+        guard var description = try? AttributedString(markdown: "stayReachable_description"~, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) else { return nil }
+        for run in description.runs {
+            let isBold = run.inlinePresentationIntent?.contains(.stronglyEmphasized) ?? false
+            guard isBold else { continue }
+            description[run.range].foregroundColor = Color(.label)
+        }
+        return description
     }
 
     @ViewBuilder

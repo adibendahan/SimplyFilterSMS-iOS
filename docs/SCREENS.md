@@ -72,6 +72,7 @@ The list of one filter type (allow, deny or language), pushed from Home, with in
 - **Reload trap:** section membership, row text and row options come from the row ViewModel's cached values, never the live `Filter`. Right after `reloadContainer()` resets the context, a `Filter` reads default values, so a regex row would drop into the regular section.
 - **`EditableText` crash trap:** after Return, ending the session, clearing focus and the business `onCommit` are deferred to the next main-loop turn. Return's `triggerPrimaryAction` still writes to the text field after `onCommit` returns, so rebuilding the `List` inside that callback crashes with `EXC_BAD_ACCESS`.
 - In `EditableText`, the idle `TextField` stays in the layout at opacity 0, which keeps right-to-left text from shifting.
+- **Empty state traps** (also Community Lists): the card sits in its own section and gets a fresh `.id` per appearance, or the list reuses the removed card with its old animation state and it comes back blank. The footer hides on `ListEmptyStateView.Presence.isActive`, not on the filters, or it fades out at the deleted row's slow pace. Adding a filter removes the card with no animation while the sheet still covers the list.
 
 ## ReportMessageView
 Reports a message as junk or not junk to the backend, as a sheet from the menu; shows a loading overlay, then a checkmark, and closes itself.

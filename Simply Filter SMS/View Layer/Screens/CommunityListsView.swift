@@ -14,9 +14,11 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .caption2) private var detailsIndent = CommunityListRow.chevronColumnBaseWidth
     @StateObject var model: ViewModel
+    @State private var emptyStatePresence = ListEmptyStateView.Presence()
 
     init(model: ViewModel) {
         _model = StateObject(wrappedValue: model)
+        _emptyStatePresence = State(initialValue: ListEmptyStateView.Presence(isShown: model.userRowViewModels.isEmpty))
     }
 
     var body: some View {
@@ -42,8 +44,9 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                 }
                 .onDelete(perform: self.model.removeCommunityLists)
 
-                if self.model.userRowViewModels.isEmpty {
+                if self.emptyStatePresence.isShown {
                     ListEmptyStateView(kind: .communityLists)
+                        .id(self.emptyStatePresence.appearance)
                 }
             } header: {
                 Text("communityLists_addedByYou"~)
@@ -67,6 +70,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                     .multilineTextAlignment(.leading)
             } // Section
         } // List
+        .modifier(ListEmptyStateView.PresenceTracker(isEmpty: self.model.userRowViewModels.isEmpty, presence: $emptyStatePresence))
         .listStyle(.insetGrouped)
         .navigationTitle("communityLists_title"~)
         .navigationBarTitleDisplayMode(.inline)

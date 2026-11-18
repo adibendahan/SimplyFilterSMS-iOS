@@ -25,10 +25,12 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
 
     @StateObject var model: ViewModel
     @State private var dotFilterID: UUID? = nil
+    @State private var emptyStatePresence = ListEmptyStateView.Presence()
     @FocusState private var focusedFilterID: UUID?
 
     init(model: ViewModel) {
         _model = StateObject(wrappedValue: model)
+        _emptyStatePresence = State(initialValue: ListEmptyStateView.Presence(isShown: model.filters.isEmpty))
     }
 
     var body: some View {
@@ -49,10 +51,6 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                     self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regularRowViewModels)
                 }
                 .deleteDisabled(self.model.editMode.isEditing)
-
-                if self.model.filters.isEmpty {
-                    self.emptyState
-                }
             } header: {
                 if !self.model.regularRowViewModels.isEmpty {
                     AdaptiveColumnHeader(
@@ -61,8 +59,15 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                         trailingSecondary: false)
                 }
             } footer: {
-                if !self.model.filters.isEmpty && self.model.regexRowViewModels.isEmpty {
+                if !self.emptyStatePresence.isActive && self.model.regexRowViewModels.isEmpty {
                     listFooter
+                }
+            }
+
+            if self.emptyStatePresence.isShown {
+                Section {
+                    self.emptyState
+                        .id(self.emptyStatePresence.appearance)
                 }
             }
 
@@ -89,6 +94,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                 }
             }
         } // List
+        .modifier(ListEmptyStateView.PresenceTracker(isEmpty: self.model.filters.isEmpty, presence: $emptyStatePresence))
         .listStyle(InsetGroupedListStyle())
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
