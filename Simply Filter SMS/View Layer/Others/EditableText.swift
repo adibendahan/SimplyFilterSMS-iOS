@@ -86,6 +86,8 @@ struct EditableText: View {
                 onCommit: {
                     finishEditingIfNeeded(reason: .onCommit)
                 })
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
             .opacity(isEditorVisible ? 1 : 0)
             .foregroundColor(attributedText != nil ? .clear : .primary)
             .frame(maxWidth: .infinity, alignment: .leading)
