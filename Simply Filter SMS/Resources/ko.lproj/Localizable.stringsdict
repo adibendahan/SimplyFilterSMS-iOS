@@ -91,5 +91,22 @@
             <string>%ld개 켜짐</string>
         </dict>
     </dict>
+
+    <key>stayReachable_addFilters</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@filters@</string>
+        <key>filters</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>허용 텍스트 추가</string>
+            <key>other</key>
+            <string>허용 텍스트 %ld개 추가</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

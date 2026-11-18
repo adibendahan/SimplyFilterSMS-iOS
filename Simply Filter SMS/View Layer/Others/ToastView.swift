@@ -272,7 +272,7 @@ struct ToastView: View {
     }
 
     enum Toast: Equatable {
-        case offline, cloudSyncOperationComplete, filterListsUpdated(FilterListCatalogEntryType), onClipboardSet(String), tipSuccessful(TipTier), tipPromotion, enableReportingExtension, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
+        case offline, cloudSyncOperationComplete, filterListsUpdated(FilterListCatalogEntryType), onClipboardSet(String), tipSuccessful(TipTier), tipPromotion, enableReportingExtension, stayReachable, filtersImported(added: Int, skipped: Int), filterImportFailed, filterExportFailed, saveFailed
 
         var logName: String {
             let mirror = Mirror(reflecting: self)
@@ -296,6 +296,8 @@ struct ToastView: View {
                 return "heart.fill"
             case .enableReportingExtension:
                 return "exclamationmark.message.fill"
+            case .stayReachable:
+                return "person.badge.shield.checkmark.fill"
             case .filtersImported:
                 return "square.and.arrow.down.fill"
             case .filterImportFailed, .filterExportFailed, .saveFailed:
@@ -317,7 +319,7 @@ struct ToastView: View {
                 return .pink.opacity(0.8)
             case .tipPromotion:
                 return .pink.opacity(0.8)
-            case .enableReportingExtension:
+            case .enableReportingExtension, .stayReachable:
                 return .green.opacity(0.8)
             case .filtersImported:
                 return .green.opacity(0.6)
@@ -348,6 +350,8 @@ struct ToastView: View {
                 return "notification_tipPromotion_title"~
             case .enableReportingExtension:
                 return "notification_reportingExtension_title"~
+            case .stayReachable:
+                return "notification_stayReachable_title"~
             case .filtersImported:
                 return "notification_import_title"~
             case .filterImportFailed:
@@ -375,6 +379,8 @@ struct ToastView: View {
                 return "notification_tipPromotion_subtitle"~
             case .enableReportingExtension:
                 return "notification_reportingExtension_subtitle"~
+            case .stayReachable:
+                return "notification_stayReachable_subtitle"~
             case .filtersImported(let added, let skipped):
                 return String(format: "notification_import_subtitle"~, added, skipped)
             case .filterImportFailed:
@@ -390,6 +396,8 @@ struct ToastView: View {
             switch self {
             case .enableReportingExtension:
                 return "notification_reportingExtension_button"~
+            case .stayReachable:
+                return "notification_stayReachable_button"~
             default:
                 return "notification_hide"~
             }
@@ -405,7 +413,7 @@ struct ToastView: View {
                 return 3
             case .tipSuccessful:
                 return 6
-            case .tipPromotion, .enableReportingExtension:
+            case .tipPromotion, .enableReportingExtension, .stayReachable:
                 guard !UIAccessibility.isVoiceOverRunning else { return 30 }
                 return 10
             case .filtersImported, .filterImportFailed, .filterExportFailed, .saveFailed:
@@ -417,7 +425,7 @@ struct ToastView: View {
             switch self {
             case .onClipboardSet, .tipSuccessful, .filtersImported, .filterImportFailed, .filterExportFailed, .saveFailed:
                 return 0
-            case .offline, .cloudSyncOperationComplete, .filterListsUpdated, .tipPromotion, .enableReportingExtension:
+            case .offline, .cloudSyncOperationComplete, .filterListsUpdated, .tipPromotion, .enableReportingExtension, .stayReachable:
                 return 1
             }
         }
@@ -433,7 +441,7 @@ struct ToastView: View {
 
         var isTappable: Bool {
             switch self {
-            case .tipPromotion, .enableReportingExtension:
+            case .tipPromotion, .enableReportingExtension, .stayReachable:
                 return true
             default:
                 return false
@@ -442,7 +450,7 @@ struct ToastView: View {
 
         var buttonActsAsTap: Bool {
             switch self {
-            case .enableReportingExtension:
+            case .enableReportingExtension, .stayReachable:
                 return true
             default:
                 return false
@@ -506,12 +514,14 @@ struct ToastView: View {
                 return 2
             case .cloudSyncOperationComplete:
                 return 3
-            case .filterListsUpdated:
+            case .stayReachable:
                 return 4
-            case .tipPromotion:
+            case .filterListsUpdated:
                 return 5
-            case .enableReportingExtension:
+            case .tipPromotion:
                 return 6
+            case .enableReportingExtension:
+                return 7
             }
         }
 
@@ -525,6 +535,7 @@ struct ToastView: View {
             .tipSuccessful(.large),
             .tipPromotion,
             .enableReportingExtension,
+            .stayReachable,
             .filtersImported(added: 3, skipped: 1),
             .filterImportFailed,
             .filterExportFailed,

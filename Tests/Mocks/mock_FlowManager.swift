@@ -27,6 +27,7 @@ class mock_FlowManager: FlowManagerProtocol {
     var didTapToastCounter = 0
     var didDismissToastCounter = 0
     var showSessionNudgesCounter = 0
+    var offerStayReachableCounter = 0
     var didShowToastThisSessionGetCounter = 0
     var isToastShowingGetCounter = 0
 
@@ -47,6 +48,7 @@ class mock_FlowManager: FlowManagerProtocol {
     var didTapToastClosure: ((ToastView.Toast) -> ())?
     var didDismissToastClosure: ((ToastView.Toast) -> ())?
     var showSessionNudgesClosure: (() -> ())?
+    var offerStayReachableClosure: (() -> ())?
     var didShowToastThisSessionClosure: (() -> Bool)?
     var isToastShowingClosure: (() -> Bool)?
 
@@ -145,6 +147,11 @@ class mock_FlowManager: FlowManagerProtocol {
         self.showSessionNudgesClosure?()
     }
 
+    func offerStayReachable() {
+        self.offerStayReachableCounter += 1
+        self.offerStayReachableClosure?()
+    }
+
     func resetCounters() {
         self.recordLaunchCounter = 0
         self.requestScreenCounter = 0
@@ -163,6 +170,7 @@ class mock_FlowManager: FlowManagerProtocol {
         self.didTapToastCounter = 0
         self.didDismissToastCounter = 0
         self.showSessionNudgesCounter = 0
+        self.offerStayReachableCounter = 0
         self.didShowToastThisSessionGetCounter = 0
         self.isToastShowingGetCounter = 0
     }

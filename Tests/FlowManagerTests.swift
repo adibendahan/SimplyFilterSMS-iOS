@@ -359,6 +359,88 @@ class FlowManagerTests: XCTestCase {
         XCTAssertEqual(self.testSubject.nextScreen(), .enableReportingExtension)
     }
 
+    func test_offerStayReachable_firstRun_showsNothing() {
+        self.testSubject.offerStayReachable()
+
+        XCTAssertNil(self.testSubject.nextToast())
+    }
+
+    func test_offerStayReachable_due_showsToastAndRecordsSession() {
+        self.isFirstRun = false
+        self.defaultsManager.sessionCounterClosure = { 4 }
+
+        self.testSubject.offerStayReachable()
+
+        XCTAssertEqual(self.testSubject.nextToast(), .stayReachable)
+        XCTAssertEqual(self.defaultsManager.stayReachableToastSessions, [4])
+    }
+
+    func test_offerStayReachable_homeBusy_showsImmediately() {
+        self.isFirstRun = false
+        self.testSubject.setHomeIdleCheck { false }
+
+        self.testSubject.offerStayReachable()
+
+        XCTAssertEqual(self.testSubject.nextToast(), .stayReachable)
+    }
+
+    func test_offerStayReachable_shownThisSession_showsNothing() {
+        self.isFirstRun = false
+        self.defaultsManager.sessionCounterClosure = { 4 }
+        self.defaultsManager.stayReachableToastSessions = [4]
+
+        self.testSubject.offerStayReachable()
+
+        XCTAssertNil(self.testSubject.nextToast())
+    }
+
+    func test_offerStayReachable_shownInEarlierSession_showsAgain() {
+        self.isFirstRun = false
+        self.defaultsManager.sessionCounterClosure = { 6 }
+        self.defaultsManager.stayReachableToastSessions = [4]
+
+        self.testSubject.offerStayReachable()
+
+        XCTAssertEqual(self.testSubject.nextToast(), .stayReachable)
+        XCTAssertEqual(self.defaultsManager.stayReachableToastSessions, [4, 6])
+    }
+
+    func test_offerStayReachable_shownMaxTimes_showsNothing() {
+        self.isFirstRun = false
+        self.defaultsManager.sessionCounterClosure = { 9 }
+        self.defaultsManager.stayReachableToastSessions = [4, 6]
+
+        self.testSubject.offerStayReachable()
+
+        XCTAssertNil(self.testSubject.nextToast())
+    }
+
+    func test_offerStayReachable_sheetOpened_showsNothing() {
+        self.isFirstRun = false
+        self.defaultsManager.didOpenStayReachable = true
+
+        self.testSubject.offerStayReachable()
+
+        XCTAssertNil(self.testSubject.nextToast())
+    }
+
+    func test_tapStayReachable_marksOpenedAndRequestsSheet() {
+        self.isFirstRun = false
+        self.lastSeenWhatsNewVersion = currentWhatsNewVersion
+        self.testSubject = self.makeTestSubject()
+
+        self.testSubject.didTapToast(.stayReachable)
+
+        XCTAssertTrue(self.defaultsManager.didOpenStayReachable)
+        XCTAssertEqual(self.testSubject.nextScreen(), .stayReachable)
+    }
+
+    func test_requestStayReachableFromMenu_marksOpened() {
+        self.testSubject.requestScreen(.stayReachable)
+
+        XCTAssertTrue(self.defaultsManager.didOpenStayReachable)
+    }
+
     func test_dismissOffline_recordsSnooze() {
         self.testSubject.didDismissToast(.offline)
 

@@ -291,6 +291,10 @@
 "notification_reportingExtension_subtitle" = "Report spam text messages";
 "notification_reportingExtension_button" = "Join";
 
+"notification_stayReachable_title" = "Never miss a delivery!";
+"notification_stayReachable_subtitle" = "Allow your name and street";
+"notification_stayReachable_button" = "Add";
+
 // MARK: Report Message
 "reportMessage_senderTitle" = "Sender";
 "reportMessage_title" = "Report Message";
@@ -337,6 +341,21 @@
 "tipJar_tier_large_desc" = "Shaken, not stirred";
 "tipJar_chooseATip" = "Choose a tip";
 
+//MARK: Stay Reachable
+"stayReachable_title" = "Stay Reachable";
+"stayReachable_description" = "A courier, a clinic or a neighbor may text you from a number you don't know. Messages that mention **your name** or **your street** always reach your inbox.";
+"stayReachable_firstName" = "First name";
+"stayReachable_surname" = "Surname";
+"stayReachable_street" = "Street";
+"stayReachable_optional" = "Optional";
+"stayReachable_streetPrompt" = "Name only, no number";
+"stayReachable_alreadyAllowed" = "%@ is already allowed.";
+"stayReachable_enteredTwice" = "%@ is entered twice.";
+"stayReachable_addLanguage" = "Add Language";
+"stayReachable_removeLanguage" = "Remove Language";
+"stayReachable_phoneLanguages" = "Your iPhone's Languages";
+"stayReachable_allLanguages" = "All Languages";
+
 //MARK: iPad Detail Placeholder
 "placeholder_choose_title" = "Select a category";
 "placeholder_choose_detail" = "Choose a category from the sidebar to view its details.";
@@ -348,6 +367,7 @@
 "a11y_addFilter_expandHint" = "Double tap to toggle advanced options";
 "a11y_reportMessage_submitHint" = "Double tap to report this message";
 "a11y_enableExtension_ctaHint" = "Double tap to open iOS Settings";
+"a11y_stayReachable_languageHint" = "Double tap to change or remove this language";
 "a11y_filterRow_targetLabel" = "Filter target: %@";
 "a11y_filterRow_matchLabel" = "Match type: %@";
 "a11y_filterRow_caseLabel" = "Case: %@";

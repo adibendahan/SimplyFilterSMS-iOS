@@ -684,4 +684,38 @@
 
 "communityLists_empty_caption" = "誰かが共有したリストのリンクがありますか？登録すると、自動で最新の状態に保たれます。";
 
+"notification_stayReachable_title" = "配達の連絡を見逃さない!";
+
+"notification_stayReachable_subtitle" = "名前と通りの名前を許可";
+
+"notification_stayReachable_button" = "追加";
+
+"stayReachable_title" = "いつでも連絡が届く";
+
+"stayReachable_description" = "配達員やクリニック、近所の人が知らない番号からメッセージを送ってくることがあります。**あなたの名前**や**通りの名前**を含むメッセージは必ず届きます。";
+
+"stayReachable_firstName" = "名";
+
+"stayReachable_surname" = "姓";
+
+"stayReachable_street" = "通り";
+
+"stayReachable_optional" = "任意";
+
+"stayReachable_streetPrompt" = "名前のみ、番地なし";
+
+"stayReachable_alreadyAllowed" = "「%@」は許可済みです。";
+
+"stayReachable_addLanguage" = "言語を追加";
+
+"stayReachable_removeLanguage" = "言語を削除";
+
+"stayReachable_phoneLanguages" = "iPhoneの言語";
+
+"stayReachable_allLanguages" = "すべての言語";
+
+"a11y_stayReachable_languageHint" = "ダブルタップでこの言語を変更または削除";
+
+"stayReachable_enteredTwice" = "「%@」が2回入力されています。";
+
 

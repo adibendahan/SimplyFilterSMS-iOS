@@ -684,4 +684,38 @@
 
 "communityLists_empty_caption" = "وصلكم رابط لقائمة شاركها أحدهم؟ اشتركوا فيها، وستبقى محدّثة تلقائيًا.";
 
+"notification_stayReachable_title" = "لا تفوّت أي توصيل!";
+
+"notification_stayReachable_subtitle" = "اسمح باسمك واسم شارعك";
+
+"notification_stayReachable_button" = "إضافة";
+
+"stayReachable_title" = "تواصل دائم";
+
+"stayReachable_description" = "قد يراسلك مندوب توصيل أو عيادة أو جار من رقم لا تعرفه. الرسائل التي تذكر **اسمك** أو **اسم شارعك** تصلك دائمًا.";
+
+"stayReachable_firstName" = "الاسم الأول";
+
+"stayReachable_surname" = "اسم العائلة";
+
+"stayReachable_street" = "الشارع";
+
+"stayReachable_optional" = "اختياري";
+
+"stayReachable_streetPrompt" = "الاسم فقط، دون رقم";
+
+"stayReachable_alreadyAllowed" = "%@ مسموح به بالفعل.";
+
+"stayReachable_addLanguage" = "إضافة لغة";
+
+"stayReachable_removeLanguage" = "إزالة اللغة";
+
+"stayReachable_phoneLanguages" = "لغات iPhone";
+
+"stayReachable_allLanguages" = "كل اللغات";
+
+"a11y_stayReachable_languageHint" = "اضغط مرتين لتغيير هذه اللغة أو إزالتها";
+
+"stayReachable_enteredTwice" = "تم إدخال %@ مرتين.";
+
 

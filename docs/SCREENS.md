@@ -33,6 +33,13 @@ The app tint picker, as a sheet from the Home menu only.
 Picks the countries allowed by the "country allowlist" rule, as a sheet from that rule's row on Home.
 - Sorted in three groups, each by calling code: Israel, then countries whose main language is the device's, then the rest.
 
+## StayReachableView
+Adds allow filters for the person's name and street in English and other languages, as a sheet from the Stay Reachable toast or Home's Add Filter menu.
+- Opening it, from either place, stops the toast for good (`didOpenStayReachable`). The toast shows at most twice, in different sessions, after a filter is added or a list or Smart Filter turned on.
+- Each section is one language. English is fixed; the others' headers are their language pickers.
+- A section is drawn in its own language and direction when the app has its texts: the app's languages from their `.strings`, about 35 more from `StayReachableLocalizations.json`. That file is plain JSON on purpose: an `.lproj` for a language tells iOS the whole app is translated into it. A language that later gets a full app translation takes its `.strings` first. The text fields stay in the phone's direction: under an overridden direction their alignment landed on the wrong side, so it's computed against the phone's.
+- Its buttons hide the keyboard before dismissing. Home presents it over a pushed list; dismissed with the keyboard up, that list's Back froze in a layout loop.
+
 ## FilterTesterView
 Type a sender and a message and see the verdict live, as a sheet from the menu.
 - A `ScrollView`, not a `Form`: a `Form` can't animate the row height when the result changes.

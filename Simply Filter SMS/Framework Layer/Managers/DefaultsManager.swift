@@ -39,6 +39,12 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("sessionNudgeLastShownSessions", defaultValue: [:])
     var sessionNudgeLastShownSessions: [String: Int]
 
+    @StoredDefault("stayReachableToastSessions", defaultValue: [])
+    var stayReachableToastSessions: [Int]
+
+    @StoredDefault("didOpenStayReachable", defaultValue: false)
+    var didOpenStayReachable: Bool
+
     @StoredDefault("inactivityNotificationDeclineCount", defaultValue: 0)
     var inactivityNotificationDeclineCount: Int
 
@@ -92,7 +98,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isAddFilterExpanded", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "installDate", "didDismissReportingExtensionNudge", "sessionNudgeLastShownSessions", "inactivityNotificationDeclineCount", "inactivityNotificationLastDeclineSession", "inactivityNotificationWasGranted", "accentColorRGB"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isAddFilterExpanded", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "installDate", "didDismissReportingExtensionNudge", "sessionNudgeLastShownSessions", "stayReachableToastSessions", "didOpenStayReachable", "inactivityNotificationDeclineCount", "inactivityNotificationLastDeclineSession", "inactivityNotificationWasGranted", "accentColorRGB"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)

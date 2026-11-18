@@ -270,6 +270,55 @@ extension CommunityListItem {
     }
 }
 
+extension Locale.LanguageCode {
+    var displayName: String {
+        let currentName = self.currentName
+        let nativeName = self.nativeName
+        let name: String
+        if nativeName == currentName {
+            name = currentName
+        } else {
+            name = "\(currentName) · \(nativeName)"
+        }
+        return name
+    }
+
+    var nativeName: String {
+        return Locale(identifier: self.identifier).localizedString(forLanguageCode: self.identifier)?.localizedCapitalized ?? self.currentName
+    }
+
+    var isRightToLeft: Bool {
+        return Locale.Language(languageCode: self).characterDirection == .rightToLeft
+    }
+
+    var appLocalization: String? {
+        return Bundle.main.localizations.first { Locale(identifier: $0).language.languageCode == self }
+    }
+
+    static var phoneLanguages: [Locale.LanguageCode] {
+        return Self.languages(in: Locale.preferredLanguages)
+    }
+
+    static var namedLanguages: [Locale.LanguageCode] {
+        let languages = Self.languages(in: Locale.availableIdentifiers)
+        return languages.sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
+    }
+
+    private var currentName: String {
+        return Locale.current.localizedString(forLanguageCode: self.identifier)?.localizedCapitalized ?? self.identifier
+    }
+
+    private static func languages(in localeIdentifiers: [String]) -> [Locale.LanguageCode] {
+        var languages: [Locale.LanguageCode] = []
+        for identifier in localeIdentifiers {
+            guard let language = Locale(identifier: identifier).language.languageCode,
+                  !languages.contains(language) else { continue }
+            languages.append(language)
+        }
+        return languages
+    }
+}
+
 extension Locale.Region {
     private static let regionalIndicatorOffset: UInt32 = 0x1F1A5
 

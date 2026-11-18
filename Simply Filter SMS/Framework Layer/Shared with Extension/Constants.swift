@@ -23,6 +23,7 @@ let kInactivityReminderHour = 19
 let kInactivityReminderLatestDay = 28
 let kInactivityNotificationMaxAsks = 3
 let kInactivityNotificationMinSessionsBetweenAsks = 3
+let kStayReachableToastMaxShows = 2
 let kMinimumFilterLength = 1
 let kFilterExportFileExtension = "sfsfilters"
 let kFilterExportTypeIdentifier = "com.grizz.apps.dev.simply-filter-sms.filters"

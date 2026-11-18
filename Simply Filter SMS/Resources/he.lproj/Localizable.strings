@@ -684,4 +684,38 @@
 
 "communityLists_empty_caption" = "קיבלתם קישור לרשימה שמישהו שיתף? הירשמו, והיא מתעדכנת מעצמה.";
 
+"notification_stayReachable_title" = "אל תפספסו משלוחים!";
+
+"notification_stayReachable_subtitle" = "אפשרו את השם והרחוב שלכם";
+
+"notification_stayReachable_button" = "הוספה";
+
+"stayReachable_title" = "תמיד זמינים";
+
+"stayReachable_description" = "שליח, מרפאה או שכן עשויים לשלוח לכם הודעה ממספר לא מוכר. הודעות שמזכירות **את השם שלכם** או **את הרחוב שלכם** תמיד יגיעו אליכם.";
+
+"stayReachable_firstName" = "שם פרטי";
+
+"stayReachable_surname" = "שם משפחה";
+
+"stayReachable_street" = "רחוב";
+
+"stayReachable_optional" = "לא חובה";
+
+"stayReachable_streetPrompt" = "שם בלבד, בלי מספר";
+
+"stayReachable_alreadyAllowed" = "%@ כבר מאופשר.";
+
+"stayReachable_enteredTwice" = "%@ הוזן פעמיים.";
+
+"stayReachable_addLanguage" = "הוספת שפה";
+
+"stayReachable_removeLanguage" = "הסרת השפה";
+
+"stayReachable_phoneLanguages" = "השפות באייפון";
+
+"stayReachable_allLanguages" = "כל השפות";
+
+"a11y_stayReachable_languageHint" = "הקשה כפולה לשינוי או להסרה של השפה";
+
 

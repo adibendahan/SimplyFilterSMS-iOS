@@ -684,4 +684,38 @@
 
 "communityLists_empty_caption" = "Hast du einen Link zu einer geteilten Liste? Abonniere sie, und sie bleibt von selbst aktuell.";
 
+"notification_stayReachable_title" = "Keine Lieferung verpassen!";
+
+"notification_stayReachable_subtitle" = "Erlaube deinen Namen und deine Straße";
+
+"notification_stayReachable_button" = "Hinzufügen";
+
+"stayReachable_title" = "Immer erreichbar";
+
+"stayReachable_description" = "Ein Kurier, eine Praxis oder jemand aus der Nachbarschaft schreibt dir vielleicht von einer unbekannten Nummer. Nachrichten, die **deinen Namen** oder **deine Straße** nennen, kommen immer bei dir an.";
+
+"stayReachable_firstName" = "Vorname";
+
+"stayReachable_surname" = "Nachname";
+
+"stayReachable_street" = "Straße";
+
+"stayReachable_optional" = "Optional";
+
+"stayReachable_streetPrompt" = "Nur der Name, keine Hausnummer";
+
+"stayReachable_alreadyAllowed" = "%@ ist bereits erlaubt.";
+
+"stayReachable_addLanguage" = "Sprache hinzufügen";
+
+"stayReachable_removeLanguage" = "Sprache entfernen";
+
+"stayReachable_phoneLanguages" = "Sprachen deines iPhone";
+
+"stayReachable_allLanguages" = "Alle Sprachen";
+
+"a11y_stayReachable_languageHint" = "Doppeltippen, um diese Sprache zu ändern oder zu entfernen";
+
+"stayReachable_enteredTwice" = "%@ wurde zweimal eingegeben.";
+
 

@@ -684,4 +684,38 @@
 
 "communityLists_empty_caption" = "有别人分享的列表链接？订阅后它会自动保持更新。";
 
+"notification_stayReachable_title" = "不错过任何快递信息！";
+
+"notification_stayReachable_subtitle" = "允许你的名字和街道";
+
+"notification_stayReachable_button" = "添加";
+
+"stayReachable_title" = "保持联系畅通";
+
+"stayReachable_description" = "快递员、诊所或邻居可能会用陌生号码给你发信息。提到**你的名字**或**你的街道**的信息总会送达。";
+
+"stayReachable_firstName" = "名字";
+
+"stayReachable_surname" = "姓氏";
+
+"stayReachable_street" = "街道";
+
+"stayReachable_optional" = "可选";
+
+"stayReachable_streetPrompt" = "只填名称，不含门牌号";
+
+"stayReachable_alreadyAllowed" = "“%@”已允许。";
+
+"stayReachable_addLanguage" = "添加语言";
+
+"stayReachable_removeLanguage" = "移除语言";
+
+"stayReachable_phoneLanguages" = "iPhone 上的语言";
+
+"stayReachable_allLanguages" = "所有语言";
+
+"a11y_stayReachable_languageHint" = "轻点两下以更改或移除此语言";
+
+"stayReachable_enteredTwice" = "“%@”输入了两次。";
+
 

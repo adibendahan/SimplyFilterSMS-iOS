@@ -131,5 +131,30 @@
             <string>%ld قائمة مفعّلة</string>
         </dict>
     </dict>
+
+    <key>stayReachable_addFilters</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@filters@</string>
+        <key>filters</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>إضافة نصوص مسموحة</string>
+            <key>one</key>
+            <string>إضافة نص مسموح واحد</string>
+            <key>two</key>
+            <string>إضافة نصين مسموحين</string>
+            <key>few</key>
+            <string>إضافة %ld نصوص مسموحة</string>
+            <key>many</key>
+            <string>إضافة %ld نصًا مسموحًا</string>
+            <key>other</key>
+            <string>إضافة %ld نص مسموح</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

@@ -103,5 +103,24 @@
             <string>%ld liste attive</string>
         </dict>
     </dict>
+
+    <key>stayReachable_addFilters</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@filters@</string>
+        <key>filters</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>Aggiungi testi consentiti</string>
+            <key>one</key>
+            <string>Aggiungi 1 testo consentito</string>
+            <key>other</key>
+            <string>Aggiungi %ld testi consentiti</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

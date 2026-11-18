@@ -171,6 +171,9 @@ extension CommunityListRowView {
         func updateCommunityList(isActive: Bool) {
             self.appManager.filterListManager.setCommunityListActive(self.communityList, value: isActive)
             self.onUpdate?()
+            if isActive {
+                self.appManager.flowManager.offerStayReachable()
+            }
         }
     }
 }

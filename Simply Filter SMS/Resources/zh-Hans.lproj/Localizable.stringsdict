@@ -102,5 +102,22 @@
             <string>已开启 %ld 个</string>
         </dict>
     </dict>
+
+    <key>stayReachable_addFilters</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@filters@</string>
+        <key>filters</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>添加允许的文本</string>
+            <key>other</key>
+            <string>添加 %ld 个允许的文本</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

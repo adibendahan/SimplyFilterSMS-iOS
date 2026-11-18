@@ -317,6 +317,17 @@ class PersistenceManager: PersistenceManagerProtocol {
         return true
     }
 
+    func filterTexts(filterTarget: FilterTarget,
+                     filterMatching: FilterMatching,
+                     filterCase: FilterCase) -> Set<String> {
+
+        let predicate = NSPredicate(format: "targetValue == %ld AND matchingValue == %ld AND caseValue == %ld",
+                                    filterTarget.rawValue, filterMatching.rawValue, filterCase.rawValue)
+        let filters = self.fetch(Filter.self, predicate: predicate) ?? []
+        let texts = filters.compactMap(\.text)
+        return Set(texts)
+    }
+
     func blockableLanguages() -> [NLLanguage] {
         return NLLanguage.allSupportedCases
             .filter({ !self.isDuplicateFilter(language: $0) })

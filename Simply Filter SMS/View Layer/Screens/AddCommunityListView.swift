@@ -281,6 +281,9 @@ extension AddCommunityListView {
             self.isSubscribing = false
             self.didFailToSubscribe = !isSubscribed
             Log.debug("subscribe tapped, url: \(communityList.url) → \(isSubscribed)")
+            if isSubscribed {
+                self.appManager.flowManager.offerStayReachable()
+            }
             return isSubscribed
         }
 

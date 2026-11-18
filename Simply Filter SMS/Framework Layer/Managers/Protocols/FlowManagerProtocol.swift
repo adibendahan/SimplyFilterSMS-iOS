@@ -28,5 +28,6 @@ protocol FlowManagerProtocol {
     func didTapToast(_ toast: ToastView.Toast)
     func didDismissToast(_ toast: ToastView.Toast)
     func showSessionNudges()
+    func offerStayReachable()
     func showWaitingNudge()
 }

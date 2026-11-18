@@ -53,6 +53,8 @@ struct AddFilterView: View {
                             TextField("", text: $model.filterText)
                                 .focused($focusedField, equals: .text)
                                 .accessibilityIdentifier(TestIdentifier.filterText.rawValue)
+                                .textInputAutocapitalization(.never)
+                                .autocorrectionDisabled()
                                 .font(self.model.selectedFilterMatching == .regex ? .system(.body, design: .monospaced) : .body)
                                 .foregroundColor(self.model.selectedFilterMatching == .regex ? .clear : .primary)
                         }
@@ -347,6 +349,7 @@ extension AddFilterView {
                                                                       filterCase: self.selectedFilterCase)
             if let filter {
                 self.onAdded?(filter)
+                self.appManager.flowManager.offerStayReachable()
             }
         }
     }

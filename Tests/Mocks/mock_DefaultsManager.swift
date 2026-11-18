@@ -160,6 +160,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var inactivityNotificationDeclineCount = 0
     var inactivityNotificationLastDeclineSession = 0
     var sessionNudgeLastShownSessions: [String: Int] = [:]
+    var stayReachableToastSessions: [Int] = []
+    var didOpenStayReachable = false
     var inactivityNotificationWasGranted = false
 
     var accentColorRGB: [String: Double] = kNoColorDict

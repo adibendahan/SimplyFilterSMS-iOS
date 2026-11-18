@@ -512,6 +512,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 } label: {
                     Label("addFilter_addLanguage"~, systemImage: "globe")
                 }
+
+                Button {
+                    self.model.requestSheet(.stayReachable)
+                } label: {
+                    Label("stayReachable_title"~, systemImage: "person.badge.shield.checkmark")
+                }
             } label: {
                 Label("menu_addFilter"~, systemImage: "plus.message")
             }
@@ -1040,6 +1046,9 @@ extension AppHomeView {
         private func setSmartFilterActive(for rule: SmartFilterType, value: Bool) {
             self.appManager.smartFilterManager.setSmartFilterActive(for: rule, value: value)
             self.refresh()
+            if value {
+                self.appManager.flowManager.offerStayReachable()
+            }
         }
 
         private static func makeCountrySummary(appManager: AppManagerProtocol) -> String {

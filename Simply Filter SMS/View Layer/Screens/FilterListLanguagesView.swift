@@ -126,9 +126,9 @@ extension FilterListLanguagesView {
             self.footer = lastUpdated?.lastUpdatedText ?? ""
             self.isLoading = false
             self.isOnline = appManager.networkSyncManager.networkStatus == .online
-            self.languages = ViewModel.makeLanguages(appManager: appManager)
 
             super.init(appManager: appManager)
+            self.languages = self.makeLanguages()
         }
 
         func startMonitoring() {
@@ -166,7 +166,7 @@ extension FilterListLanguagesView {
             let lastUpdated = self.appManager.filterListManager.filterListsLastUpdated
 
             self.footer = lastUpdated?.lastUpdatedText ?? ""
-            self.languages = ViewModel.makeLanguages(appManager: self.appManager)
+            self.languages = self.makeLanguages()
         }
 
         @Sendable func updateFilters() async {
@@ -182,12 +182,19 @@ extension FilterListLanguagesView {
 
         }
 
-        private static func makeLanguages(appManager: AppManagerProtocol) -> [StatefulItem<NLLanguage>] {
-            let filterListManager = appManager.filterListManager
+        private func makeLanguages() -> [StatefulItem<NLLanguage>] {
+            let filterListManager = self.appManager.filterListManager
             return filterListManager.filterListLanguages
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: filterListManager.isFilterListActive,
-                                                setter: filterListManager.setFilterListActive) })
+                                                setter: self.setFilterListActive) })
+        }
+
+        private func setFilterListActive(for language: NLLanguage, value: Bool) {
+            self.appManager.filterListManager.setFilterListActive(for: language, value: value)
+            if value {
+                self.appManager.flowManager.offerStayReachable()
+            }
         }
     }
 }

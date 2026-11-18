@@ -187,7 +187,21 @@ class PersistenceManagerTests: XCTestCase {
         // Verify
         XCTAssertTrue(isDuplicateFilter)
     }
-    
+
+    func test_filterTexts_matchesOnlyThatRule() {
+        // Prepare
+        _ = self.testSubject.addFilter(text: "Adi", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
+        _ = self.testSubject.addFilter(text: "Herzl", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
+        _ = self.testSubject.addFilter(text: "Cohen", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
+        _ = self.testSubject.addFilter(text: "Levi", type: .allow, denyFolder: .junk, filterTarget: .sender, filterMatching: .exact, filterCase: .caseInsensitive)
+
+        // Act
+        let texts = self.testSubject.filterTexts(filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
+
+        // Verify
+        XCTAssertEqual(texts, ["Adi", "Herzl"])
+    }
+
     func test_addFilter_deny() {
         // Prepare
         let filterName = "filterName"
