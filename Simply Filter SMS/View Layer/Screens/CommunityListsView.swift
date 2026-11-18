@@ -12,35 +12,44 @@ import SwiftUI
 struct CommunityListsView: View, ViewWithPersistentStoreReload {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @ScaledMetric(relativeTo: .caption2) private var descriptionIndent = CommunityListRow.chevronColumnBaseWidth
+    @ScaledMetric(relativeTo: .caption2) private var detailsIndent = CommunityListRow.chevronColumnBaseWidth
     @StateObject var model: ViewModel
+    @State private var emptyStatePresence = ListEmptyStateView.Presence()
 
     init(model: ViewModel) {
         _model = StateObject(wrappedValue: model)
+        _emptyStatePresence = State(initialValue: ListEmptyStateView.Presence(isShown: model.userRowViewModels.isEmpty))
     }
 
     var body: some View {
         List {
-            Section {
-                ForEach(self.model.rowViewModels, id: \.id) { rowModel in
-                    CommunityListRowView(model: rowModel, isExpanded: self.expansion(rowModel))
-                        .deleteDisabled(rowModel.communityList.isCurated)
-
-                    if self.model.expandedCommunityListID == rowModel.id, let description = rowModel.communityList.description {
-                        Text(description)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                            .padding(.leading, self.descriptionIndent)
-                            .listRowInsets(EdgeInsets(top: -14, leading: 20, bottom: 12, trailing: 20))
-                            .listRowSeparator(.hidden)
-                            .deleteDisabled(true)
+            if !self.model.curatedRowViewModels.isEmpty {
+                Section {
+                    ForEach(self.model.curatedRowViewModels, id: \.id) { rowModel in
+                        self.rows(for: rowModel)
                     }
+                } header: {
+                    Text("communityLists_featured"~)
+                } // Section
+                .transaction { transaction in
+                    if self.reduceMotion {
+                        transaction.animation = nil
+                    }
+                }
+            }
+
+            Section {
+                ForEach(self.model.userRowViewModels, id: \.id) { rowModel in
+                    self.rows(for: rowModel)
                 }
                 .onDelete(perform: self.model.removeCommunityLists)
 
-                if self.model.rowViewModels.isEmpty {
-                    ContentUnavailableView("communityLists_empty"~, systemImage: "person.3")
+                if self.emptyStatePresence.isShown {
+                    ListEmptyStateView(kind: .communityLists)
+                        .id(self.emptyStatePresence.appearance)
                 }
+            } header: {
+                Text("communityLists_addedByYou"~)
             } // Section
             .transaction { transaction in
                 if self.reduceMotion {
@@ -61,6 +70,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                     .multilineTextAlignment(.leading)
             } // Section
         } // List
+        .modifier(ListEmptyStateView.PresenceTracker(isEmpty: self.model.userRowViewModels.isEmpty, presence: $emptyStatePresence))
         .listStyle(.insetGrouped)
         .navigationTitle("communityLists_title"~)
         .navigationBarTitleDisplayMode(.inline)
@@ -84,6 +94,19 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
             self.model.startMonitoring()
         }
         .modifier(persistentStoreReload)
+    }
+
+    @ViewBuilder
+    private func rows(for rowModel: CommunityListRowView.ViewModel) -> some View {
+        CommunityListRowView(model: rowModel, isExpanded: self.expansion(rowModel))
+
+        if self.model.expandedCommunityListID == rowModel.id {
+            CommunityListDetails(communityList: rowModel.communityList)
+                .padding(.leading, self.detailsIndent)
+                .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 16, trailing: 20))
+                .listRowSeparator(.hidden)
+                .deleteDisabled(true)
+        }
     }
 
     private func expansion(_ rowModel: CommunityListRowView.ViewModel) -> Binding<Bool> {
@@ -189,8 +212,16 @@ extension CommunityListsView {
             return footer
         }
 
+        var curatedRowViewModels: [CommunityListRowView.ViewModel] {
+            return self.rowViewModels.filter { $0.communityList.isCurated }
+        }
+
+        var userRowViewModels: [CommunityListRowView.ViewModel] {
+            return self.rowViewModels.filter { !$0.communityList.isCurated }
+        }
+
         var hasUserLists: Bool {
-            return self.rowViewModels.contains { !$0.communityList.isCurated }
+            return !self.userRowViewModels.isEmpty
         }
 
         func presentAddCommunityList() {
@@ -198,12 +229,9 @@ extension CommunityListsView {
         }
 
         func removeCommunityLists(at offsets: IndexSet) {
+            let userRowViewModels = self.userRowViewModels
             for index in offsets {
-                let communityList = self.rowViewModels[index].communityList
-                guard !communityList.isCurated else {
-                    Log.debug("curated community list can't be removed, url: \(communityList.url) → skipped")
-                    continue
-                }
+                let communityList = userRowViewModels[index].communityList
                 self.appManager.filterListManager.removeCommunityList(communityList)
             }
             self.refresh()

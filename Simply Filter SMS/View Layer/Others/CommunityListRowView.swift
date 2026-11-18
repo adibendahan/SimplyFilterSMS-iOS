@@ -35,44 +35,34 @@ struct CommunityListRow: View {
     var isActive: Binding<Bool>? = nil
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .center, spacing: 0) {
-                    if let isExpanded = self.isExpanded {
-                        self.chevron(isExpanded: isExpanded)
-                    }
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .center, spacing: 12) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .center, spacing: 0) {
+                        if let isExpanded = self.isExpanded {
+                            self.chevron(isExpanded: isExpanded)
+                        }
                         Text(self.communityList.name)
                             .font(.body.weight(.semibold))
                             .foregroundColor(.primary)
                             .lineLimit(1)
-                            .layoutPriority(1)
-                        if let author = self.communityList.author {
-                            Text(String(format: "communityLists_byAuthor"~, author))
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                        }
+                            .minimumScaleFactor(0.8)
                     }
+
+                    self.infoLine
+                        .padding(.leading, self.isExpanded == nil ? 0 : self.chevronColumnWidth)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                self.infoLine
-                    .padding(.leading, self.isExpanded == nil ? 0 : self.chevronColumnWidth)
-
-                if self.isExpanded == nil, let description = self.communityList.description {
-                    Text(description)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 2)
+                if let isActive = self.isActive {
+                    Toggle(self.communityList.name, isOn: isActive)
+                        .labelsHidden()
+                        .accessibilityIdentifier(TestIdentifier.communityListToggle.rawValue)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
 
-            if let isActive = self.isActive {
-                Toggle(self.communityList.name, isOn: isActive)
-                    .labelsHidden()
-                    .accessibilityIdentifier(TestIdentifier.communityListToggle.rawValue)
+            if self.isExpanded == nil {
+                CommunityListDetails(communityList: self.communityList)
             }
         }
         .padding(.vertical, 6)
@@ -80,67 +70,76 @@ struct CommunityListRow: View {
 
     @ViewBuilder
     private func chevron(isExpanded: Binding<Bool>) -> some View {
-        if self.communityList.description != nil {
-            Button {
-                isExpanded.wrappedValue.toggle()
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.caption2.weight(.bold))
-                    .foregroundColor(Color(UIColor.tertiaryLabel))
-                    .rotationEffect(.degrees(isExpanded.wrappedValue ? 90 : 0))
-                    .frame(width: self.chevronColumnWidth, alignment: .leading)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.borderless)
-            .accessibilityLabel(isExpanded.wrappedValue ? "a11y_communityLists_hideDescription"~ : "a11y_communityLists_showDescription"~)
-            .accessibilityIdentifier(TestIdentifier.communityListExpandButton.rawValue)
-        } else {
-            Color.clear
-                .frame(width: self.chevronColumnWidth, height: 1)
+        Button {
+            isExpanded.wrappedValue.toggle()
+        } label: {
+            Image(systemName: "chevron.right")
+                .font(.caption2.weight(.bold))
+                .foregroundColor(Color(UIColor.tertiaryLabel))
+                .rotationEffect(.degrees(isExpanded.wrappedValue ? 90 : 0))
+                .frame(width: self.chevronColumnWidth, alignment: .leading)
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.borderless)
+        .accessibilityLabel(isExpanded.wrappedValue ? "a11y_communityLists_hideDescription"~ : "a11y_communityLists_showDescription"~)
+        .accessibilityIdentifier(TestIdentifier.communityListExpandButton.rawValue)
     }
 
     private var infoLine: some View {
         HStack(spacing: 5) {
-            if self.communityList.isCurated {
-                self.featuredBadge
-                if self.communityList.localeLabel != nil || self.communityList.homepage != nil {
-                    Text("·")
-                        .accessibilityHidden(true)
-                }
-            }
             if let localeLabel = self.communityList.localeLabel {
                 Text(localeLabel)
+                    .fixedSize()
                     .accessibilityLabel(self.communityList.localeName ?? localeLabel)
             }
-            if self.communityList.localeLabel != nil, self.communityList.homepage != nil {
+            if self.communityList.localeLabel != nil, self.communityList.author != nil {
                 Text("·")
                     .accessibilityHidden(true)
             }
-            if let homepage = self.communityList.homepage {
-                Link(homepage.displayHost, destination: homepage)
-                    .buttonStyle(.borderless)
-                    .foregroundStyle(.tint)
+            if let author = self.communityList.author {
+                Text(String(format: "communityLists_byAuthor"~, author))
+                    .minimumScaleFactor(0.8)
             }
         }
         .font(.caption)
         .foregroundColor(.secondary)
         .lineLimit(1)
     }
+}
 
-    private var featuredBadge: some View {
-        HStack(spacing: 3) {
-            Image(systemName: "star.fill")
-                .imageScale(.small)
-                .accessibilityHidden(true)
-            Text("communityLists_featured"~)
+struct CommunityListDetails: View {
+
+    @ScaledMetric(relativeTo: .footnote) private var gitHubIconSize: CGFloat = 11
+
+    let communityList: CommunityListItem
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if let description = self.communityList.description {
+                Text(description)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if let homepage = self.communityList.homepage {
+                Link(destination: homepage) {
+                    HStack(alignment: .center, spacing: 5) {
+                        if homepage.isGitHubLink {
+                            Image("GitHub")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: self.gitHubIconSize, height: self.gitHubIconSize)
+                                .accessibilityHidden(true)
+                        }
+                        Text(homepage.displayLink)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.tint)
+            }
         }
-        .font(.caption2.weight(.semibold))
-        .foregroundStyle(.tint)
-        .padding(.horizontal, 6)
-        .padding(.vertical, 1)
-        .background(Capsule().fill(.tint.opacity(0.15)))
-        .fixedSize()
+        .font(.footnote)
     }
 }
 
@@ -172,6 +171,9 @@ extension CommunityListRowView {
         func updateCommunityList(isActive: Bool) {
             self.appManager.filterListManager.setCommunityListActive(self.communityList, value: isActive)
             self.onUpdate?()
+            if isActive {
+                self.appManager.flowManager.offerStayReachable()
+            }
         }
     }
 }

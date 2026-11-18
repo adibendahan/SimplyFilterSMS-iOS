@@ -23,6 +23,7 @@ let kInactivityReminderHour = 19
 let kInactivityReminderLatestDay = 28
 let kInactivityNotificationMaxAsks = 3
 let kInactivityNotificationMinSessionsBetweenAsks = 3
+let kStayReachableToastMaxShows = 2
 let kMinimumFilterLength = 1
 let kFilterExportFileExtension = "sfsfilters"
 let kFilterExportTypeIdentifier = "com.grizz.apps.dev.simply-filter-sms.filters"
@@ -80,14 +81,23 @@ enum FilterType: Int64, CaseIterable, Identifiable {
         }
     }
 
-    var emptyTitle: String {
+    var addFilterTitle: String {
         switch self {
         case .deny:
-            return "filterList_empty_denied"~
+            return "addFilter_addFilter_deny"~
         case .allow:
-            return "filterList_empty_allowed"~
+            return "addFilter_addFilter_allow"~
         case .denyLanguage:
-            return "filterList_empty_deniedLanguage"~
+            return "addFilter_addLanguage"~
+        }
+    }
+
+    var addFilterIconName: String {
+        switch self {
+        case .deny, .allow:
+            return "plus.message"
+        case .denyLanguage:
+            return "globe"
         }
     }
 

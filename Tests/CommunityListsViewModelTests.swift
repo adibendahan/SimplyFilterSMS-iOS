@@ -31,6 +31,15 @@ class CommunityListsViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.rowViewModels.map(\.isActive), [false, true])
     }
 
+    func test_lists_splitIntoFeaturedAndAddedByYou() {
+        // Act
+        let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)
+
+        // Verify
+        XCTAssertEqual(viewModel.curatedRowViewModels.map(\.id), [self.curatedList.url])
+        XCTAssertEqual(viewModel.userRowViewModels.map(\.id), [self.userList.url])
+    }
+
     func test_toggle_setsTheListActive() {
         // Prepare
         let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)
@@ -64,14 +73,14 @@ class CommunityListsViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.rowViewModels.count, 1)
     }
 
-    func test_remove_skipsCuratedLists() {
+    func test_remove_removesTheSwipedUserList() {
         // Prepare
         let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)
         var removedURLs: [String] = []
         self.filterListManager.removeCommunityListClosure = { removedURLs.append($0.url) }
 
         // Act
-        viewModel.removeCommunityLists(at: IndexSet([0, 1]))
+        viewModel.removeCommunityLists(at: IndexSet([0]))
 
         // Verify
         XCTAssertEqual(removedURLs, [self.userList.url])

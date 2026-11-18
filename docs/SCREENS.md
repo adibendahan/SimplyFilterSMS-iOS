@@ -33,6 +33,14 @@ The app tint picker, as a sheet from the Home menu only.
 Picks the countries allowed by the "country allowlist" rule, as a sheet from that rule's row on Home.
 - Sorted in three groups, each by calling code: Israel, then countries whose main language is the device's, then the rest.
 
+## StayReachableView
+Adds allow filters for the person's name and street in English and other languages, as a sheet from the Stay Reachable toast or Home's Add Filter menu.
+- Opening it, from either place, stops the toast for good (`didOpenStayReachable`). The toast shows at most twice, in different sessions, after a filter is added or a list or Smart Filter turned on.
+- Each section is one language. English is fixed; the others' headers are their language pickers.
+- "Already allowed" is Add Filter's duplicate rule: a block or allow filter with the same text, exact matching, case-insensitive, all targets. The texts are read once when the sheet opens; nothing can add a filter while it's up.
+- A section is drawn in its own language and direction when the app has its texts: the app's languages from their `.strings`, about 35 more from `StayReachableLocalizations.json`. That file is plain JSON on purpose: an `.lproj` for a language tells iOS the whole app is translated into it. A language that later gets a full app translation takes its `.strings` first. The text fields stay in the phone's direction: under an overridden direction their alignment landed on the wrong side, so it's computed against the phone's.
+- Its buttons hide the keyboard before dismissing. Home presents it over a pushed list; dismissed with the keyboard up, that list's Back froze in a layout loop.
+
 ## FilterTesterView
 Type a sender and a message and see the verdict live, as a sheet from the menu.
 - A `ScrollView`, not a `Form`: a `Form` can't animate the row height when the result changes.
@@ -64,6 +72,7 @@ The list of one filter type (allow, deny or language), pushed from Home, with in
 - **Reload trap:** section membership, row text and row options come from the row ViewModel's cached values, never the live `Filter`. Right after `reloadContainer()` resets the context, a `Filter` reads default values, so a regex row would drop into the regular section.
 - **`EditableText` crash trap:** after Return, ending the session, clearing focus and the business `onCommit` are deferred to the next main-loop turn. Return's `triggerPrimaryAction` still writes to the text field after `onCommit` returns, so rebuilding the `List` inside that callback crashes with `EXC_BAD_ACCESS`.
 - In `EditableText`, the idle `TextField` stays in the layout at opacity 0, which keeps right-to-left text from shifting.
+- **Empty state traps** (also Community Lists): the card sits in its own section and gets a fresh `.id` per appearance, or the list reuses the removed card with its old animation state and it comes back blank. The footer hides on `ListEmptyStateView.Presence.isActive`, not on the filters, or it fades out at the deleted row's slow pace. Adding a filter removes the card with no animation while the sheet still covers the list.
 
 ## ReportMessageView
 Reports a message as junk or not junk to the backend, as a sheet from the menu; shows a loading overlay, then a checkmark, and closes itself.

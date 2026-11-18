@@ -664,4 +664,58 @@
 
 "communityLists_featured" = "추천";
 
+"communityLists_addedByYou" = "내가 추가한 목록";
+
+"communityLists_error_nameTooLong" = "이 목록의 이름이 너무 길어서 구독할 수 없어요.";
+
+"communityLists_error_authorTooLong" = "이 목록의 작성자 이름이 너무 길어서 구독할 수 없어요.";
+
+"filterList_empty_denied_caption" = "스팸에만 쓰이는 단어를 추가하면 그런 메시지는 받은 편지함에 오지 않아요.";
+
+"filterList_empty_denied_sample" = "고객님의 택배가 보류 중입니다. 수수료 결제: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "이름을 추가하면 이름이 들어간 메시지는 항상 받은 편지함에 와요.";
+
+"filterList_empty_allowed_sample" = "지수님, 내일 오전 10:00 예약이 있습니다. 확인하시려면 1을 회신해 주세요.";
+
+"filterList_empty_deniedLanguage_caption" = "읽지 못하는 언어로 스팸이 오나요? 그 언어를 통째로 차단하세요.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "누군가 공유한 목록 링크가 있나요? 구독하면 자동으로 최신 상태가 유지돼요.";
+
+"notification_stayReachable_title" = "배송 문자를 놓치지 마세요!";
+
+"notification_stayReachable_subtitle" = "이름과 도로명을 허용하세요";
+
+"notification_stayReachable_button" = "추가";
+
+"stayReachable_title" = "항상 연락 가능";
+
+"stayReachable_description" = "택배 기사, 병원, 이웃이 모르는 번호로 문자를 보낼 수 있어요. **내 이름**이나 **도로명**이 들어간 메시지는 항상 도착해요.";
+
+"stayReachable_firstName" = "이름";
+
+"stayReachable_surname" = "성";
+
+"stayReachable_street" = "도로명";
+
+"stayReachable_optional" = "선택 사항";
+
+"stayReachable_streetPrompt" = "번호 없이 이름만";
+
+"stayReachable_alreadyAllowed" = "'%@'은(는) 이미 허용되어 있습니다.";
+
+"stayReachable_addLanguage" = "언어 추가";
+
+"stayReachable_removeLanguage" = "언어 제거";
+
+"stayReachable_phoneLanguages" = "iPhone의 언어";
+
+"stayReachable_allLanguages" = "모든 언어";
+
+"a11y_stayReachable_languageHint" = "이중 탭하여 이 언어 변경 또는 제거";
+
+"stayReachable_enteredTwice" = "'%@'이(가) 두 번 입력되었습니다.";
+
 

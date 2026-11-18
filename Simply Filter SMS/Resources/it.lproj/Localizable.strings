@@ -664,4 +664,58 @@
 
 "communityLists_featured" = "In evidenza";
 
+"communityLists_addedByYou" = "Aggiunte da te";
+
+"communityLists_error_nameTooLong" = "Il nome di questa lista supera i %d caratteri, quindi non puoi iscriverti.";
+
+"communityLists_error_authorTooLong" = "Il nome dell'autore di questa lista supera i %d caratteri, quindi non puoi iscriverti.";
+
+"filterList_empty_denied_caption" = "Aggiungi una parola che usa solo lo spam, e quei messaggi restano fuori dalla tua posta in arrivo.";
+
+"filterList_empty_denied_sample" = "Il tuo pacco è in giacenza. Paga la tassa: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "Aggiungi il tuo nome, e i messaggi che lo citano arrivano sempre nella tua posta in arrivo.";
+
+"filterList_empty_allowed_sample" = "Ciao Giulia, il tuo appuntamento è domani alle 10:00. Rispondi SI per confermare.";
+
+"filterList_empty_deniedLanguage_caption" = "Ricevi spam in una lingua che non leggi? Blocca l'intera lingua.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "Hai il link di una lista condivisa da qualcuno? Iscriviti e si aggiornerà da sola.";
+
+"notification_stayReachable_title" = "Non perdere nessuna consegna!";
+
+"notification_stayReachable_subtitle" = "Consenti il tuo nome e la tua via";
+
+"notification_stayReachable_button" = "Aggiungi";
+
+"stayReachable_title" = "Sempre raggiungibile";
+
+"stayReachable_description" = "Un corriere, una clinica o un vicino possono scriverti da un numero che non conosci. I messaggi che citano **il tuo nome** o **la tua via** ti arrivano sempre.";
+
+"stayReachable_firstName" = "Nome";
+
+"stayReachable_surname" = "Cognome";
+
+"stayReachable_street" = "Via";
+
+"stayReachable_optional" = "Facoltativo";
+
+"stayReachable_streetPrompt" = "Solo il nome, senza numero";
+
+"stayReachable_alreadyAllowed" = "%@ è già consentito.";
+
+"stayReachable_addLanguage" = "Aggiungi lingua";
+
+"stayReachable_removeLanguage" = "Rimuovi lingua";
+
+"stayReachable_phoneLanguages" = "Lingue del tuo iPhone";
+
+"stayReachable_allLanguages" = "Tutte le lingue";
+
+"a11y_stayReachable_languageHint" = "Doppio tocco per cambiare o rimuovere questa lingua";
+
+"stayReachable_enteredTwice" = "%@ è inserito due volte.";
+
 

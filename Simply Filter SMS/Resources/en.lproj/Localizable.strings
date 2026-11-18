@@ -45,6 +45,12 @@
 "filterList_empty_denied" = "No Blocked Texts";
 "filterList_empty_allowed" = "No Allowed Texts";
 "filterList_empty_deniedLanguage" = "No Blocked Languages";
+"filterList_empty_denied_caption" = "Add a word that only spam uses, and those texts skip your inbox.";
+"filterList_empty_denied_sample" = "Your package is on hold. Pay the fee: bit.ly/…";
+"filterList_empty_allowed_caption" = "Add your first name, and texts that mention it always reach your inbox.";
+"filterList_empty_allowed_sample" = "Hi Dana, your appointment is tomorrow at 10:00 AM. Reply C to confirm.";
+"filterList_empty_deniedLanguage_caption" = "Getting spam in a language you don't read? Block the whole language.";
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
 "filterList_deleteFiltersCount" = "Delete (%ld)";
 "filterList_folder" = "Folder";
 "filterList_text" = "Text";
@@ -218,7 +224,9 @@
 "communityLists_title" = "Community Lists";
 "communityLists_byAuthor" = "by %@";
 "communityLists_featured" = "Featured";
+"communityLists_addedByYou" = "Added by You";
 "communityLists_empty" = "No Lists Yet";
+"communityLists_empty_caption" = "Got a link to a list someone shared? Subscribe, and it stays up to date by itself.";
 "communityLists_subscribeFromURL" = "Subscribe from URL";
 "communityLists_footer" = "Community Lists are filter lists made and shared by other people. Turned-on lists route messages from unknown senders to your Junk, Transactions or Promotions folder, and are updated periodically. Your regular filters are still applied.";
 "communityLists_createList" = "Create a List";
@@ -233,8 +241,10 @@
 "communityLists_error_offline" = "You're offline. Connect to the internet and try again.";
 "communityLists_error_notAList" = "This URL isn't a Simply Filter SMS list.";
 "communityLists_error_missingName" = "This list is missing its name, so you can't subscribe to it.";
+"communityLists_error_nameTooLong" = "This list's name is longer than %d characters, so you can't subscribe to it.";
 "communityLists_error_missingDescription" = "This list is missing its description, so you can't subscribe to it.";
 "communityLists_error_missingAuthor" = "This list is missing its author, so you can't subscribe to it.";
+"communityLists_error_authorTooLong" = "This list's author is longer than %d characters, so you can't subscribe to it.";
 "communityLists_error_invalidHomepage" = "This list is missing an https:// homepage, so you can't subscribe to it.";
 "communityLists_error_invalidLocale" = "This list is missing its language and country, so you can't subscribe to it.";
 "communityLists_error_subscribeFailed" = "Couldn't subscribe to the list. Try again later.";
@@ -280,6 +290,10 @@
 "notification_reportingExtension_title" = "Improve AI Filtering";
 "notification_reportingExtension_subtitle" = "Report spam text messages";
 "notification_reportingExtension_button" = "Join";
+
+"notification_stayReachable_title" = "Never miss a delivery!";
+"notification_stayReachable_subtitle" = "Allow your name and street";
+"notification_stayReachable_button" = "Add";
 
 // MARK: Report Message
 "reportMessage_senderTitle" = "Sender";
@@ -327,6 +341,21 @@
 "tipJar_tier_large_desc" = "Shaken, not stirred";
 "tipJar_chooseATip" = "Choose a tip";
 
+//MARK: Stay Reachable
+"stayReachable_title" = "Stay Reachable";
+"stayReachable_description" = "A courier, a clinic or a neighbor may text you from a number you don't know. Messages that mention **your name** or **your street** always reach your inbox.";
+"stayReachable_firstName" = "First name";
+"stayReachable_surname" = "Surname";
+"stayReachable_street" = "Street";
+"stayReachable_optional" = "Optional";
+"stayReachable_streetPrompt" = "Name only, no number";
+"stayReachable_alreadyAllowed" = "%@ is already allowed.";
+"stayReachable_enteredTwice" = "%@ is entered twice.";
+"stayReachable_addLanguage" = "Add Language";
+"stayReachable_removeLanguage" = "Remove Language";
+"stayReachable_phoneLanguages" = "Your iPhone's Languages";
+"stayReachable_allLanguages" = "All Languages";
+
 //MARK: iPad Detail Placeholder
 "placeholder_choose_title" = "Select a category";
 "placeholder_choose_detail" = "Choose a category from the sidebar to view its details.";
@@ -338,6 +367,7 @@
 "a11y_addFilter_expandHint" = "Double tap to toggle advanced options";
 "a11y_reportMessage_submitHint" = "Double tap to report this message";
 "a11y_enableExtension_ctaHint" = "Double tap to open iOS Settings";
+"a11y_stayReachable_languageHint" = "Double tap to change or remove this language";
 "a11y_filterRow_targetLabel" = "Filter target: %@";
 "a11y_filterRow_matchLabel" = "Match type: %@";
 "a11y_filterRow_caseLabel" = "Case: %@";

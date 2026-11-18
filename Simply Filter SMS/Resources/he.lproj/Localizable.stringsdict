@@ -119,5 +119,28 @@
             <string>%ld רשימות פעילות</string>
         </dict>
     </dict>
+
+    <key>stayReachable_addFilters</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@filters@</string>
+        <key>filters</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>הוספת טקסטים מאופשרים</string>
+            <key>one</key>
+            <string>הוספת טקסט מאופשר אחד</string>
+            <key>two</key>
+            <string>הוספת 2 טקסטים מאופשרים</string>
+            <key>many</key>
+            <string>הוספת %ld טקסטים מאופשרים</string>
+            <key>other</key>
+            <string>הוספת %ld טקסטים מאופשרים</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

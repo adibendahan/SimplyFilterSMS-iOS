@@ -15,9 +15,9 @@ A list missing any of these can't be subscribed to. Ask for whatever the input d
 
 | Field | Rule |
 |---|---|
-| `name` | The list's title. Short. |
+| `name` | The list's title. Up to 28 characters; Chinese, Japanese and Korean characters and emoji count as two. |
 | `description` | One sentence saying what the list does. |
-| `author` | The person or project that maintains the list. |
+| `author` | The person or project that maintains the list. Up to 25 characters, counted the same way. |
 | `homepage` | An `https://` URL for the list's site or repository. |
 | `locale` | Language and country of the messages it targets: a lowercase ISO 639 language code, a hyphen, an uppercase ISO 3166 region code (`en-US`, `he-IL`, `pt-BR`). |
 

@@ -234,6 +234,35 @@ class CommunityListsTests: XCTestCase {
     }
 
     @MainActor
+    func test_preview_refusesNamesAndAuthorsTooWideForTheRow() async {
+        // Prepare
+        await self.filterListManager.refreshFilterLists()
+        let url = URL(string: self.otherURL)!
+        let longestName = String(repeating: "n", count: CommunityListItem.maxNameWidth)
+        let longestAuthor = String(repeating: "a", count: CommunityListItem.maxAuthorWidth)
+        let widestJapaneseName = String(repeating: "日", count: CommunityListItem.maxNameWidth / 2)
+
+        // Act
+        self.listsByURL[self.otherURL] = self.payload(name: "  \(longestName)  ", author: longestAuthor, filters: [])
+        let atTheLimit = await self.filterListManager.previewCommunityList(at: url)
+        self.listsByURL[self.otherURL] = self.payload(name: longestName + "n", filters: [])
+        let longName = await self.filterListManager.previewCommunityList(at: url)
+        self.listsByURL[self.otherURL] = self.payload(author: longestAuthor + "a", filters: [])
+        let longAuthor = await self.filterListManager.previewCommunityList(at: url)
+        self.listsByURL[self.otherURL] = self.payload(name: widestJapaneseName, filters: [])
+        let japaneseAtTheLimit = await self.filterListManager.previewCommunityList(at: url)
+        self.listsByURL[self.otherURL] = self.payload(name: widestJapaneseName + "日", filters: [])
+        let wideJapaneseName = await self.filterListManager.previewCommunityList(at: url)
+
+        // Verify
+        XCTAssertNil(atTheLimit.failure)
+        XCTAssertEqual(longName.failure, .nameTooLong)
+        XCTAssertEqual(longAuthor.failure, .authorTooLong)
+        XCTAssertNil(japaneseAtTheLimit.failure)
+        XCTAssertEqual(wideJapaneseName.failure, .nameTooLong)
+    }
+
+    @MainActor
     func test_preview_refusesBadLinks() async {
         // Prepare
         await self.filterListManager.refreshFilterLists()

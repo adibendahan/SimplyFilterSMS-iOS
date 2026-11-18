@@ -48,6 +48,40 @@ class AppHomeViewModelTests: XCTestCase {
         XCTAssertEqual(testSubject.overlayWindow.toastViewModel.title, ToastView.Toast.tipPromotion.title)
     }
 
+    func test_smartFilterTurnedOn_offersStayReachable() {
+        // Prepare
+        let flowManager = mock_FlowManager()
+        let smartFilterManager = mock_SmartFilterManager()
+        smartFilterManager.smartFilterTypesClosure = { [.links] }
+        self.appManager.flowManager = flowManager
+        self.appManager.smartFilterManager = smartFilterManager
+        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
+        flowManager.resetCounters()
+
+        // Act
+        testSubject.rules[0].state = true
+
+        // Verify
+        XCTAssertEqual(flowManager.offerStayReachableCounter, 1)
+    }
+
+    func test_smartFilterTurnedOff_doesNotOfferStayReachable() {
+        // Prepare
+        let flowManager = mock_FlowManager()
+        let smartFilterManager = mock_SmartFilterManager()
+        smartFilterManager.smartFilterTypesClosure = { [.links] }
+        self.appManager.flowManager = flowManager
+        self.appManager.smartFilterManager = smartFilterManager
+        let testSubject = AppHomeView.ViewModel(appManager: self.appManager)
+        flowManager.resetCounters()
+
+        // Act
+        testSubject.rules[0].state = false
+
+        // Verify
+        XCTAssertEqual(flowManager.offerStayReachableCounter, 0)
+    }
+
     func test_resultWhileSheetOpen_showsImmediately() {
         // Prepare
         self.networkSyncManager.networkStatusClosure = { .online }

@@ -25,10 +25,12 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
 
     @StateObject var model: ViewModel
     @State private var dotFilterID: UUID? = nil
+    @State private var emptyStatePresence = ListEmptyStateView.Presence()
     @FocusState private var focusedFilterID: UUID?
 
     init(model: ViewModel) {
         _model = StateObject(wrappedValue: model)
+        _emptyStatePresence = State(initialValue: ListEmptyStateView.Presence(isShown: model.filters.isEmpty))
     }
 
     var body: some View {
@@ -49,10 +51,6 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                     self.model.deleteFilters(withOffsets: $0, rowViewModels: self.model.regularRowViewModels)
                 }
                 .deleteDisabled(self.model.editMode.isEditing)
-
-                if self.model.filters.isEmpty {
-                    ContentUnavailableView(self.model.filterType.emptyTitle, systemImage: self.model.filterType.iconName)
-                }
             } header: {
                 if !self.model.regularRowViewModels.isEmpty {
                     AdaptiveColumnHeader(
@@ -61,8 +59,15 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                         trailingSecondary: false)
                 }
             } footer: {
-                if self.model.regexRowViewModels.isEmpty {
+                if !self.emptyStatePresence.isActive && self.model.regexRowViewModels.isEmpty {
                     listFooter
+                }
+            }
+
+            if self.emptyStatePresence.isShown {
+                Section {
+                    self.emptyState
+                        .id(self.emptyStatePresence.appearance)
                 }
             }
 
@@ -89,6 +94,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                 }
             }
         } // List
+        .modifier(ListEmptyStateView.PresenceTracker(isEmpty: self.model.filters.isEmpty, presence: $emptyStatePresence))
         .listStyle(InsetGroupedListStyle())
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -204,14 +210,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                 Button(action: {
                     self.model.showAddFilter()
                 }) {
-                    Label({
-                        switch self.model.filterType {
-                        case .deny, .allow:
-                            return self.model.filterType == .deny ? ("addFilter_addFilter_deny"~) : ("addFilter_addFilter_allow"~)
-                        case .denyLanguage:
-                            return ("addFilter_addLanguage"~)
-                        }
-                    }(), systemImage: self.model.filterType == .denyLanguage ? "globe" : "plus.message")
+                    Label(self.model.filterType.addFilterTitle, systemImage: self.model.filterType.addFilterIconName)
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -221,34 +220,34 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
         }
     }
     
+    private var emptyState: some View {
+        return ListEmptyStateView(kind: .filterList(self.model.filterType), action: self.emptyStateAction)
+    }
+
+    private var emptyStateAction: ListEmptyStateView.Action? {
+        guard self.model.canAddFilter else { return nil }
+        return ListEmptyStateView.Action(
+            title: self.model.filterType.addFilterTitle,
+            iconName: self.model.filterType.addFilterIconName,
+            testIdentifier: .addFilterButton,
+            perform: self.model.showAddFilter)
+    }
+
     @ViewBuilder
     private func AddFilterButton() -> some View {
         
-        if (self.model.filterType == .denyLanguage &&
-            self.model.canBlockAnotherLanguage) ||
-            self.model.filterType != .denyLanguage {
+        if self.model.canAddFilter {
             
             Button(action: {
                 self.model.showAddFilter()
             }) {
                 HStack {
-                    switch self.model.filterType {
-                    case .deny, .allow:
-                        Image(systemName: "plus.message")
-                            .imageScale(.large)
-                            .font(.system(size: addFilterIconSize, weight: .bold))
-                        
-                        Text(self.model.filterType == .deny ? "addFilter_addFilter_deny"~ : "addFilter_addFilter_allow"~)
-                            .font(.body)
-                        
-                    case .denyLanguage:
-                        Image(systemName: "globe")
-                            .imageScale(.large)
-                            .font(.system(size: addFilterIconSize, weight: .bold))
-                        
-                        Text("addFilter_addLanguage"~)
-                            .font(.body)
-                    }
+                    Image(systemName: self.model.filterType.addFilterIconName)
+                        .imageScale(.large)
+                        .font(.system(size: addFilterIconSize, weight: .bold))
+                    
+                    Text(self.model.filterType.addFilterTitle)
+                        .font(.body)
                 }
             }
             .buttonStyle(AccessibleTextButtonStyle())
@@ -379,6 +378,10 @@ extension FiltersView {
             }
 
             self.rowViewModels = updatedViewModels
+        }
+
+        var canAddFilter: Bool {
+            return self.filterType != .denyLanguage || self.canBlockAnotherLanguage
         }
 
         func showAddFilter() {

@@ -662,6 +662,60 @@
 
 "whatsNew_communityLists_desc" = "Assine listas de filtros compartilhadas por outras pessoas, ou compartilhe a sua. As listas se atualizam sozinhas quando os autores publicam uma nova versão - elas ficam em **Seus filtros**.";
 
-"communityLists_featured" = "Destaque";
+"communityLists_featured" = "Destaques";
+
+"communityLists_addedByYou" = "Adicionadas por você";
+
+"communityLists_error_nameTooLong" = "O nome desta lista tem mais de %d caracteres, então você não pode assiná-la.";
+
+"communityLists_error_authorTooLong" = "O autor desta lista tem mais de %d caracteres, então você não pode assiná-la.";
+
+"filterList_empty_denied_caption" = "Adicione uma palavra que só o spam usa, e essas mensagens ficam fora da sua caixa de entrada.";
+
+"filterList_empty_denied_sample" = "Sua encomenda está retida. Pague a taxa: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "Adicione seu primeiro nome, e mensagens que o mencionam sempre chegam à sua caixa de entrada.";
+
+"filterList_empty_allowed_sample" = "Olá Ana, sua consulta é amanhã às 10:00. Responda SIM para confirmar.";
+
+"filterList_empty_deniedLanguage_caption" = "Recebe spam em um idioma que você não lê? Bloqueie o idioma inteiro.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "Tem o link de uma lista que alguém compartilhou? Assine, e ela se atualiza sozinha.";
+
+"notification_stayReachable_title" = "Nunca perca uma entrega!";
+
+"notification_stayReachable_subtitle" = "Permita seu nome e sua rua";
+
+"notification_stayReachable_button" = "Adicionar";
+
+"stayReachable_title" = "Sempre Disponível";
+
+"stayReachable_description" = "Um entregador, uma clínica ou um vizinho pode mandar mensagem de um número que você não conhece. Mensagens que mencionam **seu nome** ou **sua rua** sempre chegam até você.";
+
+"stayReachable_firstName" = "Nome";
+
+"stayReachable_surname" = "Sobrenome";
+
+"stayReachable_street" = "Rua";
+
+"stayReachable_optional" = "Opcional";
+
+"stayReachable_streetPrompt" = "Só o nome, sem número";
+
+"stayReachable_alreadyAllowed" = "%@ já está permitido.";
+
+"stayReachable_addLanguage" = "Adicionar Idioma";
+
+"stayReachable_removeLanguage" = "Remover Idioma";
+
+"stayReachable_phoneLanguages" = "Idiomas do Seu iPhone";
+
+"stayReachable_allLanguages" = "Todos os Idiomas";
+
+"a11y_stayReachable_languageHint" = "Toque duas vezes para alterar ou remover este idioma";
+
+"stayReachable_enteredTwice" = "%@ foi digitado duas vezes.";
 
 

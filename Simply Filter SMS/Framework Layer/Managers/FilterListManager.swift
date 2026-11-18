@@ -185,9 +185,9 @@ class FilterListManager: FilterListManagerProtocol {
             Log.debug("community list preview failed, url: \(url.absoluteString)")
             return .failure(.notAList)
         }
-        if let missingField = Self.missingField(in: downloadedList) {
-            Log.debug("community list is missing a field, url: \(url.absoluteString), field: \(missingField) → refused")
-            return .failure(missingField)
+        if let invalidField = Self.invalidField(in: downloadedList) {
+            Log.debug("community list has an invalid field, url: \(url.absoluteString), field: \(invalidField) → refused")
+            return .failure(invalidField)
         }
         Log.debug("community list previewed, url: \(url.absoluteString), records: \(downloadedList.filters.count)")
         let cacheSection = FilterListsCacheSection(url: url.absoluteString, etag: downloadedETag, payload: downloadedList)
@@ -463,10 +463,12 @@ class FilterListManager: FilterListManagerProtocol {
         return (revalidatedLists, hasFailedLists)
     }
 
-    private static func missingField(in payload: FilterExportPayload) -> CommunityListPreviewError? {
-        guard payload.name?.isBlank == false else { return .missingName }
+    private static func invalidField(in payload: FilterExportPayload) -> CommunityListPreviewError? {
+        guard let name = payload.name, !name.isBlank else { return .missingName }
+        guard name.listTextWidth <= CommunityListItem.maxNameWidth else { return .nameTooLong }
         guard payload.description?.isBlank == false else { return .missingDescription }
-        guard payload.author?.isBlank == false else { return .missingAuthor }
+        guard let author = payload.author, !author.isBlank else { return .missingAuthor }
+        guard author.listTextWidth <= CommunityListItem.maxAuthorWidth else { return .authorTooLong }
         guard CommunityListItem.homepageURL(from: payload.homepage) != nil else { return .invalidHomepage }
         guard Locale.listLocale(from: payload.locale) != nil else { return .invalidLocale }
         return nil

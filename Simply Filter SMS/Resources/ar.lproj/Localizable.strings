@@ -664,4 +664,58 @@
 
 "communityLists_featured" = "مميزة";
 
+"communityLists_addedByYou" = "قوائمك";
+
+"communityLists_error_nameTooLong" = "اسم هذه القائمة أطول من %d حرفًا، لذا لا يمكنك الاشتراك فيها.";
+
+"communityLists_error_authorTooLong" = "اسم مؤلف هذه القائمة أطول من %d حرفًا، لذا لا يمكنك الاشتراك فيها.";
+
+"filterList_empty_denied_caption" = "أضيفوا كلمة لا ترد إلا في الرسائل المزعجة، فتبقى تلك الرسائل خارج صندوق الوارد.";
+
+"filterList_empty_denied_sample" = "شحنتك معلّقة. ادفع الرسوم: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "أضيفوا اسمكم الأول، فتصل الرسائل التي تذكره دائمًا إلى صندوق الوارد.";
+
+"filterList_empty_allowed_sample" = "مرحبًا سارة، موعدك غدًا الساعة 10:00 صباحًا. للتأكيد ردّي بـ 1";
+
+"filterList_empty_deniedLanguage_caption" = "تصلكم رسائل مزعجة بلغة لا تقرؤونها؟ احظروا اللغة بأكملها.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "وصلكم رابط لقائمة شاركها أحدهم؟ اشتركوا فيها، وستبقى محدّثة تلقائيًا.";
+
+"notification_stayReachable_title" = "لا تفوّت أي توصيل!";
+
+"notification_stayReachable_subtitle" = "اسمح باسمك واسم شارعك";
+
+"notification_stayReachable_button" = "إضافة";
+
+"stayReachable_title" = "تواصل دائم";
+
+"stayReachable_description" = "قد يراسلك مندوب توصيل أو عيادة أو جار من رقم لا تعرفه. الرسائل التي تذكر **اسمك** أو **اسم شارعك** تصلك دائمًا.";
+
+"stayReachable_firstName" = "الاسم الأول";
+
+"stayReachable_surname" = "اسم العائلة";
+
+"stayReachable_street" = "الشارع";
+
+"stayReachable_optional" = "اختياري";
+
+"stayReachable_streetPrompt" = "الاسم فقط، دون رقم";
+
+"stayReachable_alreadyAllowed" = "%@ مسموح به بالفعل.";
+
+"stayReachable_addLanguage" = "إضافة لغة";
+
+"stayReachable_removeLanguage" = "إزالة اللغة";
+
+"stayReachable_phoneLanguages" = "لغات iPhone";
+
+"stayReachable_allLanguages" = "كل اللغات";
+
+"a11y_stayReachable_languageHint" = "اضغط مرتين لتغيير هذه اللغة أو إزالتها";
+
+"stayReachable_enteredTwice" = "تم إدخال %@ مرتين.";
+
 

@@ -109,6 +109,32 @@ extension String {
         return self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    var listTextWidth: Int {
+        let trimmed = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        var width = 0
+        for character in trimmed {
+            let isWide = character.unicodeScalars.contains(where: Self.isWideScalar)
+            width += isWide ? 2 : 1
+        }
+        return width
+    }
+
+    private static func isWideScalar(_ scalar: Unicode.Scalar) -> Bool {
+        return Self.wideScalarRanges.contains(where: { $0.contains(scalar.value) })
+    }
+
+    private static let wideScalarRanges: [ClosedRange<UInt32>] = [
+        0x1100...0x115F,
+        0x2E80...0xA4CF,
+        0xAC00...0xD7A3,
+        0xF900...0xFAFF,
+        0xFE30...0xFE4F,
+        0xFF00...0xFF60,
+        0xFFE0...0xFFE6,
+        0x1F300...0x1FAFF,
+        0x20000...0x3FFFD
+    ]
+
     var highlightedAsRegex: AttributedString {
         let nsAttr = NSMutableAttributedString(string: self)
         let nsLen = (self as NSString).length
@@ -244,6 +270,55 @@ extension CommunityListItem {
     }
 }
 
+extension Locale.LanguageCode {
+    var displayName: String {
+        let currentName = self.currentName
+        let nativeName = self.nativeName
+        let name: String
+        if nativeName == currentName {
+            name = currentName
+        } else {
+            name = "\(currentName) · \(nativeName)"
+        }
+        return name
+    }
+
+    var nativeName: String {
+        return Locale(identifier: self.identifier).localizedString(forLanguageCode: self.identifier)?.localizedCapitalized ?? self.currentName
+    }
+
+    var isRightToLeft: Bool {
+        return Locale.Language(languageCode: self).characterDirection == .rightToLeft
+    }
+
+    var appLocalization: String? {
+        return Bundle.main.localizations.first { Locale(identifier: $0).language.languageCode == self }
+    }
+
+    static var phoneLanguages: [Locale.LanguageCode] {
+        return Self.languages(in: Locale.preferredLanguages)
+    }
+
+    static var namedLanguages: [Locale.LanguageCode] {
+        let languages = Self.languages(in: Locale.availableIdentifiers)
+        return languages.sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
+    }
+
+    private var currentName: String {
+        return Locale.current.localizedString(forLanguageCode: self.identifier)?.localizedCapitalized ?? self.identifier
+    }
+
+    private static func languages(in localeIdentifiers: [String]) -> [Locale.LanguageCode] {
+        var languages: [Locale.LanguageCode] = []
+        for identifier in localeIdentifiers {
+            guard let language = Locale(identifier: identifier).language.languageCode,
+                  !languages.contains(language) else { continue }
+            languages.append(language)
+        }
+        return languages
+    }
+}
+
 extension Locale.Region {
     private static let regionalIndicatorOffset: UInt32 = 0x1F1A5
 
@@ -261,10 +336,23 @@ extension Locale.Region {
 }
 
 extension URL {
-    var displayHost: String {
-        let host = self.host() ?? self.absoluteString
-        guard host.hasPrefix("www.") else { return host }
-        return String(host.dropFirst(4))
+    var displayLink: String {
+        var link = self.absoluteString
+        if let scheme = self.scheme, link.hasPrefix(scheme + "://") {
+            link.removeFirst(scheme.count + 3)
+        }
+        if link.hasPrefix("www.") {
+            link.removeFirst(4)
+        }
+        if link.hasSuffix("/") {
+            link.removeLast()
+        }
+        return link
+    }
+
+    var isGitHubLink: Bool {
+        let host = self.host()?.lowercased() ?? ""
+        return host == "github.com" || host == "www.github.com" || host.hasSuffix(".github.io")
     }
 
     var opensInAppBrowser: Bool {
@@ -292,10 +380,14 @@ extension CommunityListPreviewError {
             return "communityLists_error_notAList"~
         case .missingName:
             return "communityLists_error_missingName"~
+        case .nameTooLong:
+            return String(format: "communityLists_error_nameTooLong"~, CommunityListItem.maxNameWidth)
         case .missingDescription:
             return "communityLists_error_missingDescription"~
         case .missingAuthor:
             return "communityLists_error_missingAuthor"~
+        case .authorTooLong:
+            return String(format: "communityLists_error_authorTooLong"~, CommunityListItem.maxAuthorWidth)
         case .invalidHomepage:
             return "communityLists_error_invalidHomepage"~
         case .invalidLocale:

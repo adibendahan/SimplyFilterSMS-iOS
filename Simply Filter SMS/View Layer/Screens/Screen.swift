@@ -14,7 +14,7 @@ enum Screen: Int, CaseIterable, Identifiable, Hashable {
          addLanguageFilter, addAllowFilter, addDenyFilter, filterLists,
          denyFilters, allowFilters, denyLanguageFilters, reportMessage,
          whatsNew, tipJar, countryList, enableReportingExtension, filterImport,
-         chooseAccentColor, filterExport, communityLists
+         chooseAccentColor, filterExport, communityLists, stayReachable
 
     @ViewBuilder func build() -> some View {
         Group {
@@ -102,6 +102,9 @@ enum Screen: Int, CaseIterable, Identifiable, Hashable {
 
             case .communityLists:
                 CommunityListsView(model: CommunityListsView.ViewModel())
+
+            case .stayReachable:
+                StayReachableView(model: StayReachableView.ViewModel())
             }
         }
         .adaptiveLayoutEnvironment()
@@ -115,7 +118,7 @@ enum Screen: Int, CaseIterable, Identifiable, Hashable {
         case .appHome, .onboarding, .help, .about, .enableExtension, .filterTester,
              .addLanguageFilter, .addAllowFilter, .addDenyFilter, .reportMessage,
              .whatsNew, .tipJar, .countryList, .enableReportingExtension, .filterImport,
-             .chooseAccentColor, .filterExport:
+             .chooseAccentColor, .filterExport, .stayReachable:
             return false
         }
     }
@@ -166,6 +169,8 @@ enum Screen: Int, CaseIterable, Identifiable, Hashable {
             return "filterExport"
         case .communityLists:
             return "communityLists"
+        case .stayReachable:
+            return "stayReachable"
         }
     }
 }

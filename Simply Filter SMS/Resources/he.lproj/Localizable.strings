@@ -662,6 +662,60 @@
 
 "whatsNew_communityLists_desc" = "הירשמו לרשימות סינון שאנשים אחרים שיתפו, או שתפו רשימה משלכם. הרשימות מתעדכנות מעצמן כשהיוצרים שלהן מפרסמים גרסה חדשה - תמצאו אותן ב**הפילטרים שלך**.";
 
-"communityLists_featured" = "מומלצת";
+"communityLists_featured" = "מומלצות";
+
+"communityLists_addedByYou" = "הרשימות שלכם";
+
+"communityLists_error_nameTooLong" = "שם הרשימה הזו ארוך מ-%d תווים, ולכן אי אפשר להירשם אליה.";
+
+"communityLists_error_authorTooLong" = "שם היוצר של הרשימה הזו ארוך מ-%d תווים, ולכן אי אפשר להירשם אליה.";
+
+"filterList_empty_denied_caption" = "הוסיפו מילה שמופיעה רק בספאם, והודעות שמכילות אותה נשארות מחוץ לתיבת ההודעות.";
+
+"filterList_empty_denied_sample" = "החבילה שלך מעוכבת במכס. לתשלום: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "הוסיפו את השם הפרטי שלכם, והודעות שמזכירות אותו תמיד מגיעות לתיבת ההודעות.";
+
+"filterList_empty_allowed_sample" = "שלום דנה, התור שלך נקבע למחר ב-10:00. לאישור השיבו 1";
+
+"filterList_empty_deniedLanguage_caption" = "מקבלים ספאם בשפה שאתם לא קוראים? חסמו את השפה כולה.";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "קיבלתם קישור לרשימה שמישהו שיתף? הירשמו, והיא מתעדכנת מעצמה.";
+
+"notification_stayReachable_title" = "אל תפספסו משלוחים!";
+
+"notification_stayReachable_subtitle" = "אפשרו את השם והרחוב שלכם";
+
+"notification_stayReachable_button" = "הוספה";
+
+"stayReachable_title" = "תמיד זמינים";
+
+"stayReachable_description" = "שליח, מרפאה או שכן עשויים לשלוח לכם הודעה ממספר לא מוכר. הודעות שמזכירות **את השם שלכם** או **את הרחוב שלכם** תמיד יגיעו אליכם.";
+
+"stayReachable_firstName" = "שם פרטי";
+
+"stayReachable_surname" = "שם משפחה";
+
+"stayReachable_street" = "רחוב";
+
+"stayReachable_optional" = "לא חובה";
+
+"stayReachable_streetPrompt" = "שם בלבד, בלי מספר";
+
+"stayReachable_alreadyAllowed" = "%@ כבר מאופשר.";
+
+"stayReachable_enteredTwice" = "%@ הוזן פעמיים.";
+
+"stayReachable_addLanguage" = "הוספת שפה";
+
+"stayReachable_removeLanguage" = "הסרת השפה";
+
+"stayReachable_phoneLanguages" = "השפות באייפון";
+
+"stayReachable_allLanguages" = "כל השפות";
+
+"a11y_stayReachable_languageHint" = "הקשה כפולה לשינוי או להסרה של השפה";
 
 

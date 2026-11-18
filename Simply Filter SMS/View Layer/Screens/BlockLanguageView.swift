@@ -90,6 +90,7 @@ extension BlockLanguageView {
                                                                       filterCase: .caseInsensitive)
             if let filter {
                 self.onAdded?(filter)
+                self.appManager.flowManager.offerStayReachable()
             }
         }
     }

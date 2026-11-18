@@ -19,7 +19,7 @@ body:
     id: name
     attributes:
       label: Name
-      description: The list's title, as in its "name" field.
+      description: The list's title, as in its "name" field. Up to 28 characters; Chinese, Japanese and Korean characters and emoji count as two.
     validations:
       required: true
   - type: textarea
@@ -33,7 +33,7 @@ body:
     id: author
     attributes:
       label: Author
-      description: The person or project that maintains the list, as in its "author" field.
+      description: The person or project that maintains the list, as in its "author" field. Up to 25 characters; Chinese, Japanese and Korean characters and emoji count as two.
     validations:
       required: true
   - type: input

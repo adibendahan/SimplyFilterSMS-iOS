@@ -664,4 +664,58 @@
 
 "communityLists_featured" = "おすすめ";
 
+"communityLists_addedByYou" = "追加したリスト";
+
+"communityLists_error_nameTooLong" = "このリストの名前が長すぎるため、登録できません。";
+
+"communityLists_error_authorTooLong" = "このリストの作成者名が長すぎるため、登録できません。";
+
+"filterList_empty_denied_caption" = "迷惑メッセージだけが使う言葉を追加すると、そのメッセージは受信ボックスに届かなくなります。";
+
+"filterList_empty_denied_sample" = "お荷物の配達が保留中です。手数料のお支払い: bit.ly/…";
+
+"filterList_empty_allowed_caption" = "自分の名前を追加すると、名前を含むメッセージは必ず受信ボックスに届きます。";
+
+"filterList_empty_allowed_sample" = "佐藤様、明日10:00のご予約です。確認の場合は1を返信してください。";
+
+"filterList_empty_deniedLanguage_caption" = "読めない言語のスパムが届く？その言語ごとブロックしましょう。";
+
+"filterList_empty_deniedLanguage_sample" = "恭喜您获得免费大奖";
+
+"communityLists_empty_caption" = "誰かが共有したリストのリンクがありますか？登録すると、自動で最新の状態に保たれます。";
+
+"notification_stayReachable_title" = "配達の連絡を見逃さない!";
+
+"notification_stayReachable_subtitle" = "名前と通りの名前を許可";
+
+"notification_stayReachable_button" = "追加";
+
+"stayReachable_title" = "いつでも連絡が届く";
+
+"stayReachable_description" = "配達員やクリニック、近所の人が知らない番号からメッセージを送ってくることがあります。**あなたの名前**や**通りの名前**を含むメッセージは必ず届きます。";
+
+"stayReachable_firstName" = "名";
+
+"stayReachable_surname" = "姓";
+
+"stayReachable_street" = "通り";
+
+"stayReachable_optional" = "任意";
+
+"stayReachable_streetPrompt" = "名前のみ、番地なし";
+
+"stayReachable_alreadyAllowed" = "「%@」は許可済みです。";
+
+"stayReachable_addLanguage" = "言語を追加";
+
+"stayReachable_removeLanguage" = "言語を削除";
+
+"stayReachable_phoneLanguages" = "iPhoneの言語";
+
+"stayReachable_allLanguages" = "すべての言語";
+
+"a11y_stayReachable_languageHint" = "ダブルタップでこの言語を変更または削除";
+
+"stayReachable_enteredTwice" = "「%@」が2回入力されています。";
+
 

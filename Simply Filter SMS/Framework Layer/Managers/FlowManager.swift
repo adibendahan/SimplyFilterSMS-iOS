@@ -39,6 +39,9 @@ class FlowManager: FlowManagerProtocol {
 
     func requestScreen(_ screen: Screen) {
         Log.debug("screen requested, screen: \(screen)")
+        if screen == .stayReachable {
+            self.defaultsManager.didOpenStayReachable = true
+        }
         self.pendingUserRequest = screen
         self.presentNextScreen()
     }
@@ -186,6 +189,7 @@ class FlowManager: FlowManagerProtocol {
         self.shownToast = toast
         self.didShowToastThisSession = true
         self.recordShownNudge(toast)
+        self.recordShownStayReachable(toast)
         return toast
     }
 
@@ -204,6 +208,9 @@ class FlowManager: FlowManagerProtocol {
 
         case .tipPromotion:
             self.requestScreen(.tipJar)
+
+        case .stayReachable:
+            self.requestScreen(.stayReachable)
 
         default:
             break
@@ -225,6 +232,19 @@ class FlowManager: FlowManagerProtocol {
         self.filterListManager.onFilterListsUpdateFinished { [weak self] in
             self?.tryShowSessionNudge()
         }
+    }
+
+    func offerStayReachable() {
+        let isFirstRun = self.defaultsManager.isAppFirstRun
+        let didOpen = self.defaultsManager.didOpenStayReachable
+        let shownSessions = self.defaultsManager.stayReachableToastSessions
+        let session = self.defaultsManager.sessionCounter
+        let wasShownThisSession = shownSessions.contains(session)
+        let hasShowsLeft = shownSessions.count < kStayReachableToastMaxShows
+        let isDue = !isFirstRun && !didOpen && !wasShownThisSession && hasShowsLeft
+        Log.debug("stay reachable offered, firstRun: \(isFirstRun), opened: \(didOpen), shows: \(shownSessions.count), maxShows: \(kStayReachableToastMaxShows), shownThisSession: \(wasShownThisSession), due: \(isDue)")
+        guard isDue else { return }
+        self.requestToast(.stayReachable)
     }
 
     func showWaitingNudge() {
@@ -361,5 +381,10 @@ class FlowManager: FlowManagerProtocol {
     private func recordShownNudge(_ toast: ToastView.Toast) {
         guard let key = toast.nudgeKey else { return }
         self.defaultsManager.sessionNudgeLastShownSessions[key] = self.defaultsManager.sessionCounter
+    }
+
+    private func recordShownStayReachable(_ toast: ToastView.Toast) {
+        guard toast == .stayReachable else { return }
+        self.defaultsManager.stayReachableToastSessions.append(self.defaultsManager.sessionCounter)
     }
 }
