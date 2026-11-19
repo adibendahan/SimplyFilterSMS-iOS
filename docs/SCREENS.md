@@ -51,7 +51,7 @@ Pushed from Home; toggles AI Filtering per language.
 - The view model is `@unchecked Sendable` because `.refreshable` needs a `@Sendable` action.
 
 ## CommunityListsView
-Pushed from Home's first "Your filters" row; turns Community Lists on and off, removes the user's own lists, and opens Subscribe from URL.
+Pushed from Home's first "Your lists" row; turns Community Lists on and off, removes the user's own lists, and opens Subscribe from URL.
 - Curated lists can't be swiped away: removing one would only bring it back from the catalog.
 
 ## AddCommunityListView

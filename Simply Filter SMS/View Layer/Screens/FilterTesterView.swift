@@ -158,13 +158,6 @@ extension FilterTesterView {
                 .store(in: &self.disposables)
         }
         
-        private lazy var bodyOnlySender: String = {
-            let evaluator = self.appManager.messageEvaluationManager
-            let candidates = (0...9).map { String(repeating: String($0), count: 12) }
-            return candidates.first(where: { evaluator.evaluateMessage(body: "", sender: $0).action == .allow })
-                ?? candidates[0]
-        }()
-        
         private var disposables = Set<AnyCancellable>()
 
         private func clearResult() {
@@ -173,10 +166,14 @@ extension FilterTesterView {
         }
 
         private func updateResult(text: String, sender: String) {
-            let next = self.appManager.messageEvaluationManager.evaluateMessage(
-                body: text,
-                sender: sender.isEmpty ? self.bodyOnlySender : sender
-            )
+            let evaluator = self.appManager.messageEvaluationManager
+            let next: MessageEvaluationResult
+            if sender.isEmpty {
+                next = evaluator.evaluateMessage(body: text)
+            }
+            else {
+                next = evaluator.evaluateMessage(body: text, sender: sender)
+            }
             guard next != self.result else { return }
             self.result = next
         }

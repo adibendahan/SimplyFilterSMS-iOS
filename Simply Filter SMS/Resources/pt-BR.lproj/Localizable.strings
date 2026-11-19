@@ -22,9 +22,9 @@
 
 "filterList_filters" = "Filtros";
 
-"filterList_allowed" = "Textos Permitidos";
+"filterList_allowed" = "Lista de Permitidos";
 
-"filterList_denied" = "Textos Bloqueados";
+"filterList_denied" = "Lista de Bloqueio";
 
 "filterList_menu_filterLanguage" = "Bloquear Idioma";
 
@@ -162,6 +162,10 @@
 
 "help_getStarted" = "Primeiros passos";
 
+"help_siriShortcuts" = "Siri e Atalhos";
+
+"help_shortcuts_caption" = "Veja todas as ações e use-as nos seus próprios atalhos.";
+
 "help_enableFiltering_title" = "Ativar filtragem";
 
 "help_enableFiltering_caption" = "Obrigatório nos Ajustes do iOS para filtrar SMS desconhecidos.";
@@ -196,7 +200,7 @@
 
 "faq_question_1" = "Como funciona o filtro de mensagens?";
 
-"faq_answer_1" = "Quando você recebe um SMS de um número que não está em Contatos, o Simply Filter SMS verifica nesta ordem:\n\n• **Textos Permitidos** sempre passam.\n• **Textos Bloqueados**, idiomas bloqueados, Filtros inteligentes, Permitir por país e o **Filtro AI** podem enviar para Lixo Eletrônico, Transações ou Promoções.\n• Se nada corresponder, a mensagem é entregue normalmente.\n\niMessage e remetentes em Contatos nunca são enviados ao app.";
+"faq_answer_1" = "Quando você recebe um SMS de um número que não está em Contatos, o Simply Filter SMS verifica nesta ordem:\n\n• Textos da sua **Lista de Permitidos** sempre passam.\n• Sua **Lista de Bloqueio**, idiomas bloqueados, Filtros inteligentes, Permitir por país e o **Filtro AI** podem enviar para Lixo Eletrônico, Transações ou Promoções.\n• Se nada corresponder, a mensagem é entregue normalmente.\n\niMessage e remetentes em Contatos nunca são enviados ao app.";
 
 "faq_question_2" = "Minhas mensagens são expostas ao desenvolvedor?";
 
@@ -248,7 +252,7 @@
 
 "autoFilter_shortSender_action" = "Selecione novo limite";
 
-"autoFilter_allUnknown_shortTitle" = "Todos desconhecidos (exceto Permitidos)";
+"autoFilter_allUnknown_shortTitle" = "Todos desconhecidos (exceto Lista de Permitidos)";
 
 "autoFilter_links_shortTitle" = "Links";
 
@@ -258,7 +262,7 @@
 
 "autoFilter_smartFilters" = "Filtros inteligentes";
 
-"autoFilter_yourFilters" = "Seus filtros";
+"autoFilter_yourFilters" = "Suas listas";
 
 "autoFilter_email_shortTitle" = "E-mail";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "Listas da comunidade";
 
-"whatsNew_communityLists_desc" = "Assine listas de filtros compartilhadas por outras pessoas, ou compartilhe a sua. As listas se atualizam sozinhas quando os autores publicam uma nova versão - elas ficam em **Seus filtros**.";
+"whatsNew_communityLists_desc" = "Assine listas de filtros compartilhadas por outras pessoas, ou compartilhe a sua. As listas se atualizam sozinhas quando os autores publicam uma nova versão - elas ficam em **Suas listas**.";
+
+"whatsNew_siriShortcuts_title" = "Siri e Atalhos";
+
+"whatsNew_siriShortcuts_desc" = "Adicione, remova e verifique filtros com a Siri: experimente **“Adicionar à minha Lista de Bloqueio no Simply Filter SMS”**. Todas as ações também estão no app **Atalhos**.";
 
 "communityLists_featured" = "Destaques";
 
@@ -717,5 +725,105 @@
 "a11y_stayReachable_languageHint" = "Toque duas vezes para alterar ou remover este idioma";
 
 "stayReachable_enteredTwice" = "%@ foi digitado duas vezes.";
+
+"siri_addFilter_title" = "Adicionar Filtro";
+
+"siri_addFilter_shortTitle" = "Adicionar Filtro";
+
+"siri_addFilter_description" = "Adiciona um texto à sua Lista de Bloqueio ou Lista de Permitidos.";
+
+"siri_addFilter_list" = "Lista";
+
+"siri_addFilter_listPrompt" = "Qual lista?";
+
+"siri_addFilter_text" = "Texto";
+
+"siri_addFilter_textPrompt" = "Qual texto?";
+
+"siri_addFilter_summary_block ${text}" = "Bloquear mensagens com ${text}";
+
+"siri_addFilter_summary_allow ${text}" = "Permitir mensagens com ${text}";
+
+"siri_addFilter_summary_unset ${text} ${list}" = "Adicionar ${text} à ${list}";
+
+"siri_addFilter_added_block" = "'%@' foi adicionado à sua Lista de Bloqueio.";
+
+"siri_addFilter_added_allow" = "'%@' foi adicionado à sua Lista de Permitidos.";
+
+"siri_addFilter_duplicate" = "'%@' já é um dos seus filtros.";
+
+"siri_addFilter_empty" = "Não há texto para adicionar.";
+
+"siri_addFilter_failed" = "Não foi possível salvar o filtro. Tente de novo no app.";
+
+"siri_filterList_type" = "Lista de Filtros";
+
+"siri_checkMessage_title" = "Verificar Mensagem";
+
+"siri_checkMessage_shortTitle" = "Verificar Mensagem";
+
+"siri_checkMessage_description" = "Diz para onde uma mensagem iria, de acordo com seus filtros.";
+
+"siri_checkMessage_message" = "Mensagem";
+
+"siri_checkMessage_messagePrompt" = "O que diz a mensagem?";
+
+"siri_checkMessage_sender" = "Remetente";
+
+"siri_checkMessage_summary ${message}" = "Verificar ${message}";
+
+"siri_checkMessage_folder" = "Esta mensagem iria para %@.";
+
+"siri_checkMessage_inbox" = "Esta mensagem chegaria normalmente.";
+
+"siri_removeFilter_title" = "Remover Filtro";
+
+"siri_removeFilter_shortTitle" = "Remover Filtro";
+
+"siri_removeFilter_description" = "Remove um texto ou idioma dos seus filtros.";
+
+"siri_removeFilter_filter" = "Filtro";
+
+"siri_removeFilter_filterPrompt" = "Qual filtro?";
+
+"siri_removeFilter_summary ${filter}" = "Remover ${filter}";
+
+"siri_removeFilter_confirm" = "Remover '%@' de %@?";
+
+"siri_removeFilter_removed" = "'%@' foi removido.";
+
+"siri_removeFilter_notFound" = "Esse filtro não existe mais.";
+
+"siri_removeFilter_cancelled" = "Nada foi removido.";
+
+"siri_filter_type" = "Filtro";
+
+"siri_blockLanguage_title" = "Bloquear Idioma";
+
+"siri_blockLanguage_shortTitle" = "Bloquear Idioma";
+
+"siri_blockLanguage_description" = "Envia para Lixo Eletrônico as mensagens escritas em um idioma.";
+
+"siri_blockLanguage_language" = "Idioma";
+
+"siri_blockLanguage_languagePrompt" = "Qual idioma?";
+
+"siri_blockLanguage_summary ${language}" = "Bloquear mensagens em ${language}";
+
+"siri_blockLanguage_blocked" = "Mensagens em %@ vão para Lixo Eletrônico.";
+
+"siri_blockLanguage_duplicate" = "O %@ já está bloqueado.";
+
+"siri_language_type" = "Idioma";
+
+"siri_updateLists_title" = "Atualizar Listas de Filtros";
+
+"siri_updateLists_shortTitle" = "Atualizar Listas de Filtros";
+
+"siri_updateLists_description" = "Baixa a versão mais recente do Filtro AI e das listas da comunidade.";
+
+"siri_updateLists_updated" = "Suas listas de filtros estão atualizadas.";
+
+"siri_updateLists_failed" = "Não foi possível atualizar suas listas de filtros. Verifique a conexão e tente de novo.";
 
 

@@ -33,10 +33,10 @@ Simplified Chinese is LTR. No RTL considerations. iOS handles layout direction w
 | Concept | Canonical Chinese Term | Notes |
 |---|---|---|
 | Block / Deny (verb) | 屏蔽 | Prefer over 拒绝 for filter actions |
-| Block / Deny (adjective/noun) | 已屏蔽 | e.g. "Blocked Texts" = 已屏蔽的文本 |
+| Block / Deny (adjective/noun) | 已屏蔽 | e.g. "Block List" = 屏蔽列表 |
 | Deny (generic action) | 拒绝 | Only for `general_deny` |
 | Allow / Permit (verb) | 允许 | Standard iOS term |
-| Allow / Permit (adjective/noun) | 允许的 | e.g. "Allowed Texts" = 允许的文本 |
+| Allow / Permit (adjective/noun) | 允许的 | e.g. "Allow List" = 允许列表 |
 | Filter / Filters (noun) | 过滤器 | Use 过滤 as the verb |
 | Sender | 发件人 | Match Apple Messages terminology |
 | Message (Messages UI) | 信息 | Messages app content |

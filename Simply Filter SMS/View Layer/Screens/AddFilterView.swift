@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AppIntents
 
 
 //MARK: - View -
@@ -208,6 +209,11 @@ struct AddFilterView: View {
                     .accessibilityIdentifier(TestIdentifier.addFilterConfirmButton.rawValue)
                     .disabled(self.model.filterText.count < kMinimumFilterLength || self.model.isDuplicateFilter || self.model.isInvalidRegex)
                     .contentShape(Rectangle())
+
+                    if let siriTipIntent = self.model.siriTipIntent {
+                        SiriTipView(intent: siriTipIntent, isVisible: $model.showsSiriTip)
+                            .padding(.top, 16)
+                    }
                 } // VStack
                 .padding(.horizontal, 16)
                 .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: self.model.selectedFilterMatching)
@@ -294,6 +300,16 @@ extension AddFilterView {
             }
         }
         
+        @Published var showsSiriTip: Bool {
+            didSet {
+                guard !self.showsSiriTip else { return }
+                Log.debug("add filter siri tip, dismissed")
+                self.appManager.defaultsManager.didDismissAddFilterSiriTip = true
+            }
+        }
+
+        let siriTipIntent: AddFilterIntent?
+
         private var didAddFilter = false
         private var onAdded: ((Filter) -> Void)?
 
@@ -316,6 +332,8 @@ extension AddFilterView {
             let isAllUnknownFilteringOn = appManager.smartFilterManager.isSmartFilterActive(for: .allUnknown)
             self.isAllUnknownFilteringOn = isAllUnknownFilteringOn
             self.isExpanded = appManager.defaultsManager.isAddFilterExpanded
+            self.showsSiriTip = !appManager.defaultsManager.didDismissAddFilterSiriTip
+            self.siriTipIntent = FilterListChoice(filterType: filterType).map { AddFilterIntent(list: $0) }
             
             super.init(appManager: appManager)
         }

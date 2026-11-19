@@ -22,9 +22,9 @@
 
 "filterList_filters" = "المرشّحات";
 
-"filterList_allowed" = "النصوص المسموحة";
+"filterList_allowed" = "قائمة السماح";
 
-"filterList_denied" = "النصوص المحظورة";
+"filterList_denied" = "قائمة الحظر";
 
 "filterList_menu_filterLanguage" = "حظر لغة";
 
@@ -162,6 +162,10 @@
 
 "help_getStarted" = "البدء";
 
+"help_siriShortcuts" = "Siri والاختصارات";
+
+"help_shortcuts_caption" = "اطّلع على كل الإجراءات، واستخدمها في اختصاراتك الخاصة.";
+
 "help_enableFiltering_title" = "تفعيل التصفية";
 
 "help_enableFiltering_caption" = "مطلوب في إعدادات iOS قبل تصفية رسائل SMS من أرقام مجهولة.";
@@ -196,7 +200,7 @@
 
 "faq_question_1" = "كيف تعمل تصفية الرسائل؟";
 
-"faq_answer_1" = "عندما تصلك رسالة SMS من رقم ليس في جهات الاتصال، تتحقق منها Simply Filter SMS بهذا الترتيب:\n\n• **النصوص المسموحة** تمر دائماً.\n• **النصوص المحظورة** واللغات المحظورة والمرشّحات الذكية والسماح حسب البلد و**تصفية AI** يمكن أن ترسلها إلى غير مرغوب فيه أو المعاملات أو العروض الترويجية.\n• إن لم يطابق شيء، تُسلَّم الرسالة بشكل طبيعي.\n\niMessage والمرسلون في جهات الاتصال لا يُرسلون إلى التطبيق أبداً.";
+"faq_answer_1" = "عندما تصلك رسالة SMS من رقم ليس في جهات الاتصال، تتحقق منها Simply Filter SMS بهذا الترتيب:\n\n• النصوص في **قائمة السماح** تمر دائماً.\n• **قائمة الحظر** واللغات المحظورة والمرشّحات الذكية والسماح حسب البلد و**تصفية AI** يمكن أن ترسلها إلى غير مرغوب فيه أو المعاملات أو العروض الترويجية.\n• إن لم يطابق شيء، تُسلَّم الرسالة بشكل طبيعي.\n\niMessage والمرسلون في جهات الاتصال لا يُرسلون إلى التطبيق أبداً.";
 
 "faq_question_2" = "هل رسائلي مكشوفة لمطور التطبيق؟";
 
@@ -248,7 +252,7 @@
 
 "autoFilter_shortSender_action" = "اختر حدًا جديدًا";
 
-"autoFilter_allUnknown_shortTitle" = "جميع المجهولين (ما عدا المسموح به)";
+"autoFilter_allUnknown_shortTitle" = "جميع المجهولين (ما عدا قائمة السماح)";
 
 "autoFilter_links_shortTitle" = "الروابط";
 
@@ -258,7 +262,7 @@
 
 "autoFilter_smartFilters" = "مرشّحات ذكية";
 
-"autoFilter_yourFilters" = "مرشّحاتك";
+"autoFilter_yourFilters" = "قوائمك";
 
 "autoFilter_email_shortTitle" = "إيميل";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "قوائم المجتمع";
 
-"whatsNew_communityLists_desc" = "اشترك في قوائم تصفية يشاركها أشخاص آخرون، أو شارك قائمتك. تتحدّث القوائم تلقائيًا عندما ينشر مؤلفوها نسخة جديدة - تجدها في **مرشّحاتك**.";
+"whatsNew_communityLists_desc" = "اشترك في قوائم تصفية يشاركها أشخاص آخرون، أو شارك قائمتك. تتحدّث القوائم تلقائيًا عندما ينشر مؤلفوها نسخة جديدة - تجدها في **قوائمك**.";
+
+"whatsNew_siriShortcuts_title" = "Siri والاختصارات";
+
+"whatsNew_siriShortcuts_desc" = "أضف المرشّحات وأزلها وافحصها باستخدام Siri: جرّب **«إضافة إلى قائمة الحظر في Simply Filter SMS»**. كل الإجراءات متاحة أيضًا في تطبيق **الاختصارات**.";
 
 "communityLists_featured" = "مميزة";
 
@@ -717,5 +725,105 @@
 "a11y_stayReachable_languageHint" = "اضغط مرتين لتغيير هذه اللغة أو إزالتها";
 
 "stayReachable_enteredTwice" = "تم إدخال %@ مرتين.";
+
+"siri_addFilter_title" = "إضافة مرشّح";
+
+"siri_addFilter_shortTitle" = "إضافة مرشّح";
+
+"siri_addFilter_description" = "يضيف نصًا إلى قائمة الحظر أو قائمة السماح.";
+
+"siri_addFilter_list" = "القائمة";
+
+"siri_addFilter_listPrompt" = "أي قائمة؟";
+
+"siri_addFilter_text" = "النص";
+
+"siri_addFilter_textPrompt" = "ما النص؟";
+
+"siri_addFilter_summary_block ${text}" = "حظر الرسائل التي تحتوي على ${text}";
+
+"siri_addFilter_summary_allow ${text}" = "السماح بالرسائل التي تحتوي على ${text}";
+
+"siri_addFilter_summary_unset ${text} ${list}" = "إضافة ${text} إلى ${list}";
+
+"siri_addFilter_added_block" = "تمت إضافة '%@' إلى قائمة الحظر.";
+
+"siri_addFilter_added_allow" = "تمت إضافة '%@' إلى قائمة السماح.";
+
+"siri_addFilter_duplicate" = "'%@' موجود بالفعل ضمن مرشّحاتك.";
+
+"siri_addFilter_empty" = "لا يوجد نص لإضافته.";
+
+"siri_addFilter_failed" = "تعذّر حفظ المرشّح. حاول مرة أخرى في التطبيق.";
+
+"siri_filterList_type" = "قائمة المرشّحات";
+
+"siri_checkMessage_title" = "فحص رسالة";
+
+"siri_checkMessage_shortTitle" = "فحص رسالة";
+
+"siri_checkMessage_description" = "يخبرك أين ستذهب الرسالة وفقًا لمرشّحاتك.";
+
+"siri_checkMessage_message" = "الرسالة";
+
+"siri_checkMessage_messagePrompt" = "ماذا تقول الرسالة؟";
+
+"siri_checkMessage_sender" = "المُرسِل";
+
+"siri_checkMessage_summary ${message}" = "فحص ${message}";
+
+"siri_checkMessage_folder" = "ستذهب هذه الرسالة إلى %@.";
+
+"siri_checkMessage_inbox" = "ستصل هذه الرسالة كالمعتاد.";
+
+"siri_removeFilter_title" = "إزالة مرشّح";
+
+"siri_removeFilter_shortTitle" = "إزالة مرشّح";
+
+"siri_removeFilter_description" = "يزيل نصًا أو لغة من مرشّحاتك.";
+
+"siri_removeFilter_filter" = "المرشّح";
+
+"siri_removeFilter_filterPrompt" = "أي مرشّح؟";
+
+"siri_removeFilter_summary ${filter}" = "إزالة ${filter}";
+
+"siri_removeFilter_confirm" = "هل تريد إزالة '%@' من %@؟";
+
+"siri_removeFilter_removed" = "تمت إزالة '%@'.";
+
+"siri_removeFilter_notFound" = "هذا المرشّح لم يعد موجودًا.";
+
+"siri_removeFilter_cancelled" = "لم تتم إزالة أي شيء.";
+
+"siri_filter_type" = "مرشّح";
+
+"siri_blockLanguage_title" = "حظر لغة";
+
+"siri_blockLanguage_shortTitle" = "حظر لغة";
+
+"siri_blockLanguage_description" = "ينقل الرسائل المكتوبة بلغة معيّنة إلى غير مرغوب فيه.";
+
+"siri_blockLanguage_language" = "اللغة";
+
+"siri_blockLanguage_languagePrompt" = "أي لغة؟";
+
+"siri_blockLanguage_summary ${language}" = "حظر الرسائل باللغة ${language}";
+
+"siri_blockLanguage_blocked" = "ستنتقل الرسائل باللغة %@ إلى غير مرغوب فيه.";
+
+"siri_blockLanguage_duplicate" = "اللغة %@ محظورة بالفعل.";
+
+"siri_language_type" = "لغة";
+
+"siri_updateLists_title" = "تحديث قوائم التصفية";
+
+"siri_updateLists_shortTitle" = "تحديث قوائم التصفية";
+
+"siri_updateLists_description" = "يُنزّل أحدث إصدار من تصفية AI وقوائم المجتمع.";
+
+"siri_updateLists_updated" = "قوائم التصفية محدّثة.";
+
+"siri_updateLists_failed" = "تعذّر تحديث قوائم التصفية. تحقّق من الاتصال وحاول مرة أخرى.";
 
 

@@ -109,6 +109,16 @@ extension String {
         return self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    var dictatedFilterText: String {
+        var text = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        while let last = text.last, Self.dictationEndPunctuation.contains(last) {
+            text.removeLast()
+        }
+        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static let dictationEndPunctuation: Set<Character> = [".", "?", "!", "。", "？", "！", "؟"]
+
     var listTextWidth: Int {
         let trimmed = self.trimmingCharacters(in: .whitespacesAndNewlines)
         var width = 0

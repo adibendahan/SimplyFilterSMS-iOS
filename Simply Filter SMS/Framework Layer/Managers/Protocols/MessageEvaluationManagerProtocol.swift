@@ -67,4 +67,5 @@ struct MessageEvaluationResult: Equatable {
 protocol MessageEvaluationManagerProtocol {
     var context: NSManagedObjectContext { get }
     func evaluateMessage(body: String, sender: String) -> MessageEvaluationResult
+    func evaluateMessage(body: String) -> MessageEvaluationResult
 }

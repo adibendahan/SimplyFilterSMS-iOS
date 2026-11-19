@@ -24,9 +24,9 @@
 
 "filterList_filters" = "过滤器";
 
-"filterList_allowed" = "允许的文本";
+"filterList_allowed" = "允许列表";
 
-"filterList_denied" = "已屏蔽的文本";
+"filterList_denied" = "屏蔽列表";
 
 "filterList_menu_filterLanguage" = "屏蔽语言";
 
@@ -218,6 +218,10 @@
 
 "help_getStarted" = "开始使用";
 
+"help_siriShortcuts" = "Siri 与快捷指令";
+
+"help_shortcuts_caption" = "查看所有操作，并在你自己的快捷指令中使用它们。";
+
 "help_enableFiltering_title" = "启用过滤";
 
 "help_enableFiltering_caption" = "需要先在 iOS“设置”中启用，才能过滤未知短信。";
@@ -228,7 +232,7 @@
 
 "faq_question_1" = "信息过滤如何工作？";
 
-"faq_answer_1" = "当你收到来自“通讯录”中没有的号码的信息时，Simply Filter SMS 会按以下顺序检查：\n\n• **允许的文本**始终会正常送达。\n• **屏蔽的文本**、屏蔽的语言、智能过滤器、受信任的国家和 **AI 过滤**可以将信息发送到“垃圾短信”“交易信息”或“推广信息”。\n• 如果没有匹配项，信息会正常送达。\n\niMessage 和来自“通讯录”中联系人的信息不会发送给 App。";
+"faq_answer_1" = "当你收到来自“通讯录”中没有的号码的信息时，Simply Filter SMS 会按以下顺序检查：\n\n• **允许列表**中的文本始终会正常送达。\n• **屏蔽列表**、屏蔽的语言、智能过滤器、受信任的国家和 **AI 过滤**可以将信息发送到“垃圾短信”“交易信息”或“推广信息”。\n• 如果没有匹配项，信息会正常送达。\n\niMessage 和来自“通讯录”中联系人的信息不会发送给 App。";
 
 "faq_question_2" = "开发者会看到我的信息吗？";
 
@@ -304,7 +308,7 @@
 
 "autoFilter_shortSender_action" = "选择新限制";
 
-"autoFilter_allUnknown_shortTitle" = "所有未知发件人（允许的文本除外）";
+"autoFilter_allUnknown_shortTitle" = "所有未知发件人（允许列表除外）";
 
 "autoFilter_links_shortTitle" = "链接";
 
@@ -314,7 +318,7 @@
 
 "autoFilter_smartFilters" = "智能过滤器";
 
-"autoFilter_yourFilters" = "你的过滤器";
+"autoFilter_yourFilters" = "你的列表";
 
 "autoFilter_email_shortTitle" = "邮件";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "社区列表";
 
-"whatsNew_communityLists_desc" = "订阅其他人分享的过滤列表，或分享你自己的列表。作者发布新版本后，列表会自动更新 - 在**你的过滤器**中可以找到它们。";
+"whatsNew_communityLists_desc" = "订阅其他人分享的过滤列表，或分享你自己的列表。作者发布新版本后，列表会自动更新 - 在**你的列表**中可以找到它们。";
+
+"whatsNew_siriShortcuts_title" = "Siri 与快捷指令";
+
+"whatsNew_siriShortcuts_desc" = "使用 Siri 添加、移除和检查过滤器：试试说 **“在Simply Filter SMS中添加到屏蔽列表”**。所有操作也可以在 **快捷指令** App 中使用。";
 
 "communityLists_featured" = "精选";
 
@@ -717,5 +725,105 @@
 "a11y_stayReachable_languageHint" = "轻点两下以更改或移除此语言";
 
 "stayReachable_enteredTwice" = "“%@”输入了两次。";
+
+"siri_addFilter_title" = "添加过滤器";
+
+"siri_addFilter_shortTitle" = "添加过滤器";
+
+"siri_addFilter_description" = "将文本添加到屏蔽列表或允许列表。";
+
+"siri_addFilter_list" = "列表";
+
+"siri_addFilter_listPrompt" = "哪个列表？";
+
+"siri_addFilter_text" = "文本";
+
+"siri_addFilter_textPrompt" = "什么文本？";
+
+"siri_addFilter_summary_block ${text}" = "屏蔽包含${text}的信息";
+
+"siri_addFilter_summary_allow ${text}" = "允许包含${text}的信息";
+
+"siri_addFilter_summary_unset ${text} ${list}" = "将${text}添加到${list}";
+
+"siri_addFilter_added_block" = "已将“%@”添加到屏蔽列表。";
+
+"siri_addFilter_added_allow" = "已将“%@”添加到允许列表。";
+
+"siri_addFilter_duplicate" = "“%@”已在你的过滤器中。";
+
+"siri_addFilter_empty" = "没有要添加的文本。";
+
+"siri_addFilter_failed" = "无法保存过滤器。请在 App 中重试。";
+
+"siri_filterList_type" = "过滤器列表";
+
+"siri_checkMessage_title" = "检查信息";
+
+"siri_checkMessage_shortTitle" = "检查信息";
+
+"siri_checkMessage_description" = "根据你的过滤器，告诉你信息会被分到哪里。";
+
+"siri_checkMessage_message" = "信息";
+
+"siri_checkMessage_messagePrompt" = "信息内容是什么？";
+
+"siri_checkMessage_sender" = "发件人";
+
+"siri_checkMessage_summary ${message}" = "检查${message}";
+
+"siri_checkMessage_folder" = "这条信息会被分到“%@”。";
+
+"siri_checkMessage_inbox" = "这条信息会正常送达。";
+
+"siri_removeFilter_title" = "移除过滤器";
+
+"siri_removeFilter_shortTitle" = "移除过滤器";
+
+"siri_removeFilter_description" = "从你的过滤器中移除文本或语言。";
+
+"siri_removeFilter_filter" = "过滤器";
+
+"siri_removeFilter_filterPrompt" = "哪个过滤器？";
+
+"siri_removeFilter_summary ${filter}" = "移除${filter}";
+
+"siri_removeFilter_confirm" = "要从%2$@中移除“%1$@”吗？";
+
+"siri_removeFilter_removed" = "已移除“%@”。";
+
+"siri_removeFilter_notFound" = "该过滤器已不存在。";
+
+"siri_removeFilter_cancelled" = "未移除任何内容。";
+
+"siri_filter_type" = "过滤器";
+
+"siri_blockLanguage_title" = "屏蔽语言";
+
+"siri_blockLanguage_shortTitle" = "屏蔽语言";
+
+"siri_blockLanguage_description" = "将用某种语言写的信息移到垃圾短信。";
+
+"siri_blockLanguage_language" = "语言";
+
+"siri_blockLanguage_languagePrompt" = "哪种语言？";
+
+"siri_blockLanguage_summary ${language}" = "屏蔽${language}信息";
+
+"siri_blockLanguage_blocked" = "%@信息将移到垃圾短信。";
+
+"siri_blockLanguage_duplicate" = "%@已被屏蔽。";
+
+"siri_language_type" = "语言";
+
+"siri_updateLists_title" = "更新过滤列表";
+
+"siri_updateLists_shortTitle" = "更新过滤列表";
+
+"siri_updateLists_description" = "下载最新的 AI 过滤和社区列表。";
+
+"siri_updateLists_updated" = "你的过滤列表已是最新。";
+
+"siri_updateLists_failed" = "无法更新过滤列表。请检查网络连接后重试。";
 
 

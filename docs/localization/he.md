@@ -76,8 +76,8 @@ Hebrew has neutral constructions that address nobody:
 |---|---|---|
 | Filter (noun) | **פילטר / פילטרים** | Not מסנן. `מסננת` only for the app's role in iOS ("Simply Filter SMS לא נבחרה כמסננת") |
 | Filtering | **סינון** | `הסינון`, `סינון AI` |
-| Allowed Texts (list) | **טקסטים מאופשרים** | |
-| Blocked Texts (list) | **טקסטים חסומים** | |
+| Allow List | **רשימת המאושרים** | |
+| Block List | **רשימת החסומים** | |
 | Blocked languages | **שפות חסומות** | |
 | Block (action noun) | **חסימה** | `חסימת שפה` |
 | Allow (action noun) | **אישור / מתן אפשרות** | Avoid bare `אפשר`, which also reads as "possible" |

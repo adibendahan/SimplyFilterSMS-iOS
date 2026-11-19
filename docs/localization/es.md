@@ -67,7 +67,7 @@ Words about other things keep their normal gender (`el filtro`, `la carpeta`, `l
 | Block / Allow | **Bloquear / Permitir** | Adjectives: `bloqueado`, `permitido` |
 | Filter | **filtro / filtros** | |
 | Filtering | **filtrado** | |
-| Allowed Texts / Blocked Texts | **Textos permitidos / Textos bloqueados** | |
+| Allow List / Block List | **Lista de permitidos / Lista de bloqueo** | |
 | Blocked languages | **Idiomas bloqueados** | |
 | AI Filtering (feature name) | **Filtrado AI** | As on Home (`autoFilter_title`). In prose, the technology is `IA` (`listas de IA`) |
 | Smart Filters | **Filtros inteligentes** | |

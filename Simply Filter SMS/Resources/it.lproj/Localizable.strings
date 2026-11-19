@@ -22,9 +22,9 @@
 
 "filterList_filters" = "Filtri";
 
-"filterList_allowed" = "Testi consentiti";
+"filterList_allowed" = "Lista dei consentiti";
 
-"filterList_denied" = "Testi bloccati";
+"filterList_denied" = "Lista di blocco";
 
 "filterList_menu_filterLanguage" = "Blocca una lingua";
 
@@ -162,6 +162,10 @@
 
 "help_getStarted" = "Per iniziare";
 
+"help_siriShortcuts" = "Siri e Comandi rapidi";
+
+"help_shortcuts_caption" = "Scopri tutte le azioni e usale nei tuoi comandi rapidi.";
+
 "help_enableFiltering_title" = "Attiva il filtraggio";
 
 "help_enableFiltering_caption" = "Obbligatorio in Impostazioni iOS prima di filtrare gli SMS sconosciuti.";
@@ -196,7 +200,7 @@
 
 "faq_question_1" = "Come funziona il filtraggio dei messaggi?";
 
-"faq_answer_1" = "Quando ricevi un SMS da un numero che non è in Contatti, Simply Filter SMS lo controlla in questo ordine:\n\n• I **Testi consentiti** passano sempre.\n• I **Testi bloccati**, le lingue bloccate, i Filtri intelligenti, Consenti per paese e il **Filtraggio AI** possono inviarlo in Indesiderati, Transazioni o Promozioni.\n• Se nulla corrisponde, il messaggio viene consegnato normalmente.\n\nGli iMessage e i mittenti in Contatti non vengono mai inviati all'app.";
+"faq_answer_1" = "Quando ricevi un SMS da un numero che non è in Contatti, Simply Filter SMS lo controlla in questo ordine:\n\n• I testi della tua **Lista dei consentiti** passano sempre.\n• La tua **Lista di blocco**, le lingue bloccate, i Filtri intelligenti, Consenti per paese e il **Filtraggio AI** possono inviarlo in Indesiderati, Transazioni o Promozioni.\n• Se nulla corrisponde, il messaggio viene consegnato normalmente.\n\nGli iMessage e i mittenti in Contatti non vengono mai inviati all'app.";
 
 "faq_question_2" = "I miei messaggi sono visibili allo sviluppatore?";
 
@@ -248,7 +252,7 @@
 
 "autoFilter_shortSender_action" = "Seleziona nuovo limite";
 
-"autoFilter_allUnknown_shortTitle" = "Tutti gli sconosciuti (esclusi i testi consentiti)";
+"autoFilter_allUnknown_shortTitle" = "Tutti gli sconosciuti (esclusa la Lista dei consentiti)";
 
 "autoFilter_links_shortTitle" = "Link";
 
@@ -258,7 +262,7 @@
 
 "autoFilter_smartFilters" = "Filtri intelligenti";
 
-"autoFilter_yourFilters" = "I tuoi filtri";
+"autoFilter_yourFilters" = "Le tue liste";
 
 "autoFilter_email_shortTitle" = "Email";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "Liste della community";
 
-"whatsNew_communityLists_desc" = "Iscriviti alle liste di filtri condivise da altre persone, o condividi la tua. Le liste si aggiornano da sole quando i loro autori pubblicano una nuova versione - le trovi in **I tuoi filtri**.";
+"whatsNew_communityLists_desc" = "Iscriviti alle liste di filtri condivise da altre persone, o condividi la tua. Le liste si aggiornano da sole quando i loro autori pubblicano una nuova versione - le trovi in **Le tue liste**.";
+
+"whatsNew_siriShortcuts_title" = "Siri e Comandi rapidi";
+
+"whatsNew_siriShortcuts_desc" = "Aggiungi, rimuovi e controlla i filtri con Siri: prova **“Aggiungi alla mia Lista di blocco in Simply Filter SMS”**. Tutte le azioni sono anche nell’app **Comandi rapidi**.";
 
 "communityLists_featured" = "In evidenza";
 
@@ -717,5 +725,105 @@
 "a11y_stayReachable_languageHint" = "Doppio tocco per cambiare o rimuovere questa lingua";
 
 "stayReachable_enteredTwice" = "%@ è inserito due volte.";
+
+"siri_addFilter_title" = "Aggiungi un filtro";
+
+"siri_addFilter_shortTitle" = "Aggiungi un filtro";
+
+"siri_addFilter_description" = "Aggiunge un testo alla tua Lista di blocco o Lista dei consentiti.";
+
+"siri_addFilter_list" = "Lista";
+
+"siri_addFilter_listPrompt" = "Quale lista?";
+
+"siri_addFilter_text" = "Testo";
+
+"siri_addFilter_textPrompt" = "Quale testo?";
+
+"siri_addFilter_summary_block ${text}" = "Blocca i messaggi con ${text}";
+
+"siri_addFilter_summary_allow ${text}" = "Consenti i messaggi con ${text}";
+
+"siri_addFilter_summary_unset ${text} ${list}" = "Aggiungi ${text} alla ${list}";
+
+"siri_addFilter_added_block" = "'%@' aggiunto alla tua Lista di blocco.";
+
+"siri_addFilter_added_allow" = "'%@' aggiunto alla tua Lista dei consentiti.";
+
+"siri_addFilter_duplicate" = "'%@' è già uno dei tuoi filtri.";
+
+"siri_addFilter_empty" = "Non c'è nessun testo da aggiungere.";
+
+"siri_addFilter_failed" = "Impossibile salvare il filtro. Riprova nell'app.";
+
+"siri_filterList_type" = "Lista filtri";
+
+"siri_checkMessage_title" = "Controlla un messaggio";
+
+"siri_checkMessage_shortTitle" = "Controlla un messaggio";
+
+"siri_checkMessage_description" = "Ti dice dove finirebbe un messaggio in base ai tuoi filtri.";
+
+"siri_checkMessage_message" = "Messaggio";
+
+"siri_checkMessage_messagePrompt" = "Cosa dice il messaggio?";
+
+"siri_checkMessage_sender" = "Mittente";
+
+"siri_checkMessage_summary ${message}" = "Controlla ${message}";
+
+"siri_checkMessage_folder" = "Questo messaggio finirebbe in %@.";
+
+"siri_checkMessage_inbox" = "Questo messaggio arriverebbe normalmente.";
+
+"siri_removeFilter_title" = "Rimuovi un filtro";
+
+"siri_removeFilter_shortTitle" = "Rimuovi un filtro";
+
+"siri_removeFilter_description" = "Rimuove un testo o una lingua dai tuoi filtri.";
+
+"siri_removeFilter_filter" = "Filtro";
+
+"siri_removeFilter_filterPrompt" = "Quale filtro?";
+
+"siri_removeFilter_summary ${filter}" = "Rimuovi ${filter}";
+
+"siri_removeFilter_confirm" = "Rimuovere '%@' da %@?";
+
+"siri_removeFilter_removed" = "'%@' rimosso.";
+
+"siri_removeFilter_notFound" = "Quel filtro non esiste più.";
+
+"siri_removeFilter_cancelled" = "Non è stato rimosso nulla.";
+
+"siri_filter_type" = "Filtro";
+
+"siri_blockLanguage_title" = "Blocca una lingua";
+
+"siri_blockLanguage_shortTitle" = "Blocca una lingua";
+
+"siri_blockLanguage_description" = "Sposta in Indesiderati i messaggi scritti in una lingua.";
+
+"siri_blockLanguage_language" = "Lingua";
+
+"siri_blockLanguage_languagePrompt" = "Quale lingua?";
+
+"siri_blockLanguage_summary ${language}" = "Blocca i messaggi in ${language}";
+
+"siri_blockLanguage_blocked" = "I messaggi in %@ andranno in Indesiderati.";
+
+"siri_blockLanguage_duplicate" = "Il %@ è già bloccato.";
+
+"siri_language_type" = "Lingua";
+
+"siri_updateLists_title" = "Aggiorna le liste dei filtri";
+
+"siri_updateLists_shortTitle" = "Aggiorna le liste dei filtri";
+
+"siri_updateLists_description" = "Scarica le ultime versioni del Filtraggio AI e delle liste della community.";
+
+"siri_updateLists_updated" = "Le tue liste dei filtri sono aggiornate.";
+
+"siri_updateLists_failed" = "Impossibile aggiornare le liste dei filtri. Controlla la connessione e riprova.";
 
 

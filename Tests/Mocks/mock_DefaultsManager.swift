@@ -162,6 +162,8 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var sessionNudgeLastShownSessions: [String: Int] = [:]
     var stayReachableToastSessions: [Int] = []
     var didOpenStayReachable = false
+    var didDismissAddFilterSiriTip = false
+    var didDismissHelpSiriTips = false
     var inactivityNotificationWasGranted = false
 
     var accentColorRGB: [String: Double] = kNoColorDict
