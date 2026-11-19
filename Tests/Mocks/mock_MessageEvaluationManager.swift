@@ -21,8 +21,17 @@ class mock_MessageEvaluationManager: MessageEvaluationManagerProtocol {
         return self.evaluateMessageClosure?(body, sender) ?? MessageEvaluationResult(action: .none)
     }
 
+    var evaluateMessageBodyCounter = 0
+    var evaluateMessageBodyClosure: ((String) -> (MessageEvaluationResult))?
+
+    func evaluateMessage(body: String) -> MessageEvaluationResult {
+        self.evaluateMessageBodyCounter += 1
+        return self.evaluateMessageBodyClosure?(body) ?? MessageEvaluationResult(action: .none)
+    }
+
     func resetCounters() {
         self.evaluateMessageCounter = 0
+        self.evaluateMessageBodyCounter = 0
     }
 
     //MARK: Helpers

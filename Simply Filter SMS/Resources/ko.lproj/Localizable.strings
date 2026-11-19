@@ -718,4 +718,108 @@
 
 "stayReachable_enteredTwice" = "'%@'이(가) 두 번 입력되었습니다.";
 
+"siri_addFilter_title" = "필터 추가";
+
+"siri_addFilter_shortTitle" = "필터 추가";
+
+"siri_addFilter_description" = "차단 목록이나 허용 목록에 텍스트를 추가해요.";
+
+"siri_addFilter_list" = "목록";
+
+"siri_addFilter_listPrompt" = "어떤 목록인가요?";
+
+"siri_addFilter_text" = "텍스트";
+
+"siri_addFilter_textPrompt" = "어떤 텍스트인가요?";
+
+"siri_addFilter_summary_block ${text}" = "${text} 포함 메시지 차단";
+
+"siri_addFilter_summary_allow ${text}" = "${text} 포함 메시지 허용";
+
+"siri_addFilter_summary_unset ${text} ${list}" = "${list}에 ${text} 추가";
+
+"siri_addFilter_added_block" = "'%@' 텍스트를 차단 목록에 추가했어요.";
+
+"siri_addFilter_added_allow" = "'%@' 텍스트를 허용 목록에 추가했어요.";
+
+"siri_addFilter_duplicate" = "'%@' 텍스트는 이미 필터에 있어요.";
+
+"siri_addFilter_empty" = "추가할 텍스트가 없어요.";
+
+"siri_addFilter_failed" = "필터를 저장하지 못했어요. 앱에서 다시 시도해 주세요.";
+
+"siri_filterList_type" = "필터 목록";
+
+"siri_filterList_block" = "차단 목록";
+
+"siri_filterList_allow" = "허용 목록";
+
+"siri_checkMessage_title" = "메시지 확인";
+
+"siri_checkMessage_shortTitle" = "메시지 확인";
+
+"siri_checkMessage_description" = "필터에 따라 메시지가 어디로 가는지 알려줘요.";
+
+"siri_checkMessage_message" = "메시지";
+
+"siri_checkMessage_messagePrompt" = "메시지 내용이 뭔가요?";
+
+"siri_checkMessage_sender" = "발신자";
+
+"siri_checkMessage_summary ${message}" = "${message} 확인";
+
+"siri_checkMessage_folder" = "이 메시지는 %@ 폴더로 이동해요.";
+
+"siri_checkMessage_inbox" = "이 메시지는 정상적으로 도착해요.";
+
+"siri_removeFilter_title" = "필터 삭제";
+
+"siri_removeFilter_shortTitle" = "필터 삭제";
+
+"siri_removeFilter_description" = "필터에서 텍스트나 언어를 삭제해요.";
+
+"siri_removeFilter_filter" = "필터";
+
+"siri_removeFilter_filterPrompt" = "어떤 필터인가요?";
+
+"siri_removeFilter_summary ${filter}" = "${filter} 삭제";
+
+"siri_removeFilter_confirm" = "%2$@에서 '%1$@' 필터를 삭제할까요?";
+
+"siri_removeFilter_removed" = "'%@' 필터를 삭제했어요.";
+
+"siri_removeFilter_notFound" = "그 필터는 이미 없어요.";
+
+"siri_removeFilter_cancelled" = "아무것도 삭제되지 않았어요.";
+
+"siri_filter_type" = "필터";
+
+"siri_blockLanguage_title" = "언어 차단";
+
+"siri_blockLanguage_shortTitle" = "언어 차단";
+
+"siri_blockLanguage_description" = "특정 언어로 된 메시지를 스팸 폴더로 보내요.";
+
+"siri_blockLanguage_language" = "언어";
+
+"siri_blockLanguage_languagePrompt" = "어떤 언어인가요?";
+
+"siri_blockLanguage_summary ${language}" = "${language} 메시지 차단";
+
+"siri_blockLanguage_blocked" = "%@ 메시지는 스팸 폴더로 이동해요.";
+
+"siri_blockLanguage_duplicate" = "이미 차단된 언어예요: %@";
+
+"siri_language_type" = "언어";
+
+"siri_updateLists_title" = "필터 목록 업데이트";
+
+"siri_updateLists_shortTitle" = "필터 목록 업데이트";
+
+"siri_updateLists_description" = "AI 필터링과 커뮤니티 목록의 최신 버전을 다운로드해요.";
+
+"siri_updateLists_updated" = "필터 목록이 최신 상태예요.";
+
+"siri_updateLists_failed" = "필터 목록을 업데이트하지 못했어요. 연결을 확인하고 다시 시도해 주세요.";
+
 

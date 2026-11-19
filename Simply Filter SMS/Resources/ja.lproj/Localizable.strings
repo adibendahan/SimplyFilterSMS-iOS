@@ -718,4 +718,108 @@
 
 "stayReachable_enteredTwice" = "「%@」が2回入力されています。";
 
+"siri_addFilter_title" = "フィルターを追加";
+
+"siri_addFilter_shortTitle" = "フィルターを追加";
+
+"siri_addFilter_description" = "ブロックリストまたは許可リストにテキストを追加します。";
+
+"siri_addFilter_list" = "リスト";
+
+"siri_addFilter_listPrompt" = "どのリストですか？";
+
+"siri_addFilter_text" = "テキスト";
+
+"siri_addFilter_textPrompt" = "どのテキストですか？";
+
+"siri_addFilter_summary_block ${text}" = "${text}を含むメッセージをブロック";
+
+"siri_addFilter_summary_allow ${text}" = "${text}を含むメッセージを許可";
+
+"siri_addFilter_summary_unset ${text} ${list}" = "${text}を${list}に追加";
+
+"siri_addFilter_added_block" = "「%@」をブロックリストに追加しました。";
+
+"siri_addFilter_added_allow" = "「%@」を許可リストに追加しました。";
+
+"siri_addFilter_duplicate" = "「%@」はすでにフィルターにあります。";
+
+"siri_addFilter_empty" = "追加するテキストがありません。";
+
+"siri_addFilter_failed" = "フィルターを保存できませんでした。アプリでもう一度お試しください。";
+
+"siri_filterList_type" = "フィルターリスト";
+
+"siri_filterList_block" = "ブロックリスト";
+
+"siri_filterList_allow" = "許可リスト";
+
+"siri_checkMessage_title" = "メッセージをチェック";
+
+"siri_checkMessage_shortTitle" = "メッセージをチェック";
+
+"siri_checkMessage_description" = "フィルターに基づいて、メッセージの振り分け先を確認します。";
+
+"siri_checkMessage_message" = "メッセージ";
+
+"siri_checkMessage_messagePrompt" = "メッセージの内容は何ですか？";
+
+"siri_checkMessage_sender" = "送信者";
+
+"siri_checkMessage_summary ${message}" = "${message}をチェック";
+
+"siri_checkMessage_folder" = "このメッセージは「%@」に振り分けられます。";
+
+"siri_checkMessage_inbox" = "このメッセージは通常どおり届きます。";
+
+"siri_removeFilter_title" = "フィルターを削除";
+
+"siri_removeFilter_shortTitle" = "フィルターを削除";
+
+"siri_removeFilter_description" = "フィルターからテキストまたは言語を削除します。";
+
+"siri_removeFilter_filter" = "フィルター";
+
+"siri_removeFilter_filterPrompt" = "どのフィルターですか？";
+
+"siri_removeFilter_summary ${filter}" = "${filter}を削除";
+
+"siri_removeFilter_confirm" = "「%1$@」を%2$@から削除しますか？";
+
+"siri_removeFilter_removed" = "「%@」を削除しました。";
+
+"siri_removeFilter_notFound" = "そのフィルターはもうありません。";
+
+"siri_removeFilter_cancelled" = "何も削除されませんでした。";
+
+"siri_filter_type" = "フィルター";
+
+"siri_blockLanguage_title" = "言語をブロック";
+
+"siri_blockLanguage_shortTitle" = "言語をブロック";
+
+"siri_blockLanguage_description" = "特定の言語で書かれたメッセージを迷惑メールに振り分けます。";
+
+"siri_blockLanguage_language" = "言語";
+
+"siri_blockLanguage_languagePrompt" = "どの言語ですか？";
+
+"siri_blockLanguage_summary ${language}" = "${language}のメッセージをブロック";
+
+"siri_blockLanguage_blocked" = "%@のメッセージは迷惑メールに振り分けられます。";
+
+"siri_blockLanguage_duplicate" = "%@はすでにブロックされています。";
+
+"siri_language_type" = "言語";
+
+"siri_updateLists_title" = "フィルターリストを更新";
+
+"siri_updateLists_shortTitle" = "フィルターリストを更新";
+
+"siri_updateLists_description" = "AIフィルタリングとコミュニティリストの最新版をダウンロードします。";
+
+"siri_updateLists_updated" = "フィルターリストは最新です。";
+
+"siri_updateLists_failed" = "フィルターリストを更新できませんでした。接続を確認して、もう一度お試しください。";
+
 

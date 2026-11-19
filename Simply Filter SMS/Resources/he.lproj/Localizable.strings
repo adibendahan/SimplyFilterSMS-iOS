@@ -718,4 +718,108 @@
 
 "a11y_stayReachable_languageHint" = "הקשה כפולה לשינוי או להסרה של השפה";
 
+"siri_addFilter_title" = "הוספת פילטר";
+
+"siri_addFilter_shortTitle" = "הוספת פילטר";
+
+"siri_addFilter_description" = "הוספת טקסט לרשימת החסומים או לרשימת המאושרים.";
+
+"siri_addFilter_list" = "רשימה";
+
+"siri_addFilter_listPrompt" = "לאיזו רשימה?";
+
+"siri_addFilter_text" = "טקסט";
+
+"siri_addFilter_textPrompt" = "איזה טקסט?";
+
+"siri_addFilter_summary_block ${text}" = "לחסום הודעות עם ${text}";
+
+"siri_addFilter_summary_allow ${text}" = "לאפשר הודעות עם ${text}";
+
+"siri_addFilter_summary_unset ${text} ${list}" = "הוספת ${text} ל${list}";
+
+"siri_addFilter_added_block" = "'%@' נוסף לרשימת החסומים.";
+
+"siri_addFilter_added_allow" = "'%@' נוסף לרשימת המאושרים.";
+
+"siri_addFilter_duplicate" = "'%@' כבר נמצא בפילטרים שלך.";
+
+"siri_addFilter_empty" = "אין טקסט להוספה.";
+
+"siri_addFilter_failed" = "הפילטר לא נשמר. נסו שוב באפליקציה.";
+
+"siri_filterList_type" = "רשימת פילטרים";
+
+"siri_filterList_block" = "רשימת החסומים";
+
+"siri_filterList_allow" = "רשימת המאושרים";
+
+"siri_checkMessage_title" = "בדיקת הודעה";
+
+"siri_checkMessage_shortTitle" = "בדיקת הודעה";
+
+"siri_checkMessage_description" = "בדיקה לאן הודעה תגיע לפי הפילטרים שלך.";
+
+"siri_checkMessage_message" = "הודעה";
+
+"siri_checkMessage_messagePrompt" = "מה כתוב בהודעה?";
+
+"siri_checkMessage_sender" = "שולח";
+
+"siri_checkMessage_summary ${message}" = "בדיקת ${message}";
+
+"siri_checkMessage_folder" = "ההודעה הזאת תגיע לתיקיית %@.";
+
+"siri_checkMessage_inbox" = "ההודעה הזאת לא תסונן.";
+
+"siri_removeFilter_title" = "הסרת פילטר";
+
+"siri_removeFilter_shortTitle" = "הסרת פילטר";
+
+"siri_removeFilter_description" = "הסרת טקסט או שפה מהפילטרים שלך.";
+
+"siri_removeFilter_filter" = "פילטר";
+
+"siri_removeFilter_filterPrompt" = "איזה פילטר?";
+
+"siri_removeFilter_summary ${filter}" = "הסרת ${filter}";
+
+"siri_removeFilter_confirm" = "להסיר את '%@' מ%@?";
+
+"siri_removeFilter_removed" = "'%@' הוסר.";
+
+"siri_removeFilter_notFound" = "הפילטר הזה כבר לא קיים.";
+
+"siri_removeFilter_cancelled" = "שום דבר לא הוסר.";
+
+"siri_filter_type" = "פילטר";
+
+"siri_blockLanguage_title" = "חסימת שפה";
+
+"siri_blockLanguage_shortTitle" = "חסימת שפה";
+
+"siri_blockLanguage_description" = "העברת הודעות בשפה מסוימת לתיקיית זבל.";
+
+"siri_blockLanguage_language" = "שפה";
+
+"siri_blockLanguage_languagePrompt" = "איזו שפה?";
+
+"siri_blockLanguage_summary ${language}" = "לחסום הודעות ב${language}";
+
+"siri_blockLanguage_blocked" = "הודעות ב%@ יעברו לתיקיית זבל.";
+
+"siri_blockLanguage_duplicate" = "%@ כבר חסומה.";
+
+"siri_language_type" = "שפה";
+
+"siri_updateLists_title" = "עדכון רשימות הסינון";
+
+"siri_updateLists_shortTitle" = "עדכון רשימות הסינון";
+
+"siri_updateLists_description" = "הורדת הגרסה העדכנית של סינון AI ורשימות קהילה.";
+
+"siri_updateLists_updated" = "רשימות הסינון מעודכנות.";
+
+"siri_updateLists_failed" = "רשימות הסינון לא עודכנו. כדאי לבדוק את החיבור ולנסות שוב.";
+
 

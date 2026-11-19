@@ -718,4 +718,108 @@
 
 "stayReachable_enteredTwice" = "%@ est saisi deux fois.";
 
+"siri_addFilter_title" = "Ajouter un filtre";
+
+"siri_addFilter_shortTitle" = "Ajouter un filtre";
+
+"siri_addFilter_description" = "Ajoute un texte à ta liste de blocage ou d’autorisation.";
+
+"siri_addFilter_list" = "Liste";
+
+"siri_addFilter_listPrompt" = "Quelle liste ?";
+
+"siri_addFilter_text" = "Texte";
+
+"siri_addFilter_textPrompt" = "Quel texte ?";
+
+"siri_addFilter_summary_block ${text}" = "Bloquer les messages avec ${text}";
+
+"siri_addFilter_summary_allow ${text}" = "Autoriser les messages avec ${text}";
+
+"siri_addFilter_summary_unset ${text} ${list}" = "Ajouter ${text} à ${list}";
+
+"siri_addFilter_added_block" = "« %@ » a été ajouté à ta liste de blocage.";
+
+"siri_addFilter_added_allow" = "« %@ » a été ajouté à ta liste d’autorisation.";
+
+"siri_addFilter_duplicate" = "« %@ » fait déjà partie de tes filtres.";
+
+"siri_addFilter_empty" = "Il n’y a aucun texte à ajouter.";
+
+"siri_addFilter_failed" = "Impossible d’enregistrer le filtre. Réessaie dans l’app.";
+
+"siri_filterList_type" = "Liste de filtres";
+
+"siri_filterList_block" = "Liste de blocage";
+
+"siri_filterList_allow" = "Liste d’autorisation";
+
+"siri_checkMessage_title" = "Vérifier un message";
+
+"siri_checkMessage_shortTitle" = "Vérifier un message";
+
+"siri_checkMessage_description" = "Indique où un message arriverait selon tes filtres.";
+
+"siri_checkMessage_message" = "Message";
+
+"siri_checkMessage_messagePrompt" = "Que dit le message ?";
+
+"siri_checkMessage_sender" = "Expéditeur";
+
+"siri_checkMessage_summary ${message}" = "Vérifier ${message}";
+
+"siri_checkMessage_folder" = "Ce message irait dans %@.";
+
+"siri_checkMessage_inbox" = "Ce message arriverait normalement.";
+
+"siri_removeFilter_title" = "Supprimer un filtre";
+
+"siri_removeFilter_shortTitle" = "Supprimer un filtre";
+
+"siri_removeFilter_description" = "Supprime un texte ou une langue de tes filtres.";
+
+"siri_removeFilter_filter" = "Filtre";
+
+"siri_removeFilter_filterPrompt" = "Quel filtre ?";
+
+"siri_removeFilter_summary ${filter}" = "Supprimer ${filter}";
+
+"siri_removeFilter_confirm" = "Supprimer « %@ » de %@ ?";
+
+"siri_removeFilter_removed" = "« %@ » a été supprimé.";
+
+"siri_removeFilter_notFound" = "Ce filtre n’existe plus.";
+
+"siri_removeFilter_cancelled" = "Rien n’a été supprimé.";
+
+"siri_filter_type" = "Filtre";
+
+"siri_blockLanguage_title" = "Bloquer une langue";
+
+"siri_blockLanguage_shortTitle" = "Bloquer une langue";
+
+"siri_blockLanguage_description" = "Envoie dans Indésirables les messages écrits dans une langue.";
+
+"siri_blockLanguage_language" = "Langue";
+
+"siri_blockLanguage_languagePrompt" = "Quelle langue ?";
+
+"siri_blockLanguage_summary ${language}" = "Bloquer les messages en ${language}";
+
+"siri_blockLanguage_blocked" = "Les messages en %@ iront dans Indésirables.";
+
+"siri_blockLanguage_duplicate" = "Le %@ est déjà bloqué.";
+
+"siri_language_type" = "Langue";
+
+"siri_updateLists_title" = "Mettre à jour les listes de filtres";
+
+"siri_updateLists_shortTitle" = "Mettre à jour les listes de filtres";
+
+"siri_updateLists_description" = "Télécharge les dernières versions du Filtrage AI et des listes communautaires.";
+
+"siri_updateLists_updated" = "Tes listes de filtres sont à jour.";
+
+"siri_updateLists_failed" = "Impossible de mettre à jour tes listes de filtres. Vérifie ta connexion et réessaie.";
+
 

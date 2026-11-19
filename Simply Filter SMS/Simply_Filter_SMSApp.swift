@@ -16,6 +16,7 @@ struct Simply_Filter_SMSApp: App {
 
     init() {
         UIScrollView.appearance().delaysContentTouches = false
+        SimplyFilterSMSShortcuts.updateAppShortcutParameters()
     }
 
     var body: some Scene {

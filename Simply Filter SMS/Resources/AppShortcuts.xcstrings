@@ -1,0 +1,537 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Add to my ${list} in ${applicationName}": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "إضافة إلى ${list} في ${applicationName}",
+              "إضافة مرشّح إلى ${list} في ${applicationName}",
+              "إضافة مرشّح في ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Zu meiner ${list} in ${applicationName} hinzufügen",
+              "Filter zu meiner ${list} in ${applicationName} hinzufügen",
+              "Filter in ${applicationName} hinzufügen"
+            ]
+          }
+        },
+        "en": {
+          "stringSet": {
+            "state": "new",
+            "values": [
+              "Add to my ${list} in ${applicationName}",
+              "Add a filter to my ${list} in ${applicationName}",
+              "Add a filter in ${applicationName}"
+            ]
+          }
+        },
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Añadir a mi ${list} en ${applicationName}",
+              "Añadir un filtro a mi ${list} en ${applicationName}",
+              "Añadir un filtro en ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Ajouter à ma ${list} dans ${applicationName}",
+              "Ajouter un filtre à ma ${list} dans ${applicationName}",
+              "Ajouter un filtre dans ${applicationName}"
+            ]
+          }
+        },
+        "he": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "הוספה ל${list} ב-${applicationName}",
+              "הוספת פילטר ל${list} ב-${applicationName}",
+              "הוספת פילטר ב-${applicationName}"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Aggiungi alla mia ${list} in ${applicationName}",
+              "Aggiungi un filtro alla mia ${list} in ${applicationName}",
+              "Aggiungi un filtro in ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}で${list}に追加",
+              "${applicationName}で${list}にフィルターを追加",
+              "${applicationName}でフィルターを追加"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}에서 ${list}에 추가",
+              "${applicationName}에서 ${list}에 필터 추가",
+              "${applicationName}에서 필터 추가"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Adicionar à minha ${list} no ${applicationName}",
+              "Adicionar um filtro à minha ${list} no ${applicationName}",
+              "Adicionar um filtro no ${applicationName}"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "在${applicationName}中添加到${list}",
+              "在${applicationName}中将过滤器添加到${list}",
+              "在${applicationName}中添加过滤器"
+            ]
+          }
+        }
+      }
+    },
+    "Remove a filter in ${applicationName}": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "إزالة مرشّح في ${applicationName}",
+              "حذف مرشّح في ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Filter in ${applicationName} entfernen",
+              "Filter in ${applicationName} löschen"
+            ]
+          }
+        },
+        "en": {
+          "stringSet": {
+            "state": "new",
+            "values": [
+              "Remove a filter in ${applicationName}",
+              "Delete a filter in ${applicationName}"
+            ]
+          }
+        },
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Eliminar un filtro en ${applicationName}",
+              "Borrar un filtro en ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Supprimer un filtre dans ${applicationName}",
+              "Effacer un filtre dans ${applicationName}"
+            ]
+          }
+        },
+        "he": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "הסרת פילטר ב-${applicationName}",
+              "מחיקת פילטר ב-${applicationName}"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Rimuovi un filtro in ${applicationName}",
+              "Elimina un filtro in ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}でフィルターを削除",
+              "${applicationName}でフィルターを消去"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}에서 필터 삭제",
+              "${applicationName}에서 필터 지우기"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Remover um filtro no ${applicationName}",
+              "Apagar um filtro no ${applicationName}"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "在${applicationName}中移除过滤器",
+              "在${applicationName}中删除过滤器"
+            ]
+          }
+        }
+      }
+    },
+    "Check a message in ${applicationName}": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "فحص رسالة في ${applicationName}",
+              "اختبار رسالة في ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Nachricht in ${applicationName} prüfen",
+              "Nachricht in ${applicationName} testen"
+            ]
+          }
+        },
+        "en": {
+          "stringSet": {
+            "state": "new",
+            "values": [
+              "Check a message in ${applicationName}",
+              "Test a message in ${applicationName}"
+            ]
+          }
+        },
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Comprobar un mensaje en ${applicationName}",
+              "Probar un mensaje en ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Vérifier un message dans ${applicationName}",
+              "Tester un message dans ${applicationName}"
+            ]
+          }
+        },
+        "he": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "בדיקת הודעה ב-${applicationName}",
+              "בחינת הודעה ב-${applicationName}"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Controlla un messaggio in ${applicationName}",
+              "Prova un messaggio in ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}でメッセージをチェック",
+              "${applicationName}でメッセージをテスト"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}에서 메시지 확인",
+              "${applicationName}에서 메시지 테스트"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Verificar uma mensagem no ${applicationName}",
+              "Testar uma mensagem no ${applicationName}"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "在${applicationName}中检查信息",
+              "在${applicationName}中测试信息"
+            ]
+          }
+        }
+      }
+    },
+    "Block ${language} texts in ${applicationName}": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "حظر الرسائل باللغة ${language} في ${applicationName}",
+              "حظر لغة في ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Nachrichten auf ${language} in ${applicationName} sperren",
+              "Sprache in ${applicationName} sperren"
+            ]
+          }
+        },
+        "en": {
+          "stringSet": {
+            "state": "new",
+            "values": [
+              "Block ${language} texts in ${applicationName}",
+              "Block a language in ${applicationName}"
+            ]
+          }
+        },
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Bloquear mensajes en ${language} en ${applicationName}",
+              "Bloquear un idioma en ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Bloquer les messages en ${language} dans ${applicationName}",
+              "Bloquer une langue dans ${applicationName}"
+            ]
+          }
+        },
+        "he": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "חסימת הודעות ב${language} ב-${applicationName}",
+              "חסימת שפה ב-${applicationName}"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Blocca i messaggi in ${language} in ${applicationName}",
+              "Blocca una lingua in ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}で${language}のメッセージをブロック",
+              "${applicationName}で言語をブロック"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}에서 ${language} 메시지 차단",
+              "${applicationName}에서 언어 차단"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Bloquear mensagens em ${language} no ${applicationName}",
+              "Bloquear um idioma no ${applicationName}"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "在${applicationName}中屏蔽${language}信息",
+              "在${applicationName}中屏蔽语言"
+            ]
+          }
+        }
+      }
+    },
+    "Update my filter lists in ${applicationName}": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "تحديث قوائم التصفية في ${applicationName}",
+              "إنعاش قوائم التصفية في ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Filterlisten in ${applicationName} aktualisieren",
+              "Filterlisten in ${applicationName} neu laden"
+            ]
+          }
+        },
+        "en": {
+          "stringSet": {
+            "state": "new",
+            "values": [
+              "Update my filter lists in ${applicationName}",
+              "Refresh my filter lists in ${applicationName}"
+            ]
+          }
+        },
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Actualizar mis listas de filtros en ${applicationName}",
+              "Refrescar mis listas de filtros en ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Mettre à jour mes listes de filtres dans ${applicationName}",
+              "Actualiser mes listes de filtres dans ${applicationName}"
+            ]
+          }
+        },
+        "he": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "עדכון רשימות הסינון ב-${applicationName}",
+              "רענון רשימות הסינון ב-${applicationName}"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Aggiorna le mie liste dei filtri in ${applicationName}",
+              "Ricarica le mie liste dei filtri in ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}でフィルターリストを更新",
+              "${applicationName}でフィルターリストを再読み込み"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}에서 필터 목록 업데이트",
+              "${applicationName}에서 필터 목록 새로고침"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Atualizar minhas listas de filtros no ${applicationName}",
+              "Recarregar minhas listas de filtros no ${applicationName}"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "在${applicationName}中更新过滤列表",
+              "在${applicationName}中刷新过滤列表"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

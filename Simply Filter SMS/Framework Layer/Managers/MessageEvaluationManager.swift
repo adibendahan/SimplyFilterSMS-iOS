@@ -56,6 +56,12 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
         }
     }
 
+    func evaluateMessage(body: String) -> MessageEvaluationResult {
+        let sender = self.bodyOnlySender()
+        Log.debug("evaluating body only, stand-in sender: \(sender)")
+        return self.evaluateMessage(body: body, sender: sender)
+    }
+
     private func evaluateRules(body: String, sender: String) -> MessageEvaluationResult {
         Log.debug("evaluating, sender: \(sender), body: \(body)")
         var result = MessageEvaluationResult(action: .none)
@@ -132,6 +138,12 @@ class MessageEvaluationManager: MessageEvaluationManagerProtocol {
     }
 
     private let contextSource: ContextSource
+
+    private func bodyOnlySender() -> String {
+        let candidates = (0...9).map { String(repeating: String($0), count: 12) }
+        let unmatchedSender = candidates.first(where: { self.evaluateMessage(body: "", sender: $0).action == .allow })
+        return unmatchedSender ?? candidates[0]
+    }
 
     private func runAllUnknownRule() -> MessageEvaluationResult {
         let ruleRequest: NSFetchRequest<AutomaticFiltersRule> = AutomaticFiltersRule.fetchRequest()
