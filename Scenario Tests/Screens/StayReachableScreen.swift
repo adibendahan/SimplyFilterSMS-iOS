@@ -83,8 +83,15 @@ struct StayReachableSheet: Screen {
     }
 
     private var sections: [Language] {
-        let otherLanguages = self.phoneLanguages.filter { $0 != .english }
-        return [.english] + otherLanguages
+        let appLanguage = self.phoneLanguages.first ?? .english
+        let otherLanguages = self.phoneLanguages.filter { $0 != appLanguage && $0 != .english }
+        let sections: [Language]
+        if appLanguage == .english {
+            sections = [.english] + otherLanguages
+        } else {
+            sections = [appLanguage, .english] + otherLanguages
+        }
+        return sections
     }
 
     func expectOpen(file: StaticString = #filePath, line: UInt = #line) {

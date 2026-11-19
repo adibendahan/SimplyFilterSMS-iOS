@@ -36,7 +36,7 @@ Picks the countries allowed by the "country allowlist" rule, as a sheet from tha
 ## StayReachableView
 Adds allow filters for the person's name and street in English and other languages, as a sheet from the Stay Reachable toast or Home's Add Filter menu.
 - Opening it, from either place, stops the toast for good (`didOpenStayReachable`). The toast shows at most twice, in different sessions, after a filter is added or a list or Smart Filter turned on.
-- Each section is one language. English is fixed; the others' headers are their language pickers.
+- Each section is one language. The app's language is fixed and first; the others' headers are their language pickers. The second is English, or in English the first other phone language.
 - "Already allowed" is Add Filter's duplicate rule: a block or allow filter with the same text, exact matching, case-insensitive, all targets. The texts are read once when the sheet opens; nothing can add a filter while it's up.
 - A section is drawn in its own language and direction when the app has its texts: the app's languages from their `.strings`, about 35 more from `StayReachableLocalizations.json`. That file is plain JSON on purpose: an `.lproj` for a language tells iOS the whole app is translated into it. A language that later gets a full app translation takes its `.strings` first. The text fields stay in the phone's direction: under an overridden direction their alignment landed on the wrong side, so it's computed against the phone's.
 - Its buttons hide the keyboard before dismissing. Home presents it over a pushed list; dismissed with the keyboard up, that list's Back froze in a layout loop.

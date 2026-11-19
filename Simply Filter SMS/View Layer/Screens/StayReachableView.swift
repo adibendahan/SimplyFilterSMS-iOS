@@ -146,7 +146,7 @@ struct StayReachableView: View {
 
     @ViewBuilder
     private func sectionHeader(for section: LanguageSection) -> some View {
-        if section.language == .english {
+        if section.language == self.model.appLanguage {
             Text(self.model.title(for: section))
         } else {
             Menu {
@@ -319,6 +319,7 @@ extension StayReachableView {
 
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var sections: [LanguageSection]
+        let appLanguage: Locale.LanguageCode
         let phoneLanguages: [Locale.LanguageCode]
         let otherLanguages: [Locale.LanguageCode]
         private var allowedTexts: Set<String> = []
@@ -339,14 +340,23 @@ extension StayReachableView {
             return localizations
         }()
 
-        override init(appManager: AppManagerProtocol = AppManager.shared) {
-            let phoneLanguages = Locale.LanguageCode.phoneLanguages.filter { $0 != .english }
-            let otherLanguages = Locale.LanguageCode.namedLanguages.filter { $0 != .english && !phoneLanguages.contains($0) }
-            var sections = [LanguageSection(language: .english)]
-            if let firstPhoneLanguage = phoneLanguages.first {
-                sections.append(LanguageSection(language: firstPhoneLanguage))
+        init(appManager: AppManagerProtocol = AppManager.shared,
+             appLanguage: Locale.LanguageCode = .appLanguage,
+             phoneLanguages allPhoneLanguages: [Locale.LanguageCode] = Locale.LanguageCode.phoneLanguages) {
+            let phoneLanguages = allPhoneLanguages.filter { $0 != appLanguage }
+            let otherLanguages = Locale.LanguageCode.namedLanguages.filter { $0 != appLanguage && !phoneLanguages.contains($0) }
+            let secondLanguage: Locale.LanguageCode?
+            if appLanguage == .english {
+                secondLanguage = phoneLanguages.first
+            } else {
+                secondLanguage = .english
+            }
+            var sections = [LanguageSection(language: appLanguage)]
+            if let secondLanguage {
+                sections.append(LanguageSection(language: secondLanguage))
             }
 
+            self.appLanguage = appLanguage
             self.phoneLanguages = phoneLanguages
             self.otherLanguages = otherLanguages
             self.sections = sections
@@ -355,7 +365,7 @@ extension StayReachableView {
             self.allowedTexts = appManager.persistenceManager.filterTexts(filterTarget: .all,
                                                                           filterMatching: .exact,
                                                                           filterCase: .caseInsensitive)
-            Log.debug("opened, phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), allowedTexts: \(self.allowedTexts.count)")
+            Log.debug("opened, appLanguage: \(appLanguage.identifier), phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), allowedTexts: \(self.allowedTexts.count)")
         }
 
         var newFilterTexts: [String] {

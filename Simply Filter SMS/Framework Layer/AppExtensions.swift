@@ -295,6 +295,11 @@ extension Locale.LanguageCode {
         return Bundle.main.localizations.first { Locale(identifier: $0).language.languageCode == self }
     }
 
+    static var appLanguage: Locale.LanguageCode {
+        let localization = Bundle.main.preferredLocalizations.first ?? Locale.LanguageCode.english.identifier
+        return Locale(identifier: localization).language.languageCode ?? .english
+    }
+
     static var phoneLanguages: [Locale.LanguageCode] {
         return Self.languages(in: Locale.preferredLanguages)
     }

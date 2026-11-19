@@ -32,11 +32,53 @@ class StayReachableViewModelTests: XCTestCase {
     }
 
     //MARK: Tests
-    func test_init_startsWithEnglish() {
+    func test_init_inEnglish_startsWithEnglishThenTheFirstOtherPhoneLanguage() {
+        // Prepare
+        let hebrew = Locale.LanguageCode("he")
+        let french = Locale.LanguageCode("fr")
+
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english, hebrew, french])
+
         // Verify
-        XCTAssertEqual(self.testSubject.sections.first?.language, .english)
-        XCTAssertFalse(self.testSubject.phoneLanguages.contains(.english))
+        XCTAssertEqual(self.testSubject.sections.map(\.language), [.english, hebrew])
+        XCTAssertEqual(self.testSubject.appLanguage, .english)
+        XCTAssertEqual(self.testSubject.phoneLanguages, [hebrew, french])
         XCTAssertFalse(self.testSubject.otherLanguages.contains(.english))
+        XCTAssertFalse(self.testSubject.otherLanguages.contains(hebrew))
+        XCTAssertFalse(self.testSubject.otherLanguages.contains(french))
+    }
+
+    func test_init_inEnglishWithNoOtherPhoneLanguage_startsWithEnglishOnly() {
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english])
+
+        // Verify
+        XCTAssertEqual(self.testSubject.sections.map(\.language), [.english])
+        XCTAssertTrue(self.testSubject.phoneLanguages.isEmpty)
+    }
+
+    func test_init_inAnotherAppLanguage_startsWithItThenEnglish() {
+        // Prepare
+        let hebrew = Locale.LanguageCode("he")
+        let arabic = Locale.LanguageCode("ar")
+
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: hebrew,
+                                                       phoneLanguages: [hebrew, arabic])
+
+        // Verify
+        XCTAssertEqual(self.testSubject.sections.map(\.language), [hebrew, .english])
+        XCTAssertEqual(self.testSubject.appLanguage, hebrew)
+        XCTAssertEqual(self.testSubject.phoneLanguages, [arabic])
+        XCTAssertTrue(self.testSubject.otherLanguages.contains(.english))
+        XCTAssertFalse(self.testSubject.otherLanguages.contains(hebrew))
+        XCTAssertFalse(self.testSubject.otherLanguages.contains(arabic))
     }
 
     func test_newFilterTexts_skipsBlankRepeatedAndAllowed() {
