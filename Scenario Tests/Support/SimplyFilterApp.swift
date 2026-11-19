@@ -42,6 +42,14 @@ final class SimplyFilterApp {
     }
 
     func expect(_ message: Message, toBe verdict: Verdict, file: StaticString = #filePath, line: UInt = #line) {
-        self.filterTester.expect(message, toBe: verdict, file: file, line: line)
+        self.testYourFilters { tester in
+            tester.expect(message, toBe: verdict, file: file, line: line)
+        }
+    }
+
+    func testYourFilters(_ checks: (FilterTesterScreen) -> Void) {
+        self.filterTester.open()
+        checks(self.filterTester)
+        self.filterTester.close()
     }
 }

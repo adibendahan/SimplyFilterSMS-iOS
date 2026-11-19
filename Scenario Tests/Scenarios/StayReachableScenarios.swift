@@ -29,11 +29,13 @@ final class StayReachableScenarios: ScenarioTestCase {
         sheet.add()
 
         app.home.turnOn(.allUnknownSenders)
-        app.expect(hebrewName, toBe: .allowed)
-        app.expect(surname, toBe: .allowed)
-        app.expect(street, toBe: .allowed)
-        app.expect(longerWord, toBe: .junk)
-        app.expect(noName, toBe: .junk)
+        app.testYourFilters { tester in
+            tester.expect(hebrewName, toBe: .allowed)
+            tester.expect(surname, toBe: .allowed)
+            tester.expect(street, toBe: .allowed)
+            tester.expect(longerWord, toBe: .junk)
+            tester.expect(noName, toBe: .junk)
+        }
 
         let reopenedSheet = app.stayReachable.openFromMenu()
         reopenedSheet.fill(.english, surname: "LEVI")

@@ -60,6 +60,19 @@ extension Screen {
         field.typeText(text)
     }
 
+    func clear(_ field: XCUIElement) {
+        for edge in [CGFloat(0.99), CGFloat(0.01)] {
+            let text = field.value as? String ?? ""
+            guard !text.isEmpty else { break }
+            field.coordinate(withNormalizedOffset: CGVector(dx: edge, dy: 0.9)).tap()
+            XCTAssertTrue(self.waitForKeyboardFocus(on: field), "\(field) did not take the keyboard")
+            let deletes = String(repeating: XCUIKeyboardKey.delete.rawValue, count: text.count)
+            field.typeText(deletes)
+        }
+        let remaining = field.value as? String ?? ""
+        XCTAssertTrue(remaining.isEmpty, "\(field) still reads \"\(remaining)\" after clearing")
+    }
+
 
     //MARK: - Private -
     private func openFilterToolsMenu() {
