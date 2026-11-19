@@ -20,10 +20,12 @@ final class SimplyFilterApp {
     let aiFiltering: AIFilteringScreen
     let communityLists: CommunityListsScreen
     let filterTransfer: FilterTransferScreen
+    let stayReachable: StayReachableScreen
     private let filterTester: FilterTesterScreen
 
-    init(remoteLists: RemoteLists) {
-        var arguments = ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+    init(remoteLists: RemoteLists, phoneLanguages: [Language]) {
+        let languageCodes = phoneLanguages.map(\.rawValue).joined(separator: ", ")
+        var arguments = ["-AppleLanguages", "(\(languageCodes))", "-AppleLocale", "en_US"]
         if remoteLists == .testCatalog {
             arguments.append("-UITestData")
         }
@@ -35,6 +37,7 @@ final class SimplyFilterApp {
         self.aiFiltering = AIFilteringScreen(app: app)
         self.communityLists = CommunityListsScreen(app: app)
         self.filterTransfer = FilterTransferScreen(app: app)
+        self.stayReachable = StayReachableScreen(app: app, phoneLanguages: phoneLanguages)
         self.filterTester = FilterTesterScreen(app: app)
     }
 

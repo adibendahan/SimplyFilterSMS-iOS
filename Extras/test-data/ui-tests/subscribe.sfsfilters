@@ -1,6 +1,6 @@
 {
   "appVersion": "4.0.0",
-  "author": "Simply Filter SMS UI Tests",
+  "author": "Simply Filter UI Tests",
   "description": "Blocks parking fine and toll overdue scams, allows CityHall.",
   "exportedAt": "2026-11-15T00:00:00Z",
   "filters": [

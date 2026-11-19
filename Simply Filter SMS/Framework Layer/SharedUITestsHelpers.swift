@@ -93,4 +93,11 @@ enum TestIdentifier: String {
     case filterListLanguageToggle = "filterListLanguageToggle"
     case communityListExpandButton = "communityListExpandButton"
     case communityListToggle = "communityListToggle"
+    case addFilterMenuButton = "addFilterMenuButton"
+    case toast = "toast"
+    case stayReachableFirstNameField = "stayReachableFirstNameField"
+    case stayReachableSurnameField = "stayReachableSurnameField"
+    case stayReachableStreetField = "stayReachableStreetField"
+    case stayReachableAddButton = "stayReachableAddButton"
+    case stayReachableSkippedNote = "stayReachableSkippedNote"
 }

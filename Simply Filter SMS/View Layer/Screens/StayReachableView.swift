@@ -54,6 +54,7 @@ struct StayReachableView: View {
                             Text(skippedNote)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: .infinity)
+                                .accessibilityIdentifier(TestIdentifier.stayReachableSkippedNote.rawValue)
                         }
                     }
                     .environment(\.layoutDirection, self.model.layoutDirection(for: section) ?? self.layoutDirection)
@@ -77,6 +78,7 @@ struct StayReachableView: View {
                 }
                 .buttonStyle(FilledButton())
                 .disabled(self.model.newFilterTexts.isEmpty)
+                .accessibilityIdentifier(TestIdentifier.stayReachableAddButton.rawValue)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(Color(.systemGroupedBackground).ignoresSafeArea())
@@ -229,6 +231,7 @@ struct StayReachableView: View {
 
             TextField(title, text: text, prompt: Text(prompt))
                 .focused($focusedField, equals: focus)
+                .accessibilityIdentifier(field.testIdentifier.rawValue)
                 .textContentType(field.contentType)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -271,7 +274,7 @@ extension StayReachableView {
         }
     }
 
-    enum Field: CaseIterable {
+    enum Field: CaseIterable, TestIdentifiable {
         case firstName, surname, street
 
         var keyPath: WritableKeyPath<LanguageSection, String> {
@@ -302,6 +305,14 @@ extension StayReachableView {
             case .firstName: return .givenName
             case .surname: return .familyName
             case .street: return nil
+            }
+        }
+
+        var testIdentifier: TestIdentifier {
+            switch self {
+            case .firstName: return .stayReachableFirstNameField
+            case .surname: return .stayReachableSurnameField
+            case .street: return .stayReachableStreetField
             }
         }
     }

@@ -9,6 +9,8 @@ aws s3 cp Extras/test-data/ui-tests/catalog.json s3://grizz-apps-dev/simply-filt
 
 A test's expectation traces to one record here; change a record and its test together.
 
+Names stay within 28 and authors within 25 (`CommunityListItem.maxNameWidth` / `maxAuthorWidth`, counted by `String.listTextWidth`), or Subscribe from URL refuses the list.
+
 | File | Record | Expected in the Filter Tester |
 |---|---|---|
 | `ai-en.sfsfilters` | deny, body contains `winner prize`, junk | English on: Junk |

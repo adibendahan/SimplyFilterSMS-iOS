@@ -521,6 +521,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             } label: {
                 Label("menu_addFilter"~, systemImage: "plus.message")
             }
+            .accessibilityIdentifier(TestIdentifier.addFilterMenuButton.rawValue)
 
             Menu {
                 Button {
