@@ -51,7 +51,7 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
     
     var addFilterClosure: ((String, FilterType, MessageFolder, FilterTarget, FilterMatching, FilterCase) -> ())?
     var isDuplicateFilterClosure: ((String, FilterTarget, FilterMatching, FilterCase) -> (Bool))?
-    var filterTextsClosure: ((FilterTarget, FilterMatching, FilterCase) -> (Set<String>))?
+    var filterTextsClosure: ((FilterTarget, FilterMatching) -> (Set<String>))?
     var blockableLanguagesClosure: (() -> ([NLLanguage]))?
     var isDuplicateFilterLanguageClosure: ((NLLanguage) -> (Bool))?
     var deleteFiltersOffsetsClosure: ((IndexSet, [Filter]) -> ())?
@@ -118,11 +118,10 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
     }
 
     func filterTexts(filterTarget: FilterTarget,
-                     filterMatching: FilterMatching,
-                     filterCase: FilterCase) -> Set<String> {
+                     filterMatching: FilterMatching) -> Set<String> {
 
         self.filterTextsCounter += 1
-        return self.filterTextsClosure?(filterTarget, filterMatching, filterCase) ?? []
+        return self.filterTextsClosure?(filterTarget, filterMatching) ?? []
     }
 
     func blockableLanguages() -> [NLLanguage] {

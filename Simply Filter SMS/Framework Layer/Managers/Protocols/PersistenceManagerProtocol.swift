@@ -42,8 +42,7 @@ protocol PersistenceManagerProtocol: AnyObject {
                            filterMatching: FilterMatching,
                            filterCase: FilterCase) -> Bool
     func filterTexts(filterTarget: FilterTarget,
-                     filterMatching: FilterMatching,
-                     filterCase: FilterCase) -> Set<String>
+                     filterMatching: FilterMatching) -> Set<String>
     
     @discardableResult
     func addFilter(text: String, type: FilterType,

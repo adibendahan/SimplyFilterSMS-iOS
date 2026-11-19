@@ -194,12 +194,65 @@ class PersistenceManagerTests: XCTestCase {
         _ = self.testSubject.addFilter(text: "Herzl", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
         _ = self.testSubject.addFilter(text: "Cohen", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive)
         _ = self.testSubject.addFilter(text: "Levi", type: .allow, denyFolder: .junk, filterTarget: .sender, filterMatching: .exact, filterCase: .caseInsensitive)
+        _ = self.testSubject.addFilter(text: "Dana", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .exact, filterCase: .caseSensitive)
 
         // Act
-        let texts = self.testSubject.filterTexts(filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
+        let texts = self.testSubject.filterTexts(filterTarget: .all, filterMatching: .exact)
 
         // Verify
-        XCTAssertEqual(texts, ["Adi", "Herzl"])
+        XCTAssertEqual(texts, ["Adi", "Herzl", "Dana"])
+    }
+
+    func test_isDuplicateFilter_ignoresCaseWhenEitherFilterIsCaseInsensitive() {
+        // Prepare
+        _ = self.testSubject.addFilter(text: "dana", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
+        _ = self.testSubject.addFilter(text: "Levi", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .exact, filterCase: .caseSensitive)
+
+        // Verify
+        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: "Dana", filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive))
+        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: "DANA", filterTarget: .all, filterMatching: .exact, filterCase: .caseSensitive))
+        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: "levi", filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive))
+        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: "Levi", filterTarget: .all, filterMatching: .exact, filterCase: .caseSensitive))
+        XCTAssertFalse(self.testSubject.isDuplicateFilter(text: "levi", filterTarget: .all, filterMatching: .exact, filterCase: .caseSensitive))
+        XCTAssertFalse(self.testSubject.isDuplicateFilter(text: "Dana", filterTarget: .sender, filterMatching: .exact, filterCase: .caseInsensitive))
+        XCTAssertFalse(self.testSubject.isDuplicateFilter(text: "Dana", filterTarget: .all, filterMatching: .contains, filterCase: .caseInsensitive))
+    }
+
+    func test_isDuplicateFilter_regexComparesTheExactPattern() {
+        // Prepare
+        _ = self.testSubject.addFilter(text: "[A-Z]+", type: .deny, denyFolder: .junk, filterTarget: .all, filterMatching: .regex, filterCase: .caseInsensitive)
+
+        // Verify
+        XCTAssertTrue(self.testSubject.isDuplicateFilter(text: "[A-Z]+", filterTarget: .all, filterMatching: .regex, filterCase: .caseSensitive))
+        XCTAssertFalse(self.testSubject.isDuplicateFilter(text: "[a-z]+", filterTarget: .all, filterMatching: .regex, filterCase: .caseInsensitive))
+    }
+
+    func test_updateFilter_caseAndCapitalizationChangesAreNotDuplicatesOfItself() {
+        // Prepare
+        _ = self.testSubject.addFilter(text: "Dana", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .exact, filterCase: .caseInsensitive)
+        let filter = self.testSubject.fetchFilterRecords().first!
+
+        // Act
+        self.testSubject.updateFilter(filter, filterCase: .caseSensitive)
+        self.testSubject.updateFilter(filter, filterCase: .caseInsensitive)
+        self.testSubject.updateFilter(filter, filterText: "DANA")
+
+        // Verify
+        XCTAssertEqual(filter.filterCase, .caseInsensitive)
+        XCTAssertEqual(filter.text, "DANA")
+    }
+
+    func test_updateFilter_caseChangeThatDuplicatesAnotherFilterIsSkipped() {
+        // Prepare
+        _ = self.testSubject.addFilter(text: "Dana", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .exact, filterCase: .caseSensitive)
+        _ = self.testSubject.addFilter(text: "dana", type: .allow, denyFolder: .junk, filterTarget: .all, filterMatching: .exact, filterCase: .caseSensitive)
+        let filter = self.testSubject.fetchFilterRecords().first { $0.text == "dana" }!
+
+        // Act
+        self.testSubject.updateFilter(filter, filterCase: .caseInsensitive)
+
+        // Verify
+        XCTAssertEqual(filter.filterCase, .caseSensitive)
     }
 
     func test_addFilter_deny() {

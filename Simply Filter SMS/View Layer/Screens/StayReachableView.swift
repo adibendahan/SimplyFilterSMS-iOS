@@ -362,9 +362,8 @@ extension StayReachableView {
             self.sections = sections
 
             super.init(appManager: appManager)
-            self.allowedTexts = appManager.persistenceManager.filterTexts(filterTarget: .all,
-                                                                          filterMatching: .exact,
-                                                                          filterCase: .caseInsensitive)
+            let allowedTexts = appManager.persistenceManager.filterTexts(filterTarget: .all, filterMatching: .exact)
+            self.allowedTexts = Set(allowedTexts.map { $0.lowercased() })
             Log.debug("opened, appLanguage: \(appLanguage.identifier), phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), allowedTexts: \(self.allowedTexts.count)")
         }
 
@@ -387,7 +386,7 @@ extension StayReachableView {
         func isAlreadyAllowed(_ text: String) -> Bool {
             let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
             guard trimmedText.count >= kMinimumFilterLength else { return false }
-            return self.allowedTexts.contains(trimmedText)
+            return self.allowedTexts.contains(trimmedText.lowercased())
         }
 
         func isSkipped(_ field: Field, in section: LanguageSection) -> Bool {

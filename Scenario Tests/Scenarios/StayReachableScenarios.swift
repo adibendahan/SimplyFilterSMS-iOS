@@ -21,8 +21,8 @@ final class StayReachableScenarios: ScenarioTestCase {
 
         let sheet = app.stayReachable.openFromToast()
         sheet.expect(.hebrew, header: "עברית", firstNameLabel: "שם פרטי")
-        sheet.fill(.english, firstName: "Dana", surname: "Levi", street: "Herzl")
-        sheet.expectSkipped("Dana", because: "is already allowed")
+        sheet.fill(.english, firstName: "dana", surname: "Levi", street: "Herzl")
+        sheet.expectSkipped("dana", because: "is already allowed")
         sheet.fill(.hebrew, firstName: "דנה", surname: "לוי", street: "herzl")
         sheet.expectSkipped("herzl", because: "הוזן פעמיים")
         sheet.expectAddButton("Add 4 Allowed Texts")
@@ -36,8 +36,8 @@ final class StayReachableScenarios: ScenarioTestCase {
         app.expect(noName, toBe: .junk)
 
         let reopenedSheet = app.stayReachable.openFromMenu()
-        reopenedSheet.fill(.english, surname: "Levi")
-        reopenedSheet.expectSkipped("Levi", because: "is already allowed")
+        reopenedSheet.fill(.english, surname: "LEVI")
+        reopenedSheet.expectSkipped("LEVI", because: "is already allowed")
         reopenedSheet.expectNothingToAdd()
         reopenedSheet.close()
     }

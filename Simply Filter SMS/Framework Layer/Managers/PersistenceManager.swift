@@ -311,18 +311,18 @@ class PersistenceManager: PersistenceManagerProtocol {
                            filterMatching: FilterMatching = .contains,
                            filterCase: FilterCase = .caseInsensitive) -> Bool {
 
-        let predicate = NSPredicate(format: "text == %@ AND targetValue == %ld AND matchingValue == %ld AND caseValue == %ld",
-                                    text, filterTarget.rawValue, filterMatching.rawValue, filterCase.rawValue)
-        guard let _ = self.fetch(Filter.self, predicate: predicate)?.first else { return false }
-        return true
+        return self.isDuplicateFilter(text: text,
+                                      filterTarget: filterTarget,
+                                      filterMatching: filterMatching,
+                                      filterCase: filterCase,
+                                      excluding: nil)
     }
 
     func filterTexts(filterTarget: FilterTarget,
-                     filterMatching: FilterMatching,
-                     filterCase: FilterCase) -> Set<String> {
+                     filterMatching: FilterMatching) -> Set<String> {
 
-        let predicate = NSPredicate(format: "targetValue == %ld AND matchingValue == %ld AND caseValue == %ld",
-                                    filterTarget.rawValue, filterMatching.rawValue, filterCase.rawValue)
+        let predicate = NSPredicate(format: "targetValue == %ld AND matchingValue == %ld",
+                                    filterTarget.rawValue, filterMatching.rawValue)
         let filters = self.fetch(Filter.self, predicate: predicate) ?? []
         let texts = filters.compactMap(\.text)
         return Set(texts)
@@ -398,7 +398,8 @@ class PersistenceManager: PersistenceManagerProtocol {
         guard !self.isDuplicateFilter(text: filter.text ?? "",
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filterMatching,
-                                      filterCase: filter.filterCase) else {
+                                      filterCase: filter.filterCase,
+                                      excluding: filter) else {
             Log.debug("duplicate, text: \(filter.text), matching: \(filterMatching) → skipped")
             return
         }
@@ -411,7 +412,8 @@ class PersistenceManager: PersistenceManagerProtocol {
         guard !self.isDuplicateFilter(text: filter.text ?? "",
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filter.filterMatching,
-                                      filterCase: filterCase) else {
+                                      filterCase: filterCase,
+                                      excluding: filter) else {
             Log.debug("duplicate, text: \(filter.text), case: \(filterCase) → skipped")
             return
         }
@@ -424,7 +426,8 @@ class PersistenceManager: PersistenceManagerProtocol {
         guard !self.isDuplicateFilter(text: filter.text ?? "",
                                       filterTarget: filterTarget,
                                       filterMatching: filter.filterMatching,
-                                      filterCase: filter.filterCase) else {
+                                      filterCase: filter.filterCase,
+                                      excluding: filter) else {
             Log.debug("duplicate, text: \(filter.text), target: \(filterTarget) → skipped")
             return
         }
@@ -437,7 +440,8 @@ class PersistenceManager: PersistenceManagerProtocol {
         guard !self.isDuplicateFilter(text: filterText,
                                       filterTarget: filter.filterTarget,
                                       filterMatching: filter.filterMatching,
-                                      filterCase: filter.filterCase) else {
+                                      filterCase: filter.filterCase,
+                                      excluding: filter) else {
             Log.debug("duplicate, text: \(filterText) → skipped")
             return
         }
@@ -593,6 +597,32 @@ class PersistenceManager: PersistenceManagerProtocol {
     #endif // DEBUG
 
     //MARK: - Private -
+    private func isDuplicateFilter(text: String,
+                                   filterTarget: FilterTarget,
+                                   filterMatching: FilterMatching,
+                                   filterCase: FilterCase,
+                                   excluding excludedFilter: Filter?) -> Bool {
+
+        let textPredicate: NSPredicate
+        if filterMatching == .regex {
+            textPredicate = NSPredicate(format: "text == %@", text)
+        } else if filterCase == .caseInsensitive {
+            textPredicate = NSPredicate(format: "text ==[c] %@", text)
+        } else {
+            textPredicate = NSPredicate(format: "(caseValue == %ld AND text ==[c] %@) OR (caseValue == %ld AND text == %@)",
+                                        FilterCase.caseInsensitive.rawValue, text, FilterCase.caseSensitive.rawValue, text)
+        }
+        let rulePredicate = NSPredicate(format: "targetValue == %ld AND matchingValue == %ld",
+                                        filterTarget.rawValue, filterMatching.rawValue)
+        var predicates = [textPredicate, rulePredicate]
+        if let excludedFilter {
+            predicates.append(NSPredicate(format: "SELF != %@", excludedFilter))
+        }
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        let duplicate = self.fetch(Filter.self, predicate: predicate)?.first
+        return duplicate != nil
+    }
+
     private var decodedCache: (encodedSnapshot: String, snapshot: FilterListsSnapshot)?
 
     private func legacyFilterLists() -> FilterListsSnapshot? {
