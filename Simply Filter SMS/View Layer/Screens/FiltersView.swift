@@ -213,7 +213,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                     Label(self.model.filterType.addFilterTitle, systemImage: self.model.filterType.addFilterIconName)
                 }
             } label: {
-                Image(systemName: "ellipsis.circle")
+                Image(systemName: "ellipsis")
             }
             .tint(.primary)
             .accessibilityLabel("a11y_home_menuButton"~)

@@ -88,7 +88,7 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                         Label("autoFilter_improveAIFiltering"~, systemImage: "wand.and.stars")
                     }
                 } label: {
-                    Image(systemName: "ellipsis.circle")
+                    Image(systemName: "ellipsis")
                 }
                 .tint(.primary)
                 .accessibilityLabel("a11y_home_menuButton"~)

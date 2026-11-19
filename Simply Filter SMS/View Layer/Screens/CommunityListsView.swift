@@ -147,7 +147,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                     Label("communityLists_submitList"~, systemImage: "text.bubble")
                 }
             } label: {
-                Image(systemName: "ellipsis.circle")
+                Image(systemName: "ellipsis")
             }
             .tint(.primary)
             .accessibilityLabel("a11y_home_menuButton"~)

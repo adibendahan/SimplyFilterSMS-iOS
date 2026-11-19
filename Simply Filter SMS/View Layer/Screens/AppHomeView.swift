@@ -469,6 +469,8 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 Label("addFilter_addLanguage"~, systemImage: "globe")
             }
 
+            Divider()
+
             Button {
                 self.model.requestSheet(.stayReachable)
             } label: {
@@ -608,7 +610,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             }
 
         } label: {
-            Label("a11y_home_menuButton"~, systemImage: "ellipsis.circle")
+            Label("a11y_home_menuButton"~, systemImage: "ellipsis")
         }
         .tint(.primary)
         .accessibilityIdentifier(TestIdentifier.appMenuButton.rawValue)
