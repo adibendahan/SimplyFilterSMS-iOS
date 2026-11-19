@@ -565,7 +565,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 }
                 .accessibilityIdentifier(TestIdentifier.importFiltersMenuButton.rawValue)
             } label: {
-                Label("menu_filterTools"~, systemImage: "wrench.and.screwdriver.fill")
+                Label("menu_filterTools"~, systemImage: "wrench.and.screwdriver")
             }
             .accessibilityIdentifier(TestIdentifier.filterToolsMenuButton.rawValue)
 
@@ -574,7 +574,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Button {
                 self.model.requestSheet(.help)
             } label: {
-                Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
+                Label("menu_help"~, systemImage: "questionmark.circle")
             }
 
             if !WhatsNewEntry.allCases.isEmpty {

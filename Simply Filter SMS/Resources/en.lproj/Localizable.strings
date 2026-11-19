@@ -30,7 +30,7 @@
 "filterList_allowed" = "Allowed Texts";
 "filterList_denied" = "Blocked Texts";
 "filterList_menu_filterLanguage" = "Block a Language";
-"filterList_menu_enableExtension" = "Help";
+"menu_help" = "Help";
 "filterList_menu_about" = "About";
 "accentColor_menuItem" = "Accent Color";
 "accentColor_title" = "Accent Color";

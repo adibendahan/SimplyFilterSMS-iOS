@@ -28,7 +28,7 @@
 
 "filterList_menu_filterLanguage" = "언어 차단";
 
-"filterList_menu_enableExtension" = "도움말";
+"menu_help" = "도움말";
 
 "filterList_menu_about" = "정보";
 

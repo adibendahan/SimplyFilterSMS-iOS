@@ -210,7 +210,6 @@ Existing strings that break this guide. Fix them when touching the area; renamin
 | `enableReportingExtension_step5_title` / `_desc` | לחץ לחיצה ארוכה… | singular imperative |
 | `enableReportingExtension_step6_title` / `_desc` | בחר הודעות / בחר… שברצונך | singular |
 | `enableReportingExtension_step7_desc` | לחץ על 'דווח על הודעות'… | `לחץ` (the quoted iOS term stays) |
-| `autoFilter_improveAIFiltering`, `notification_reportingExtension_title` | שפר סינון AI | singular imperative |
 | `notification_reportingExtension_subtitle` | דווח על הודעות ספאם | singular imperative |
 | `notification_reportingExtension_button` | הצטרף | singular imperative |
 | `autoFilter_reportSpam` | דווח על ספאם | singular imperative |
