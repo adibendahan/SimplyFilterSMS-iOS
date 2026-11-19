@@ -134,13 +134,16 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             .navigationTitle(self.model.title)
             .listStyle(.insetGrouped)
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    self.addFilterMenu
+                }
                 if #available(iOS 27.0, *) {
                     ToolbarItem(placement: .topBarPinnedTrailing) {
-                        NavigationBarTrailingItem()
+                        self.appMenu
                     }
                 } else {
                     ToolbarItem(placement: .topBarTrailing) {
-                        NavigationBarTrailingItem()
+                        self.appMenu
                     }
                 }
             }
@@ -446,8 +449,39 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         }
     }
 
-    @ViewBuilder
-    private func NavigationBarTrailingItem() -> some View {
+    private var addFilterMenu: some View {
+        Menu {
+            Button {
+                self.model.requestSheet(.addAllowFilter)
+            } label: {
+                Label("addFilter_addFilter_allow"~, systemImage: "person.crop.circle.badge.checkmark")
+            }
+
+            Button {
+                self.model.requestSheet(.addDenyFilter)
+            } label: {
+                Label("addFilter_addFilter_deny"~, systemImage: "person.crop.circle.badge.xmark")
+            }
+
+            Button {
+                self.model.requestSheet(.addLanguageFilter)
+            } label: {
+                Label("addFilter_addLanguage"~, systemImage: "globe")
+            }
+
+            Button {
+                self.model.requestSheet(.stayReachable)
+            } label: {
+                Label("stayReachable_title"~, systemImage: "person.badge.shield.checkmark")
+            }
+        } label: {
+            Label("menu_addFilter"~, systemImage: "plus")
+        }
+        .accessibilityIdentifier(TestIdentifier.addFilterMenuButton.rawValue)
+        .tint(.primary)
+    }
+
+    private var appMenu: some View {
         Menu {
 
             #if DEBUG
@@ -493,35 +527,6 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             }
             .accessibilityIdentifier(TestIdentifier.debugToolsButton.rawValue)
             #endif // DEBUG
-
-            Menu {
-                Button {
-                    self.model.requestSheet(.addAllowFilter)
-                } label: {
-                    Label("addFilter_addFilter_allow"~, systemImage: "person.crop.circle.badge.checkmark")
-                }
-
-                Button {
-                    self.model.requestSheet(.addDenyFilter)
-                } label: {
-                    Label("addFilter_addFilter_deny"~, systemImage: "person.crop.circle.badge.xmark")
-                }
-
-                Button {
-                    self.model.requestSheet(.addLanguageFilter)
-                } label: {
-                    Label("addFilter_addLanguage"~, systemImage: "globe")
-                }
-
-                Button {
-                    self.model.requestSheet(.stayReachable)
-                } label: {
-                    Label("stayReachable_title"~, systemImage: "person.badge.shield.checkmark")
-                }
-            } label: {
-                Label("menu_addFilter"~, systemImage: "plus.message")
-            }
-            .accessibilityIdentifier(TestIdentifier.addFilterMenuButton.rawValue)
 
             Menu {
                 Button {
@@ -572,11 +577,21 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 Label("filterList_menu_enableExtension"~, systemImage: "questionmark.circle")
             }
 
+            if !WhatsNewEntry.allCases.isEmpty {
+                Button {
+                    self.model.requestSheet(.whatsNew)
+                } label: {
+                    Label("whatsNew_menuItem"~, systemImage: "sparkles")
+                }
+            }
+
             Button {
                 self.model.requestSheet(.about)
             } label: {
                 Label("filterList_menu_about"~, systemImage: "info.circle")
             }
+
+            Divider()
 
             Button {
                 self.model.requestSheet(.chooseAccentColor)
@@ -584,18 +599,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 Label("accentColor_menuItem"~, systemImage: "paintpalette")
             }
 
+            Divider()
+
             Button {
                 self.model.requestSheet(.tipJar)
             } label: {
                 Label("tipJar_menuItem"~, systemImage: "heart.fill")
-            }
-
-            if !WhatsNewEntry.allCases.isEmpty {
-                Button {
-                    self.model.requestSheet(.whatsNew)
-                } label: {
-                    Label("whatsNew_menuItem"~, systemImage: "sparkles")
-                }
             }
 
         } label: {

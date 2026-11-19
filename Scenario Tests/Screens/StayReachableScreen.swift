@@ -47,10 +47,7 @@ struct StayReachableScreen: Screen {
 
     private func openAddFilterMenu() {
         let addFilter = self.app.buttons[.addFilterMenuButton]
-        if !addFilter.exists {
-            self.app.buttons[.appMenuButton].tap()
-        }
-        XCTAssertTrue(addFilter.waitForExistence(timeout: 5), "The app menu did not open")
+        XCTAssertTrue(addFilter.waitForExistence(timeout: 5), "The add filter button is missing")
         addFilter.tap()
     }
 }
