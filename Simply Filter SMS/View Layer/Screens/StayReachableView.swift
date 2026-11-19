@@ -322,7 +322,7 @@ extension StayReachableView {
         let appLanguage: Locale.LanguageCode
         let phoneLanguages: [Locale.LanguageCode]
         let otherLanguages: [Locale.LanguageCode]
-        private var allowedTexts: Set<String> = []
+        private var existingFilters: [FilterSignature] = []
 
         private static let extraLocalizations: [String: [String: String]] = {
             guard let url = Bundle.main.url(forResource: "StayReachableLocalizations", withExtension: "json") else {
@@ -362,9 +362,8 @@ extension StayReachableView {
             self.sections = sections
 
             super.init(appManager: appManager)
-            let allowedTexts = appManager.persistenceManager.filterTexts(filterTarget: .all, filterMatching: .exact)
-            self.allowedTexts = Set(allowedTexts.map { $0.lowercased() })
-            Log.debug("opened, appLanguage: \(appLanguage.identifier), phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), allowedTexts: \(self.allowedTexts.count)")
+            self.existingFilters = appManager.persistenceManager.fetchFilterRecords().map(\.signature)
+            Log.debug("opened, appLanguage: \(appLanguage.identifier), phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), existingFilters: \(self.existingFilters.count)")
         }
 
         var newFilterTexts: [String] {
@@ -386,7 +385,8 @@ extension StayReachableView {
         func isAlreadyAllowed(_ text: String) -> Bool {
             let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
             guard trimmedText.count >= kMinimumFilterLength else { return false }
-            return self.allowedTexts.contains(trimmedText.lowercased())
+            let signature = Self.newFilterSignature(for: trimmedText)
+            return self.existingFilters.contains { signature.isDuplicate(of: $0) }
         }
 
         func isSkipped(_ field: Field, in section: LanguageSection) -> Bool {
@@ -474,18 +474,26 @@ extension StayReachableView {
         func addFilters() {
             let newTexts = self.newFilterTexts
             for text in newTexts {
-                _ = self.appManager.persistenceManager.addFilter(text: text,
+                let signature = Self.newFilterSignature(for: text)
+                _ = self.appManager.persistenceManager.addFilter(text: signature.text,
                                                                  type: .allow,
                                                                  denyFolder: .junk,
-                                                                 filterTarget: .all,
-                                                                 filterMatching: .exact,
-                                                                 filterCase: .caseInsensitive)
+                                                                 filterTarget: signature.filterTarget,
+                                                                 filterMatching: signature.filterMatching,
+                                                                 filterCase: signature.filterCase)
             }
             Log.debug("allow filters added, texts: \(newTexts), languages: \(self.sections.map(\.language.identifier))")
         }
 
 
         //MARK: Private
+        private static func newFilterSignature(for text: String) -> FilterSignature {
+            return FilterSignature(text: text,
+                                   filterTarget: .all,
+                                   filterMatching: .exact,
+                                   filterCase: .caseInsensitive)
+        }
+
         private func hasLabels(for language: Locale.LanguageCode) -> Bool {
             return language.appLocalization != nil || Self.extraLocalizations[language.identifier] != nil
         }

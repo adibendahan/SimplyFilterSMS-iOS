@@ -219,6 +219,21 @@ class FilterTransferManagerTests: XCTestCase {
         XCTAssertEqual(self.persistenceManager.fetchFilterRecords().count, 0)
     }
 
+    func test_preview_intraFileDuplicatesFollowTheCaseRule() throws {
+        let data = try self.payload(filters: [
+            record(text: "Dana", type: "allow", folder: nil, matching: "exact", filterCase: "sensitive"),
+            record(text: "dana", type: "allow", folder: nil, matching: "exact", filterCase: "sensitive"),
+            record(text: "DANA", type: "allow", folder: nil, matching: "exact", filterCase: "insensitive"),
+            record(text: "[A-Z]+", type: "deny", matching: "regex", filterCase: nil),
+            record(text: "[a-z]+", type: "deny", matching: "regex", filterCase: nil)
+        ])
+
+        let preview = try self.testSubject.previewImport(data: data)
+
+        XCTAssertEqual(preview.candidates.map(\.text), ["Dana", "dana", "[A-Z]+", "[a-z]+"])
+        XCTAssertEqual(preview.duplicateCount, 1)
+    }
+
     func test_invalidJSON_throws() {
         XCTAssertThrowsError(try self.testSubject.previewImport(data: Data("not-json".utf8))) { error in
             XCTAssertEqual(error as? FilterTransferError, .invalidFile)

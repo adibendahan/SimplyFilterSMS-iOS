@@ -1,4 +1,4 @@
-/* Mirrors the app's checks: FilterExportPayload(data:), FilterListManager.invalidField(in:), String.listTextWidth, FilterTransferCandidate(record:). Change them together. */
+/* Mirrors the app's checks: FilterExportPayload(data:), FilterListManager.invalidField(in:), String.listTextWidth, FilterTransferCandidate(record:), FilterSignature.isDuplicate(of:). Change them together. */
 (function () {
   var FORMAT = 'simply-filter-sms-filters';
   var CURRENT_VERSION = 2;
@@ -117,6 +117,17 @@
     return null;
   }
 
+  function isDuplicate(signature, other) {
+    if (signature.target !== other.target || signature.matching !== other.matching) {
+      return false;
+    }
+    var isEitherCaseInsensitive = signature.filterCase === 'insensitive' || other.filterCase === 'insensitive';
+    if (signature.matching !== 'regex' && isEitherCaseInsensitive) {
+      return signature.text.toLowerCase() === other.text.toLowerCase();
+    }
+    return signature.text === other.text;
+  }
+
   function recordLabel(record, index) {
     var text = typeof record.text === 'string' ? record.text.trim() : '';
     return text ? t('record.label', [index + 1, text]) : t('record.labelNoText', [index + 1]);
@@ -160,7 +171,7 @@
 
     var skipped = [];
     var duplicates = [];
-    var seen = {};
+    var seen = [];
     var counts = { deny: 0, allow: 0 };
     payload.filters.forEach(function (record, index) {
       var reason = recordProblem(record);
@@ -168,13 +179,12 @@
         skipped.push(t('record.reason', [recordLabel(record, index), reason]));
         return;
       }
-      var text = record.text.trim();
-      var filterCase = record.matching === 'regex' ? 'insensitive' : record.case;
-      var key = [text, record.target, record.matching, filterCase].join('|');
-      if (seen[key]) {
-        duplicates.push(t('record.repeats', [recordLabel(record, index), seen[key]]));
+      var signature = { text: record.text.trim(), target: record.target, matching: record.matching, filterCase: record.case, number: index + 1 };
+      var original = seen.find(function (earlier) { return isDuplicate(signature, earlier); });
+      if (original) {
+        duplicates.push(t('record.repeats', [recordLabel(record, index), original.number]));
       } else {
-        seen[key] = index + 1;
+        seen.push(signature);
       }
       counts[record.type] += 1;
     });

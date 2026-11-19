@@ -15,7 +15,6 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
     
     var addFilterCounter = 0
     var isDuplicateFilterCounter = 0
-    var filterTextsCounter = 0
     var blockableLanguagesCounter = 0
     var isDuplicateFilterLanguageCounter = 0
     var deleteFiltersOffsetsCounter = 0
@@ -51,7 +50,6 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
     
     var addFilterClosure: ((String, FilterType, MessageFolder, FilterTarget, FilterMatching, FilterCase) -> ())?
     var isDuplicateFilterClosure: ((String, FilterTarget, FilterMatching, FilterCase) -> (Bool))?
-    var filterTextsClosure: ((FilterTarget, FilterMatching) -> (Set<String>))?
     var blockableLanguagesClosure: (() -> ([NLLanguage]))?
     var isDuplicateFilterLanguageClosure: ((NLLanguage) -> (Bool))?
     var deleteFiltersOffsetsClosure: ((IndexSet, [Filter]) -> ())?
@@ -115,13 +113,6 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
         
         self.isDuplicateFilterCounter += 1
         return self.isDuplicateFilterClosure?(text, filterTarget, filterMatching, filterCase) ?? false
-    }
-
-    func filterTexts(filterTarget: FilterTarget,
-                     filterMatching: FilterMatching) -> Set<String> {
-
-        self.filterTextsCounter += 1
-        return self.filterTextsClosure?(filterTarget, filterMatching) ?? []
     }
 
     func blockableLanguages() -> [NLLanguage] {
@@ -297,7 +288,6 @@ class mock_PersistenceManager: PersistenceManagerProtocol {
         self.blockableLanguagesCounter = 0
         self.isDuplicateFilterCounter = 0
         self.isDuplicateFilterCounter = 0
-        self.filterTextsCounter = 0
         self.deleteFiltersOffsetsCounter = 0
         self.deleteFiltersCounter = 0
         self.updateFilterDenyFolderCounter = 0

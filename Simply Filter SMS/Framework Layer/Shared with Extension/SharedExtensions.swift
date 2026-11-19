@@ -82,6 +82,13 @@ extension Filter {
             self.targetValue = newValue.rawValue
         }
     }
+
+    var signature: FilterSignature {
+        return FilterSignature(text: self.text ?? "",
+                               filterTarget: self.filterTarget,
+                               filterMatching: self.filterMatching,
+                               filterCase: self.filterCase)
+    }
 }
 
 extension AutomaticFiltersRule {
