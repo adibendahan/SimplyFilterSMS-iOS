@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import AppIntents
+import NaturalLanguage
 import MessageUI
 import UniformTypeIdentifiers
 
@@ -18,6 +20,9 @@ struct HelpView: View {
 
     @Environment(\.accessibilityReduceMotion)
     private var reduceMotion
+
+    @Environment(\.colorScheme)
+    private var colorScheme
 
     @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 22
 
@@ -80,6 +85,56 @@ struct HelpView: View {
                     .accessibilityHint("a11y_help_enableReportingHint"~)
                 } header: {
                     Text("help_getStarted"~)
+                        .accessibilityAddTraits(.isHeader)
+                }
+
+                Section {
+                    if model.showsSiriTips {
+                        VStack(spacing: 10) {
+                            ScrollView(.horizontal) {
+                                HStack(spacing: 10) {
+                                    ForEach(model.siriTipSlots, id: \.self) { slot in
+                                        siriTipView(model.siriTip(at: slot))
+                                            .containerRelativeFrame(.horizontal)
+                                            .id(slot)
+                                    }
+                                }
+                                .scrollTargetLayout()
+                            }
+                            .scrollIndicators(.hidden)
+                            .scrollTargetBehavior(.viewAligned)
+                            .scrollPosition(id: $model.siriTipSlot)
+                            .onScrollSettled(of: model.siriTipSlot) {
+                                var transaction = Transaction()
+                                transaction.disablesAnimations = true
+                                withTransaction(transaction) {
+                                    model.recenterSiriTips()
+                                }
+                            }
+
+                            HStack(spacing: 7) {
+                                ForEach(HelpSiriTip.allCases, id: \.self) { tip in
+                                    Circle()
+                                        .fill(tip == model.currentSiriTip ? Color.primary : Color.secondary.opacity(0.4))
+                                        .frame(width: 7, height: 7)
+                                }
+                            }
+                            .accessibilityHidden(true)
+                        }
+                    }
+
+                    VStack(spacing: 10) {
+                        Text("help_shortcuts_caption"~)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+
+                        ShortcutsLink()
+                            .shortcutsLinkStyle(colorScheme == .dark ? .darkOutline : .lightOutline)
+                    }
+                    .frame(maxWidth: .infinity)
+                } header: {
+                    Text("help_siriShortcuts"~)
                         .accessibilityAddTraits(.isHeader)
                 }
 
@@ -191,6 +246,22 @@ struct HelpView: View {
         .ignoresSafeArea(.container, edges: .bottom)
     }
 
+    @ViewBuilder
+    private func siriTipView(_ tip: HelpSiriTip) -> some View {
+        switch tip {
+        case .addFilter:
+            SiriTipView(intent: AddFilterIntent(list: .block), isVisible: $model.showsSiriTips)
+        case .checkMessage:
+            SiriTipView(intent: CheckMessageIntent(), isVisible: $model.showsSiriTips)
+        case .removeFilter:
+            SiriTipView(intent: RemoveFilterIntent(), isVisible: $model.showsSiriTips)
+        case .blockLanguage:
+            SiriTipView(intent: BlockLanguageIntent(language: model.siriTipLanguage), isVisible: $model.showsSiriTips)
+        case .updateLists:
+            SiriTipView(intent: UpdateFilterListsIntent(), isVisible: $model.showsSiriTips)
+        }
+    }
+
     private func expansion(_ item: HelpFAQ) -> Binding<Bool> {
         Binding(
             get: { model.expandedFAQ == item },
@@ -205,6 +276,31 @@ struct HelpView: View {
             }
         )
     }
+}
+
+
+private extension View {
+    @ViewBuilder
+    func onScrollSettled<Value: Equatable>(of value: Value, perform action: @escaping () -> Void) -> some View {
+        if #available(iOS 18.0, *) {
+            self.onScrollPhaseChange { _, phase in
+                if phase == .idle {
+                    action()
+                }
+            }
+        } else {
+            self.onChange(of: value) { _, _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    action()
+                }
+            }
+        }
+    }
+}
+
+
+enum HelpSiriTip: CaseIterable, Hashable {
+    case addFilter, checkMessage, removeFilter, blockLanguage, updateLists
 }
 
 
@@ -255,6 +351,15 @@ extension HelpView {
 
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var expandedFAQ: HelpFAQ?
+        @Published var siriTipSlot: Int?
+        let siriTipLanguage: LanguageEntity?
+        @Published var showsSiriTips: Bool {
+            didSet {
+                guard !self.showsSiriTips else { return }
+                Log.debug("help siri tips, dismissed")
+                self.appManager.defaultsManager.didDismissHelpSiriTips = true
+            }
+        }
         @Published var composeMailScreen: Bool = false {
             didSet {
                 guard oldValue != self.composeMailScreen else { return }
@@ -267,13 +372,47 @@ extension HelpView {
         init(appManager: AppManagerProtocol = AppManager.shared,
              onRequestScreen: ((Screen) -> Void)? = nil) {
             self.onRequestScreen = onRequestScreen
+            self.showsSiriTips = !appManager.defaultsManager.didDismissHelpSiriTips
+            self.siriTipSlot = HelpSiriTip.allCases.count + Int.random(in: 0..<HelpSiriTip.allCases.count)
+            self.siriTipLanguage = Self.makeSiriTipLanguage()
             super.init(appManager: appManager)
+        }
+
+        var siriTipSlots: [Int] {
+            return Array(0..<(HelpSiriTip.allCases.count * Self.siriTipCopies))
+        }
+
+        var currentSiriTip: HelpSiriTip? {
+            return self.siriTipSlot.map { self.siriTip(at: $0) }
+        }
+
+        func siriTip(at slot: Int) -> HelpSiriTip {
+            return HelpSiriTip.allCases[slot % HelpSiriTip.allCases.count]
+        }
+
+        func recenterSiriTips() {
+            guard let slot = self.siriTipSlot else { return }
+            let tipCount = HelpSiriTip.allCases.count
+            let middleSlot = tipCount + slot % tipCount
+            guard middleSlot != slot else { return }
+            self.siriTipSlot = middleSlot
         }
 
         func setClipboard(content: String, displayName: String) {
             UIPasteboard.general.setValue(content, forPasteboardType: UTType.plainText.identifier)
             Log.debug("copied to clipboard, item: \(displayName), content: \(content)")
             self.appManager.flowManager.requestToast(.onClipboardSet(displayName))
+        }
+
+
+        //MARK: - Private -
+        private static let siriTipCopies = 3
+
+        private static func makeSiriTipLanguage() -> LanguageEntity? {
+            let deviceLanguage = Locale.preferredLanguages.first ?? ""
+            let candidates = NLLanguage.allSupportedCases.filter { !deviceLanguage.hasPrefix($0.rawValue) }
+            let language = candidates.randomElement()
+            return language.map { LanguageEntity(id: $0.rawValue) }
         }
     }
 }

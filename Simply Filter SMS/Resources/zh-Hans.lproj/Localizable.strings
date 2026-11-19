@@ -24,9 +24,9 @@
 
 "filterList_filters" = "过滤器";
 
-"filterList_allowed" = "允许的文本";
+"filterList_allowed" = "允许列表";
 
-"filterList_denied" = "已屏蔽的文本";
+"filterList_denied" = "屏蔽列表";
 
 "filterList_menu_filterLanguage" = "屏蔽语言";
 
@@ -218,6 +218,10 @@
 
 "help_getStarted" = "开始使用";
 
+"help_siriShortcuts" = "Siri 与快捷指令";
+
+"help_shortcuts_caption" = "查看所有操作，并在你自己的快捷指令中使用它们。";
+
 "help_enableFiltering_title" = "启用过滤";
 
 "help_enableFiltering_caption" = "需要先在 iOS“设置”中启用，才能过滤未知短信。";
@@ -228,7 +232,7 @@
 
 "faq_question_1" = "信息过滤如何工作？";
 
-"faq_answer_1" = "当你收到来自“通讯录”中没有的号码的信息时，Simply Filter SMS 会按以下顺序检查：\n\n• **允许的文本**始终会正常送达。\n• **屏蔽的文本**、屏蔽的语言、智能过滤器、受信任的国家和 **AI 过滤**可以将信息发送到“垃圾短信”“交易信息”或“推广信息”。\n• 如果没有匹配项，信息会正常送达。\n\niMessage 和来自“通讯录”中联系人的信息不会发送给 App。";
+"faq_answer_1" = "当你收到来自“通讯录”中没有的号码的信息时，Simply Filter SMS 会按以下顺序检查：\n\n• **允许列表**中的文本始终会正常送达。\n• **屏蔽列表**、屏蔽的语言、智能过滤器、受信任的国家和 **AI 过滤**可以将信息发送到“垃圾短信”“交易信息”或“推广信息”。\n• 如果没有匹配项，信息会正常送达。\n\niMessage 和来自“通讯录”中联系人的信息不会发送给 App。";
 
 "faq_question_2" = "开发者会看到我的信息吗？";
 
@@ -304,7 +308,7 @@
 
 "autoFilter_shortSender_action" = "选择新限制";
 
-"autoFilter_allUnknown_shortTitle" = "所有未知发件人（允许的文本除外）";
+"autoFilter_allUnknown_shortTitle" = "所有未知发件人（允许列表除外）";
 
 "autoFilter_links_shortTitle" = "链接";
 
@@ -314,7 +318,7 @@
 
 "autoFilter_smartFilters" = "智能过滤器";
 
-"autoFilter_yourFilters" = "你的过滤器";
+"autoFilter_yourFilters" = "你的列表";
 
 "autoFilter_email_shortTitle" = "邮件";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "社区列表";
 
-"whatsNew_communityLists_desc" = "订阅其他人分享的过滤列表，或分享你自己的列表。作者发布新版本后，列表会自动更新 - 在**你的过滤器**中可以找到它们。";
+"whatsNew_communityLists_desc" = "订阅其他人分享的过滤列表，或分享你自己的列表。作者发布新版本后，列表会自动更新 - 在**你的列表**中可以找到它们。";
+
+"whatsNew_siriShortcuts_title" = "Siri 与快捷指令";
+
+"whatsNew_siriShortcuts_desc" = "使用 Siri 添加、移除和检查过滤器：试试说 **“在Simply Filter SMS中添加到屏蔽列表”**。所有操作也可以在 **快捷指令** App 中使用。";
 
 "communityLists_featured" = "精选";
 
@@ -749,10 +757,6 @@
 "siri_addFilter_failed" = "无法保存过滤器。请在 App 中重试。";
 
 "siri_filterList_type" = "过滤器列表";
-
-"siri_filterList_block" = "屏蔽列表";
-
-"siri_filterList_allow" = "允许列表";
 
 "siri_checkMessage_title" = "检查信息";
 

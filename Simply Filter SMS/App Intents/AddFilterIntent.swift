@@ -19,6 +19,12 @@ struct AddFilterIntent: AppIntent {
                requestValueDialog: IntentDialog("siri_addFilter_textPrompt"))
     var text: String
 
+    init() {}
+
+    init(list: FilterListChoice) {
+        self.list = list
+    }
+
     static var parameterSummary: some ParameterSummary {
         Switch(\.$list) {
             Case(.block) {
@@ -83,9 +89,20 @@ enum FilterListChoice: String, AppEnum, CaseIterable {
 
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "siri_filterList_type"
     static let caseDisplayRepresentations: [FilterListChoice: DisplayRepresentation] = [
-        .block: "siri_filterList_block",
-        .allow: "siri_filterList_allow"
+        .block: "filterList_denied",
+        .allow: "filterList_allowed"
     ]
+
+    init?(filterType: FilterType) {
+        switch filterType {
+        case .deny:
+            self = .block
+        case .allow:
+            self = .allow
+        case .denyLanguage:
+            return nil
+        }
+    }
 
     var filterType: FilterType {
         switch self {

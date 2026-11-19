@@ -16,6 +16,14 @@ struct BlockLanguageIntent: AppIntent {
                requestValueDialog: IntentDialog("siri_blockLanguage_languagePrompt"))
     var language: LanguageEntity
 
+    init() {}
+
+    init(language: LanguageEntity?) {
+        if let language {
+            self.language = language
+        }
+    }
+
     static var parameterSummary: some ParameterSummary {
         Summary("siri_blockLanguage_summary \(\.$language)")
     }

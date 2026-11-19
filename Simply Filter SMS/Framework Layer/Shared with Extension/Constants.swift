@@ -683,7 +683,7 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, tipJar, regexFilters, filterTransfer, communityLists
+    case aiFiltering, tipJar, regexFilters, filterTransfer, communityLists, siriShortcuts
 
     var title: String {
         switch self {
@@ -697,6 +697,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_filterTransfer_title"~
         case .communityLists:
             return "whatsNew_communityLists_title"~
+        case .siriShortcuts:
+            return "whatsNew_siriShortcuts_title"~
         }
     }
 
@@ -712,6 +714,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_filterTransfer_desc"~
         case .communityLists:
             return "whatsNew_communityLists_desc"~
+        case .siriShortcuts:
+            return "whatsNew_siriShortcuts_desc"~
         }
     }
 
@@ -727,6 +731,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "square.and.arrow.up.on.square"
         case .communityLists:
             return "person.2.circle"
+        case .siriShortcuts:
+            return "mic.fill"
         }
     }
 
@@ -742,6 +748,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return .blue
         case .communityLists:
             return .indigo
+        case .siriShortcuts:
+            return .purple
         }
     }
 
@@ -749,14 +757,16 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .communityLists:
             return 0
-        case .filterTransfer:
+        case .siriShortcuts:
             return 1
-        case .tipJar:
+        case .filterTransfer:
             return 2
-        case .aiFiltering:
+        case .tipJar:
             return 3
-        case .regexFilters:
+        case .aiFiltering:
             return 4
+        case .regexFilters:
+            return 5
         }
     }
 

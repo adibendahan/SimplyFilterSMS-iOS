@@ -40,9 +40,9 @@ Japanese is LTR. No RTL considerations.
 | Concept | Canonical Japanese Term | Notes |
 |---|---|---|
 | Block / Deny (verb) | ブロック | Widely used in Japanese iOS apps; shorter than 拒否する |
-| Block / Deny (adjective/noun) | ブロック済み / ブロック | e.g., "Blocked Texts" = ブロックテキスト |
+| Block / Deny (adjective/noun) | ブロック済み / ブロック | e.g., "Block List" = ブロックリスト |
 | Allow / Permit (verb) | 許可 | Standard iOS term |
-| Allow / Permit (adjective/noun) | 許可済み / 許可 | e.g., "Allowed Texts" = 許可テキスト |
+| Allow / Permit (adjective/noun) | 許可済み / 許可 | e.g., "Allow List" = 許可リスト |
 | Filter / Filters (noun) | フィルター | Standard loanword, plural implicit |
 | Sender | 送信者 | Standard term |
 | Message (SMS) | メッセージ | Standard iOS term |

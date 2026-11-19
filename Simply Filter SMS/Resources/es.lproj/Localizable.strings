@@ -22,9 +22,9 @@
 
 "filterList_filters" = "Filtros";
 
-"filterList_allowed" = "Textos permitidos";
+"filterList_allowed" = "Lista de permitidos";
 
-"filterList_denied" = "Textos bloqueados";
+"filterList_denied" = "Lista de bloqueo";
 
 "filterList_menu_filterLanguage" = "Bloquear idioma";
 
@@ -162,6 +162,10 @@
 
 "help_getStarted" = "Primeros pasos";
 
+"help_siriShortcuts" = "Siri y Atajos";
+
+"help_shortcuts_caption" = "Mira todas las acciones y úsalas en tus propios atajos.";
+
 "help_enableFiltering_title" = "Activar el filtrado";
 
 "help_enableFiltering_caption" = "Obligatorio en Ajustes de iOS para filtrar SMS desconocidos.";
@@ -196,7 +200,7 @@
 
 "faq_question_1" = "¿Cómo funciona el filtrado de mensajes?";
 
-"faq_answer_1" = "Cuando recibes un SMS de un número que no está en Contactos, Simply Filter SMS lo comprueba en este orden:\n\n• Los **Textos permitidos** siempre pasan.\n• Los **Textos bloqueados**, idiomas bloqueados, Filtros inteligentes, Permitir por país y el **Filtrado AI** pueden enviarlo a No deseado, Transacciones o Promociones.\n• Si no hay coincidencia, el mensaje se entrega con normalidad.\n\nLos iMessage y los remitentes de Contactos nunca se envían a la app.";
+"faq_answer_1" = "Cuando recibes un SMS de un número que no está en Contactos, Simply Filter SMS lo comprueba en este orden:\n\n• Los textos de tu **Lista de permitidos** siempre pasan.\n• Tu **Lista de bloqueo**, idiomas bloqueados, Filtros inteligentes, Permitir por país y el **Filtrado AI** pueden enviarlo a No deseado, Transacciones o Promociones.\n• Si no hay coincidencia, el mensaje se entrega con normalidad.\n\nLos iMessage y los remitentes de Contactos nunca se envían a la app.";
 
 "faq_question_2" = "¿Mis mensajes están expuestos al desarrollador?";
 
@@ -248,7 +252,7 @@
 
 "autoFilter_shortSender_action" = "Seleccionar nuevo límite";
 
-"autoFilter_allUnknown_shortTitle" = "Todos los desconocidos (excepto permitidos)";
+"autoFilter_allUnknown_shortTitle" = "Todos los desconocidos (excepto Lista de permitidos)";
 
 "autoFilter_links_shortTitle" = "Enlaces";
 
@@ -258,7 +262,7 @@
 
 "autoFilter_smartFilters" = "Filtros inteligentes";
 
-"autoFilter_yourFilters" = "Tus filtros";
+"autoFilter_yourFilters" = "Tus listas";
 
 "autoFilter_email" = "Bloquear correos";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "Listas de la comunidad";
 
-"whatsNew_communityLists_desc" = "Suscríbete a listas de filtros que comparten otras personas, o comparte la tuya. Las listas se actualizan solas cuando sus autores publican una versión nueva - las encontrarás en **Tus filtros**.";
+"whatsNew_communityLists_desc" = "Suscríbete a listas de filtros que comparten otras personas, o comparte la tuya. Las listas se actualizan solas cuando sus autores publican una versión nueva - las encontrarás en **Tus listas**.";
+
+"whatsNew_siriShortcuts_title" = "Siri y Atajos";
+
+"whatsNew_siriShortcuts_desc" = "Añade, elimina y comprueba filtros con Siri: prueba **“Añadir a mi Lista de bloqueo en Simply Filter SMS”**. Todas las acciones también están en la app **Atajos**.";
 
 "communityLists_featured" = "Destacadas";
 
@@ -722,7 +730,7 @@
 
 "siri_addFilter_shortTitle" = "Añadir un filtro";
 
-"siri_addFilter_description" = "Añade un texto a tu lista de bloqueo o de permitidos.";
+"siri_addFilter_description" = "Añade un texto a tu Lista de bloqueo o Lista de permitidos.";
 
 "siri_addFilter_list" = "Lista";
 
@@ -738,9 +746,9 @@
 
 "siri_addFilter_summary_unset ${text} ${list}" = "Añadir ${text} a ${list}";
 
-"siri_addFilter_added_block" = "'%@' se ha añadido a tu lista de bloqueo.";
+"siri_addFilter_added_block" = "'%@' se ha añadido a tu Lista de bloqueo.";
 
-"siri_addFilter_added_allow" = "'%@' se ha añadido a tu lista de permitidos.";
+"siri_addFilter_added_allow" = "'%@' se ha añadido a tu Lista de permitidos.";
 
 "siri_addFilter_duplicate" = "'%@' ya es uno de tus filtros.";
 
@@ -749,10 +757,6 @@
 "siri_addFilter_failed" = "No se ha podido guardar el filtro. Inténtalo de nuevo en la app.";
 
 "siri_filterList_type" = "Lista de filtros";
-
-"siri_filterList_block" = "Lista de bloqueo";
-
-"siri_filterList_allow" = "Lista de permitidos";
 
 "siri_checkMessage_title" = "Comprobar un mensaje";
 

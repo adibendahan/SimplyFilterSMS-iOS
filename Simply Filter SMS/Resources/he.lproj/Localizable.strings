@@ -18,9 +18,9 @@
 
 "filterList_filters" = "פילטרים";
 
-"filterList_allowed" = "טקסטים מאופשרים";
+"filterList_allowed" = "רשימת המאושרים";
 
-"filterList_denied" = "טקסטים חסומים";
+"filterList_denied" = "רשימת החסומים";
 
 "filterList_menu_filterLanguage" = "חסימת שפה";
 
@@ -114,6 +114,10 @@
 
 "help_getStarted" = "התחלה";
 
+"help_siriShortcuts" = "Siri וקיצורים";
+
+"help_shortcuts_caption" = "צפו בכל הפעולות והשתמשו בהן בקיצורים משלכם.";
+
 "help_enableFiltering_title" = "הפעלת הסינון";
 
 "help_enableFiltering_caption" = "חובה בהגדרות מערכת ההפעלה כדי לסנן SMS ממספרים לא מוכרים.";
@@ -148,7 +152,7 @@
 
 "faq_question_1" = "איך עובד הסינון של ההודעות?";
 
-"faq_answer_1" = "כשאתם מקבלים SMS ממספר שלא נמצא באנשי הקשר, Simply Filter SMS בודקת אותו בסדר הזה:\n\n• **טקסטים מאופשרים** תמיד עוברים.\n• **טקסטים חסומים**, שפות חסומות, פילטרים חכמים, אפשר לפי מדינה ו-**סינון AI** יכולים להעביר את ההודעה לזבל, עסקאות או קידומי מכירות.\n• אם אין התאמה, ההודעה מתקבלת כרגיל.\n\niMessage ושולחים מאנשי הקשר לא נשלחים לאפליקציה.";
+"faq_answer_1" = "כשאתם מקבלים SMS ממספר שלא נמצא באנשי הקשר, Simply Filter SMS בודקת אותו בסדר הזה:\n\n• הודעות עם טקסט מ**רשימת המאושרים** תמיד עוברות.\n• **רשימת החסומים**, שפות חסומות, פילטרים חכמים, אפשר לפי מדינה ו-**סינון AI** יכולים להעביר את ההודעה לזבל, עסקאות או קידומי מכירות.\n• אם אין התאמה, ההודעה מתקבלת כרגיל.\n\niMessage ושולחים מאנשי הקשר לא נשלחים לאפליקציה.";
 
 "faq_question_2" = "האם ההודעות שלי חשופות למפתח האפליקציה?";
 
@@ -192,7 +196,7 @@
 
 "autoFilter_shortSender_action" = "בחרו הגבלה חדשה";
 
-"autoFilter_allUnknown_shortTitle" = "אנשי קשר בלבד (למעט טקסט מאופשר)";
+"autoFilter_allUnknown_shortTitle" = "אנשי קשר בלבד (למעט רשימת המאושרים)";
 
 "autoFilter_links_shortTitle" = "קישורים";
 
@@ -208,7 +212,7 @@
 
 "autoFilter_smartFilters" = "פילטרים חכמים";
 
-"autoFilter_yourFilters" = "הפילטרים שלך";
+"autoFilter_yourFilters" = "הרשימות שלך";
 
 "autoFilter_email" = "חסום מיילים";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "רשימות קהילה";
 
-"whatsNew_communityLists_desc" = "הירשמו לרשימות סינון שאנשים אחרים שיתפו, או שתפו רשימה משלכם. הרשימות מתעדכנות מעצמן כשהיוצרים שלהן מפרסמים גרסה חדשה - תמצאו אותן ב**הפילטרים שלך**.";
+"whatsNew_communityLists_desc" = "הירשמו לרשימות סינון שאנשים אחרים שיתפו, או שתפו רשימה משלכם. הרשימות מתעדכנות מעצמן כשהיוצרים שלהן מפרסמים גרסה חדשה - תמצאו אותן תחת **הרשימות שלך**.";
+
+"whatsNew_siriShortcuts_title" = "Siri וקיצורים";
+
+"whatsNew_siriShortcuts_desc" = "הוסיפו, הסירו ובדקו פילטרים באמצעות Siri: נסו **„הוספה לרשימת החסומים ב-Simply Filter SMS”**. כל הפעולות זמינות גם באפליקציית **קיצורים**.";
 
 "communityLists_featured" = "מומלצות";
 
@@ -749,10 +757,6 @@
 "siri_addFilter_failed" = "הפילטר לא נשמר. נסו שוב באפליקציה.";
 
 "siri_filterList_type" = "רשימת פילטרים";
-
-"siri_filterList_block" = "רשימת החסומים";
-
-"siri_filterList_allow" = "רשימת המאושרים";
 
 "siri_checkMessage_title" = "בדיקת הודעה";
 

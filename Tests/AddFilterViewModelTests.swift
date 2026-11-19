@@ -27,6 +27,32 @@ class AddFilterViewModelTests: XCTestCase {
         AddFilterView.ViewModel(filterType: .deny, appManager: appManager)
     }
 
+    // MARK: Siri tip tests
+
+    func test_showsSiriTip_trueWhenNotDismissed() {
+        let vm = makeViewModel()
+        XCTAssertTrue(vm.showsSiriTip)
+        XCTAssertEqual(vm.siriTipIntent?.list, .block)
+    }
+
+    func test_showsSiriTip_dismissSavesAndHidesNextSheet() {
+        let vm = makeViewModel()
+        vm.showsSiriTip = false
+        let defaultsManager = self.appManager.defaultsManager as! mock_DefaultsManager
+        XCTAssertTrue(defaultsManager.didDismissAddFilterSiriTip)
+        XCTAssertFalse(makeViewModel().showsSiriTip)
+    }
+
+    func test_siriTipIntent_allowSheetUsesAllowedList() {
+        let vm = AddFilterView.ViewModel(filterType: .allow, appManager: appManager)
+        XCTAssertEqual(vm.siriTipIntent?.list, .allow)
+    }
+
+    func test_siriTipIntent_nilForLanguageSheet() {
+        let vm = AddFilterView.ViewModel(filterType: .denyLanguage, appManager: appManager)
+        XCTAssertNil(vm.siriTipIntent)
+    }
+
     // MARK: isInvalidRegex tests
 
     func test_isInvalidRegex_falseWhenNotRegexMatching() {

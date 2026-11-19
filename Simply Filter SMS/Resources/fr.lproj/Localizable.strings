@@ -22,9 +22,9 @@
 
 "filterList_filters" = "Filtres";
 
-"filterList_allowed" = "Textes autorisés";
+"filterList_allowed" = "Liste d’autorisation";
 
-"filterList_denied" = "Textes bloqués";
+"filterList_denied" = "Liste de blocage";
 
 "filterList_menu_filterLanguage" = "Bloquer une langue";
 
@@ -162,6 +162,10 @@
 
 "help_getStarted" = "Pour commencer";
 
+"help_siriShortcuts" = "Siri et Raccourcis";
+
+"help_shortcuts_caption" = "Découvre toutes les actions et utilise-les dans tes propres raccourcis.";
+
 "help_enableFiltering_title" = "Activer le filtrage";
 
 "help_enableFiltering_caption" = "Obligatoire dans Réglages iOS avant de filtrer les SMS inconnus.";
@@ -196,7 +200,7 @@
 
 "faq_question_1" = "Comment fonctionne le filtrage des messages ?";
 
-"faq_answer_1" = "Quand tu reçois un SMS d'un numéro qui n'est pas dans Contacts, Simply Filter SMS le vérifie dans cet ordre :\n\n• Les **Textes autorisés** passent toujours.\n• Les **Textes bloqués**, langues bloquées, Filtres intelligents, Autoriser par pays et le **Filtrage AI** peuvent l'envoyer dans Indésirables, Transactions ou Promotions.\n• Si rien ne correspond, le message est livré normalement.\n\nLes iMessage et les expéditeurs dans Contacts ne sont jamais envoyés à l'app.";
+"faq_answer_1" = "Quand tu reçois un SMS d'un numéro qui n'est pas dans Contacts, Simply Filter SMS le vérifie dans cet ordre :\n\n• Les textes de ta **Liste d’autorisation** passent toujours.\n• Ta **Liste de blocage**, les langues bloquées, Filtres intelligents, Autoriser par pays et le **Filtrage AI** peuvent l'envoyer dans Indésirables, Transactions ou Promotions.\n• Si rien ne correspond, le message est livré normalement.\n\nLes iMessage et les expéditeurs dans Contacts ne sont jamais envoyés à l'app.";
 
 "faq_question_2" = "Mes messages sont-ils exposés au développeur ?";
 
@@ -248,7 +252,7 @@
 
 "autoFilter_shortSender_action" = "Sélectionner nouvelle limite";
 
-"autoFilter_allUnknown_shortTitle" = "Tous inconnus (sauf autorisés)";
+"autoFilter_allUnknown_shortTitle" = "Tous inconnus (sauf Liste d’autorisation)";
 
 "autoFilter_links_shortTitle" = "Liens";
 
@@ -258,7 +262,7 @@
 
 "autoFilter_smartFilters" = "Filtres intelligents";
 
-"autoFilter_yourFilters" = "Tes filtres";
+"autoFilter_yourFilters" = "Tes listes";
 
 "autoFilter_email_shortTitle" = "E-mail";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "Listes communautaires";
 
-"whatsNew_communityLists_desc" = "Abonne-toi à des listes de filtres partagées par d'autres personnes, ou partage la tienne. Les listes se mettent à jour toutes seules quand leurs auteurs publient une nouvelle version - tu les trouveras dans **Tes filtres**.";
+"whatsNew_communityLists_desc" = "Abonne-toi à des listes de filtres partagées par d'autres personnes, ou partage la tienne. Les listes se mettent à jour toutes seules quand leurs auteurs publient une nouvelle version - tu les trouveras dans **Tes listes**.";
+
+"whatsNew_siriShortcuts_title" = "Siri et Raccourcis";
+
+"whatsNew_siriShortcuts_desc" = "Ajoute, supprime et vérifie des filtres avec Siri : essaie **« Ajouter à ma Liste de blocage dans Simply Filter SMS »**. Toutes les actions sont aussi dans l’app **Raccourcis**.";
 
 "communityLists_featured" = "En vedette";
 
@@ -722,7 +730,7 @@
 
 "siri_addFilter_shortTitle" = "Ajouter un filtre";
 
-"siri_addFilter_description" = "Ajoute un texte à ta liste de blocage ou d’autorisation.";
+"siri_addFilter_description" = "Ajoute un texte à ta Liste de blocage ou ta Liste d’autorisation.";
 
 "siri_addFilter_list" = "Liste";
 
@@ -738,9 +746,9 @@
 
 "siri_addFilter_summary_unset ${text} ${list}" = "Ajouter ${text} à ${list}";
 
-"siri_addFilter_added_block" = "« %@ » a été ajouté à ta liste de blocage.";
+"siri_addFilter_added_block" = "« %@ » a été ajouté à ta Liste de blocage.";
 
-"siri_addFilter_added_allow" = "« %@ » a été ajouté à ta liste d’autorisation.";
+"siri_addFilter_added_allow" = "« %@ » a été ajouté à ta Liste d’autorisation.";
 
 "siri_addFilter_duplicate" = "« %@ » fait déjà partie de tes filtres.";
 
@@ -749,10 +757,6 @@
 "siri_addFilter_failed" = "Impossible d’enregistrer le filtre. Réessaie dans l’app.";
 
 "siri_filterList_type" = "Liste de filtres";
-
-"siri_filterList_block" = "Liste de blocage";
-
-"siri_filterList_allow" = "Liste d’autorisation";
 
 "siri_checkMessage_title" = "Vérifier un message";
 

@@ -18,6 +18,8 @@ protocol DefaultsManagerProtocol {
     var didTip: Bool { get set }
     var lastSeenWhatsNewVersion: Int { get set }
     var didDismissReportingExtensionNudge: Bool { get set }
+    var didDismissAddFilterSiriTip: Bool { get set }
+    var didDismissHelpSiriTips: Bool { get set }
     var sessionNudgeLastShownSessions: [String: Int] { get set }
     var stayReachableToastSessions: [Int] { get set }
     var didOpenStayReachable: Bool { get set }

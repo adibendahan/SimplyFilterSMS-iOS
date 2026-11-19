@@ -22,9 +22,9 @@
 
 "filterList_filters" = "المرشّحات";
 
-"filterList_allowed" = "النصوص المسموحة";
+"filterList_allowed" = "قائمة السماح";
 
-"filterList_denied" = "النصوص المحظورة";
+"filterList_denied" = "قائمة الحظر";
 
 "filterList_menu_filterLanguage" = "حظر لغة";
 
@@ -162,6 +162,10 @@
 
 "help_getStarted" = "البدء";
 
+"help_siriShortcuts" = "Siri والاختصارات";
+
+"help_shortcuts_caption" = "اطّلع على كل الإجراءات، واستخدمها في اختصاراتك الخاصة.";
+
 "help_enableFiltering_title" = "تفعيل التصفية";
 
 "help_enableFiltering_caption" = "مطلوب في إعدادات iOS قبل تصفية رسائل SMS من أرقام مجهولة.";
@@ -196,7 +200,7 @@
 
 "faq_question_1" = "كيف تعمل تصفية الرسائل؟";
 
-"faq_answer_1" = "عندما تصلك رسالة SMS من رقم ليس في جهات الاتصال، تتحقق منها Simply Filter SMS بهذا الترتيب:\n\n• **النصوص المسموحة** تمر دائماً.\n• **النصوص المحظورة** واللغات المحظورة والمرشّحات الذكية والسماح حسب البلد و**تصفية AI** يمكن أن ترسلها إلى غير مرغوب فيه أو المعاملات أو العروض الترويجية.\n• إن لم يطابق شيء، تُسلَّم الرسالة بشكل طبيعي.\n\niMessage والمرسلون في جهات الاتصال لا يُرسلون إلى التطبيق أبداً.";
+"faq_answer_1" = "عندما تصلك رسالة SMS من رقم ليس في جهات الاتصال، تتحقق منها Simply Filter SMS بهذا الترتيب:\n\n• النصوص في **قائمة السماح** تمر دائماً.\n• **قائمة الحظر** واللغات المحظورة والمرشّحات الذكية والسماح حسب البلد و**تصفية AI** يمكن أن ترسلها إلى غير مرغوب فيه أو المعاملات أو العروض الترويجية.\n• إن لم يطابق شيء، تُسلَّم الرسالة بشكل طبيعي.\n\niMessage والمرسلون في جهات الاتصال لا يُرسلون إلى التطبيق أبداً.";
 
 "faq_question_2" = "هل رسائلي مكشوفة لمطور التطبيق؟";
 
@@ -248,7 +252,7 @@
 
 "autoFilter_shortSender_action" = "اختر حدًا جديدًا";
 
-"autoFilter_allUnknown_shortTitle" = "جميع المجهولين (ما عدا المسموح به)";
+"autoFilter_allUnknown_shortTitle" = "جميع المجهولين (ما عدا قائمة السماح)";
 
 "autoFilter_links_shortTitle" = "الروابط";
 
@@ -258,7 +262,7 @@
 
 "autoFilter_smartFilters" = "مرشّحات ذكية";
 
-"autoFilter_yourFilters" = "مرشّحاتك";
+"autoFilter_yourFilters" = "قوائمك";
 
 "autoFilter_email_shortTitle" = "إيميل";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "قوائم المجتمع";
 
-"whatsNew_communityLists_desc" = "اشترك في قوائم تصفية يشاركها أشخاص آخرون، أو شارك قائمتك. تتحدّث القوائم تلقائيًا عندما ينشر مؤلفوها نسخة جديدة - تجدها في **مرشّحاتك**.";
+"whatsNew_communityLists_desc" = "اشترك في قوائم تصفية يشاركها أشخاص آخرون، أو شارك قائمتك. تتحدّث القوائم تلقائيًا عندما ينشر مؤلفوها نسخة جديدة - تجدها في **قوائمك**.";
+
+"whatsNew_siriShortcuts_title" = "Siri والاختصارات";
+
+"whatsNew_siriShortcuts_desc" = "أضف المرشّحات وأزلها وافحصها باستخدام Siri: جرّب **«إضافة إلى قائمة الحظر في Simply Filter SMS»**. كل الإجراءات متاحة أيضًا في تطبيق **الاختصارات**.";
 
 "communityLists_featured" = "مميزة";
 
@@ -749,10 +757,6 @@
 "siri_addFilter_failed" = "تعذّر حفظ المرشّح. حاول مرة أخرى في التطبيق.";
 
 "siri_filterList_type" = "قائمة المرشّحات";
-
-"siri_filterList_block" = "قائمة الحظر";
-
-"siri_filterList_allow" = "قائمة السماح";
 
 "siri_checkMessage_title" = "فحص رسالة";
 

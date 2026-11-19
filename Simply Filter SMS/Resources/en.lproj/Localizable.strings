@@ -27,8 +27,8 @@
 
 //MARK: Filter List View
 "filterList_filters" = "Filters";
-"filterList_allowed" = "Allowed Texts";
-"filterList_denied" = "Blocked Texts";
+"filterList_allowed" = "Allow List";
+"filterList_denied" = "Block List";
 "filterList_menu_filterLanguage" = "Block a Language";
 "menu_help" = "Help";
 "filterList_menu_about" = "About";
@@ -156,12 +156,14 @@
 "faq_subtitle" = "Can't find your answer? Email or open a GitHub issue.";
 "faq_section" = "FAQ";
 "help_getStarted" = "Get Started";
+"help_siriShortcuts" = "Siri & Shortcuts";
+"help_shortcuts_caption" = "See all the actions, and use them in your own shortcuts.";
 "help_enableFiltering_title" = "Enable Filtering";
 "help_enableFiltering_caption" = "Required in iOS Settings before unknown SMS can be filtered.";
 "help_enableReporting_title" = "Enable Reporting Extension";
 "help_enableReporting_caption" = "Optional. Report from a thread in Messages to help improve AI Filtering.";
 "faq_question_1" = "How does message filtering work?";
-"faq_answer_1" = "When you get an SMS from a number that isn't in Contacts, Simply Filter SMS checks it in this order:\n\n• **Allowed Texts** always get through.\n• **Blocked Texts**, blocked languages, Smart Filters, Trusted Countries, and **AI Filtering** can send it to Junk, Transactions, or Promotions.\n• If nothing matches, the message is delivered normally.\n\niMessage and senders in Contacts are never sent to the app.";
+"faq_answer_1" = "When you get an SMS from a number that isn't in Contacts, Simply Filter SMS checks it in this order:\n\n• Texts on your **Allow List** always get through.\n• Your **Block List**, blocked languages, Smart Filters, Trusted Countries, and **AI Filtering** can send it to Junk, Transactions, or Promotions.\n• If nothing matches, the message is delivered normally.\n\niMessage and senders in Contacts are never sent to the app.";
 "faq_question_2" = "Are my messages exposed to the app developer?";
 "faq_answer_2" = "No. Simply Filter SMS doesn't collect any information, and every message is processed on your device. A message is never sent anywhere automatically. The only exception is when you choose to report a specific message yourself: only that message is sent, and only because you tapped Report.";
 "faq_question_3" = "What about iMessages and messages from my contacts?";
@@ -201,12 +203,12 @@
 "autoFilter_shortSender_desc" = "At least %ld characters";
 "autoFilter_shortSender_change" = "Change";
 "autoFilter_shortSender_action" = "Select new limit";
-"autoFilter_allUnknown_shortTitle" = "All unknown senders (except Allowed Text)";
+"autoFilter_allUnknown_shortTitle" = "All unknown senders (except Allow List)";
 "autoFilter_links_shortTitle" = "Links";
 "autoFilter_numbersOnly_shortTitle" = "Numbers only";
 "autoFilter_shortSender_shortTitle" = "Short senders";
 "autoFilter_smartFilters" = "Smart filters";
-"autoFilter_yourFilters" = "Your filters";
+"autoFilter_yourFilters" = "Your lists";
 "autoFilter_email_shortTitle" = "Email";
 "autoFilter_email" = "Block Email Senders";
 "autoFilter_empty" = "Go online while the app is open at least once to download the AI Filtering lists.";
@@ -390,7 +392,7 @@
 //MARK: Siri
 "siri_addFilter_title" = "Add a Filter";
 "siri_addFilter_shortTitle" = "Add a Filter";
-"siri_addFilter_description" = "Adds a text to your block list or allow list.";
+"siri_addFilter_description" = "Adds a text to your Block List or Allow List.";
 "siri_addFilter_list" = "List";
 "siri_addFilter_listPrompt" = "Which list?";
 "siri_addFilter_text" = "Text";
@@ -398,14 +400,12 @@
 "siri_addFilter_summary_block ${text}" = "Block texts with ${text}";
 "siri_addFilter_summary_allow ${text}" = "Allow texts with ${text}";
 "siri_addFilter_summary_unset ${text} ${list}" = "Add ${text} to ${list}";
-"siri_addFilter_added_block" = "Added “%@” to your block list.";
-"siri_addFilter_added_allow" = "Added “%@” to your allow list.";
+"siri_addFilter_added_block" = "Added “%@” to your Block List.";
+"siri_addFilter_added_allow" = "Added “%@” to your Allow List.";
 "siri_addFilter_duplicate" = "“%@” is already one of your filters.";
 "siri_addFilter_empty" = "There's no text to add.";
 "siri_addFilter_failed" = "Couldn't save the filter. Try again in the app.";
 "siri_filterList_type" = "Filter List";
-"siri_filterList_block" = "Block List";
-"siri_filterList_allow" = "Allow List";
 "siri_checkMessage_title" = "Check a Message";
 "siri_checkMessage_shortTitle" = "Check a Message";
 "siri_checkMessage_description" = "Tells you where a text would go, using your filters.";
@@ -469,7 +469,9 @@
 "whatsNew_filterTransfer_title" = "Export & Import Filters";
 "whatsNew_filterTransfer_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
 "whatsNew_communityLists_title" = "Community Lists";
-"whatsNew_communityLists_desc" = "Subscribe to filter lists shared by other people, or share your own. Lists update themselves when their authors publish a new version - find them under **Your Filters**.";
+"whatsNew_communityLists_desc" = "Subscribe to filter lists shared by other people, or share your own. Lists update themselves when their authors publish a new version - find them under **Your lists**.";
+"whatsNew_siriShortcuts_title" = "Siri & Shortcuts";
+"whatsNew_siriShortcuts_desc" = "Add, remove and check filters with Siri: try **“Add to my Block List in Simply Filter SMS”**. All the actions are in the **Shortcuts** app too.";
 
 // Country calling code groups
 "callingCode_+1" = "North America";

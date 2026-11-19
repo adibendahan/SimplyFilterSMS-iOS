@@ -22,9 +22,9 @@
 
 "filterList_filters" = "Filter";
 
-"filterList_allowed" = "Erlaubte Texte";
+"filterList_allowed" = "Positivliste";
 
-"filterList_denied" = "Gesperrte Texte";
+"filterList_denied" = "Sperrliste";
 
 "filterList_menu_filterLanguage" = "Sprache sperren";
 
@@ -162,6 +162,10 @@
 
 "help_getStarted" = "Erste Schritte";
 
+"help_siriShortcuts" = "Siri & Kurzbefehle";
+
+"help_shortcuts_caption" = "Sieh dir alle Aktionen an und nutze sie in deinen eigenen Kurzbefehlen.";
+
 "help_enableFiltering_title" = "Filterung aktivieren";
 
 "help_enableFiltering_caption" = "In den iOS-Einstellungen nötig, bevor unbekannte SMS gefiltert werden können.";
@@ -196,7 +200,7 @@
 
 "faq_question_1" = "Wie funktioniert die Nachrichtenfilterung?";
 
-"faq_answer_1" = "Wenn du eine SMS von einer Nummer bekommst, die nicht in Kontakten ist, prüft Simply Filter SMS sie in dieser Reihenfolge:\n\n• **Erlaubte Texte** kommen immer durch.\n• **Gesperrte Texte**, gesperrte Sprachen, Smarte Filter, Nach Land erlauben und **KI-Filterung** können sie nach Junk, Transaktionen oder Werbung schicken.\n• Gibt es keine Übereinstimmung, wird die Nachricht normal zugestellt.\n\niMessage und Absender in Kontakten werden der App nie übergeben.";
+"faq_answer_1" = "Wenn du eine SMS von einer Nummer bekommst, die nicht in Kontakten ist, prüft Simply Filter SMS sie in dieser Reihenfolge:\n\n• Texte auf deiner **Positivliste** kommen immer durch.\n• Deine **Sperrliste**, gesperrte Sprachen, Smarte Filter, Nach Land erlauben und **KI-Filterung** können sie nach Junk, Transaktionen oder Werbung schicken.\n• Gibt es keine Übereinstimmung, wird die Nachricht normal zugestellt.\n\niMessage und Absender in Kontakten werden der App nie übergeben.";
 
 "faq_question_2" = "Sind meine Nachrichten für den App-Entwickler einsehbar?";
 
@@ -248,7 +252,7 @@
 
 "autoFilter_shortSender_action" = "Neues Limit auswählen";
 
-"autoFilter_allUnknown_shortTitle" = "Alle unbekannten Absender (außer erlaubtem Text)";
+"autoFilter_allUnknown_shortTitle" = "Alle unbekannten Absender (außer Positivliste)";
 
 "autoFilter_links_shortTitle" = "Links";
 
@@ -258,7 +262,7 @@
 
 "autoFilter_smartFilters" = "Smarte Filter";
 
-"autoFilter_yourFilters" = "Deine Filter";
+"autoFilter_yourFilters" = "Deine Listen";
 
 "autoFilter_email_shortTitle" = "E-Mail";
 
@@ -660,7 +664,11 @@
 
 "whatsNew_communityLists_title" = "Community-Listen";
 
-"whatsNew_communityLists_desc" = "Abonniere Filterlisten, die andere teilen, oder teile deine eigene. Listen aktualisieren sich selbst, wenn ihre Autoren eine neue Version veröffentlichen - du findest sie unter **Deine Filter**.";
+"whatsNew_communityLists_desc" = "Abonniere Filterlisten, die andere teilen, oder teile deine eigene. Listen aktualisieren sich selbst, wenn ihre Autoren eine neue Version veröffentlichen - du findest sie unter **Deine Listen**.";
+
+"whatsNew_siriShortcuts_title" = "Siri & Kurzbefehle";
+
+"whatsNew_siriShortcuts_desc" = "Füge Filter mit Siri hinzu, entferne oder prüfe sie: Probier **„Zu meiner Sperrliste in Simply Filter SMS hinzufügen“**. Alle Aktionen gibt es auch in der App **Kurzbefehle**.";
 
 "communityLists_featured" = "Empfohlen";
 
@@ -749,10 +757,6 @@
 "siri_addFilter_failed" = "Der Filter konnte nicht gespeichert werden. Versuch es in der App noch mal.";
 
 "siri_filterList_type" = "Filterliste";
-
-"siri_filterList_block" = "Sperrliste";
-
-"siri_filterList_allow" = "Positivliste";
 
 "siri_checkMessage_title" = "Nachricht prüfen";
 

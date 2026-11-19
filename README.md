@@ -125,8 +125,8 @@ On the home screen, tap the ••• button at the top right, then **Filter Too
 
 When you get an SMS from a number that isn't in Contacts, Simply Filter SMS checks it in this order:
 
-* **Allowed Texts** always get through.
-* **Blocked Texts**, blocked languages, Smart Filters, Trusted Countries, **AI Filtering** and **Community Lists** can send it to Junk, Transactions, or Promotions.
+* Texts on your **Allow List** always get through.
+* Your **Block List**, blocked languages, Smart Filters, Trusted Countries, **AI Filtering** and **Community Lists** can send it to Junk, Transactions, or Promotions.
 * If nothing matches, the message is delivered normally.
 
 iMessage and senders in Contacts are never sent to the app.
