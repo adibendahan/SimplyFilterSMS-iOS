@@ -390,6 +390,25 @@ enum FilterCase: Int64, CaseIterable, Identifiable, TestIdentifiable {
     }
 }
 
+struct FilterSignature: Equatable {
+    let text: String
+    let filterTarget: FilterTarget
+    let filterMatching: FilterMatching
+    let filterCase: FilterCase
+
+    func isDuplicate(of other: FilterSignature) -> Bool {
+        guard self.filterTarget == other.filterTarget, self.filterMatching == other.filterMatching else { return false }
+        let isEitherCaseInsensitive = self.filterCase == .caseInsensitive || other.filterCase == .caseInsensitive
+        let isDuplicate: Bool
+        if self.filterMatching != .regex && isEitherCaseInsensitive {
+            isDuplicate = self.text.lowercased() == other.text.lowercased()
+        } else {
+            isDuplicate = self.text == other.text
+        }
+        return isDuplicate
+    }
+}
+
 enum ReportType: Int64, CaseIterable, Identifiable {
     var id: Int64 { return self.rawValue }
 

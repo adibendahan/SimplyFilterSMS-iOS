@@ -121,8 +121,11 @@ struct FilterTransferCandidate: Equatable, Identifiable {
         return (try? Regex(self.text)) != nil
     }
 
-    var duplicateKey: String {
-        return "\(self.text)|\(self.filterTarget.rawValue)|\(self.filterMatching.rawValue)|\(self.filterCase.rawValue)"
+    var signature: FilterSignature {
+        return FilterSignature(text: self.text,
+                               filterTarget: self.filterTarget,
+                               filterMatching: self.filterMatching,
+                               filterCase: self.filterCase)
     }
 }
 

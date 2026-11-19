@@ -54,6 +54,7 @@ struct StayReachableView: View {
                             Text(skippedNote)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: .infinity)
+                                .accessibilityIdentifier(TestIdentifier.stayReachableSkippedNote.rawValue)
                         }
                     }
                     .environment(\.layoutDirection, self.model.layoutDirection(for: section) ?? self.layoutDirection)
@@ -77,6 +78,7 @@ struct StayReachableView: View {
                 }
                 .buttonStyle(FilledButton())
                 .disabled(self.model.newFilterTexts.isEmpty)
+                .accessibilityIdentifier(TestIdentifier.stayReachableAddButton.rawValue)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(Color(.systemGroupedBackground).ignoresSafeArea())
@@ -144,7 +146,7 @@ struct StayReachableView: View {
 
     @ViewBuilder
     private func sectionHeader(for section: LanguageSection) -> some View {
-        if section.language == .english {
+        if section.language == self.model.appLanguage {
             Text(self.model.title(for: section))
         } else {
             Menu {
@@ -229,6 +231,7 @@ struct StayReachableView: View {
 
             TextField(title, text: text, prompt: Text(prompt))
                 .focused($focusedField, equals: focus)
+                .accessibilityIdentifier(field.testIdentifier.rawValue)
                 .textContentType(field.contentType)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -271,7 +274,7 @@ extension StayReachableView {
         }
     }
 
-    enum Field: CaseIterable {
+    enum Field: CaseIterable, TestIdentifiable {
         case firstName, surname, street
 
         var keyPath: WritableKeyPath<LanguageSection, String> {
@@ -304,13 +307,22 @@ extension StayReachableView {
             case .street: return nil
             }
         }
+
+        var testIdentifier: TestIdentifier {
+            switch self {
+            case .firstName: return .stayReachableFirstNameField
+            case .surname: return .stayReachableSurnameField
+            case .street: return .stayReachableStreetField
+            }
+        }
     }
 
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var sections: [LanguageSection]
+        let appLanguage: Locale.LanguageCode
         let phoneLanguages: [Locale.LanguageCode]
         let otherLanguages: [Locale.LanguageCode]
-        private var allowedTexts: Set<String> = []
+        private var existingFilters: [FilterSignature] = []
 
         private static let extraLocalizations: [String: [String: String]] = {
             guard let url = Bundle.main.url(forResource: "StayReachableLocalizations", withExtension: "json") else {
@@ -328,23 +340,30 @@ extension StayReachableView {
             return localizations
         }()
 
-        override init(appManager: AppManagerProtocol = AppManager.shared) {
-            let phoneLanguages = Locale.LanguageCode.phoneLanguages.filter { $0 != .english }
-            let otherLanguages = Locale.LanguageCode.namedLanguages.filter { $0 != .english && !phoneLanguages.contains($0) }
-            var sections = [LanguageSection(language: .english)]
-            if let firstPhoneLanguage = phoneLanguages.first {
-                sections.append(LanguageSection(language: firstPhoneLanguage))
+        init(appManager: AppManagerProtocol = AppManager.shared,
+             appLanguage: Locale.LanguageCode = .appLanguage,
+             phoneLanguages allPhoneLanguages: [Locale.LanguageCode] = Locale.LanguageCode.phoneLanguages) {
+            let phoneLanguages = allPhoneLanguages.filter { $0 != appLanguage }
+            let otherLanguages = Locale.LanguageCode.namedLanguages.filter { $0 != appLanguage && !phoneLanguages.contains($0) }
+            let secondLanguage: Locale.LanguageCode?
+            if appLanguage == .english {
+                secondLanguage = phoneLanguages.first
+            } else {
+                secondLanguage = .english
+            }
+            var sections = [LanguageSection(language: appLanguage)]
+            if let secondLanguage {
+                sections.append(LanguageSection(language: secondLanguage))
             }
 
+            self.appLanguage = appLanguage
             self.phoneLanguages = phoneLanguages
             self.otherLanguages = otherLanguages
             self.sections = sections
 
             super.init(appManager: appManager)
-            self.allowedTexts = appManager.persistenceManager.filterTexts(filterTarget: .all,
-                                                                          filterMatching: .exact,
-                                                                          filterCase: .caseInsensitive)
-            Log.debug("opened, phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), allowedTexts: \(self.allowedTexts.count)")
+            self.existingFilters = appManager.persistenceManager.fetchFilterRecords().map(\.signature)
+            Log.debug("opened, appLanguage: \(appLanguage.identifier), phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), existingFilters: \(self.existingFilters.count)")
         }
 
         var newFilterTexts: [String] {
@@ -366,7 +385,8 @@ extension StayReachableView {
         func isAlreadyAllowed(_ text: String) -> Bool {
             let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
             guard trimmedText.count >= kMinimumFilterLength else { return false }
-            return self.allowedTexts.contains(trimmedText)
+            let signature = Self.newFilterSignature(for: trimmedText)
+            return self.existingFilters.contains { signature.isDuplicate(of: $0) }
         }
 
         func isSkipped(_ field: Field, in section: LanguageSection) -> Bool {
@@ -454,18 +474,26 @@ extension StayReachableView {
         func addFilters() {
             let newTexts = self.newFilterTexts
             for text in newTexts {
-                _ = self.appManager.persistenceManager.addFilter(text: text,
+                let signature = Self.newFilterSignature(for: text)
+                _ = self.appManager.persistenceManager.addFilter(text: signature.text,
                                                                  type: .allow,
                                                                  denyFolder: .junk,
-                                                                 filterTarget: .all,
-                                                                 filterMatching: .exact,
-                                                                 filterCase: .caseInsensitive)
+                                                                 filterTarget: signature.filterTarget,
+                                                                 filterMatching: signature.filterMatching,
+                                                                 filterCase: signature.filterCase)
             }
             Log.debug("allow filters added, texts: \(newTexts), languages: \(self.sections.map(\.language.identifier))")
         }
 
 
         //MARK: Private
+        private static func newFilterSignature(for text: String) -> FilterSignature {
+            return FilterSignature(text: text,
+                                   filterTarget: .all,
+                                   filterMatching: .exact,
+                                   filterCase: .caseInsensitive)
+        }
+
         private func hasLabels(for language: Locale.LanguageCode) -> Bool {
             return language.appLocalization != nil || Self.extraLocalizations[language.identifier] != nil
         }

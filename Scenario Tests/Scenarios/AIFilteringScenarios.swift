@@ -19,9 +19,11 @@ final class AIFilteringScenarios: ScenarioTestCase {
 
         app.aiFiltering.turnOn(.english)
 
-        app.expect(prize, toBe: .junk)
-        app.expect(verificationCode, toBe: .transaction)
-        app.expect(prizeFromTrustedSender, toBe: .allowed)
+        app.testYourFilters { tester in
+            tester.expect(prize, toBe: .junk)
+            tester.expect(verificationCode, toBe: .transaction)
+            tester.expect(prizeFromTrustedSender, toBe: .allowed)
+        }
 
         app.aiFiltering.turnOff(.english)
 

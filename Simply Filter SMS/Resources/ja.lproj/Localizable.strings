@@ -28,7 +28,7 @@
 
 "filterList_menu_filterLanguage" = "言語をブロック";
 
-"filterList_menu_enableExtension" = "ヘルプ";
+"menu_help" = "ヘルプ";
 
 "filterList_menu_about" = "このアプリについて";
 

@@ -19,8 +19,10 @@ final class FilterScenarios: ScenarioTestCase {
 
         app.allowList.add("Pharmacy", target: .sender)
 
-        app.expect(prescription, toBe: .allowed)
-        app.expect(mentionsPharmacy, toBe: .junk)
+        app.testYourFilters { tester in
+            tester.expect(prescription, toBe: .allowed)
+            tester.expect(mentionsPharmacy, toBe: .junk)
+        }
     }
 
     func testDenyFilterSendsMatchingMessagesToItsFolderUntilDeleted() {
@@ -30,8 +32,10 @@ final class FilterScenarios: ScenarioTestCase {
 
         app.denyList.add("SALE", folder: .promotions, letterCase: .sensitive)
 
-        app.expect(sale, toBe: .promotion)
-        app.expect(lowercaseSale, toBe: .allowed)
+        app.testYourFilters { tester in
+            tester.expect(sale, toBe: .promotion)
+            tester.expect(lowercaseSale, toBe: .allowed)
+        }
 
         app.denyList.delete("SALE")
 

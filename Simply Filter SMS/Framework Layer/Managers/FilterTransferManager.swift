@@ -103,7 +103,7 @@ class FilterTransferManager: FilterTransferManagerProtocol {
         var duplicateCount = 0
         var invalidCount = 0
         var skippedCount = 0
-        var seenKeys = Set<String>()
+        var seenSignatures: [FilterSignature] = []
 
         for record in payload.filters {
             if let recordType = FilterType(exportKey: record.type), !recordType.isTransferable {
@@ -118,19 +118,20 @@ class FilterTransferManager: FilterTransferManagerProtocol {
                 continue
             }
 
-            let key = candidate.duplicateKey
+            let signature = candidate.signature
+            let isFileDuplicate = seenSignatures.contains { signature.isDuplicate(of: $0) }
             let isStoreDuplicate = !typesToClear.contains(candidate.type) &&
                 self.persistenceManager.isDuplicateFilter(text: candidate.text,
                                                           filterTarget: candidate.filterTarget,
                                                           filterMatching: candidate.filterMatching,
                                                           filterCase: candidate.filterCase)
-            if seenKeys.contains(key) || isStoreDuplicate {
-                Log.debug("record duplicate, text: \(candidate.text), inFile: \(seenKeys.contains(key)), inStore: \(isStoreDuplicate) → skipped")
+            if isFileDuplicate || isStoreDuplicate {
+                Log.debug("record duplicate, text: \(candidate.text), inFile: \(isFileDuplicate), inStore: \(isStoreDuplicate) → skipped")
                 duplicateCount += 1
                 continue
             }
 
-            seenKeys.insert(key)
+            seenSignatures.append(signature)
             accepted.append(candidate)
         }
 

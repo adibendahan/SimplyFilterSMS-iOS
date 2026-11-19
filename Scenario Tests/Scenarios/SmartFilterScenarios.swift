@@ -20,10 +20,12 @@ final class SmartFilterScenarios: ScenarioTestCase {
         app.home.turnOn(.numbersOnly)
         app.home.turnOn(.emojis)
 
-        app.expect(parcelLink, toBe: .junk)
-        app.expect(namedSender, toBe: .junk)
-        app.expect(birthday, toBe: .junk)
-        app.expect(plainText, toBe: .allowed)
+        app.testYourFilters { tester in
+            tester.expect(parcelLink, toBe: .junk)
+            tester.expect(namedSender, toBe: .junk)
+            tester.expect(birthday, toBe: .junk)
+            tester.expect(plainText, toBe: .allowed)
+        }
 
         app.home.turnOff(.links)
 

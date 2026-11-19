@@ -28,7 +28,7 @@
 
 "filterList_menu_filterLanguage" = "Sprache sperren";
 
-"filterList_menu_enableExtension" = "Hilfe";
+"menu_help" = "Hilfe";
 
 "filterList_menu_about" = "Über";
 

@@ -31,6 +31,7 @@ struct ToastView: View {
         .limitedDynamicTypeSize(.accessibility1)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(self.model.onTap == nil ? [] : .isButton)
+        .accessibilityIdentifier(TestIdentifier.toast.rawValue)
         .accessibilityAction {
             self.performTap()
         }

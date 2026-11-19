@@ -168,7 +168,7 @@ struct HelpView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("filterList_menu_enableExtension"~)
+            .navigationTitle("menu_help"~)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

@@ -26,8 +26,10 @@ final class FilterTransferScenarios: ScenarioTestCase {
 
         app.filterTransfer.importFromFiles(named: fileName)
 
-        app.expect(sale, toBe: .promotion)
-        app.expect(lowercaseSale, toBe: .allowed)
-        app.expect(fromPharmacy, toBe: .allowed)
+        app.testYourFilters { tester in
+            tester.expect(sale, toBe: .promotion)
+            tester.expect(lowercaseSale, toBe: .allowed)
+            tester.expect(fromPharmacy, toBe: .allowed)
+        }
     }
 }

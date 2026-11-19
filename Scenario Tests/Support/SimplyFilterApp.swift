@@ -20,10 +20,12 @@ final class SimplyFilterApp {
     let aiFiltering: AIFilteringScreen
     let communityLists: CommunityListsScreen
     let filterTransfer: FilterTransferScreen
+    let stayReachable: StayReachableScreen
     private let filterTester: FilterTesterScreen
 
-    init(remoteLists: RemoteLists) {
-        var arguments = ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+    init(remoteLists: RemoteLists, phoneLanguages: [Language]) {
+        let languageCodes = phoneLanguages.map(\.rawValue).joined(separator: ", ")
+        var arguments = ["-AppleLanguages", "(\(languageCodes))", "-AppleLocale", "en_US"]
         if remoteLists == .testCatalog {
             arguments.append("-UITestData")
         }
@@ -35,10 +37,19 @@ final class SimplyFilterApp {
         self.aiFiltering = AIFilteringScreen(app: app)
         self.communityLists = CommunityListsScreen(app: app)
         self.filterTransfer = FilterTransferScreen(app: app)
+        self.stayReachable = StayReachableScreen(app: app, phoneLanguages: phoneLanguages)
         self.filterTester = FilterTesterScreen(app: app)
     }
 
     func expect(_ message: Message, toBe verdict: Verdict, file: StaticString = #filePath, line: UInt = #line) {
-        self.filterTester.expect(message, toBe: verdict, file: file, line: line)
+        self.testYourFilters { tester in
+            tester.expect(message, toBe: verdict, file: file, line: line)
+        }
+    }
+
+    func testYourFilters(_ checks: (FilterTesterScreen) -> Void) {
+        self.filterTester.open()
+        checks(self.filterTester)
+        self.filterTester.close()
     }
 }

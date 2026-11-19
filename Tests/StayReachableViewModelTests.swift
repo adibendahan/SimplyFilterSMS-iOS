@@ -32,11 +32,53 @@ class StayReachableViewModelTests: XCTestCase {
     }
 
     //MARK: Tests
-    func test_init_startsWithEnglish() {
+    func test_init_inEnglish_startsWithEnglishThenTheFirstOtherPhoneLanguage() {
+        // Prepare
+        let hebrew = Locale.LanguageCode("he")
+        let french = Locale.LanguageCode("fr")
+
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english, hebrew, french])
+
         // Verify
-        XCTAssertEqual(self.testSubject.sections.first?.language, .english)
-        XCTAssertFalse(self.testSubject.phoneLanguages.contains(.english))
+        XCTAssertEqual(self.testSubject.sections.map(\.language), [.english, hebrew])
+        XCTAssertEqual(self.testSubject.appLanguage, .english)
+        XCTAssertEqual(self.testSubject.phoneLanguages, [hebrew, french])
         XCTAssertFalse(self.testSubject.otherLanguages.contains(.english))
+        XCTAssertFalse(self.testSubject.otherLanguages.contains(hebrew))
+        XCTAssertFalse(self.testSubject.otherLanguages.contains(french))
+    }
+
+    func test_init_inEnglishWithNoOtherPhoneLanguage_startsWithEnglishOnly() {
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english])
+
+        // Verify
+        XCTAssertEqual(self.testSubject.sections.map(\.language), [.english])
+        XCTAssertTrue(self.testSubject.phoneLanguages.isEmpty)
+    }
+
+    func test_init_inAnotherAppLanguage_startsWithItThenEnglish() {
+        // Prepare
+        let hebrew = Locale.LanguageCode("he")
+        let arabic = Locale.LanguageCode("ar")
+
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: hebrew,
+                                                       phoneLanguages: [hebrew, arabic])
+
+        // Verify
+        XCTAssertEqual(self.testSubject.sections.map(\.language), [hebrew, .english])
+        XCTAssertEqual(self.testSubject.appLanguage, hebrew)
+        XCTAssertEqual(self.testSubject.phoneLanguages, [arabic])
+        XCTAssertTrue(self.testSubject.otherLanguages.contains(.english))
+        XCTAssertFalse(self.testSubject.otherLanguages.contains(hebrew))
+        XCTAssertFalse(self.testSubject.otherLanguages.contains(arabic))
     }
 
     func test_newFilterTexts_skipsBlankRepeatedAndAllowed() {
@@ -48,8 +90,9 @@ class StayReachableViewModelTests: XCTestCase {
         hebrew.firstName = "adi"
         hebrew.surname = "בן דהן"
         hebrew.street = "הרצל"
-        self.persistenceManager.filterTextsClosure = { _, _, _ in
-            return ["Ben-Dahan"]
+        let existingFilters = self.allowFilters(["Ben-Dahan"])
+        self.persistenceManager.fetchFilterRecordsClosure = {
+            return existingFilters
         }
         self.testSubject = StayReachableView.ViewModel(appManager: self.appManager)
 
@@ -88,8 +131,9 @@ class StayReachableViewModelTests: XCTestCase {
         english.firstName = "Adi"
         english.surname = "Cohen"
         english.street = "Cohen"
-        self.persistenceManager.filterTextsClosure = { _, _, _ in
-            return ["Adi"]
+        let existingFilters = self.allowFilters(["Adi"])
+        self.persistenceManager.fetchFilterRecordsClosure = {
+            return existingFilters
         }
         self.testSubject = StayReachableView.ViewModel(appManager: self.appManager)
 
@@ -107,8 +151,9 @@ class StayReachableViewModelTests: XCTestCase {
         english.firstName = "Aaa"
         english.surname = "aaa"
         english.street = "Aaa"
-        self.persistenceManager.filterTextsClosure = { _, _, _ in
-            return ["Aaa", "aaa"]
+        let existingFilters = self.allowFilters(["Aaa", "aaa"])
+        self.persistenceManager.fetchFilterRecordsClosure = {
+            return existingFilters
         }
         self.testSubject = StayReachableView.ViewModel(appManager: self.appManager)
 
@@ -143,10 +188,9 @@ class StayReachableViewModelTests: XCTestCase {
         var english = StayReachableView.LanguageSection(language: .english)
         english.firstName = "Adi"
         english.surname = "Cohen"
-        var requestedRule: (FilterTarget, FilterMatching, FilterCase)?
-        self.persistenceManager.filterTextsClosure = { target, matching, filterCase in
-            requestedRule = (target, matching, filterCase)
-            return ["Adi"]
+        let existingFilters = self.allowFilters(["Adi"])
+        self.persistenceManager.fetchFilterRecordsClosure = {
+            return existingFilters
         }
         self.persistenceManager.resetCounters()
 
@@ -159,11 +203,40 @@ class StayReachableViewModelTests: XCTestCase {
         // Verify
         XCTAssertEqual(newFilterTexts, ["Cohen"])
         XCTAssertFalse(skippedNote.isEmpty)
-        XCTAssertEqual(self.persistenceManager.filterTextsCounter, 1)
+        XCTAssertEqual(self.persistenceManager.fetchFilterRecordsCounter, 1)
         XCTAssertEqual(self.persistenceManager.isDuplicateFilterCounter, 0)
-        XCTAssertEqual(requestedRule?.0, .all)
-        XCTAssertEqual(requestedRule?.1, .exact)
-        XCTAssertEqual(requestedRule?.2, .caseInsensitive)
+    }
+
+    func test_isAlreadyAllowed_ignoresCase() {
+        // Prepare
+        let existingFilters = self.allowFilters(["dana", "LEVI"])
+        self.persistenceManager.fetchFilterRecordsClosure = {
+            return existingFilters
+        }
+
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager)
+
+        // Verify
+        XCTAssertTrue(self.testSubject.isAlreadyAllowed("Dana"))
+        XCTAssertTrue(self.testSubject.isAlreadyAllowed(" levi "))
+        XCTAssertFalse(self.testSubject.isAlreadyAllowed("Danaher"))
+    }
+
+    func test_isAlreadyAllowed_followsTheDuplicateRule() {
+        // Prepare
+        let caseSensitive = self.allowFilters(["Herzl"], filterCase: .caseSensitive)
+        let containsMatching = self.allowFilters(["Cohen"], filterMatching: .contains)
+        self.persistenceManager.fetchFilterRecordsClosure = {
+            return caseSensitive + containsMatching
+        }
+
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager)
+
+        // Verify
+        XCTAssertTrue(self.testSubject.isAlreadyAllowed("herzl"))
+        XCTAssertFalse(self.testSubject.isAlreadyAllowed("Cohen"))
     }
 
     func test_addFilters_addsExactCaseInsensitiveAllowFilters() {
@@ -231,5 +304,24 @@ class StayReachableViewModelTests: XCTestCase {
 
         // Verify
         XCTAssertEqual(self.testSubject.sections.map(\.language), [.english, german])
+    }
+
+
+    //MARK: Private
+    private func allowFilters(_ texts: [String],
+                              filterMatching: FilterMatching = .exact,
+                              filterCase: FilterCase = .caseInsensitive) -> [Filter] {
+        var filters: [Filter] = []
+        for text in texts {
+            let filter = Filter(context: self.persistenceManager.context)
+            filter.uuid = UUID()
+            filter.text = text
+            filter.filterType = .allow
+            filter.filterTarget = .all
+            filter.filterMatching = filterMatching
+            filter.filterCase = filterCase
+            filters.append(filter)
+        }
+        return filters
     }
 }

@@ -77,6 +77,7 @@ struct CommunityListRow: View {
                 .font(.caption2.weight(.bold))
                 .foregroundColor(Color(UIColor.tertiaryLabel))
                 .rotationEffect(.degrees(isExpanded.wrappedValue ? 90 : 0))
+                .flipsForRightToLeftLayoutDirection(true)
                 .frame(width: self.chevronColumnWidth, alignment: .leading)
                 .contentShape(Rectangle())
         }
@@ -109,6 +110,7 @@ struct CommunityListRow: View {
 
 struct CommunityListDetails: View {
 
+    @Environment(\.layoutDirection) private var layoutDirection
     @ScaledMetric(relativeTo: .footnote) private var gitHubIconSize: CGFloat = 11
 
     let communityList: CommunityListItem
@@ -119,6 +121,8 @@ struct CommunityListDetails: View {
                 Text(description)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .environment(\.layoutDirection, self.descriptionLayoutDirection)
             }
             if let homepage = self.communityList.homepage {
                 Link(destination: homepage) {
@@ -140,6 +144,12 @@ struct CommunityListDetails: View {
             }
         }
         .font(.footnote)
+    }
+
+    private var descriptionLayoutDirection: LayoutDirection {
+        guard let language = self.communityList.locale?.language.languageCode else { return self.layoutDirection }
+        let direction: LayoutDirection = language.isRightToLeft ? .rightToLeft : .leftToRight
+        return direction
     }
 }
 

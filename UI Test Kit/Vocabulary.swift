@@ -21,7 +21,7 @@ struct Message: CustomStringConvertible {
     }
 }
 
-enum Verdict: String {
+enum Verdict: String, CaseIterable {
     case allowed
     case junk
     case promotion
