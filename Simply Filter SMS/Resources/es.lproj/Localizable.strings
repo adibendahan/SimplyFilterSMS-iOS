@@ -876,4 +876,14 @@
 
 "faq_iCloudSync_answer" = "Sí. Con iCloud activado, tus filtros, Filtros inteligentes y listas se sincronizan con todos los dispositivos con la misma Cuenta de Apple. Van a tu iCloud, nunca al desarrollador.";
 
+"whatsNew_accentColor_title" = "Color de acento";
+
+"whatsNew_accentColor_desc" = "Elige tu color favorito en **Color de acento** en el menú, y toda la app lo adopta.";
+
+"whatsNew_help_title" = "Ayuda y FAQ";
+
+"whatsNew_help_desc" = "**Ayuda** en el menú ahora te guía en la configuración en **Primeros pasos** y responde a las dudas comunes en **Preguntas frecuentes**.";
+
+"tipJar_tipButton" = "Propina de %@";
+
 

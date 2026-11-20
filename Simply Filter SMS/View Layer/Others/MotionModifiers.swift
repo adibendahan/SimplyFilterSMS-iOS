@@ -146,6 +146,73 @@ private struct ShakeModifier: ViewModifier {
     }
 }
 
+private enum RippleMotion {
+    static let endScale: CGFloat = 1.45
+    static let startOpacity: Double = 0.5
+    static let duration: Double = 0.6
+    static let lifetime: Double = 0.7
+}
+
+private struct StrokeRipple: View {
+    let systemName: String
+    let color: Color
+    let reduceMotion: Bool
+
+    @State private var isExpanded = false
+
+    var body: some View {
+        Image(systemName: self.systemName)
+            .resizable()
+            .scaledToFit()
+            .fontWeight(.ultraLight)
+            .foregroundStyle(self.color)
+            .scaleEffect(self.isExpanded && !self.reduceMotion ? RippleMotion.endScale : 1)
+            .opacity(self.isExpanded ? 0 : RippleMotion.startOpacity)
+            .onAppear {
+                withAnimation(.easeOut(duration: RippleMotion.duration)) {
+                    self.isExpanded = true
+                }
+            }
+    }
+}
+
+private struct StrokeRippleOnTapModifier: ViewModifier {
+    let systemName: String
+    let color: Color
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    @State private var ripples: [UUID] = []
+    @State private var tapCount = 0
+
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                ZStack {
+                    ForEach(self.ripples, id: \.self) { _ in
+                        StrokeRipple(systemName: self.systemName, color: self.color, reduceMotion: self.reduceMotion)
+                    }
+                }
+                .allowsHitTesting(false)
+            }
+            .sensoryFeedback(.impact(weight: .light), trigger: self.tapCount)
+            .contentShape(Rectangle())
+            .simultaneousGesture(TapGesture().onEnded {
+                self.addRipple()
+            })
+    }
+
+    private func addRipple() {
+        let ripple = UUID()
+        self.tapCount += 1
+        self.ripples.append(ripple)
+        DispatchQueue.main.asyncAfter(deadline: .now() + RippleMotion.lifetime) {
+            self.ripples.removeAll { $0 == ripple }
+        }
+    }
+}
+
 private struct BounceOnAppearModifier: ViewModifier {
     let isShown: Bool
     let delay: Double
@@ -169,6 +236,83 @@ private struct BounceOnAppearModifier: ViewModifier {
                 guard self.bouncesOnTap, !self.reduceMotion else { return }
                 self.bounceTrigger += 1
             }
+    }
+}
+
+
+private struct BreatheModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, *), !self.reduceMotion {
+            content
+                .symbolEffect(.breathe)
+        } else {
+            content
+        }
+    }
+}
+
+
+//MARK: - Loading -
+private enum SpinnerSwapMotion {
+    static let contentScale: CGFloat = 0.8
+    static let contentBlur: CGFloat = 4
+    static let spinnerStartScale: CGFloat = 0.4
+    static let animation = Animation.spring(response: 0.35, dampingFraction: 0.75)
+}
+
+private struct SpinnerSwapModifier: ViewModifier {
+    let isActive: Bool
+    let tint: Color
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    func body(content: Content) -> some View {
+        let isMoving = self.isActive && !self.reduceMotion
+        content
+            .opacity(self.isActive ? 0 : 1)
+            .scaleEffect(isMoving ? SpinnerSwapMotion.contentScale : 1)
+            .blur(radius: isMoving ? SpinnerSwapMotion.contentBlur : 0)
+            .overlay {
+                if self.isActive {
+                    ProgressView()
+                        .controlSize(.regular)
+                        .tint(self.tint)
+                        .transition(.motion(.scale(scale: SpinnerSwapMotion.spinnerStartScale).combined(with: .opacity)))
+                }
+            }
+            .animation(self.reduceMotion ? ReducedMotion.fade : SpinnerSwapMotion.animation, value: self.isActive)
+    }
+}
+
+
+//MARK: - Write On -
+private struct WriteOnModifier: ViewModifier {
+    let isShown: Bool
+    let delay: Double
+    let duration: Double
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    func body(content: Content) -> some View {
+        if self.reduceMotion {
+            content
+                .opacity(self.isShown ? 1 : 0)
+                .animation(ReducedMotion.fade.delay(self.delay), value: self.isShown)
+        } else {
+            content
+                .mask(alignment: .leading) {
+                    GeometryReader { proxy in
+                        Rectangle()
+                            .frame(width: self.isShown ? proxy.size.width : 0)
+                    }
+                }
+                .animation(.easeInOut(duration: self.duration).delay(self.delay), value: self.isShown)
+        }
     }
 }
 
@@ -237,8 +381,24 @@ extension View {
         return self.modifier(ShakeModifier(trigger: trigger))
     }
 
+    func strokeRippleOnTap(systemName: String, color: Color) -> some View {
+        return self.modifier(StrokeRippleOnTapModifier(systemName: systemName, color: color))
+    }
+
     func bounceOnAppear(isShown: Bool, delay: Double, bouncesOnTap: Bool = false) -> some View {
         return self.modifier(BounceOnAppearModifier(isShown: isShown, delay: delay, bouncesOnTap: bouncesOnTap))
+    }
+
+    func breathe() -> some View {
+        return self.modifier(BreatheModifier())
+    }
+
+    func spinnerSwap(isActive: Bool, tint: Color) -> some View {
+        return self.modifier(SpinnerSwapModifier(isActive: isActive, tint: tint))
+    }
+
+    func writeOn(isShown: Bool, delay: Double = 0, duration: Double = 0.7) -> some View {
+        return self.modifier(WriteOnModifier(isShown: isShown, delay: delay, duration: duration))
     }
 
     func motionAnimation<Value: Equatable>(_ animation: Animation?, value: Value) -> some View {

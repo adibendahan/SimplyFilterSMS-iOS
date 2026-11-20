@@ -682,7 +682,7 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, tipJar, regexFilters, filterTransfer, communityLists, siriShortcuts, newLanguages, trustedCountries, accessibility, ipad, quickAddFilter, singleChar
+    case aiFiltering, tipJar, regexFilters, filterTransfer, accentColor, help, communityLists, siriShortcuts, newLanguages, trustedCountries, accessibility, ipad, quickAddFilter, singleChar
 
     var title: String {
         switch self {
@@ -694,6 +694,10 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_regexFilters_title"~
         case .filterTransfer:
             return "whatsNew_filterTransfer_title"~
+        case .accentColor:
+            return "whatsNew_accentColor_title"~
+        case .help:
+            return "whatsNew_help_title"~
         case .communityLists:
             return "whatsNew_communityLists_title"~
         case .siriShortcuts:
@@ -723,6 +727,10 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_regexFilters_desc"~
         case .filterTransfer:
             return "whatsNew_filterTransfer_desc"~
+        case .accentColor:
+            return "whatsNew_accentColor_desc"~
+        case .help:
+            return "whatsNew_help_desc"~
         case .communityLists:
             return "whatsNew_communityLists_desc"~
         case .siriShortcuts:
@@ -752,6 +760,10 @@ enum WhatsNewEntry: String, CaseIterable {
             return "chevron.left.forwardslash.chevron.right"
         case .filterTransfer:
             return "square.and.arrow.up.on.square"
+        case .accentColor:
+            return "paintpalette.fill"
+        case .help:
+            return "questionmark.circle.fill"
         case .communityLists:
             return "person.2.circle"
         case .siriShortcuts:
@@ -781,6 +793,10 @@ enum WhatsNewEntry: String, CaseIterable {
             return .orange
         case .filterTransfer:
             return .blue
+        case .accentColor:
+            return .pink
+        case .help:
+            return .orange
         case .communityLists:
             return .indigo
         case .siriShortcuts:
@@ -808,30 +824,34 @@ enum WhatsNewEntry: String, CaseIterable {
             return 1
         case .filterTransfer:
             return 2
-        case .regexFilters:
+        case .accentColor:
             return 3
-        case .aiFiltering:
+        case .help:
             return 4
-        case .newLanguages:
+        case .regexFilters:
             return 5
-        case .trustedCountries:
+        case .aiFiltering:
             return 6
-        case .accessibility:
+        case .newLanguages:
             return 7
-        case .tipJar:
+        case .trustedCountries:
             return 8
-        case .ipad:
+        case .accessibility:
             return 9
-        case .quickAddFilter:
+        case .tipJar:
             return 10
-        case .singleChar:
+        case .ipad:
             return 11
+        case .quickAddFilter:
+            return 12
+        case .singleChar:
+            return 13
         }
     }
 
     var iconScale: CGFloat {
         switch self {
-        case .communityLists, .newLanguages, .trustedCountries, .accessibility, .quickAddFilter, .singleChar:
+        case .communityLists, .newLanguages, .trustedCountries, .accessibility, .quickAddFilter, .singleChar, .accentColor, .help:
             return 1.0
         case .siriShortcuts:
             return 1.1
@@ -852,7 +872,7 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .communityLists, .siriShortcuts:
             return "4.0.0"
-        case .filterTransfer:
+        case .filterTransfer, .accentColor, .help:
             return "3.1.0"
         case .regexFilters:
             return "3.0.2"

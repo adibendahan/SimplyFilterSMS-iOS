@@ -876,4 +876,14 @@
 
 "faq_iCloudSync_answer" = "Ja. Mit iCloud werden deine Filter, Smarten Filter und Listen auf jedes Gerät mit demselben Apple Account synchronisiert. Sie landen in deiner iCloud, nie beim Entwickler.";
 
+"whatsNew_accentColor_title" = "Akzentfarbe";
+
+"whatsNew_accentColor_desc" = "Wähle deine Lieblingsfarbe unter **Akzentfarbe** im Menü, und die ganze App übernimmt sie.";
+
+"whatsNew_help_title" = "Hilfe & FAQ";
+
+"whatsNew_help_desc" = "**Hilfe** im Menü führt dich jetzt unter **Erste Schritte** durch die Einrichtung und beantwortet häufige Fragen in den **FAQ**.";
+
+"tipJar_tipButton" = "%@ Trinkgeld";
+
 

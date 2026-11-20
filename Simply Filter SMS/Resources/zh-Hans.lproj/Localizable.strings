@@ -876,4 +876,14 @@
 
 "faq_iCloudSync_answer" = "会。开启 iCloud 后，你的过滤器、智能过滤器和列表会同步到登录同一 Apple 账户的所有设备。它们保存在你的 iCloud 中，绝不会发送给开发者。";
 
+"whatsNew_accentColor_title" = "强调色";
+
+"whatsNew_accentColor_desc" = "在菜单的**强调色**中选择你喜欢的颜色，整个应用都会换上它。";
+
+"whatsNew_help_title" = "帮助与常见问题";
+
+"whatsNew_help_desc" = "菜单中的**帮助**现在会在**开始使用**中引导你完成设置，并在**常见问题**中解答常见疑问。";
+
+"tipJar_tipButton" = "支付 %@ 小费";
+
 
