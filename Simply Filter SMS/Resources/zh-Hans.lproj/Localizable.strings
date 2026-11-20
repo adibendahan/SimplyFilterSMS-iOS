@@ -440,7 +440,7 @@
 
 "whatsNew_tipJar_title" = "支持开发者";
 
-"whatsNew_tipJar_desc" = "新增 **小费罐**，你可以用它支持 App 开发。Simply Filter SMS 永远免费 - 小费只是表达感谢的一种方式！**轻点此处留下小费！**";
+"whatsNew_tipJar_desc" = "新增 **小费罐**，你可以用它支持 App 开发。Simply Filter SMS 永远免费 - 小费只是表达感谢的一种方式！";
 
 "whatsNew_regexFilters_title" = "正则表达式过滤器";
 
@@ -670,6 +670,30 @@
 
 "whatsNew_siriShortcuts_desc" = "使用 Siri 添加、移除和检查过滤器：试试说 **“在Simply Filter SMS中添加到屏蔽列表”**。所有操作也可以在 **快捷指令** App 中使用。";
 
+"whatsNew_quickAddFilter_title" = "快速添加过滤器";
+
+"whatsNew_quickAddFilter_desc" = "轻点主屏幕上的 **+**，一步添加允许、屏蔽或语言过滤器。在过滤器列表中，它位于 **…** 菜单里。";
+
+"whatsNew_iPad_title" = "原生 iPad 支持";
+
+"whatsNew_iPad_desc" = "完整的原生 iPad 体验，带有**侧边栏导航**，并为大屏幕优化了布局。";
+
+"whatsNew_singleChar_title" = "单字符过滤器";
+
+"whatsNew_singleChar_desc" = "现在可以创建只有**一个字符**的过滤器，更精确地控制信息过滤。";
+
+"whatsNew_newLanguages_title" = "新增 9 种语言";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** App 现已支持 **9 种新语言**，全部在 **AI** 的帮助下完成本地化。";
+
+"whatsNew_trustedCountries_title" = "受信任的国家/地区";
+
+"whatsNew_trustedCountries_desc" = "根据电话号码前缀自动允许来自**特定国家/地区**的信息。添加受信任的国家/地区，过滤其余信息。";
+
+"whatsNew_accessibility_title" = "辅助功能支持";
+
+"whatsNew_accessibility_desc" = "完全支持 **旁白** 和 **语音控制**。文本会随 **动态字体** 缩放。动画会遵循你的 **减弱动态效果** 设置。";
+
 "communityLists_featured" = "精选";
 
 "communityLists_addedByYou" = "你添加的";
@@ -825,5 +849,13 @@
 "siri_updateLists_updated" = "你的过滤列表已是最新。";
 
 "siri_updateLists_failed" = "无法更新过滤列表。请检查网络连接后重试。";
+
+"whatsNew_version" = "版本 %@";
+
+"whatsNew_earlierUpdates" = "以往更新";
+
+"whatsNew_tipJar_action" = "留下小费";
+
+"whatsNew_communityLists_action" = "浏览社区列表";
 
 

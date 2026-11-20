@@ -13,7 +13,3 @@ Found along the way; each is fixed in its own change.
 ## Help
 
 - **Update the FAQ.** Add questions and answers for the newer features (Siri & Shortcuts, Community Lists, Stay Reachable, and anything else missing). Move the whole question list off the Help screen into its own screen, opened from a single FAQ row, since Help is already full.
-
-## What's New
-
-- **Redesign the What's New screen.**

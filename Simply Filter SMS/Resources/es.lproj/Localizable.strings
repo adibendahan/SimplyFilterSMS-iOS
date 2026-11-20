@@ -342,7 +342,7 @@
 
 "whatsNew_tipJar_title" = "Apoya al desarrollador";
 
-"whatsNew_tipJar_desc" = "Las nuevas **Propinas** te permiten apoyar el desarrollo de la app. Simply Filter SMS es gratis para siempre. ¡Las propinas son una forma de dar las gracias! **¡Toca aquí para dejar una propina!**";
+"whatsNew_tipJar_desc" = "Las nuevas **Propinas** te permiten apoyar el desarrollo de la app. Simply Filter SMS es gratis para siempre. ¡Las propinas son una forma de dar las gracias!";
 
 "tipJar_title" = "Propinas";
 
@@ -670,6 +670,30 @@
 
 "whatsNew_siriShortcuts_desc" = "Añade, elimina y comprueba filtros con Siri: prueba **“Añadir a mi Lista de bloqueo en Simply Filter SMS”**. Todas las acciones también están en la app **Atajos**.";
 
+"whatsNew_quickAddFilter_title" = "Añadir filtros rápido";
+
+"whatsNew_quickAddFilter_desc" = "Toca **+** en la pantalla de inicio para añadir un filtro permitido, bloqueado o de idioma en un solo paso. Dentro de una lista de filtros, está en el menú **…**.";
+
+"whatsNew_newLanguages_title" = "9 Nuevos Idiomas";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** La app ahora está disponible en **9 nuevos idiomas**, todos localizados con la ayuda de la **IA**.";
+
+"whatsNew_trustedCountries_title" = "Países de Confianza";
+
+"whatsNew_trustedCountries_desc" = "Permite automáticamente mensajes de **países específicos** por prefijo telefónico. Agrega tus países de confianza y filtra el resto.";
+
+"whatsNew_accessibility_title" = "Soporte de accesibilidad";
+
+"whatsNew_accessibility_desc" = "Totalmente usable con **VoiceOver** y **Control por voz**. El texto escala con **Tipo de texto dinámico**. Las animaciones respetan tu configuración de **Reducir movimiento**.";
+
+"whatsNew_iPad_title" = "Soporte nativo para iPad";
+
+"whatsNew_iPad_desc" = "Experiencia nativa en iPad con **navegación en barra lateral** y diseños optimizados para pantallas grandes.";
+
+"whatsNew_singleChar_title" = "Filtros de un carácter";
+
+"whatsNew_singleChar_desc" = "Ahora puedes crear filtros con un **solo carácter**, para un control más preciso del filtrado.";
+
 "communityLists_featured" = "Destacadas";
 
 "communityLists_addedByYou" = "Añadidas por ti";
@@ -825,5 +849,13 @@
 "siri_updateLists_updated" = "Tus listas de filtros están al día.";
 
 "siri_updateLists_failed" = "No se han podido actualizar tus listas de filtros. Comprueba la conexión e inténtalo de nuevo.";
+
+"whatsNew_version" = "Versión %@";
+
+"whatsNew_earlierUpdates" = "Actualizaciones anteriores";
+
+"whatsNew_tipJar_action" = "Dejar una propina";
+
+"whatsNew_communityLists_action" = "Ver listas de la comunidad";
 
 

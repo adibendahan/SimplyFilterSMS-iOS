@@ -362,7 +362,7 @@
 
 "whatsNew_tipJar_title" = "תמכו במפתח";
 
-"whatsNew_tipJar_desc" = "**צנצנת טיפים** חדשה מאפשרת לתמוך בפיתוח האפליקציה. Simply Filter SMS חינמית לתמיד - טיפים הם דרך להגיד תודה! **לחצו כאן כדי לתת טיפ!**";
+"whatsNew_tipJar_desc" = "**צנצנת טיפים** חדשה מאפשרת לתמוך בפיתוח האפליקציה. Simply Filter SMS חינמית לתמיד - טיפים הם דרך להגיד תודה!";
 
 "tipJar_title" = "צנצנת טיפים";
 
@@ -670,6 +670,30 @@
 
 "whatsNew_siriShortcuts_desc" = "הוסיפו, הסירו ובדקו פילטרים באמצעות Siri: נסו **„הוספה לרשימת החסומים ב-Simply Filter SMS”**. כל הפעולות זמינות גם באפליקציית **קיצורים**.";
 
+"whatsNew_quickAddFilter_title" = "הוספת פילטרים מהירה";
+
+"whatsNew_quickAddFilter_desc" = "לחצו על **+** במסך הבית כדי להוסיף טקסט מאושר, טקסט חסום או שפה חסומה. בתוך רשימת פילטרים, ההוספה נמצאת בתפריט **…**.";
+
+"whatsNew_newLanguages_title" = "9 שפות חדשות";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** האפליקציה זמינה כעת ב-**9 שפות חדשות**, כולן תורגמו בעזרת **בינה מלאכותית**.";
+
+"whatsNew_trustedCountries_title" = "מדינות מהימנות";
+
+"whatsNew_trustedCountries_desc" = "אפשרו אוטומטית הודעות ממדינות **ספציפיות** לפי קידומת טלפון. הוסיפו את המדינות המהימנות עליכם וסננו את השאר.";
+
+"whatsNew_accessibility_title" = "תמיכה בנגישות";
+
+"whatsNew_accessibility_desc" = "שימוש מלא עם **VoiceOver** ו-**בקרה קולית**. הטקסט גדל עם **גודל טקסט**. האנימציות מכבדות את הגדרת **הפחת תנועה**.";
+
+"whatsNew_iPad_title" = "תמיכה מלאה ב-iPad";
+
+"whatsNew_iPad_desc" = "חוויית iPad מלאה עם **ניווט בסרגל צד** ועיצוב מותאם למסכים גדולים.";
+
+"whatsNew_singleChar_title" = "פילטרים של תו בודד";
+
+"whatsNew_singleChar_desc" = "עכשיו ניתן ליצור פילטרים עם **תו בודד**, לשליטה מדויקת יותר בסינון ההודעות.";
+
 "communityLists_featured" = "מומלצות";
 
 "communityLists_addedByYou" = "הרשימות שלכם";
@@ -825,5 +849,13 @@
 "siri_updateLists_updated" = "רשימות הסינון מעודכנות.";
 
 "siri_updateLists_failed" = "רשימות הסינון לא עודכנו. כדאי לבדוק את החיבור ולנסות שוב.";
+
+"whatsNew_version" = "גרסה %@";
+
+"whatsNew_earlierUpdates" = "עדכונים קודמים";
+
+"whatsNew_tipJar_action" = "השארת טיפ";
+
+"whatsNew_communityLists_action" = "צפייה ברשימות קהילה";
 
 

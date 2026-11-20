@@ -342,7 +342,7 @@
 
 "whatsNew_tipJar_title" = "ادعم المطور";
 
-"whatsNew_tipJar_desc" = "يتيح لك **صندوق الإكراميات** الجديد دعم تطوير التطبيق. Simply Filter SMS مجاني للأبد - الإكراميات مجرد طريقة لقول شكرًا! **اضغط هنا للإكرامية!**";
+"whatsNew_tipJar_desc" = "يتيح لك **صندوق الإكراميات** الجديد دعم تطوير التطبيق. Simply Filter SMS مجاني للأبد - الإكراميات مجرد طريقة لقول شكرًا!";
 
 "tipJar_title" = "صندوق الإكراميات";
 
@@ -670,6 +670,30 @@
 
 "whatsNew_siriShortcuts_desc" = "أضف المرشّحات وأزلها وافحصها باستخدام Siri: جرّب **«إضافة إلى قائمة الحظر في Simply Filter SMS»**. كل الإجراءات متاحة أيضًا في تطبيق **الاختصارات**.";
 
+"whatsNew_quickAddFilter_title" = "إضافة سريعة للمرشحات";
+
+"whatsNew_quickAddFilter_desc" = "اضغط **+** في الشاشة الرئيسية لإضافة نص مسموح أو نص محظور أو لغة محظورة بخطوة واحدة. داخل قائمة المرشحات، تجدها في قائمة **…**.";
+
+"whatsNew_newLanguages_title" = "9 لغات جديدة";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** التطبيق متاح الآن بـ**9 لغات جديدة**، كلها مترجمة بمساعدة **الذكاء الاصطناعي**.";
+
+"whatsNew_trustedCountries_title" = "دول موثوقة";
+
+"whatsNew_trustedCountries_desc" = "السماح تلقائياً بالرسائل من **دول محددة** بناءً على رمز الهاتف. أضف الدول الموثوقة لديك وقم بتصفية الباقي.";
+
+"whatsNew_accessibility_title" = "دعم إمكانية الوصول";
+
+"whatsNew_accessibility_desc" = "قابل للاستخدام الكامل مع **VoiceOver** و**التحكم الصوتي**. يتوسع النص مع **الحجم الديناميكي**. الحركات تحترم إعداد **تقليل الحركة**.";
+
+"whatsNew_iPad_title" = "دعم iPad الأصلي";
+
+"whatsNew_iPad_desc" = "تجربة iPad كاملة مع **التنقل بالشريط الجانبي** وتصميم محسّن للشاشات الأكبر.";
+
+"whatsNew_singleChar_title" = "مرشّحات حرف واحد";
+
+"whatsNew_singleChar_desc" = "يمكنك الآن إنشاء مرشّحات بـ**حرف واحد فقط**، مما يمنحك تحكمًا أكثر دقة في تصفية الرسائل.";
+
 "communityLists_featured" = "مميزة";
 
 "communityLists_addedByYou" = "قوائمك";
@@ -825,5 +849,13 @@
 "siri_updateLists_updated" = "قوائم التصفية محدّثة.";
 
 "siri_updateLists_failed" = "تعذّر تحديث قوائم التصفية. تحقّق من الاتصال وحاول مرة أخرى.";
+
+"whatsNew_version" = "الإصدار %@";
+
+"whatsNew_earlierUpdates" = "تحديثات سابقة";
+
+"whatsNew_tipJar_action" = "ترك إكرامية";
+
+"whatsNew_communityLists_action" = "تصفّح قوائم المجتمع";
 
 
