@@ -80,7 +80,6 @@ Not applicable — German is LTR.
 
 - `aboutView_twitter` = `"a_bd"` — social handle
 - `aboutView_github` = `"GitHub"` — brand name
-- `aboutView_appIconCredit` = `"Vitali Levit"` — proper name
 - "Adi Ben-Dahan" in `aboutView_aboutText` — developer name
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
 - Brand names: Simply Filter SMS, iCloud, iOS, App Store, VoiceOver, Dynamic Type

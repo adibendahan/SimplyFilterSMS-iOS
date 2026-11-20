@@ -123,7 +123,7 @@ These must match Spanish (Spain) iOS exactly. The values below are the ones the 
 ## 4d. Strings to Keep Untranslated
 
 - Brand names: Simply Filter SMS, iCloud, iOS, iMessage, App Store, GitHub, VoiceOver
-- `aboutView_twitter` = `a_bd`; `aboutView_appIconCredit` = `Vitali Levit`; "Adi Ben-Dahan"
+- `aboutView_twitter` = `a_bd`; "Adi Ben-Dahan"
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
 - `SMS`, `Regex`, `spam`
 - All emoji, exactly as in English

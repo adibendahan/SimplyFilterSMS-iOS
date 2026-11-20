@@ -150,10 +150,6 @@
 
 "aboutView_sendMail" = "E-mail";
 
-"aboutView_appIconCredit" = "Vitali Levit";
-
-"aboutView_appIconCreditTitle" = "Designer de l'icône";
-
 "aboutView_review" = "Note-nous s'il te plaît !";
 
 "faq_subtitle" = "Pas de réponse ? Envoie un e-mail ou ouvre une issue GitHub.";

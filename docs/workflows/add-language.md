@@ -86,7 +86,6 @@ To find the official iOS term: look up how the iOS Settings app, Messages app, o
 Always keep these unchanged regardless of language:
 - `aboutView_twitter` — social handle
 - `aboutView_github` — brand name
-- `aboutView_appIconCredit` — proper name (Vitali Levit)
 - Developer name "Adi Ben-Dahan" embedded in `aboutView_aboutText`
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
 - Brand names: "Simply Filter SMS", "iCloud", "iOS", "AppStore", "VoiceOver"

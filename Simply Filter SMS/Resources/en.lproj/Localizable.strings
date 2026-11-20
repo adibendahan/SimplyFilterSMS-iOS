@@ -142,8 +142,6 @@
 "aboutView_twitter" = "a_bd";
 "aboutView_github" = "GitHub";
 "aboutView_sendMail" = "Email";
-"aboutView_appIconCredit" = "Vitali Levit";
-"aboutView_appIconCreditTitle" = "Icon Designer";
 "aboutView_review" = "Rate us please!";
 
 "aboutView_contactSection" = "Contact";

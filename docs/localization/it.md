@@ -69,7 +69,6 @@ Italian is LTR — no directional considerations needed.
 ## 4d. Strings to Keep Untranslated
 - `aboutView_twitter` → keep "a_bd"
 - `aboutView_github` → keep "GitHub"
-- `aboutView_appIconCredit` → keep "Vitali Levit"
 - "Adi Ben-Dahan" in `aboutView_aboutText` and `general_copyright` → keep as proper name
 - "Tel Aviv 🇮🇱" → keep
 - Brand names: "Simply Filter SMS", "iCloud", "iOS", "App Store", "VoiceOver", "SimplyFilterSMS"

@@ -163,23 +163,6 @@ struct AboutView: View {
                                 .frame(width: iconSize, height: iconSize)
                         }
                     }
-
-                    Link(destination: .iconDesignerURL) {
-                        Label {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("aboutView_appIconCredit"~)
-                                    .foregroundColor(.primary)
-                                Text("aboutView_appIconCreditTitle"~)
-                                    .foregroundColor(.secondary)
-                                    .font(.caption)
-                            }
-                        } icon: {
-                            Image("Instagram")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: iconSize, height: iconSize)
-                        }
-                    }
                 }
 
                 // Support the App
