@@ -11,7 +11,6 @@ import SwiftUI
 //MARK: - View -
 struct CommunityListsView: View, ViewWithPersistentStoreReload {
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .caption2) private var detailsIndent = CommunityListRow.chevronColumnBaseWidth
     @StateObject var model: ViewModel
     @State private var emptyStatePresence = ListEmptyStateView.Presence()
@@ -31,11 +30,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                 } header: {
                     Text("communityLists_featured"~)
                 } // Section
-                .transaction { transaction in
-                    if self.reduceMotion {
-                        transaction.animation = nil
-                    }
-                }
+                .motionTransaction()
             }
 
             Section {
@@ -51,11 +46,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
             } header: {
                 Text("communityLists_addedByYou"~)
             } // Section
-            .transaction { transaction in
-                if self.reduceMotion {
-                    transaction.animation = nil
-                }
-            }
+            .motionTransaction()
 
             Section {
                 Button {
@@ -113,7 +104,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
         Binding(
             get: { self.model.expandedCommunityListID == rowModel.id },
             set: { open in
-                withAnimation(self.reduceMotion ? nil : .easeInOut) {
+                withMotionAnimation(.easeInOut) {
                     if open {
                         self.model.expandedCommunityListID = rowModel.id
                     } else if self.model.expandedCommunityListID == rowModel.id {
