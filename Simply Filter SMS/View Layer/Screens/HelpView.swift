@@ -139,39 +139,32 @@ struct HelpView: View {
                 }
 
                 Section {
-                    ForEach(HelpFAQ.allCases, id: \.self) { item in
-                        DisclosureGroup(isExpanded: expansion(item)) {
-                            Group {
-                                if let attributed = try? AttributedString(markdown: item.answer, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) {
-                                    Text(attributed)
-                                } else {
-                                    Text(item.answer)
-                                }
-                            }
-                            .font(.footnote.weight(.regular))
-                            .foregroundColor(.primary)
-                            .padding(.leading, -20)
-                            .padding(.top, -4)
-                            .padding(.bottom, 4)
-                            .listRowSeparator(.hidden)
-                        } label: {
-                            Text(item.question)
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundColor(.primary)
-                                .multilineTextAlignment(.leading)
+                    NavigationLink {
+                        FAQView(model: model.faqViewModel) {
+                            dismiss()
                         }
-                        .accessibilityHint("a11y_help_faqHint"~)
+                    } label: {
+                        AdaptiveRow {
+                            Image(systemName: "questionmark.bubble")
+                                .foregroundStyle(.tint)
+                                .font(.body)
+                                .adaptiveIconColumn(width: 22)
+                                .accessibilityHidden(true)
+                        } content: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("help_faq_title"~)
+                                    .font(.body.weight(.semibold))
+                                    .foregroundColor(.primary)
+                                Text("help_faq_caption"~)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
+                    .accessibilityElement(children: .combine)
                 } header: {
                     Text("faq_section"~)
                         .accessibilityAddTraits(.isHeader)
-                } footer: {
-                    Text("faq_subtitle"~)
-                }
-                .transaction { transaction in
-                    if reduceMotion {
-                        transaction.animation = nil
-                    }
                 }
 
                 Section {
@@ -261,21 +254,6 @@ struct HelpView: View {
             SiriTipView(intent: UpdateFilterListsIntent(), isVisible: $model.showsSiriTips)
         }
     }
-
-    private func expansion(_ item: HelpFAQ) -> Binding<Bool> {
-        Binding(
-            get: { model.expandedFAQ == item },
-            set: { open in
-                withAnimation(reduceMotion ? nil : .easeInOut) {
-                    if open {
-                        model.expandedFAQ = item
-                    } else if model.expandedFAQ == item {
-                        model.expandedFAQ = nil
-                    }
-                }
-            }
-        )
-    }
 }
 
 
@@ -304,53 +282,10 @@ enum HelpSiriTip: CaseIterable, Hashable {
 }
 
 
-enum HelpFAQ: String, CaseIterable, Hashable {
-    case notFiltering, iMessage, filterTester,
-         howItWorks, smartFilters, trustedCountries, ai, report,
-         whereFiltered, folders,
-         privacy, shareFilters
-
-    var question: String {
-        switch self {
-        case .notFiltering: return "faq_question_notFiltering"~
-        case .iMessage: return "faq_question_3"~
-        case .filterTester: return "faq_question_testFilters"~
-        case .howItWorks: return "faq_question_1"~
-        case .smartFilters: return "faq_question_smartFilters"~
-        case .trustedCountries: return "faq_question_trustedCountries"~
-        case .ai: return "help_automaticFiltering_question"~
-        case .report: return "faq_question_report"~
-        case .whereFiltered: return "faq_question_4"~
-        case .folders: return "faq_question_5"~
-        case .privacy: return "faq_question_2"~
-        case .shareFilters: return "faq_question_shareFilters"~
-        }
-    }
-
-    var answer: String {
-        switch self {
-        case .notFiltering: return "faq_answer_notFiltering"~
-        case .iMessage: return "faq_answer_3"~
-        case .filterTester: return "faq_answer_testFilters"~
-        case .howItWorks: return "faq_answer_1"~
-        case .smartFilters: return "faq_answer_smartFilters"~
-        case .trustedCountries: return "faq_answer_trustedCountries"~
-        case .ai: return "help_automaticFiltering"~
-        case .report: return "faq_answer_report"~
-        case .whereFiltered: return "faq_answer_4"~
-        case .folders: return "faq_answer_5"~
-        case .privacy: return "faq_answer_2"~
-        case .shareFilters: return "faq_answer_shareFilters"~
-        }
-    }
-}
-
-
 //MARK: - ViewModel -
 extension HelpView {
 
     class ViewModel: BaseViewModel, ObservableObject {
-        @Published var expandedFAQ: HelpFAQ?
         @Published var siriTipSlot: Int?
         let siriTipLanguage: LanguageEntity?
         @Published var showsSiriTips: Bool {
@@ -368,6 +303,7 @@ extension HelpView {
         }
         @Published var result: Result<MFMailComposeResult, Error>?
         var onRequestScreen: ((Screen) -> Void)?
+        let faqViewModel: FAQView.ViewModel
 
         init(appManager: AppManagerProtocol = AppManager.shared,
              onRequestScreen: ((Screen) -> Void)? = nil) {
@@ -375,6 +311,7 @@ extension HelpView {
             self.showsSiriTips = !appManager.defaultsManager.didDismissHelpSiriTips
             self.siriTipSlot = HelpSiriTip.allCases.count + Int.random(in: 0..<HelpSiriTip.allCases.count)
             self.siriTipLanguage = Self.makeSiriTipLanguage()
+            self.faqViewModel = FAQView.ViewModel(appManager: appManager)
             super.init(appManager: appManager)
         }
 
@@ -419,12 +356,6 @@ extension HelpView {
 
 
 //MARK: - Preview -
-#Preview("Collapsed") {
+#Preview {
     HelpView(model: HelpView.ViewModel(appManager: AppManager.previews))
-}
-
-#Preview("Expanded") {
-    let model = HelpView.ViewModel(appManager: AppManager.previews)
-    model.expandedFAQ = .notFiltering
-    return HelpView(model: model)
 }

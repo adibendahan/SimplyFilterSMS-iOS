@@ -226,53 +226,55 @@
 
 "help_enableReporting_caption" = "可选功能。从“信息”中的对话报告信息，帮助改进 AI 过滤。";
 
-"faq_question_1" = "信息过滤如何工作？";
+"faq_howItWorks_question" = "信息过滤如何工作？";
 
-"faq_answer_1" = "当你收到来自“通讯录”中没有的号码的信息时，Simply Filter SMS 会按以下顺序检查：\n\n• **允许列表**中的文本始终会正常送达。\n• **屏蔽列表**、屏蔽的语言、智能过滤器、受信任的国家和 **AI 过滤**可以将信息发送到“垃圾短信”“交易信息”或“推广信息”。\n• 如果没有匹配项，信息会正常送达。\n\niMessage 和来自“通讯录”中联系人的信息不会发送给 App。";
+"faq_howItWorks_answer" = "当你收到来自“通讯录”中没有的号码的信息时，Simply Filter SMS 会进行检查，以第一个匹配项为准：\n\n• **允许列表**中的文本始终会正常送达。\n• 如果开启了**屏蔽所有未知发件人**，其余信息都会进入“垃圾短信”。\n• **智能过滤器**、**屏蔽列表**、屏蔽的语言、**AI 过滤**和**社区列表**可以将信息发送到“垃圾短信”“交易信息”或“推广信息”。\n• 如果没有匹配项，信息会正常送达。\n\niMessage 和来自“通讯录”中联系人的信息不会发送给 App。";
 
-"faq_question_2" = "开发者会看到我的信息吗？";
+"faq_privacy_question" = "开发者会看到我的信息吗？";
 
-"faq_answer_2" = "不会。Simply Filter SMS 不会收集任何信息，每条信息都在你的设备上处理。任何信息都不会被自动发送到任何地方。唯一的例外是你自己选择报告某条特定信息：只有那条信息会被发送，而且只是因为你点按了“报告”。";
+"faq_privacy_answer" = "不会。Simply Filter SMS 不收集任何信息，每条信息都在你的设备上检查。只有你主动报告某条信息时，才会发送那一条。";
 
-"faq_question_3" = "iMessage 和来自联系人的信息呢？";
+"faq_iMessage_question" = "iMessage 和来自联系人的信息呢？";
 
-"faq_answer_3" = "Apple 不会向任何开发者开放这些信息，它们始终是完全私密的。";
+"faq_iMessage_answer" = "Apple 不会把它们交给任何过滤 App，因此无法过滤，并且始终完全私密。";
 
-"faq_question_4" = "被过滤的信息在哪里？";
+"faq_whereFiltered_question" = "被过滤的信息在哪里？";
 
-"faq_answer_4" = "被标记为垃圾短信的信息仍可在“信息”App 的“垃圾短信”列表中查看。";
+"faq_whereFiltered_answer" = "在“信息”App 的**垃圾短信**、**交易信息**或**推广信息**中。不会删除任何内容，你可以随时查看。";
 
-"faq_question_5" = "垃圾短信、交易信息和推广信息列表有什么区别？";
+"faq_folders_question" = "“垃圾短信”“交易信息”和“推广信息”有什么区别？";
 
-"faq_answer_5" = "区别不大，你可以将任意词语过滤到任意列表。这些列表无法自定义。只有被过滤到“垃圾短信”列表的信息会静默送达。";
+"faq_folders_answer" = "区别不大。你可以把任何过滤器发送到其中任意一个，而 iOS 不允许 App 更改它们。只有“垃圾短信”中的信息会静默送达，没有通知。";
 
-"help_automaticFiltering_question" = "AI 过滤如何工作？";
+"faq_ai_question" = "AI 过滤如何工作？";
+
+"faq_ai_answer" = "为你收信使用的语言开启 AI 过滤。它使用 AI 生成的关键词列表，将垃圾信息送到“垃圾短信”“交易信息”或“推广信息”，列表会自动更新。信息在你的设备上检查，你自己的过滤器仍然有效。";
 
 "help_automaticFiltering" = "AI 过滤使用 AI 生成的关键词列表来识别垃圾信息，并将信息送到“垃圾短信”“交易信息”或“推广信息”列表。列表会定期更新。启用 AI 过滤后，你的常规过滤器仍然会生效。";
 
-"faq_question_notFiltering" = "为什么我的信息没有被过滤？";
+"faq_notFiltering_question" = "为什么我的信息没有被过滤？";
 
-"faq_answer_notFiltering" = "通常是以下原因之一：\n\n• Simply Filter SMS 没有在 iOS“设置”中选为过滤 App。\n• 该对话是 **iMessage**（蓝色气泡），而不是短信。Apple 不允许任何 App 过滤 iMessage。\n• 发件人在**通讯录**中。iOS 不会过滤这些联系人。\n\n在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**测试过滤器**，再粘贴发件人和信息。即使关闭了过滤，App 内的测试仍会运行，因此测试结果可能显示已过滤，而“信息”仍会正常送达。如果 Simply Filter SMS 已在 iOS“设置”中启用，但测试仍显示应该被过滤，请给我发邮件。";
+"faq_notFiltering_answer" = "通常是以下原因之一：\n\n• Simply Filter SMS 没有在 iOS“设置”中选为过滤 App。\n• 该对话是 **iMessage**（蓝色气泡），而不是短信。Apple 不允许任何 App 过滤 iMessage。\n• 发件人在**通讯录**中。iOS 不会过滤这些联系人。\n\n在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**测试过滤器**，再粘贴发件人和信息。即使关闭了过滤，App 内的测试仍会运行，因此测试结果可能显示已过滤，而“信息”仍会正常送达。如果 Simply Filter SMS 已在 iOS“设置”中启用，但测试仍显示应该被过滤，请给我发邮件。";
 
-"faq_question_smartFilters" = "什么是智能过滤器？";
+"faq_smartFilters_question" = "什么是智能过滤器？";
 
-"faq_answer_smartFilters" = "主屏幕上的**智能过滤器**可以拦截常见垃圾信息：链接、邮件、Emoji、短发件人、仅含数字的发件人或所有未知发件人。它们会与你自己的过滤器一起工作。**屏蔽所有未知发件人**的力度最强，启用后会关闭其他智能过滤器。";
+"faq_smartFilters_answer" = "主屏幕上的**智能过滤器**可以拦截常见垃圾信息：链接、邮件发件人、Emoji、短发件人，以及名称中含有字母的发件人。匹配的信息会进入“垃圾短信”。**屏蔽所有未知发件人**的力度最强：不在**允许列表**中的所有未知发件人都会进入“垃圾短信”。";
 
-"faq_question_trustedCountries" = "什么是受信任的国家？";
+"faq_allowByCountry_question" = "什么是按国家/地区允许？";
 
-"faq_answer_trustedCountries" = "**按国家允许**可以放行来自你选择的国家/地区代码的号码，例如 +1 或 +86。来自其他国家/地区的发件人会被过滤。没有国家/地区代码的号码不会被检查。";
+"faq_allowByCountry_answer" = "一种智能过滤器，允许来自你所选国家/地区代码（如 +1 或 +972）的短信通过。其他国家/地区的号码会进入“垃圾短信”。没有国家/地区代码的发件人不会被检查。";
 
-"faq_question_testFilters" = "如何测试我的过滤器？";
+"faq_filterTester_question" = "如何测试我的过滤器？";
 
-"faq_answer_testFilters" = "在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**测试过滤器**。输入发件人和信息，结果会随输入更新。将发件人留空即可只测试信息正文。";
+"faq_filterTester_answer" = "在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**测试过滤器**。输入发件人和信息，结果会随输入更新。将发件人留空即可只测试信息正文。";
 
-"faq_question_shareFilters" = "可以分享我的过滤器吗？";
+"faq_shareFilters_question" = "可以分享我的过滤器吗？";
 
-"faq_answer_shareFilters" = "在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**导出过滤器**，再发送文件。在另一台设备上使用 **导入过滤器** 添加它们。已存在的过滤器会被跳过，不会覆盖或删除任何内容。";
+"faq_shareFilters_answer" = "在主屏幕上，轻点右上角的 ••• 按钮，然后依次轻点 **过滤工具**、**导出过滤器**，再发送文件。在另一台设备上使用 **导入过滤器** 添加它们。已存在的过滤器会被跳过，不会覆盖或删除任何内容。要与所有人分享，请将它们发布为社区列表。";
 
-"faq_question_report" = "如何帮助改进 AI 过滤？";
+"faq_report_question" = "如何帮助改进 AI 过滤？";
 
-"faq_answer_report" = "在主屏幕上，轻点右上角的 ••• 按钮，然后轻点 **过滤工具**。**报告信息**会从此 App 发送信息。**改进 AI 过滤**会启用从“信息”对话中报告信息的功能。报告会用于训练 AI 列表。你的设备上的过滤仍然在本地完成。";
+"faq_report_answer" = "在主屏幕上，轻点右上角的 ••• 按钮，然后轻点**过滤工具**：\n\n• **报告信息**可将文本报告为垃圾短信或不是垃圾短信。\n• **改进 AI 过滤**可设置直接从“信息”中的对话进行报告。\n\n报告会用来训练生成这些列表的 AI。只有你报告的那条信息会被发送，设备上的过滤仍在本地进行。";
 
 "help_deny" = "添加会使信息被标记为垃圾短信的文本，也可以选择要存储信息的具体列表。";
 
@@ -516,7 +518,7 @@
 
 "a11y_help_enableReportingHint" = "轻点两下以打开报告设置";
 
-"a11y_help_faqHint" = "轻点两下以显示或隐藏答案";
+"a11y_faq_answerHint" = "轻点两下以显示或隐藏答案";
 
 "a11y_help_emailHint" = "轻点两下以发送邮件。如果未设置邮件 App，则复制地址";
 
@@ -853,5 +855,25 @@
 "whatsNew_tipJar_action" = "留下小费";
 
 "whatsNew_communityLists_action" = "浏览社区列表";
+
+"help_faq_title" = "所有问题";
+
+"help_faq_caption" = "过滤、隐私、社区列表等。";
+
+"faq_communityLists_question" = "什么是社区列表？";
+
+"faq_communityLists_answer" = "由其他人创建并分享的过滤列表。在主屏幕上打开**社区列表**来开启精选列表，或轻点**通过 URL 订阅**并粘贴别人分享的链接。已开启的列表会自动更新。请只订阅你信任的列表。要分享你自己的列表，请轻点**创建列表**。";
+
+"faq_stayReachable_question" = "什么是保持联系畅通？";
+
+"faq_stayReachable_answer" = "快递员、诊所或邻居可能会用你不认识的号码给你发信息。轻点主屏幕顶部的 **+**，然后轻点**保持联系畅通**，添加你的名字和街道。提到它们的文本始终会正常送达。";
+
+"faq_siriShortcuts_question" = "可以使用 Siri 和快捷指令吗？";
+
+"faq_siriShortcuts_answer" = "可以。让 Siri 添加或移除过滤器、检查信息、屏蔽某种语言或更新列表。例如：“在Simply Filter SMS中添加过滤器”。同样的操作也可以在“快捷指令”App 中使用，用于你自己的快捷指令。";
+
+"faq_iCloudSync_question" = "我的过滤器会同步到其他设备吗？";
+
+"faq_iCloudSync_answer" = "会。开启 iCloud 后，你的过滤器、智能过滤器和列表会同步到登录同一 Apple 账户的所有设备。它们保存在你的 iCloud 中，绝不会发送给开发者。";
 
 
