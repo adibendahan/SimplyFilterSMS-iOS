@@ -61,7 +61,6 @@ Korean uses specific counter words (e.g. 개 for general objects). For `%ld filt
 
 - `aboutView_twitter` = "a_bd"
 - `aboutView_github` = "GitHub"
-- `aboutView_appIconCredit` = "Vitali Levit"
 - "Adi Ben-Dahan" in `aboutView_aboutText`
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
 - Brand names: "Simply Filter SMS", "iCloud", "iOS", "App Store", "VoiceOver", "Dynamic Type", "SimplyFilterSMS"

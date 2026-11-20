@@ -84,7 +84,6 @@ Never shorten or paraphrase an iOS system term, even if the string is longer tha
 
 - `aboutView_twitter` = `a_bd`
 - `aboutView_github` = `GitHub`
-- `aboutView_appIconCredit` = `Vitali Levit`
 - Developer name "Adi Ben-Dahan" in `aboutView_aboutText`
 - Brand names: Simply Filter SMS, iCloud, iOS, App Store, GitHub, VoiceOver
 - Translate Dynamic Type / Voice Control / Reduce Motion with the official iOS Simplified Chinese terms above

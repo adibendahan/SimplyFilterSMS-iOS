@@ -106,8 +106,6 @@
 
 "aboutView_sendMail" = "אימייל";
 
-"aboutView_appIconCredit" = "ויטאלי לויט";
-
 "faq_subtitle" = "לא מצאתם תשובה? שלחו מייל או פתחו Issue ב-GitHub.";
 
 "faq_section" = "שאלות נפוצות";
@@ -329,8 +327,6 @@
 "general_all" = "כל המדינות";
 
 "general_noResults" = "אין תוצאות";
-
-"aboutView_appIconCreditTitle" = "מעצב האייקון";
 
 "notification_clipboard_subtitle" = "הועתק ללוח";
 

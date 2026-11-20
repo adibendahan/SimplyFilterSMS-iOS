@@ -100,7 +100,7 @@ If any string refers to an iOS system UI element (folder names, app names, Setti
 
 - Brand names: "Simply Filter SMS", "iCloud", "iOS", "App Store", "VoiceOver", "Dynamic Type"
 - Social handles: `@grizz_dev` etc.
-- Proper names: "Adi Ben-Dahan", "Vitali Levit"
+- Proper names: "Adi Ben-Dahan"
 - All emoji — keep exactly as in English source
 - Phone calling codes: +1, +972, etc.
 

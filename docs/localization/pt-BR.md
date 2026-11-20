@@ -63,7 +63,6 @@
 
 - `aboutView_twitter` = "a_bd"
 - `aboutView_github` = "GitHub"
-- `aboutView_appIconCredit` = "Vitali Levit"
 - Developer name "Adi Ben-Dahan" in `aboutView_aboutText`
 - "Tel Aviv 🇮🇱" in `aboutView_aboutText`
 - Brand names: Simply Filter SMS, iCloud, iOS, App Store, VoiceOver, Dynamic Type
