@@ -16,9 +16,13 @@ A generic step-by-step setup sheet, built with different steps for first-run onb
 - `EnableExtensionStepView` uses `.task(id: isActive)` for its toggle, so a fast loop can't race an earlier activation.
 
 ## HelpView
-FAQ, setup shortcuts and contact, as a sheet from the menu.
-- It's a `List` with one `DisclosureGroup` open at a time. A custom accordion in a `ScrollView` made the scroll position jump when a question opened.
+Setup shortcuts, Siri tips, the FAQ link and contact, as a sheet from the menu.
 - The "Get Started" rows ask Home (`onRequestScreen`) to present the setup sheet after Help dismisses.
+
+## FAQView
+The question list, pushed from Help.
+- It's a `List` with one `DisclosureGroup` open at a time. A custom accordion in a `ScrollView` made the scroll position jump when a question opened.
+- Help holds its ViewModel, so the open answer survives Help re-rendering.
 
 ## AboutView
 App info, links and credits, as a sheet from the menu.

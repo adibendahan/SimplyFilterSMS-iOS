@@ -170,51 +170,53 @@
 
 "help_enableReporting_caption" = "Optional. Melde aus einem Verlauf in Nachrichten, um die KI-Filterung zu verbessern.";
 
-"faq_question_notFiltering" = "Warum werden meine Nachrichten nicht gefiltert?";
+"faq_notFiltering_question" = "Warum werden meine Nachrichten nicht gefiltert?";
 
-"faq_answer_notFiltering" = "Meist einer dieser Gründe:\n\n• Simply Filter SMS ist in den iOS-Einstellungen nicht als Filter ausgewählt.\n• Der Verlauf ist **iMessage** (blaue Blasen), keine SMS. Apple lässt keine App diese filtern.\n• Der Absender ist in **Kontakten**. iOS überspringt die Filterung für sie.\n\nTippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**, dann **Filter testen**, und füge Absender und Nachricht ein. Der Test läuft in der App auch wenn die Filterung aus ist, deshalb kann er „gefiltert“ zeigen, während Nachrichten die SMS trotzdem zustellt. Wenn Simply Filter SMS in den iOS-Einstellungen aktiv ist und der Test trotzdem sagt, sie hätte gefiltert werden sollen, schreib mir.";
+"faq_notFiltering_answer" = "Meist einer dieser Gründe:\n\n• Simply Filter SMS ist in den iOS-Einstellungen nicht als Filter ausgewählt.\n• Der Verlauf ist **iMessage** (blaue Blasen), keine SMS. Apple lässt keine App diese filtern.\n• Der Absender ist in **Kontakten**. iOS überspringt die Filterung für sie.\n\nTippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**, dann **Filter testen**, und füge Absender und Nachricht ein. Der Test läuft in der App auch wenn die Filterung aus ist, deshalb kann er „gefiltert“ zeigen, während Nachrichten die SMS trotzdem zustellt. Wenn Simply Filter SMS in den iOS-Einstellungen aktiv ist und der Test trotzdem sagt, sie hätte gefiltert werden sollen, schreib mir.";
 
-"faq_question_smartFilters" = "Was sind Smarte Filter?";
+"faq_smartFilters_question" = "Was sind Smarte Filter?";
 
-"faq_answer_smartFilters" = "**Smarte Filter** auf dem Startbildschirm fangen häufigen Spam: Links, E-Mails, Emojis, kurze Absender, Absender nur aus Zahlen oder alle unbekannten Absender. Sie arbeiten mit deinen eigenen Filtern. **Alle Unbekannten sperren** ist am stärksten und schaltet die anderen Smarten Filter aus.";
+"faq_smartFilters_answer" = "**Smarte Filter** auf dem Startbildschirm fangen häufigen Spam: Links, E-Mail-Absender, Emojis, kurze Absender und Absender mit Buchstaben im Namen. Treffer landen in Junk. **Alle Unbekannten sperren** ist am stärksten: Es schickt jeden unbekannten Absender nach Junk, außer er steht auf deiner **Positivliste**.";
 
-"faq_question_trustedCountries" = "Was ist Nach Land erlauben?";
+"faq_allowByCountry_question" = "Was ist Nach Land erlauben?";
 
-"faq_answer_trustedCountries" = "**Nach Land erlauben** lässt SMS von Nummern mit einer von dir gewählten Landesvorwahl durch, zum Beispiel +1 oder +49. Absender aus anderen Ländern werden gefiltert. Nummern ohne Landesvorwahl werden nicht geprüft.";
+"faq_allowByCountry_answer" = "Ein Smarter Filter, der SMS von den Ländervorwahlen durchlässt, die du wählst, zum Beispiel +1 oder +972. Nummern aus anderen Ländern landen in Junk. Absender ohne Ländervorwahl werden nicht geprüft.";
 
-"faq_question_testFilters" = "Wie teste ich meine Filter?";
+"faq_filterTester_question" = "Wie teste ich meine Filter?";
 
-"faq_answer_testFilters" = "Tippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**, dann **Filter testen**. Tippe Absender und Nachricht ein. Das Ergebnis aktualisiert sich beim Tippen. Lass den Absender leer, um nur den Text zu testen.";
+"faq_filterTester_answer" = "Tippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**, dann **Filter testen**. Tippe Absender und Nachricht ein. Das Ergebnis aktualisiert sich beim Tippen. Lass den Absender leer, um nur den Text zu testen.";
 
-"faq_question_shareFilters" = "Kann ich meine Filter teilen?";
+"faq_shareFilters_question" = "Kann ich meine Filter teilen?";
 
-"faq_answer_shareFilters" = "Tippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**, dann **Filter exportieren**, und sende die Datei. Auf dem anderen Gerät fügst du sie mit **Filter importieren** hinzu. Filter, die dort schon existieren, werden übersprungen. Nichts wird überschrieben oder gelöscht.";
+"faq_shareFilters_answer" = "Tippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**, dann **Filter exportieren**, und sende die Datei. Auf dem anderen Gerät fügst du sie mit **Filter importieren** hinzu. Filter, die dort schon existieren, werden übersprungen. Nichts wird überschrieben oder gelöscht. Um sie mit allen zu teilen, veröffentliche sie als Community-Liste.";
 
-"faq_question_report" = "Wie helfe ich, die KI-Filterung zu verbessern?";
+"faq_report_question" = "Wie helfe ich, die KI-Filterung zu verbessern?";
 
-"faq_answer_report" = "Tippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann **Filter-Tools**. **Nachricht melden** sendet eine Nachricht aus dieser App. **KI-Filterung verbessern** aktiviert das Melden aus einem Verlauf in Nachrichten. Meldungen trainieren die KI-Listen. Die Filterung auf deinem Gerät bleibt lokal.";
+"faq_report_answer" = "Tippe auf dem Startbildschirm oben rechts auf die •••-Taste, dann auf **Filter-Tools**:\n\n• **Nachricht melden** meldet einen Text als Junk oder Kein Junk.\n• **KI-Filterung verbessern** richtet das Melden direkt aus einem Verlauf in Nachrichten ein.\n\nMeldungen trainieren die KI, die die Listen erstellt. Nur die gemeldete Nachricht wird gesendet, und das Filtern auf deinem Gerät bleibt lokal.";
 
-"faq_question_1" = "Wie funktioniert die Nachrichtenfilterung?";
+"faq_howItWorks_question" = "Wie funktioniert die Nachrichtenfilterung?";
 
-"faq_answer_1" = "Wenn du eine SMS von einer Nummer bekommst, die nicht in Kontakten ist, prüft Simply Filter SMS sie in dieser Reihenfolge:\n\n• Texte auf deiner **Positivliste** kommen immer durch.\n• Deine **Sperrliste**, gesperrte Sprachen, Smarte Filter, Nach Land erlauben und **KI-Filterung** können sie nach Junk, Transaktionen oder Werbung schicken.\n• Gibt es keine Übereinstimmung, wird die Nachricht normal zugestellt.\n\niMessage und Absender in Kontakten werden der App nie übergeben.";
+"faq_howItWorks_answer" = "Wenn du eine SMS von einer Nummer bekommst, die nicht in Kontakten ist, prüft Simply Filter SMS sie, und der erste Treffer entscheidet:\n\n• Texte auf deiner **Positivliste** kommen immer durch.\n• **Alle Unbekannten sperren** schickt, wenn eingeschaltet, alles andere nach Junk.\n• **Smarte Filter**, deine **Sperrliste**, gesperrte Sprachen, **KI-Filterung** und **Community-Listen** können sie nach Junk, Transaktionen oder Werbung schicken.\n• Gibt es keinen Treffer, wird die Nachricht normal zugestellt.\n\niMessage und Absender in Kontakten werden der App nie übergeben.";
 
-"faq_question_2" = "Sind meine Nachrichten für den App-Entwickler einsehbar?";
+"faq_privacy_question" = "Sind meine Nachrichten für den App-Entwickler einsehbar?";
 
-"faq_answer_2" = "Nein. Simply Filter SMS sammelt keinerlei Informationen, und jede Nachricht wird auf deinem Gerät verarbeitet. Keine Nachricht wird jemals automatisch irgendwohin gesendet. Die einzige Ausnahme ist, wenn du selbst eine bestimmte Nachricht meldest: Nur diese Nachricht wird gesendet, und nur weil du auf Melden getippt hast.";
+"faq_privacy_answer" = "Nein. Simply Filter SMS sammelt keine Daten, und jede Nachricht wird auf deinem Gerät geprüft. Eine Nachricht wird nur gesendet, wenn du sie selbst meldest, und dann nur diese eine.";
 
-"faq_question_3" = "Was ist mit iMessages und Nachrichten von meinen Kontakten?";
+"faq_iMessage_question" = "Was ist mit iMessages und Nachrichten von meinen Kontakten?";
 
-"faq_answer_3" = "Apple gibt diese Nachrichten nicht an Entwickler weiter. Sie bleiben vollständig privat.";
+"faq_iMessage_answer" = "Apple gibt sie an keine Filter-App weiter. Sie können also nicht gefiltert werden und bleiben völlig privat.";
 
-"faq_question_4" = "Wo sind die gefilterten Nachrichten?";
+"faq_whereFiltered_question" = "Wo sind die gefilterten Nachrichten?";
 
-"faq_answer_4" = "Wenn eine Nachricht als Junk markiert wird, ist sie weiterhin in der Nachrichten-App im Junk-Ordner lesbar.";
+"faq_whereFiltered_answer" = "In der Nachrichten-App, im Ordner **Junk**, **Transaktionen** oder **Werbung**. Nichts wird gelöscht, du kannst sie jederzeit lesen.";
 
-"faq_question_5" = "Was ist der Unterschied zwischen Junk/Transaktionen/Werbung?";
+"faq_folders_question" = "Was ist der Unterschied zwischen Junk, Transaktionen und Werbung?";
 
-"faq_answer_5" = "Kaum etwas. Du kannst jedes Wort in jeden Ordner filtern. Die Ordner sind nicht anpassbar. Nur Nachrichten im Junk-Ordner werden lautlos zugestellt.";
+"faq_folders_answer" = "Nicht viel. Du kannst jeden Filter in jeden davon schicken, und iOS lässt Apps sie nicht ändern. Nur Nachrichten in Junk kommen ohne Mitteilung an.";
 
-"help_automaticFiltering_question" = "Wie funktioniert KI-Filterung?";
+"faq_ai_question" = "Wie funktioniert KI-Filterung?";
+
+"faq_ai_answer" = "Schalte die KI-Filterung für die Sprachen ein, in denen du Nachrichten bekommst. Sie nutzt KI-erstellte Stichwortlisten, um Spam nach Junk, Transaktionen oder Werbung zu schicken, und die Listen aktualisieren sich selbst. Nachrichten werden auf deinem Gerät geprüft, und deine eigenen Filter gelten weiterhin.";
 
 "help_automaticFiltering" = "KI-Filterung nutzt KI-generierte Schlüsselwortlisten, um Spam zu erkennen und Nachrichten in den Ordner Junk, Transaktionen oder Werbung zu leiten. Die Listen werden regelmäßig aktualisiert. Deine eigenen Filter bleiben aktiv, wenn KI-Filterung eingeschaltet ist.";
 
@@ -414,7 +416,7 @@
 
 "a11y_help_enableReportingHint" = "Doppeltippen, um die Melde-Einrichtung zu öffnen";
 
-"a11y_help_faqHint" = "Doppeltippen, um die Antwort ein- oder auszublenden";
+"a11y_faq_answerHint" = "Doppeltippen, um die Antwort ein- oder auszublenden";
 
 "a11y_help_emailHint" = "Doppeltippen, um eine E-Mail zu senden. Kopiert die Adresse, wenn Mail nicht eingerichtet ist";
 
@@ -853,5 +855,25 @@
 "whatsNew_tipJar_action" = "Trinkgeld geben";
 
 "whatsNew_communityLists_action" = "Community-Listen ansehen";
+
+"help_faq_title" = "Alle Fragen";
+
+"help_faq_caption" = "Filtern, Datenschutz, Community-Listen und mehr.";
+
+"faq_communityLists_question" = "Was sind Community-Listen?";
+
+"faq_communityLists_answer" = "Filterlisten, die andere Leute erstellen und teilen. Öffne auf dem Startbildschirm **Community-Listen**, um eine empfohlene Liste einzuschalten, oder tippe auf **Von URL abonnieren** und füge einen geteilten Link ein. Eingeschaltete Listen aktualisieren sich selbst. Abonniere nur Listen, denen du vertraust. Um deine eigene zu teilen, tippe auf **Liste erstellen**.";
+
+"faq_stayReachable_question" = "Was ist Immer erreichbar?";
+
+"faq_stayReachable_answer" = "Ein Kurier, eine Praxis oder ein Nachbar schreibt dir vielleicht von einer unbekannten Nummer. Tippe oben auf dem Startbildschirm auf **+**, dann auf **Immer erreichbar**, und füge deinen Namen und deine Straße hinzu. Texte, die sie erwähnen, kommen immer durch.";
+
+"faq_siriShortcuts_question" = "Kann ich Siri und Kurzbefehle nutzen?";
+
+"faq_siriShortcuts_answer" = "Ja. Bitte Siri, einen Filter hinzuzufügen oder zu entfernen, eine Nachricht zu prüfen, eine Sprache zu sperren oder die Listen zu aktualisieren. Zum Beispiel: „Filter in Simply Filter SMS hinzufügen“. Dieselben Aktionen findest du in der Kurzbefehle-App für deine eigenen Kurzbefehle.";
+
+"faq_iCloudSync_question" = "Werden meine Filter auf meine anderen Geräte synchronisiert?";
+
+"faq_iCloudSync_answer" = "Ja. Mit iCloud werden deine Filter, Smarten Filter und Listen auf jedes Gerät mit demselben Apple Account synchronisiert. Sie landen in deiner iCloud, nie beim Entwickler.";
 
 

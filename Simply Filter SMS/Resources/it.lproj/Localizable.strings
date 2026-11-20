@@ -170,51 +170,53 @@
 
 "help_enableReporting_caption" = "Facoltativo. Segnala da una conversazione in Messaggi per aiutare a migliorare il Filtraggio AI.";
 
-"faq_question_notFiltering" = "Perché i miei messaggi non vengono filtrati?";
+"faq_notFiltering_question" = "Perché i miei messaggi non vengono filtrati?";
 
-"faq_answer_notFiltering" = "Di solito è uno di questi:\n\n• Simply Filter SMS non è selezionato come filtro in Impostazioni iOS.\n• La conversazione è **iMessage** (bolle blu), non SMS. Apple non lascia filtrare quelli a nessuna app.\n• Il mittente è in **Contatti**. iOS salta il filtraggio per loro.\n\nNella schermata Home, tocca il pulsante ••• in alto a destra, poi **Strumenti filtro**, poi **Testa i tuoi filtri**, e incolla mittente e messaggio. Il test gira nell'app anche se il filtraggio è spento, quindi può mostrare filtrato mentre Messaggi consegna ancora l'SMS. Se Simply Filter SMS è attivo in Impostazioni iOS e il test dice ancora che doveva essere filtrato, scrivimi.";
+"faq_notFiltering_answer" = "Di solito è uno di questi:\n\n• Simply Filter SMS non è selezionato come filtro in Impostazioni iOS.\n• La conversazione è **iMessage** (bolle blu), non SMS. Apple non lascia filtrare quelli a nessuna app.\n• Il mittente è in **Contatti**. iOS salta il filtraggio per loro.\n\nNella schermata Home, tocca il pulsante ••• in alto a destra, poi **Strumenti filtro**, poi **Testa i tuoi filtri**, e incolla mittente e messaggio. Il test gira nell'app anche se il filtraggio è spento, quindi può mostrare filtrato mentre Messaggi consegna ancora l'SMS. Se Simply Filter SMS è attivo in Impostazioni iOS e il test dice ancora che doveva essere filtrato, scrivimi.";
 
-"faq_question_smartFilters" = "Cosa sono i Filtri intelligenti?";
+"faq_smartFilters_question" = "Cosa sono i Filtri intelligenti?";
 
-"faq_answer_smartFilters" = "I **Filtri intelligenti** nella schermata Home intercettano lo spam comune: link, e-mail, emoji, mittenti brevi, mittenti solo numeri o tutti gli sconosciuti. Funzionano insieme ai tuoi filtri. **Blocca sconosciuti** è il più forte e spegne gli altri Filtri intelligenti.";
+"faq_smartFilters_answer" = "I **Filtri intelligenti** nella schermata Home intercettano lo spam comune: link, mittenti e-mail, emoji, mittenti brevi e mittenti con lettere nel nome. Ciò che corrisponde va in Indesiderati. **Blocca sconosciuti** è il più forte: manda in Indesiderati ogni mittente sconosciuto che non sia nella tua **Lista dei consentiti**.";
 
-"faq_question_trustedCountries" = "Cos'è Consenti per paese?";
+"faq_allowByCountry_question" = "Cos'è Consenti per paese?";
 
-"faq_answer_trustedCountries" = "**Consenti per paese** fa passare gli SMS da numeri con un prefisso internazionale che scegli, ad esempio +1 o +39. I mittenti di altri paesi vengono filtrati. I numeri senza prefisso paese non vengono controllati.";
+"faq_allowByCountry_answer" = "Un Filtro intelligente che lascia passare gli SMS dai prefissi internazionali che scegli, come +1 o +972. I numeri di altri paesi vanno in Indesiderati. I mittenti senza prefisso internazionale non vengono controllati.";
 
-"faq_question_testFilters" = "Come testo i miei filtri?";
+"faq_filterTester_question" = "Come testo i miei filtri?";
 
-"faq_answer_testFilters" = "Nella schermata Home, tocca il pulsante ••• in alto a destra, poi **Strumenti filtro**, poi **Testa i tuoi filtri**. Digita un mittente e un messaggio. Il risultato si aggiorna mentre scrivi. Lascia il mittente vuoto per testare solo il corpo.";
+"faq_filterTester_answer" = "Nella schermata Home, tocca il pulsante ••• in alto a destra, poi **Strumenti filtro**, poi **Testa i tuoi filtri**. Digita un mittente e un messaggio. Il risultato si aggiorna mentre scrivi. Lascia il mittente vuoto per testare solo il corpo.";
 
-"faq_question_shareFilters" = "Posso condividere i miei filtri?";
+"faq_shareFilters_question" = "Posso condividere i miei filtri?";
 
-"faq_answer_shareFilters" = "Nella schermata Home, tocca il pulsante ••• in alto a destra, poi **Strumenti filtro**, poi **Esporta filtri**, e invia il file. Sull'altro dispositivo usa **Importa filtri** per aggiungerli. I filtri già presenti vengono saltati. Nulla viene sovrascritto o eliminato.";
+"faq_shareFilters_answer" = "Nella schermata Home, tocca il pulsante ••• in alto a destra, poi **Strumenti filtro**, poi **Esporta filtri**, e invia il file. Sull'altro dispositivo usa **Importa filtri** per aggiungerli. I filtri già presenti vengono saltati. Nulla viene sovrascritto o eliminato. Per condividerli con tutti, pubblicali come Lista della community.";
 
-"faq_question_report" = "Come aiuto a migliorare il Filtraggio AI?";
+"faq_report_question" = "Come aiuto a migliorare il Filtraggio AI?";
 
-"faq_answer_report" = "Nella schermata Home, tocca il pulsante ••• in alto a destra, poi **Strumenti filtro**. **Segnala messaggio** invia un messaggio da questa app. **Migliora il filtro IA** attiva le segnalazioni da una conversazione in Messaggi. Le segnalazioni addestrano le liste IA. Il filtraggio sul tuo dispositivo resta locale.";
+"faq_report_answer" = "Nella schermata Home, tocca il pulsante ••• in alto a destra, poi **Strumenti filtro**:\n\n• **Segnala messaggio** segnala un testo come indesiderato o non indesiderato.\n• **Migliora il filtro IA** configura la segnalazione da una conversazione in Messaggi.\n\nLe segnalazioni addestrano l'IA che crea le liste. Viene inviato solo il messaggio che segnali, e il filtraggio sul tuo dispositivo resta locale.";
 
-"faq_question_1" = "Come funziona il filtraggio dei messaggi?";
+"faq_howItWorks_question" = "Come funziona il filtraggio dei messaggi?";
 
-"faq_answer_1" = "Quando ricevi un SMS da un numero che non è in Contatti, Simply Filter SMS lo controlla in questo ordine:\n\n• I testi della tua **Lista dei consentiti** passano sempre.\n• La tua **Lista di blocco**, le lingue bloccate, i Filtri intelligenti, Consenti per paese e il **Filtraggio AI** possono inviarlo in Indesiderati, Transazioni o Promozioni.\n• Se nulla corrisponde, il messaggio viene consegnato normalmente.\n\nGli iMessage e i mittenti in Contatti non vengono mai inviati all'app.";
+"faq_howItWorks_answer" = "Quando ricevi un SMS da un numero che non è in Contatti, Simply Filter SMS lo controlla e decide la prima corrispondenza:\n\n• I testi della tua **Lista dei consentiti** passano sempre.\n• **Blocca sconosciuti**, se attivo, manda tutto il resto in Indesiderati.\n• I **Filtri intelligenti**, la tua **Lista di blocco**, le lingue bloccate, il **Filtraggio AI** e le **Liste della community** possono inviarlo in Indesiderati, Transazioni o Promozioni.\n• Se nulla corrisponde, il messaggio viene consegnato normalmente.\n\nGli iMessage e i mittenti in Contatti non vengono mai inviati all'app.";
 
-"faq_question_2" = "I miei messaggi sono visibili allo sviluppatore?";
+"faq_privacy_question" = "I miei messaggi sono visibili allo sviluppatore?";
 
-"faq_answer_2" = "No. Simply Filter SMS non raccoglie alcuna informazione e ogni messaggio viene elaborato sul tuo dispositivo. Nessun messaggio viene mai inviato da nessuna parte in automatico. L'unica eccezione è quando scegli tu di segnalare un messaggio specifico: viene inviato solo quel messaggio, e solo perché hai toccato Segnala.";
+"faq_privacy_answer" = "No. Simply Filter SMS non raccoglie alcuna informazione, e ogni messaggio viene controllato sul tuo dispositivo. Un messaggio viene inviato solo se lo segnali tu, e solo quello.";
 
-"faq_question_3" = "E gli iMessage e i messaggi dai miei contatti?";
+"faq_iMessage_question" = "E gli iMessage e i messaggi dai miei contatti?";
 
-"faq_answer_3" = "Apple non espone quei messaggi ad alcuno sviluppatore, rimangono completamente privati.";
+"faq_iMessage_answer" = "Apple non li passa a nessuna app di filtro, quindi non possono essere filtrati e restano del tutto privati.";
 
-"faq_question_4" = "Dove sono i messaggi filtrati?";
+"faq_whereFiltered_question" = "Dove sono i messaggi filtrati?";
 
-"faq_answer_4" = "Quando un messaggio viene contrassegnato come indesiderato, è comunque possibile leggerlo nell'app Messaggi nella cartella Indesiderati.";
+"faq_whereFiltered_answer" = "Nell'app Messaggi, nella cartella **Indesiderati**, **Transazioni** o **Promozioni**. Non viene eliminato nulla, quindi puoi leggerli quando vuoi.";
 
-"faq_question_5" = "Qual è la differenza tra Indesiderati/Transazioni/Promozioni?";
+"faq_folders_question" = "Che differenza c'è tra Indesiderati, Transazioni e Promozioni?";
 
-"faq_answer_5" = "Non molta, puoi filtrare qualsiasi parola in qualsiasi cartella. Quelle cartelle non sono personalizzabili. Solo i messaggi filtrati nella cartella Indesiderati verranno consegnati in silenzio.";
+"faq_folders_answer" = "Poca. Puoi mandare qualsiasi filtro in qualsiasi cartella, e iOS non permette alle app di modificarle. Solo i messaggi in Indesiderati arrivano in silenzio, senza notifica.";
 
-"help_automaticFiltering_question" = "Come funziona il filtraggio AI?";
+"faq_ai_question" = "Come funziona il filtraggio AI?";
+
+"faq_ai_answer" = "Attiva il Filtraggio AI per le lingue in cui ricevi messaggi. Usa elenchi di parole chiave creati dall'IA per mandare lo spam in Indesiderati, Transazioni o Promozioni, e gli elenchi si aggiornano da soli. I messaggi vengono controllati sul tuo dispositivo, e i tuoi filtri restano attivi.";
 
 "help_automaticFiltering" = "Il filtraggio AI usa liste di parole chiave generate dall'IA per rilevare spam e instradare i messaggi nella cartella Indesiderati, Transazioni o Promozioni. Le liste vengono aggiornate periodicamente. I tuoi filtri normali sono ancora attivi quando il filtraggio AI è acceso.";
 
@@ -432,7 +434,7 @@
 
 "a11y_help_enableReportingHint" = "Doppio tocco per aprire la configurazione delle segnalazioni";
 
-"a11y_help_faqHint" = "Doppio tocco per mostrare o nascondere la risposta";
+"a11y_faq_answerHint" = "Doppio tocco per mostrare o nascondere la risposta";
 
 "a11y_help_emailHint" = "Doppio tocco per inviare un’e-mail. Copia l’indirizzo se Mail non è configurata";
 
@@ -853,5 +855,25 @@
 "whatsNew_tipJar_action" = "Lascia una mancia";
 
 "whatsNew_communityLists_action" = "Sfoglia le liste della community";
+
+"help_faq_title" = "Tutte le domande";
+
+"help_faq_caption" = "Filtri, privacy, Liste della community e altro.";
+
+"faq_communityLists_question" = "Cosa sono le Liste della community?";
+
+"faq_communityLists_answer" = "Liste di filtri create e condivise da altre persone. Nella schermata Home, apri **Liste della community** per attivare una lista in evidenza, oppure tocca **Iscriviti da URL** e incolla un link condiviso. Le liste attive si aggiornano da sole. Iscriviti solo a liste di cui ti fidi. Per condividere la tua, tocca **Crea una lista**.";
+
+"faq_stayReachable_question" = "Cos'è Sempre raggiungibile?";
+
+"faq_stayReachable_answer" = "Un corriere, una clinica o un vicino potrebbero scriverti da un numero che non conosci. Tocca **+** in alto nella schermata Home, poi **Sempre raggiungibile**, e aggiungi il tuo nome e la tua via. I testi che li citano passano sempre.";
+
+"faq_siriShortcuts_question" = "Posso usare Siri e Comandi rapidi?";
+
+"faq_siriShortcuts_answer" = "Sì. Chiedi a Siri di aggiungere o rimuovere un filtro, controllare un messaggio, bloccare una lingua o aggiornare le liste. Per esempio: «Aggiungi un filtro in Simply Filter SMS». Le stesse azioni sono nell'app Comandi Rapidi per i tuoi comandi.";
+
+"faq_iCloudSync_question" = "I miei filtri si sincronizzano sugli altri dispositivi?";
+
+"faq_iCloudSync_answer" = "Sì. Con iCloud attivo, i tuoi filtri, Filtri intelligenti e liste si sincronizzano su ogni dispositivo con lo stesso Account Apple. Finiscono nel tuo iCloud, mai allo sviluppatore.";
 
 

@@ -170,6 +170,19 @@ extension String {
     }
 }
 
+extension AttributedString {
+    func highlighting(_ query: String) -> AttributedString {
+        var result = self
+        guard !query.isEmpty else { return result }
+        var searchStart = result.startIndex
+        while let range = result[searchStart...].range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) {
+            result[range].backgroundColor = Color.yellow.opacity(0.4)
+            searchStart = range.upperBound
+        }
+        return result
+    }
+}
+
 extension View {
     @ViewBuilder func `if`<Content: View>(_ conditional: Bool, @ViewBuilder _ content: (Self) -> Content) -> some View {
         if conditional {
