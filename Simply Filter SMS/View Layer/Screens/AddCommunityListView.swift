@@ -12,7 +12,6 @@ import SwiftUI
 struct AddCommunityListView: View {
 
     @Environment(\.dismiss) var dismiss
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @ObservedObject var model: ViewModel
     @FocusState private var isURLFieldFocused: Bool
@@ -38,29 +37,18 @@ struct AddCommunityListView: View {
 
                             self.urlFieldStatus
                         }
-                        .animation(self.reduceMotion ? nil : .bouncy, value: self.model.previewState)
-                        .keyframeAnimator(initialValue: CGFloat.zero, trigger: self.shakeTrigger) { content, offset in
-                            content.offset(x: offset)
-                        } keyframes: { _ in
-                            KeyframeTrack {
-                                LinearKeyframe(-10, duration: 0.05)
-                                LinearKeyframe(10, duration: 0.08)
-                                LinearKeyframe(-7, duration: 0.08)
-                                LinearKeyframe(7, duration: 0.08)
-                                LinearKeyframe(-3, duration: 0.07)
-                                LinearKeyframe(0, duration: 0.06)
-                            }
-                        }
+                        .motionAnimation(.bouncy, value: self.model.previewState)
+                        .shake(trigger: self.shakeTrigger)
                     } footer: {
                         if case .failed(let error) = self.model.previewState {
                             Label(error.message, systemImage: "exclamationmark.circle")
                                 .foregroundColor(.red)
-                                .transition(self.reduceMotion ? .identity : .opacity.combined(with: .move(edge: .top)))
+                                .transition(.motion(.opacity.combined(with: .move(edge: .top))))
                                 .accessibilityIdentifier(TestIdentifier.communityListError.rawValue)
                         }
                         else {
                             Text("communityLists_urlHint"~)
-                                .transition(self.reduceMotion ? .identity : .opacity)
+                                .transition(.opacity)
                         }
                     } // Section
                 }
@@ -68,7 +56,7 @@ struct AddCommunityListView: View {
                 if self.isPreviewRevealed, case .loaded(let communityList) = self.model.previewState {
                     Section {
                         CommunityListRow(communityList: communityList)
-                            .modifier(StaggeredReveal(index: 0))
+                            .previewReveal(index: 0)
                     } header: {
                         Text("communityLists_preview"~)
                     }
@@ -83,7 +71,7 @@ struct AddCommunityListView: View {
                                                       count: self.areCountsShown ? self.model.candidates(for: filterType).count : 0)
                             }
                             .accentColor(Color.primary.opacity(0.35))
-                            .modifier(StaggeredReveal(index: index + 1))
+                            .previewReveal(index: index + 1)
                         }
                     } header: {
                         Text("filterList_filters"~)
@@ -94,7 +82,7 @@ struct AddCommunityListView: View {
                 }
             } // List
             .listStyle(.insetGrouped)
-            .animation(self.reduceMotion ? nil : .easeInOut(duration: 0.25), value: self.model.previewState)
+            .motionAnimation(.easeInOut(duration: 0.25), value: self.model.previewState)
             .onChange(of: self.model.previewState) { oldState, newState in
                 self.previewStateChanged(from: oldState, to: newState)
             }
@@ -139,17 +127,17 @@ struct AddCommunityListView: View {
         switch self.model.previewState {
         case .loading:
             ProgressView()
-                .transition(self.reduceMotion ? .identity : .scale(scale: 0.4).combined(with: .opacity))
+                .transition(.motion(.scale(scale: 0.4).combined(with: .opacity)))
         case .loaded:
             Image(systemName: "checkmark.circle.fill")
                 .font(.title3)
                 .foregroundStyle(.green)
-                .transition(self.reduceMotion ? .identity : .scale(scale: 0.3).combined(with: .opacity))
+                .transition(.motion(.scale(scale: 0.3).combined(with: .opacity)))
         case .failed:
             Image(systemName: "exclamationmark.circle.fill")
                 .font(.title3)
                 .foregroundStyle(.red)
-                .transition(self.reduceMotion ? .identity : .scale(scale: 0.3).combined(with: .opacity))
+                .transition(.motion(.scale(scale: 0.3).combined(with: .opacity)))
         case .empty:
             EmptyView()
         }
@@ -164,24 +152,21 @@ struct AddCommunityListView: View {
             self.revealPreview()
         case .failed:
             UINotificationFeedbackGenerator().notificationOccurred(.error)
-            if !self.reduceMotion {
-                self.shakeTrigger += 1
-            }
+            self.shakeTrigger += 1
         case .empty, .loading:
             break
         }
     }
 
     private func revealPreview() {
-        let fieldDelay = self.reduceMotion ? 0 : 0.4
-        let countsDelay = self.reduceMotion ? 0 : 0.35 + Double(self.model.filterTypes.count) * StaggeredReveal.step
+        let countsDelay = PreviewMotion.countsBaseDelay + Stagger.delay(for: self.model.filterTypes.count, step: PreviewMotion.step)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + fieldDelay) {
-            withAnimation(self.reduceMotion ? nil : .spring(response: 0.45, dampingFraction: 0.82)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + PreviewMotion.fieldDelay) {
+            withMotionAnimation(.spring(response: 0.45, dampingFraction: 0.82)) {
                 self.isPreviewRevealed = true
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + countsDelay) {
-                withAnimation(self.reduceMotion ? nil : .snappy) {
+                withMotionAnimation(.snappy) {
                     self.areCountsShown = true
                 }
             }
@@ -189,30 +174,19 @@ struct AddCommunityListView: View {
     }
 }
 
-private struct StaggeredReveal: ViewModifier {
-
+//MARK: - Motion -
+private enum PreviewMotion {
     static let step: Double = 0.06
+    static let fieldDelay: Double = 0.4
+    static let countsBaseDelay: Double = 0.35
+    static let rise: CGFloat = 14
+    static let startScale: CGFloat = 0.96
+    static let animation = Animation.spring(response: 0.45, dampingFraction: 0.8)
+}
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var isRevealed = false
-
-    let index: Int
-
-    func body(content: Content) -> some View {
-        content
-            .opacity(self.isRevealed ? 1 : 0)
-            .scaleEffect(self.isRevealed ? 1 : 0.96)
-            .offset(y: self.isRevealed ? 0 : 14)
-            .onAppear {
-                guard !self.isRevealed else { return }
-                guard !self.reduceMotion else {
-                    self.isRevealed = true
-                    return
-                }
-                withAnimation(.spring(response: 0.45, dampingFraction: 0.8).delay(Double(self.index) * Self.step)) {
-                    self.isRevealed = true
-                }
-            }
+private extension View {
+    func previewReveal(index: Int) -> some View {
+        return self.entranceOnAppear(delay: Stagger.delay(for: index, step: PreviewMotion.step), rise: PreviewMotion.rise, scale: PreviewMotion.startScale, animation: PreviewMotion.animation)
     }
 }
 

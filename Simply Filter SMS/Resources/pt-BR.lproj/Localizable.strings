@@ -342,7 +342,7 @@
 
 "whatsNew_tipJar_title" = "Apoie o Desenvolvedor";
 
-"whatsNew_tipJar_desc" = "Um novo **Pote de Gorjetas** permite apoiar o desenvolvimento do app. Simply Filter SMS é gratuito para sempre - gorjetas são só uma forma de dizer obrigado! **Toque aqui para dar uma gorjeta!**";
+"whatsNew_tipJar_desc" = "Um novo **Pote de Gorjetas** permite apoiar o desenvolvimento do app. Simply Filter SMS é gratuito para sempre - gorjetas são só uma forma de dizer obrigado!";
 
 "tipJar_title" = "Pote de Gorjetas";
 
@@ -670,6 +670,30 @@
 
 "whatsNew_siriShortcuts_desc" = "Adicione, remova e verifique filtros com a Siri: experimente **“Adicionar à minha Lista de Bloqueio no Simply Filter SMS”**. Todas as ações também estão no app **Atalhos**.";
 
+"whatsNew_quickAddFilter_title" = "Adição Rápida de Filtros";
+
+"whatsNew_quickAddFilter_desc" = "Toque em **+** na tela inicial para adicionar um filtro permitido, bloqueado ou de idioma em um só passo. Dentro de uma lista de filtros, ele fica no menu **…**.";
+
+"whatsNew_newLanguages_title" = "9 Novos Idiomas";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** O app agora está disponível em **9 novos idiomas**, todos localizados com a ajuda da **IA**.";
+
+"whatsNew_trustedCountries_title" = "Países Confiáveis";
+
+"whatsNew_trustedCountries_desc" = "Permita automaticamente mensagens de **países específicos** por prefixo telefônico. Adicione seus países confiáveis e filtre o restante.";
+
+"whatsNew_accessibility_title" = "Suporte a Acessibilidade";
+
+"whatsNew_accessibility_desc" = "Totalmente utilizável com **VoiceOver** e **Controle por Voz**. O texto escala com **Tipo Dinâmico**. Animações respeitam seu ajuste de **Reduzir Movimento**.";
+
+"whatsNew_iPad_title" = "Suporte Nativo ao iPad";
+
+"whatsNew_iPad_desc" = "Experiência iPad completa com **navegação em barra lateral** e layouts otimizados para telas maiores.";
+
+"whatsNew_singleChar_title" = "Filtros de Um Caractere";
+
+"whatsNew_singleChar_desc" = "Agora você pode criar filtros com apenas **um caractere**, dando mais controle preciso sobre o filtro de mensagens.";
+
 "communityLists_featured" = "Destaques";
 
 "communityLists_addedByYou" = "Adicionadas por você";
@@ -825,5 +849,13 @@
 "siri_updateLists_updated" = "Suas listas de filtros estão atualizadas.";
 
 "siri_updateLists_failed" = "Não foi possível atualizar suas listas de filtros. Verifique a conexão e tente de novo.";
+
+"whatsNew_version" = "Versão %@";
+
+"whatsNew_earlierUpdates" = "Atualizações anteriores";
+
+"whatsNew_tipJar_action" = "Deixar uma gorjeta";
+
+"whatsNew_communityLists_action" = "Ver listas da comunidade";
 
 

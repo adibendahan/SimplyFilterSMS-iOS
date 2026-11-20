@@ -209,27 +209,26 @@ struct ListEmptyStateView: View {
     @ScaledMetric(relativeTo: .subheadline) private var twoCaptionLinesHeight: CGFloat = 40
 
     @State private var hasAppeared = false
-    @State private var badgeBounce = 0
 
     var body: some View {
         VStack(spacing: self.kind.style.spacing) {
             self.illustrationContent
                 .frame(minHeight: self.illustrationHeight)
                 .padding(.bottom, self.kind.style.illustrationSpacing)
-                .modifier(self.entrance(delay: 0, distance: Motion.illustrationRise, scale: Motion.illustrationStartScale))
+                .entrance(isShown: self.isRevealed, rise: Motion.illustrationRise, scale: Motion.illustrationStartScale)
                 .accessibilityHidden(true)
 
             Text(self.kind.title)
                 .font(self.kind.style.titleFont)
                 .multilineTextAlignment(.center)
-                .modifier(self.entrance(delay: Motion.titleDelay))
+                .entrance(isShown: self.isRevealed, delay: Motion.titleDelay)
 
             Text(self.kind.caption)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(minHeight: self.captionMinHeight, alignment: .top)
-                .modifier(self.entrance(delay: Motion.captionDelay))
+                .entrance(isShown: self.isRevealed, delay: Motion.captionDelay)
 
             if let action = self.action {
                 Button {
@@ -244,7 +243,7 @@ struct ListEmptyStateView: View {
                 .buttonStyle(FilledButton())
                 .padding(.top, 10)
                 .accessibilityIdentifier(action.testIdentifier.rawValue)
-                .modifier(self.entrance(delay: Motion.buttonDelay))
+                .entrance(isShown: self.isRevealed, delay: Motion.buttonDelay)
             }
         }
         .frame(maxWidth: .infinity)
@@ -258,8 +257,7 @@ struct ListEmptyStateView: View {
     private var illustrationContent: some View {
         let badge = IllustrationBadge(iconName: self.kind.badgeIconName,
                                       color: self.kind.color,
-                                      isShown: self.isRevealed || self.reduceMotion,
-                                      bounce: self.badgeBounce)
+                                      isShown: self.isRevealed || self.reduceMotion)
 
         switch self.kind.illustration {
         case .message(let sample):
@@ -291,21 +289,9 @@ struct ListEmptyStateView: View {
         return self.hasAppeared || self.isPreview
     }
 
-    private func entrance(delay: Double, distance: CGFloat = Motion.textRise, scale: CGFloat = 1) -> Entrance {
-        return Entrance(isShown: self.isRevealed,
-                        delay: delay,
-                        distance: distance,
-                        scale: scale,
-                        reduceMotion: self.reduceMotion)
-    }
-
     private func playEntrance() {
         DispatchQueue.main.asyncAfter(deadline: .now() + Motion.entranceDelay) {
             self.hasAppeared = true
-            guard !self.reduceMotion else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + Motion.badgeBounceDelay) {
-                self.badgeBounce += 1
-            }
         }
     }
 }
@@ -323,37 +309,7 @@ private enum Motion {
     static let badgeBounceDelay: TimeInterval = 0.45
     static let illustrationRise: CGFloat = 28
     static let illustrationStartScale: CGFloat = 0.6
-    static let textRise: CGFloat = 12
-    static let fadeDuration: TimeInterval = 0.3
-    static let spring = Animation.spring(response: 0.55, dampingFraction: 0.62)
     static let badgeSpring = Animation.spring(response: 0.42, dampingFraction: 0.45)
-}
-
-private struct Entrance: ViewModifier {
-    let isShown: Bool
-    let delay: Double
-    let distance: CGFloat
-    let scale: CGFloat
-    let reduceMotion: Bool
-
-    func body(content: Content) -> some View {
-        let isAtRest = self.isShown || self.reduceMotion
-        return content
-            .opacity(self.isShown ? 1 : 0)
-            .scaleEffect(isAtRest ? 1 : self.scale)
-            .offset(y: isAtRest ? 0 : self.distance)
-            .animation(self.animation, value: self.isShown)
-    }
-
-    private var animation: Animation {
-        let animation: Animation
-        if self.reduceMotion {
-            animation = .easeOut(duration: Motion.fadeDuration)
-        } else {
-            animation = Motion.spring.delay(self.delay)
-        }
-        return animation
-    }
 }
 
 
@@ -369,7 +325,6 @@ private struct IllustrationBadge: ViewModifier {
     let iconName: String
     let color: Color
     let isShown: Bool
-    let bounce: Int
 
     @ScaledMetric(relativeTo: .body) private var badgeSize: CGFloat = 30
     private let ringWidth: CGFloat = 3
@@ -384,7 +339,7 @@ private struct IllustrationBadge: ViewModifier {
             Image(systemName: self.iconName)
                 .font(.footnote.weight(.bold))
                 .foregroundStyle(.white)
-                .symbolEffect(.bounce, value: self.bounce)
+                .bounceOnAppear(isShown: self.isShown, delay: Motion.badgeBounceDelay)
                 .frame(width: self.badgeSize, height: self.badgeSize)
                 .background(self.color, in: Circle())
                 .padding(self.ringWidth)

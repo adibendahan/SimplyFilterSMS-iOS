@@ -342,7 +342,7 @@
 
 "whatsNew_tipJar_title" = "Soutenir le développeur";
 
-"whatsNew_tipJar_desc" = "Une nouvelle **boîte à pourboires** te permet de soutenir le développement de l'app. Simply Filter SMS est gratuit pour toujours - les pourboires sont juste une façon de dire merci ! **Touche ici pour donner un pourboire !**";
+"whatsNew_tipJar_desc" = "Une nouvelle **boîte à pourboires** te permet de soutenir le développement de l'app. Simply Filter SMS est gratuit pour toujours - les pourboires sont juste une façon de dire merci !";
 
 "tipJar_title" = "Boîte à pourboires";
 
@@ -670,6 +670,30 @@
 
 "whatsNew_siriShortcuts_desc" = "Ajoute, supprime et vérifie des filtres avec Siri : essaie **« Ajouter à ma Liste de blocage dans Simply Filter SMS »**. Toutes les actions sont aussi dans l’app **Raccourcis**.";
 
+"whatsNew_quickAddFilter_title" = "Ajout rapide de filtres";
+
+"whatsNew_quickAddFilter_desc" = "Touche **+** sur l'écran d'accueil pour ajouter un filtre autorisé, bloqué ou de langue en une seule étape. Dans une liste de filtres, c'est dans le menu **…**.";
+
+"whatsNew_newLanguages_title" = "9 Nouvelles Langues";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** L'app est maintenant disponible en **9 nouvelles langues**, toutes localisées à l'aide de l'**IA**.";
+
+"whatsNew_trustedCountries_title" = "Pays de Confiance";
+
+"whatsNew_trustedCountries_desc" = "Autorise automatiquement les messages de **pays spécifiques** par préfixe téléphonique. Ajoute tes pays de confiance et filtre le reste.";
+
+"whatsNew_accessibility_title" = "Support accessibilité";
+
+"whatsNew_accessibility_desc" = "Entièrement utilisable avec **VoiceOver** et **Contrôle vocal**. Le texte s'adapte avec **Taille du texte dynamique**. Les animations respectent ton réglage **Réduire les animations**.";
+
+"whatsNew_iPad_title" = "Support natif iPad";
+
+"whatsNew_iPad_desc" = "Expérience iPad complète avec **navigation en barre latérale** et mises en page optimisées pour les grands écrans.";
+
+"whatsNew_singleChar_title" = "Filtres à un caractère";
+
+"whatsNew_singleChar_desc" = "Tu peux maintenant créer des filtres avec un seul **caractère**, pour un contrôle plus précis du filtrage.";
+
 "communityLists_featured" = "En vedette";
 
 "communityLists_addedByYou" = "Ajoutées par toi";
@@ -825,5 +849,13 @@
 "siri_updateLists_updated" = "Tes listes de filtres sont à jour.";
 
 "siri_updateLists_failed" = "Impossible de mettre à jour tes listes de filtres. Vérifie ta connexion et réessaie.";
+
+"whatsNew_version" = "Version %@";
+
+"whatsNew_earlierUpdates" = "Mises à jour précédentes";
+
+"whatsNew_tipJar_action" = "Laisser un pourboire";
+
+"whatsNew_communityLists_action" = "Parcourir les listes communautaires";
 
 

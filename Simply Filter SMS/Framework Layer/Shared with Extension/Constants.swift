@@ -683,7 +683,7 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, tipJar, regexFilters, filterTransfer, communityLists, siriShortcuts
+    case aiFiltering, tipJar, regexFilters, filterTransfer, communityLists, siriShortcuts, newLanguages, trustedCountries, accessibility, ipad, quickAddFilter, singleChar
 
     var title: String {
         switch self {
@@ -699,6 +699,18 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_communityLists_title"~
         case .siriShortcuts:
             return "whatsNew_siriShortcuts_title"~
+        case .newLanguages:
+            return "whatsNew_newLanguages_title"~
+        case .trustedCountries:
+            return "whatsNew_trustedCountries_title"~
+        case .accessibility:
+            return "whatsNew_accessibility_title"~
+        case .ipad:
+            return "whatsNew_iPad_title"~
+        case .quickAddFilter:
+            return "whatsNew_quickAddFilter_title"~
+        case .singleChar:
+            return "whatsNew_singleChar_title"~
         }
     }
 
@@ -716,6 +728,18 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_communityLists_desc"~
         case .siriShortcuts:
             return "whatsNew_siriShortcuts_desc"~
+        case .newLanguages:
+            return "whatsNew_newLanguages_desc"~
+        case .trustedCountries:
+            return "whatsNew_trustedCountries_desc"~
+        case .accessibility:
+            return "whatsNew_accessibility_desc"~
+        case .ipad:
+            return "whatsNew_iPad_desc"~
+        case .quickAddFilter:
+            return "whatsNew_quickAddFilter_desc"~
+        case .singleChar:
+            return "whatsNew_singleChar_desc"~
         }
     }
 
@@ -733,6 +757,18 @@ enum WhatsNewEntry: String, CaseIterable {
             return "person.2.circle"
         case .siriShortcuts:
             return "mic.fill"
+        case .newLanguages:
+            return "globe"
+        case .trustedCountries:
+            return "globe.americas"
+        case .accessibility:
+            return "accessibility"
+        case .ipad:
+            return "ipad.and.iphone"
+        case .quickAddFilter:
+            return "plus.circle"
+        case .singleChar:
+            return "character.cursor.ibeam"
         }
     }
 
@@ -750,6 +786,18 @@ enum WhatsNewEntry: String, CaseIterable {
             return .indigo
         case .siriShortcuts:
             return .purple
+        case .newLanguages:
+            return .teal
+        case .trustedCountries:
+            return .green
+        case .accessibility:
+            return .blue
+        case .ipad:
+            return .pink
+        case .quickAddFilter:
+            return .cyan
+        case .singleChar:
+            return .mint
         }
     }
 
@@ -761,21 +809,82 @@ enum WhatsNewEntry: String, CaseIterable {
             return 1
         case .filterTransfer:
             return 2
-        case .tipJar:
+        case .regexFilters:
             return 3
         case .aiFiltering:
             return 4
-        case .regexFilters:
+        case .newLanguages:
             return 5
+        case .trustedCountries:
+            return 6
+        case .accessibility:
+            return 7
+        case .tipJar:
+            return 8
+        case .ipad:
+            return 9
+        case .quickAddFilter:
+            return 10
+        case .singleChar:
+            return 11
         }
     }
 
-    var isActionable: Bool {
+    var iconScale: CGFloat {
         switch self {
-        case .tipJar, .communityLists:
-            return true
+        case .communityLists, .newLanguages, .trustedCountries, .accessibility, .quickAddFilter, .singleChar:
+            return 1.0
+        case .siriShortcuts:
+            return 1.1
+        case .filterTransfer:
+            return 1.08
+        case .tipJar:
+            return 1.07
+        case .aiFiltering:
+            return 1.05
+        case .regexFilters:
+            return 1.2
+        case .ipad:
+            return 1.15
+        }
+    }
+
+    var release: String {
+        switch self {
+        case .communityLists, .siriShortcuts:
+            return "4.0.0"
+        case .filterTransfer:
+            return "3.1.0"
+        case .regexFilters:
+            return "3.0.2"
+        case .aiFiltering, .newLanguages, .trustedCountries:
+            return "3.0.0"
+        case .accessibility:
+            return "2.3.0"
+        case .tipJar:
+            return "2.2.1"
+        case .ipad, .quickAddFilter, .singleChar:
+            return "2.2.0"
+        }
+    }
+
+    var isCurrent: Bool {
+        return self.release == WhatsNewEntry.newestRelease
+    }
+
+    private static let newestRelease: String? = {
+        let releases = WhatsNewEntry.allCases.map { $0.release }
+        return releases.max { $0.compare($1, options: .numeric) == .orderedAscending }
+    }()
+
+    var actionTitle: String? {
+        switch self {
+        case .tipJar:
+            return "whatsNew_tipJar_action"~
+        case .communityLists:
+            return "whatsNew_communityLists_action"~
         default:
-            return false
+            return nil
         }
     }
 }

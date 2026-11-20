@@ -342,7 +342,7 @@
 
 "whatsNew_tipJar_title" = "Entwickler unterstützen";
 
-"whatsNew_tipJar_desc" = "Ein neues **Trinkgeld-Glas** ermöglicht es, die App-Entwicklung zu unterstützen. Simply Filter SMS ist für immer kostenlos – Trinkgelder sind nur eine Möglichkeit, Danke zu sagen! **Hier tippen zum Spenden!**";
+"whatsNew_tipJar_desc" = "Ein neues **Trinkgeld-Glas** ermöglicht es, die App-Entwicklung zu unterstützen. Simply Filter SMS ist für immer kostenlos – Trinkgelder sind nur eine Möglichkeit, Danke zu sagen!";
 
 "tipJar_title" = "Trinkgeld-Glas";
 
@@ -670,6 +670,30 @@
 
 "whatsNew_siriShortcuts_desc" = "Füge Filter mit Siri hinzu, entferne oder prüfe sie: Probier **„Zu meiner Sperrliste in Simply Filter SMS hinzufügen“**. Alle Aktionen gibt es auch in der App **Kurzbefehle**.";
 
+"whatsNew_quickAddFilter_title" = "Filter schnell hinzufügen";
+
+"whatsNew_quickAddFilter_desc" = "Tippe auf dem Home-Bildschirm auf **+**, um mit einem Schritt einen erlaubten, gesperrten oder Sprachfilter hinzuzufügen. In einer Filterliste findest du es im **…**-Menü.";
+
+"whatsNew_newLanguages_title" = "9 Neue Sprachen";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** Die App ist jetzt in **9 neuen Sprachen** verfügbar, alle mit Hilfe von **KI** lokalisiert.";
+
+"whatsNew_trustedCountries_title" = "Vertrauenswürdige Länder";
+
+"whatsNew_trustedCountries_desc" = "Nachrichten aus **bestimmten Ländern** automatisch anhand der Telefonvorwahl zulassen. Füge deine vertrauenswürdigen Länder hinzu und filtere den Rest heraus.";
+
+"whatsNew_accessibility_title" = "Bedienungshilfen";
+
+"whatsNew_accessibility_desc" = "Vollständig nutzbar mit **VoiceOver** und **Sprachsteuerung**. Text skaliert mit **Dynamischer Schriftgröße**. Animationen berücksichtigen die Einstellung **Bewegung reduzieren**.";
+
+"whatsNew_iPad_title" = "Nativer iPad-Support";
+
+"whatsNew_iPad_desc" = "Vollständige native iPad-Erfahrung mit **Seitenleistennavigation** und optimierten Layouts für größere Bildschirme.";
+
+"whatsNew_singleChar_title" = "Einzelzeichen-Filter";
+
+"whatsNew_singleChar_desc" = "Du kannst jetzt Filter mit nur einem **einzelnen Zeichen** erstellen – für präzisere Kontrolle.";
+
 "communityLists_featured" = "Empfohlen";
 
 "communityLists_addedByYou" = "Von dir hinzugefügt";
@@ -825,5 +849,13 @@
 "siri_updateLists_updated" = "Deine Filterlisten sind aktuell.";
 
 "siri_updateLists_failed" = "Deine Filterlisten konnten nicht aktualisiert werden. Prüf deine Verbindung und versuch es noch mal.";
+
+"whatsNew_version" = "Version %@";
+
+"whatsNew_earlierUpdates" = "Frühere Updates";
+
+"whatsNew_tipJar_action" = "Trinkgeld geben";
+
+"whatsNew_communityLists_action" = "Community-Listen ansehen";
 
 

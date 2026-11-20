@@ -360,7 +360,7 @@
 
 "whatsNew_tipJar_title" = "開発者を支援";
 
-"whatsNew_tipJar_desc" = "新しい**チップ機能**でアプリの開発を支援できます。Simply Filter SMSは永久無料 - チップはありがとうの気持ちを伝える方法です! **ここをタップしてチップを送る!**";
+"whatsNew_tipJar_desc" = "新しい**チップ機能**でアプリの開発を支援できます。Simply Filter SMSは永久無料 - チップはありがとうの気持ちを伝える方法です!";
 
 "tipJar_title" = "チップ";
 
@@ -670,6 +670,30 @@
 
 "whatsNew_siriShortcuts_desc" = "Siriでフィルターを追加、削除、確認できます。**「Simply Filter SMSでブロックリストに追加」**と言ってみてください。すべてのアクションは**ショートカット**アプリでも使えます。";
 
+"whatsNew_quickAddFilter_title" = "フィルタをすばやく追加";
+
+"whatsNew_quickAddFilter_desc" = "ホーム画面の**+**をタップすると、許可・ブロック・言語のフィルタをワンステップで追加できます。フィルタリストの中では**…**メニューにあります。";
+
+"whatsNew_newLanguages_title" = "9つの新言語";
+
+"whatsNew_newLanguages_desc" = "**Hola. Bonjour. Hallo. Ciao. Olá. مرحبا. こんにちは. 안녕하세요. 你好.** アプリが**9つの新しい言語**で利用可能になりました。すべて**AI**の助けでローカライズされています。";
+
+"whatsNew_trustedCountries_title" = "信頼できる国";
+
+"whatsNew_trustedCountries_desc" = "電話番号の国番号で**特定の国**からのメッセージを自動的に許可。信頼できる国を追加して、それ以外をフィルタリングしましょう。";
+
+"whatsNew_accessibility_title" = "アクセシビリティ対応";
+
+"whatsNew_accessibility_desc" = "**VoiceOver**と**音声コントロール**で完全に使用できます。テキストは**ダイナミックタイプ**に対応します。アニメーションは**視差効果を減らす**設定に従います。";
+
+"whatsNew_iPad_title" = "iPad完全対応";
+
+"whatsNew_iPad_desc" = "**サイドバーナビゲーション**と大画面向けに最適化されたレイアウトでiPadに完全対応しました。";
+
+"whatsNew_singleChar_title" = "1文字フィルター";
+
+"whatsNew_singleChar_desc" = "**1文字**だけのフィルターを作成できるようになり、メッセージフィルタリングをより細かく制御できます。";
+
 "communityLists_featured" = "おすすめ";
 
 "communityLists_addedByYou" = "追加したリスト";
@@ -825,5 +849,13 @@
 "siri_updateLists_updated" = "フィルターリストは最新です。";
 
 "siri_updateLists_failed" = "フィルターリストを更新できませんでした。接続を確認して、もう一度お試しください。";
+
+"whatsNew_version" = "バージョン %@";
+
+"whatsNew_earlierUpdates" = "以前のアップデート";
+
+"whatsNew_tipJar_action" = "チップを送る";
+
+"whatsNew_communityLists_action" = "コミュニティリストを見る";
 
 
