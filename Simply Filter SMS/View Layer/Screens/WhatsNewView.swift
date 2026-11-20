@@ -31,21 +31,15 @@ struct WhatsNewView: View {
                     WhatsNewOrbitView(entries: self.model.orbitEntries, hasAppeared: self.hasAppeared, collapse: self.heroCollapse)
                         .padding(.top, 8)
 
-                    if !self.showsVersionAsSubtitle {
-                        Text(self.model.versionText)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.top, 4)
+                    if let currentSection = self.model.currentSection {
+                        self.releaseSection(currentSection, startIndex: 0)
                     }
-
-                    self.entryList(self.model.currentEntries, startIndex: 0)
-                        .padding(.top, 24)
 
                     if !self.model.earlierSections.isEmpty {
                         Divider()
                             .padding(.top, 28)
                             .padding(.horizontal, 28)
-                            .rowEntrance(isShown: self.hasAppeared, index: self.model.currentEntries.count)
+                            .rowEntrance(isShown: self.hasAppeared, index: self.currentEntryCount)
 
                         Text("whatsNew_earlierUpdates"~)
                             .font(.title3.bold())
@@ -53,10 +47,10 @@ struct WhatsNewView: View {
                             .padding(.top, 20)
                             .padding(.horizontal, 32)
                             .accessibilityAddTraits(.isHeader)
-                            .rowEntrance(isShown: self.hasAppeared, index: self.model.currentEntries.count)
+                            .rowEntrance(isShown: self.hasAppeared, index: self.currentEntryCount)
 
                         ForEach(Array(self.model.earlierSections.enumerated()), id: \.element.id) { offset, section in
-                            self.releaseSection(section, startIndex: self.model.currentEntries.count + 1 + offset)
+                            self.releaseSection(section, startIndex: self.currentEntryCount + 1 + offset)
                         }
                     }
                 }
@@ -66,7 +60,7 @@ struct WhatsNewView: View {
             .modifier(BottomActionBar(bar: self.continueButton))
             .background(Color(.systemBackground))
             .navigationTitle("whatsNew_title"~)
-            .modifier(VersionSubtitle(text: self.model.versionText))
+            .modifier(AppNameSubtitle())
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -90,14 +84,8 @@ struct WhatsNewView: View {
 
 
     //MARK: - Private -
-    private var showsVersionAsSubtitle: Bool {
-        let result: Bool
-        if #available(iOS 26.0, *) {
-            result = true
-        } else {
-            result = false
-        }
-        return result
+    private var currentEntryCount: Int {
+        return self.model.currentSection?.entries.count ?? 0
     }
 
     private var continueButton: some View {
@@ -217,13 +205,11 @@ private extension View {
 
 
 //MARK: - Layout -
-private struct VersionSubtitle: ViewModifier {
-    let text: String
-
+private struct AppNameSubtitle: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
-                .navigationSubtitle(self.text)
+                .navigationSubtitle("Simply Filter SMS")
         } else {
             content
         }
@@ -265,20 +251,18 @@ extension WhatsNewView {
         }
 
         let orbitEntries: [WhatsNewEntry]
-        let currentEntries: [WhatsNewEntry]
+        let currentSection: ReleaseSection?
         let earlierSections: [ReleaseSection]
-        let versionText: String
         var onActionableEntryTapped: ((WhatsNewEntry) -> Void)?
 
         private static let orbitCapacity = 6
 
         init(appManager: AppManagerProtocol = AppManager.shared, onActionableEntryTapped: ((WhatsNewEntry) -> Void)? = nil) {
             let entries = WhatsNewEntry.allCases.sorted { $0.order < $1.order }
-            let earlierEntries = entries.filter { !$0.isCurrent }
+            let sections = ViewModel.releaseSections(for: entries)
             self.orbitEntries = Array(entries.prefix(ViewModel.orbitCapacity))
-            self.currentEntries = entries.filter { $0.isCurrent }
-            self.earlierSections = ViewModel.releaseSections(for: earlierEntries)
-            self.versionText = String(format: "whatsNew_version"~, appVersion)
+            self.currentSection = sections.first
+            self.earlierSections = Array(sections.dropFirst())
             self.onActionableEntryTapped = onActionableEntryTapped
             super.init(appManager: appManager)
         }
