@@ -73,5 +73,4 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - **Don't use `.task` for one-time loads:** it re-fires when view identity changes. Use `Task { }` in the ViewModel's `init`.
 - **Identity:** use `Filter.uuid` for `ForEach` ids, `scrollTo`, new-item dots and `@FocusState`, not `NSManagedObjectID`. Cache row ViewModels on the parent by that UUID; never build them inside `ForEach`.
 - **Delayed clears check identity:** `if self?.newlyAddedFilter == filter { self?.newlyAddedFilter = nil }`, so an earlier timer can't clear a later value.
-- **Motion goes through the shared modifiers in `MotionModifiers.swift`;** a screen keeps only its own timing values. Under Reduce Motion everything is a plain fade, never an instant pop or a movement.
 - **List row animation:** `listRowBackground` doesn't animate; use `.overlay` or modifiers on the row content. For a new-item marker, use a small accent `Circle()` driven by local `@State` opacity, with both `.onAppear` (rows that appear with the flag set) and `.onChange(of:)` (rows already there), guarded against double-firing.

@@ -1,0 +1,27 @@
+{
+  "images" : [
+    {
+      "filename" : "signature.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "signature-ar.pdf",
+      "idiom" : "universal",
+      "locale" : "ar"
+    },
+    {
+      "filename" : "signature-he.pdf",
+      "idiom" : "universal",
+      "locale" : "he"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "localizable" : true,
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

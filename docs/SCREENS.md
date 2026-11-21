@@ -92,3 +92,4 @@ The shared picker for importing and exporting filters (`.filterImport` / `.filte
 
 ## TipJarView
 Optional tips through StoreKit, as a sheet from the menu, About, or a What's New entry.
+- The signature is a localized image (`TipJarSignature`): every language shows the English one except Hebrew and Arabic, which read right to left and have their own. A new right-to-left language needs its own, drawn with an open-license handwriting font.

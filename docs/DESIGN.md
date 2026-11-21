@@ -29,6 +29,13 @@ The user can pick the app's tint (`ChooseAccentColorView`). Getting this wrong m
 
 ---
 
+## Motion
+
+- **Under Reduce Motion everything is a plain fade,** never an instant pop or a movement.
+- **A sheet's entrance starts about 0.1s after the sheet opens,** while it is still sliding up.
+
+---
+
 ## Smaller rules
 
 - **Filter option chips** in a filter row are tinted only when the option differs from the default (exact match, case-sensitive, a target other than "all"); the folder chip is always tinted. Tapping a chip opens a `Menu` holding a `Picker`, so the current value gets the system checkmark.

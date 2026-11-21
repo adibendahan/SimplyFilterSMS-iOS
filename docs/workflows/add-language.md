@@ -39,7 +39,7 @@ Analyze the target language's grammar rules and define a clear strategy. Address
   - *Informal singular tú/tu/du/etc.*: natural for mobile apps in many languages
   - *Formal singular*: only if informal would feel out of place in that language/market
 - **Imperative verbs**: State whether imperatives carry gender inflection (most don't) and what form to use for buttons.
-- **RTL**: If the language is RTL, note that layout mirroring is handled by iOS automatically — no code changes needed, but punctuation placement in translated strings must follow RTL conventions.
+- **RTL**: If the language is RTL, note that layout mirroring is handled by iOS automatically, but punctuation placement in translated strings must follow RTL conventions, and the Tip Jar signature needs a localized image (see `docs/SCREENS.md`, TipJarView).
 
 ### 4b. Canonical Term Groups
 

@@ -355,6 +355,8 @@
 "tipJar_tier_large_desc" = "Shaken, not stirred";
 "tipJar_chooseATip" = "Choose a tip";
 
+"tipJar_tipButton" = "Tip %@";
+
 //MARK: Stay Reachable
 "stayReachable_title" = "Stay Reachable";
 "stayReachable_description" = "A courier, a clinic or a neighbor may text you from a number you don't know. Messages that mention **your name** or **your street** always reach your inbox.";
@@ -480,6 +482,14 @@
 "notification_saveFailed_subtitle" = "Changes not saved, please try again.";
 "whatsNew_filterTransfer_title" = "Export & Import Filters";
 "whatsNew_filterTransfer_desc" = "Share your filters with a friend - export a file from **Filter Tools** in the menu and send it.";
+
+"whatsNew_accentColor_title" = "Accent Color";
+
+"whatsNew_accentColor_desc" = "Pick your favorite color in **Accent Color** in the menu, and the whole app takes it on.";
+
+"whatsNew_help_title" = "Help & FAQ";
+
+"whatsNew_help_desc" = "**Help** in the menu now walks you through setup under **Get Started**, and answers common questions in the **FAQ**.";
 "whatsNew_communityLists_title" = "Community Lists";
 "whatsNew_communityLists_desc" = "Subscribe to filter lists shared by other people, or share your own. Lists update themselves when their authors publish a new version - find them under **Your lists**.";
 "whatsNew_communityLists_action" = "Browse Community Lists";

@@ -876,4 +876,14 @@
 
 "faq_iCloudSync_answer" = "네. iCloud가 켜져 있으면 필터, 스마트 필터, 목록이 같은 Apple 계정으로 로그인한 모든 기기와 동기화됩니다. 데이터는 내 iCloud에 저장되며 개발자에게는 절대 전달되지 않습니다.";
 
+"whatsNew_accentColor_title" = "강조 색상";
+
+"whatsNew_accentColor_desc" = "메뉴의 **강조 색상**에서 좋아하는 색을 고르면 앱 전체가 그 색으로 바뀝니다.";
+
+"whatsNew_help_title" = "도움말 및 자주 묻는 질문";
+
+"whatsNew_help_desc" = "메뉴의 **도움말**에서 **시작하기**로 설정 방법을 안내하고, **자주 묻는 질문**에서 궁금한 점에 답해 드립니다.";
+
+"tipJar_tipButton" = "%@ 팁 보내기";
+
 
