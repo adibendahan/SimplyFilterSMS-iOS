@@ -122,5 +122,69 @@
             <string>Add %ld Allowed Texts</string>
         </dict>
     </dict>
+
+    <key>autoFilter_languagesOn</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@languages@</string>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>AI Filtering is off</string>
+            <key>one</key>
+            <string>On for 1 language</string>
+            <key>other</key>
+            <string>On for %ld languages</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_ruleCount</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@rules@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>1 rule</string>
+            <key>other</key>
+            <string>%ld rules</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_rulesFromLanguages</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%1$#@rules@ in %2$#@languages@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>1 rule</string>
+            <key>other</key>
+            <string>%ld rules</string>
+        </dict>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>1 language</string>
+            <key>other</key>
+            <string>%ld languages</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

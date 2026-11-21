@@ -47,6 +47,16 @@ struct CommunityListRow: View {
                             .foregroundColor(.primary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
+
+                        if let ruleCountText = self.ruleCountText {
+                            Text("(\(ruleCountText))")
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                                .fixedSize()
+                                .padding(.leading, 4)
+                                .accessibilityLabel(ruleCountText)
+                        }
                     }
 
                     self.infoLine
@@ -66,6 +76,11 @@ struct CommunityListRow: View {
             }
         }
         .padding(.vertical, 6)
+    }
+
+    private var ruleCountText: String? {
+        guard let ruleCount = self.communityList.ruleCount, ruleCount > 0 else { return nil }
+        return String.localizedStringWithFormat("autoFilter_ruleCount"~, ruleCount)
     }
 
     @ViewBuilder

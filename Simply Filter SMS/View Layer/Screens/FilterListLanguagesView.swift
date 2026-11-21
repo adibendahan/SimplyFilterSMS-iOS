@@ -12,21 +12,36 @@ import NaturalLanguage
 //MARK: - View -
 struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
 
-    @ScaledMetric(relativeTo: .body) private var footerIconSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .largeTitle) private var shieldIconSize: CGFloat = 76
+    @ScaledMetric(relativeTo: .largeTitle) private var shieldCollapseDistance: CGFloat = 120
 
     @ObservedObject var model: ViewModel
 
+    @State private var shieldCollapse: CGFloat = 0
+
     var body: some View {
         List {
+            Section {
+                self.header
+            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
+
             Section {
                 ForEach (self.model.languages.indices, id: \.self) { index in
                     let language = model.languages[index].item
 
                     if let localizedName = language.localizedName {
+                        let nativeName = self.model.nativeNames[language]
+                        let ruleCountText = self.model.ruleCountTexts[language]
+                        let spokenParts = [localizedName, nativeName, ruleCountText].compactMap { $0 }
+
                         AdaptiveToggle(isOn: $model.languages[index].state) {
-                            Text(localizedName)
+                            self.languageLabel(name: localizedName, nativeName: nativeName, ruleCountText: ruleCountText)
+                                .accessibilityLabel(spokenParts.joined(separator: ", "))
                         }
                         .accessibilityIdentifier("\(TestIdentifier.filterListLanguageToggle.rawValue)-\(language.rawValue)")
+                        .settle(delay: LanguagesMotion.rowDelay(for: index))
                     }
                 }
 
@@ -54,28 +69,42 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                     Text("lang_supported"~)
                 }
             } footer: {
-                VStack(alignment: .leading) {
-                    Text((self.model.footer.isEmpty ? "" : self.model.footer + ". ") + "help_automaticFiltering"~)
-                        .multilineTextAlignment(.leading)
+                Text(self.model.footer)
+                    .multilineTextAlignment(.leading)
+                    .settle(delay: LanguagesMotion.footerDelay)
+            } // Section
 
-                    Button {
-                        self.model.sheetScreen = .enableReportingExtension
-                    } label: {
-                        HStack {
-                            Image(systemName: "wand.and.stars")
-                                .imageScale(.large)
-                                .font(.system(size: self.footerIconSize, weight: .bold))
+            Section {
+                Button {
+                    self.model.sheetScreen = .enableReportingExtension
+                } label: {
+                    HStack {
+                        Label {
                             Text("autoFilter_improveAIFiltering"~)
-                                .font(.body)
+                        } icon: {
+                            Image(systemName: "wand.and.stars")
+                                .foregroundStyle(.indigo)
                         }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.forward")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                            .accessibilityHidden(true)
                     }
-                    .buttonStyle(AccessibleTextButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 20)
-                    .padding(.bottom, 48)
                 }
+                .foregroundStyle(.primary)
+                .settle(delay: LanguagesMotion.footerDelay)
+            } footer: {
+                Text("autoFilter_improveFooter"~)
+                    .multilineTextAlignment(.leading)
+                    .settle(delay: LanguagesMotion.footerDelay)
+                    .padding(.bottom, 48)
             } // Section
         } // List
+        .onScrollProgress(distance: self.shieldCollapseDistance, progress: self.$shieldCollapse)
+        .contentMargins(.top, 8, for: .scrollContent)
         .listStyle(.insetGrouped)
         .navigationTitle("autoFilter_title"~)
         .navigationBarTitleDisplayMode(.inline)
@@ -101,6 +130,84 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
         }
         .modifier(persistentStoreReload)
     }
+
+
+    //MARK: - Private -
+    private var header: some View {
+        VStack(spacing: 6) {
+            AIFilteringShieldIcon(isGlinting: self.model.activeLanguagesCount > 0)
+                .font(.system(size: self.shieldIconSize))
+                .entranceOnAppear(delay: LanguagesMotion.shieldDelay, rise: 0, scale: LanguagesMotion.shieldStartScale, blur: LanguagesMotion.shieldBlur, animation: LanguagesMotion.shieldAnimation)
+                .scrollCollapse(progress: self.shieldCollapse)
+                .padding(.bottom, 8)
+                .accessibilityHidden(true)
+
+            self.statusBadge
+                .settle(delay: LanguagesMotion.badgeDelay)
+                .padding(.bottom, 4)
+
+            Text(.init("autoFilter_description"~))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .settle(delay: LanguagesMotion.descriptionDelay)
+        }
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var statusBadge: some View {
+        StatusBadge(isOn: self.model.activeLanguagesCount > 0,
+                    title: self.model.badgeTitle,
+                    onWidthSamples: self.model.badgeOnWidthSamples,
+                    offTitle: self.model.badgeOffTitle)
+        .font(.headline)
+    }
+
+    private func languageLabel(name: String, nativeName: String?, ruleCountText: String?) -> Text {
+        var label = Text(name)
+        if let nativeName {
+            let separator = Text(" / ")
+                .font(.footnote)
+                .foregroundStyle(.primary)
+            let nativeNameText = Text(nativeName)
+                .font(.footnote)
+                .foregroundStyle(.primary)
+            label = label + separator + nativeNameText
+        }
+        if let ruleCountText {
+            let countText = Text(" (\(ruleCountText))")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            label = label + countText
+        }
+        return label
+    }
+}
+
+
+//MARK: - Motion -
+private enum LanguagesMotion {
+    static let shieldDelay: Double = 0.1
+    static let shieldStartScale: CGFloat = 0.5
+    static let shieldBlur: CGFloat = 8
+    static let shieldAnimation = Animation.spring(response: 0.55, dampingFraction: 0.7)
+    static let badgeDelay: Double = 0.2
+    static let descriptionDelay: Double = 0.25
+    static let footerDelay: Double = 0.5
+    static let rise: CGFloat = 10
+    static let blur: CGFloat = 6
+    static let settleAnimation = Animation.spring(response: 0.6, dampingFraction: 0.85)
+
+    static func rowDelay(for index: Int) -> Double {
+        return Stagger.delay(for: index, step: 0.04, base: 0.3, limit: 5)
+    }
+}
+
+private extension View {
+    func settle(delay: Double) -> some View {
+        return self.entranceOnAppear(delay: delay, rise: LanguagesMotion.rise, blur: LanguagesMotion.blur, animation: LanguagesMotion.settleAnimation)
+    }
 }
 
 
@@ -108,7 +215,10 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
 extension FilterListLanguagesView {
 
     class ViewModel: BaseViewModel, @unchecked Sendable, ObservableObject, PersistentStoreReloadRefreshing {
-        @Published private(set) var footer: String
+        @Published private(set) var lastUpdated: String
+        private var ruleCounts: [NLLanguage: Int]
+        @Published private(set) var nativeNames: [NLLanguage: String] = [:]
+        @Published private(set) var ruleCountTexts: [NLLanguage: String] = [:]
         @Published private(set) var isLoading: Bool
         @Published private(set) var isOnline: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
@@ -123,12 +233,59 @@ extension FilterListLanguagesView {
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             let lastUpdated = appManager.filterListManager.filterListsLastUpdated
 
-            self.footer = lastUpdated?.lastUpdatedText ?? ""
+            self.lastUpdated = lastUpdated?.lastUpdatedText ?? ""
+            self.ruleCounts = appManager.filterListManager.filterListRuleCounts
             self.isLoading = false
             self.isOnline = appManager.networkSyncManager.networkStatus == .online
 
             super.init(appManager: appManager)
             self.languages = self.makeLanguages()
+            self.nativeNames = self.makeNativeNames()
+            self.ruleCountTexts = self.makeRuleCountTexts()
+        }
+
+        var activeLanguagesCount: Int {
+            return self.languages.filter(\.state).count
+        }
+
+        var headline: String {
+            return String.localizedStringWithFormat("autoFilter_languagesOn"~, self.activeLanguagesCount)
+        }
+
+        var badgeTitle: StatusBadge.Title {
+            return StatusBadge.Title(text: self.headline, count: self.activeLanguagesCount)
+        }
+
+        var badgeOnWidthSamples: [String] {
+            let sampleCounts = [1, max(self.languages.count, 1)]
+            let samples = sampleCounts.map { String.localizedStringWithFormat("autoFilter_languagesOn"~, $0) }
+            return samples.uniqued()
+        }
+
+        var badgeOffTitle: String {
+            return String.localizedStringWithFormat("autoFilter_languagesOn"~, 0)
+        }
+
+        var footer: String {
+            let activeLanguagesCount = self.activeLanguagesCount
+            var activeRuleCount = 0
+            for statefulLanguage in self.languages where statefulLanguage.state {
+                activeRuleCount += self.ruleCounts[statefulLanguage.item] ?? 0
+            }
+
+            let summary: String
+            if activeLanguagesCount == 0 {
+                summary = "autoFilter_turnOnHint"~
+            }
+            else if activeRuleCount > 0 {
+                summary = String.localizedStringWithFormat("autoFilter_rulesFromLanguages"~, activeRuleCount, activeLanguagesCount)
+            }
+            else {
+                summary = ""
+            }
+
+            let parts = [summary, self.lastUpdated].filter { !$0.isEmpty }
+            return parts.joined(separator: ". ")
         }
 
         func startMonitoring() {
@@ -165,8 +322,11 @@ extension FilterListLanguagesView {
         func refresh() {
             let lastUpdated = self.appManager.filterListManager.filterListsLastUpdated
 
-            self.footer = lastUpdated?.lastUpdatedText ?? ""
+            self.lastUpdated = lastUpdated?.lastUpdatedText ?? ""
+            self.ruleCounts = self.appManager.filterListManager.filterListRuleCounts
             self.languages = self.makeLanguages()
+            self.nativeNames = self.makeNativeNames()
+            self.ruleCountTexts = self.makeRuleCountTexts()
         }
 
         @Sendable func updateFilters() async {
@@ -188,6 +348,30 @@ extension FilterListLanguagesView {
                 .map({ StatefulItem<NLLanguage>(item: $0,
                                                 getter: filterListManager.isFilterListActive,
                                                 setter: self.setFilterListActive) })
+        }
+
+        private func makeNativeNames() -> [NLLanguage: String] {
+            var nativeNames: [NLLanguage: String] = [:]
+
+            for statefulLanguage in self.languages {
+                let language = statefulLanguage.item
+                guard let nativeName = language.nativeName, nativeName != language.localizedName else { continue }
+                nativeNames[language] = nativeName
+            }
+
+            return nativeNames
+        }
+
+        private func makeRuleCountTexts() -> [NLLanguage: String] {
+            var ruleCountTexts: [NLLanguage: String] = [:]
+
+            for statefulLanguage in self.languages {
+                let language = statefulLanguage.item
+                guard let ruleCount = self.ruleCounts[language], ruleCount > 0 else { continue }
+                ruleCountTexts[language] = String.localizedStringWithFormat("autoFilter_ruleCount"~, ruleCount)
+            }
+
+            return ruleCountTexts
         }
 
         private func setFilterListActive(for language: NLLanguage, value: Bool) {

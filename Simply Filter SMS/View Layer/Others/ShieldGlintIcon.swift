@@ -6,6 +6,22 @@
 import SwiftUI
 
 
+struct AIFilteringShieldIcon: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    let isGlinting: Bool
+
+    var body: some View {
+        if self.isGlinting && !self.reduceMotion {
+            ShieldGlintIcon()
+        } else {
+            Image(systemName: "bolt.shield.fill")
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
+        }
+    }
+}
+
 // Isolated in its own view so its internal timer never triggers a re-render
 // of the parent view (e.g. AppHomeView), which would cause open Menus to flicker.
 struct ShieldGlintIcon: View {

@@ -108,5 +108,61 @@
             <string>許可テキストを%ld件追加</string>
         </dict>
     </dict>
+
+    <key>autoFilter_languagesOn</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@languages@</string>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>AIフィルタリングはオフです</string>
+            <key>other</key>
+            <string>%ld言語でオン</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_ruleCount</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@rules@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>other</key>
+            <string>%ld件のルール</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_rulesFromLanguages</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%2$#@languages@で%1$#@rules@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>other</key>
+            <string>%ld件のルール</string>
+        </dict>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>other</key>
+            <string>%ld言語</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

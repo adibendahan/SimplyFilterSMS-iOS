@@ -119,5 +119,61 @@
             <string>添加 %ld 个允许的文本</string>
         </dict>
     </dict>
+
+    <key>autoFilter_languagesOn</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@languages@</string>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>AI 过滤已关闭</string>
+            <key>other</key>
+            <string>已为 %ld 种语言开启</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_ruleCount</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@rules@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>other</key>
+            <string>%ld 条规则</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_rulesFromLanguages</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%2$#@languages@，共 %1$#@rules@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>other</key>
+            <string>%ld 条规则</string>
+        </dict>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>other</key>
+            <string>%ld 种语言</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

@@ -143,6 +143,12 @@ extension NLLanguage: @retroactive Identifiable {
     var localizedName: String? {
         return Locale.current.localizedString(forIdentifier: self.rawValue)
     }
+
+    var nativeName: String? {
+        let nativeLocale = Locale(identifier: self.rawValue)
+        let nativeName = nativeLocale.localizedString(forIdentifier: self.rawValue)
+        return nativeName?.capitalized(with: nativeLocale)
+    }
 }
 
 

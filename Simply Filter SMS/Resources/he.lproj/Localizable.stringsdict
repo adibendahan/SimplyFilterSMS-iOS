@@ -142,5 +142,85 @@
             <string>הוספת %ld טקסטים מאופשרים</string>
         </dict>
     </dict>
+
+    <key>autoFilter_languagesOn</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@languages@</string>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>סינון AI כבוי</string>
+            <key>one</key>
+            <string>פעיל בשפה אחת</string>
+            <key>two</key>
+            <string>פעיל בשתי שפות</string>
+            <key>many</key>
+            <string>פעיל ב-%ld שפות</string>
+            <key>other</key>
+            <string>פעיל ב-%ld שפות</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_ruleCount</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@rules@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>כלל אחד</string>
+            <key>two</key>
+            <string>2 כללים</string>
+            <key>many</key>
+            <string>%ld כללים</string>
+            <key>other</key>
+            <string>%ld כללים</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_rulesFromLanguages</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%1$#@rules@ %2$#@languages@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>כלל אחד</string>
+            <key>two</key>
+            <string>2 כללים</string>
+            <key>many</key>
+            <string>%ld כללים</string>
+            <key>other</key>
+            <string>%ld כללים</string>
+        </dict>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>one</key>
+            <string>בשפה אחת</string>
+            <key>two</key>
+            <string>בשתי שפות</string>
+            <key>many</key>
+            <string>ב-%ld שפות</string>
+            <key>other</key>
+            <string>ב-%ld שפות</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

@@ -33,6 +33,8 @@ The user can pick the app's tint (`ChooseAccentColorView`). Getting this wrong m
 
 - **Under Reduce Motion everything is a plain fade,** never an instant pop or a movement.
 - **A sheet's entrance starts about 0.1s after the sheet opens,** while it is still sliding up.
+- **SF Symbol replace effects ignore the animation's timing.** When an icon change has to finish in a set order with other changes, draw the icon (`StatusBadge` does).
+- **Right-to-left mirrors hand-drawn shapes, not SF Symbols.** A drawn icon that stands in for a symbol pins `.leftToRight`.
 
 ---
 
