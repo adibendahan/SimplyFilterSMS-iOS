@@ -30,6 +30,7 @@ How tests are written here and the traps around them. The test names say what ea
 
 - `UI Test Kit/` is compiled into `Scenario Tests` and `Screenshots Automation` (membership set by hand): identifiers, waits, the launch, the shared `Screen` moves and the menu items. Each target keeps its own screens.
 - The `-Testing` launch argument makes `AppManager` reset defaults and the store, seed empty AI lists for all 10 languages, and silence the inactivity notification ask.
+- `-DebugData` (with `-Testing`) also loads the debug data set (`DebugDataManager`) without the screenshot setup. Scenarios that only need existing filters launch with it (`startingData: .debug`) instead of adding them through the UI.
 - **iOS 27 drops identifiers on submenu items:** `openFilterTool` taps the item's SF Symbol (`FilterTool`), which keeps its identifier and works in every language.
 - A SwiftUI `Toggle` is a `Switch` containing an unlabeled `Switch`: count switches by identifier, never with `app.switches.count`.
 - SwiftUI lists don't create off-screen rows; an element below the fold doesn't exist until it's scrolled to.

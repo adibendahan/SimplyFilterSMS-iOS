@@ -22,6 +22,7 @@ protocol DefaultsManagerProtocol {
     var didDismissHelpSiriTips: Bool { get set }
     var sessionNudgeLastShownSessions: [String: Int] { get set }
     var stayReachableToastSessions: [Int] { get set }
+    var recentSearchQueries: [String] { get set }
     var didOpenStayReachable: Bool { get set }
     var inactivityNotificationDeclineCount: Int { get set }
     var inactivityNotificationLastDeclineSession: Int { get set }

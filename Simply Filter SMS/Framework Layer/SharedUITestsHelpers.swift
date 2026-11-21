@@ -20,6 +20,10 @@ extension ProcessInfo {
         return arguments.contains("-ScreenshotData")
     }
 
+    var isUsingDebugData: Bool {
+        return arguments.contains("-DebugData")
+    }
+
     var shouldSkipFilterListsUpdate: Bool {
         return self.isInTestingMode && !self.isUsingUITestData && !self.isUsingScreenshotData
     }
@@ -100,4 +104,7 @@ enum TestIdentifier: String {
     case stayReachableStreetField = "stayReachableStreetField"
     case stayReachableAddButton = "stayReachableAddButton"
     case stayReachableSkippedNote = "stayReachableSkippedNote"
+    case searchResult = "searchResult"
+    case communityListDetails = "communityListDetails"
+    case faqAnswer = "faqAnswer"
 }

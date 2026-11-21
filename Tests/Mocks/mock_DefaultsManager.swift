@@ -161,6 +161,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var inactivityNotificationLastDeclineSession = 0
     var sessionNudgeLastShownSessions: [String: Int] = [:]
     var stayReachableToastSessions: [Int] = []
+    var recentSearchQueries: [String] = []
     var didOpenStayReachable = false
     var didDismissAddFilterSiriTip = false
     var didDismissHelpSiriTips = false

@@ -48,6 +48,9 @@ class DefaultsManager: DefaultsManagerProtocol {
     @StoredDefault("stayReachableToastSessions", defaultValue: [])
     var stayReachableToastSessions: [Int]
 
+    @StoredDefault("recentSearchQueries", defaultValue: [])
+    var recentSearchQueries: [String]
+
     @StoredDefault("didOpenStayReachable", defaultValue: false)
     var didOpenStayReachable: Bool
 
@@ -104,7 +107,7 @@ class DefaultsManager: DefaultsManagerProtocol {
     
     #if DEBUG
     func reset() {
-        let keysToRemove: [String] = ["isAppFirstRun", "isAddFilterExpanded", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "installDate", "didDismissReportingExtensionNudge", "didDismissAddFilterSiriTip", "didDismissHelpSiriTips", "sessionNudgeLastShownSessions", "stayReachableToastSessions", "didOpenStayReachable", "inactivityNotificationDeclineCount", "inactivityNotificationLastDeclineSession", "inactivityNotificationWasGranted", "accentColorRGB"]
+        let keysToRemove: [String] = ["isAppFirstRun", "isAddFilterExpanded", "isFilterOptionsCollapsed", "sessionCounter", "didPromptForReview", "didTip", "lastSeenWhatsNewVersion", "installDate", "didDismissReportingExtensionNudge", "didDismissAddFilterSiriTip", "didDismissHelpSiriTips", "sessionNudgeLastShownSessions", "stayReachableToastSessions", "didOpenStayReachable", "inactivityNotificationDeclineCount", "inactivityNotificationLastDeclineSession", "inactivityNotificationWasGranted", "accentColorRGB", "recentSearchQueries"]
         
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)

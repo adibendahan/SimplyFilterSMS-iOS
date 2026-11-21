@@ -141,6 +141,9 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
             focusedFilterID = nil
             hideKeyboard()
         }
+        .onAppear {
+            self.model.revealSearchFocus()
+        }
         .onChange(of: model.newlyAddedFilter) { _, newFilter in
             guard let filter = newFilter, let id = filter.uuid else { return }
             dotFilterID = id
@@ -399,6 +402,10 @@ extension FiltersView {
 
         private func filterWasAdded(_ filter: Filter) {
             self.refresh()
+            self.highlight(filter)
+        }
+
+        private func highlight(_ filter: Filter) {
             self.newlyAddedFilter = filter
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
                 if self?.newlyAddedFilter == filter {
@@ -407,6 +414,15 @@ extension FiltersView {
             }
         }
         
+        func revealSearchFocus() {
+            guard let uuid = self.appManager.searchManager.takeFocusedFilter() else { return }
+            guard let filter = self.rowViewModels.first(where: { $0.filter.uuid == uuid })?.filter else {
+                Log.debug("search focus not found, uuid: \(uuid) → skipped")
+                return
+            }
+            self.highlight(filter)
+        }
+
         func deleteFilters(withOffsets offsets: IndexSet, rowViewModels: [FilterRowView.ViewModel]) {
             let toDelete = Set(offsets.map { rowViewModels[$0].filter })
             self.deleteFilters(toDelete)

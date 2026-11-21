@@ -29,6 +29,7 @@ struct FAQView: View {
                         .padding(.top, -4)
                         .padding(.bottom, 4)
                         .listRowSeparator(.hidden)
+                        .accessibilityIdentifier("\(TestIdentifier.faqAnswer.rawValue)-\(item.rawValue)")
                     } label: {
                         Text(AttributedString(item.question).highlighting(self.model.searchTerm))
                             .font(.subheadline.weight(.semibold))
@@ -66,6 +67,7 @@ struct FAQView: View {
                 }
                 .tint(.primary)
                 .accessibilityLabel("general_close"~)
+                .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
                 .contentShape(Rectangle())
             }
         }

@@ -23,6 +23,7 @@ class mock_AppManager: AppManagerProtocol {
     var filterTransferManager: FilterTransferManagerProtocol = mock_FilterTransferManager()
     var flowManager: FlowManagerProtocol = mock_FlowManager()
     var schedulingManager: SchedulingManagerProtocol = mock_SchedulingManager()
+    var searchManager: SearchManagerProtocol = mock_SearchManager()
     var debugDataManager: DebugDataManagerProtocol = mock_DebugDataManager()
 
     var onAppLaunchCounter = 0

@@ -269,6 +269,10 @@
 "inactivityNotification_reminder_title" = "Your AI filter lists haven't updated";
 "inactivityNotification_reminder_body" = "Open Simply Filter SMS to update them and keep filtering messages from unknown senders.";
 "general_search" = "Search";
+"search_menu" = "Menu";
+"search_recent" = "Recent";
+"search_suggestions" = "Suggestions";
+"search_clearRecent" = "Clear";
 "general_more" = "more";
 "general_selected" = "Selected";
 "general_all" = "All Countries";
