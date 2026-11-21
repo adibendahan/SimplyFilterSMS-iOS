@@ -400,8 +400,6 @@
 
 "a11y_home_shortSenderAction" = "Zeichenlimit ändern";
 
-"a11y_footer_hint" = "Doppeltippen, um App-Info anzuzeigen";
-
 "a11y_filterRow_editHint" = "Doppeltippen, um zu bearbeiten";
 
 "a11y_about_versionHint" = "Doppeltippen, um Version zu kopieren";
@@ -605,8 +603,6 @@
 "communityLists_empty" = "Noch keine Listen";
 
 "communityLists_subscribeFromURL" = "Von URL abonnieren";
-
-"communityLists_footer" = "Community-Listen sind Filterlisten, die andere erstellt und geteilt haben. Aktivierte Listen leiten Nachrichten von unbekannten Absendern in den Ordner Junk, Transaktionen oder Werbung und werden regelmäßig aktualisiert. Deine eigenen Filter bleiben aktiv.";
 
 "communityLists_createList" = "Liste erstellen";
 
@@ -889,5 +885,7 @@
 "autoFilter_turnOnHint" = "Schalte die Sprachen ein, in denen du Nachrichten bekommst";
 
 "autoFilter_improveFooter" = "Melde Spam direkt in Nachrichten. Jede Meldung macht die KI-Filterung für alle besser.";
+
+"communityLists_description" = "Filterlisten, die andere erstellt und geteilt haben. Aktivierte Listen sortieren Nachrichten von unbekannten Absendern in **Junk**, **Transaktionen** oder **Werbung** und aktualisieren sich von selbst.";
 
 

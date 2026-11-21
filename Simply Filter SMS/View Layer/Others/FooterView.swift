@@ -8,30 +8,21 @@
 import SwiftUI
 
 struct FooterView: View {
-    var onTap: (() ->())? = nil
-
     var body: some View {
-        Button {
-            self.onTap?()
-        } label: {
-            VStack (alignment: .center, spacing: 0) {
-                Rectangle()
-                    .frame(height: 1, alignment: .bottom)
-                    .foregroundColor(.primary.opacity(0.05))
-                    .padding(.bottom, 8)
-                Text("Simply Filter SMS v\(Text(appVersion))\n\(Text(String(format: "general_copyright"~, Calendar.current.component(.year, from: Date()))))")
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .font(.footnote)
-                    .foregroundColor(.primary)
-                    .multilineTextAlignment(.center)
-                    .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-            }
-            .frame(maxWidth: .infinity)
-            .modifier(FooterBackground())
-            .contentShape(Rectangle())
+        VStack (alignment: .center, spacing: 0) {
+            Rectangle()
+                .frame(height: 1, alignment: .bottom)
+                .foregroundColor(.primary.opacity(0.05))
+                .padding(.bottom, 8)
+            Text("Simply Filter SMS v\(Text(appVersion))\n\(Text(String(format: "general_copyright"~, Calendar.current.component(.year, from: Date()))))")
+                .frame(maxWidth: .infinity, alignment: .center)
+                .font(.footnote)
+                .foregroundColor(.primary)
+                .multilineTextAlignment(.center)
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         }
-        .buttonStyle(.plain)
-        .accessibilityHint("a11y_footer_hint"~)
+        .frame(maxWidth: .infinity)
+        .modifier(FooterBackground())
     }
 }
 
@@ -64,8 +55,7 @@ private struct FooterBackground: ViewModifier {
 #if !REPORTING_EXTENSION
 struct FooterView_Previews: PreviewProvider {
     static var previews: some View {
-        EmptyView()
-            .modifier(EmbeddedFooterModifier())
+        FooterView()
     }
 }
 #endif

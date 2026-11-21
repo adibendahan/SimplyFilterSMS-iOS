@@ -400,8 +400,6 @@
 
 "a11y_home_shortSenderAction" = "Modifier la limite de caractères";
 
-"a11y_footer_hint" = "Appuyer deux fois pour voir les infos de l'app";
-
 "a11y_filterRow_editHint" = "Appuyer deux fois pour modifier";
 
 "a11y_about_versionHint" = "Appuyer deux fois pour copier la version";
@@ -605,8 +603,6 @@
 "communityLists_empty" = "Aucune liste pour l'instant";
 
 "communityLists_subscribeFromURL" = "S'abonner depuis une URL";
-
-"communityLists_footer" = "Les Listes communautaires sont des listes de filtres créées et partagées par d'autres personnes. Les listes activées acheminent les messages des expéditeurs inconnus vers le dossier Indésirables, Transactions ou Promotions, et sont mises à jour régulièrement. Tes filtres habituels s'appliquent toujours.";
 
 "communityLists_createList" = "Créer une liste";
 
@@ -889,5 +885,7 @@
 "autoFilter_turnOnHint" = "Active les langues dans lesquelles tu reçois des messages";
 
 "autoFilter_improveFooter" = "Signale le spam directement depuis Messages. Chaque signalement améliore le Filtrage AI pour tout le monde.";
+
+"communityLists_description" = "Des listes de filtres créées et partagées par d'autres personnes. Les listes que tu actives classent les messages des expéditeurs inconnus dans **Indésirables**, **Transactions** ou **Promotions**, et se mettent à jour toutes seules.";
 
 

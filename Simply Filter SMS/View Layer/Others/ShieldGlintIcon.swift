@@ -22,6 +22,17 @@ struct AIFilteringShieldIcon: View {
     }
 }
 
+struct CommunityListsIcon: View {
+    let isPulsing: Bool
+
+    var body: some View {
+        Image(systemName: "person.2.circle.fill")
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
+            .pulseRings(isActive: self.isPulsing, color: .indigo)
+    }
+}
+
 // Isolated in its own view so its internal timer never triggers a re-render
 // of the parent view (e.g. AppHomeView), which would cause open Menus to flicker.
 struct ShieldGlintIcon: View {

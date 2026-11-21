@@ -23,7 +23,7 @@ The user can pick the app's tint (`ChooseAccentColorView`). Getting this wrong m
 
 - **Chrome that should follow the pick uses `.tint` (`ShapeStyle.tint`), never `Color.accentColor`.**
 - **Toolbar `•••` menus and the close X pin `.tint(.primary)`.** They were never accent-colored and shouldn't start following the pick.
-- **Meaning colors never follow the tint:** deny red, allow green, language cyan, AI Filtering indigo, the smart rule icons, delete red, and the red "block all unknown" toggle.
+- **Meaning colors never follow the tint:** deny red, allow green, language cyan, AI Filtering and Community Lists indigo, the smart rule icons, delete red, and the red "block all unknown" toggle.
 - `.optionalTint(nil)` sets `Color.accentColor` instead of no tint, so a `UISwitch` resets to the default color.
 - Dimmed navigation chevrons use `.accentColor(Color.primary.opacity(0.35))`.
 
@@ -41,4 +41,3 @@ The user can pick the app's tint (`ChooseAccentColorView`). Getting this wrong m
 ## Smaller rules
 
 - **Filter option chips** in a filter row are tinted only when the option differs from the default (exact match, case-sensitive, a target other than "all"); the folder chip is always tinted. Tapping a chip opens a `Menu` holding a `Picker`, so the current value gets the system checkmark.
-- **The footer** (version and copyright, tap for About) is on Home only.

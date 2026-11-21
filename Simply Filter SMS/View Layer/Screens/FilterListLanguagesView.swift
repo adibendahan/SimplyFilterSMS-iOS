@@ -12,17 +12,19 @@ import NaturalLanguage
 //MARK: - View -
 struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
 
-    @ScaledMetric(relativeTo: .largeTitle) private var shieldIconSize: CGFloat = 76
-    @ScaledMetric(relativeTo: .largeTitle) private var shieldCollapseDistance: CGFloat = 120
-
     @ObservedObject var model: ViewModel
 
-    @State private var shieldCollapse: CGFloat = 0
+    @State private var headerCollapse: CGFloat = 0
 
     var body: some View {
         List {
             Section {
-                self.header
+                FeatureStatusHeader(feature: .aiFiltering,
+                                    isOn: self.model.activeLanguagesCount > 0,
+                                    badgeTitle: self.model.badgeTitle,
+                                    badgeOnWidthSamples: self.model.badgeOnWidthSamples,
+                                    badgeOffTitle: self.model.badgeOffTitle,
+                                    collapseProgress: self.headerCollapse)
             }
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
@@ -100,10 +102,9 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                 Text("autoFilter_improveFooter"~)
                     .multilineTextAlignment(.leading)
                     .settle(delay: LanguagesMotion.footerDelay)
-                    .padding(.bottom, 48)
             } // Section
         } // List
-        .onScrollProgress(distance: self.shieldCollapseDistance, progress: self.$shieldCollapse)
+        .modifier(FeatureStatusHeader.CollapseTracker(progress: self.$headerCollapse))
         .contentMargins(.top, 8, for: .scrollContent)
         .listStyle(.insetGrouped)
         .navigationTitle("autoFilter_title"~)
@@ -133,37 +134,6 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
 
 
     //MARK: - Private -
-    private var header: some View {
-        VStack(spacing: 6) {
-            AIFilteringShieldIcon(isGlinting: self.model.activeLanguagesCount > 0)
-                .font(.system(size: self.shieldIconSize))
-                .entranceOnAppear(delay: LanguagesMotion.shieldDelay, rise: 0, scale: LanguagesMotion.shieldStartScale, blur: LanguagesMotion.shieldBlur, animation: LanguagesMotion.shieldAnimation)
-                .scrollCollapse(progress: self.shieldCollapse)
-                .padding(.bottom, 8)
-                .accessibilityHidden(true)
-
-            self.statusBadge
-                .settle(delay: LanguagesMotion.badgeDelay)
-                .padding(.bottom, 4)
-
-            Text(.init("autoFilter_description"~))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .settle(delay: LanguagesMotion.descriptionDelay)
-        }
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .combine)
-    }
-
-    private var statusBadge: some View {
-        StatusBadge(isOn: self.model.activeLanguagesCount > 0,
-                    title: self.model.badgeTitle,
-                    onWidthSamples: self.model.badgeOnWidthSamples,
-                    offTitle: self.model.badgeOffTitle)
-        .font(.headline)
-    }
-
     private func languageLabel(name: String, nativeName: String?, ruleCountText: String?) -> Text {
         var label = Text(name)
         if let nativeName {
@@ -188,12 +158,6 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
 
 //MARK: - Motion -
 private enum LanguagesMotion {
-    static let shieldDelay: Double = 0.1
-    static let shieldStartScale: CGFloat = 0.5
-    static let shieldBlur: CGFloat = 8
-    static let shieldAnimation = Animation.spring(response: 0.55, dampingFraction: 0.7)
-    static let badgeDelay: Double = 0.2
-    static let descriptionDelay: Double = 0.25
     static let footerDelay: Double = 0.5
     static let rise: CGFloat = 10
     static let blur: CGFloat = 6

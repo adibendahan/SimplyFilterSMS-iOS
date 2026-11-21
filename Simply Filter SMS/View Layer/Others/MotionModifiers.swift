@@ -273,6 +273,83 @@ private struct BreatheModifier: ViewModifier {
     }
 }
 
+private enum PulseRingMotion {
+    static let ringCount = 2
+    static let period: Double = 2.4
+    static let endScale: CGFloat = 1.3
+    static let startOpacity: Double = 0.7
+    static let room: CGFloat = 6
+
+    static func delay(for index: Int) -> Double {
+        return Stagger.delay(for: index, step: PulseRingMotion.period / Double(PulseRingMotion.ringCount))
+    }
+}
+
+private struct PulseRing: View {
+    let color: Color
+    let delay: Double
+
+    @State private var isExpanded = false
+
+    var body: some View {
+        Image(systemName: "circle")
+            .fontWeight(.light)
+            .foregroundStyle(self.color)
+            .scaleEffect(self.isExpanded ? PulseRingMotion.endScale : 1)
+            .opacity(self.isExpanded ? 0 : PulseRingMotion.startOpacity)
+            .onAppear {
+                let animation = Animation.easeOut(duration: PulseRingMotion.period)
+                    .repeatForever(autoreverses: false)
+                    .delay(self.delay)
+                withAnimation(animation) {
+                    self.isExpanded = true
+                }
+            }
+    }
+}
+
+private struct PulseBreatheModifier: ViewModifier {
+    let isActive: Bool
+
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, *) {
+            content
+                .symbolEffect(.breathe.plain.byLayer, isActive: self.isActive)
+        } else {
+            content
+        }
+    }
+}
+
+private struct PulseRingsModifier: ViewModifier {
+    let isActive: Bool
+    let color: Color
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .modifier(PulseBreatheModifier(isActive: self.isShowingRings))
+            .background {
+                if self.isShowingRings {
+                    ZStack {
+                        ForEach(0..<PulseRingMotion.ringCount, id: \.self) { index in
+                            PulseRing(color: self.color, delay: PulseRingMotion.delay(for: index))
+                        }
+                    }
+                    .transition(.opacity)
+                    .allowsHitTesting(false)
+                }
+            }
+            .padding(PulseRingMotion.room)
+    }
+
+    private var isShowingRings: Bool {
+        return self.isActive && !self.reduceMotion && !ProcessInfo.processInfo.isInTestingMode
+    }
+}
+
 
 //MARK: - Loading -
 private enum SpinnerSwapMotion {
@@ -516,6 +593,10 @@ extension View {
 
     func breathe() -> some View {
         return self.modifier(BreatheModifier())
+    }
+
+    func pulseRings(isActive: Bool, color: Color) -> some View {
+        return self.modifier(PulseRingsModifier(isActive: isActive, color: color))
     }
 
     func spinnerSwap(isActive: Bool, tint: Color) -> some View {

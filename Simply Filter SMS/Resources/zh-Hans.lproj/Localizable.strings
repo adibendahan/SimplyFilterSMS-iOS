@@ -502,8 +502,6 @@
 
 "a11y_home_shortSenderAction" = "更改字符限制";
 
-"a11y_footer_hint" = "轻点两下以查看 App 信息";
-
 "a11y_filterRow_editHint" = "轻点两下以编辑";
 
 "a11y_about_versionHint" = "轻点两下以复制版本";
@@ -605,8 +603,6 @@
 "communityLists_empty" = "还没有列表";
 
 "communityLists_subscribeFromURL" = "通过 URL 订阅";
-
-"communityLists_footer" = "社区列表是由其他人创建并分享的过滤列表。开启的列表会将陌生发件人的信息送到“垃圾短信”“交易信息”或“推广信息”列表，并会定期更新。你的常规过滤器仍然会生效。";
 
 "communityLists_createList" = "创建列表";
 
@@ -889,5 +885,7 @@
 "autoFilter_turnOnHint" = "打开你接收信息所用的语言";
 
 "autoFilter_improveFooter" = "直接在“信息”中报告垃圾短信。每次报告都会让 AI 过滤对所有人更好。";
+
+"communityLists_description" = "由其他人创建并分享的过滤列表。开启的列表会将陌生发件人的信息分到“**垃圾短信**”“**交易信息**”或“**推广信息**”，并会自动更新。";
 
 

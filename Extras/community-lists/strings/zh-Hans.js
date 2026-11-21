@@ -3,7 +3,6 @@ window.STRINGS["zh-Hans"] = {
   "app.byAuthor": "作者：{0}",
   "app.subscribeFromURL": "通过 URL 订阅",
   "app.lastUpdated": "更新于 {0}",
-  "app.footer": "社区列表是由其他人创建并分享的过滤列表。开启的列表会将陌生发件人的信息送到“垃圾短信”“交易信息”或“推广信息”列表，并会定期更新。你的常规过滤器仍然会生效。",
   "app.createList": "创建列表",
   "app.submitList": "提交列表",
   "app.blockedTexts": "已屏蔽的文本",

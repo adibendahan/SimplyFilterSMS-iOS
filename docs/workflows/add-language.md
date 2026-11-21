@@ -288,7 +288,6 @@ The Community Lists guide, its list tester and the submit page (`Extras/communit
    | `app.byAuthor` | `communityLists_byAuthor` |
    | `app.subscribeFromURL` | `communityLists_subscribeFromURL` |
    | `app.lastUpdated` | `autoFilter_lastUpdated` |
-   | `app.footer` | `communityLists_footer` |
    | `app.createList` | `communityLists_createList` |
    | `app.submitList` | `communityLists_submitList` |
    | `app.blockedTexts` | `filterList_denied` |

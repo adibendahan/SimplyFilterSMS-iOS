@@ -235,13 +235,13 @@
 "autoFilter_turnOnHint" = "Turn on the languages you get messages in";
 "autoFilter_improveFooter" = "Report spam right from Messages. Every report makes AI Filtering better for everyone.";
 "communityLists_title" = "Community Lists";
+"communityLists_description" = "Filter lists made and shared by other people. Lists you turn on sort messages from unknown senders into **Junk**, **Transactions** or **Promotions**, and update by themselves.";
 "communityLists_byAuthor" = "by %@";
 "communityLists_featured" = "Featured";
 "communityLists_addedByYou" = "Added by You";
 "communityLists_empty" = "No Lists Yet";
 "communityLists_empty_caption" = "Got a link to a list someone shared? Subscribe, and it stays up to date by itself.";
 "communityLists_subscribeFromURL" = "Subscribe from URL";
-"communityLists_footer" = "Community Lists are filter lists made and shared by other people. Turned-on lists route messages from unknown senders to your Junk, Transactions or Promotions folder, and are updated periodically. Your regular filters are still applied.";
 "communityLists_createList" = "Create a List";
 "communityLists_submitList" = "Submit a List";
 "a11y_communityLists_urlField" = "List URL";
@@ -392,7 +392,6 @@
 "a11y_filterRow_folderLabel" = "Folder: %@";
 "a11y_home_shortSenderHint" = "Currently %ld characters. Use actions to change the character limit";
 "a11y_home_shortSenderAction" = "Change character limit";
-"a11y_footer_hint" = "Double tap to view app info";
 "a11y_filterRow_editHint" = "Double tap to edit";
 "a11y_about_versionHint" = "Double tap to copy version";
 "a11y_about_versionCopied" = "Version";

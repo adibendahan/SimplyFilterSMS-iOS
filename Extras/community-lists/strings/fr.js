@@ -3,7 +3,6 @@ window.STRINGS["fr"] = {
   "app.byAuthor": "par {0}",
   "app.subscribeFromURL": "S'abonner depuis une URL",
   "app.lastUpdated": "Mis à jour le {0}",
-  "app.footer": "Les Listes communautaires sont des listes de filtres créées et partagées par d'autres personnes. Les listes activées acheminent les messages des expéditeurs inconnus vers le dossier Indésirables, Transactions ou Promotions, et sont mises à jour régulièrement. Tes filtres habituels s'appliquent toujours.",
   "app.createList": "Créer une liste",
   "app.submitList": "Soumettre une liste",
   "app.blockedTexts": "Textes bloqués",

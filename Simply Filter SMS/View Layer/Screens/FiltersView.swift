@@ -253,7 +253,6 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
             .buttonStyle(AccessibleTextButtonStyle())
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.top, 1)
-            .padding(.bottom, 48)
             .highPriorityGesture(TapGesture()
                 .onEnded({ _ in
                 self.model.showAddFilter()

@@ -3,7 +3,6 @@ window.STRINGS["ko"] = {
   "app.byAuthor": "{0} 제작",
   "app.subscribeFromURL": "URL로 구독",
   "app.lastUpdated": "{0} 업데이트됨",
-  "app.footer": "커뮤니티 목록은 다른 사람들이 만들어 공유한 필터 목록이에요. 켜진 목록은 알 수 없는 발신자의 메시지를 스팸, 거래 또는 프로모션 폴더로 보내고, 주기적으로 업데이트돼요. 기존 필터는 계속 적용돼요.",
   "app.createList": "목록 만들기",
   "app.submitList": "목록 제출하기",
   "app.blockedTexts": "차단 텍스트",

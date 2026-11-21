@@ -400,8 +400,6 @@
 
 "a11y_home_shortSenderAction" = "Alterar limite de caracteres";
 
-"a11y_footer_hint" = "Toque duas vezes para ver informações do app";
-
 "a11y_filterRow_editHint" = "Toque duas vezes para editar";
 
 "a11y_about_versionHint" = "Toque duas vezes para copiar a versão";
@@ -605,8 +603,6 @@
 "communityLists_empty" = "Nenhuma lista ainda";
 
 "communityLists_subscribeFromURL" = "Assinar de URL";
-
-"communityLists_footer" = "As Listas da comunidade são listas de filtros criadas e compartilhadas por outras pessoas. As listas ativadas encaminham mensagens de remetentes desconhecidos para a pasta Lixo Eletrônico, Transações ou Promoções, e são atualizadas periodicamente. Seus filtros regulares ainda são aplicados.";
 
 "communityLists_createList" = "Criar uma lista";
 
@@ -889,5 +885,7 @@
 "autoFilter_turnOnHint" = "Ative os idiomas em que você recebe mensagens";
 
 "autoFilter_improveFooter" = "Denuncie spam direto pelo app Mensagens. Cada denúncia melhora o Filtro AI para todos.";
+
+"communityLists_description" = "Listas de filtros criadas e compartilhadas por outras pessoas. As listas que você ativar enviam mensagens de remetentes desconhecidos para **Lixo Eletrônico**, **Transações** ou **Promoções**, e se atualizam sozinhas.";
 
 

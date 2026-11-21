@@ -418,8 +418,6 @@
 
 "a11y_home_shortSenderAction" = "Cambia limite caratteri";
 
-"a11y_footer_hint" = "Doppio tocco per vedere le informazioni sull'app";
-
 "a11y_filterRow_editHint" = "Doppio tocco per modificare";
 
 "a11y_about_versionHint" = "Doppio tocco per copiare la versione";
@@ -605,8 +603,6 @@
 "communityLists_empty" = "Ancora nessuna lista";
 
 "communityLists_subscribeFromURL" = "Iscriviti da URL";
-
-"communityLists_footer" = "Le Liste della community sono liste di filtri create e condivise da altre persone. Le liste attive instradano i messaggi dei mittenti sconosciuti nella cartella Indesiderati, Transazioni o Promozioni e vengono aggiornate periodicamente. I tuoi filtri normali sono ancora attivi.";
 
 "communityLists_createList" = "Crea una lista";
 
@@ -889,5 +885,7 @@
 "autoFilter_turnOnHint" = "Attiva le lingue in cui ricevi i messaggi";
 
 "autoFilter_improveFooter" = "Segnala lo spam direttamente da Messaggi. Ogni segnalazione migliora il Filtraggio AI per tutti.";
+
+"communityLists_description" = "Liste di filtri create e condivise da altre persone. Le liste che attivi smistano i messaggi dei mittenti sconosciuti in **Indesiderati**, **Transazioni** o **Promozioni** e si aggiornano da sole.";
 
 

@@ -86,7 +86,7 @@
     document.querySelectorAll('[data-updated]').forEach(function (node) {
       var date = new Date(2026, 10, 13, 9, 41);
       var formatted = new Intl.DateTimeFormat(lang, { dateStyle: 'short', timeStyle: 'short' }).format(date);
-      node.textContent = t('app.lastUpdated', [formatted]) + '. ' + t('app.footer') + ' ';
+      node.textContent = t('app.lastUpdated', [formatted]) + '. ';
     });
     document.querySelectorAll('[data-copyright]').forEach(function (node) {
       node.textContent = t('app.copyright', [new Date().getFullYear()]);
