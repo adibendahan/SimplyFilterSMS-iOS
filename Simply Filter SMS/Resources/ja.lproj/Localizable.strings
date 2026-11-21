@@ -888,4 +888,12 @@
 
 "communityLists_description" = "ほかの人が作成して共有したフィルタリストです。オンにしたリストは、不明な送信者からのメッセージを**迷惑メール**、**トランザクション**、**プロモーション**に振り分け、自動で更新されます。";
 
+"search_menu" = "メニュー";
+
+"search_recent" = "最近の検索";
+
+"search_clearRecent" = "消去";
+
+"search_suggestions" = "候補";
+
 

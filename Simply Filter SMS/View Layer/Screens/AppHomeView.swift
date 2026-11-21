@@ -118,7 +118,21 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 }
             } // List
             .background(horizontalSizeClass == .regular ? InstantTouchDisabler(delaysContentTouches: true) : nil)
-            .navigationTitle(self.model.title)
+            .overlay {
+                ZStack {
+                    if self.model.isShowingSearchOverlay {
+                        Color.listBackgroundColor(for: self.colorScheme)
+                            .ignoresSafeArea()
+                            .transition(.identity)
+                        SearchResultsView(model: self.model.searchResults)
+                            .transition(SearchMotion.resultsTransition)
+                    }
+                }
+                .motionOrFadeAnimation(SearchMotion.reveal, value: self.model.isShowingSearchOverlay)
+            }
+            .searchable(text: self.$model.searchQuery, isPresented: self.$model.isSearchPresented, prompt: "general_search"~)
+            .modifier(SearchFieldSelection(request: self.model.searchSelectionRequest, text: self.model.searchQuery))
+            .navigationTitle(self.model.navigationTitle)
             .listStyle(.insetGrouped)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -146,6 +160,11 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 } else if horizontalSizeClass == .compact {
                     model.navigationScreen = nil
                 }
+            }
+            .onReceive(self.model.$searchPushRequest) { screen in
+                guard let screen else { return }
+                self.model.searchPushRequest = nil
+                selectedScreen = screen
             }
             .onReceive(self.model.$navigationScreen) { navigationScreen in
                 if navigationScreen == nil {
@@ -575,6 +594,75 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 }
 
 
+//MARK: - Search Selection -
+struct SearchSelectionRequest: Equatable {
+    let id: Int
+    let start: Int
+}
+
+private struct SearchFieldSelection: ViewModifier {
+    let request: SearchSelectionRequest
+    let text: String
+
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+                .modifier(SearchFieldSelectionApplier(request: self.request, text: self.text))
+        } else {
+            content
+        }
+    }
+}
+
+@available(iOS 26.0, *)
+private struct SearchFieldSelectionApplier: ViewModifier {
+    let request: SearchSelectionRequest
+    let text: String
+
+    @State private var selection: TextSelection?
+
+    func body(content: Content) -> some View {
+        content
+            .searchSelection(self.fittingSelection)
+            .onChange(of: self.request) { _, request in
+                let text = self.text
+                DispatchQueue.main.async {
+                    guard let start = text.index(text.startIndex, offsetBy: request.start, limitedBy: text.endIndex) else { return }
+                    self.selection = TextSelection(range: start..<text.endIndex)
+                }
+            }
+    }
+
+    private var fittingSelection: Binding<TextSelection?> {
+        return Binding(
+            get: {
+                guard let selection = self.selection,
+                      case .selection(let range) = selection.indices,
+                      self.isBoundary(range.lowerBound),
+                      self.isBoundary(range.upperBound) else { return nil }
+                return selection
+            },
+            set: { newSelection in
+                self.selection = newSelection
+            }
+        )
+    }
+
+    private func isBoundary(_ index: String.Index) -> Bool {
+        return index == self.text.endIndex || self.text.indices.contains(index)
+    }
+}
+
+
+//MARK: - Motion -
+private enum SearchMotion {
+    static let reveal = Animation.easeOut(duration: 0.22)
+    static let closeAfterDrillDown: TimeInterval = 0.5
+    static let resultsTransition = AnyTransition.asymmetric(insertion: .motion(.opacity.combined(with: .offset(y: 6))),
+                                                            removal: .identity)
+}
+
+
 //MARK: - ViewModel -
 extension AppHomeView {
     
@@ -633,6 +721,30 @@ extension AppHomeView {
         @Published var isImportingFile = false
         @Published var fileImporterID = UUID()
         @Published var customAccent: Color? = nil
+        @Published var searchQuery: String = "" {
+            didSet {
+                guard oldValue != self.searchQuery, !self.isHoldingResults else { return }
+                self.searchQueryChanged()
+            }
+        }
+        @Published var isSearchPresented = false {
+            didSet {
+                guard oldValue != self.isSearchPresented, self.isSearchPresented else { return }
+                self.searchDidOpen()
+            }
+        }
+        @Published var searchPushRequest: Screen? = nil
+        @Published private(set) var searchSelectionRequest = SearchSelectionRequest(id: 0, start: 0)
+        private var typedSearchQuery = ""
+        private var isSettingSearchQuery = false
+        @Published private(set) var isHoldingResults = false
+        lazy var searchResults = SearchResultsView.ViewModel(appManager: self.appManager,
+                                                             onSelect: { [weak self] result in
+                                                                 self?.openSearchResult(result)
+                                                             },
+                                                             onPickRecent: { [weak self] query in
+                                                                 self?.setSearchQuery(query)
+                                                             })
 
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             let hasActiveFilterLists = appManager.filterListManager.hasActiveFilterLists
@@ -755,6 +867,134 @@ extension AppHomeView {
 
         func requestSheet(_ screen: Screen) {
             self.appManager.flowManager.requestScreen(screen)
+        }
+
+        var isSearching: Bool {
+            return !self.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+
+        var isShowingResults: Bool {
+            return self.isSearching || self.isHoldingResults
+        }
+
+        var isShowingSearchOverlay: Bool {
+            let isShowingEmptyState = self.isSearchPresented && self.searchQuery.isEmpty
+            return self.isShowingResults || isShowingEmptyState
+        }
+
+        var navigationTitle: String {
+            let result: String
+            if self.isShowingResults {
+                result = "general_search"~
+            } else {
+                result = self.title
+            }
+            return result
+        }
+
+        func openSearchResult(_ result: SearchResult) {
+            let searchManager = self.appManager.searchManager
+            searchManager.recordSearch(self.searchQuery)
+            switch result {
+            case .aiLanguage:
+                self.searchPushRequest = .filterLists
+            case .smartFilter:
+                break
+            case .communityList(let communityList):
+                searchManager.setPendingFocus(.communityList(communityList.id))
+                self.searchPushRequest = .communityLists
+            case .filter(let filter):
+                if let uuid = filter.uuid {
+                    searchManager.setPendingFocus(.filter(uuid))
+                }
+                self.searchPushRequest = filter.filterType.screen
+            case .help(let faq):
+                searchManager.setPendingFocus(.help(faq))
+                self.requestSheet(.help)
+            case .action(let action):
+                self.perform(action)
+            }
+            if result.opensScreen {
+                self.closeSearchAfterDrillDown()
+            } else {
+                self.closeSearch()
+            }
+        }
+
+        private func searchDidOpen() {
+            self.searchResults.reloadEmptyState()
+            guard let lastQuery = self.appManager.searchManager.lastQuery else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.isSearchPresented, self.searchQuery.isEmpty else { return }
+                Log.debug("search reopened, restored: \(lastQuery)")
+                self.setSearchQuery(lastQuery)
+                self.requestSearchSelection(from: 0)
+            }
+        }
+
+        private func searchQueryChanged() {
+            let typed = self.searchQuery
+            let completion = self.isSettingSearchQuery ? nil : self.completionForTyping(typed)
+            if let completion {
+                Log.debug("search completed from history, typed: \(typed), completion: \(completion)")
+                self.setSearchQuery(completion)
+                self.typedSearchQuery = typed
+                self.requestSearchSelection(from: typed.count)
+            } else {
+                self.searchResults.update(query: typed)
+            }
+        }
+
+        private func completionForTyping(_ typed: String) -> String? {
+            let isTypingForward = typed.count > self.typedSearchQuery.count
+            self.typedSearchQuery = typed
+            guard isTypingForward else { return nil }
+            return self.historyCompletion(for: typed)
+        }
+
+        private func historyCompletion(for typed: String) -> String? {
+            guard !typed.isEmpty else { return nil }
+            let recentQueries = self.appManager.searchManager.recentQueries
+            guard let match = recentQueries.first(where: { $0.count > typed.count && $0.lowercased().hasPrefix(typed.lowercased()) }) else { return nil }
+            return typed + match.dropFirst(typed.count)
+        }
+
+        private func setSearchQuery(_ query: String) {
+            self.isSettingSearchQuery = true
+            self.searchQuery = query
+            self.isSettingSearchQuery = false
+            self.typedSearchQuery = query
+        }
+
+        private func requestSearchSelection(from start: Int) {
+            self.searchSelectionRequest = SearchSelectionRequest(id: self.searchSelectionRequest.id + 1, start: start)
+        }
+
+        private func closeSearch() {
+            self.setSearchQuery("")
+            self.isSearchPresented = false
+        }
+
+        private func closeSearchAfterDrillDown() {
+            self.isHoldingResults = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + SearchMotion.closeAfterDrillDown) { [weak self] in
+                guard let self, self.isHoldingResults else { return }
+                Log.debug("search closed behind drill-down, query: \(self.searchResults.query)")
+                self.isHoldingResults = false
+                self.closeSearch()
+            }
+        }
+
+        private func perform(_ action: SearchAction) {
+            switch action {
+            case .exportFilters:
+                self.exportFilters()
+            case .importFilters:
+                self.beginFileImport()
+            default:
+                guard let screen = action.screen else { return }
+                self.requestSheet(screen)
+            }
         }
 
         private func importFromFileURL(_ url: URL) {

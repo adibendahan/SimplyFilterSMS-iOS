@@ -888,4 +888,12 @@
 
 "communityLists_description" = "Filterlisten, die andere erstellt und geteilt haben. Aktivierte Listen sortieren Nachrichten von unbekannten Absendern in **Junk**, **Transaktionen** oder **Werbung** und aktualisieren sich von selbst.";
 
+"search_menu" = "Menü";
+
+"search_recent" = "Zuletzt gesucht";
+
+"search_clearRecent" = "Löschen";
+
+"search_suggestions" = "Vorschläge";
+
 

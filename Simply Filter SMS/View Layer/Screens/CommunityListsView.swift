@@ -121,6 +121,8 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
 
         if self.model.expandedCommunityListID == rowModel.id {
             CommunityListDetails(communityList: rowModel.communityList)
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier(TestIdentifier.communityListDetails.rawValue)
                 .padding(.leading, self.detailsIndent)
                 .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 16, trailing: 20))
                 .listRowSeparator(.hidden)
@@ -195,6 +197,7 @@ extension CommunityListsView {
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             super.init(appManager: appManager)
             self.updateRowViewModels()
+            self.revealSearchFocus()
         }
 
         func startMonitoring() {
@@ -294,6 +297,15 @@ extension CommunityListsView {
                     self.refresh()
                 }
             }
+        }
+
+        private func revealSearchFocus() {
+            guard let id = self.appManager.searchManager.takeFocusedCommunityList() else { return }
+            guard self.rowViewModels.contains(where: { $0.id == id }) else {
+                Log.debug("search focus not found, list: \(id) → skipped")
+                return
+            }
+            self.expandedCommunityListID = id
         }
 
         private func updateRowViewModels() {

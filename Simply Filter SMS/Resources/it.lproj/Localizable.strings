@@ -888,4 +888,12 @@
 
 "communityLists_description" = "Liste di filtri create e condivise da altre persone. Le liste che attivi smistano i messaggi dei mittenti sconosciuti in **Indesiderati**, **Transazioni** o **Promozioni** e si aggiornano da sole.";
 
+"search_menu" = "Menu";
+
+"search_recent" = "Recenti";
+
+"search_clearRecent" = "Cancella";
+
+"search_suggestions" = "Suggerimenti";
+
 

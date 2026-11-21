@@ -888,4 +888,12 @@
 
 "communityLists_description" = "由其他人创建并分享的过滤列表。开启的列表会将陌生发件人的信息分到“**垃圾短信**”“**交易信息**”或“**推广信息**”，并会自动更新。";
 
+"search_menu" = "菜单";
+
+"search_recent" = "最近搜索";
+
+"search_clearRecent" = "清除";
+
+"search_suggestions" = "建议";
+
 

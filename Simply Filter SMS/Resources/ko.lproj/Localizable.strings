@@ -888,4 +888,12 @@
 
 "communityLists_description" = "다른 사람들이 만들어 공유한 필터 목록이에요. 켠 목록은 알 수 없는 발신자의 메시지를 **스팸**, **거래** 또는 **프로모션**으로 분류하고, 알아서 업데이트돼요.";
 
+"search_menu" = "메뉴";
+
+"search_recent" = "최근 검색";
+
+"search_clearRecent" = "지우기";
+
+"search_suggestions" = "제안";
+
 

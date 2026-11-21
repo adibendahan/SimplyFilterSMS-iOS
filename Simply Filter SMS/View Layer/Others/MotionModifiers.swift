@@ -529,6 +529,19 @@ private struct MotionAnimationModifier<Value: Equatable>: ViewModifier {
     }
 }
 
+private struct MotionOrFadeAnimationModifier<Value: Equatable>: ViewModifier {
+    let animation: Animation
+    let value: Value
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .animation(self.reduceMotion ? ReducedMotion.fade : self.animation, value: self.value)
+    }
+}
+
 private struct MotionTransactionModifier: ViewModifier {
     @Environment(\.accessibilityReduceMotion)
     private var reduceMotion
@@ -609,6 +622,10 @@ extension View {
 
     func motionAnimation<Value: Equatable>(_ animation: Animation?, value: Value) -> some View {
         return self.modifier(MotionAnimationModifier(animation: animation, value: value))
+    }
+
+    func motionOrFadeAnimation<Value: Equatable>(_ animation: Animation, value: Value) -> some View {
+        return self.modifier(MotionOrFadeAnimationModifier(animation: animation, value: value))
     }
 
     func motionTransaction() -> some View {
