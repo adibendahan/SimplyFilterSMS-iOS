@@ -40,6 +40,63 @@ class CommunityListsViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.userRowViewModels.map(\.id), [self.userList.url])
     }
 
+    func test_headline_countsActiveLists() {
+        // Act
+        let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)
+
+        // Verify
+        XCTAssertEqual(viewModel.activeListsCount, 1)
+        XCTAssertEqual(viewModel.headline, String.localizedStringWithFormat("communityLists_active_count"~, 1))
+    }
+
+    func test_badgeTitle_splitsAroundTheNumber() {
+        // Act
+        let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)
+
+        // Verify
+        let title = viewModel.badgeTitle
+        XCTAssertEqual(title.count, 1)
+        XCTAssertEqual(title.text, viewModel.headline)
+    }
+
+    func test_badgeTitle_noActiveLists_isTheOffTitle() {
+        // Prepare
+        self.filterListManager.communityListsClosure = { [self.curatedList] }
+
+        // Act
+        let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)
+
+        // Verify
+        XCTAssertEqual(viewModel.activeListsCount, 0)
+        XCTAssertEqual(viewModel.badgeTitle.text, viewModel.badgeOffTitle)
+    }
+
+    func test_addedByYouFooter_withLastUpdated_startsWithIt() {
+        // Prepare
+        self.filterListManager.filterListsLastUpdatedClosure = { Date() }
+        let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)
+
+        // Act
+        let footer = String(viewModel.addedByYouFooter(includesLastUpdated: true).characters)
+
+        // Verify
+        let lastUpdatedFooter = viewModel.lastUpdatedFooter ?? ""
+        XCTAssertFalse(lastUpdatedFooter.isEmpty)
+        XCTAssertEqual(footer, lastUpdatedFooter + " " + "communityLists_createList"~ + " · " + "communityLists_submitList"~)
+    }
+
+    func test_addedByYouFooter_withoutLastUpdated_isOnlyTheLinks() {
+        // Prepare
+        self.filterListManager.filterListsLastUpdatedClosure = { Date() }
+        let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)
+
+        // Act
+        let footer = String(viewModel.addedByYouFooter(includesLastUpdated: false).characters)
+
+        // Verify
+        XCTAssertEqual(footer, "communityLists_createList"~ + " · " + "communityLists_submitList"~)
+    }
+
     func test_toggle_setsTheListActive() {
         // Prepare
         let viewModel = CommunityListsView.ViewModel(appManager: self.appManager)

@@ -3,7 +3,6 @@ window.STRINGS["ja"] = {
   "app.byAuthor": "作成：{0}",
   "app.subscribeFromURL": "URLで登録",
   "app.lastUpdated": "{0}に更新",
-  "app.footer": "コミュニティリストは、ほかの人が作成して共有したフィルタリストです。オンのリストは不明な送信者からのメッセージを迷惑メール、トランザクション、プロモーションのいずれかのフォルダに振り分け、定期的に更新されます。通常のフィルターは引き続き適用されます。",
   "app.createList": "リストを作成",
   "app.submitList": "リストを提出",
   "app.blockedTexts": "ブロックテキスト",

@@ -14,6 +14,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
     @ScaledMetric(relativeTo: .caption2) private var detailsIndent = CommunityListRow.chevronColumnBaseWidth
     @StateObject var model: ViewModel
     @State private var emptyStatePresence = ListEmptyStateView.Presence()
+    @State private var headerCollapse: CGFloat = 0
 
     init(model: ViewModel) {
         _model = StateObject(wrappedValue: model)
@@ -22,6 +23,18 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
 
     var body: some View {
         List {
+            Section {
+                FeatureStatusHeader(feature: .communityLists,
+                                    isOn: self.model.activeListsCount > 0,
+                                    badgeTitle: self.model.badgeTitle,
+                                    badgeOnWidthSamples: self.model.badgeOnWidthSamples,
+                                    badgeOffTitle: self.model.badgeOffTitle,
+                                    collapseProgress: self.headerCollapse)
+            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
+            .listSectionSpacing(.compact)
+
             if !self.model.curatedRowViewModels.isEmpty {
                 Section {
                     ForEach(self.model.curatedRowViewModels, id: \.id) { rowModel in
@@ -29,6 +42,10 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                     }
                 } header: {
                     Text("communityLists_featured"~)
+                } footer: {
+                    if self.isLastUpdatedUnderFeatured, let lastUpdatedFooter = self.model.lastUpdatedFooter {
+                        self.footer(AttributedString(lastUpdatedFooter))
+                    }
                 } // Section
                 .motionTransaction()
             }
@@ -45,6 +62,8 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                 }
             } header: {
                 Text("communityLists_addedByYou"~)
+            } footer: {
+                self.footer(self.model.addedByYouFooter(includesLastUpdated: !self.isLastUpdatedUnderFeatured))
             } // Section
             .motionTransaction()
 
@@ -56,12 +75,11 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                 }
                 .foregroundStyle(.primary)
                 .accessibilityIdentifier(TestIdentifier.addCommunityListButton.rawValue)
-            } footer: {
-                Text(self.model.footer)
-                    .multilineTextAlignment(.leading)
             } // Section
         } // List
         .modifier(ListEmptyStateView.PresenceTracker(isEmpty: self.model.userRowViewModels.isEmpty, presence: $emptyStatePresence))
+        .modifier(FeatureStatusHeader.CollapseTracker(progress: self.$headerCollapse))
+        .contentMargins(.top, 8, for: .scrollContent)
         .listStyle(.insetGrouped)
         .navigationTitle("communityLists_title"~)
         .navigationBarTitleDisplayMode(.inline)
@@ -85,6 +103,16 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
             self.model.startMonitoring()
         }
         .modifier(persistentStoreReload)
+    }
+
+    private var isLastUpdatedUnderFeatured: Bool {
+        return self.emptyStatePresence.isActive && !self.model.curatedRowViewModels.isEmpty
+    }
+
+    private func footer(_ text: AttributedString) -> some View {
+        return Text(text)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
     }
 
     @ViewBuilder
@@ -184,19 +212,44 @@ extension CommunityListsView {
             self.updateRowViewModels()
         }
 
-        var footer: AttributedString {
+        var activeListsCount: Int {
+            return self.rowViewModels.filter(\.isActive).count
+        }
+
+        var headline: String {
+            return String.localizedStringWithFormat("communityLists_active_count"~, self.activeListsCount)
+        }
+
+        var badgeTitle: StatusBadge.Title {
+            return StatusBadge.Title(text: self.headline, count: self.activeListsCount)
+        }
+
+        var badgeOnWidthSamples: [String] {
+            let sampleCounts = [1, max(self.rowViewModels.count, 1)]
+            let samples = sampleCounts.map { String.localizedStringWithFormat("communityLists_active_count"~, $0) }
+            return samples.uniqued()
+        }
+
+        var badgeOffTitle: String {
+            return String.localizedStringWithFormat("communityLists_active_count"~, 0)
+        }
+
+        var lastUpdatedFooter: String? {
+            guard let lastUpdated = self.appManager.filterListManager.filterListsLastUpdated else { return nil }
+            return lastUpdated.lastUpdatedText + "."
+        }
+
+        func addedByYouFooter(includesLastUpdated: Bool) -> AttributedString {
             var guideLink = AttributedString("communityLists_createList"~)
             guideLink.link = .communityListGuideURL
 
             var proposalLink = AttributedString("communityLists_submitList"~)
             proposalLink.link = .communityListProposalURL
 
-            var footerText = "communityLists_footer"~ + " "
-            if let lastUpdated = self.appManager.filterListManager.filterListsLastUpdated {
-                footerText = lastUpdated.lastUpdatedText + ". " + footerText
+            var footer = AttributedString()
+            if includesLastUpdated, let lastUpdatedFooter = self.lastUpdatedFooter {
+                footer = AttributedString(lastUpdatedFooter + " ")
             }
-
-            var footer = AttributedString(footerText)
             footer.append(guideLink)
             footer.append(AttributedString(" · "))
             footer.append(proposalLink)

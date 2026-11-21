@@ -606,8 +606,6 @@
 
 "communityLists_subscribeFromURL" = "URLで登録";
 
-"communityLists_footer" = "コミュニティリストは、ほかの人が作成して共有したフィルタリストです。オンのリストは不明な送信者からのメッセージを迷惑メール、トランザクション、プロモーションのいずれかのフォルダに振り分け、定期的に更新されます。通常のフィルターは引き続き適用されます。";
-
 "communityLists_createList" = "リストを作成";
 
 "communityLists_submitList" = "リストを提出";
@@ -889,5 +887,7 @@
 "autoFilter_turnOnHint" = "メッセージを受け取る言語をオンにしてください";
 
 "autoFilter_improveFooter" = "メッセージアプリから直接スパムを報告できます。報告はみんなのAIフィルタリングの改善に役立ちます。";
+
+"communityLists_description" = "ほかの人が作成して共有したフィルタリストです。オンにしたリストは、不明な送信者からのメッセージを**迷惑メール**、**トランザクション**、**プロモーション**に振り分け、自動で更新されます。";
 
 

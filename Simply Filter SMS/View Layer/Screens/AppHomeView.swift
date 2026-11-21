@@ -167,10 +167,6 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     .background(Color.listBackgroundColor(for: colorScheme))
             }
         } // NavigationSplitView
-        .modifier(EmbeddedFooterModifier(isHidden: self.model.sheetScreen != nil) {
-            guard horizontalSizeClass == .regular || self.model.navigationScreen == nil else { return }
-            self.model.requestSheet(.about)
-        })
         .modifier(OverlayWindowModifier(model: self.model.overlayWindow))
         .modifier(persistentStoreReload)
         .sheet(item: $model.sheetScreen) {

@@ -3,7 +3,6 @@ window.STRINGS["it"] = {
   "app.byAuthor": "di {0}",
   "app.subscribeFromURL": "Iscriviti da URL",
   "app.lastUpdated": "Aggiornato il {0}",
-  "app.footer": "Le Liste della community sono liste di filtri create e condivise da altre persone. Le liste attive instradano i messaggi dei mittenti sconosciuti nella cartella Indesiderati, Transazioni o Promozioni e vengono aggiornate periodicamente. I tuoi filtri normali sono ancora attivi.",
   "app.createList": "Crea una lista",
   "app.submitList": "Invia una lista",
   "app.blockedTexts": "Testi bloccati",

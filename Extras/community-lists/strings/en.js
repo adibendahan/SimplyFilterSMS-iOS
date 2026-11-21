@@ -3,7 +3,6 @@ window.STRINGS["en"] = {
   "app.byAuthor": "by {0}",
   "app.subscribeFromURL": "Subscribe from URL",
   "app.lastUpdated": "Updated {0}",
-  "app.footer": "Community Lists are filter lists made and shared by other people. Turned-on lists route messages from unknown senders to your Junk, Transactions or Promotions folder, and are updated periodically. Your regular filters are still applied.",
   "app.createList": "Create a List",
   "app.submitList": "Submit a List",
   "app.blockedTexts": "Blocked Texts",

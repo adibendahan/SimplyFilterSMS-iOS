@@ -606,8 +606,6 @@
 
 "communityLists_subscribeFromURL" = "URL로 구독";
 
-"communityLists_footer" = "커뮤니티 목록은 다른 사람들이 만들어 공유한 필터 목록이에요. 켜진 목록은 알 수 없는 발신자의 메시지를 스팸, 거래 또는 프로모션 폴더로 보내고, 주기적으로 업데이트돼요. 기존 필터는 계속 적용돼요.";
-
 "communityLists_createList" = "목록 만들기";
 
 "communityLists_submitList" = "목록 제출하기";
@@ -889,5 +887,7 @@
 "autoFilter_turnOnHint" = "메시지를 받는 언어를 켜 주세요";
 
 "autoFilter_improveFooter" = "메시지 앱에서 바로 스팸을 신고할 수 있어요. 신고할수록 모두의 AI 필터링이 좋아져요.";
+
+"communityLists_description" = "다른 사람들이 만들어 공유한 필터 목록이에요. 켠 목록은 알 수 없는 발신자의 메시지를 **스팸**, **거래** 또는 **프로모션**으로 분류하고, 알아서 업데이트돼요.";
 
 

@@ -3,7 +3,6 @@ window.STRINGS["pt-BR"] = {
   "app.byAuthor": "por {0}",
   "app.subscribeFromURL": "Assinar de URL",
   "app.lastUpdated": "Atualizado em {0}",
-  "app.footer": "As Listas da comunidade são listas de filtros criadas e compartilhadas por outras pessoas. As listas ativadas encaminham mensagens de remetentes desconhecidos para a pasta Lixo Eletrônico, Transações ou Promoções, e são atualizadas periodicamente. Seus filtros regulares ainda são aplicados.",
   "app.createList": "Criar uma lista",
   "app.submitList": "Enviar uma lista",
   "app.blockedTexts": "Textos Bloqueados",

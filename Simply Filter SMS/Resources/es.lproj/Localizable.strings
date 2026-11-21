@@ -606,8 +606,6 @@
 
 "communityLists_subscribeFromURL" = "Suscribirse desde URL";
 
-"communityLists_footer" = "Las Listas de la comunidad son listas de filtros creadas y compartidas por otras personas. Las listas activadas envían los mensajes de remitentes desconocidos a la carpeta No deseado, Transacciones o Promociones, y se actualizan periódicamente. Tus filtros habituales siguen aplicándose.";
-
 "communityLists_createList" = "Crear una lista";
 
 "communityLists_submitList" = "Enviar una lista";
@@ -889,5 +887,7 @@
 "autoFilter_turnOnHint" = "Activa los idiomas en los que recibes mensajes";
 
 "autoFilter_improveFooter" = "Reporta spam directamente desde Mensajes. Cada reporte mejora el Filtrado AI para todos.";
+
+"communityLists_description" = "Listas de filtros creadas y compartidas por otras personas. Las listas que actives envían los mensajes de remitentes desconocidos a **No deseado**, **Transacciones** o **Promociones**, y se actualizan solas.";
 
 

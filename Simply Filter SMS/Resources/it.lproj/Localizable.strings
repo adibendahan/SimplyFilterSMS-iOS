@@ -606,8 +606,6 @@
 
 "communityLists_subscribeFromURL" = "Iscriviti da URL";
 
-"communityLists_footer" = "Le Liste della community sono liste di filtri create e condivise da altre persone. Le liste attive instradano i messaggi dei mittenti sconosciuti nella cartella Indesiderati, Transazioni o Promozioni e vengono aggiornate periodicamente. I tuoi filtri normali sono ancora attivi.";
-
 "communityLists_createList" = "Crea una lista";
 
 "communityLists_submitList" = "Invia una lista";
@@ -889,5 +887,7 @@
 "autoFilter_turnOnHint" = "Attiva le lingue in cui ricevi i messaggi";
 
 "autoFilter_improveFooter" = "Segnala lo spam direttamente da Messaggi. Ogni segnalazione migliora il Filtraggio AI per tutti.";
+
+"communityLists_description" = "Liste di filtri create e condivise da altre persone. Le liste che attivi smistano i messaggi dei mittenti sconosciuti in **Indesiderati**, **Transazioni** o **Promozioni** e si aggiornano da sole.";
 
 

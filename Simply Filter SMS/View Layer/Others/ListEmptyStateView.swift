@@ -117,7 +117,7 @@ struct ListEmptyStateView: View {
             case .regular:
                 return 22
             case .compact:
-                return 14
+                return 8
             }
         }
 
@@ -205,7 +205,7 @@ struct ListEmptyStateView: View {
     @Environment(\.isPreview) private var isPreview
 
     @ScaledMetric(relativeTo: .body) private var regularIllustrationHeight: CGFloat = 124
-    @ScaledMetric(relativeTo: .body) private var compactIllustrationHeight: CGFloat = 84
+    @ScaledMetric(relativeTo: .body) private var compactIllustrationHeight: CGFloat = 76
     @ScaledMetric(relativeTo: .subheadline) private var twoCaptionLinesHeight: CGFloat = 40
 
     @State private var hasAppeared = false

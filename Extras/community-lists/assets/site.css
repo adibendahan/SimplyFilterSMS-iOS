@@ -189,7 +189,7 @@ h1 { font-size: clamp(44px, 7vw, 80px); line-height: 1.04; font-weight: 600; let
 .app-link { grid-row: 3; grid-column: 2 / 4; margin-top: 10px; display: flex; align-items: center; gap: 6px; font-size: 15.5px; line-height: 18px; color: var(--app-tint); overflow-wrap: anywhere; }
 .gh { flex: none; width: 0.85em; height: 0.85em; }
 .app-subscribe { margin: 36px 17px 0; height: 51px; border-radius: 26px; background: var(--app-cell); display: flex; align-items: center; gap: 15px; padding-inline-start: 20px; font-size: 19.5px; letter-spacing: -0.02em; }
-.app-footer { margin-top: 9px; margin-inline: 36px 34px; font-size: 13.6px; line-height: 16.3px; color: var(--app-ink-2); letter-spacing: -0.01em; }
+.app-footer { margin-top: 9px; margin-inline: 36px 34px; text-align: center; font-size: 13.6px; line-height: 16.3px; color: var(--app-ink-2); letter-spacing: -0.01em; }
 .app-footer .link { color: var(--app-tint); }
 
 /* List row, shared by the phone, the field anatomy and the tester */
