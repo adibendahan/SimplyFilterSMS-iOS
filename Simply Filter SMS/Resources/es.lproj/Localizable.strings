@@ -218,8 +218,6 @@
 
 "faq_ai_answer" = "Activa el Filtrado AI para los idiomas en los que recibes mensajes. Usa listas de palabras clave creadas por IA para enviar el spam a No deseado, Transacciones o Promociones, y las listas se actualizan solas. Los mensajes se comprueban en tu dispositivo, y tus propios filtros siguen aplicándose.";
 
-"help_automaticFiltering" = "El Filtrado AI usa listas de palabras clave generadas por IA para detectar spam y enviar mensajes a la carpeta No deseado, Transacciones o Promociones. Las listas se actualizan periódicamente. Tus filtros habituales siguen aplicándose cuando el Filtrado AI está activo.";
-
 "help_deny" = "Añade textos que harán que un mensaje se marque como no deseado. También puedes elegir la carpeta específica.";
 
 "help_allow" = "Añade textos que harán que un mensaje se marque como válido. Se recomienda añadir textos únicos como tu nombre. Los textos de esta lista tienen la mayor prioridad al filtrar.";
@@ -232,9 +230,9 @@
 
 "autoFilter_neverUpdated" = "Nunca";
 
-"autoFilter_ON" = "ON";
+"autoFilter_ON" = "Activado";
 
-"autoFilter_OFF" = "OFF";
+"autoFilter_OFF" = "Desactivado";
 
 "autoFilter_allUnknown" = "Bloquear desconocidos";
 
@@ -885,5 +883,11 @@
 "whatsNew_help_desc" = "**Ayuda** en el menú ahora te guía en la configuración en **Primeros pasos** y responde a las dudas comunes en **Preguntas frecuentes**.";
 
 "tipJar_tipButton" = "Propina de %@";
+
+"autoFilter_description" = "Usa IA para detectar spam de remitentes desconocidos y moverlo a **No deseado** o **Promociones**. Tus propios filtros siguen aplicándose.";
+
+"autoFilter_turnOnHint" = "Activa los idiomas en los que recibes mensajes";
+
+"autoFilter_improveFooter" = "Reporta spam directamente desde Mensajes. Cada reporte mejora el Filtrado AI para todos.";
 
 

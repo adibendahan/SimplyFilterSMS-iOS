@@ -52,6 +52,8 @@ Type a sender and a message and see the verdict live, as a sheet from the menu.
 
 ## FilterListLanguagesView
 Pushed from Home; toggles AI Filtering per language.
+- Home's footer floats over every screen pushed from it, so the last section's footer pads 48pt at the bottom (as `FiltersView` does); without it the last row can't scroll clear.
+- The entrance uses `entranceOnAppear` per row: a `List` builds its rows after the screen's `onAppear`, so a shared "has appeared" flag sets them at rest and nothing animates.
 - The view model is `@unchecked Sendable` because `.refreshable` needs a `@Sendable` action.
 
 ## CommunityListsView

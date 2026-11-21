@@ -218,8 +218,6 @@
 
 "faq_ai_answer" = "Schalte die KI-Filterung für die Sprachen ein, in denen du Nachrichten bekommst. Sie nutzt KI-erstellte Stichwortlisten, um Spam nach Junk, Transaktionen oder Werbung zu schicken, und die Listen aktualisieren sich selbst. Nachrichten werden auf deinem Gerät geprüft, und deine eigenen Filter gelten weiterhin.";
 
-"help_automaticFiltering" = "KI-Filterung nutzt KI-generierte Schlüsselwortlisten, um Spam zu erkennen und Nachrichten in den Ordner Junk, Transaktionen oder Werbung zu leiten. Die Listen werden regelmäßig aktualisiert. Deine eigenen Filter bleiben aktiv, wenn KI-Filterung eingeschaltet ist.";
-
 "help_deny" = "Füge Texte hinzu, die eine Nachricht als Spam kennzeichnen. Du kannst auch den Zielordner auswählen.";
 
 "help_allow" = "Füge Texte hinzu, die eine Nachricht als gültig kennzeichnen. Empfohlen: einzigartige Texte wie deinen Namen. Texte auf dieser Liste haben die höchste Priorität.";
@@ -232,9 +230,9 @@
 
 "autoFilter_neverUpdated" = "Nie";
 
-"autoFilter_ON" = "AN";
+"autoFilter_ON" = "Ein";
 
-"autoFilter_OFF" = "AUS";
+"autoFilter_OFF" = "Aus";
 
 "autoFilter_allUnknown" = "Alle Unbekannten sperren";
 
@@ -885,5 +883,11 @@
 "whatsNew_help_desc" = "**Hilfe** im Menü führt dich jetzt unter **Erste Schritte** durch die Einrichtung und beantwortet häufige Fragen in den **FAQ**.";
 
 "tipJar_tipButton" = "%@ Trinkgeld";
+
+"autoFilter_description" = "Erkennt mit KI Spam von unbekannten Absendern und verschiebt ihn in **Junk** oder **Werbung**. Deine eigenen Filter gelten weiterhin.";
+
+"autoFilter_turnOnHint" = "Schalte die Sprachen ein, in denen du Nachrichten bekommst";
+
+"autoFilter_improveFooter" = "Melde Spam direkt in Nachrichten. Jede Meldung macht die KI-Filterung für alle besser.";
 
 

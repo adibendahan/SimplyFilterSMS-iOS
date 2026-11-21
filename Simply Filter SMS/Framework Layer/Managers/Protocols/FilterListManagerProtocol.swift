@@ -13,6 +13,7 @@ protocol FilterListManagerProtocol {
     var activeFilterListsTitle: String? { get }
     var filterListsLastUpdated: Date? { get }
     var filterListLanguages: [NLLanguage] { get }
+    var filterListRuleCounts: [NLLanguage: Int] { get }
     var communityLists: [CommunityListItem] { get }
     var activeCommunityListsCount: Int { get }
     
@@ -68,6 +69,10 @@ extension CommunityListItem {
         self.cacheSection = cacheSection
         self.isActive = isActive
         self.isCurated = catalogEntry != nil
+    }
+
+    var ruleCount: Int? {
+        return self.cacheSection?.payload.filters.count
     }
 
     static func homepageURL(from homepage: String?) -> URL? {

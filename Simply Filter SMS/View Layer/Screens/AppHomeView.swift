@@ -21,14 +21,11 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
 
-    @Environment(\.accessibilityReduceMotion)
-    private var reduceMotion
-    
     @ObservedObject var model: ViewModel
 
     @ScaledMetric(relativeTo: .title) private var shieldIconSize: CGFloat = 34
     @ScaledMetric(relativeTo: .title3) private var filterListsTitleSize: CGFloat = 20
-    @ScaledMetric(relativeTo: .body) private var badgeFontSize: CGFloat = 16
+    @ScaledMetric(relativeTo: .caption2) private var statusLineGap: CGFloat = 4
     @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
 
     @State private var dynamicEmojis: [String: String] = [:]
@@ -43,22 +40,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     let screen: Screen = .filterLists
                     
                     AdaptiveRow {
-                        Group {
-                            if self.model.hasActiveFilterLists && !self.model.isAllUnknownFilteringOn && !reduceMotion {
-                                ShieldGlintIcon()
-                            } else {
-                                Image(systemName: "bolt.shield.fill")
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(Color.white.opacity(0.9), Color.indigo)
-                            }
-                        }
+                        AIFilteringShieldIcon(isGlinting: self.model.hasActiveFilterLists && !self.model.isAllUnknownFilteringOn)
                         .font(.system(size: shieldIconSize))
                         .frame(width: shieldIconSize + 4, alignment: .center)
                         .accessibilityHidden(true)
                     } content: {
                         filterListsTextColumn
-                    } trailing: {
-                        filterListsStatusBadge
                     }
                     .padding(.vertical, 12)
                     .sidebarNavigationRow(screen: screen, isRegular: horizontalSizeClass == .regular) {
@@ -264,41 +251,15 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 
     @ViewBuilder
     private var filterListsTextColumn: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: self.statusLineGap) {
             Text("autoFilter_title"~)
                 .font(.system(size: filterListsTitleSize, weight: .bold, design: .rounded))
                 .fixedSize(horizontal: false, vertical: true)
 
-            if !self.model.subtitle.isEmpty {
-                Text(self.model.subtitle)
-                    .font(.caption2)
-                    .lineLimit(3)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            StatusLine(isOn: self.model.hasActiveFilterLists, text: self.model.subtitle)
         }
     }
 
-    @ViewBuilder
-    private var filterListsStatusBadge: some View {
-        if self.model.hasActiveFilterLists {
-            let onColor = model.customAccent ?? Color.green
-            Text("autoFilter_ON"~)
-                .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-                .background(onColor.opacity(0.1))
-                .foregroundColor(onColor)
-                .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                .font(.system(size: badgeFontSize, weight: .heavy, design: .default))
-                .limitedDynamicTypeSize()
-        } else {
-            Text("autoFilter_OFF"~)
-                .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-                .background(Color.red.opacity(0.1))
-                .foregroundColor(.red)
-                .containerShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                .font(.system(size: badgeFontSize, weight: .heavy, design: .default))
-                .limitedDynamicTypeSize()
-        }
-    }
     
     @ViewBuilder
     private func smartFilterToggle(index: Int, rule: SmartFilterType, isDisabled: Bool) -> some View {

@@ -156,5 +156,99 @@
             <string>إضافة %ld نص مسموح</string>
         </dict>
     </dict>
+
+    <key>autoFilter_languagesOn</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@languages@</string>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>تصفية AI متوقفة</string>
+            <key>one</key>
+            <string>مفعّلة للغة واحدة</string>
+            <key>two</key>
+            <string>مفعّلة للغتين</string>
+            <key>few</key>
+            <string>مفعّلة لـ %ld لغات</string>
+            <key>many</key>
+            <string>مفعّلة لـ %ld لغة</string>
+            <key>other</key>
+            <string>مفعّلة لـ %ld لغة</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_ruleCount</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@rules@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>%ld قاعدة</string>
+            <key>one</key>
+            <string>قاعدة واحدة</string>
+            <key>two</key>
+            <string>قاعدتان</string>
+            <key>few</key>
+            <string>%ld قواعد</string>
+            <key>many</key>
+            <string>%ld قاعدة</string>
+            <key>other</key>
+            <string>%ld قاعدة</string>
+        </dict>
+    </dict>
+
+    <key>autoFilter_rulesFromLanguages</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%1$#@rules@ في %2$#@languages@</string>
+        <key>rules</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>%ld قاعدة</string>
+            <key>one</key>
+            <string>قاعدة واحدة</string>
+            <key>two</key>
+            <string>قاعدتان</string>
+            <key>few</key>
+            <string>%ld قواعد</string>
+            <key>many</key>
+            <string>%ld قاعدة</string>
+            <key>other</key>
+            <string>%ld قاعدة</string>
+        </dict>
+        <key>languages</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>ld</string>
+            <key>zero</key>
+            <string>%ld لغة</string>
+            <key>one</key>
+            <string>لغة واحدة</string>
+            <key>two</key>
+            <string>لغتين</string>
+            <key>few</key>
+            <string>%ld لغات</string>
+            <key>many</key>
+            <string>%ld لغة</string>
+            <key>other</key>
+            <string>%ld لغة</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

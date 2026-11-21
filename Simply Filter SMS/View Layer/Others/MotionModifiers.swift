@@ -121,6 +121,25 @@ private struct ScrollProgressModifier: ViewModifier {
     }
 }
 
+private struct ScrollCollapseModifier: ViewModifier {
+    let progress: CGFloat
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    func body(content: Content) -> some View {
+        if self.reduceMotion {
+            content
+                .opacity(1 - self.progress)
+        } else {
+            content
+                .scaleEffect(1 - 0.45 * self.progress)
+                .opacity(1 - self.progress)
+                .blur(radius: 8 * self.progress)
+        }
+    }
+}
+
 
 //MARK: - Feedback -
 private struct ShakeModifier: ViewModifier {
@@ -317,6 +336,108 @@ private struct WriteOnModifier: ViewModifier {
 }
 
 
+//MARK: - Value Changes -
+struct AnimatedValue<Value: Equatable, Content: View>: View {
+    let value: Value
+    let animation: (Value, Value) -> Animation
+    let content: (Value) -> Content
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    @State private var shownValue: Value
+
+    init(_ value: Value, animation: @escaping (Value, Value) -> Animation, @ViewBuilder content: @escaping (Value) -> Content) {
+        self.value = value
+        self.animation = animation
+        self.content = content
+        _shownValue = State(initialValue: value)
+    }
+
+    var body: some View {
+        self.content(self.shownValue)
+            .onChange(of: self.value) { oldValue, newValue in
+                let resolvedAnimation = self.reduceMotion ? ReducedMotion.fade : self.animation(oldValue, newValue)
+                withAnimation(resolvedAnimation) {
+                    self.shownValue = newValue
+                }
+            }
+    }
+}
+
+struct FadeSwapTiming {
+    let fadeOut: Animation
+    let fadeIn: Animation
+    let update: Animation
+}
+
+struct FadeSwap<Value: Equatable, Content: View>: View {
+    let value: Value
+    let isSwap: (Value, Value) -> Bool
+    let timing: (Value, Value) -> FadeSwapTiming
+    let content: (Value) -> Content
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    @State private var shownValue: Value
+    @State private var opacity: Double = 1
+
+    init(_ value: Value, isSwap: @escaping (Value, Value) -> Bool, timing: @escaping (Value, Value) -> FadeSwapTiming, @ViewBuilder content: @escaping (Value) -> Content) {
+        self.value = value
+        self.isSwap = isSwap
+        self.timing = timing
+        self.content = content
+        _shownValue = State(initialValue: value)
+    }
+
+    var body: some View {
+        self.content(self.shownValue)
+            .opacity(self.opacity)
+            .onChange(of: self.value) { oldValue, newValue in
+                self.valueChanged(from: oldValue, to: newValue)
+            }
+    }
+
+    private func valueChanged(from oldValue: Value, to newValue: Value) {
+        let timing = self.resolvedTiming(from: oldValue, to: newValue)
+        if self.isSwap(oldValue, newValue) {
+            self.swap(to: newValue, timing: timing)
+        }
+        else {
+            withAnimation(timing.update) {
+                self.shownValue = newValue
+            }
+        }
+    }
+
+    private func swap(to newValue: Value, timing: FadeSwapTiming) {
+        withAnimation(timing.fadeOut) {
+            self.opacity = 0
+        } completion: {
+            var swapTransaction = Transaction()
+            swapTransaction.disablesAnimations = true
+            withTransaction(swapTransaction) {
+                self.shownValue = newValue
+            }
+            withAnimation(timing.fadeIn) {
+                self.opacity = 1
+            }
+        }
+    }
+
+    private func resolvedTiming(from oldValue: Value, to newValue: Value) -> FadeSwapTiming {
+        let result: FadeSwapTiming
+        if self.reduceMotion {
+            result = FadeSwapTiming(fadeOut: ReducedMotion.fade, fadeIn: ReducedMotion.fade, update: ReducedMotion.fade)
+        } else {
+            result = self.timing(oldValue, newValue)
+        }
+        return result
+    }
+}
+
+
 //MARK: - Reduce Motion -
 private struct MotionAnimationModifier<Value: Equatable>: ViewModifier {
     let animation: Animation?
@@ -375,6 +496,10 @@ extension View {
 
     func onScrollProgress(distance: CGFloat, progress: Binding<CGFloat>) -> some View {
         return self.modifier(ScrollProgressModifier(distance: distance, progress: progress))
+    }
+
+    func scrollCollapse(progress: CGFloat) -> some View {
+        return self.modifier(ScrollCollapseModifier(progress: progress))
     }
 
     func shake(trigger: Int) -> some View {

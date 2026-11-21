@@ -78,10 +78,6 @@ class FilterListManager: FilterListManagerProtocol {
             }
             else {
                 activeLanguagesString.append(string)
-                
-                if count > 0 {
-                    activeLanguagesString.append(".")
-                }
             }
         }
         
@@ -110,6 +106,23 @@ class FilterListManager: FilterListManagerProtocol {
         }
 
         return filterListLanguages.sorted(by: NLLanguage.displayOrder)
+    }
+
+    var filterListRuleCounts: [NLLanguage: Int] {
+        guard let snapshot = self.persistenceManager?.cachedFilterLists() else { return [:] }
+        var filterListRuleCounts: [NLLanguage: Int] = [:]
+
+        for entry in snapshot.catalog.lists {
+            guard entry.entryType == .aiFilteringLanguage,
+                  let langRawValue = entry.language,
+                  let listURL = entry.resolvedURL,
+                  let cacheSection = snapshot.cacheSection(for: listURL.absoluteString) else { continue }
+            let language = NLLanguage(langRawValue)
+            let previousCount = filterListRuleCounts[language] ?? 0
+            filterListRuleCounts[language] = previousCount + cacheSection.payload.filters.count
+        }
+
+        return filterListRuleCounts
     }
     
     func isFilterListActive(for language: NLLanguage) -> Bool {

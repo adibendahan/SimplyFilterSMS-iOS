@@ -201,7 +201,6 @@ Existing strings that break this guide. Fix them when touching the area; renamin
 | `whatsNew_aiFiltering_title` | Filtrado con IA | Filtrado AI |
 | `autoFilter_improveAIFiltering`, `notification_reportingExtension_title` | Mejorar filtrado de IA | Mejorar Filtrado AI (also quoted in `faq_answer_report`) |
 | `inactivityNotification_title` | …filtrado de IA… | …Filtrado AI… |
-| `help_automaticFiltering` | …a la carpeta de no deseados | …a la carpeta No deseado |
 | `autoFilter_email_shortTitle` | Email | Correo |
 
 **Title Case:**

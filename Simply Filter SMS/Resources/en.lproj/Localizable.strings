@@ -174,7 +174,6 @@
 "faq_folders_answer" = "Not much. You can send any filter to any of them, and iOS doesn't let apps change them. Only messages in Junk arrive silently, without a notification.";
 "faq_ai_question" = "How does AI Filtering work?";
 "faq_ai_answer" = "Turn on AI Filtering for the languages you get texts in. It uses AI-made keyword lists to send spam to Junk, Transactions or Promotions, and the lists update by themselves. Messages are checked on your device, and your own filters still apply.";
-"help_automaticFiltering" = "AI Filtering uses AI-generated keyword lists to detect spam and route messages to the Junk, Transactions or Promotions folder. The lists are updated periodically. Your regular filters are still applied when AI Filtering is on.";
 "faq_notFiltering_question" = "Why aren't my messages being filtered?";
 "faq_notFiltering_answer" = "Usually one of these:\n\n• Simply Filter SMS isn't selected as the filter in iOS Settings.\n• The thread is **iMessage** (blue bubbles), not SMS. Apple doesn't let any app filter those.\n• The sender is in **Contacts**. iOS skips filtering for them.\n\nOn the home screen, tap the ••• button at the top right, then **Filter Tools**, then **Test Your Filters**, and paste the sender and message. The test runs in the app even when filtering is off, so it can show filtered while Messages still delivers. If Simply Filter SMS is enabled in iOS Settings and the test still says it should have been filtered, email me.";
 "faq_smartFilters_question" = "What are Smart Filters?";
@@ -203,8 +202,8 @@
 "autoFilter_lastUpdated" = "Updated %@";
 "autoFilter_forceUpdate" = "Force Update";
 "autoFilter_neverUpdated" = "Never";
-"autoFilter_ON" = "ON";
-"autoFilter_OFF" = "OFF";
+"autoFilter_ON" = "On";
+"autoFilter_OFF" = "Off";
 "autoFilter_allUnknown" = "Block All Unknown";
 "autoFilter_links" = "Block Links";
 "autoFilter_numbersOnly" = "Allow Numbers Only";
@@ -232,6 +231,9 @@
 "autoFilter_countryAllowlist_explanation" = "Add the countries you want to allow messages from. Messages sent from phone numbers registered in countries not on this list will be filtered. Only senders with a full international calling code (e.g. +1, +972) are checked - senders without one are not affected.";
 "autoFilter_reportSpam" = "Report Spam";
 "autoFilter_improveAIFiltering" = "Improve AI Filtering";
+"autoFilter_description" = "Uses AI to catch spam from unknown senders and move it to **Junk** or **Promotions**. Your own filters still apply.";
+"autoFilter_turnOnHint" = "Turn on the languages you get messages in";
+"autoFilter_improveFooter" = "Report spam right from Messages. Every report makes AI Filtering better for everyone.";
 "communityLists_title" = "Community Lists";
 "communityLists_byAuthor" = "by %@";
 "communityLists_featured" = "Featured";

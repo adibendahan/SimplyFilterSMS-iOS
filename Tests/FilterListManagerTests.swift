@@ -113,7 +113,7 @@ class FilterListManagerTests: XCTestCase {
         let activeFilterListsTitleResult = self.testSubject.activeFilterListsTitle
         
         // Verify
-        XCTAssertEqual(activeFilterListsTitleResult, "\(NLLanguage.english.localizedName!), \(NLLanguage.hebrew.localizedName!).")
+        XCTAssertEqual(activeFilterListsTitleResult, "\(NLLanguage.english.localizedName!), \(NLLanguage.hebrew.localizedName!)")
         XCTAssertEqual(self.persistenceManager.fetchAutomaticFiltersLanguageRecordsCounter, 1)
         XCTAssertEqual(self.persistenceManager.cachedFilterListCatalogCounter, 1)
     }
@@ -178,6 +178,44 @@ class FilterListManagerTests: XCTestCase {
         XCTAssertEqual(self.persistenceManager.cachedFilterListCatalogCounter, 1)
     }
     
+    func test_filterListRuleCounts() {
+        // Prepare
+        let englishSection = self.section("en", etag: "en-1", text: "en")
+        let hebrewPayload = FilterExportPayload(format: FilterExportPayload.formatIdentifier,
+                                                version: FilterExportPayload.currentVersion,
+                                                exportedAt: Date(timeIntervalSince1970: 1_800_000_000),
+                                                appVersion: "3.3.0",
+                                                name: nil,
+                                                description: nil,
+                                                author: nil,
+                                                homepage: nil,
+                                                locale: nil,
+                                                filters: self.payload(text: "a").filters + self.payload(text: "b").filters,
+                                                forceClearBeforeImport: nil)
+        let hebrewSection = FilterListsCacheSection(url: self.section("he", etag: "he-1", text: "he").url,
+                                                    etag: "he-1",
+                                                    payload: hebrewPayload)
+        self.persistenceManager.cachedFilterListsClosure = {
+            return FilterListsSnapshot(catalogETag: "catalog-1",
+                                       catalog: self.catalog(["he", "en", "fr"]),
+                                       lists: [hebrewSection, englishSection])
+        }
+
+        // Act
+        let ruleCountsResult = self.testSubject.filterListRuleCounts
+
+        // Verify
+        XCTAssertEqual(ruleCountsResult, [.hebrew: 2, .english: 1])
+    }
+
+    func test_filterListRuleCounts_noCache() {
+        // Act
+        let ruleCountsResult = self.testSubject.filterListRuleCounts
+
+        // Verify
+        XCTAssertEqual(ruleCountsResult, [:])
+    }
+
     func test_isFilterListActive() {
         // Prepare
         self.persistenceManager.ensuredAutomaticFiltersLanguageRecordClosure = { language in

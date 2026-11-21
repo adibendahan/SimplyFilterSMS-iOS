@@ -20,6 +20,7 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var filterListsLastUpdatedGetCounter = 0
     var filterListsLastUpdatedSetCounter = 0
     var filterListLanguagesGetCounter = 0
+    var filterListRuleCountsGetCounter = 0
     var isFilterListActiveCounter = 0
     var setFilterListActiveCounter = 0
     var refreshFilterListsCounter = 0
@@ -37,6 +38,7 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var activeFilterListsTitleClosure: (() -> (String?))?
     var filterListsLastUpdatedClosure: (() -> (Date?))?
     var filterListLanguagesClosure: (() -> ([NLLanguage]))?
+    var filterListRuleCountsClosure: (() -> ([NLLanguage: Int]))?
     var isFilterListActiveClosure: ((NLLanguage) -> (Bool))?
     var setFilterListActiveClosure: ((NLLanguage, Bool) -> ())?
     var refreshFilterListsClosure: (() -> ())?
@@ -81,6 +83,11 @@ class mock_FilterListManager: FilterListManagerProtocol {
     var filterListLanguages: [NLLanguage] {
         self.filterListLanguagesGetCounter += 1
         return self.filterListLanguagesClosure?() ?? []
+    }
+
+    var filterListRuleCounts: [NLLanguage: Int] {
+        self.filterListRuleCountsGetCounter += 1
+        return self.filterListRuleCountsClosure?() ?? [:]
     }
     
     var communityLists: [CommunityListItem] {
@@ -142,6 +149,7 @@ class mock_FilterListManager: FilterListManagerProtocol {
         self.filterListsLastUpdatedGetCounter = 0
         self.filterListsLastUpdatedSetCounter = 0
         self.filterListLanguagesGetCounter = 0
+        self.filterListRuleCountsGetCounter = 0
         self.isFilterListActiveCounter = 0
         self.setFilterListActiveCounter = 0
         self.refreshFilterListsCounter = 0
