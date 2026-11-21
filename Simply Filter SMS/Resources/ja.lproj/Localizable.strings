@@ -418,8 +418,6 @@
 
 "a11y_home_shortSenderAction" = "文字数上限を変更";
 
-"a11y_footer_hint" = "ダブルタップでアプリ情報を表示";
-
 "a11y_filterRow_editHint" = "ダブルタップで編集";
 
 "a11y_about_versionHint" = "ダブルタップでバージョンをコピー";

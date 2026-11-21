@@ -502,8 +502,6 @@
 
 "a11y_home_shortSenderAction" = "更改字符限制";
 
-"a11y_footer_hint" = "轻点两下以查看 App 信息";
-
 "a11y_filterRow_editHint" = "轻点两下以编辑";
 
 "a11y_about_versionHint" = "轻点两下以复制版本";

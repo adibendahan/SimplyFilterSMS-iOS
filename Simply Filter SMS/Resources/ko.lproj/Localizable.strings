@@ -418,8 +418,6 @@
 
 "a11y_home_shortSenderAction" = "글자 수 제한 변경";
 
-"a11y_footer_hint" = "이중 탭하여 앱 정보 보기";
-
 "a11y_filterRow_editHint" = "이중 탭하여 편집";
 
 "a11y_about_versionHint" = "이중 탭하여 버전 복사";

@@ -400,8 +400,6 @@
 
 "a11y_home_shortSenderAction" = "Zeichenlimit ändern";
 
-"a11y_footer_hint" = "Doppeltippen, um App-Info anzuzeigen";
-
 "a11y_filterRow_editHint" = "Doppeltippen, um zu bearbeiten";
 
 "a11y_about_versionHint" = "Doppeltippen, um Version zu kopieren";

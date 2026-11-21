@@ -392,7 +392,6 @@
 "a11y_filterRow_folderLabel" = "Folder: %@";
 "a11y_home_shortSenderHint" = "Currently %ld characters. Use actions to change the character limit";
 "a11y_home_shortSenderAction" = "Change character limit";
-"a11y_footer_hint" = "Double tap to view app info";
 "a11y_filterRow_editHint" = "Double tap to edit";
 "a11y_about_versionHint" = "Double tap to copy version";
 "a11y_about_versionCopied" = "Version";

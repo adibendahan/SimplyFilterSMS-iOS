@@ -400,8 +400,6 @@
 
 "a11y_home_shortSenderAction" = "Cambiar límite de caracteres";
 
-"a11y_footer_hint" = "Toca dos veces para ver información de la app";
-
 "a11y_filterRow_editHint" = "Toca dos veces para editar";
 
 "a11y_about_versionHint" = "Toca dos veces para copiar la versión";

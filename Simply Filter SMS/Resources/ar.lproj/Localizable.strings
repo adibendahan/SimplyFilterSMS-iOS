@@ -400,8 +400,6 @@
 
 "a11y_home_shortSenderAction" = "تغيير حد الأحرف";
 
-"a11y_footer_hint" = "اضغط مرتين لعرض معلومات التطبيق";
-
 "a11y_filterRow_editHint" = "اضغط مرتين للتعديل";
 
 "a11y_about_versionHint" = "اضغط مرتين لنسخ الإصدار";

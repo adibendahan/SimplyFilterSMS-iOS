@@ -70,7 +70,8 @@ extension FeatureStatusHeader {
             case .communityLists:
                 return "communityLists_description"~
             }
-        }    }
+        }
+    }
 }
 
 
