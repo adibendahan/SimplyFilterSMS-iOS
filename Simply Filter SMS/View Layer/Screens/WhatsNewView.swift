@@ -255,12 +255,10 @@ extension WhatsNewView {
         let earlierSections: [ReleaseSection]
         var onActionableEntryTapped: ((WhatsNewEntry) -> Void)?
 
-        private static let orbitCapacity = 6
-
         init(appManager: AppManagerProtocol = AppManager.shared, onActionableEntryTapped: ((WhatsNewEntry) -> Void)? = nil) {
             let entries = WhatsNewEntry.allCases.sorted { $0.order < $1.order }
             let sections = ViewModel.releaseSections(for: entries)
-            self.orbitEntries = Array(entries.prefix(ViewModel.orbitCapacity))
+            self.orbitEntries = ViewModel.orbitEntries(from: entries)
             self.currentSection = sections.first
             self.earlierSections = Array(sections.dropFirst())
             self.onActionableEntryTapped = onActionableEntryTapped
@@ -277,6 +275,16 @@ extension WhatsNewView {
 
 
         //MARK: - Private -
+        private static func orbitEntries(from entries: [WhatsNewEntry]) -> [WhatsNewEntry] {
+            var positioned: [(entry: WhatsNewEntry, position: Int)] = []
+            for entry in entries {
+                guard let position = entry.orbitPosition else { continue }
+                positioned.append((entry: entry, position: position))
+            }
+            let sorted = positioned.sorted { $0.position < $1.position }
+            return sorted.map { $0.entry }
+        }
+
         private static func releaseSections(for entries: [WhatsNewEntry]) -> [ReleaseSection] {
             var releases: [String] = []
             for entry in entries where !releases.contains(entry.release) {

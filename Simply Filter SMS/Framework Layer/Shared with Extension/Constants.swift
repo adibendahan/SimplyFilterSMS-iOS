@@ -796,7 +796,7 @@ enum WhatsNewEntry: String, CaseIterable {
         case .accentColor:
             return .pink
         case .help:
-            return .orange
+            return .green
         case .communityLists:
             return .indigo
         case .siriShortcuts:
@@ -813,6 +813,25 @@ enum WhatsNewEntry: String, CaseIterable {
             return .cyan
         case .singleChar:
             return .mint
+        }
+    }
+
+    var orbitPosition: Int? {
+        switch self {
+        case .communityLists:
+            return 0
+        case .siriShortcuts:
+            return 1
+        case .filterTransfer:
+            return 2
+        case .accentColor:
+            return 3
+        case .aiFiltering:
+            return 4
+        case .regexFilters:
+            return 5
+        case .help, .newLanguages, .trustedCountries, .accessibility, .tipJar, .ipad, .quickAddFilter, .singleChar:
+            return nil
         }
     }
 
