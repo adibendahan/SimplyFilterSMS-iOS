@@ -44,6 +44,7 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                         }
                         .accessibilityIdentifier("\(TestIdentifier.filterListLanguageToggle.rawValue)-\(language.rawValue)")
                         .settle(delay: LanguagesMotion.rowDelay(for: index))
+                        .revealHighlight(isRevealed: self.model.revealedLanguage == language)
                     }
                 }
 
@@ -186,6 +187,7 @@ extension FilterListLanguagesView {
         @Published private(set) var isLoading: Bool
         @Published private(set) var isOnline: Bool
         @Published var languages: [StatefulItem<NLLanguage>] = []
+        @Published private(set) var revealedLanguage: NLLanguage?
         @Published var sheetScreen: Screen? = nil {
             didSet {
                 guard oldValue != self.sheetScreen else { return }
@@ -206,6 +208,7 @@ extension FilterListLanguagesView {
             self.languages = self.makeLanguages()
             self.nativeNames = self.makeNativeNames()
             self.ruleCountTexts = self.makeRuleCountTexts()
+            self.revealSearchFocus()
         }
 
         var activeLanguagesCount: Int {
@@ -304,6 +307,21 @@ extension FilterListLanguagesView {
                 }
             }
 
+        }
+
+        private func revealSearchFocus() {
+            guard let language = self.appManager.searchManager.takeFocus(\.language) else { return }
+            guard self.languages.contains(where: { $0.item == language }) else {
+                Log.debug("search focus not found, language: \(language.rawValue) → skipped")
+                return
+            }
+            Log.debug("search focus revealed, language: \(language.rawValue)")
+            self.revealedLanguage = language
+            DispatchQueue.main.asyncAfter(deadline: .now() + kSearchRevealDuration) { [weak self] in
+                if self?.revealedLanguage == language {
+                    self?.revealedLanguage = nil
+                }
+            }
         }
 
         private func makeLanguages() -> [StatefulItem<NLLanguage>] {

@@ -15,10 +15,12 @@ class ScenarioTestCase: XCTestCase {
         self.continueAfterFailure = false
     }
 
-    func launchApp(remoteLists: SimplyFilterApp.RemoteLists = .off, phoneLanguages: [Language] = [.english]) -> SimplyFilterApp {
+    func launchApp(remoteLists: SimplyFilterApp.RemoteLists = .off,
+                   phoneLanguages: [Language] = [.english],
+                   startingData: SimplyFilterApp.StartingData = .empty) -> SimplyFilterApp {
         if UIDevice.current.userInterfaceIdiom == .pad {
             XCUIDevice.shared.orientation = .landscapeRight
         }
-        return SimplyFilterApp(remoteLists: remoteLists, phoneLanguages: phoneLanguages)
+        return SimplyFilterApp(remoteLists: remoteLists, phoneLanguages: phoneLanguages, startingData: startingData)
     }
 }

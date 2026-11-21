@@ -888,4 +888,30 @@
 
 "communityLists_description" = "ほかの人が作成して共有したフィルタリストです。オンにしたリストは、不明な送信者からのメッセージを**迷惑メール**、**トランザクション**、**プロモーション**に振り分け、自動で更新されます。";
 
+"search_menu" = "メニュー";
+
+"search_recent" = "最近の検索";
+
+"search_clearRecent" = "消去";
+
+"search_suggestions" = "候補";
+
+"spotlight_allowList_keywords" = "許可, 許可済み, ホワイトリスト, 信頼, 安全な送信者, ブロックしない";
+
+"spotlight_blockList_keywords" = "ブロック, ブロック済み, ブラックリスト, スパム, 迷惑メール, 単語, 送信者";
+
+"spotlight_blockedLanguages_keywords" = "言語, 外国語, 言語をブロック, 文字";
+
+"spotlight_communityLists_keywords" = "コミュニティ, 共有, リスト, 登録, スパムリスト";
+
+"spotlight_aiFiltering_keywords" = "AI, 自動, スマート, スパム, 迷惑メール, 保護, 言語";
+
+"spotlight_testFilters_keywords" = "テスト, 確認, 試す, メッセージ, テスター";
+
+"spotlight_reportMessage_keywords" = "報告, スパム, 迷惑メール, 見逃したスパム, 改善";
+
+"whatsNew_search_title" = "検索とSpotlight";
+
+"whatsNew_search_desc" = "メイン画面の**検索**から、フィルタ、リスト、設定、回答をすぐに見つけられます。リストやツールはiPhoneの**Spotlight**にも表示されます - 名前を入力するだけです。";
+
 

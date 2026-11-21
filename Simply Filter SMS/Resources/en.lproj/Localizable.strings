@@ -269,6 +269,17 @@
 "inactivityNotification_reminder_title" = "Your AI filter lists haven't updated";
 "inactivityNotification_reminder_body" = "Open Simply Filter SMS to update them and keep filtering messages from unknown senders.";
 "general_search" = "Search";
+"search_menu" = "Menu";
+"search_recent" = "Recent";
+"search_suggestions" = "Suggestions";
+"search_clearRecent" = "Clear";
+"spotlight_allowList_keywords" = "allow, allowed, whitelist, trusted, safe senders, never block";
+"spotlight_blockList_keywords" = "block, blocked, blacklist, spam, junk, words, senders";
+"spotlight_blockedLanguages_keywords" = "language, languages, foreign, block language, alphabet";
+"spotlight_communityLists_keywords" = "community, shared, lists, subscribe, spam lists";
+"spotlight_aiFiltering_keywords" = "AI, automatic, smart, spam, junk, protection, languages";
+"spotlight_testFilters_keywords" = "test, check, try, message, tester";
+"spotlight_reportMessage_keywords" = "report, spam, junk, missed spam, improve";
 "general_more" = "more";
 "general_selected" = "Selected";
 "general_all" = "All Countries";
@@ -496,6 +507,8 @@
 "whatsNew_communityLists_action" = "Browse Community Lists";
 "whatsNew_siriShortcuts_title" = "Siri & Shortcuts";
 "whatsNew_siriShortcuts_desc" = "Add, remove and check filters with Siri: try **“Add to my Block List in Simply Filter SMS”**. All the actions are in the **Shortcuts** app too.";
+"whatsNew_search_title" = "Search & Spotlight";
+"whatsNew_search_desc" = "Find any filter, list, setting or answer from **Search** on the home screen. Your lists and tools show up in iPhone **Spotlight** too - just type their name.";
 
 "whatsNew_quickAddFilter_title" = "Quick Add Filters";
 

@@ -888,4 +888,30 @@
 
 "communityLists_description" = "قوائم تصفية أنشأها أشخاص آخرون وشاركوها. توجّه القوائم المفعّلة الرسائل من المرسلين غير المعروفين إلى **غير مرغوب فيه** أو **المعاملات** أو **العروض الترويجية**، وتتحدّث تلقائيًا.";
 
+"search_menu" = "القائمة";
+
+"search_recent" = "عمليات البحث الأخيرة";
+
+"search_clearRecent" = "مسح";
+
+"search_suggestions" = "اقتراحات";
+
+"spotlight_allowList_keywords" = "سماح, مسموح, قائمة بيضاء, موثوق, مرسلون آمنون, عدم الحظر";
+
+"spotlight_blockList_keywords" = "حظر, محظور, قائمة سوداء, رسائل مزعجة, غير مرغوب فيه, كلمات, مرسلون";
+
+"spotlight_blockedLanguages_keywords" = "لغة, لغات, أجنبية, حظر لغة, أبجدية";
+
+"spotlight_communityLists_keywords" = "مجتمع, مشتركة, قوائم, اشتراك, قوائم الرسائل المزعجة";
+
+"spotlight_aiFiltering_keywords" = "AI, ذكاء اصطناعي, تلقائي, ذكي, رسائل مزعجة, غير مرغوب فيه, حماية, لغات";
+
+"spotlight_testFilters_keywords" = "اختبار, فحص, تجربة, رسالة, مختبر";
+
+"spotlight_reportMessage_keywords" = "إبلاغ, رسائل مزعجة, غير مرغوب فيه, رسالة مزعجة فائتة, تحسين";
+
+"whatsNew_search_title" = "البحث وSpotlight";
+
+"whatsNew_search_desc" = "اعثر على أي مرشّح أو قائمة أو إعداد أو إجابة من **بحث** في الشاشة الرئيسية. تظهر قوائمك وأدواتك في **Spotlight** على iPhone أيضًا - اكتب اسمها فقط.";
+
 

@@ -299,12 +299,12 @@ struct ListEmptyStateView: View {
 
 //MARK: - Motion -
 private enum Motion {
-    static let entranceDelay: TimeInterval = 0.25
+    static let entranceDelay: TimeInterval = 0.1
     static let arrivalDelay: TimeInterval = 0.35
     static let footerFadeDuration: TimeInterval = 0.15
-    static let titleDelay: TimeInterval = 0.3
-    static let captionDelay: TimeInterval = 0.36
-    static let buttonDelay: TimeInterval = 0.42
+    static let titleDelay: TimeInterval = 0.15
+    static let captionDelay: TimeInterval = 0.21
+    static let buttonDelay: TimeInterval = 0.27
     static let badgePopDelay: TimeInterval = 0.22
     static let badgeBounceDelay: TimeInterval = 0.45
     static let illustrationRise: CGFloat = 28

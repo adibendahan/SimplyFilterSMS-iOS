@@ -258,6 +258,44 @@ private struct BounceOnAppearModifier: ViewModifier {
     }
 }
 
+private enum RevealHighlightMotion {
+    static let fade = Animation.easeOut(duration: 0.8).delay(0.6)
+    static let rowBleed: CGFloat = -40
+}
+
+private struct RevealHighlightModifier: ViewModifier {
+    let isRevealed: Bool
+
+    @State private var highlightOpacity: Double = 0
+
+    func body(content: Content) -> some View {
+        content
+            .background {
+                Color(UIColor.systemGray4)
+                    .padding(RevealHighlightMotion.rowBleed)
+                    .opacity(self.highlightOpacity)
+                    .allowsHitTesting(false)
+            }
+            .onAppear {
+                guard self.isRevealed else { return }
+                self.flash()
+            }
+            .onChange(of: self.isRevealed) { _, isRevealed in
+                guard isRevealed else { return }
+                self.flash()
+            }
+    }
+
+    private func flash() {
+        self.highlightOpacity = 1
+        DispatchQueue.main.async {
+            withAnimation(RevealHighlightMotion.fade) {
+                self.highlightOpacity = 0
+            }
+        }
+    }
+}
+
 
 private struct BreatheModifier: ViewModifier {
     @Environment(\.accessibilityReduceMotion)
@@ -529,6 +567,19 @@ private struct MotionAnimationModifier<Value: Equatable>: ViewModifier {
     }
 }
 
+private struct MotionOrFadeAnimationModifier<Value: Equatable>: ViewModifier {
+    let animation: Animation
+    let value: Value
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .animation(self.reduceMotion ? ReducedMotion.fade : self.animation, value: self.value)
+    }
+}
+
 private struct MotionTransactionModifier: ViewModifier {
     @Environment(\.accessibilityReduceMotion)
     private var reduceMotion
@@ -591,6 +642,10 @@ extension View {
         return self.modifier(BounceOnAppearModifier(isShown: isShown, delay: delay, bouncesOnTap: bouncesOnTap))
     }
 
+    func revealHighlight(isRevealed: Bool) -> some View {
+        return self.modifier(RevealHighlightModifier(isRevealed: isRevealed))
+    }
+
     func breathe() -> some View {
         return self.modifier(BreatheModifier())
     }
@@ -609,6 +664,10 @@ extension View {
 
     func motionAnimation<Value: Equatable>(_ animation: Animation?, value: Value) -> some View {
         return self.modifier(MotionAnimationModifier(animation: animation, value: value))
+    }
+
+    func motionOrFadeAnimation<Value: Equatable>(_ animation: Animation, value: Value) -> some View {
+        return self.modifier(MotionOrFadeAnimationModifier(animation: animation, value: value))
     }
 
     func motionTransaction() -> some View {

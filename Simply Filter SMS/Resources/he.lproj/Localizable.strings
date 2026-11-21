@@ -888,4 +888,30 @@
 
 "autoFilter_improveFooter" = "אפשר לדווח על ספאם ישירות מאפליקציית ההודעות. כל דיווח משפר את סינון AI לכולם.";
 
+"search_menu" = "תפריט";
+
+"search_recent" = "חיפושים אחרונים";
+
+"search_clearRecent" = "ניקוי";
+
+"search_suggestions" = "הצעות";
+
+"spotlight_allowList_keywords" = "אישור, מאושרים, רשימה לבנה, אמינים, שולחים בטוחים, לא לחסום";
+
+"spotlight_blockList_keywords" = "חסימה, חסומים, רשימה שחורה, ספאם, זבל, מילים, שולחים";
+
+"spotlight_blockedLanguages_keywords" = "שפה, שפות, זרה, חסימת שפה, אלפבית";
+
+"spotlight_communityLists_keywords" = "קהילה, משותפות, רשימות, הרשמה, רשימות ספאם";
+
+"spotlight_aiFiltering_keywords" = "AI, בינה מלאכותית, אוטומטי, חכם, ספאם, זבל, הגנה, שפות";
+
+"spotlight_testFilters_keywords" = "בדיקה, לבדוק, לנסות, הודעה, בוחן";
+
+"spotlight_reportMessage_keywords" = "דיווח, ספאם, זבל, ספאם שפספס, שיפור";
+
+"whatsNew_search_title" = "חיפוש ו-Spotlight";
+
+"whatsNew_search_desc" = "מוצאים כל פילטר, רשימה, הגדרה או תשובה דרך **חיפוש** במסך הראשי. גם הרשימות והכלים מופיעים ב-**Spotlight** של האייפון - פשוט מקלידים את השם שלהם.";
+
 

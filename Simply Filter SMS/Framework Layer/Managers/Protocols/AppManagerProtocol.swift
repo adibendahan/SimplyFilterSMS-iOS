@@ -20,6 +20,7 @@ protocol AppManagerProtocol {
     var filterTransferManager: FilterTransferManagerProtocol { get }
     var flowManager: FlowManagerProtocol { get }
     var schedulingManager: SchedulingManagerProtocol { get }
+    var searchManager: SearchManagerProtocol { get }
 
     @MainActor func onAppLaunch()
     @MainActor func onAppBecameActive() -> Bool

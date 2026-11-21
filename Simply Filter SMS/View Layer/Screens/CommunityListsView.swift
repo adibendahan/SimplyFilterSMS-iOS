@@ -118,9 +118,12 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
     @ViewBuilder
     private func rows(for rowModel: CommunityListRowView.ViewModel) -> some View {
         CommunityListRowView(model: rowModel, isExpanded: self.expansion(rowModel))
+            .revealHighlight(isRevealed: self.model.revealedCommunityListID == rowModel.id)
 
         if self.model.expandedCommunityListID == rowModel.id {
             CommunityListDetails(communityList: rowModel.communityList)
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier(TestIdentifier.communityListDetails.rawValue)
                 .padding(.leading, self.detailsIndent)
                 .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 16, trailing: 20))
                 .listRowSeparator(.hidden)
@@ -182,6 +185,7 @@ extension CommunityListsView {
         @Published private(set) var rowViewModels: [CommunityListRowView.ViewModel] = []
         @Published var editMode: EditMode = .inactive
         @Published var expandedCommunityListID: String?
+        @Published private(set) var revealedCommunityListID: String?
         @Published var addCommunityListViewModel: AddCommunityListView.ViewModel? = nil {
             didSet {
                 let wasShown = oldValue != nil
@@ -195,6 +199,7 @@ extension CommunityListsView {
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             super.init(appManager: appManager)
             self.updateRowViewModels()
+            self.revealSearchFocus()
         }
 
         func startMonitoring() {
@@ -292,6 +297,22 @@ extension CommunityListsView {
             Task {
                 DispatchQueue.main.async {
                     self.refresh()
+                }
+            }
+        }
+
+        private func revealSearchFocus() {
+            guard let id = self.appManager.searchManager.takeFocus(\.communityListID) else { return }
+            guard self.rowViewModels.contains(where: { $0.id == id }) else {
+                Log.debug("search focus not found, list: \(id) → skipped")
+                return
+            }
+            Log.debug("search focus revealed, list: \(id)")
+            self.expandedCommunityListID = id
+            self.revealedCommunityListID = id
+            DispatchQueue.main.asyncAfter(deadline: .now() + kSearchRevealDuration) { [weak self] in
+                if self?.revealedCommunityListID == id {
+                    self?.revealedCommunityListID = nil
                 }
             }
         }

@@ -25,6 +25,7 @@ class AppManager: AppManagerProtocol {
     var filterTransferManager: FilterTransferManagerProtocol
     var flowManager: FlowManagerProtocol
     var schedulingManager: SchedulingManagerProtocol
+    var searchManager: SearchManagerProtocol
     var debugDataManager: DebugDataManagerProtocol
 
     init(inMemory: Bool = false) {
@@ -54,6 +55,10 @@ class AppManager: AppManagerProtocol {
                                        filterListManager: filterListManager)
         self.schedulingManager = SchedulingManager(filterListManager: filterListManager,
                                                    defaultsManager: defaultsManager)
+        self.searchManager = SearchManager(persistenceManager: persistenceManager,
+                                           defaultsManager: defaultsManager,
+                                           smartFilterManager: smartFilterManager,
+                                           filterListManager: filterListManager)
         self.debugDataManager = DebugDataManager(persistenceManager: persistenceManager,
                                                  defaultsManager: defaultsManager,
                                                  filterListManager: filterListManager,
@@ -74,6 +79,10 @@ class AppManager: AppManagerProtocol {
                 Log.debug("testing mode, screenshotData: \(Bundle.main.preferredLocalizations[0]) → debug data loaded")
                 self.debugDataManager.load()
                 self.debugDataManager.expireFilterListsCache()
+            }
+            else if ProcessInfo.processInfo.isUsingDebugData {
+                Log.debug("testing mode, debugData: \(Bundle.main.preferredLocalizations[0]) → debug data loaded")
+                self.debugDataManager.load()
             }
             self.flowManager.resetSession()
         }
@@ -114,6 +123,7 @@ class AppManager: AppManagerProtocol {
         self.defaultsManager.sessionStartDate = Date()
         Log.debug("session started, session: \(self.defaultsManager.sessionCounter)")
         self.filterListManager.updateFilterListsWhenOnline()
+        self.searchManager.resetSession()
     }
     
     #if DEBUG

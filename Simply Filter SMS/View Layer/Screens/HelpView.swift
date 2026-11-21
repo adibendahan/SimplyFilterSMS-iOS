@@ -33,7 +33,7 @@ struct HelpView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack(path: self.$model.path) {
             List {
                 Section {
                     Button {
@@ -139,11 +139,7 @@ struct HelpView: View {
                 }
 
                 Section {
-                    NavigationLink {
-                        FAQView(model: model.faqViewModel) {
-                            dismiss()
-                        }
-                    } label: {
+                    NavigationLink(value: Route.faq) {
                         AdaptiveRow {
                             Image(systemName: "questionmark.bubble")
                                 .foregroundStyle(.tint)
@@ -216,6 +212,11 @@ struct HelpView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .navigationDestination(for: Route.self) { _ in
+                FAQView(model: self.model.faqViewModel) {
+                    self.dismiss()
+                }
+            }
             .navigationTitle("menu_help"~)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
@@ -235,7 +236,6 @@ struct HelpView: View {
                     .edgesIgnoringSafeArea(.bottom)
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
         .ignoresSafeArea(.container, edges: .bottom)
     }
 
@@ -285,6 +285,10 @@ enum HelpSiriTip: CaseIterable, Hashable {
 //MARK: - ViewModel -
 extension HelpView {
 
+    enum Route: Hashable {
+        case faq
+    }
+
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var siriTipSlot: Int?
         let siriTipLanguage: LanguageEntity?
@@ -302,6 +306,7 @@ extension HelpView {
             }
         }
         @Published var result: Result<MFMailComposeResult, Error>?
+        @Published var path: [Route] = []
         var onRequestScreen: ((Screen) -> Void)?
         let faqViewModel: FAQView.ViewModel
 
@@ -313,6 +318,7 @@ extension HelpView {
             self.siriTipLanguage = Self.makeSiriTipLanguage()
             self.faqViewModel = FAQView.ViewModel(appManager: appManager)
             super.init(appManager: appManager)
+            self.revealSearchFocus()
         }
 
         var siriTipSlots: [Int] {
@@ -343,6 +349,12 @@ extension HelpView {
 
 
         //MARK: - Private -
+        private func revealSearchFocus() {
+            guard let faq = self.appManager.searchManager.takeFocus(\.faq) else { return }
+            self.faqViewModel.reveal(faq)
+            self.path = [.faq]
+        }
+
         private static let siriTipCopies = 3
 
         private static func makeSiriTipLanguage() -> LanguageEntity? {

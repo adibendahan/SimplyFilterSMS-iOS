@@ -888,4 +888,30 @@
 
 "communityLists_description" = "Listas de filtros criadas e compartilhadas por outras pessoas. As listas que você ativar enviam mensagens de remetentes desconhecidos para **Lixo Eletrônico**, **Transações** ou **Promoções**, e se atualizam sozinhas.";
 
+"search_menu" = "Menu";
+
+"search_recent" = "Recentes";
+
+"search_clearRecent" = "Limpar";
+
+"search_suggestions" = "Sugestões";
+
+"spotlight_allowList_keywords" = "permitir, permitidos, lista branca, confiáveis, remetentes seguros, nunca bloquear";
+
+"spotlight_blockList_keywords" = "bloquear, bloqueados, lista negra, spam, lixo eletrônico, palavras, remetentes";
+
+"spotlight_blockedLanguages_keywords" = "idioma, idiomas, estrangeiro, bloquear idioma, alfabeto";
+
+"spotlight_communityLists_keywords" = "comunidade, compartilhadas, listas, assinar, listas de spam";
+
+"spotlight_aiFiltering_keywords" = "AI, IA, automático, inteligente, spam, lixo eletrônico, proteção, idiomas";
+
+"spotlight_testFilters_keywords" = "testar, verificar, experimentar, mensagem, testador";
+
+"spotlight_reportMessage_keywords" = "reportar, spam, lixo eletrônico, spam não detectado, melhorar";
+
+"whatsNew_search_title" = "Busca e Spotlight";
+
+"whatsNew_search_desc" = "Encontre qualquer filtro, lista, ajuste ou resposta em **Buscar** na tela principal. Suas listas e ferramentas também aparecem no **Spotlight** do iPhone - é só digitar o nome.";
+
 

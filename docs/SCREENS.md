@@ -9,6 +9,8 @@ The main screen: AI Filtering, the smart rules, and the three user filter lists;
 - `refresh()` reloads everything from the managers, and runs on every pop, sheet dismiss and relevant notification.
 - `startMonitoring()` compares the store fingerprint with the UI once on its own, in case a CloudKit import finished before the observers were registered.
 - The What's New sheet is marked seen on any user dismiss, swipe included, but not when a file or deep link replaces it (`isReplacingSheetForLaunch`).
+- **Pushing from code on iPhone goes through the list selection (`selectedScreen`).** Setting `navigationScreen` alone only works on iPad, where the split view shows it; on iPhone nothing is pushed. Search requests its pushes through `searchPushRequest` for this reason.
+- **Search results that land on one item** go through `SearchManager`'s single pending focus, because `Screen` can't carry it. The destination ViewModel takes it when it opens (`revealSearchFocus()`); a new destination takes it the same way, or the focus waits for the next screen of that kind.
 
 ## EnableExtensionView
 A generic step-by-step setup sheet, built with different steps for first-run onboarding, enabling the message filter, and enabling the Reporting Extension (`EnableReportingExtensionStep`).
