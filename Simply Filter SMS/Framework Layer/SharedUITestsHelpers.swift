@@ -24,11 +24,13 @@ extension ProcessInfo {
         return arguments.contains("-DebugData")
     }
 
+    #if DEBUG
     var screenshotFilterListsFolder: URL? {
         guard self.isUsingScreenshotData,
               let path = self.environment["SCREENSHOT_FILTER_LISTS"] else { return nil }
         return URL(fileURLWithPath: path, isDirectory: true)
     }
+    #endif // DEBUG
 
     var shouldSkipFilterListsUpdate: Bool {
         return self.isInTestingMode && !self.isUsingUITestData && !self.isUsingScreenshotData
