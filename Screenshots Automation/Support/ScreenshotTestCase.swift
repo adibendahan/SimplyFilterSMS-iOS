@@ -14,6 +14,11 @@ class ScreenshotTestCase: XCTestCase {
         self.continueAfterFailure = false
     }
 
+    override func tearDown() async throws {
+        self.deliverIfPassed()
+        try await super.tearDown()
+    }
+
     func launchStudio() -> ScreenshotStudio {
         if UIDevice.current.userInterfaceIdiom == .pad {
             XCUIDevice.shared.orientation = .landscapeRight
@@ -40,11 +45,34 @@ class ScreenshotTestCase: XCTestCase {
         attachment.name = shot.attachmentName(on: studio.device)
         attachment.lifetime = .keepAlways
         self.add(attachment)
+        let pendingShot = PendingShot(data: data, fileName: shot.fileName(on: studio.device))
+        self.pendingShots.append(pendingShot)
     }
 
     //MARK: - Private -
     private var studio: ScreenshotStudio?
     private let settleDuration: TimeInterval = 1.5
+    private let deliveryFolderKey = "SCREENSHOT_DELIVERY_FOLDER"
+    private var pendingShots: [PendingShot] = []
+
+    private struct PendingShot {
+        let data: Data
+        let fileName: String
+    }
+
+    private func deliverIfPassed() {
+        let failureCount = self.testRun?.totalFailureCount ?? 0
+        guard let folder = ProcessInfo.processInfo.environment[self.deliveryFolderKey],
+              failureCount == 0 else { return }
+        for pendingShot in self.pendingShots {
+            let destination = URL(fileURLWithPath: folder).appendingPathComponent(pendingShot.fileName)
+            do {
+                try pendingShot.data.write(to: destination, options: .atomic)
+            } catch {
+                XCTFail("\(pendingShot.fileName) could not be written to \(folder): \(error)")
+            }
+        }
+    }
 
     private func settle() {
         let animationsFinished = XCTestExpectation(description: "animations finished")

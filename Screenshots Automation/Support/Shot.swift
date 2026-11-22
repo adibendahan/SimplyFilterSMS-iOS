@@ -23,6 +23,11 @@ enum Shot: Int, CaseIterable {
         return "screenshot~\(StudioLanguage.current.rawValue)~\(device.rawValue)~\(number)-\(self.slug)"
     }
 
+    func fileName(on device: ShotDevice) -> String {
+        let number = String(format: "%02d", self.rawValue)
+        return "\(device.rawValue)-\(number)-\(self.slug).png"
+    }
+
     //MARK: - Private -
     private var slug: String {
         switch self {
