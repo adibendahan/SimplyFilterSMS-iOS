@@ -1,5 +1,8 @@
-¡Simply Filter SMS 4.0.0 ya está aquí, con las Listas de la comunidad! 🎉
+¡Simply Filter SMS 4.0.0 ya está aquí! 🎉
 
-Suscríbete a listas de filtros que comparten otras personas, o comparte la tuya. Las listas se actualizan solas cuando sus autores publican una versión nueva. Las encontrarás en 'Tus filtros'.
+• Un nuevo aspecto - Un icono renovado, pantallas rediseñadas y animaciones más fluidas en toda la app.
+• Listas de la comunidad - Suscríbete a listas de filtros que comparten otras personas, o comparte la tuya. Las listas se actualizan solas cuando sus autores publican una versión nueva. Las encontrarás en 'Tus listas', en la pantalla principal.
+• Siri y Atajos - Añade, elimina y comprueba filtros con Siri o desde la app Atajos.
+• Búsqueda y Spotlight - Encuentra cualquier filtro, lista, ajuste o respuesta desde Buscar en la pantalla principal o desde Spotlight en el iPhone.
 
 Además, correcciones de errores y mejoras.
