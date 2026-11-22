@@ -215,6 +215,20 @@ extension AdaptiveColumnHeader where Leading == EmptyView {
     }
 }
 
+private struct AdaptiveLineLimit: ViewModifier {
+    @Environment(\.needsStackedLayout) private var needsStackedLayout
+
+    let limit: Int
+
+    func body(content: Content) -> some View {
+        if needsStackedLayout {
+            content.lineLimit(nil)
+        } else {
+            content.lineLimit(limit)
+        }
+    }
+}
+
 extension View {
     func adaptiveLayoutEnvironment() -> some View {
         modifier(AdaptiveLayoutEnvironment())
@@ -226,6 +240,10 @@ extension View {
 
     func adaptiveStackedRowPadding() -> some View {
         modifier(AdaptiveStackedRowPadding())
+    }
+
+    func adaptiveLineLimit(_ limit: Int) -> some View {
+        modifier(AdaptiveLineLimit(limit: limit))
     }
 
     func limitedDynamicTypeSize(_ max: DynamicTypeSize = .xxxLarge) -> some View {

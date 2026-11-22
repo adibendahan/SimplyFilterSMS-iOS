@@ -19,6 +19,7 @@ struct HomeSearchModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .accessibilityHidden(self.model.isShowingOverlay)
             .overlay {
                 ZStack {
                     if self.model.isShowingOverlay {
