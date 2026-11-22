@@ -422,6 +422,108 @@ private struct SpinnerSwapModifier: ViewModifier {
     }
 }
 
+private enum CollapseToCircleMotion {
+    static let animation = Animation.spring(response: 0.5, dampingFraction: 0.85)
+}
+
+private struct CollapseToCircleModifier: ViewModifier {
+    let diameter: CGFloat
+
+    @State private var isCollapsed = ReducedMotion.isEnabled
+
+    func body(content: Content) -> some View {
+        content
+            .frame(maxWidth: self.isCollapsed ? self.diameter : .infinity)
+            .onAppear {
+                guard !self.isCollapsed else { return }
+                DispatchQueue.main.async {
+                    withAnimation(CollapseToCircleMotion.animation) {
+                        self.isCollapsed = true
+                    }
+                }
+            }
+    }
+}
+
+
+//MARK: - Celebration -
+private enum CelebrateMotion {
+    static let sparkCount = 8
+    static let sparkSize: CGFloat = 6
+    static let sparkTravel: CGFloat = 26
+    static let burstDuration: Double = 0.6
+    static let thumpScale: CGFloat = 1.18
+    static let thumpRise: Double = 0.14
+    static let thumpSettle: Double = 0.36
+
+    static func angle(for index: Int) -> Angle {
+        return .degrees(360 / Double(CelebrateMotion.sparkCount) * Double(index))
+    }
+}
+
+private struct SparkBurst: View {
+    let color: Color
+    let progress: CGFloat
+
+    var body: some View {
+        GeometryReader { proxy in
+            let radius = min(proxy.size.width, proxy.size.height) / 2
+            ZStack {
+                ForEach(0..<CelebrateMotion.sparkCount, id: \.self) { index in
+                    Circle()
+                        .fill(self.color)
+                        .frame(width: CelebrateMotion.sparkSize, height: CelebrateMotion.sparkSize)
+                        .offset(y: -(radius + CelebrateMotion.sparkTravel * self.progress))
+                        .rotationEffect(CelebrateMotion.angle(for: index))
+                }
+            }
+            .frame(width: proxy.size.width, height: proxy.size.height)
+            .opacity(1 - self.progress)
+        }
+    }
+}
+
+private struct CelebrateModifier: ViewModifier {
+    let isCelebrating: Bool
+    let color: Color
+
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    @State private var trigger = 0
+
+    func body(content: Content) -> some View {
+        content
+            .keyframeAnimator(initialValue: CGFloat(1), trigger: self.trigger) { view, scale in
+                view.scaleEffect(scale)
+            } keyframes: { _ in
+                KeyframeTrack {
+                    CubicKeyframe(CelebrateMotion.thumpScale, duration: CelebrateMotion.thumpRise)
+                    SpringKeyframe(1, duration: CelebrateMotion.thumpSettle, spring: .bouncy)
+                }
+            }
+            .overlay {
+                Color.clear
+                    .keyframeAnimator(initialValue: CGFloat(1), trigger: self.trigger) { view, progress in
+                        view.overlay {
+                            SparkBurst(color: self.color, progress: progress)
+                        }
+                    } keyframes: { _ in
+                        KeyframeTrack {
+                            MoveKeyframe(0)
+                            CubicKeyframe(1, duration: CelebrateMotion.burstDuration)
+                        }
+                    }
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
+            .onChange(of: self.isCelebrating) { _, isCelebrating in
+                guard isCelebrating, !self.reduceMotion else { return }
+                self.trigger += 1
+            }
+    }
+}
+
 
 //MARK: - Write On -
 private struct WriteOnModifier: ViewModifier {
@@ -656,6 +758,14 @@ extension View {
 
     func spinnerSwap(isActive: Bool, tint: Color) -> some View {
         return self.modifier(SpinnerSwapModifier(isActive: isActive, tint: tint))
+    }
+
+    func collapseToCircle(diameter: CGFloat) -> some View {
+        return self.modifier(CollapseToCircleModifier(diameter: diameter))
+    }
+
+    func celebrate(isCelebrating: Bool, color: Color) -> some View {
+        return self.modifier(CelebrateModifier(isCelebrating: isCelebrating, color: color))
     }
 
     func writeOn(isShown: Bool, delay: Double = 0, duration: Double = 0.7) -> some View {

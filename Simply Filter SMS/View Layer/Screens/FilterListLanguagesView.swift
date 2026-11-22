@@ -81,20 +81,11 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                 Button {
                     self.model.sheetScreen = .enableReportingExtension
                 } label: {
-                    HStack {
-                        Label {
-                            Text("autoFilter_improveAIFiltering"~)
-                        } icon: {
-                            Image(systemName: "wand.and.stars")
-                                .foregroundStyle(.indigo)
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "chevron.forward")
-                            .font(.footnote.weight(.semibold))
-                            .foregroundStyle(.tertiary)
-                            .accessibilityHidden(true)
+                    Label {
+                        Text("autoFilter_improveAIFiltering"~)
+                    } icon: {
+                        Image(systemName: "wand.and.stars")
+                            .foregroundStyle(.tint)
                     }
                 }
                 .foregroundStyle(.primary)

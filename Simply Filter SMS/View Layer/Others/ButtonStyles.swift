@@ -60,17 +60,16 @@ struct OutlineButton: ButtonStyle {
 
 struct AccessibleTextButtonStyle: ButtonStyle {
     @Environment(\.accessibilityShowButtonShapes) private var showButtonShapes
-    var compact: Bool = false
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundStyle(.tint)
             .fixedSize(horizontal: true, vertical: false)
-            .padding(.vertical, showButtonShapes ? (compact ? 4 : 10) : 0)
-            .padding(.horizontal, showButtonShapes ? (compact ? 8 : 16) : 0)
+            .padding(.vertical, showButtonShapes ? 4 : 0)
+            .padding(.horizontal, showButtonShapes ? 8 : 0)
             .background {
                 if showButtonShapes {
-                    RoundedRectangle(cornerRadius: compact ? 8 : 10, style: .continuous)
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(.tint.opacity(0.12))
                 }
             }
