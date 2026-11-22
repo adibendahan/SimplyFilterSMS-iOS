@@ -33,9 +33,9 @@ struct WhatsNewOrbitView: View {
                 Circle()
                     .stroke(Color.gray.opacity(0.18), style: StrokeStyle(lineWidth: 1, dash: [3, 6]))
                     .frame(width: self.orbitRadius * 2, height: self.orbitRadius * 2)
-                    .scaleEffect((self.hasAppeared ? 1 : 0.4) * (1 - 0.75 * self.motionCollapse))
+                    .scaleEffect((self.isEntranceAtRest ? 1 : 0.4) * (1 - 0.75 * self.motionCollapse))
                     .opacity(self.hasAppeared ? 1 - self.motionCollapse : 0)
-                    .animation(.spring(response: 0.9, dampingFraction: 0.8).delay(0.1), value: self.hasAppeared)
+                    .animation(self.entranceAnimation(.spring(response: 0.9, dampingFraction: 0.8).delay(0.1)), value: self.hasAppeared)
 
                 ForEach(Array(self.entries.enumerated()), id: \.element) { index, entry in
                     self.satellite(entry, index: index, drift: drift, pulse: pulse)
@@ -48,8 +48,9 @@ struct WhatsNewOrbitView: View {
                     .clipShape(RoundedRectangle(cornerRadius: self.logoSize * 0.225, style: .continuous))
                     .shadow(color: Color.green.opacity(0.35 * (1 - self.motionCollapse)), radius: self.hasAppeared ? 24 : 0, y: 8)
                     .scaleEffect(self.logoScale)
-                    .rotationEffect(.degrees(self.hasAppeared ? 0 : -12))
-                    .animation(.spring(response: 0.55, dampingFraction: 0.55), value: self.hasAppeared)
+                    .rotationEffect(.degrees(self.isEntranceAtRest ? 0 : -12))
+                    .opacity(self.logoEntranceOpacity)
+                    .animation(self.entranceAnimation(.spring(response: 0.55, dampingFraction: 0.55)), value: self.hasAppeared)
                     .animation(.spring(response: 0.35, dampingFraction: 0.45), value: self.logoBounce)
                     .scaleEffect(1 - 0.45 * self.logoCollapse)
                     .opacity(1 - self.logoCollapse)
@@ -78,13 +79,37 @@ struct WhatsNewOrbitView: View {
         return result
     }
 
+    private var isEntranceAtRest: Bool {
+        return self.hasAppeared || self.reduceMotion
+    }
+
+    private var logoEntranceOpacity: Double {
+        let result: Double
+        if self.hasAppeared || !self.reduceMotion {
+            result = 1
+        } else {
+            result = 0
+        }
+        return result
+    }
+
+    private func entranceAnimation(_ animation: Animation) -> Animation {
+        let result: Animation
+        if self.reduceMotion {
+            result = ReducedMotion.fade
+        } else {
+            result = animation
+        }
+        return result
+    }
+
     private var logoCollapse: CGFloat {
         return self.collapseStage(start: 0.45, length: 0.55)
     }
 
     private var logoScale: CGFloat {
         let result: CGFloat
-        if !self.hasAppeared {
+        if !self.isEntranceAtRest {
             result = 0.5
         } else if self.logoBounce {
             result = 1.08
@@ -117,7 +142,7 @@ struct WhatsNewOrbitView: View {
         let pull = self.collapseStage(start: 0.05 * CGFloat(index), length: 0.55)
         let swirl = Double(pull) * .pi * 0.75
         let angle = baseAngle + drift + self.spinBoost + swirl
-        let radius = self.hasAppeared ? self.orbitRadius * (1 - pull) : 0
+        let radius = self.isEntranceAtRest ? self.orbitRadius * (1 - pull) : 0
         let x = cos(angle) * radius
         let y = sin(angle) * radius
         let delay = 0.15 + 0.06 * Double(index)
@@ -140,10 +165,10 @@ struct WhatsNewOrbitView: View {
                 .frame(width: self.satelliteSize * 0.48 * entry.iconScale, height: self.satelliteSize * 0.48 * entry.iconScale)
         }
         .frame(width: self.satelliteSize, height: self.satelliteSize)
-        .scaleEffect(self.hasAppeared ? emphasis * (1 - 0.7 * pull) : 0.2)
+        .scaleEffect(self.isEntranceAtRest ? emphasis * (1 - 0.7 * pull) : 0.2)
         .opacity(self.hasAppeared ? 1 - pull : 0)
         .offset(x: x, y: y)
-        .animation(.spring(response: 0.75, dampingFraction: 0.62).delay(delay), value: self.hasAppeared)
+        .animation(self.entranceAnimation(.spring(response: 0.75, dampingFraction: 0.62).delay(delay)), value: self.hasAppeared)
     }
 
     private func logoTapped() {

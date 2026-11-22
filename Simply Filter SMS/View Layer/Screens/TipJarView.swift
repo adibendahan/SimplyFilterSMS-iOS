@@ -160,7 +160,7 @@ struct TipJarView: View {
             Text("\(tier.displayName) · \(tier.tierDescription)")
                 .font(self.isCompact ? .footnote : .subheadline)
                 .foregroundColor(.secondary)
-                .lineLimit(1)
+                .adaptiveLineLimit(1)
                 .minimumScaleFactor(0.8)
                 .id(tier)
                 .transition(.motion(.push(from: .bottom)))

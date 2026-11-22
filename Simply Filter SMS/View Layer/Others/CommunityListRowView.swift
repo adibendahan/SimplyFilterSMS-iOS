@@ -45,7 +45,7 @@ struct CommunityListRow: View {
                         Text(self.communityList.name)
                             .font(.body.weight(.semibold))
                             .foregroundColor(.primary)
-                            .lineLimit(1)
+                            .adaptiveLineLimit(1)
                             .minimumScaleFactor(0.8)
 
                         if let ruleCountText = self.ruleCountText {
@@ -119,7 +119,7 @@ struct CommunityListRow: View {
         }
         .font(.caption)
         .foregroundColor(.secondary)
-        .lineLimit(1)
+        .adaptiveLineLimit(1)
     }
 }
 
