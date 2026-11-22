@@ -1,1 +1,1 @@
-https://github.com/adibendahan/SimplyFilterSMS-iOS/blob/master/Extras/app-store/Support.md
+https://adibendahan.github.io/SimplyFilterSMS-iOS/support/
