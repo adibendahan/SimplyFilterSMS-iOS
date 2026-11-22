@@ -19,7 +19,10 @@ final class ScreenshotStudio {
     let communityLists: CommunityListsScreen
 
     init() {
-        let app = XCUIApplication.launchSimplyFilter(arguments: ["-ScreenshotData"])
+        let filterListsKey = "SCREENSHOT_FILTER_LISTS"
+        let filterListsFolder = ProcessInfo.processInfo.environment[filterListsKey]
+        let environment = filterListsFolder.map { [filterListsKey: $0] } ?? [:]
+        let app = XCUIApplication.launchSimplyFilter(arguments: ["-ScreenshotData"], environment: environment)
         self.device = ShotDevice(app: app)
         self.aiFiltering = AIFilteringScreen(app: app)
         self.blockedTexts = FilterListScreen(app: app, link: .denyFiltersLink)

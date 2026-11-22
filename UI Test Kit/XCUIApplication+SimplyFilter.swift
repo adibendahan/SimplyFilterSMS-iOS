@@ -9,9 +9,10 @@ import XCTest
 
 extension XCUIApplication {
     @MainActor
-    static func launchSimplyFilter(arguments: [String]) -> XCUIApplication {
+    static func launchSimplyFilter(arguments: [String], environment: [String: String] = [:]) -> XCUIApplication {
         let app = XCUIApplication(bundleIdentifier: "com.grizz.apps.dev.Simply-Filter-SMS")
         app.launchArguments = ["-Testing"] + arguments
+        app.launchEnvironment = environment
         app.launch()
         app.dismissLaunchScreens()
         return app

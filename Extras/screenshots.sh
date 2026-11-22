@@ -2,9 +2,10 @@
 #
 # screenshots.sh — capture the App Store screenshots of Simply Filter SMS.
 #
-# Runs the Screenshots Automation tests once per language on dedicated
-# simulators, with the simulator's system language switched for each run, and
-# writes the shots to <output>/<app version>/<App Store Connect locale>/.
+# Runs the Screenshots Automation tests on dedicated simulators, several of each
+# device at once, each working through its own share of the languages with its
+# system language switched for every run. Each shot is written to
+# <output>/<app version>/<App Store Connect locale>/ as soon as its test passes.
 # The iPhone Duo is shot folded and unfolded; hinge
 # (brew install artemnovichkov/tap/hinge) folds it between the two runs.
 #
@@ -20,9 +21,17 @@ readonly WORK="${TMPDIR:-/tmp}/simply-filter-sms-screenshots"
 readonly DERIVED_DATA="${WORK}/DerivedData"
 readonly LOGS="${WORK}/logs"
 readonly LOCK="${WORK}/lock"
+readonly START_LOCK="${WORK}/start-lock"
+readonly FILTER_LISTS="${WORK}/filter-lists"
+# The app's production catalog (URL.filterListCatalogURL); its lists are
+# downloaded once per run and fed to every launch instead of each one downloading.
+readonly CATALOG_URL="https://grizz-apps-dev.s3.us-east-2.amazonaws.com/simply-filter-sms/4.0.0/catalog.json"
 readonly ATTEMPTS=2
 readonly STALL_SECONDS=420
 readonly TEST_TIME_ALLOWANCE=300
+readonly QUIET_CPU=50
+readonly QUIET_SECONDS=5
+readonly QUIET_LIMIT=120
 readonly APP_INFO_PLIST="${DERIVED_DATA}/Build/Products/Debug-iphonesimulator/Simply Filter SMS.app/Info.plist"
 
 readonly EXIT_FAILED_LANGUAGE=1
@@ -44,11 +53,13 @@ readonly LANGUAGES=(
     "zh-Hans|zh_CN|zh-Hans|Chinese (Simplified)"
 )
 
-# key | simulator name | device type | screens (file name prefixes)
+# key | simulator name | device type | simulators at once | screens (file name prefixes)
+# More than one simulator of a device at once overloads the Mac: every running
+# simulator keeps iOS's own services busy, and UI queries time out under it.
 readonly DEVICES=(
-    "iphone|Screenshots iPhone|com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro-Max|iphone"
-    "ipad|Screenshots iPad|com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB|ipad"
-    "duo|Screenshots Duo|com.apple.CoreSimulator.SimDeviceType.iPhone-Duo|duo-outer duo-inner"
+    "iphone|Screenshots iPhone|com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro-Max|1|iphone"
+    "ipad|Screenshots iPad|com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB|1|ipad"
+    "duo|Screenshots Duo|com.apple.CoreSimulator.SimDeviceType.iPhone-Duo|1|duo-outer duo-inner"
 )
 
 # number | file name | test | screens
@@ -67,11 +78,11 @@ readonly SHOTS=(
 output_root="${HERE}/Screenshots"
 version_dir=""
 skip_build=false
+parallel=0
 selected_languages=()
 selected_devices=()
 selected_shots=()
-device_ids=()
-device_keys=()
+workers=()
 
 #MARK: - Output -
 
@@ -101,19 +112,19 @@ Options:
   -d, --device DEVICE   iphone, ipad or duo. Repeat for more. Default: all.
   -s, --shot NUMBER     Capture only this shot (1-9). Repeat for more. Default: all.
   -o, --output DIR      The folder that keeps every app version. Default: Extras/Screenshots
+  -p, --parallel N      Simulators per selected device, instead of one each. Only for a
+                        run of one device: the Mac copes with three simulators in all.
       --skip-build      Reuse the previous build instead of building again.
       --list            List the languages, devices and shots, then exit.
   -h, --help            Show this help, then exit.
 
 Each app version has its own folder, DIR/<app version>/<App Store Connect locale>/.
-A language is written there only after all of its shots were captured, so a
-failed language keeps its previous screenshots. A run of every shot on every
-device replaces that version's whole language folder; any narrower run
-replaces only the shots it captured.
+Every shot is written there as soon as its test passes, replacing the file of
+the same name; a shot whose test failed keeps its previous file.
 
 A shot that runs longer than ${TEST_TIME_ALLOWANCE} seconds fails, and a test run that prints
-nothing for $((STALL_SECONDS / 60)) minutes is stopped. Either way the language is tried
-again on restarted simulators, up to ${ATTEMPTS} attempts in all.
+nothing for $((STALL_SECONDS / 60)) minutes is stopped. Either way that language is tried
+again on that device after restarting its simulator, up to ${ATTEMPTS} attempts in all.
 
 Examples:
   ${PROGRAM}                          Every shot, every language, every device.
@@ -122,7 +133,7 @@ Examples:
 
 Exit status:
   0  every language was captured
-  1  at least one language failed (see the log it names)
+  1  at least one language failed on a device (see the log it names)
   2  invalid usage
   3  the environment or the build is not ready
 EOF
@@ -138,7 +149,7 @@ list() {
     printf '%sDevices%s\n' "${bold}" "${reset}"
     local key sim_name screens screen counts
     for entry in "${DEVICES[@]}"; do
-        IFS='|' read -r key sim_name _ screens <<<"${entry}"
+        IFS='|' read -r key sim_name _ _ screens <<<"${entry}"
         counts=""
         for screen in ${screens}; do
             counts="${counts:+${counts}, }${screen} $(shot_count "${screen}" "${SHOTS[@]}") shots"
@@ -190,7 +201,7 @@ shot_count() {
 selected_screens() {
     local entry screens
     for entry in "${selected_devices[@]}"; do
-        IFS='|' read -r _ _ _ screens <<<"${entry}"
+        IFS='|' read -r _ _ _ _ screens <<<"${entry}"
         read -ra screens <<<"${screens}"
         printf '%s\n' "${screens[@]}"
     done
@@ -229,6 +240,10 @@ parse_arguments() {
                 [[ $# -ge 2 ]] || die "$1 needs a directory" "${EXIT_USAGE}"
                 output_root="$2"
                 shift 2 ;;
+            -p|--parallel)
+                [[ $# -ge 2 ]] && [[ "$2" =~ ^[1-9][0-9]*$ ]] || die "$1 needs a number of simulators" "${EXIT_USAGE}"
+                parallel="$2"
+                shift 2 ;;
             --skip-build)
                 skip_build=true
                 shift ;;
@@ -252,26 +267,35 @@ parse_arguments() {
     [[ ${total} -gt 0 ]] || die "the selected shots don't exist on the selected devices (see --list)" "${EXIT_USAGE}"
 }
 
-is_full_run() {
-    [[ ${#selected_devices[@]} -eq ${#DEVICES[@]} ]] && [[ ${#selected_shots[@]} -eq ${#SHOTS[@]} ]]
+device_screens() {
+    local entry screens
+    entry=$(device_entry "$1")
+    IFS='|' read -r _ _ _ _ screens <<<"${entry}"
+    echo "${screens}"
 }
 
-# The tests for the given screens: the whole class when every shot is selected.
+# The tests for the given screen that still have to run: every selected shot
+# whose file was not delivered after the marker (a retry redoes only those).
+# The whole class when every shot is selected and none was delivered yet.
 test_filters() {
-    if [[ ${#selected_shots[@]} -eq ${#SHOTS[@]} ]]; then
-        printf -- '-only-testing\n%s\n' "${TEST_CLASS}"
-        return
-    fi
-    local entry test screens screen
+    local screen="$1" delivery="${2:-}" marker="${3:-}"
+    local entry number file test screens file_path pending=0 total=0 lines=()
     for entry in "${selected_shots[@]}"; do
-        IFS='|' read -r _ _ test screens <<<"${entry}"
-        for screen in "$@"; do
-            if [[ " ${screens} " = *" ${screen} "* ]]; then
-                printf -- '-only-testing\n%s/%s\n' "${TEST_CLASS}" "${test}"
-                break
-            fi
-        done
+        IFS='|' read -r number file test screens <<<"${entry}"
+        [[ " ${screens} " = *" ${screen} "* ]] || continue
+        total=$((total + 1))
+        file_path="${delivery}/${screen}-$(printf '%02d' "${number}")-${file}.png"
+        if [[ -n "${marker}" ]] && [[ "${file_path}" -nt "${marker}" ]]; then
+            continue
+        fi
+        pending=$((pending + 1))
+        lines+=("-only-testing" "${TEST_CLASS}/${test}")
     done
+    if [[ ${pending} -gt 0 ]] && [[ ${pending} -eq ${total} ]] && [[ ${#selected_shots[@]} -eq ${#SHOTS[@]} ]]; then
+        printf -- '-only-testing\n%s\n' "${TEST_CLASS}"
+    elif [[ ${pending} -gt 0 ]]; then
+        printf '%s\n' "${lines[@]}"
+    fi
 }
 
 #MARK: - Environment -
@@ -286,11 +310,11 @@ acquire_lock() {
 cleanup() {
     local status=$?
     trap - EXIT INT TERM
-    local job
-    for job in $(jobs -p); do
-        kill "${job}" 2>/dev/null || true
+    local child
+    for child in $(pgrep -P $$); do
+        stop_tree "${child}"
     done
-    rmdir "${LOCK}" 2>/dev/null || true
+    rmdir "${START_LOCK}" "${LOCK}" 2>/dev/null || true
     exit "${status}"
 }
 
@@ -338,45 +362,78 @@ ensure_simulator() {
     echo "${udid}"
 }
 
+# The language is written into the simulator's settings while it is off, so it
+# starts only once per language, and one simulator starts at a time: a start
+# launches every built-in app and service and is the heaviest moment of a run.
 prepare_simulator() {
     local udid="$1" key="$2" language="$3" locale="$4"
+    local preferences="${HOME}/Library/Developer/CoreSimulator/Devices/${udid}/data/Library/Preferences"
     xcrun simctl shutdown "${udid}" >/dev/null 2>&1 || true
-    xcrun simctl boot "${udid}"
-    xcrun simctl bootstatus "${udid}" >/dev/null
-    xcrun simctl spawn "${udid}" defaults write .GlobalPreferences AppleLanguages -array "${language}"
-    xcrun simctl spawn "${udid}" defaults write .GlobalPreferences AppleLocale -string "${locale}"
-    if [[ "${key}" = "ipad" ]]; then
-        xcrun simctl spawn "${udid}" defaults write com.apple.springboard SBChamoisWindowingEnabled -bool false
-        xcrun simctl spawn "${udid}" defaults write com.apple.springboard SBMedusaMultitaskingEnabled -bool false
+    if [[ ! -d "${preferences}" ]]; then
+        start_simulator "${udid}"
+        xcrun simctl shutdown "${udid}"
     fi
-    xcrun simctl shutdown "${udid}"
-    xcrun simctl boot "${udid}"
-    xcrun simctl bootstatus "${udid}" >/dev/null
+    set_preference "${preferences}/.GlobalPreferences.plist" AppleLanguages -json "[\"${language}\"]"
+    set_preference "${preferences}/.GlobalPreferences.plist" AppleLocale -string "${locale}"
+    if [[ "${key}" = "ipad" ]]; then
+        set_preference "${preferences}/com.apple.springboard.plist" SBChamoisWindowingEnabled -bool false
+        set_preference "${preferences}/com.apple.springboard.plist" SBMedusaMultitaskingEnabled -bool false
+    fi
+    start_simulator "${udid}"
     xcrun simctl ui "${udid}" appearance light
     xcrun simctl status_bar "${udid}" clear
     xcrun simctl status_bar "${udid}" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 \
         --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
+    wait_until_quiet "${udid}"
 }
 
-# Destinations for the given device keys, or for every selected device.
-destinations() {
-    local index
-    for index in "${!device_ids[@]}"; do
-        if [[ $# -eq 0 ]] || [[ " $* " = *" ${device_keys[${index}]} "* ]]; then
-            printf -- '-destination\nid=%s\n' "${device_ids[${index}]}"
-        fi
-    done
+set_preference() {
+    local file="$1" key="$2" type="$3" value="$4"
+    [[ -f "${file}" ]] || plutil -create binary1 "${file}"
+    plutil -replace "${key}" "${type}" "${value}" "${file}"
 }
 
-udid_for() {
-    local index
-    for index in "${!device_keys[@]}"; do
-        if [[ "${device_keys[${index}]}" = "$1" ]]; then
-            echo "${device_ids[${index}]}"
-            return 0
+# The CPU percent used by everything running inside the simulator.
+simulator_cpu() {
+    local root
+    root=$(pgrep -f "launchd_sim .*$1" | head -1)
+    [[ -n "${root}" ]] || { echo 0; return; }
+    ps -A -o pid=,ppid=,%cpu= | awk -v root="${root}" '
+        { parent[$1] = $2; cpu[$1] = $3 }
+        END {
+            for (pid in parent) {
+                ancestor = pid
+                while (ancestor != "" && ancestor != 0 && ancestor != root) ancestor = parent[ancestor]
+                if (ancestor == root) sum += cpu[pid]
+            }
+            printf "%d", sum
+        }'
+}
+
+# A booted simulator keeps launching its own services for a minute or two; the
+# first test started in that burst times out on its first query.
+wait_until_quiet() {
+    local udid="$1" quiet=0 waited=0
+    while [[ ${quiet} -lt ${QUIET_SECONDS} ]] && [[ ${waited} -lt ${QUIET_LIMIT} ]]; do
+        if [[ $(simulator_cpu "${udid}") -lt ${QUIET_CPU} ]]; then
+            quiet=$((quiet + 1))
+        else
+            quiet=0
         fi
+        waited=$((waited + 1))
+        sleep 1
     done
-    return 1
+    echo "simulator ${udid} quiet after ${waited}s"
+}
+
+start_simulator() {
+    local udid="$1" status=0
+    until mkdir "${START_LOCK}" 2>/dev/null; do
+        sleep 1
+    done
+    xcrun simctl boot "${udid}" && xcrun simctl bootstatus "${udid}" >/dev/null || status=$?
+    rmdir "${START_LOCK}"
+    return "${status}"
 }
 
 # Folds (close) or unfolds (open) the iPhone Duo, then waits until the screen
@@ -395,18 +452,32 @@ print(str(next((d["primary"] for d in json.load(sys.stdin)["displays"] if d["act
     return 1
 }
 
+# Every running process started under the given one, deepest first.
+stop_tree() {
+    local pid="$1" child
+    for child in $(pgrep -P "${pid}" 2>/dev/null); do
+        stop_tree "${child}"
+    done
+    kill "${pid}" 2>/dev/null || true
+}
+
 #MARK: - Steps -
 
+# One simulator per lane of each selected device; each runs its own languages.
 prepare_simulators() {
     step "Simulators"
-    local entry key sim_name type runtime udid
+    local entry key sim_name type count runtime udid lane name lanes
     for entry in "${selected_devices[@]}"; do
-        IFS='|' read -r key sim_name type _ <<<"${entry}"
+        IFS='|' read -r key sim_name type count _ <<<"${entry}"
         runtime=$(runtime_for "${type}")
-        udid=$(ensure_simulator "${sim_name}" "${type}" "${runtime}") || exit "${EXIT_ENVIRONMENT}"
-        device_ids+=("${udid}")
-        device_keys+=("${key}")
-        ok "${sim_name} ${dim}(${udid}, ${runtime##*.})${reset}"
+        [[ ${parallel} -gt 0 ]] && count=${parallel}
+        lanes=$(( count < ${#selected_languages[@]} ? count : ${#selected_languages[@]} ))
+        for (( lane = 1; lane <= lanes; lane++ )); do
+            [[ ${lane} -eq 1 ]] && name="${sim_name}" || name="${sim_name} ${lane}"
+            udid=$(ensure_simulator "${name}" "${type}" "${runtime}") || exit "${EXIT_ENVIRONMENT}"
+            workers+=("${key}|${udid}|${name}|${lane}|${lanes}")
+            ok "${name} ${dim}(${udid}, ${runtime##*.})${reset}"
+        done
     done
 }
 
@@ -419,9 +490,8 @@ build() {
     fi
     local started log="${LOGS}/build.log"
     started=$(date +%s)
-    local args=()
-    while IFS= read -r line; do args+=("${line}"); done < <(destinations)
-    if xcodebuild build-for-testing -project "${PROJECT}" -scheme "${SCHEME}" "${args[@]}" \
+    if xcodebuild build-for-testing -project "${PROJECT}" -scheme "${SCHEME}" \
+        -destination "generic/platform=iOS Simulator" \
         -derivedDataPath "${DERIVED_DATA}" >"${log}" 2>&1; then
         ok "built in $(elapsed "${started}")"
     else
@@ -431,28 +501,28 @@ build() {
     fi
 }
 
+fetch_filter_lists() {
+    step "Filter lists"
+    rm -rf "${FILTER_LISTS}" && mkdir -p "${FILTER_LISTS}"
+    curl -fsSL "${CATALOG_URL}" -o "${FILTER_LISTS}/catalog.json" || die "could not download the catalog ${CATALOG_URL}"
+    local url count=0
+    while IFS= read -r url; do
+        curl -fsSL "${url}" -o "${FILTER_LISTS}/${url##*/}" || die "could not download the list ${url}"
+        count=$((count + 1))
+    done < <(python3 -I - "${FILTER_LISTS}/catalog.json" "${CATALOG_URL}" <<'PYTHON'
+import json, sys, urllib.parse
+for entry in json.load(open(sys.argv[1]))["lists"]:
+    print(urllib.parse.urljoin(sys.argv[2], entry["url"]))
+PYTHON
+)
+    ok "${count} lists"
+}
+
 choose_version_dir() {
     local version
     version=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "${APP_INFO_PLIST}" 2>/dev/null) \
         || die "could not read the app version from ${APP_INFO_PLIST}"
     version_dir="${output_root}/${version}"
-}
-
-collect() {
-    local bundle="$1" staging="$2"
-    local export="${WORK}/export"
-    rm -rf "${export}" && mkdir -p "${export}" "${staging}"
-    xcrun xcresulttool export attachments --path "${bundle}" --output-path "${export}" >/dev/null
-    python3 -I - "${export}" "${staging}" <<'PYTHON'
-import json, shutil, sys
-export, staging = sys.argv[1], sys.argv[2]
-for test in json.load(open(f"{export}/manifest.json")):
-    for attachment in test["attachments"]:
-        name = attachment.get("suggestedHumanReadableName", "")
-        if name.startswith("screenshot~"):
-            _, _, device, shot = name.split("_0_")[0].split("~")
-            shutil.copy(f"{export}/{attachment['exportedFileName']}", f"{staging}/{device}-{shot}.png")
-PYTHON
 }
 
 file_size() {
@@ -469,11 +539,13 @@ stop_process() {
     kill -9 "${pid}" 2>/dev/null || true
 }
 
+# Each shot is written straight to the delivery folder as soon as its test passes.
 # Returns 0 when every test passed, 1 when one failed, 2 when the run stalled.
 run_tests() {
-    local bundle="$1" log="$2"
-    shift 2
+    local bundle="$1" log="$2" delivery="$3"
+    shift 3
     rm -rf "${bundle}"
+    TEST_RUNNER_SCREENSHOT_DELIVERY_FOLDER="${delivery}" TEST_RUNNER_SCREENSHOT_FILTER_LISTS="${FILTER_LISTS}" \
     xcodebuild test-without-building -project "${PROJECT}" -scheme "${SCHEME}" "$@" \
         -derivedDataPath "${DERIVED_DATA}" -resultBundlePath "${bundle}" \
         -test-timeouts-enabled YES -default-test-execution-time-allowance "${TEST_TIME_ALLOWANCE}" \
@@ -495,76 +567,47 @@ run_tests() {
     wait "${pid}" || return 1
 }
 
-prepare_language() {
-    local code="$1" locale="$2" log="$3"
-    local index pid pids=() status=0
-    for index in "${!device_ids[@]}"; do
-        prepare_simulator "${device_ids[${index}]}" "${device_keys[${index}]}" "${code}" "${locale}" >>"${log}" 2>&1 &
-        pids+=($!)
-    done
-    for pid in "${pids[@]}"; do
-        wait "${pid}" || status=1
-    done
-    return "${status}"
-}
-
-# Runs the tests for the given screens on the given devices into one bundle.
-# Prints why it failed, or nothing.
-run_screens() {
-    local bundle="$1" log="$2" devices="$3"
-    shift 3
+# Runs the tests for one screen on one simulator. Prints why it failed, or nothing.
+run_screen() {
+    local bundle="$1" log="$2" udid="$3" delivery="$4" screen="$5" marker="$6"
     local args=() line status=0
-    while IFS= read -r line; do args+=("${line}"); done < <(test_filters "$@")
+    while IFS= read -r line; do args+=("${line}"); done < <(test_filters "${screen}" "${delivery}" "${marker}")
     [[ ${#args[@]} -gt 0 ]] || return 0
-    local device_list
-    read -ra device_list <<<"${devices}"
-    while IFS= read -r line; do args+=("${line}"); done < <(destinations "${device_list[@]}")
-    run_tests "${bundle}" "${log}" "${args[@]}" || status=$?
+    run_tests "${bundle}" "${log}" "${delivery}" "${args[@]}" -destination "id=${udid}" || status=$?
     case "${status}" in
-        0) collect "${bundle}" "${WORK}/staging/current" ;;
+        0) ;;
         2) echo "the test run printed nothing for $((STALL_SECONDS / 60)) minutes and was stopped" ;;
-        *) echo "a shot failed on $*" ;;
+        *) echo "a shot failed on ${screen}" ;;
     esac
 }
 
-# Prints why an attempt failed, or nothing when every shot was captured.
-attempt_language() {
-    local code="$1" locale="$2" name="$3" log="$4" bundle="$5" staging="$6"
-    rm -rf "${staging}" "${WORK}/staging/current"
-    if ! prepare_language "${code}" "${locale}" "${log}"; then
-        echo "could not set the simulators to ${name}"
+# Prints why an attempt failed, or nothing when every shot was delivered.
+attempt_device() {
+    local code="$1" locale="$2" name="$3" key="$4" udid="$5" delivery="$6" log="$7" results="$8" began="$9"
+    if ! prepare_simulator "${udid}" "${key}" "${code}" "${locale}" >>"${log}" 2>&1; then
+        echo "could not set the simulator to ${name}"
         return
     fi
 
-    local flat=() screens=() reason
-    udid_for iphone >/dev/null && flat+=(iphone) && screens+=(iphone)
-    udid_for ipad >/dev/null && flat+=(ipad) && screens+=(ipad)
-    if [[ ${#flat[@]} -gt 0 ]]; then
-        reason=$(run_screens "${bundle}" "${log}" "${flat[*]}" "${screens[@]}")
-        [[ -z "${reason}" ]] || { echo "${reason}"; return; }
-    fi
-
-    local duo pose screen
-    if duo=$(udid_for duo); then
-        for pose in close open; do
-            [[ "${pose}" = "close" ]] && screen="duo-outer" || screen="duo-inner"
-            [[ $(shot_count "${screen}" "${selected_shots[@]}") -gt 0 ]] || continue
-            if ! fold "${duo}" "${pose}" >>"${log}" 2>&1; then
+    local screen pose reason
+    for screen in $(device_screens "${key}"); do
+        [[ $(shot_count "${screen}" "${selected_shots[@]}") -gt 0 ]] || continue
+        if [[ "${key}" = "duo" ]]; then
+            [[ "${screen}" = "duo-outer" ]] && pose="close" || pose="open"
+            if ! fold "${udid}" "${pose}" >>"${log}" 2>&1; then
                 echo "hinge could not ${pose} the iPhone Duo"
                 return
             fi
-            reason=$(run_screens "${bundle%.xcresult}.${screen}.xcresult" "${log}" duo "${screen}")
-            [[ -z "${reason}" ]] || { echo "${reason}"; return; }
-        done
-    fi
+        fi
+        reason=$(run_screen "${results}.${screen}.xcresult" "${log}" "${udid}" "${delivery}" "${screen}" "${began}")
+        [[ -z "${reason}" ]] || { echo "${reason}"; return; }
+    done
 
-    mkdir -p "${WORK}/staging/current"
-    mv "${WORK}/staging/current" "${staging}"
     local shots captured missing=()
-    for screen in $(selected_screens); do
+    for screen in $(device_screens "${key}"); do
         shots=$(shot_count "${screen}" "${selected_shots[@]}")
         [[ ${shots} -gt 0 ]] || continue
-        captured=$(find "${staging}" -name "${screen}-*.png" | wc -l | tr -d ' ')
+        captured=$(find "${delivery}" -name "${screen}-*.png" -newer "${began}" | wc -l | tr -d ' ')
         [[ "${captured}" -eq "${shots}" ]] || missing+=("${screen} ${captured}/${shots}")
     done
     if [[ ${#missing[@]} -gt 0 ]]; then
@@ -572,48 +615,48 @@ attempt_language() {
     fi
 }
 
-capture_language() {
-    local entry="$1" code locale folder name
+# Captures one language on one simulator, trying again on a restarted simulator.
+capture() {
+    local entry="$1" key="$2" udid="$3" sim_name="$4"
+    local code locale folder name
     IFS='|' read -r code locale folder name <<<"${entry}"
-    local started log="${LOGS}/${code}.log" staging="${WORK}/staging/${folder}"
+    local started delivery="${version_dir}/${folder}" log="${LOGS}/${code}-${key}.log"
     started=$(date +%s)
-    step "${name}"
-    rm -rf "${WORK}/results/${code}".*xcresult
+    mkdir -p "${delivery}"
 
-    local attempt reason bundle
+    local attempt reason results began="${WORK}/results/${code}.${key}.began"
+    touch "${began}"
     for (( attempt = 1; attempt <= ATTEMPTS; attempt++ )); do
-        bundle="${WORK}/results/${code}.${attempt}.xcresult"
-        printf '\n=== attempt %d of %d ===\n' "${attempt}" "${ATTEMPTS}" >>"${log}"
-        reason=$(attempt_language "${code}" "${locale}" "${name}" "${log}" "${bundle}" "${staging}")
+        results="${WORK}/results/${code}.${key}.${attempt}"
+        printf '\n=== attempt %d of %d on %s ===\n' "${attempt}" "${ATTEMPTS}" "${sim_name}" >>"${log}"
+        reason=$(attempt_device "${code}" "${locale}" "${name}" "${key}" "${udid}" "${delivery}" "${log}" "${results}" "${began}")
         [[ -n "${reason}" ]] || break
         if [[ ${attempt} -lt ${ATTEMPTS} ]]; then
-            warn "${reason}; trying again on restarted simulators"
-            note "${bundle}"
+            warn "${name} on ${sim_name}: ${reason}; trying again on a restarted simulator"
         else
-            fail "${reason}"
+            fail "${name} on ${sim_name}: ${reason}"
             note "${log}"
-            note "${bundle}"
+            note "${results}.*.xcresult"
+            echo "${code} ${key}" >>"${WORK}/failed"
             return 1
         fi
     done
 
-    local screen
-    for screen in $(selected_screens); do
+    local screen counts=""
+    for screen in $(device_screens "${key}"); do
         [[ $(shot_count "${screen}" "${selected_shots[@]}") -gt 0 ]] || continue
-        ok "${screen} $(find "${staging}" -name "${screen}-*.png" | wc -l | tr -d ' ')/$(shot_count "${screen}" "${selected_shots[@]}")"
+        counts="${counts:+${counts}, }${screen} $(shot_count "${screen}" "${selected_shots[@]}")"
     done
+    ok "${name} on ${sim_name}: ${counts} ${dim}($(elapsed "${started}"))${reset}"
+}
 
-    mkdir -p "${version_dir}/${folder}"
-    if is_full_run; then
-        rm -f "${version_dir}/${folder}"/*.png
-    else
-        local file
-        for file in "${staging}"/*.png; do
-            rm -f "${version_dir}/${folder}/${file##*/}"
-        done
-    fi
-    mv "${staging}"/*.png "${version_dir}/${folder}/"
-    note "${version_dir}/${folder} ($(elapsed "${started}"))"
+# A simulator's share of the languages: every lanes-th one, from its lane.
+run_worker() {
+    local key="$1" udid="$2" sim_name="$3" lane="$4" lanes="$5" index
+    for index in "${!selected_languages[@]}"; do
+        [[ $(( index % lanes + 1 )) -eq ${lane} ]] || continue
+        capture "${selected_languages[${index}]}" "${key}" "${udid}" "${sim_name}" || true
+    done
 }
 
 #MARK: - Main -
@@ -624,21 +667,32 @@ main() {
     trap cleanup EXIT
     trap interrupted INT TERM
     preflight
-    rm -rf "${LOGS}" && mkdir -p "${LOGS}" "${WORK}/results" "${WORK}/staging"
+    rm -rf "${LOGS}" "${WORK}/results" "${WORK}/failed" && mkdir -p "${LOGS}" "${WORK}/results"
 
-    local started failed=()
+    local started
     started=$(date +%s)
     prepare_simulators
     build
+    fetch_filter_lists
     choose_version_dir
-    local entry
-    for entry in "${selected_languages[@]}"; do
-        capture_language "${entry}" || failed+=("${entry%%|*}")
+
+    step "Capturing ${#selected_languages[@]} languages on ${#workers[@]} simulators → ${version_dir}"
+    local worker key udid sim_name lane lanes pids=()
+    for worker in "${workers[@]}"; do
+        IFS='|' read -r key udid sim_name lane lanes <<<"${worker}"
+        run_worker "${key}" "${udid}" "${sim_name}" "${lane}" "${lanes}" &
+        pids+=($!)
+    done
+    local pid
+    for pid in "${pids[@]}"; do
+        wait "${pid}" || true
     done
 
     echo
-    if [[ ${#failed[@]} -gt 0 ]]; then
-        printf '%s%d of %d languages failed:%s %s\n' "${red}" ${#failed[@]} ${#selected_languages[@]} "${reset}" "${failed[*]}"
+    if [[ -s "${WORK}/failed" ]]; then
+        printf '%s%d of %d language and device runs failed:%s\n' "${red}" "$(wc -l <"${WORK}/failed" | tr -d ' ')" \
+            $(( ${#selected_languages[@]} * ${#selected_devices[@]} )) "${reset}"
+        sed 's/^/  /' "${WORK}/failed"
         exit "${EXIT_FAILED_LANGUAGE}"
     fi
     printf '%sAll %d languages captured in %s%s → %s\n' "${green}" ${#selected_languages[@]} "$(elapsed "${started}")" "${reset}" "${version_dir}"

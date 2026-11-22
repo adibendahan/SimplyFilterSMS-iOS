@@ -107,6 +107,12 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                         }
                     }
                     .foregroundStyle(.primary)
+                    .highPriorityGesture(
+                        TapGesture()
+                            .onEnded { _ in
+                                self.model.showAddFilter()
+                            }
+                    )
                     .accessibilityIdentifier(TestIdentifier.addFilterButton.rawValue)
                 } // Section
             }

@@ -69,8 +69,12 @@ class AppManager: AppManagerProtocol {
             defaultsManager.reset()
             persistenceManager.resetContainer()
             defaultsManager.inactivityNotificationDeclineCount = kInactivityNotificationMaxAsks
+            let filterListsFolder = ProcessInfo.processInfo.screenshotFilterListsFolder
             if ProcessInfo.processInfo.isUsingUITestData {
                 Log.debug("testing mode, uiTestData: \(URL.filterListCatalogURL) → data reset")
+            }
+            else if let filterListsFolder {
+                self.seedFilterListsForTesting(from: filterListsFolder)
             }
             else {
                 self.seedEmptyAIListsForTesting()
@@ -78,7 +82,9 @@ class AppManager: AppManagerProtocol {
             if ProcessInfo.processInfo.isUsingScreenshotData {
                 Log.debug("testing mode, screenshotData: \(Bundle.main.preferredLocalizations[0]) → debug data loaded")
                 self.debugDataManager.load()
-                self.debugDataManager.expireFilterListsCache()
+                if filterListsFolder == nil {
+                    self.debugDataManager.expireFilterListsCache()
+                }
             }
             else if ProcessInfo.processInfo.isUsingDebugData {
                 Log.debug("testing mode, debugData: \(Bundle.main.preferredLocalizations[0]) → debug data loaded")
@@ -146,6 +152,34 @@ class AppManager: AppManagerProtocol {
 
     //MARK: - Private -
     #if DEBUG
+    private func seedFilterListsForTesting(from folder: URL) {
+        let catalogFile = folder.appendingPathComponent("catalog.json")
+        guard let catalogData = try? Data(contentsOf: catalogFile),
+              let catalog = FilterListCatalogResponse(data: catalogData) else {
+            Log.error("testing mode, catalog unreadable, folder: \(folder.path)")
+            return
+        }
+        var cacheSections: [FilterListsCacheSection] = []
+
+        for catalogEntry in catalog.lists {
+            guard let listURL = catalogEntry.resolvedURL else { continue }
+            let listFile = folder.appendingPathComponent(listURL.lastPathComponent)
+            guard let listData = try? Data(contentsOf: listFile),
+                  let listPayload = try? FilterExportPayload(data: listData) else {
+                Log.error("testing mode, list unreadable, file: \(listFile.lastPathComponent) → skipped")
+                continue
+            }
+            let cacheSection = FilterListsCacheSection(url: listURL.absoluteString,
+                                                       etag: nil,
+                                                       payload: listPayload)
+            cacheSections.append(cacheSection)
+        }
+
+        let testingSnapshot = FilterListsSnapshot(catalogETag: nil, catalog: catalog, lists: cacheSections)
+        _ = self.persistenceManager.saveCache(testingSnapshot)
+        Log.debug("testing mode, filterListsSeeded: \(cacheSections.count), folder: \(folder.lastPathComponent) → data reset")
+    }
+
     private func seedEmptyAIListsForTesting() {
         let testingLanguages = ["en", "he", "ar", "es", "fr", "pt", "de", "ja", "ko", "it"]
         var catalogEntries: [FilterListCatalogEntry] = []
