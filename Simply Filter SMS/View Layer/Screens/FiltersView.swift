@@ -21,8 +21,6 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
     @Environment(\.colorScheme)
     var colorScheme: ColorScheme
     
-    @ScaledMetric(relativeTo: .title3) private var addFilterIconSize: CGFloat = 20
-
     @StateObject var model: ViewModel
     @State private var dotFilterID: UUID? = nil
     @State private var emptyStatePresence = ListEmptyStateView.Presence()
@@ -95,6 +93,23 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                     listFooter
                 }
             }
+
+            if !self.emptyStatePresence.isActive && self.model.canAddFilter {
+                Section {
+                    Button {
+                        self.model.showAddFilter()
+                    } label: {
+                        Label {
+                            Text(self.model.filterType.addFilterTitle)
+                        } icon: {
+                            Image(systemName: self.model.filterType.addFilterIconName)
+                                .foregroundStyle(.tint)
+                        }
+                    }
+                    .foregroundStyle(.primary)
+                    .accessibilityIdentifier(TestIdentifier.addFilterButton.rawValue)
+                } // Section
+            }
         } // List
         .modifier(ListEmptyStateView.PresenceTracker(isEmpty: self.model.filters.isEmpty, presence: $emptyStatePresence))
         .listStyle(InsetGroupedListStyle())
@@ -166,13 +181,8 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
         .modifier(persistentStoreReload)
     }
 
-    @ViewBuilder
     private var listFooter: some View {
-        VStack(spacing: 16) {
-            Text(.init(self.model.footer))
-
-            AddFilterButton()
-        }
+        return Text(.init(self.model.footer))
     }
     
     @ViewBuilder
@@ -242,37 +252,6 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
             iconName: self.model.filterType.addFilterIconName,
             testIdentifier: .addFilterButton,
             perform: self.model.showAddFilter)
-    }
-
-    @ViewBuilder
-    private func AddFilterButton() -> some View {
-        
-        if self.model.canAddFilter {
-            
-            Button(action: {
-                self.model.showAddFilter()
-            }) {
-                HStack {
-                    Image(systemName: self.model.filterType.addFilterIconName)
-                        .imageScale(.large)
-                        .font(.system(size: addFilterIconSize, weight: .bold))
-                    
-                    Text(self.model.filterType.addFilterTitle)
-                        .font(.body)
-                }
-            }
-            .buttonStyle(AccessibleTextButtonStyle())
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.top, 1)
-            .highPriorityGesture(TapGesture()
-                .onEnded({ _ in
-                self.model.showAddFilter()
-            }))
-            .accessibilityIdentifier(TestIdentifier.addFilterButton.rawValue)
-        }
-        else {
-            EmptyView()
-        }
     }
 }
 

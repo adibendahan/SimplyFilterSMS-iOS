@@ -28,95 +28,89 @@ struct ReportMessageView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
-                Form {
-                    Section {
-                        ZStack (alignment: .top) {
-                            Text("reportMessage_senderTitle"~)
-                                .font(.caption)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, -20)
-                                .foregroundColor(.secondary)
+            Form {
+                Section {
+                    ZStack (alignment: .top) {
+                        Text("reportMessage_senderTitle"~)
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, -20)
+                            .foregroundColor(.secondary)
 
-                            TextField("", text: $model.sender)
-                                .focused($focusedField, equals: .sender)
-                                .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
-                                
+                        TextField("", text: $model.sender)
+                            .focused($focusedField, equals: .sender)
+                            .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
+                            
 
+                    }
+                    .listRowInsets(EdgeInsets(top: 30, leading: 20, bottom: 15, trailing: 20))
+
+                    ZStack (alignment: .top) {
+                        Text("testFilters_messageTitle"~)
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.secondary)
+
+                        TextEditor(text: $model.text)
+                            .frame(minHeight: 80, idealHeight: 80, alignment: .top)
+                            .focused($focusedField, equals: .text)
+                            .multilineTextAlignment(.leading)
+                            .padding(.top, 15)
+                            .accessibilityIdentifier(TestIdentifier.testBodyInput.rawValue)
+                    }
+                    .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
+
+                    Picker(selection: $model.selectedReport, label: EmptyView()) {
+                        ForEach(ReportType.allCases.filter { $0 != .junkAndBlockSender }, id: \.rawValue) { reportType in
+                            Text(reportType.name)
+                                .font(.body)
+                                .tag(reportType)
                         }
-                        .listRowInsets(EdgeInsets(top: 30, leading: 20, bottom: 15, trailing: 20))
+                    }
+                    .pickerStyle(.segmented)
+                    .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
 
-                        ZStack (alignment: .top) {
-                            Text("testFilters_messageTitle"~)
-                                .font(.caption)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.secondary)
-
-                            TextEditor(text: $model.text)
-                                .frame(minHeight: 80, idealHeight: 80, alignment: .top)
-                                .focused($focusedField, equals: .text)
-                                .multilineTextAlignment(.leading)
-                                .padding(.top, 15)
-                                .accessibilityIdentifier(TestIdentifier.testBodyInput.rawValue)
+                    ReportSubmitButton(phase: self.model.state.submitPhase) {
+                        withAnimation {
+                            self.model.reportMessage()
+                            self.focusedField = nil
                         }
-                        .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
-
-                        Picker(selection: $model.selectedReport, label: EmptyView()) {
-                            ForEach(ReportType.allCases.filter { $0 != .junkAndBlockSender }, id: \.rawValue) { reportType in
-                                Text(reportType.name)
-                                    .font(.body)
-                                    .tag(reportType)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
-
-                        Button {
-                            withAnimation {
-                                self.model.reportMessage()
-                                self.focusedField = nil
-                            }
-                        } label: {
-                            Text("reportMessage_report"~)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(FilledButton())
-                        .listRowSeparator(.hidden)
-                        .padding(.bottom, 8)
-                        .disabled(self.model.text.isEmpty && self.model.sender.isEmpty)
-                        .accessibilityIdentifier(TestIdentifier.testYourFiltersButton.rawValue)
-                        .accessibilityHint("a11y_reportMessage_submitHint"~)
-                    } header: {
-                        Spacer()
-                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                    } footer: {
+                    }
+                    .listRowSeparator(.hidden)
+                    .padding(.bottom, 8)
+                    .disabled(self.model.text.isEmpty && self.model.sender.isEmpty)
+                    .accessibilityIdentifier(TestIdentifier.testYourFiltersButton.rawValue)
+                    .accessibilityHint("a11y_reportMessage_submitHint"~)
+                } header: {
+                    Spacer()
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                } footer: {
+                    ZStack {
                         Text("reportingExtension_footer"~)
                             .multilineTextAlignment(.center)
                             .limitedDynamicTypeSize()
-                    }
-                }
-                .onAppear {
-                    if self.model.state == .userInput {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                            focusedField = .sender
-                        }
-                    }
-                }
+                            .opacity(self.model.state.isResult ? 0 : 1)
 
-                if self.model.state != .userInput {
-                    Color.black.opacity(0.25)
-                        .ignoresSafeArea()
-                        .transition(.opacity)
-
-                    ReportSubmitCard(
-                        isDone: self.model.state.isResult,
-                        text: self.model.state.resultText
-                    )
+                        Text(self.model.state.resultText ?? "")
+                            .font(.headline.weight(.bold))
+                            .foregroundStyle(Color.primary)
+                            .multilineTextAlignment(.center)
+                            .entrance(isShown: self.model.state.isResult, delay: ReportMessageMotion.thanksDelay, rise: ReportMessageMotion.thanksRise)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
             }
+            .disabled(self.model.state != .userInput)
+            .onAppear {
+                if self.model.state == .userInput {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                        focusedField = .sender
+                    }
+                }
+            }
+            .navigationTitle("reportMessage_title"~)
             .if(self.model.state == .userInput) {
                 $0
-                    .navigationTitle("reportMessage_title"~)
                     .toolbar {
                         ToolbarItem {
                             Button {
@@ -145,6 +139,13 @@ struct ReportMessageView: View {
 }
 
 
+//MARK: - Motion -
+private enum ReportMessageMotion {
+    static let thanksDelay: Double = 0.3
+    static let thanksRise: CGFloat = 8
+}
+
+
 //MARK: - ViewModel -
 extension ReportMessageView {
 
@@ -161,6 +162,17 @@ extension ReportMessageView {
                 return true
             default:
                 return false
+            }
+        }
+
+        var submitPhase: ReportSubmitButton.Phase {
+            switch self {
+            case .userInput:
+                return .idle
+            case .loading:
+                return .sending
+            case .result(_):
+                return .done
             }
         }
 

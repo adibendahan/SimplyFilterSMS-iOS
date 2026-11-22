@@ -81,8 +81,11 @@ extension FeatureStatusHeader {
         @ScaledMetric(relativeTo: .largeTitle) private var distance: CGFloat = 120
         @Binding var progress: CGFloat
 
+        private let bottomRoom: CGFloat = 50
+
         func body(content: Content) -> some View {
             content
+                .contentMargins(.bottom, self.bottomRoom, for: .scrollContent)
                 .onScrollProgress(distance: self.distance, progress: self.$progress)
         }
     }

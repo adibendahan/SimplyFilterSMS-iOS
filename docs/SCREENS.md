@@ -82,7 +82,7 @@ The list of one filter type (allow, deny or language), pushed from Home, with in
 - **Empty state traps** (also Community Lists): the card sits in its own section and gets a fresh `.id` per appearance, or the list reuses the removed card with its old animation state and it comes back blank. The footer hides on `ListEmptyStateView.Presence.isActive`, not on the filters, or it fades out at the deleted row's slow pace. Adding a filter removes the card with no animation while the sheet still covers the list.
 
 ## ReportMessageView
-Reports a message as junk or not junk to the backend, as a sheet from the menu; shows a loading overlay, then a checkmark, and closes itself.
+Reports a message as junk or not junk to the backend, as a sheet from the menu, and closes itself after the thank-you.
 - The view model is `@unchecked Sendable` for its async report `Task`.
 
 ## WhatsNewView

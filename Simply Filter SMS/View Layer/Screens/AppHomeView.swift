@@ -356,7 +356,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Text(action)
                 .font(.caption2)
         }
-        .buttonStyle(AccessibleTextButtonStyle(compact: true))
+        .buttonStyle(AccessibleTextButtonStyle())
     }
     }
 
@@ -374,7 +374,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 Text("autoFilter_shortSender_change"~)
                     .font(.caption2)
             }
-            .buttonStyle(AccessibleTextButtonStyle(compact: true))
+            .buttonStyle(AccessibleTextButtonStyle())
             .accessibilityIdentifier(TestIdentifier.countryAllowlistButton.rawValue)
         }
     }

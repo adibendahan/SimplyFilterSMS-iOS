@@ -71,7 +71,12 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                 Button {
                     self.model.presentAddCommunityList()
                 } label: {
-                    Label("communityLists_subscribeFromURL"~, systemImage: "link.badge.plus")
+                    Label {
+                        Text("communityLists_subscribeFromURL"~)
+                    } icon: {
+                        Image(systemName: "link.badge.plus")
+                            .foregroundStyle(.tint)
+                    }
                 }
                 .foregroundStyle(.primary)
                 .accessibilityIdentifier(TestIdentifier.addCommunityListButton.rawValue)
