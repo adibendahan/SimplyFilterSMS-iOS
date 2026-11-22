@@ -276,13 +276,22 @@ extension WhatsNewView {
 
         //MARK: - Private -
         private static func orbitEntries(from entries: [WhatsNewEntry]) -> [WhatsNewEntry] {
-            var positioned: [(entry: WhatsNewEntry, position: Int)] = []
-            for entry in entries {
-                guard let position = entry.orbitPosition else { continue }
-                positioned.append((entry: entry, position: position))
+            let orbitEntries = entries.filter(\.isInOrbit)
+            let currentEntries = orbitEntries.filter(\.isCurrent).shuffled()
+            let earlierEntries = orbitEntries.filter { !$0.isCurrent }.shuffled()
+            let startsWithCurrent = Bool.random()
+            var leading = startsWithCurrent ? currentEntries : earlierEntries
+            var trailing = startsWithCurrent ? earlierEntries : currentEntries
+            var result: [WhatsNewEntry] = []
+            while !leading.isEmpty || !trailing.isEmpty {
+                if !leading.isEmpty {
+                    result.append(leading.removeFirst())
+                }
+                if !trailing.isEmpty {
+                    result.append(trailing.removeFirst())
+                }
             }
-            let sorted = positioned.sorted { $0.position < $1.position }
-            return sorted.map { $0.entry }
+            return result
         }
 
         private static func releaseSections(for entries: [WhatsNewEntry]) -> [ReleaseSection] {

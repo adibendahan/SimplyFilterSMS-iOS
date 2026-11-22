@@ -18,6 +18,7 @@ struct FAQView: View {
     let onClose: () -> Void
 
     var body: some View {
+        ScrollViewReader { proxy in
         List {
             Section {
                 ForEach(self.model.visibleItems, id: \.self) { item in
@@ -29,6 +30,7 @@ struct FAQView: View {
                         .padding(.top, -4)
                         .padding(.bottom, 4)
                         .listRowSeparator(.hidden)
+                        .accessibilityIdentifier("\(TestIdentifier.faqAnswer.rawValue)-\(item.rawValue)")
                     } label: {
                         Text(AttributedString(item.question).highlighting(self.model.searchTerm))
                             .font(.subheadline.weight(.semibold))
@@ -36,6 +38,7 @@ struct FAQView: View {
                             .multilineTextAlignment(.leading)
                     }
                     .accessibilityHint("a11y_faq_answerHint"~)
+                    .revealHighlight(isRevealed: self.model.revealedFAQ == item)
                 }
             } footer: {
                 Text("faq_subtitle"~)
@@ -66,9 +69,17 @@ struct FAQView: View {
                 }
                 .tint(.primary)
                 .accessibilityLabel("general_close"~)
+                .accessibilityIdentifier(TestIdentifier.closeButton.rawValue)
                 .contentShape(Rectangle())
             }
         }
+        .onAppear {
+            guard let faq = self.model.revealedFAQ else { return }
+            DispatchQueue.main.async {
+                proxy.scrollTo(faq, anchor: .center)
+            }
+        }
+        } // ScrollViewReader
     }
 
     private func answerText(for item: HelpFAQ) -> AttributedString {
@@ -152,6 +163,7 @@ extension FAQView {
             }
         }
         @Published private(set) var visibleItems: [HelpFAQ] = HelpFAQ.allCases
+        @Published private(set) var revealedFAQ: HelpFAQ?
 
         var searchTerm: String {
             return self.searchQuery.trimmingCharacters(in: .whitespaces)
@@ -164,6 +176,17 @@ extension FAQView {
                 self.expandedFAQs.insert(item)
             } else {
                 self.expandedFAQs = [item]
+            }
+        }
+
+        func reveal(_ item: HelpFAQ) {
+            Log.debug("search focus revealed, faq: \(item.rawValue)")
+            self.setExpanded(item, open: true)
+            self.revealedFAQ = item
+            DispatchQueue.main.asyncAfter(deadline: .now() + kSearchRevealDuration) { [weak self] in
+                if self?.revealedFAQ == item {
+                    self?.revealedFAQ = nil
+                }
             }
         }
 

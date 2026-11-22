@@ -888,4 +888,30 @@
 
 "communityLists_description" = "由其他人创建并分享的过滤列表。开启的列表会将陌生发件人的信息分到“**垃圾短信**”“**交易信息**”或“**推广信息**”，并会自动更新。";
 
+"search_menu" = "菜单";
+
+"search_recent" = "最近搜索";
+
+"search_clearRecent" = "清除";
+
+"search_suggestions" = "建议";
+
+"spotlight_allowList_keywords" = "允许, 已允许, 白名单, 信任, 安全发件人, 从不屏蔽";
+
+"spotlight_blockList_keywords" = "屏蔽, 已屏蔽, 黑名单, 垃圾信息, 垃圾短信, 字词, 发件人";
+
+"spotlight_blockedLanguages_keywords" = "语言, 外语, 屏蔽语言, 字母";
+
+"spotlight_communityLists_keywords" = "社区, 共享, 列表, 订阅, 垃圾信息列表";
+
+"spotlight_aiFiltering_keywords" = "AI, 人工智能, 自动, 智能, 垃圾信息, 垃圾短信, 保护, 语言";
+
+"spotlight_testFilters_keywords" = "测试, 检查, 试用, 信息, 测试器";
+
+"spotlight_reportMessage_keywords" = "报告, 垃圾信息, 垃圾短信, 漏网垃圾信息, 改进";
+
+"whatsNew_search_title" = "搜索与 Spotlight";
+
+"whatsNew_search_desc" = "在主屏幕的**搜索**中查找任何过滤器、列表、设置或答案。你的列表和工具也会出现在 iPhone 的 **Spotlight** 中 - 只需输入名称。";
+
 

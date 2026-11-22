@@ -8,6 +8,7 @@
 import SwiftUI
 import StoreKit
 import UniformTypeIdentifiers
+import CoreSpotlight
 
 //MARK: - View -
 struct AppHomeView: View, ViewWithPersistentStoreReload {
@@ -72,6 +73,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         .if(rule.isDestructive) { $0.tint(.red) }
                         .disabled(isDisabled)
                         .listRowBackground(Color(UIColor.secondarySystemGroupedBackground))
+                        .revealHighlight(isRevealed: self.model.revealedSmartFilter == rule)
                         .if(rule.subtitle != nil) {
                             $0.accessibilityHint(String(format: "a11y_home_shortSenderHint"~, self.model.shortSenderChoice))
                                 .accessibilityAction(named: "a11y_home_shortSenderAction"~) {
@@ -117,8 +119,9 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     Text("")
                 }
             } // List
+            .listSectionSpacing(.compact)
             .background(horizontalSizeClass == .regular ? InstantTouchDisabler(delaysContentTouches: true) : nil)
-            .navigationTitle(self.model.title)
+            .homeSearch(model: self.model.search, title: self.model.title)
             .listStyle(.insetGrouped)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -146,6 +149,11 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 } else if horizontalSizeClass == .compact {
                     model.navigationScreen = nil
                 }
+            }
+            .onReceive(self.model.$searchPushRequest) { screen in
+                guard let screen else { return }
+                self.model.searchPushRequest = nil
+                selectedScreen = screen
             }
             .onReceive(self.model.$navigationScreen) { navigationScreen in
                 if navigationScreen == nil {
@@ -242,6 +250,10 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         .onOpenURL { url in
             self.model.handleDeepLink(url: url)
         }
+        .onContinueUserActivity(CSSearchableItemActionType) { activity in
+            let identifier = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String
+            self.model.openSpotlightItem(identifier)
+        }
         .optionalTint(model.customAccent)
     }
 
@@ -295,6 +307,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Image(systemName: rule.icon)
                 .foregroundColor(rule.iconColor.opacity(isDisabled ? 0.5 : 1))
                 .font(rule.isDestructive ? Font.body.bold() : .body)
+                .bounceOnAppear(isShown: self.model.revealedSmartFilter == rule, delay: SearchMotion.revealBounceDelay, bouncesOnTap: true)
                 .adaptiveIconColumn()
         }
     }
@@ -575,6 +588,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 }
 
 
+//MARK: - Motion -
+private enum SearchMotion {
+    static let revealBounceDelay: Double = 0.3
+}
+
+
 //MARK: - ViewModel -
 extension AppHomeView {
     
@@ -633,6 +652,12 @@ extension AppHomeView {
         @Published var isImportingFile = false
         @Published var fileImporterID = UUID()
         @Published var customAccent: Color? = nil
+        @Published var searchPushRequest: Screen? = nil
+        @Published private(set) var revealedSmartFilter: SmartFilterType?
+        lazy var search = HomeSearchModifier.ViewModel(appManager: self.appManager,
+                                                       onOpen: { [weak self] result in
+                                                           self?.openSearchResult(result)
+                                                       })
 
         override init(appManager: AppManagerProtocol = AppManager.shared) {
             let hasActiveFilterLists = appManager.filterListManager.hasActiveFilterLists
@@ -665,6 +690,7 @@ extension AppHomeView {
                 .sorted(by: { $0.id.sortIndex < $1.id.sortIndex })
 
             self.runLaunchFlowIfNeeded()
+            appManager.searchManager.indexSpotlightItems()
         }
         
         func refresh() {
@@ -755,6 +781,70 @@ extension AppHomeView {
 
         func requestSheet(_ screen: Screen) {
             self.appManager.flowManager.requestScreen(screen)
+        }
+
+        func openSpotlightItem(_ identifier: String?) {
+            guard let identifier, let result = self.appManager.searchManager.spotlightResult(for: identifier) else {
+                Log.debug("spotlight item not recognized, id: \(identifier) → ignored")
+                return
+            }
+            Log.debug("spotlight item opened, id: \(identifier)")
+            switch result {
+            case .list(let list):
+                self.searchPushRequest = list.screen
+            case .action(let action):
+                self.perform(action)
+            default:
+                break
+            }
+        }
+
+        func openSearchResult(_ result: SearchResult) {
+            let searchManager = self.appManager.searchManager
+            switch result {
+            case .list(let list):
+                self.searchPushRequest = list.screen
+            case .aiLanguage(let language):
+                searchManager.setPendingFocus(.aiLanguage(language))
+                self.searchPushRequest = .filterLists
+            case .smartFilter(let rule):
+                self.revealSmartFilter(rule)
+            case .communityList(let communityList):
+                searchManager.setPendingFocus(.communityList(communityList.id))
+                self.searchPushRequest = .communityLists
+            case .filter(let filter):
+                if let uuid = filter.uuid {
+                    searchManager.setPendingFocus(.filter(uuid))
+                }
+                self.searchPushRequest = filter.filterType.screen
+            case .help(let faq):
+                searchManager.setPendingFocus(.help(faq))
+                self.requestSheet(.help)
+            case .action(let action):
+                self.perform(action)
+            }
+        }
+
+        private func revealSmartFilter(_ rule: SmartFilterType) {
+            Log.debug("search focus revealed, smart filter: \(rule)")
+            self.revealedSmartFilter = rule
+            DispatchQueue.main.asyncAfter(deadline: .now() + kSearchRevealDuration) { [weak self] in
+                if self?.revealedSmartFilter == rule {
+                    self?.revealedSmartFilter = nil
+                }
+            }
+        }
+
+        private func perform(_ action: SearchAction) {
+            switch action {
+            case .exportFilters:
+                self.exportFilters()
+            case .importFilters:
+                self.beginFileImport()
+            default:
+                guard let screen = action.screen else { return }
+                self.requestSheet(screen)
+            }
         }
 
         private func importFromFileURL(_ url: URL) {

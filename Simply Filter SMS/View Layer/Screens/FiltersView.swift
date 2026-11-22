@@ -43,6 +43,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                         focusedFilterID: $focusedFilterID,
                         model: rowModel,
                         isOptionsCollapsed: model.isFilterOptionsCollapsed)
+                    .revealHighlight(isRevealed: self.model.revealedFilterID == rowModel.id)
                     .environment(\.editMode, $model.editMode)
                     .id(rowModel.id)
                     .tag(rowModel.filter)
@@ -79,6 +80,7 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
                             focusedFilterID: $focusedFilterID,
                             model: rowModel,
                             isOptionsCollapsed: model.isFilterOptionsCollapsed)
+                        .revealHighlight(isRevealed: self.model.revealedFilterID == rowModel.id)
                         .environment(\.editMode, $model.editMode)
                         .id(rowModel.id)
                         .tag(rowModel.filter)
@@ -140,6 +142,15 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
         .onTapGesture {
             focusedFilterID = nil
             hideKeyboard()
+        }
+        .onAppear {
+            self.model.revealSearchFocus()
+        }
+        .onChange(of: model.revealedFilterID) { _, revealedID in
+            guard let revealedID else { return }
+            withAnimation {
+                proxy.scrollTo(revealedID, anchor: .center)
+            }
         }
         .onChange(of: model.newlyAddedFilter) { _, newFilter in
             guard let filter = newFilter, let id = filter.uuid else { return }
@@ -302,6 +313,7 @@ extension FiltersView {
             }
         }
         @Published private(set) var newlyAddedFilter: Filter? = nil
+        @Published private(set) var revealedFilterID: UUID? = nil
 
         var regularRowViewModels: [FilterRowView.ViewModel] {
             self.rowViewModels.filter({ $0.filterMatching != .regex })
@@ -399,6 +411,10 @@ extension FiltersView {
 
         private func filterWasAdded(_ filter: Filter) {
             self.refresh()
+            self.highlight(filter)
+        }
+
+        private func highlight(_ filter: Filter) {
             self.newlyAddedFilter = filter
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
                 if self?.newlyAddedFilter == filter {
@@ -407,6 +423,21 @@ extension FiltersView {
             }
         }
         
+        func revealSearchFocus() {
+            guard let uuid = self.appManager.searchManager.takeFocus(\.filterID) else { return }
+            guard self.rowViewModels.contains(where: { $0.filter.uuid == uuid }) else {
+                Log.debug("search focus not found, uuid: \(uuid) → skipped")
+                return
+            }
+            Log.debug("search focus revealed, filter: \(uuid)")
+            self.revealedFilterID = uuid
+            DispatchQueue.main.asyncAfter(deadline: .now() + kSearchRevealDuration) { [weak self] in
+                if self?.revealedFilterID == uuid {
+                    self?.revealedFilterID = nil
+                }
+            }
+        }
+
         func deleteFilters(withOffsets offsets: IndexSet, rowViewModels: [FilterRowView.ViewModel]) {
             let toDelete = Set(offsets.map { rowViewModels[$0].filter })
             self.deleteFilters(toDelete)

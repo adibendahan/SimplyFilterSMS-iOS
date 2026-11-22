@@ -14,6 +14,11 @@ final class SimplyFilterApp {
         case testCatalog
     }
 
+    enum StartingData {
+        case empty
+        case debug
+    }
+
     let home: HomeScreen
     let allowList: FilterListScreen
     let denyList: FilterListScreen
@@ -21,13 +26,17 @@ final class SimplyFilterApp {
     let communityLists: CommunityListsScreen
     let filterTransfer: FilterTransferScreen
     let stayReachable: StayReachableScreen
+    let search: SearchScreen
     private let filterTester: FilterTesterScreen
 
-    init(remoteLists: RemoteLists, phoneLanguages: [Language]) {
+    init(remoteLists: RemoteLists, phoneLanguages: [Language], startingData: StartingData) {
         let languageCodes = phoneLanguages.map(\.rawValue).joined(separator: ", ")
         var arguments = ["-AppleLanguages", "(\(languageCodes))", "-AppleLocale", "en_US"]
         if remoteLists == .testCatalog {
             arguments.append("-UITestData")
+        }
+        if startingData == .debug {
+            arguments.append("-DebugData")
         }
         let app = XCUIApplication.launchSimplyFilter(arguments: arguments)
 
@@ -38,6 +47,7 @@ final class SimplyFilterApp {
         self.communityLists = CommunityListsScreen(app: app)
         self.filterTransfer = FilterTransferScreen(app: app)
         self.stayReachable = StayReachableScreen(app: app, phoneLanguages: phoneLanguages)
+        self.search = SearchScreen(app: app)
         self.filterTester = FilterTesterScreen(app: app)
     }
 

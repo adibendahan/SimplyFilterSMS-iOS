@@ -888,4 +888,30 @@
 
 "communityLists_description" = "Des listes de filtres créées et partagées par d'autres personnes. Les listes que tu actives classent les messages des expéditeurs inconnus dans **Indésirables**, **Transactions** ou **Promotions**, et se mettent à jour toutes seules.";
 
+"search_menu" = "Menu";
+
+"search_recent" = "Récents";
+
+"search_clearRecent" = "Effacer";
+
+"search_suggestions" = "Suggestions";
+
+"spotlight_allowList_keywords" = "autoriser, autorisés, liste blanche, de confiance, expéditeurs sûrs, ne jamais bloquer";
+
+"spotlight_blockList_keywords" = "bloquer, bloqués, liste noire, spam, indésirables, mots, expéditeurs";
+
+"spotlight_blockedLanguages_keywords" = "langue, langues, étrangère, bloquer une langue, alphabet";
+
+"spotlight_communityLists_keywords" = "communauté, partagées, listes, s’abonner, listes de spam";
+
+"spotlight_aiFiltering_keywords" = "AI, IA, automatique, intelligent, spam, indésirables, protection, langues";
+
+"spotlight_testFilters_keywords" = "tester, vérifier, essayer, message, testeur";
+
+"spotlight_reportMessage_keywords" = "signaler, spam, indésirables, spam manqué, améliorer";
+
+"whatsNew_search_title" = "Recherche et Spotlight";
+
+"whatsNew_search_desc" = "Trouve n'importe quel filtre, liste, réglage ou réponse depuis **Rechercher** sur l'écran principal. Tes listes et outils apparaissent aussi dans **Spotlight** sur l'iPhone - tape simplement leur nom.";
+
 
