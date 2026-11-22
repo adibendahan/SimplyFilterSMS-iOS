@@ -886,7 +886,7 @@
 
 "autoFilter_improveFooter" = "Denuncie spam direto pelo app Mensagens. Cada denúncia melhora o Filtro AI para todos.";
 
-"communityLists_description" = "Listas de filtros criadas e compartilhadas por outras pessoas. As listas que você ativar enviam mensagens de remetentes desconhecidos para **Lixo Eletrônico**, **Transações** ou **Promoções**, e se atualizam sozinhas.";
+"communityLists_description" = "Listas de filtros de spam compartilhadas e mantidas pela comunidade.";
 
 "search_menu" = "Menu";
 

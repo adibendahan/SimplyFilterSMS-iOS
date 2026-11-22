@@ -16,6 +16,7 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - [docs/SCREENS.md](docs/SCREENS.md) — one sentence per screen, plus its traps
 - [docs/EXTENSION.md](docs/EXTENSION.md) — Message Filter and Reporting extension constraints
 - [docs/TESTS.md](docs/TESTS.md) — running tests, mock conventions, the screenshot target
+- [docs/AUTOMATIONS.md](docs/AUTOMATIONS.md) — how to run each script and fastlane lane
 - [docs/LOGGING.md](docs/LOGGING.md) — the log line convention and the keep/drop checklist; every new code path follows it
 - [docs/DESIGN.md](docs/DESIGN.md) — design principles and the accent-color rules
 - [docs/AWS_SETUP.md](docs/AWS_SETUP.md) — the reporting backend and S3 hosting of the AI Filtering lists
@@ -63,7 +64,7 @@ Simply Filter SMS (Swift/SwiftUI, iOS 17+) filters SMS from unknown senders with
 - **Extensions over repeated conditionals:** e.g. `element.conditionalTap(!isPad)` instead of `if !isPad { element.tap() }` at every call site.
 - **Naming:** `*Protocol`, `mock_*` (one per protocol in `Tests/Mocks/`), `*Manager`, `*View`.
 - **Logging:** only `Log.debug` / `Log.error` / `Log.fault`, never `Logger` or `print`. Every new code path is logged by [docs/LOGGING.md](docs/LOGGING.md).
-- **Core Data model:** `Resources/Simply-Filter-SMS.xcdatamodeld`; Int64 raw values mapped to enums in `SharedExtensions.swift`. **After any model change, deploy the CloudKit schema to production** (CloudKit Console → Schema → Deploy to Production) before release: development auto-evolves, production doesn't, and a missing field silently stops syncing in TestFlight/App Store only. Check the diff first: a record type deployed to production can never be removed.
+- **Core Data model:** `Resources/Simply-Filter-SMS.xcdatamodeld`; Int64 raw values mapped to enums in `SharedExtensions.swift`. **After any model change, deploy the CloudKit schema to production** (CloudKit Console → Schema → Deploy to Production) before release: development auto-evolves, production doesn't, and a missing field silently stops syncing in TestFlight/App Store only. Development learns a field only when a debug build on a device signed in to iCloud (never a simulator) exports a record that sets it; until then the deploy shows "no changes". Check the diff first: a record type deployed to production can never be removed.
 - **In-memory stores never sync** (`cloudKitContainerOptions = nil`). With mirroring on, a save in an isolated test run throws `No eligible connection available`.
 - **Renames never touch stored names:** a Core Data entity or attribute (`AutomaticFiltersRule`, `age`…) and the background task identifier keep their strings when the Swift name around them changes; changing one loses users' data or breaks sync. A `@StoredDefault` key is renamed only by adding the old→new pair to `DefaultsManager.migrateRenamedKeys()`.
 - **`.sfsfilters` is the one filter-list format** for exports, AI lists and Community Lists. Exports and AI lists are `version` `2` so 3.2 refuses them: 3.2 requires `case` and `folder` on every record and would drop allow and regex filters. 3.3 reads `1` and `2`. Further changes are additive and optional. A field a record doesn't use is omitted, never a placeholder: regex records omit `case`, allow records omit `folder` (`exportKey(for:)` / `init?(exportKey:for:)`). Exports never write `name`.

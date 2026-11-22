@@ -886,7 +886,7 @@
 
 "autoFilter_improveFooter" = "Melde Spam direkt in Nachrichten. Jede Meldung macht die KI-Filterung für alle besser.";
 
-"communityLists_description" = "Filterlisten, die andere erstellt und geteilt haben. Aktivierte Listen sortieren Nachrichten von unbekannten Absendern in **Junk**, **Transaktionen** oder **Werbung** und aktualisieren sich von selbst.";
+"communityLists_description" = "Spam-Filterlisten, die von der Community geteilt und gepflegt werden.";
 
 "search_menu" = "Menü";
 

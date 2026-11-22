@@ -11,7 +11,9 @@ How tests are written here and the traps around them. The test names say what ea
 - Unit tests: the `Tests` target, through the app scheme with Xcode's MCP.
 - From the command line, use the `Tests` scheme. Running the app scheme's test action can fail to load an unsigned `Tests.xctest`.
 - UI scenarios: the `Scenario Tests` scheme, only before a release or when asked.
-- App Store screenshots: `Extras/screenshots.sh` writes to `Extras/Screenshots/<version>/`; `cd Extras && fastlane upload_screenshots path:Screenshots/<version>` uploads it (fastlane runs from `Extras/`, where its folder is).
+- App Store screenshots: `Extras/screenshots.sh` captures to `Extras/Screenshots/<version>/`, `Extras/store-screenshots.sh` frames them into `Extras/Screenshots/<version>-store/`, and `cd Extras && fastlane upload_screenshots path:Screenshots/<version>-store` uploads the framed set (fastlane runs from `Extras/`, where its folder is). Upload the `-store` folder, never the raw captures.
+- **Apple's device frames are never committed.** Their license forbids redistributing them and the repo is public: they live in the git-ignored `Extras/local/bezels/` (`store-screenshots.sh --list` names the files). Apple's marketing guidelines require them as-is: no added shadow, reflection or tint.
+- Each frame's screen opening is exactly the capture's size, and `frame.html`'s `screenOrigin` and `screenRadii` are measured from the frame's transparent pixels. A new frame is measured the same way; a guessed radius lets the background or the capture's corners show around the screen.
 
 ---
 
@@ -50,4 +52,10 @@ How tests are written here and the traps around them. The test names say what ea
 - On the iPad simulator, `app.keyboards` doesn't see the on-screen keyboard. Close it by pressing Return in the focused field and checking the field lost focus (`hideKeyboard(from:)`), never by looking for the keyboard.
 - A tap that lands while a view animates in can be dropped and leave the field without focus. `type(_:into:)` waits for focus and taps again; on Test Your Filters, wait for the verdict before moving to the next field.
 - On the iPad, a field that still has focus when its sheet scrolls it out of view keeps the app from ever reporting idle, and every later step waits 60 seconds. Subscribe from URL does this once the list loads, so shot 09 types the address with Return (`url + "\n"`) to drop focus first.
+- **The iPhone Duo is never rotated.** Its orientation follows the folded phone, and unfolding opens it sideways like a book: folded gives the outer display tall (1398 × 2034), unfolded gives the inner display wide (2853 × 2007) with the sidebar beside the detail. Unfolded "landscape" makes the inner display tall and hides the sidebar.
+- **Only `hinge` folds the Duo** (Homebrew `artemnovichkov/tap/hinge`). Nothing in `simctl`, `devicectl` or XCUITest can. It sends Device Hub's private hinge event, so an Xcode update can break it; check one fold after each update. The script folds only between two test runs, never mid-run.
+- **A Duo reboot resets it:** it always boots folded, and its displays get new IDs. Pick a display by size or through `hinge posture`, never by a stored ID.
+- On the unfolded Duo, `XCUIScreen.main` is the outer display, black while unfolded. The shot comes from the largest `XCUIScreen` instead.
+- The Duo's runtime is its own build (`iOS-27-2-iPhone19-4`), so a runtime lookup by plain iOS version skips it; each device row in the script says how its runtime is found.
+- fastlane 2.241.2 uploads both Duo sizes under one display type, `APP_IPHONE_DUO`. Not yet checked: that App Store Connect sorts them into its outer and inner categories.
 - On the iPhone Duo, gestures at screen coordinates (`app.coordinate(…)`, `app.swipeUp()`) go to the folded display even while it's unfolded, and do nothing. Gesture on an element instead. Both Duo displays are short enough that Home's lower links are off screen: reach them with `reveal(_:)`, which swipes the Home list itself along its left margin. An element's own `swipeUp()` starts below its center, which lands on the short-sender row's "Change" button in some languages; that button takes the drag and the list never scrolls.
