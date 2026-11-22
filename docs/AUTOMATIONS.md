@@ -66,9 +66,9 @@ fastlane upload_creative_assets files:header-21x9-en.png,header-21x9-he.png
 cd Extras && bartycrouch update
 ```
 
-## Community Lists site
+## GitHub Pages site
 
-`Extras/community-lists/` deploys to GitHub Pages by itself on a push to `master` that touches it (`.github/workflows/pages.yml`). Changes go to `develop` in their own PR; the maintainer updates `master`. To redeploy without a change:
+`Extras/github-pages/` deploys to GitHub Pages by itself on a push to `master` that touches it (`.github/workflows/pages.yml`). Changes go to `develop` in their own PR; the maintainer updates `master`. To redeploy without a change:
 
 ```sh
 gh workflow run pages.yml --ref master

@@ -1,0 +1,48 @@
+/* Privacy and Support: an Apple-style info page. A large statement, a grid of icon tiles on the gray band, and a closing band. */
+.info-hero { padding-block: 120px 96px; text-align: center; }
+.info-hero .eyebrow { font: 600 21px/1.2 var(--font-display); color: var(--tint); letter-spacing: 0.01em; margin: 0 0 14px; }
+.info-hero h1 { max-width: 15ch; margin-inline: auto; }
+.info-hero .lede { max-width: 34em; margin: 24px auto 0; }
+.info-hero .hero-icon { display: inline-grid; place-items: center; width: 84px; height: 84px; border-radius: 22px; margin-bottom: 28px; color: #ffffff; background: var(--hero-icon, var(--tint)); }
+.info-hero .hero-icon svg { width: 48px; height: 48px; }
+
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.tile { background: var(--card); border-radius: 24px; padding: 36px 32px 34px; display: grid; align-content: start; gap: 12px; }
+.tile svg { width: 40px; height: 40px; color: var(--tile-icon, var(--tint)); margin-bottom: 8px; }
+.tile h3 { font-size: 24px; line-height: 1.17; font-weight: 600; letter-spacing: 0.009em; }
+.tile p { margin: 0; font-size: 17px; line-height: 1.47; color: var(--ink-2); letter-spacing: -0.022em; }
+.tile a { font-weight: 500; }
+
+.contact-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.contact-card { background: var(--band); border-radius: 24px; padding: 40px 36px; display: grid; align-content: start; gap: 12px; color: inherit; }
+.contact-card:hover { text-decoration: none; }
+.contact-card svg { width: 44px; height: 44px; color: var(--tint); margin-bottom: 8px; }
+.contact-card h3 { font-size: 28px; line-height: 1.14; font-weight: 600; letter-spacing: 0.007em; }
+.contact-card p { margin: 0; font-size: 17px; line-height: 1.47; color: var(--ink-2); letter-spacing: -0.022em; }
+.contact-card .more { color: var(--tint); font-size: 17px; font-weight: 500; margin-top: 6px; }
+.contact-card:hover .more { text-decoration: underline; }
+
+.steps-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; background: var(--card); border-radius: 24px; overflow: hidden; }
+.steps-list li { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 18px; align-items: start; padding: 22px 28px; border-top: 1px solid var(--hair-soft); }
+.steps-list li:first-child { border-top: 0; }
+.steps-list .num { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 16px; background: var(--fill); font: 600 16px/1 var(--font-display); color: var(--ink); }
+.steps-list strong { display: block; font-size: 19px; font-weight: 600; letter-spacing: 0.012em; margin-bottom: 4px; }
+.steps-list span.text { font-size: 17px; line-height: 1.47; color: var(--ink-2); letter-spacing: -0.022em; }
+.split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: start; }
+.split .head { margin-bottom: 0; }
+
+.closing { text-align: center; }
+.closing h2 { max-width: 18ch; margin-inline: auto; }
+.closing .lede { max-width: 32em; margin: 20px auto 0; }
+.closing .note { margin-top: 28px; font-size: 14px; color: var(--ink-3); }
+
+@media (max-width: 900px) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .split { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+}
+@media (max-width: 640px) {
+  .info-hero { padding-block: 72px 56px; }
+  .tiles, .contact-cards { grid-template-columns: minmax(0, 1fr); }
+  .tile, .contact-card { padding: 28px 24px; }
+  .steps-list li { padding: 18px 20px; }
+}

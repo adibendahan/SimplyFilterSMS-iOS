@@ -269,11 +269,11 @@ If all keys are present: confirm and move to the next step.
 
 ---
 
-## Step 7b — Translate the Community Lists site
+## Step 7b — Translate the GitHub Pages site
 
-The Community Lists guide, its list tester and the submit page (`Extras/community-lists/`, published to GitHub Pages) carry their own text, one file per language in `Extras/community-lists/strings/`.
+The GitHub Pages site (`Extras/github-pages/`) carries its own text for the Community Lists guide, its list tester, the submit page, and the privacy and support pages: one file per language in `Extras/github-pages/strings/`.
 
-1. Create `Extras/community-lists/strings/<code>.js` with the same keys as `Extras/community-lists/strings/en.js`, in this shape:
+1. Create `Extras/github-pages/strings/<code>.js` with the same keys as `Extras/github-pages/strings/en.js`, in this shape:
    ```js
    window.STRINGS["<code>"] = {
      "key": "value",
@@ -307,10 +307,10 @@ The Community Lists guide, its list tester and the submit page (`Extras/communit
    - `example.locale` is the language's main locale (e.g. `ru-RU`); `example.description` is "Blocks loan and prize scams in <language>." in the target language.
    - Plurals: keys ending in `.one` / `.other` (`check.filterCount`, `check.skipped`, `check.duplicates`) follow `Intl.PluralRules` for the language. `.other` is required; add only the categories the language uses (`.two`, `.few`, `.many`), or phrase the string as a count label when every form would be awkward (as Arabic does).
 4. **Register the language:**
-   - Add `<code>` to `SUPPORTED` in `Extras/community-lists/assets/i18n-boot.js`. If the browser reports a different tag (e.g. `pt` for `pt-BR`, `zh` for `zh-Hans`), add the mapping to `supportedLanguage` there.
-   - Add an `<option value="<code>">` with the language's name in its own language to the language menu in both `Extras/community-lists/index.html` and `Extras/community-lists/submit/index.html`, in the same order as the others.
-   - For an RTL language, add `<code>` to `RTL` in `Extras/community-lists/assets/i18n.js`.
-5. **Verify:** the new file has every key `en.js` has (plural categories aside), and each value uses the same placeholders as its English value. Open `Extras/community-lists/index.html?lang=<code>` and `Extras/community-lists/submit/index.html?lang=<code>` in a browser and check the text, the layout, and (for RTL) the mirroring.
+   - Add `<code>` to `SUPPORTED` in `Extras/github-pages/assets/i18n-boot.js`. If the browser reports a different tag (e.g. `pt` for `pt-BR`, `zh` for `zh-Hans`), add the mapping to `supportedLanguage` there.
+   - Add an `<option value="<code>">` with the language's name in its own language to the language menu in every page: `Extras/github-pages/index.html`, `submit/index.html`, `privacy/index.html` and `support/index.html`, in the same order as the others.
+   - For an RTL language, add `<code>` to `RTL` in `Extras/github-pages/assets/i18n.js`.
+5. **Verify:** the new file has every key `en.js` has (plural categories aside), and each value uses the same placeholders as its English value. Open `Extras/github-pages/index.html?lang=<code>` and `Extras/github-pages/submit/index.html?lang=<code>` in a browser and check the text, the layout, and (for RTL) the mirroring.
 
 The site deploys from `master`, so the language goes live when this reaches `master`.
 
@@ -363,7 +363,7 @@ At the end, report:
 - Strings file: `Simply Filter SMS/Resources/<code>.lproj/Localizable.strings`
 - Plural `.stringsdict`: created (3 entries: `general_active_count`, `autoFilter_countryAllowlist_section_allowed`, `autoFilter_countryAllowlist_section_blocked`)
 - Key count (must match English)
-- Community Lists site: `Extras/community-lists/strings/<code>.js` created and the language registered (key count matches `en.js`)
+- GitHub Pages site: `Extras/github-pages/strings/<code>.js` created and the language registered (key count matches `en.js`)
 - Xcode project updated: yes/no
 - Strings that exceeded the length constraint (flagged for layout review)
 - Test launch argument: `-AppleLanguages (<code>)`
