@@ -235,7 +235,7 @@
 "autoFilter_turnOnHint" = "Turn on the languages you get messages in";
 "autoFilter_improveFooter" = "Report spam right from Messages. Every report makes AI Filtering better for everyone.";
 "communityLists_title" = "Community Lists";
-"communityLists_description" = "Filter lists made and shared by other people. Lists you turn on sort messages from unknown senders into **Junk**, **Transactions** or **Promotions**, and update by themselves.";
+"communityLists_description" = "Spam filter lists shared and maintained by the community.";
 "communityLists_byAuthor" = "by %@";
 "communityLists_featured" = "Featured";
 "communityLists_addedByYou" = "Added by You";

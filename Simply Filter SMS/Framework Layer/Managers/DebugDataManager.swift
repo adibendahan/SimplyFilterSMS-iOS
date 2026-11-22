@@ -88,6 +88,10 @@ class DebugDataManager: DebugDataManagerProtocol {
         let candidates = [NLLanguage(langCode), NLLanguage(normalizedCode)]
         let preferred = candidates.first { supported.contains($0) } ?? .english
         filterListManager.setFilterListActive(for: preferred, value: true)
+
+        if let curatedList = filterListManager.communityLists.first(where: { $0.isCurated }) {
+            filterListManager.setCommunityListActive(curatedList, value: true)
+        }
     }
 
     // MARK: - Language Data

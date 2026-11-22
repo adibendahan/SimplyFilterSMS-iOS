@@ -886,7 +886,7 @@
 
 "autoFilter_improveFooter" = "直接在“信息”中报告垃圾短信。每次报告都会让 AI 过滤对所有人更好。";
 
-"communityLists_description" = "由其他人创建并分享的过滤列表。开启的列表会将陌生发件人的信息分到“**垃圾短信**”“**交易信息**”或“**推广信息**”，并会自动更新。";
+"communityLists_description" = "由社区共享和维护的垃圾信息过滤列表。";
 
 "search_menu" = "菜单";
 

@@ -886,7 +886,7 @@
 
 "autoFilter_improveFooter" = "Signale le spam directement depuis Messages. Chaque signalement améliore le Filtrage AI pour tout le monde.";
 
-"communityLists_description" = "Des listes de filtres créées et partagées par d'autres personnes. Les listes que tu actives classent les messages des expéditeurs inconnus dans **Indésirables**, **Transactions** ou **Promotions**, et se mettent à jour toutes seules.";
+"communityLists_description" = "Des listes de filtres anti-spam partagées et maintenues par la communauté.";
 
 "search_menu" = "Menu";
 
