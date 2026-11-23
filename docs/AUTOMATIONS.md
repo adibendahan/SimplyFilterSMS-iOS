@@ -6,7 +6,7 @@ How to run each automation in this repo.
 
 ## App Store screenshots
 
-Three steps, all from `Extras/`: capture (`Screenshots/<version>/`), frame (`Screenshots/<version>-store/`), upload.
+Three steps, all from `Extras/`: capture (`screenshots/<version>/`), frame (`screenshots/<version>-store/`), upload.
 
 Needs `hinge` for the Duo (`brew install artemnovichkov/tap/hinge`), Google Chrome for framing, and Apple's device frames in `Extras/local/bezels/`. Captions live in `Extras/fastlane/store_screenshots/captions/<locale>.json`.
 
@@ -20,7 +20,7 @@ cd Extras
 # Check a change on one shot first
 ./screenshots.sh -l en -d iphone -s 1
 ./store-screenshots.sh -l en -d iphone -s 1
-open Screenshots/4.0.0-store/en-US/iphone-01-home.png
+open screenshots/4.0.0-store/en-US/iphone-01-home.png
 
 # A few languages, reusing the last build
 ./screenshots.sh --skip-build -l he -l ar
@@ -38,7 +38,7 @@ tail -f "$TMPDIR/screenshots.log"
 ./store-screenshots.sh -v 4.0.0
 
 # Upload the framed set (never the raw captures)
-fastlane upload_screenshots path:Screenshots/4.0.0-store
+fastlane upload_screenshots path:screenshots/4.0.0-store
 ```
 
 ## App Store metadata and assets
