@@ -686,7 +686,7 @@ enum TipTier: String, CaseIterable {
 }
 
 enum WhatsNewEntry: String, CaseIterable {
-    case aiFiltering, tipJar, regexFilters, filterTransfer, accentColor, help, communityLists, siriShortcuts, search, newLanguages, trustedCountries, accessibility, ipad, quickAddFilter, singleChar
+    case aiFiltering, tipJar, regexFilters, filterTransfer, accentColor, help, communityLists, siriShortcuts, search, freshLook, newLanguages, trustedCountries, accessibility, ipad, quickAddFilter, singleChar
 
     var title: String {
         switch self {
@@ -708,6 +708,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_siriShortcuts_title"~
         case .search:
             return "whatsNew_search_title"~
+        case .freshLook:
+            return "whatsNew_freshLook_title"~
         case .newLanguages:
             return "whatsNew_newLanguages_title"~
         case .trustedCountries:
@@ -743,6 +745,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "whatsNew_siriShortcuts_desc"~
         case .search:
             return "whatsNew_search_desc"~
+        case .freshLook:
+            return "whatsNew_freshLook_desc"~
         case .newLanguages:
             return "whatsNew_newLanguages_desc"~
         case .trustedCountries:
@@ -778,6 +782,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return "mic.fill"
         case .search:
             return "magnifyingglass"
+        case .freshLook:
+            return "sparkles"
         case .newLanguages:
             return "globe"
         case .trustedCountries:
@@ -813,6 +819,8 @@ enum WhatsNewEntry: String, CaseIterable {
             return .purple
         case .search:
             return .blue
+        case .freshLook:
+            return .teal
         case .newLanguages:
             return .teal
         case .trustedCountries:
@@ -832,49 +840,51 @@ enum WhatsNewEntry: String, CaseIterable {
         switch self {
         case .communityLists, .siriShortcuts, .search, .accentColor, .aiFiltering, .regexFilters:
             return true
-        case .filterTransfer, .help, .newLanguages, .trustedCountries, .accessibility, .tipJar, .ipad, .quickAddFilter, .singleChar:
+        case .freshLook, .filterTransfer, .help, .newLanguages, .trustedCountries, .accessibility, .tipJar, .ipad, .quickAddFilter, .singleChar:
             return false
         }
     }
 
     var order: Int {
         switch self {
-        case .communityLists:
+        case .freshLook:
             return 0
-        case .siriShortcuts:
+        case .communityLists:
             return 1
-        case .search:
+        case .siriShortcuts:
             return 2
-        case .filterTransfer:
+        case .search:
             return 3
-        case .accentColor:
+        case .filterTransfer:
             return 4
-        case .help:
+        case .accentColor:
             return 5
-        case .regexFilters:
+        case .help:
             return 6
-        case .aiFiltering:
+        case .regexFilters:
             return 7
-        case .newLanguages:
+        case .aiFiltering:
             return 8
-        case .trustedCountries:
+        case .newLanguages:
             return 9
-        case .accessibility:
+        case .trustedCountries:
             return 10
-        case .tipJar:
+        case .accessibility:
             return 11
-        case .ipad:
+        case .tipJar:
             return 12
-        case .quickAddFilter:
+        case .ipad:
             return 13
-        case .singleChar:
+        case .quickAddFilter:
             return 14
+        case .singleChar:
+            return 15
         }
     }
 
     var iconScale: CGFloat {
         switch self {
-        case .communityLists, .search, .newLanguages, .trustedCountries, .accessibility, .quickAddFilter, .singleChar, .accentColor, .help:
+        case .communityLists, .search, .freshLook, .newLanguages, .trustedCountries, .accessibility, .quickAddFilter, .singleChar, .accentColor, .help:
             return 1.0
         case .siriShortcuts:
             return 1.1
@@ -893,7 +903,7 @@ enum WhatsNewEntry: String, CaseIterable {
 
     var release: String {
         switch self {
-        case .communityLists, .siriShortcuts, .search:
+        case .communityLists, .siriShortcuts, .search, .freshLook:
             return "4.0.0"
         case .filterTransfer, .accentColor, .help:
             return "3.1.0"

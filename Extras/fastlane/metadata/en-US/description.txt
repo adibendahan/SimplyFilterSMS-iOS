@@ -3,7 +3,10 @@ Take back control of your inbox.
 Simply Filter SMS is a privacy-first, open-source text message filter for iPhone and iPad. Create keyword rules and smart filters to automatically move unwanted messages from unknown senders to Junk, Promotions, or Transactions - completely on-device. Your filters sync across your devices through iCloud.
 
 What's new in this version:
+• A Fresh Look - A refreshed app icon, redesigned screens, and smoother animations throughout.
 • Community Lists - Subscribe to filter lists shared by other people, or share your own. Lists update automatically when their authors publish a new version.
+• Siri & Shortcuts - Add, remove and check filters with Siri, or from the Shortcuts app.
+• Search & Spotlight - Find any filter, list, setting or answer from Search on the home screen, or from iPhone Spotlight.
 
 In case you missed it, here's what was updated recently:
 • Export & Import Filters - Share your filter setup with a friend. Export from Filter Tools in the menu and send the file.

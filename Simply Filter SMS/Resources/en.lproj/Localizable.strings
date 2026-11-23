@@ -509,6 +509,8 @@
 "whatsNew_siriShortcuts_desc" = "Add, remove and check filters with Siri: try **“Add to my Block List in Simply Filter SMS”**. All the actions are in the **Shortcuts** app too.";
 "whatsNew_search_title" = "Search & Spotlight";
 "whatsNew_search_desc" = "Find any filter, list, setting or answer from **Search** on the home screen. Your lists and tools show up in iPhone **Spotlight** too - just type their name.";
+"whatsNew_freshLook_title" = "A Fresh Look";
+"whatsNew_freshLook_desc" = "A refreshed app icon, redesigned screens, and smoother animations throughout.";
 
 "whatsNew_quickAddFilter_title" = "Quick Add Filters";
 
