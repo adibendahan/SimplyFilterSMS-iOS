@@ -26,6 +26,7 @@ class AppManager: AppManagerProtocol {
     var flowManager: FlowManagerProtocol
     var schedulingManager: SchedulingManagerProtocol
     var searchManager: SearchManagerProtocol
+    var stayReachableManager: StayReachableManagerProtocol
     var debugDataManager: DebugDataManagerProtocol
 
     init(inMemory: Bool = false) {
@@ -50,6 +51,8 @@ class AppManager: AppManagerProtocol {
         self.reportMessageService = reportMessageService
         self.tipJarManager = TipJarManager(defaultsManager: defaultsManager)
         self.filterTransferManager = FilterTransferManager(persistenceManager: persistenceManager)
+        self.stayReachableManager = StayReachableManager(persistenceManager: persistenceManager,
+                                                         defaultsManager: defaultsManager)
         self.flowManager = FlowManager(defaultsManager: defaultsManager,
                                        networkSyncManager: networkSyncManager,
                                        filterListManager: filterListManager)

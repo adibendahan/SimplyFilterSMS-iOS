@@ -24,6 +24,7 @@ protocol DefaultsManagerProtocol {
     var stayReachableToastSessions: [Int] { get set }
     var recentSearchQueries: [String] { get set }
     var didOpenStayReachable: Bool { get set }
+    var stayReachableFilterIDs: [[String: String]] { get set }
     var inactivityNotificationDeclineCount: Int { get set }
     var inactivityNotificationLastDeclineSession: Int { get set }
     var inactivityNotificationWasGranted: Bool { get set }

@@ -384,6 +384,7 @@
 "stayReachable_removeLanguage" = "Remove Language";
 "stayReachable_phoneLanguages" = "Your iPhone's Languages";
 "stayReachable_allLanguages" = "All Languages";
+"stayReachable_saveChanges" = "Save Changes";
 
 //MARK: iPad Detail Placeholder
 "placeholder_choose_title" = "Select a category";

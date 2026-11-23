@@ -13,6 +13,7 @@ class StayReachableViewModelTests: XCTestCase {
 
     private var appManager: mock_AppManager!
     private var persistenceManager: mock_PersistenceManager!
+    private var defaultsManager: mock_DefaultsManager!
     private var testSubject: StayReachableView.ViewModel!
 
     //MARK: Test Lifecycle
@@ -20,12 +21,17 @@ class StayReachableViewModelTests: XCTestCase {
         super.setUp()
         self.appManager = mock_AppManager()
         self.persistenceManager = mock_PersistenceManager()
+        self.defaultsManager = mock_DefaultsManager()
         self.appManager.persistenceManager = self.persistenceManager
+        self.appManager.defaultsManager = self.defaultsManager
+        self.appManager.stayReachableManager = StayReachableManager(persistenceManager: self.persistenceManager,
+                                                                    defaultsManager: self.defaultsManager)
         self.testSubject = StayReachableView.ViewModel(appManager: self.appManager)
     }
 
     override func tearDown() {
         self.testSubject = nil
+        self.defaultsManager = nil
         self.persistenceManager = nil
         self.appManager = nil
         super.tearDown()
@@ -239,26 +245,143 @@ class StayReachableViewModelTests: XCTestCase {
         XCTAssertFalse(self.testSubject.isAlreadyAllowed("Cohen"))
     }
 
-    func test_addFilters_addsExactCaseInsensitiveAllowFilters() {
+    func test_init_remembered_restoresTheFiltersCurrentText() {
         // Prepare
-        var english = StayReachableView.LanguageSection(language: .english)
-        english.firstName = "Adi"
-        english.street = "Herzl"
-        self.testSubject.sections = [english]
-        var addedTexts: [String] = []
-        self.persistenceManager.addFilterClosure = { text, type, _, target, matching, filterCase in
-            XCTAssertEqual(type, .allow)
-            XCTAssertEqual(target, .all)
-            XCTAssertEqual(matching, .exact)
-            XCTAssertEqual(filterCase, .caseInsensitive)
-            addedTexts.append(text)
-        }
+        let filters = self.allowFilters(["Adi", "Herzl"])
+        self.persistenceManager.fetchFilterRecordsClosure = { filters }
+        self.defaultsManager.stayReachableFilterIDs = [["language": "en",
+                                                        "firstName": filters[0].uuid!.uuidString,
+                                                        "street": filters[1].uuid!.uuidString]]
+        filters[1].text = "Herzl St"
+
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english, Locale.LanguageCode("he")])
+
+        // Verify
+        XCTAssertEqual(self.testSubject.sections.map(\.language), [.english])
+        XCTAssertEqual(self.testSubject.sections[0].texts, ["Adi", "", "Herzl St"])
+        XCTAssertEqual(self.testSubject.changeCount, 0)
+        XCTAssertFalse(self.testSubject.isSkipped(.firstName, in: self.testSubject.sections[0]))
+        XCTAssertTrue(self.testSubject.skippedNote(for: self.testSubject.sections[0]).isEmpty)
+    }
+
+    func test_restoredFieldEdited_countsAsAnEditOfItsOwnFilter() {
+        // Prepare
+        let filters = self.allowFilters(["Adi"])
+        self.persistenceManager.fetchFilterRecordsClosure = { filters }
+        self.defaultsManager.stayReachableFilterIDs = [["language": "en",
+                                                        "firstName": filters[0].uuid!.uuidString]]
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english])
+
+        // Act
+        self.testSubject.sections[0].firstName = "ADI"
+        let section = self.testSubject.sections[0]
+
+        // Verify
+        XCTAssertFalse(self.testSubject.isSkipped(.firstName, in: section))
+        XCTAssertTrue(self.testSubject.skippedNote(for: section).isEmpty)
+        XCTAssertTrue(self.testSubject.newFilterTexts.isEmpty)
+        XCTAssertEqual(self.testSubject.editedTexts, ["ADI"])
+        XCTAssertEqual(self.testSubject.changeCount, 1)
+    }
+
+    func test_restoredFieldCleared_countsAsAChange() {
+        // Prepare
+        let filters = self.allowFilters(["Adi"])
+        self.persistenceManager.fetchFilterRecordsClosure = { filters }
+        self.defaultsManager.stayReachableFilterIDs = [["language": "en",
+                                                        "firstName": filters[0].uuid!.uuidString]]
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english])
+
+        // Act
+        self.testSubject.sections[0].firstName = ""
+
+        // Verify
+        XCTAssertEqual(self.testSubject.clearedFieldCount, 1)
+        XCTAssertEqual(self.testSubject.changeCount, 1)
+        XCTAssertEqual(self.testSubject.addButtonTitle, "stayReachable_saveChanges"~)
+    }
+
+    func test_addButtonTitle_newTextsAlongsideEdits_countsOnlyTheNewOnes() {
+        // Prepare
+        let filters = self.allowFilters(["Adi"])
+        self.persistenceManager.fetchFilterRecordsClosure = { filters }
+        self.defaultsManager.stayReachableFilterIDs = [["language": "en",
+                                                        "firstName": filters[0].uuid!.uuidString]]
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english])
+
+        // Act
+        self.testSubject.sections[0].firstName = "Adie"
+        self.testSubject.sections[0].street = "Herzl"
+
+        // Verify
+        XCTAssertEqual(self.testSubject.changeCount, 2)
+        XCTAssertEqual(self.testSubject.addButtonTitle, String.localizedStringWithFormat("stayReachable_addFilters"~, 1))
+    }
+
+    func test_restoredFieldEditedToAnotherAllowedText_isSkipped() {
+        // Prepare
+        let filters = self.allowFilters(["Adi", "Dana"])
+        self.persistenceManager.fetchFilterRecordsClosure = { filters }
+        self.defaultsManager.stayReachableFilterIDs = [["language": "en",
+                                                        "firstName": filters[0].uuid!.uuidString]]
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english])
+
+        // Act
+        self.testSubject.sections[0].firstName = "Dana"
+        let section = self.testSubject.sections[0]
+
+        // Verify
+        XCTAssertTrue(self.testSubject.isSkipped(.firstName, in: section))
+        XCTAssertFalse(self.testSubject.skippedNote(for: section).isEmpty)
+        XCTAssertEqual(self.testSubject.changeCount, 0)
+    }
+
+    func test_addFilters_savesTheSections() {
+        // Prepare
+        let stayReachableManager = mock_StayReachableManager()
+        self.appManager.stayReachableManager = stayReachableManager
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english])
+        self.testSubject.sections[0].firstName = "Adi"
+        var savedSections: [StayReachableSection] = []
+        stayReachableManager.saveClosure = { savedSections = $0 }
 
         // Act
         self.testSubject.addFilters()
 
         // Verify
-        XCTAssertEqual(addedTexts, ["Adi", "Herzl"])
+        XCTAssertEqual(stayReachableManager.saveCounter, 1)
+        XCTAssertEqual(savedSections.map(\.firstName), ["Adi"])
+    }
+
+    func test_init_rememberedOtherLanguageOnly_keepsTheAppLanguageFirst() {
+        // Prepare
+        let hebrew = Locale.LanguageCode("he")
+        let filters = self.allowFilters(["עדי"])
+        self.persistenceManager.fetchFilterRecordsClosure = { filters }
+        self.defaultsManager.stayReachableFilterIDs = [["language": "he",
+                                                        "firstName": filters[0].uuid!.uuidString]]
+
+        // Act
+        self.testSubject = StayReachableView.ViewModel(appManager: self.appManager,
+                                                       appLanguage: .english,
+                                                       phoneLanguages: [.english, hebrew])
+
+        // Verify
+        XCTAssertEqual(self.testSubject.sections.map(\.language), [.english, hebrew])
+        XCTAssertEqual(self.testSubject.sections[1].firstName, "עדי")
     }
 
     func test_addAndRemoveSection_updatesUnusedLanguages() {

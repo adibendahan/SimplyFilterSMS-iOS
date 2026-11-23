@@ -120,12 +120,30 @@ struct StayReachableSheet: Screen {
         }
     }
 
+    func expectFilled(_ language: Language, firstName: String, surname: String, street: String, file: StaticString = #filePath, line: UInt = #line) {
+        let texts: [(Field, String)] = [(.firstName, firstName), (.surname, surname), (.street, street)]
+        self.step("The \(language.rawValue) section is filled in: \(firstName) \(surname), \(street)") {
+            for (field, text) in texts {
+                let element = self.field(field, in: language)
+                self.reveal(element)
+                XCTAssertEqual(element.value as? String, text, "The \(language.rawValue) \(field.rawValue) is not \"\(text)\"", file: file, line: line)
+            }
+        }
+    }
+
     func expectSkipped(_ text: String, because reason: String, file: StaticString = #filePath, line: UInt = #line) {
         self.step("\"\(text)\" is skipped: \(reason)") {
             let predicate = NSPredicate(format: "identifier == %@ AND label CONTAINS %@ AND label CONTAINS %@",
                                         TestIdentifier.stayReachableSkippedNote.rawValue, text, reason)
             let note = self.app.staticTexts.matching(predicate).firstMatch
             XCTAssertTrue(note.waitForExistence(timeout: 5), "No note says \"\(text)\" \(reason)", file: file, line: line)
+        }
+    }
+
+    func expectNoSkippedNotes(file: StaticString = #filePath, line: UInt = #line) {
+        self.step("No text is marked as skipped") {
+            let notes = self.app.staticTexts.matching(identifier: TestIdentifier.stayReachableSkippedNote.rawValue)
+            XCTAssertEqual(notes.count, 0, "A skipped note shows: \(notes.firstMatch.label)", file: file, line: line)
         }
     }
 

@@ -9,7 +9,7 @@ import XCTest
 
 final class StayReachableScenarios: ScenarioTestCase {
 
-    func testStayReachableAllowsNameAndStreetInEveryLanguageAndSkipsWhatsAlreadyAllowed() {
+    func testStayReachableAllowsNameAndStreetInEveryLanguageSkipsWhatsAlreadyAllowedAndRemembersThem() {
         let app = self.launchApp(phoneLanguages: [.english, .hebrew])
         let hebrewName = Message(from: "+15551234567", "דנה, החבילה שלך הגיעה")
         let surname = Message(from: "Courier", "Delivery for Levi")
@@ -38,8 +38,9 @@ final class StayReachableScenarios: ScenarioTestCase {
         }
 
         let reopenedSheet = app.stayReachable.openFromMenu()
-        reopenedSheet.fill(.english, surname: "LEVI")
-        reopenedSheet.expectSkipped("LEVI", because: "is already allowed")
+        reopenedSheet.expectFilled(.english, firstName: "Dana", surname: "Levi", street: "Herzl")
+        reopenedSheet.expectFilled(.hebrew, firstName: "דנה", surname: "לוי", street: "Herzl")
+        reopenedSheet.expectNoSkippedNotes()
         reopenedSheet.expectNothingToAdd()
         reopenedSheet.close()
     }

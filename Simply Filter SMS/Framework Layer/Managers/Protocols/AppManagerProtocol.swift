@@ -21,6 +21,7 @@ protocol AppManagerProtocol {
     var flowManager: FlowManagerProtocol { get }
     var schedulingManager: SchedulingManagerProtocol { get }
     var searchManager: SearchManagerProtocol { get }
+    var stayReachableManager: StayReachableManagerProtocol { get }
 
     @MainActor func onAppLaunch()
     @MainActor func onAppBecameActive() -> Bool
