@@ -75,6 +75,18 @@ extension AnyTransition {
     }
 }
 
+extension ToolbarItemPlacement {
+    static var pinnedTrailing: ToolbarItemPlacement {
+        let placement: ToolbarItemPlacement
+        if #available(iOS 27.0, *) {
+            placement = .topBarPinnedTrailing
+        } else {
+            placement = .topBarTrailing
+        }
+        return placement
+    }
+}
+
 extension Date {
     func daysBetween(date: Date) -> Int {
         return Date.daysBetween(start: self, end: date)

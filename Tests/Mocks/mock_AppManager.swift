@@ -24,6 +24,7 @@ class mock_AppManager: AppManagerProtocol {
     var flowManager: FlowManagerProtocol = mock_FlowManager()
     var schedulingManager: SchedulingManagerProtocol = mock_SchedulingManager()
     var searchManager: SearchManagerProtocol = mock_SearchManager()
+    var stayReachableManager: StayReachableManagerProtocol = mock_StayReachableManager()
     var debugDataManager: DebugDataManagerProtocol = mock_DebugDataManager()
 
     var onAppLaunchCounter = 0

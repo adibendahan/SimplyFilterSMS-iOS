@@ -88,6 +88,19 @@ class FlowManager: FlowManagerProtocol {
         return nil
     }
 
+    func finishFirstRun(openedSettings: Bool) {
+        Log.debug("first run finished, openedSettings: \(openedSettings)")
+        self.defaultsManager.isAppFirstRun = false
+        self.isAwaitingReturnFromSettings = openedSettings
+    }
+
+    func appBecameActive() {
+        guard self.isAwaitingReturnFromSettings else { return }
+        Log.debug("back from Settings → showing waiting toast")
+        self.isAwaitingReturnFromSettings = false
+        self.showWaitingToast()
+    }
+
     func completeScreen(_ screen: Screen) {
         Log.debug("screen completed, screen: \(screen)")
         if self.activeScreen == screen {
@@ -113,7 +126,7 @@ class FlowManager: FlowManagerProtocol {
         self.startedAsFirstRun = self.defaultsManager.isAppFirstRun
         self.shownToast = nil
         self.pendingToast = nil
-        self.waitingNudge = nil
+        self.waitingToast = nil
         self.didShowToastThisSession = false
     }
 
@@ -169,18 +182,17 @@ class FlowManager: FlowManagerProtocol {
             return
         }
         #endif // DEBUG
-        let mustWait = toast.isNudge && !self.isHomeIdle()
-        guard mustWait else {
+        guard self.mustWait(toast) else {
             self.enqueue(toast)
             return
         }
 
-        guard !toast.isOutranked(by: self.waitingNudge) else {
-            Log.debug("Home busy, toast: \(toast.logName), waiting: \(self.waitingNudge?.logName) → dropped")
+        guard !toast.isOutranked(by: self.waitingToast) else {
+            Log.debug("must wait, toast: \(toast.logName), waiting: \(self.waitingToast?.logName) → dropped")
             return
         }
-        Log.debug("Home busy, toast: \(toast.logName) → waiting")
-        self.waitingNudge = toast
+        Log.debug("must wait, toast: \(toast.logName), firstRun: \(self.defaultsManager.isAppFirstRun), awaitingSettingsReturn: \(self.isAwaitingReturnFromSettings) → waiting")
+        self.waitingToast = toast
     }
 
     func nextToast() -> ToastView.Toast? {
@@ -247,19 +259,20 @@ class FlowManager: FlowManagerProtocol {
         self.requestToast(.stayReachable)
     }
 
-    func showWaitingNudge() {
-        guard let waitingNudge = self.waitingNudge else { return }
-        guard self.isHomeIdle() else {
-            Log.debug("Home busy, nudge: \(waitingNudge.logName) → still waiting")
+    func showWaitingToast() {
+        guard let waitingToast = self.waitingToast else { return }
+        guard !self.mustWait(waitingToast) else {
+            Log.debug("must wait, toast: \(waitingToast.logName), firstRun: \(self.defaultsManager.isAppFirstRun), awaitingSettingsReturn: \(self.isAwaitingReturnFromSettings) → still waiting")
             return
         }
-        self.waitingNudge = nil
+        self.waitingToast = nil
 
-        guard !self.didShowToastThisSession else {
-            Log.debug("another toast showed this session, nudge: \(waitingNudge.logName) → skipped")
+        let isSkippedNudge = waitingToast.isNudge && self.didShowToastThisSession
+        guard !isSkippedNudge else {
+            Log.debug("another toast showed this session, nudge: \(waitingToast.logName) → skipped")
             return
         }
-        self.enqueue(waitingNudge)
+        self.enqueue(waitingToast)
     }
 
 
@@ -269,13 +282,14 @@ class FlowManager: FlowManagerProtocol {
     private let filterListManager: FilterListManagerProtocol
     private var startedAsFirstRun: Bool
     private var launchActionClaimedSession = false
+    private var isAwaitingReturnFromSettings = false
     private var whatsNewEnabled = false
     private var activeScreen: Screen?
     private var pendingLaunchScreen: Screen?
     private var pendingUserRequest: Screen?
     private var shownToast: ToastView.Toast?
     private var pendingToast: ToastView.Toast?
-    private var waitingNudge: ToastView.Toast?
+    private var waitingToast: ToastView.Toast?
     private var presentNextScreen: () -> Void = {}
     private var showNextToast: () -> Void = {}
     private var isHomeIdle: () -> Bool = { true }
@@ -295,6 +309,12 @@ class FlowManager: FlowManagerProtocol {
         return lastDismissDate.addingTimeInterval(snoozeDuration) > Date()
     }
 
+    private func mustWait(_ toast: ToastView.Toast) -> Bool {
+        let isFirstRun = self.defaultsManager.isAppFirstRun
+        let isNudgeWithHomeBusy = toast.isNudge && !self.isHomeIdle()
+        return isFirstRun || self.isAwaitingReturnFromSettings || isNudgeWithHomeBusy
+    }
+
     private func enqueue(_ toast: ToastView.Toast) {
         guard !toast.isOutranked(by: self.shownToast, self.pendingToast) else {
             Log.debug("outranked, toast: \(toast.logName), shown: \(self.shownToast?.logName), pending: \(self.pendingToast?.logName) → dropped")
@@ -307,6 +327,10 @@ class FlowManager: FlowManagerProtocol {
     private func cancel(_ toast: ToastView.Toast) {
         if self.pendingToast == toast {
             self.pendingToast = nil
+        }
+
+        if self.waitingToast == toast {
+            self.waitingToast = nil
         }
 
         guard self.shownToast == toast else { return }

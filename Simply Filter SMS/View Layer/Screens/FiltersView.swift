@@ -123,14 +123,8 @@ struct FiltersView: View, ViewWithPersistentStoreReload {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationBarTrailingItem()
             }
-            if #available(iOS 27.0, *) {
-                ToolbarItem(placement: .topBarPinnedTrailing) {
-                    filterListTrailingMenu
-                }
-            } else {
-                ToolbarItem(placement: .topBarTrailing) {
-                    filterListTrailingMenu
-                }
+            ToolbarItem(placement: .pinnedTrailing) {
+                filterListTrailingMenu
             }
         }
         .navigationTitle(self.model.filterType.name)

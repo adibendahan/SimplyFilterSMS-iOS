@@ -114,10 +114,6 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     Text("autoFilter_yourFilters"~)
                         .accessibilityAddTraits(.isHeader)
                 }
-                
-                Section {} header: {
-                    Text("")
-                }
             } // List
             .listSectionSpacing(.compact)
             .background(horizontalSizeClass == .regular ? InstantTouchDisabler(delaysContentTouches: true) : nil)
@@ -127,14 +123,8 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 ToolbarItem(placement: .topBarTrailing) {
                     self.addFilterMenu
                 }
-                if #available(iOS 27.0, *) {
-                    ToolbarItem(placement: .topBarPinnedTrailing) {
-                        self.appMenu
-                    }
-                } else {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        self.appMenu
-                    }
+                ToolbarItem(placement: .pinnedTrailing) {
+                    self.appMenu
                 }
             }
             .navigationSplitViewColumnWidth(min: 340, ideal: 380)
@@ -625,7 +615,7 @@ extension AppHomeView {
             didSet {
                 if self.sheetScreen == nil, let dismissed = oldValue {
                     self.completeDismissedSheet(dismissed)
-                    self.appManager.flowManager.showWaitingNudge()
+                    self.appManager.flowManager.showWaitingToast()
                 }
             }
         }
@@ -638,14 +628,14 @@ extension AppHomeView {
         @Published var showNothingToImportAlert = false {
             didSet {
                 if oldValue && !self.showNothingToImportAlert {
-                    self.appManager.flowManager.showWaitingNudge()
+                    self.appManager.flowManager.showWaitingToast()
                 }
             }
         }
         @Published var showInactivityNotificationAlert = false {
             didSet {
                 if oldValue && !self.showInactivityNotificationAlert {
-                    self.appManager.flowManager.showWaitingNudge()
+                    self.appManager.flowManager.showWaitingToast()
                 }
             }
         }
@@ -711,7 +701,7 @@ extension AppHomeView {
             if self.sheetScreen != .chooseAccentColor {
                 self.customAccent = Color(accentRGB: self.appManager.defaultsManager.accentColorRGB)
             }
-            self.appManager.flowManager.showWaitingNudge()
+            self.appManager.flowManager.showWaitingToast()
         }
         
         func setSelectedChoice(for rule: SmartFilterType, choice: Int) {
@@ -889,7 +879,7 @@ extension AppHomeView {
                 return
             }
             guard let screen = self.appManager.flowManager.nextScreen() else {
-                self.appManager.flowManager.showWaitingNudge()
+                self.appManager.flowManager.showWaitingToast()
                 return
             }
             if screen == .filterImport,
@@ -911,6 +901,7 @@ extension AppHomeView {
         @MainActor
         func appBecameActive() {
             self.appManager.schedulingManager.refreshInactivityReminder()
+            self.appManager.flowManager.appBecameActive()
             let didStartNewSession = self.appManager.onAppBecameActive()
             guard didStartNewSession else { return }
             self.appManager.flowManager.showSessionNudges()
@@ -1006,7 +997,7 @@ extension AppHomeView {
             }
 
             self.catchUpFromStoreIfNeeded()
-            self.appManager.flowManager.showWaitingNudge()
+            self.appManager.flowManager.showWaitingToast()
         }
 
         private func catchUpFromStoreIfNeeded() {

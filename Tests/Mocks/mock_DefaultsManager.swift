@@ -163,6 +163,7 @@ class mock_DefaultsManager: DefaultsManagerProtocol {
     var stayReachableToastSessions: [Int] = []
     var recentSearchQueries: [String] = []
     var didOpenStayReachable = false
+    var stayReachableFilterIDs: [[String: String]] = []
     var didDismissAddFilterSiriTip = false
     var didDismissHelpSiriTips = false
     var inactivityNotificationWasGranted = false

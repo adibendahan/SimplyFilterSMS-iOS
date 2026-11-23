@@ -77,7 +77,7 @@ struct StayReachableView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(FilledButton())
-                .disabled(self.model.newFilterTexts.isEmpty)
+                .disabled(self.model.changeCount == 0)
                 .accessibilityIdentifier(TestIdentifier.stayReachableAddButton.rawValue)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
@@ -262,67 +262,15 @@ struct StayReachableView: View {
 //MARK: - ViewModel -
 extension StayReachableView {
 
-    struct LanguageSection: Identifiable {
-        let id = UUID()
-        var language: Locale.LanguageCode
-        var firstName = ""
-        var surname = ""
-        var street = ""
-
-        var texts: [String] {
-            return Field.allCases.map { self[keyPath: $0.keyPath] }
-        }
-    }
-
-    enum Field: CaseIterable, TestIdentifiable {
-        case firstName, surname, street
-
-        var keyPath: WritableKeyPath<LanguageSection, String> {
-            switch self {
-            case .firstName: return \.firstName
-            case .surname: return \.surname
-            case .street: return \.street
-            }
-        }
-
-        var titleKey: String {
-            switch self {
-            case .firstName: return "stayReachable_firstName"
-            case .surname: return "stayReachable_surname"
-            case .street: return "stayReachable_street"
-            }
-        }
-
-        var promptKey: String {
-            switch self {
-            case .firstName, .surname: return "stayReachable_optional"
-            case .street: return "stayReachable_streetPrompt"
-            }
-        }
-
-        var contentType: UITextContentType? {
-            switch self {
-            case .firstName: return .givenName
-            case .surname: return .familyName
-            case .street: return nil
-            }
-        }
-
-        var testIdentifier: TestIdentifier {
-            switch self {
-            case .firstName: return .stayReachableFirstNameField
-            case .surname: return .stayReachableSurnameField
-            case .street: return .stayReachableStreetField
-            }
-        }
-    }
+    typealias LanguageSection = StayReachableSection
+    typealias Field = StayReachableField
 
     class ViewModel: BaseViewModel, ObservableObject {
         @Published var sections: [LanguageSection]
         let appLanguage: Locale.LanguageCode
         let phoneLanguages: [Locale.LanguageCode]
         let otherLanguages: [Locale.LanguageCode]
-        private var existingFilters: [FilterSignature] = []
+        private let existingFilters: [Filter]
 
         private static let extraLocalizations: [String: [String: String]] = {
             guard let url = Bundle.main.url(forResource: "StayReachableLocalizations", withExtension: "json") else {
@@ -351,57 +299,106 @@ extension StayReachableView {
             } else {
                 secondLanguage = .english
             }
+            let filters = appManager.persistenceManager.fetchFilterRecords()
+            let rememberedSections = appManager.stayReachableManager.rememberedSections(in: filters)
             var sections = [LanguageSection(language: appLanguage)]
-            if let secondLanguage {
+            if rememberedSections.isEmpty, let secondLanguage {
                 sections.append(LanguageSection(language: secondLanguage))
+            }
+            for rememberedSection in rememberedSections {
+                if rememberedSection.language == appLanguage {
+                    sections[0] = rememberedSection
+                } else {
+                    sections.append(rememberedSection)
+                }
             }
 
             self.appLanguage = appLanguage
             self.phoneLanguages = phoneLanguages
             self.otherLanguages = otherLanguages
             self.sections = sections
+            self.existingFilters = filters
 
             super.init(appManager: appManager)
-            self.existingFilters = appManager.persistenceManager.fetchFilterRecords().map(\.signature)
-            Log.debug("opened, appLanguage: \(appLanguage.identifier), phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), existingFilters: \(self.existingFilters.count)")
+            Log.debug("opened, appLanguage: \(appLanguage.identifier), phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), rememberedSections: \(rememberedSections.count), existingFilters: \(self.existingFilters.count)")
         }
 
         var newFilterTexts: [String] {
             var newTexts: [String] = []
             for section in self.sections {
                 for field in Field.allCases {
-                    let trimmedText = section[keyPath: field.keyPath].trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard trimmedText.count >= kMinimumFilterLength, !self.isSkipped(field, in: section) else { continue }
+                    let trimmedText = section.trimmedText(field)
+                    guard trimmedText.count >= kMinimumFilterLength,
+                          !section.hasRestoredFilter(field),
+                          !self.isSkipped(field, in: section) else { continue }
                     newTexts.append(trimmedText)
                 }
             }
             return newTexts
         }
 
-        var addButtonTitle: String {
-            return String.localizedStringWithFormat("stayReachable_addFilters"~, self.newFilterTexts.count)
+        var editedTexts: [String] {
+            var editedTexts: [String] = []
+            for section in self.sections {
+                for field in Field.allCases {
+                    let trimmedText = section.trimmedText(field)
+                    guard trimmedText.count >= kMinimumFilterLength,
+                          section.hasRestoredFilter(field),
+                          !section.isUnchanged(field),
+                          !self.isSkipped(field, in: section) else { continue }
+                    editedTexts.append(trimmedText)
+                }
+            }
+            return editedTexts
         }
 
-        func isAlreadyAllowed(_ text: String) -> Bool {
-            let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard trimmedText.count >= kMinimumFilterLength else { return false }
-            let signature = Self.newFilterSignature(for: trimmedText)
-            return self.existingFilters.contains { signature.isDuplicate(of: $0) }
+        var clearedFieldCount: Int {
+            var clearedFieldCount = 0
+            for section in self.sections {
+                for field in Field.allCases {
+                    guard section.hasRestoredFilter(field), section.trimmedText(field).isEmpty else { continue }
+                    clearedFieldCount += 1
+                }
+            }
+            return clearedFieldCount
+        }
+
+        var changeCount: Int {
+            return self.newFilterTexts.count + self.editedTexts.count + self.clearedFieldCount
+        }
+
+        var addButtonTitle: String {
+            let newTextCount = self.newFilterTexts.count
+            let isSavingChangesOnly = newTextCount == 0 && self.changeCount > 0
+            let title: String
+            if isSavingChangesOnly {
+                title = "stayReachable_saveChanges"~
+            } else {
+                title = String.localizedStringWithFormat("stayReachable_addFilters"~, newTextCount)
+            }
+            return title
+        }
+
+        func isAlreadyAllowed(_ text: String, excluding ownFilter: Filter? = nil) -> Bool {
+            return self.appManager.stayReachableManager.isAlreadyAllowed(text, excluding: ownFilter, in: self.existingFilters)
         }
 
         func isSkipped(_ field: Field, in section: LanguageSection) -> Bool {
+            guard !section.isUnchanged(field) else { return false }
             let text = section[keyPath: field.keyPath]
-            return self.isAlreadyAllowed(text) || self.isRepeated(field, in: section)
+            let ownFilter = section.restoredFilters[field]
+            return self.isAlreadyAllowed(text, excluding: ownFilter) || self.isRepeated(field, in: section)
         }
 
         func skippedNote(for section: LanguageSection) -> String {
             var sentences: [String] = []
             var namedTexts: [String] = []
             for field in Field.allCases {
-                let trimmedText = section[keyPath: field.keyPath].trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !section.isUnchanged(field) else { continue }
+                let trimmedText = section.trimmedText(field)
                 let isolatedText = "\u{2068}" + trimmedText + "\u{2069}"
                 let sentence: String?
-                if self.isAlreadyAllowed(trimmedText) {
+                if self.isAlreadyAllowed(trimmedText, excluding: section.restoredFilters[field]) {
                     sentence = String(format: self.localizedString("stayReachable_alreadyAllowed", in: section.language), isolatedText)
                 } else if self.isRepeated(field, in: section) {
                     sentence = String(format: self.localizedString("stayReachable_enteredTwice", in: section.language), isolatedText)
@@ -472,28 +469,12 @@ extension StayReachableView {
         }
 
         func addFilters() {
-            let newTexts = self.newFilterTexts
-            for text in newTexts {
-                let signature = Self.newFilterSignature(for: text)
-                _ = self.appManager.persistenceManager.addFilter(text: signature.text,
-                                                                 type: .allow,
-                                                                 denyFolder: .junk,
-                                                                 filterTarget: signature.filterTarget,
-                                                                 filterMatching: signature.filterMatching,
-                                                                 filterCase: signature.filterCase)
-            }
-            Log.debug("allow filters added, texts: \(newTexts), languages: \(self.sections.map(\.language.identifier))")
+            Log.debug("saving, new: \(self.newFilterTexts), edited: \(self.editedTexts), cleared: \(self.clearedFieldCount), languages: \(self.sections.map(\.language.identifier))")
+            self.appManager.stayReachableManager.save(self.sections)
         }
 
 
         //MARK: Private
-        private static func newFilterSignature(for text: String) -> FilterSignature {
-            return FilterSignature(text: text,
-                                   filterTarget: .all,
-                                   filterMatching: .exact,
-                                   filterCase: .caseInsensitive)
-        }
-
         private func hasLabels(for language: Locale.LanguageCode) -> Bool {
             return language.appLocalization != nil || Self.extraLocalizations[language.identifier] != nil
         }
@@ -513,7 +494,7 @@ extension StayReachableView {
         }
 
         private func isRepeated(_ field: Field, in section: LanguageSection) -> Bool {
-            let trimmedText = section[keyPath: field.keyPath].trimmingCharacters(in: .whitespacesAndNewlines)
+            let trimmedText = section.trimmedText(field)
             guard trimmedText.count >= kMinimumFilterLength,
                   let sectionIndex = self.sections.firstIndex(where: { $0.id == section.id }) else { return false }
             let earlierSections = self.sections.prefix(upTo: sectionIndex)
@@ -522,6 +503,41 @@ extension StayReachableView {
             earlierTexts.append(contentsOf: earlierFields.map { section[keyPath: $0.keyPath] })
             let trimmedEarlierTexts = earlierTexts.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             return trimmedEarlierTexts.contains { $0.caseInsensitiveCompare(trimmedText) == .orderedSame }
+        }
+    }
+}
+
+
+//MARK: - Field -
+extension StayReachableField: TestIdentifiable {
+    var titleKey: String {
+        switch self {
+        case .firstName: return "stayReachable_firstName"
+        case .surname: return "stayReachable_surname"
+        case .street: return "stayReachable_street"
+        }
+    }
+
+    var promptKey: String {
+        switch self {
+        case .firstName, .surname: return "stayReachable_optional"
+        case .street: return "stayReachable_streetPrompt"
+        }
+    }
+
+    var contentType: UITextContentType? {
+        switch self {
+        case .firstName: return .givenName
+        case .surname: return .familyName
+        case .street: return nil
+        }
+    }
+
+    var testIdentifier: TestIdentifier {
+        switch self {
+        case .firstName: return .stayReachableFirstNameField
+        case .surname: return .stayReachableSurnameField
+        case .street: return .stayReachableStreetField
         }
     }
 }
