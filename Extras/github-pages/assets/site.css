@@ -23,6 +23,8 @@
   --app-sep: rgba(60, 60, 67, 0.16);
   --app-button: #ffffff;
   --app-button-edge: rgba(0, 0, 0, 0.07);
+  --app-indigo: #6155f5;
+  --app-green: #34c759;
   --ok: #1a7f37;
   --bad: #d70015;
   --warn: #b64400;
@@ -48,7 +50,7 @@
     --hair: #424245; --hair-soft: #2c2c2e; --tint: #2997ff; --button: #0071e3; --button-ink: #ffffff;
     --switch-on: #0a84ff; --switch-off: #5b5b5f; --latest: #30d158; --ok: #30d158; --bad: #ff453a; --warn: #ff9f0a;
     --app-ground: #000000; --app-cell: #1c1c1e; --app-ink: #ffffff; --app-ink-2: #8d8d93; --app-ink-3: #5e5e63; --app-tint: #0a84ff;
-    --app-sep: rgba(84, 84, 88, 0.6); --app-button: #1c1c1e; --app-button-edge: rgba(255, 255, 255, 0.09);
+    --app-sep: rgba(84, 84, 88, 0.6); --app-button: #1c1c1e; --app-button-edge: rgba(255, 255, 255, 0.09); --app-indigo: #6d7cff; --app-green: #30d158;
     --fill: rgba(118, 118, 128, 0.24); --seg-on: #636366; --hl: rgba(41, 151, 255, 0.22);
     --ios-ground: #000000; --ios-cell: #1c1c1e; --ios-sep: #38383a; --phone: #2c2c2e; --phone-edge: #636366;
     --code-key: #fc5fa3; --code-str: #fc6a5d; --code-num: #d0bf69;
@@ -61,7 +63,7 @@
   --hair: #424245; --hair-soft: #2c2c2e; --tint: #2997ff; --button: #0071e3; --button-ink: #ffffff;
   --switch-on: #0a84ff; --switch-off: #5b5b5f; --latest: #30d158; --ok: #30d158; --bad: #ff453a; --warn: #ff9f0a;
   --app-ground: #000000; --app-cell: #1c1c1e; --app-ink: #ffffff; --app-ink-2: #8d8d93; --app-ink-3: #5e5e63; --app-tint: #0a84ff;
-  --app-sep: rgba(84, 84, 88, 0.6); --app-button: #1c1c1e; --app-button-edge: rgba(255, 255, 255, 0.09);
+  --app-sep: rgba(84, 84, 88, 0.6); --app-button: #1c1c1e; --app-button-edge: rgba(255, 255, 255, 0.09); --app-indigo: #6d7cff; --app-green: #30d158;
   --fill: rgba(118, 118, 128, 0.24); --seg-on: #636366; --hl: rgba(41, 151, 255, 0.22);
   --ios-ground: #000000; --ios-cell: #1c1c1e; --ios-sep: #38383a; --phone: #2c2c2e; --phone-edge: #636366;
   --code-key: #fc5fa3; --code-str: #fc6a5d; --code-num: #d0bf69;
@@ -173,7 +175,13 @@ h1 { font-size: clamp(44px, 7vw, 80px); line-height: 1.04; font-weight: 600; let
 .app-nav { position: relative; height: 44px; margin-top: 8px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; }
 .app-nav-button { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--app-button); box-shadow: 0 0 0 0.5px var(--app-button-edge), 0 4px 14px rgba(0, 0, 0, 0.07); color: var(--app-ink); }
 .app-title { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 600 18px/1 var(--font-text); letter-spacing: -0.02em; white-space: nowrap; }
-.app-card { margin: 45px 17px 0 17px; background: var(--app-cell); border-radius: 22px; }
+.app-hero { display: flex; flex-direction: column; align-items: center; margin-top: 18px; }
+.app-hero-icon { display: block; }
+.app-badge { margin-top: 14px; height: 34px; display: flex; align-items: center; gap: 8px; padding-inline: 8px 15px; border-radius: 17px; color: var(--app-green); background: color-mix(in srgb, var(--app-green) 12%, transparent); font: 600 17px/1 var(--font-text); letter-spacing: -0.02em; }
+.app-hero-desc { margin: 9px 40px 0; text-align: center; font-size: 14px; line-height: 18px; color: var(--app-ink-2); }
+.app-section { margin: 20px 34px 7px; font: 600 15.5px/19px var(--font-text); color: var(--app-ink-2); }
+.app-card { margin: 0 17px; background: var(--app-cell); border-radius: 22px; }
+.app-count { font-size: 15px; color: var(--app-ink-2); white-space: nowrap; }
 .app-row { display: grid; grid-template-columns: 38px minmax(0, 1fr) 63px; column-gap: 0; padding-block: 20px 19px; padding-inline: 0 17px; position: relative; }
 .app-row + .app-row.sep::before { content: ""; position: absolute; top: 0; inset-inline: 38px 19px; height: 0.5px; background: var(--app-sep); }
 .app-row + .app-row { padding-top: 19px; }
