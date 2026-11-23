@@ -48,7 +48,7 @@ class StayReachableManagerTests: XCTestCase {
         XCTAssertEqual(sections[0].texts, ["Adi", "", "Herzl St"])
         XCTAssertEqual(sections[0].restoredFilters[.firstName], filters[0])
         XCTAssertEqual(sections[0].restoredFilters[.street], filters[1])
-        XCTAssertTrue(sections[0].isRestored(.street))
+        XCTAssertTrue(sections[0].isUnchanged(.street))
     }
 
     func test_rememberedSections_deletedFilters_dropsTheirFieldsAndBlankSections() {

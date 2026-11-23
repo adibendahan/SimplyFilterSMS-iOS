@@ -35,7 +35,11 @@ struct StayReachableSection: Identifiable {
         return self[keyPath: field.keyPath].trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    func isRestored(_ field: StayReachableField) -> Bool {
+    func hasRestoredFilter(_ field: StayReachableField) -> Bool {
+        return self.restoredFilters[field] != nil
+    }
+
+    func isUnchanged(_ field: StayReachableField) -> Bool {
         guard let filter = self.restoredFilters[field] else { return false }
         let filterText = (filter.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         return self.trimmedText(field) == filterText

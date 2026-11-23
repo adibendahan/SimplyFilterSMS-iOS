@@ -270,7 +270,7 @@ extension StayReachableView {
         let appLanguage: Locale.LanguageCode
         let phoneLanguages: [Locale.LanguageCode]
         let otherLanguages: [Locale.LanguageCode]
-        private var existingFilters: [Filter] = []
+        private let existingFilters: [Filter]
 
         private static let extraLocalizations: [String: [String: String]] = {
             guard let url = Bundle.main.url(forResource: "StayReachableLocalizations", withExtension: "json") else {
@@ -317,9 +317,9 @@ extension StayReachableView {
             self.phoneLanguages = phoneLanguages
             self.otherLanguages = otherLanguages
             self.sections = sections
+            self.existingFilters = filters
 
             super.init(appManager: appManager)
-            self.existingFilters = filters
             Log.debug("opened, appLanguage: \(appLanguage.identifier), phoneLanguages: \(phoneLanguages.map(\.identifier)), sections: \(sections.map(\.language.identifier)), rememberedSections: \(rememberedSections.count), existingFilters: \(self.existingFilters.count)")
         }
 
@@ -327,9 +327,10 @@ extension StayReachableView {
             var newTexts: [String] = []
             for section in self.sections {
                 for field in Field.allCases {
-                    let trimmedText = section[keyPath: field.keyPath].trimmingCharacters(in: .whitespacesAndNewlines)
-                    let isRestoredField = section.restoredFilters[field] != nil
-                    guard trimmedText.count >= kMinimumFilterLength, !isRestoredField, !self.isSkipped(field, in: section) else { continue }
+                    let trimmedText = section.trimmedText(field)
+                    guard trimmedText.count >= kMinimumFilterLength,
+                          !section.hasRestoredFilter(field),
+                          !self.isSkipped(field, in: section) else { continue }
                     newTexts.append(trimmedText)
                 }
             }
@@ -341,10 +342,9 @@ extension StayReachableView {
             for section in self.sections {
                 for field in Field.allCases {
                     let trimmedText = section.trimmedText(field)
-                    let isRestoredField = section.restoredFilters[field] != nil
                     guard trimmedText.count >= kMinimumFilterLength,
-                          isRestoredField,
-                          !section.isRestored(field),
+                          section.hasRestoredFilter(field),
+                          !section.isUnchanged(field),
                           !self.isSkipped(field, in: section) else { continue }
                     editedTexts.append(trimmedText)
                 }
@@ -356,8 +356,7 @@ extension StayReachableView {
             var clearedFieldCount = 0
             for section in self.sections {
                 for field in Field.allCases {
-                    let isRestoredField = section.restoredFilters[field] != nil
-                    guard isRestoredField, section.trimmedText(field).isEmpty else { continue }
+                    guard section.hasRestoredFilter(field), section.trimmedText(field).isEmpty else { continue }
                     clearedFieldCount += 1
                 }
             }
@@ -385,7 +384,7 @@ extension StayReachableView {
         }
 
         func isSkipped(_ field: Field, in section: LanguageSection) -> Bool {
-            guard !section.isRestored(field) else { return false }
+            guard !section.isUnchanged(field) else { return false }
             let text = section[keyPath: field.keyPath]
             let ownFilter = section.restoredFilters[field]
             return self.isAlreadyAllowed(text, excluding: ownFilter) || self.isRepeated(field, in: section)
@@ -395,8 +394,8 @@ extension StayReachableView {
             var sentences: [String] = []
             var namedTexts: [String] = []
             for field in Field.allCases {
-                guard !section.isRestored(field) else { continue }
-                let trimmedText = section[keyPath: field.keyPath].trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !section.isUnchanged(field) else { continue }
+                let trimmedText = section.trimmedText(field)
                 let isolatedText = "\u{2068}" + trimmedText + "\u{2069}"
                 let sentence: String?
                 if self.isAlreadyAllowed(trimmedText, excluding: section.restoredFilters[field]) {
@@ -495,7 +494,7 @@ extension StayReachableView {
         }
 
         private func isRepeated(_ field: Field, in section: LanguageSection) -> Bool {
-            let trimmedText = section[keyPath: field.keyPath].trimmingCharacters(in: .whitespacesAndNewlines)
+            let trimmedText = section.trimmedText(field)
             guard trimmedText.count >= kMinimumFilterLength,
                   let sectionIndex = self.sections.firstIndex(where: { $0.id == section.id }) else { return false }
             let earlierSections = self.sections.prefix(upTo: sectionIndex)
@@ -509,6 +508,7 @@ extension StayReachableView {
 }
 
 
+//MARK: - Field -
 extension StayReachableField: TestIdentifiable {
     var titleKey: String {
         switch self {

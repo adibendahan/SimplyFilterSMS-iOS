@@ -49,11 +49,12 @@ class StayReachableManager: StayReachableManagerProtocol {
         for section in sections {
             for field in StayReachableField.allCases {
                 let trimmedText = section.trimmedText(field)
-                if trimmedText.isEmpty, let restoredFilter = section.restoredFilters[field] {
+                let restoredFilter = section.restoredFilters[field]
+                if trimmedText.isEmpty, let restoredFilter {
                     clearedFilters.insert(restoredFilter)
                 }
-                guard trimmedText.count >= kMinimumFilterLength, !section.isRestored(field) else { continue }
-                if let restoredFilter = section.restoredFilters[field] {
+                guard trimmedText.count >= kMinimumFilterLength, !section.isUnchanged(field) else { continue }
+                if let restoredFilter {
                     self.persistenceManager.updateFilter(restoredFilter, filterText: trimmedText)
                 } else {
                     let signature = Self.allowSignature(for: trimmedText)
