@@ -51,7 +51,8 @@ cd Extras
 # Pull the live store text into fastlane/metadata/ (do this before editing it)
 fastlane download_metadata
 
-# Push fastlane/metadata/
+# Push fastlane/metadata/. App Store Connect rejects emoji in What's New
+# (release_notes.txt), and one rejected language fails the whole run: nothing saves.
 fastlane upload_metadata
 
 # Upload every fastlane/creative_assets/*.png to the App Asset Library,
