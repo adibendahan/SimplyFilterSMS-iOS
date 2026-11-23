@@ -114,10 +114,6 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     Text("autoFilter_yourFilters"~)
                         .accessibilityAddTraits(.isHeader)
                 }
-                
-                Section {} header: {
-                    Text("")
-                }
             } // List
             .listSectionSpacing(.compact)
             .background(horizontalSizeClass == .regular ? InstantTouchDisabler(delaysContentTouches: true) : nil)
