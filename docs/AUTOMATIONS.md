@@ -51,7 +51,8 @@ cd Extras
 # Pull the live store text into fastlane/metadata/ (do this before editing it)
 fastlane download_metadata
 
-# Push fastlane/metadata/
+# Push fastlane/metadata/. App Store Connect rejects emoji in What's New
+# (release_notes.txt), and one rejected language fails the whole run: nothing saves.
 fastlane upload_metadata
 
 # Upload every fastlane/creative_assets/*.png to the App Asset Library,
@@ -59,6 +60,8 @@ fastlane upload_metadata
 fastlane upload_creative_assets
 fastlane upload_creative_assets files:header-21x9-en.png,header-21x9-he.png
 ```
+
+The search results banner (`search-3x2-<lang>.png`) is one template, `fastlane/creative_assets/source/search-3x2.html`, rendered per language with headless Chrome at 3840 × 2560 (`--allow-file-access-from-files`). Its query takes `lang`, `dir`, and `title`, `private` and `openSource` from the store screenshots' captions file. Its phones show `source/screens/<lang>/`: copies of the iPhone shots 1, 2 and 3 as `home.png`, `ai.png` and `blocked.png`. The same banner shows on every device, each cropping it differently, so keep its layout: a crop shows more or less of the phones.
 
 ## Localization
 
