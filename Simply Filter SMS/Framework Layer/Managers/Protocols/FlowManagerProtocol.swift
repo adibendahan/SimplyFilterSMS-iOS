@@ -16,6 +16,8 @@ protocol FlowManagerProtocol {
     func requestScreen(_ screen: Screen)
     func enableWhatsNew()
     func nextScreen() -> Screen?
+    func finishFirstRun(openedSettings: Bool)
+    func appBecameActive()
     func completeScreen(_ screen: Screen)
     func resetSession()
 
@@ -29,5 +31,5 @@ protocol FlowManagerProtocol {
     func didDismissToast(_ toast: ToastView.Toast)
     func showSessionNudges()
     func offerStayReachable()
-    func showWaitingNudge()
+    func showWaitingToast()
 }

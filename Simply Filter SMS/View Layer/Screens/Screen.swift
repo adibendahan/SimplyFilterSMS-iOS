@@ -27,14 +27,10 @@ enum Screen: Int, CaseIterable, Identifiable, Hashable {
                     steps: Array(EnableFilterExtensionStep.allCases),
                     isInteractiveDismissDisabled: true,
                     onDismiss: {
-                        Log.debug("first run finished by dismissing")
-                        var defaultsManager = AppManager.shared.defaultsManager
-                        defaultsManager.isAppFirstRun = false
+                        AppManager.shared.flowManager.finishFirstRun(openedSettings: false)
                     },
                     onCTA: {
-                        Log.debug("first run finished by opening Settings")
-                        var defaultsManager = AppManager.shared.defaultsManager
-                        defaultsManager.isAppFirstRun = false
+                        AppManager.shared.flowManager.finishFirstRun(openedSettings: true)
                         UIApplication.shared.openSettings()
                     }
                 ))

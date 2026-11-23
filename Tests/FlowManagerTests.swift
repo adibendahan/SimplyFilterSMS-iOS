@@ -14,14 +14,14 @@ class FlowManagerTests: XCTestCase {
     private var defaultsManager: mock_DefaultsManager!
     private var networkSyncManager: mock_NetworkSyncManager!
     private var filterListManager: mock_FilterListManager!
-    private var isFirstRun = true
+    private var isFirstRun = false
     private var lastSeenWhatsNewVersion = 0
     private var networkStatus: NetworkStatus = .online
     private var testSubject: FlowManager!
 
     override func setUp() {
         super.setUp()
-        self.isFirstRun = true
+        self.isFirstRun = false
         self.lastSeenWhatsNewVersion = 0
         self.networkStatus = .online
         self.defaultsManager = mock_DefaultsManager()
@@ -60,6 +60,7 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_firstRun_winsOverFileAndWhatsNew() {
+        self.isFirstRun = true
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         self.testSubject.enableWhatsNew()
 
@@ -68,6 +69,7 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_importWaitsUntilFirstRunCompletes() {
+        self.isFirstRun = true
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
 
         XCTAssertEqual(self.testSubject.nextScreen(), .enableExtension)
@@ -80,8 +82,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_afterFirstRun_fileBeatsWhatsNew() {
-        self.isFirstRun = false
-        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         self.testSubject.enableWhatsNew()
 
@@ -89,17 +89,12 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_whatsNew_waitsUntilEnabled() {
-        self.isFirstRun = false
-        self.testSubject = self.makeTestSubject()
-
         XCTAssertNil(self.testSubject.nextScreen())
         self.testSubject.enableWhatsNew()
         XCTAssertEqual(self.testSubject.nextScreen(), .whatsNew)
     }
 
     func test_whatsNew_skippedWhenLaunchClaimedSession() {
-        self.isFirstRun = false
-        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         self.testSubject.completeScreen(.filterImport)
         self.testSubject.enableWhatsNew()
@@ -108,8 +103,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_lastLaunchURLWins() {
-        self.isFirstRun = false
-        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         XCTAssertTrue(self.testSubject.recordLaunch(.tipJar))
 
@@ -117,23 +110,20 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_userRequest_doesNotBeatFirstRun() {
+        self.isFirstRun = true
         self.testSubject.requestScreen(.about)
 
         XCTAssertEqual(self.testSubject.nextScreen(), .enableExtension)
     }
 
     func test_userRequest_afterFirstRun() {
-        self.isFirstRun = false
         self.lastSeenWhatsNewVersion = currentWhatsNewVersion
-        self.testSubject = self.makeTestSubject()
         self.testSubject.requestScreen(.about)
 
         XCTAssertEqual(self.testSubject.nextScreen(), .about)
     }
 
     func test_userRequest_whatsNew_afterLaunchClaimedSession() {
-        self.isFirstRun = false
-        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.filterImport))
         self.testSubject.completeScreen(.filterImport)
         self.testSubject.requestScreen(.whatsNew)
@@ -142,6 +132,7 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_enableExtensionDeepLink_ignoredDuringFirstRun() {
+        self.isFirstRun = true
         XCTAssertFalse(self.testSubject.recordLaunch(.enableExtension))
         XCTAssertEqual(self.testSubject.nextScreen(), .enableExtension)
 
@@ -151,8 +142,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_recordLaunch_returnsTrueWhenQueued() {
-        self.isFirstRun = false
-        self.testSubject = self.makeTestSubject()
         XCTAssertTrue(self.testSubject.recordLaunch(.tipJar))
     }
 
@@ -323,7 +312,7 @@ class FlowManagerTests: XCTestCase {
         XCTAssertNil(self.testSubject.nextToast())
 
         isHomeIdle = true
-        self.testSubject.showWaitingNudge()
+        self.testSubject.showWaitingToast()
         XCTAssertEqual(self.testSubject.nextToast(), .tipPromotion)
     }
 
@@ -336,9 +325,7 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_tapTipPromotion_requestsTipJar() {
-        self.isFirstRun = false
         self.lastSeenWhatsNewVersion = currentWhatsNewVersion
-        self.testSubject = self.makeTestSubject()
         var presentNextScreenCount = 0
         self.testSubject.setScreenPresenter { presentNextScreenCount += 1 }
 
@@ -349,9 +336,7 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_tapReportingNudge_dismissesItAndRequestsSheet() {
-        self.isFirstRun = false
         self.lastSeenWhatsNewVersion = currentWhatsNewVersion
-        self.testSubject = self.makeTestSubject()
 
         self.testSubject.didTapToast(.enableReportingExtension)
 
@@ -360,13 +345,13 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_offerStayReachable_firstRun_showsNothing() {
+        self.isFirstRun = true
         self.testSubject.offerStayReachable()
 
         XCTAssertNil(self.testSubject.nextToast())
     }
 
     func test_offerStayReachable_due_showsToastAndRecordsSession() {
-        self.isFirstRun = false
         self.defaultsManager.sessionCounterClosure = { 4 }
 
         self.testSubject.offerStayReachable()
@@ -376,7 +361,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_offerStayReachable_homeBusy_showsImmediately() {
-        self.isFirstRun = false
         self.testSubject.setHomeIdleCheck { false }
 
         self.testSubject.offerStayReachable()
@@ -385,7 +369,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_offerStayReachable_shownThisSession_showsNothing() {
-        self.isFirstRun = false
         self.defaultsManager.sessionCounterClosure = { 4 }
         self.defaultsManager.stayReachableToastSessions = [4]
 
@@ -395,7 +378,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_offerStayReachable_shownInEarlierSession_showsAgain() {
-        self.isFirstRun = false
         self.defaultsManager.sessionCounterClosure = { 6 }
         self.defaultsManager.stayReachableToastSessions = [4]
 
@@ -406,7 +388,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_offerStayReachable_shownMaxTimes_showsNothing() {
-        self.isFirstRun = false
         self.defaultsManager.sessionCounterClosure = { 9 }
         self.defaultsManager.stayReachableToastSessions = [4, 6]
 
@@ -416,7 +397,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_offerStayReachable_sheetOpened_showsNothing() {
-        self.isFirstRun = false
         self.defaultsManager.didOpenStayReachable = true
 
         self.testSubject.offerStayReachable()
@@ -425,9 +405,7 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_tapStayReachable_marksOpenedAndRequestsSheet() {
-        self.isFirstRun = false
         self.lastSeenWhatsNewVersion = currentWhatsNewVersion
-        self.testSubject = self.makeTestSubject()
 
         self.testSubject.didTapToast(.stayReachable)
 
@@ -526,8 +504,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_bothNudgesDue_tipFirstReportingNextSession() {
-        self.isFirstRun = false
-        self.testSubject = self.makeTestSubject()
         self.filterListManager.hasActiveFilterListsClosure = { true }
         self.defaultsManager.didTipClosure = { false }
         self.defaultsManager.sessionCounterClosure = { 6 }
@@ -544,8 +520,6 @@ class FlowManagerTests: XCTestCase {
     }
 
     func test_reportingNudge_noActiveFilterLists_neverDue() {
-        self.isFirstRun = false
-        self.testSubject = self.makeTestSubject()
         self.filterListManager.hasActiveFilterListsClosure = { false }
         self.defaultsManager.didTipClosure = { true }
         self.defaultsManager.sessionCounterClosure = { 9 }
@@ -596,7 +570,82 @@ class FlowManagerTests: XCTestCase {
         self.testSubject.completeToast(.cloudSyncOperationComplete)
 
         isHomeIdle = true
-        self.testSubject.showWaitingNudge()
+        self.testSubject.showWaitingToast()
+
+        XCTAssertNil(self.testSubject.nextToast())
+    }
+
+    func test_firstRun_toastWaitsUntilFirstRunFinishes() {
+        self.isFirstRun = true
+
+        self.testSubject.requestToast(.cloudSyncOperationComplete)
+        XCTAssertNil(self.testSubject.nextToast())
+
+        self.testSubject.showWaitingToast()
+        XCTAssertNil(self.testSubject.nextToast())
+
+        self.testSubject.finishFirstRun(openedSettings: false)
+        self.isFirstRun = false
+        self.testSubject.showWaitingToast()
+        XCTAssertEqual(self.defaultsManager.isAppFirstRunSetCounter, 1)
+        XCTAssertEqual(self.testSubject.nextToast(), .cloudSyncOperationComplete)
+    }
+
+    func test_firstRun_openedSettings_waitsUntilAppIsActive() {
+        self.isFirstRun = true
+        self.testSubject.requestToast(.cloudSyncOperationComplete)
+
+        self.testSubject.finishFirstRun(openedSettings: true)
+        self.isFirstRun = false
+        self.testSubject.showWaitingToast()
+        XCTAssertNil(self.testSubject.nextToast())
+
+        self.testSubject.appBecameActive()
+        XCTAssertEqual(self.testSubject.nextToast(), .cloudSyncOperationComplete)
+    }
+
+    func test_firstRun_openedSettings_toastWhileAway_waitsUntilAppIsActive() {
+        self.isFirstRun = true
+        self.testSubject.finishFirstRun(openedSettings: true)
+        self.isFirstRun = false
+
+        self.testSubject.requestToast(.cloudSyncOperationComplete)
+        XCTAssertNil(self.testSubject.nextToast())
+
+        self.testSubject.appBecameActive()
+        XCTAssertEqual(self.testSubject.nextToast(), .cloudSyncOperationComplete)
+    }
+
+    func test_appBecameActive_notBackFromSettings_nudgeKeepsWaiting() {
+        self.testSubject.setHomeIdleCheck { false }
+        self.testSubject.requestToast(.tipPromotion)
+
+        self.testSubject.appBecameActive()
+
+        XCTAssertNil(self.testSubject.nextToast())
+    }
+
+    func test_firstRun_waitingToast_shownEvenAfterAnotherToast() {
+        self.testSubject.requestToast(.onClipboardSet("Email"))
+        _ = self.testSubject.nextToast()
+        self.testSubject.completeToast(.onClipboardSet("Email"))
+        self.isFirstRun = true
+        self.testSubject.requestToast(.cloudSyncOperationComplete)
+
+        self.isFirstRun = false
+        self.testSubject.showWaitingToast()
+
+        XCTAssertEqual(self.testSubject.nextToast(), .cloudSyncOperationComplete)
+    }
+
+    func test_firstRun_offlineWaiting_backOnline_dropsIt() {
+        self.isFirstRun = true
+        self.testSubject.startAppEventToasts()
+        self.postNetworkStatus(.offline)
+
+        self.postNetworkStatus(.online)
+        self.isFirstRun = false
+        self.testSubject.showWaitingToast()
 
         XCTAssertNil(self.testSubject.nextToast())
     }

@@ -14,13 +14,15 @@ class mock_FlowManager: FlowManagerProtocol {
     var requestScreenCounter = 0
     var enableWhatsNewCounter = 0
     var nextScreenCounter = 0
+    var finishFirstRunCounter = 0
+    var appBecameActiveCounter = 0
     var completeScreenCounter = 0
     var resetSessionCounter = 0
     var startAppEventToastsCounter = 0
     var setToastPresenterCounter = 0
     var setScreenPresenterCounter = 0
     var setHomeIdleCheckCounter = 0
-    var showWaitingNudgeCounter = 0
+    var showWaitingToastCounter = 0
     var requestToastCounter = 0
     var nextToastCounter = 0
     var completeToastCounter = 0
@@ -35,13 +37,15 @@ class mock_FlowManager: FlowManagerProtocol {
     var requestScreenClosure: ((Screen) -> ())?
     var enableWhatsNewClosure: (() -> ())?
     var nextScreenClosure: (() -> Screen?)?
+    var finishFirstRunClosure: ((Bool) -> ())?
+    var appBecameActiveClosure: (() -> ())?
     var completeScreenClosure: ((Screen) -> ())?
     var resetSessionClosure: (() -> ())?
     var startAppEventToastsClosure: (() -> ())?
     var setToastPresenterClosure: ((@escaping () -> Void) -> ())?
     var setScreenPresenterClosure: ((@escaping () -> Void) -> ())?
     var setHomeIdleCheckClosure: ((@escaping () -> Bool) -> ())?
-    var showWaitingNudgeClosure: (() -> ())?
+    var showWaitingToastClosure: (() -> ())?
     var requestToastClosure: ((ToastView.Toast) -> ())?
     var nextToastClosure: (() -> ToastView.Toast?)?
     var completeToastClosure: ((ToastView.Toast) -> ())?
@@ -82,6 +86,16 @@ class mock_FlowManager: FlowManagerProtocol {
         return self.nextScreenClosure?()
     }
 
+    func finishFirstRun(openedSettings: Bool) {
+        self.finishFirstRunCounter += 1
+        self.finishFirstRunClosure?(openedSettings)
+    }
+
+    func appBecameActive() {
+        self.appBecameActiveCounter += 1
+        self.appBecameActiveClosure?()
+    }
+
     func completeScreen(_ screen: Screen) {
         self.completeScreenCounter += 1
         self.completeScreenClosure?(screen)
@@ -112,9 +126,9 @@ class mock_FlowManager: FlowManagerProtocol {
         self.setHomeIdleCheckClosure?(isHomeIdle)
     }
 
-    func showWaitingNudge() {
-        self.showWaitingNudgeCounter += 1
-        self.showWaitingNudgeClosure?()
+    func showWaitingToast() {
+        self.showWaitingToastCounter += 1
+        self.showWaitingToastClosure?()
     }
 
     func requestToast(_ toast: ToastView.Toast) {
@@ -157,13 +171,15 @@ class mock_FlowManager: FlowManagerProtocol {
         self.requestScreenCounter = 0
         self.enableWhatsNewCounter = 0
         self.nextScreenCounter = 0
+        self.finishFirstRunCounter = 0
+        self.appBecameActiveCounter = 0
         self.completeScreenCounter = 0
         self.resetSessionCounter = 0
         self.startAppEventToastsCounter = 0
         self.setToastPresenterCounter = 0
         self.setScreenPresenterCounter = 0
         self.setHomeIdleCheckCounter = 0
-        self.showWaitingNudgeCounter = 0
+        self.showWaitingToastCounter = 0
         self.requestToastCounter = 0
         self.nextToastCounter = 0
         self.completeToastCounter = 0
