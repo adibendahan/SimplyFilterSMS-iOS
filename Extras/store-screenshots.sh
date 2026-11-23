@@ -4,8 +4,8 @@
 #
 # Reads the captures that screenshots.sh writes to <output>/<version>/<locale>/,
 # puts each one in Apple's device frame on the store background with its
-# caption, and writes the result to <output>/<version>-store/<locale>/ under
-# the same file name, ready for fastlane upload_screenshots.
+# caption, and writes the result to <output>/<version>-store/<locale>/ as
+# <device>-<shot>-<name>.png, ready for fastlane upload_screenshots.
 #
 set -Eeuo pipefail
 
@@ -56,17 +56,17 @@ readonly SCREENS=(
 # number | file name | screens
 readonly SHOTS=(
     "1|home|iphone duo-outer"
-    "2|ai-filtering|iphone ipad duo-outer duo-inner"
-    "3|blocked-texts|iphone ipad duo-outer duo-inner"
-    "4|allowed-texts|iphone ipad duo-outer duo-inner"
-    "5|add-filter|iphone ipad duo-outer duo-inner"
-    "6|blocked-languages|iphone ipad duo-outer duo-inner"
-    "7|test-your-filters|iphone ipad duo-outer duo-inner"
-    "8|countries|iphone ipad duo-outer duo-inner"
-    "9|community-lists|iphone ipad duo-outer duo-inner"
+    "2|ai-filtering|iphone ipad duo-inner"
+    "3|blocked-texts|iphone ipad duo-inner"
+    "4|allowed-texts|iphone ipad duo-inner"
+    "5|add-filter|iphone ipad duo-inner"
+    "6|blocked-languages|iphone ipad duo-inner"
+    "7|test-your-filters|iphone ipad duo-inner"
+    "8|countries|iphone ipad duo-inner"
+    "9|community-lists|iphone ipad duo-inner"
 )
 
-output_root="${HERE}/Screenshots"
+output_root="${HERE}/screenshots"
 version=""
 selected_languages=()
 selected_devices=()
@@ -101,18 +101,21 @@ Options:
                          language that has a captions file.
   -d, --device DEVICE    iphone, ipad or duo. Repeat for more. Default: all.
   -s, --shot NUMBER      Frame only this shot (1-9). Repeat for more. Default: all.
-  -o, --output DIR       The folder that keeps every app version. Default: Extras/Screenshots
+  -o, --output DIR       The folder that keeps every app version. Default: Extras/screenshots
       --list             List the languages, devices and shots, then exit.
   -h, --help             Show this help, then exit.
 
 Reads DIR/<version>/<App Store Connect locale>/ and writes the store images to
-DIR/<version>-store/<App Store Connect locale>/ under the same file names.
-Upload them with: cd Extras && fastlane upload_screenshots path:Screenshots/<version>-store
+DIR/<version>-store/<App Store Connect locale>/ as <device>-<shot>-<name>.png.
+fastlane orders each device's images by file name, and App Store Connect keeps
+one set of at most 10 per device: the iPhone Duo's folded and unfolded shots
+share it, so each Duo shot is taken on one of its two screens.
+Upload them with: cd Extras && fastlane upload_screenshots path:screenshots/<version>-store
 
 Captions come from fastlane/store_screenshots/captions/<locale>.json, keyed by
 shot number, plus "private" and "openSource", the two labels of the privacy
-row under caption 1 on each screen's first image. Words between asterisks are
-drawn in green (*simply filter*ed). A screen without a Home shot opens on
+row under caption 1 on each device's first image. Words between asterisks are
+drawn in green (*simply filter*ed). A device without a Home shot opens on
 shot 2, which then carries caption 1 and the privacy row instead of caption 2.
 
 Apple's device frames are not in the repository: their license forbids
@@ -343,16 +346,20 @@ frame_language() {
     for device_key in "${selected_devices[@]}"; do
         device="$(device_entry "${device_key}")"
         IFS='|' read -r _ screens <<<"${device}"
+        local opens_on_home=false home_screens
+        home_screens=" $(shot_entry 1 | cut -d'|' -f3) "
         for screen in ${screens}; do
-            local opens_on_home=false
-            [[ " $(shot_entry 1 | cut -d'|' -f3) " = *" ${screen} "* ]] && opens_on_home=true
+            [[ "${home_screens}" = *" ${screen} "* ]] && opens_on_home=true
+        done
+        for screen in ${screens}; do
             for number in "${selected_shots[@]}"; do
                 shot="$(shot_entry "${number}")"
                 IFS='|' read -r _ file shot_screens <<<"${shot}"
                 [[ " ${shot_screens} " = *" ${screen} "* ]] || continue
 
-                local name
+                local name store_name
                 name="$(printf '%s-%02d-%s.png' "${screen}" "${number}" "${file}")"
+                store_name="$(printf '%s-%02d-%s.png' "${device_key}" "${number}" "${file}")"
                 local title private="" open_source=""
                 local opens_here=false
                 [[ "${number}" = "1" ]] && opens_here=true
@@ -371,8 +378,8 @@ frame_language() {
                 elif [[ -z "${title}" ]]; then
                     fail "${name}: no caption for shot ${number} in ${folder}.json"
                     failures=$((failures + 1))
-                elif render "${screen}" "${input_dir}/${name}" "${output_dir}/${name}" "${title}" "${private}" "${open_source}" "${code}" "${direction}"; then
-                    ok "${name}"
+                elif render "${screen}" "${input_dir}/${name}" "${output_dir}/${store_name}" "${title}" "${private}" "${open_source}" "${code}" "${direction}"; then
+                    ok "${store_name}"
                     written=$((written + 1))
                 else
                     fail "${name}: the render failed"

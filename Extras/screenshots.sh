@@ -65,17 +65,17 @@ readonly DEVICES=(
 # number | file name | test | screens
 readonly SHOTS=(
     "1|home|testHome|iphone duo-outer"
-    "2|ai-filtering|testAIFiltering|iphone ipad duo-outer duo-inner"
-    "3|blocked-texts|testBlockedTexts|iphone ipad duo-outer duo-inner"
-    "4|allowed-texts|testAllowedTexts|iphone ipad duo-outer duo-inner"
-    "5|add-filter|testAddFilter|iphone ipad duo-outer duo-inner"
-    "6|blocked-languages|testBlockedLanguages|iphone ipad duo-outer duo-inner"
-    "7|test-your-filters|testFilterTester|iphone ipad duo-outer duo-inner"
-    "8|countries|testCountries|iphone ipad duo-outer duo-inner"
-    "9|community-lists|testCommunityLists|iphone ipad duo-outer duo-inner"
+    "2|ai-filtering|testAIFiltering|iphone ipad duo-inner"
+    "3|blocked-texts|testBlockedTexts|iphone ipad duo-inner"
+    "4|allowed-texts|testAllowedTexts|iphone ipad duo-inner"
+    "5|add-filter|testAddFilter|iphone ipad duo-inner"
+    "6|blocked-languages|testBlockedLanguages|iphone ipad duo-inner"
+    "7|test-your-filters|testFilterTester|iphone ipad duo-inner"
+    "8|countries|testCountries|iphone ipad duo-inner"
+    "9|community-lists|testCommunityLists|iphone ipad duo-inner"
 )
 
-output_root="${HERE}/Screenshots"
+output_root="${HERE}/screenshots"
 version_dir=""
 skip_build=false
 parallel=0
@@ -111,7 +111,7 @@ Options:
   -l, --language CODE   Capture only this language. Repeat for more. Default: all.
   -d, --device DEVICE   iphone, ipad or duo. Repeat for more. Default: all.
   -s, --shot NUMBER     Capture only this shot (1-9). Repeat for more. Default: all.
-  -o, --output DIR      The folder that keeps every app version. Default: Extras/Screenshots
+  -o, --output DIR      The folder that keeps every app version. Default: Extras/screenshots
   -p, --parallel N      Simulators per selected device, instead of one each. Only for a
                         run of one device: the Mac copes with three simulators in all.
       --skip-build      Reuse the previous build instead of building again.
@@ -291,7 +291,7 @@ test_filters() {
         pending=$((pending + 1))
         lines+=("-only-testing" "${TEST_CLASS}/${test}")
     done
-    if [[ ${pending} -gt 0 ]] && [[ ${pending} -eq ${total} ]] && [[ ${#selected_shots[@]} -eq ${#SHOTS[@]} ]]; then
+    if [[ ${pending} -gt 0 ]] && [[ ${pending} -eq ${total} ]] && [[ ${total} -eq ${#SHOTS[@]} ]]; then
         printf -- '-only-testing\n%s\n' "${TEST_CLASS}"
     elif [[ ${pending} -gt 0 ]]; then
         printf '%s\n' "${lines[@]}"

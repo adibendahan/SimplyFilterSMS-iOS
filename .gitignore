@@ -81,7 +81,7 @@ Extras/fastlane/report.xml
 Extras/fastlane/Preview.html
 Extras/fastlane/screenshots/**/*.png
 Extras/fastlane/test_output
-/Extras/Screenshots/
+/Extras/screenshots/
 /Extras/local/
 
 # Code Injection
