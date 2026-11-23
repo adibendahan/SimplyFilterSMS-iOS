@@ -18,8 +18,8 @@
   function namedTerm(name) {
     if (!terms) {
       terms = {
-        blockedTexts: lookup('app.blockedTexts'),
-        allowedTexts: lookup('app.allowedTexts'),
+        blockList: lookup('app.blockList'),
+        allowList: lookup('app.allowList'),
         export: lookup('app.export'),
         sender: lookup('app.sender'),
         body: lookup('app.body'),
@@ -83,9 +83,13 @@
     document.querySelectorAll('[data-list]').forEach(function (node) {
       node.textContent = list(node.getAttribute('data-list').split(','));
     });
+    document.querySelectorAll('[data-plural]').forEach(function (node) {
+      var count = Number(node.getAttribute('data-count'));
+      node.textContent = plural(node.getAttribute('data-plural'), count, [new Intl.NumberFormat(lang).format(count)]);
+    });
     document.querySelectorAll('[data-updated]').forEach(function (node) {
       var date = new Date(2026, 10, 13, 9, 41);
-      var formatted = new Intl.DateTimeFormat(lang, { dateStyle: 'short', timeStyle: 'short' }).format(date);
+      var formatted = new Intl.DateTimeFormat(lang, { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(date);
       node.textContent = t('app.lastUpdated', [formatted]) + '. ';
     });
     document.querySelectorAll('[data-copyright]').forEach(function (node) {
