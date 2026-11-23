@@ -89,7 +89,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
         .navigationTitle("communityLists_title"~)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .pinnedTrailing) {
                 communityListsTrailingMenu
             }
         }

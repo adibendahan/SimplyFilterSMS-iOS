@@ -127,14 +127,8 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 ToolbarItem(placement: .topBarTrailing) {
                     self.addFilterMenu
                 }
-                if #available(iOS 27.0, *) {
-                    ToolbarItem(placement: .topBarPinnedTrailing) {
-                        self.appMenu
-                    }
-                } else {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        self.appMenu
-                    }
+                ToolbarItem(placement: .pinnedTrailing) {
+                    self.appMenu
                 }
             }
             .navigationSplitViewColumnWidth(min: 340, ideal: 380)

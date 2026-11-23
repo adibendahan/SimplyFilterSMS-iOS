@@ -102,7 +102,7 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
         .navigationTitle("autoFilter_title"~)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .pinnedTrailing) {
                 Menu {
                     Button {
                         self.model.sheetScreen = .enableReportingExtension
