@@ -83,8 +83,9 @@ struct FilterTesterScreen: Screen {
 
     //MARK: - Private -
     private func waitForVerdict(on message: Message) {
-        let verdicts = [Verdict.allowed, .junk, .promotion, .transaction].map { self.app.descendants(matching: .any)[$0.element] }
-        let anyVerdict = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in verdicts.contains { $0.exists } }, object: nil)
-        XCTAssertEqual(XCTWaiter.wait(for: [anyVerdict], timeout: 5), .completed, "\(message) shows no verdict")
+        let identifiers = [Verdict.allowed, .junk, .promotion, .transaction].map(\.element.rawValue)
+        let isVerdict = NSPredicate(format: "identifier IN %@", identifiers)
+        let verdict = self.app.descendants(matching: .any).matching(isVerdict).firstMatch
+        XCTAssertTrue(verdict.waitForExistence(timeout: 10), "\(message) shows no verdict")
     }
 }

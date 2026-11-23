@@ -27,7 +27,6 @@ struct CommunityListsScreen: Screen {
     let app: XCUIApplication
 
     func show(subscribingTo urls: [String]) {
-        self.reveal(self.app.buttons[.communityListsLink])
         self.open(.communityListsLink)
         let downloaded = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in self.listNames.count == 1 }, object: nil)
         XCTAssertEqual(XCTWaiter.wait(for: [downloaded], timeout: self.downloadTimeout), .completed, "The curated list did not download")
