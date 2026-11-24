@@ -10,26 +10,23 @@ import XCTest
 final class FilterTransferScenarios: ScenarioTestCase {
 
     func testExportedFiltersComeBackWithTheirOptionsAfterImport() {
-        let app = self.launchApp()
         let fileName = "ui-test-\(UUID().uuidString.prefix(8))"
-        let sale = Message(from: "Store", "Big SALE today only")
-        let lowercaseSale = Message(from: "Store", "big sale today only")
-        let fromPharmacy = Message(from: "Pharmacy", "Big SALE today only")
+        let bitcoinOffer = Message(from: "Store", "Buy Bitcoin today")
+        let fromApple = Message(from: "Apple", "Buy Bitcoin today")
+        let fromLowercaseApple = Message(from: "apple", "Buy Bitcoin today")
 
-        app.denyList.add("SALE", folder: .promotions, letterCase: .sensitive)
-        app.allowList.add("Pharmacy", target: .sender)
-        app.filterTransfer.exportToFiles(named: fileName)
+        let appWithFilters = self.launchApp(startingData: .debug)
+        appWithFilters.filterTransfer.exportToFiles(named: fileName)
 
-        app.denyList.delete("SALE")
-        app.allowList.delete("Pharmacy")
-        app.expect(sale, toBe: .allowed)
+        let app = self.launchApp()
+        app.expect(bitcoinOffer, toBe: .allowed)
 
         app.filterTransfer.importFromFiles(named: fileName)
 
         app.testYourFilters { tester in
-            tester.expect(sale, toBe: .promotion)
-            tester.expect(lowercaseSale, toBe: .allowed)
-            tester.expect(fromPharmacy, toBe: .allowed)
+            tester.expect(bitcoinOffer, toBe: .transaction)
+            tester.expect(fromApple, toBe: .allowed)
+            tester.expect(fromLowercaseApple, toBe: .transaction)
         }
     }
 }
