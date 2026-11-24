@@ -91,7 +91,7 @@ class SchedulingManager: SchedulingManagerProtocol {
         }
     }
     
-    func shouldShowInactivityNotificationAlert() async -> Bool {
+    @MainActor func shouldShowInactivityNotificationAlert() async -> Bool {
         let hasActiveFilterLists = self.filterListManager.hasActiveFilterLists
         let sessionCounter = self.defaultsManager.sessionCounter
         let hasAsksLeft = self.hasAsksLeft
