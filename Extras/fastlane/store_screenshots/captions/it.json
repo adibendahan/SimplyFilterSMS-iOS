@@ -1,5 +1,7 @@
 {
-    "1": "SMS di spam, *semplicemente filtrati*.",
+    "tagline": "SMS di spam, *semplicemente filtrati*.",
+    "trio": ["Privata*.*", "Gratuita*.*", "Open\nsource*.*"],
+    "1": "Un tocco, e addio spam.",
     "2": "Liste antispam AI in 10 lingue",
     "3": "Le tue parole. Le tue regole.",
     "4": "Ciò che conta arriva sempre.",
@@ -7,7 +9,7 @@
     "6": "Silenzia le lingue sconosciute.",
     "7": "Scopri cosa passa.",
     "8": "Blocca i numeri esteri.",
-    "9": "Liste di blocco della community, sempre aggiornate.",
+    "9": "Liste della community, aggiornate.",
     "private": "Privacy prima di tutto",
     "openSource": "Open source"
 }

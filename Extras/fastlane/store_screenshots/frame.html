@@ -6,15 +6,14 @@
 <style>
 @font-face { font-family: "Store SF Hebrew"; src: url("file:///System/Library/Fonts/SFHebrew.ttf"); font-weight: 1 1000; }
 @font-face { font-family: "Store SF Arabic"; src: url("file:///System/Library/Fonts/SFArabic.ttf"); font-weight: 1 1000; }
+@font-face { font-family: "Store Hiragino"; src: url("file:///System/Library/Fonts/ヒラギノ角ゴシック W6.ttc"); font-weight: 1 750; }
+@font-face { font-family: "Store Hiragino"; src: url("file:///System/Library/Fonts/ヒラギノ角ゴシック W8.ttc"); font-weight: 751 1000; }
+html[lang="ja"] body { font-family: -apple-system, "SF Pro Display", "Store Hiragino", system-ui, sans-serif; }
 html, body { margin: 0; padding: 0; }
 body { background: #F4F1EA; overflow: hidden; font-family: -apple-system, "SF Pro Display", "Store SF Hebrew", "Store SF Arabic", system-ui, sans-serif; }
 #canvas { position: relative; overflow: hidden; background: #F4F1EA; }
 #text { position: absolute; left: 0; right: 0; text-align: center; }
 #title { margin: 0; font-weight: 700; line-height: 1.12; color: #1C1C1E; text-wrap: balance; }
-#badges { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: center; }
-.badge { display: flex; align-items: center; }
-.badge img { display: block; }
-.badge span { font-weight: 600; line-height: 1; color: #1C1C1E; white-space: nowrap; }
 #screen, #frame { position: absolute; display: block; }
 html[lang="ja"] #title { word-break: auto-phrase; }
 html[lang="ko"] #title { word-break: keep-all; }
@@ -23,7 +22,6 @@ html[lang="ko"] #title { word-break: keep-all; }
 <body>
 <div id="canvas">
 <div id="text"><h1 id="title"></h1></div>
-<div id="badges"></div>
 <img id="screen" alt="">
 <img id="frame" alt="">
 </div>
@@ -35,12 +33,12 @@ const LAYOUTS = {
         frameSize: [1470, 3000],
         screenOrigin: [75, 66],
         screenRadii: [184, 184, 184, 184],
-        frameWidth: 1203,
-        frameTop: 726,
-        textTop: 252,
+        frameWidth: 1300,
+        frameTop: 600,
+        textTop: 120,
         textInset: 60,
-        titleSize: 108,
-        circle: { diameter: 3600, top: 570, blur: 144 }
+        titleSize: 156,
+        circle: { diameter: 3600, top: 638, blur: 144 }
     },
     "duo-outer": {
         size: [1398, 2034],
@@ -49,11 +47,11 @@ const LAYOUTS = {
         screenOrigin: [88, 80],
         screenRadii: [20, 170, 170, 20],
         frameWidth: 1220,
-        frameTop: 479,
-        textTop: 180,
+        frameTop: 530,
+        textTop: 120,
         textInset: 60,
-        titleSize: 102,
-        circle: { diameter: 3810, top: 329, blur: 144 }
+        titleSize: 128,
+        circle: { diameter: 3810, top: 380, blur: 144 }
     },
     "ipad": {
         size: [2752, 2064],
@@ -62,11 +60,11 @@ const LAYOUTS = {
         screenOrigin: [124, 118],
         screenRadii: [54, 54, 54, 54],
         frameWidth: 2400,
-        frameTop: 390,
+        frameTop: 441,
         textTop: 132,
         textInset: 120,
-        titleSize: 102,
-        circle: { diameter: 7428, top: 240, blur: 180 }
+        titleSize: 128,
+        circle: { diameter: 7428, top: 291, blur: 180 }
     },
     "duo-inner": {
         size: [2853, 2007],
@@ -74,25 +72,17 @@ const LAYOUTS = {
         frameSize: [3093, 2247],
         screenOrigin: [120, 120],
         screenRadii: [156, 156, 156, 156],
-        frameWidth: 2450,
-        frameTop: 407,
-        textTop: 120,
+        frameWidth: 2750,
+        frameTop: 270,
+        textTop: 60,
         textInset: 120,
-        titleSize: 102,
-        circle: { diameter: 7710, top: 263, blur: 180 }
+        titleSize: 128,
+        minTextGap: 60,
+        circle: { diameter: 7710, top: 126, blur: 180 }
     }
 };
 const MIN_TEXT_GAP = 100;
 const MIN_TITLE_SCALE = 0.6;
-const BADGE_REFERENCE_TITLE = 108;
-const BADGE_ICON_SIZE = 57;
-const BADGE_TEXT_SIZE = 42;
-const BADGE_ICON_GAP = 21;
-const BADGE_GAP = 78;
-const BADGE_FRAME_SHIFT = 54;
-const BADGE_MIN_GAP = 48;
-const BADGE_POSITION = 0.6;
-const BADGE_ICONS = "icons/";
 const BEZELS = "../../local/bezels/";
 const PAPER_COLOR = "#F4F1EA";
 const CIRCLE_COLOR = "#AED7A2";
@@ -101,11 +91,6 @@ const EDGE_PROFILE = [[-3, 100], [-2, 97.7], [-1.5, 93.3], [-1, 84.1], [-0.5, 69
 
 const params = new URLSearchParams(location.search);
 const layout = LAYOUTS[params.get("device")];
-const badges = [
-    ["lock-duotone.svg", params.get("private") || ""],
-    ["code-duotone.svg", params.get("openSource") || ""]
-].filter(([, label]) => label);
-const hasBadges = badges.length > 0;
 const [width, height] = layout.size;
 const scale = layout.frameWidth / layout.frameSize[0];
 
@@ -136,47 +121,23 @@ titleParts.forEach((part, index) => {
 title.style.fontSize = layout.titleSize + "px";
 title.style.letterSpacing = "-1.5px";
 
-const badgeScale = layout.titleSize / BADGE_REFERENCE_TITLE;
-const badgeHeight = BADGE_ICON_SIZE * badgeScale;
-const badgeRow = document.getElementById("badges");
-badgeRow.style.gap = BADGE_GAP * badgeScale + "px";
-badges.forEach(([file, label]) => {
-    const badge = document.createElement("div");
-    badge.className = "badge";
-    badge.style.gap = BADGE_ICON_GAP * badgeScale + "px";
-    const icon = document.createElement("img");
-    icon.src = BADGE_ICONS + file;
-    icon.alt = "";
-    icon.style.width = badgeHeight + "px";
-    icon.style.height = badgeHeight + "px";
-    const name = document.createElement("span");
-    name.textContent = label;
-    name.style.fontSize = BADGE_TEXT_SIZE * badgeScale + "px";
-    name.style.letterSpacing = -0.3 * badgeScale + "px";
-    badge.appendChild(icon);
-    badge.appendChild(name);
-    badgeRow.appendChild(badge);
-});
-
-const frameTop = layout.frameTop + BADGE_FRAME_SHIFT * badgeScale;
-const textClearance = hasBadges ? 2 * BADGE_MIN_GAP * badgeScale + badgeHeight : MIN_TEXT_GAP;
-const textLimit = frameTop - textClearance;
-const minimumTitleSize = layout.titleSize * MIN_TITLE_SCALE;
-let titleSize = layout.titleSize;
-while (text.getBoundingClientRect().bottom > textLimit && titleSize > minimumTitleSize) {
-    titleSize -= 1;
-    title.style.fontSize = titleSize + "px";
+const frameTop = layout.frameTop;
+function fitTitle() {
+    const textLimit = frameTop - (layout.minTextGap ?? MIN_TEXT_GAP);
+    const minimumTitleSize = layout.titleSize * MIN_TITLE_SCALE;
+    let titleSize = layout.titleSize;
+    while (text.getBoundingClientRect().bottom > textLimit && titleSize > minimumTitleSize) {
+        titleSize -= 1;
+        title.style.fontSize = titleSize + "px";
+    }
 }
-const textBottom = text.getBoundingClientRect().bottom;
-const badgeSpace = frameTop - textBottom - badgeHeight;
-badgeRow.style.top = textBottom + badgeSpace * BADGE_POSITION + "px";
-badgeRow.style.height = badgeHeight + "px";
-badgeRow.style.display = hasBadges ? "flex" : "none";
+text.getBoundingClientRect();
+document.fonts.ready.then(fitTitle);
 const frameLeft = (width - layout.frameWidth) / 2;
 
 const radius = layout.circle.diameter / 2;
 const sigma = layout.circle.blur;
-const circleCenterY = frameTop - (layout.frameTop - layout.circle.top) + radius;
+const circleCenterY = layout.circle.top + radius;
 const edgeStops = EDGE_PROFILE.map(([offset, share]) => {
     const color = "color-mix(in srgb, " + CIRCLE_COLOR + " " + share + "%, " + PAPER_COLOR + ")";
     return color + " " + (radius + offset * sigma) + "px";

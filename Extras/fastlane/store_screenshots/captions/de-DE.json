@@ -1,5 +1,7 @@
 {
-    "1": "Spam-SMS, *einfach gefiltert*.",
+    "tagline": "Spam-SMS, *einfach gefiltert*.",
+    "trio": ["Privat*.*", "Kostenlos*.*", "Open\nSource*.*"],
+    "1": "Ein Tipp, und der Spam ist weg.",
     "2": "KI-Spamlisten in 10 Sprachen",
     "3": "Deine Wörter. Deine Regeln.",
     "4": "Wichtiges kommt immer an.",
@@ -7,7 +9,7 @@
     "6": "Fremde Sprachen stummschalten.",
     "7": "Sieh, was durchkommt.",
     "8": "Ausländische Nummern blockieren.",
-    "9": "Community-Sperrlisten, automatisch aktuell.",
+    "9": "Community-Listen, automatisch aktuell.",
     "private": "Privatsphäre zuerst",
     "openSource": "Open Source"
 }

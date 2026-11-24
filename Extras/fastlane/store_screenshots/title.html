@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Store title card</title>
+<style>
+@font-face { font-family: "Store SF Hebrew"; src: url("file:///System/Library/Fonts/SFHebrew.ttf"); font-weight: 1 1000; }
+@font-face { font-family: "Store SF Arabic"; src: url("file:///System/Library/Fonts/SFArabic.ttf"); font-weight: 1 1000; }
+@font-face { font-family: "Store Hiragino"; src: url("file:///System/Library/Fonts/ヒラギノ角ゴシック W6.ttc"); font-weight: 1 750; }
+@font-face { font-family: "Store Hiragino"; src: url("file:///System/Library/Fonts/ヒラギノ角ゴシック W8.ttc"); font-weight: 751 1000; }
+html[lang="ja"] body { font-family: -apple-system, "SF Pro Display", "Store Hiragino", system-ui, sans-serif; }
+html, body { margin: 0; padding: 0; }
+body { background: #F4F1EA; overflow: hidden; font-family: -apple-system, "SF Pro Display", "Store SF Hebrew", "Store SF Arabic", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+#canvas { position: relative; overflow: hidden; background: #F4F1EA; }
+#icon { display: block; border-radius: 22.37%; }
+#tagline { margin: 0; font-weight: 700; line-height: 1.04; color: #1C1C1E; text-wrap: balance; }
+#trio { margin: 0; font-weight: 800; line-height: 0.8; color: #1C1C1E; white-space: nowrap; text-align: start; }
+#trio .item { display: block; }
+#trio .item + .item { margin-top: 0.26em; }
+html[lang="ja"] #tagline { word-break: auto-phrase; }
+html[lang="ko"] #tagline { word-break: keep-all; }
+html[lang="ja"] #trio, html[lang="ko"] #trio, html[lang="zh-Hans"] #trio { line-height: 1.0; }
+html[lang="ar"] #trio { line-height: 1.05; }
+html[lang="ar"] #tagline { line-height: 1.35; }
+html[lang="ar"] #trio .item + .item { margin-top: 0.3em; }
+.portrait #lead { position: absolute; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.portrait #trio { position: absolute; }
+.landscape #row { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; }
+.landscape #lead { display: flex; flex-direction: column; align-items: flex-start; text-align: start; }
+</style>
+</head>
+<body>
+<div id="canvas">
+<div id="row">
+<div id="lead"><img id="icon" alt=""><h2 id="tagline"></h2></div>
+<h1 id="trio"></h1>
+</div>
+</div>
+<script>
+const LAYOUTS = {
+    "iphone": {
+        size: [1320, 2868],
+        orientation: "portrait",
+        iconTop: 240,
+        iconSize: 400,
+        taglineGap: 80,
+        taglineSize: 184,
+        taglineInset: 60,
+        trioInset: 130,
+        trioBottom: 368,
+        trioSize: 258,
+        minimumBlockGap: 260,
+        circle: { centerY: 4200, radius: 2000, blur: 144 }
+    },
+    "ipad": {
+        size: [2752, 2064],
+        orientation: "landscape",
+        iconSize: 400,
+        taglineGap: 70,
+        taglineSize: 170,
+        sideInsets: [270, 253],
+        columnGap: 140,
+        trioSize: 300,
+        circle: { centerY: 4400, radius: 3000, blur: 180 }
+    },
+    "duo-inner": {
+        size: [2853, 2007],
+        orientation: "landscape",
+        iconSize: 400,
+        taglineGap: 70,
+        taglineSize: 170,
+        sideInsets: [290, 304],
+        columnGap: 140,
+        trioSize: 300,
+        circle: { centerY: 4350, radius: 3000, blur: 180 }
+    }
+};
+const MIN_TEXT_SCALE = 0.6;
+const TAGLINE_MAX_LINES = 2;
+const LANDSCAPE_TAGLINE_FLOOR = 0.85;
+const PAPER_COLOR = "#F4F1EA";
+const CIRCLE_COLOR = "#AED7A2";
+const EMPHASIS_COLOR = "#2B7A3D";
+const EDGE_PROFILE = [[-3, 100], [-2, 97.7], [-1.5, 93.3], [-1, 84.1], [-0.5, 69.1], [0, 50], [0.5, 30.9], [1, 15.9], [1.5, 6.7], [2, 2.3], [3, 0]];
+
+const params = new URLSearchParams(location.search);
+const layout = LAYOUTS[params.get("device")];
+const [width, height] = layout.size;
+const isPortrait = layout.orientation === "portrait";
+
+document.documentElement.lang = params.get("lang") || "en";
+document.documentElement.dir = params.get("dir") || "ltr";
+
+const canvas = document.getElementById("canvas");
+canvas.className = layout.orientation;
+canvas.style.width = width + "px";
+canvas.style.height = height + "px";
+
+function appendEmphasized(element, text) {
+    text.split("*").forEach((part, index) => {
+        const isEmphasized = index % 2 === 1;
+        if (isEmphasized) {
+            const emphasis = document.createElement("span");
+            emphasis.textContent = part;
+            emphasis.style.color = EMPHASIS_COLOR;
+            element.appendChild(emphasis);
+        } else {
+            element.appendChild(document.createTextNode(part));
+        }
+    });
+}
+
+function shrinkToFit(element, startSize, letterSpacing, fits) {
+    const minimumSize = startSize * MIN_TEXT_SCALE;
+    let size = startSize;
+    element.style.fontSize = size + "px";
+    element.style.letterSpacing = size * letterSpacing + "px";
+    while (!fits() && size > minimumSize) {
+        size -= 1;
+        element.style.fontSize = size + "px";
+        element.style.letterSpacing = size * letterSpacing + "px";
+    }
+}
+
+function taglineLineCount() {
+    const lineHeight = parseFloat(getComputedStyle(tagline).lineHeight);
+    return Math.round(tagline.scrollHeight / lineHeight);
+}
+
+const icon = document.getElementById("icon");
+icon.src = params.get("icon");
+icon.style.width = layout.iconSize + "px";
+icon.style.height = layout.iconSize + "px";
+
+const tagline = document.getElementById("tagline");
+appendEmphasized(tagline, params.get("tagline") || "");
+tagline.style.marginTop = layout.taglineGap + "px";
+
+const trio = document.getElementById("trio");
+const trioLines = JSON.parse(params.get("trio") || "[]");
+trioLines.forEach((line) => {
+    const item = document.createElement("span");
+    item.className = "item";
+    line.split("\n").forEach((part, index) => {
+        if (index > 0) {
+            item.appendChild(document.createElement("br"));
+        }
+        appendEmphasized(item, part);
+    });
+    trio.appendChild(item);
+});
+
+const lead = document.getElementById("lead");
+function layoutBlocks() {
+    if (isPortrait) {
+        lead.style.top = layout.iconTop + "px";
+        lead.style.padding = "0 " + layout.taglineInset + "px";
+        trio.style.bottom = layout.trioBottom + "px";
+        trio.style.insetInlineStart = layout.trioInset + "px";
+        const trioWidthLimit = width - 2 * layout.trioInset;
+        tagline.style.fontSize = layout.taglineSize + "px";
+        const fullLeadBottom = lead.getBoundingClientRect().bottom;
+        shrinkToFit(trio, layout.trioSize, -0.039, () => trio.scrollWidth <= trioWidthLimit && trio.getBoundingClientRect().top - fullLeadBottom >= layout.minimumBlockGap);
+        const leadLimit = trio.getBoundingClientRect().top - layout.taglineGap;
+        const taglineWidthLimit = width - 2 * layout.taglineInset;
+        shrinkToFit(tagline, layout.taglineSize, -0.022, () => lead.getBoundingClientRect().bottom <= leadLimit && tagline.scrollWidth <= taglineWidthLimit);
+    } else {
+        const row = document.getElementById("row");
+        row.style.paddingInlineStart = layout.sideInsets[0] + "px";
+        row.style.paddingInlineEnd = layout.sideInsets[1] + "px";
+        const trioHeightLimit = height * 0.8;
+        const taglineFits = () => {
+            const taglineWidthLimit = width - layout.sideInsets[0] - layout.sideInsets[1] - trio.scrollWidth - layout.columnGap;
+            tagline.style.maxWidth = taglineWidthLimit + "px";
+            return tagline.scrollWidth <= taglineWidthLimit && taglineLineCount() <= TAGLINE_MAX_LINES;
+        };
+        const fullTaglineSize = () => {
+            tagline.style.fontSize = layout.taglineSize * LANDSCAPE_TAGLINE_FLOOR + "px";
+            tagline.style.letterSpacing = layout.taglineSize * LANDSCAPE_TAGLINE_FLOOR * -0.022 + "px";
+            return taglineFits();
+        };
+        shrinkToFit(trio, layout.trioSize, -0.039, () => trio.scrollHeight <= trioHeightLimit && fullTaglineSize());
+        shrinkToFit(tagline, layout.taglineSize, -0.022, taglineFits);
+    }
+}
+lead.getBoundingClientRect();
+document.fonts.ready.then(layoutBlocks);
+
+const radius = layout.circle.radius;
+const sigma = layout.circle.blur;
+const edgeStops = EDGE_PROFILE.map(([offset, share]) => {
+    const color = "color-mix(in srgb, " + CIRCLE_COLOR + " " + share + "%, " + PAPER_COLOR + ")";
+    return color + " " + (radius + offset * sigma) + "px";
+});
+canvas.style.backgroundImage = "radial-gradient(circle at " + width / 2 + "px " + layout.circle.centerY + "px, " + edgeStops.join(", ") + ")";
+</script>
+</body>
+</html>
