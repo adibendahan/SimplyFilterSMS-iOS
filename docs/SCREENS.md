@@ -10,6 +10,7 @@ The main screen: AI Filtering, the smart rules, and the three user filter lists;
 - `startMonitoring()` compares the store fingerprint with the UI once on its own, in case a CloudKit import finished before the observers were registered.
 - The What's New sheet is marked seen on any user dismiss, swipe included, but not when a file or deep link replaces it (`isReplacingSheetForLaunch`).
 - **Pushing from code on iPhone goes through the list selection (`selectedScreen`).** Setting `navigationScreen` alone only works on iPad, where the split view shows it; on iPhone nothing is pushed. Search requests its pushes through `searchPushRequest` for this reason.
+- **Home's top bar holds only the pinned `•••`,** like every screen pushed from it; on iPhone the add-filter `+` sits in the bottom bar beside search. A top-bar `+` in another placement made both buttons jump on every pop back to Home, and a `ToolbarItemGroup` in the pinned placement shows only its first item.
 - **Search results that land on one item** go through `SearchManager`'s single pending focus, because `Screen` can't carry it. The destination ViewModel takes it when it opens (`revealSearchFocus()`); a new destination takes it the same way, or the focus waits for the next screen of that kind.
 
 ## EnableExtensionView

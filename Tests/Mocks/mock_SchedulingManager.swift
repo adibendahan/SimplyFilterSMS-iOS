@@ -36,7 +36,7 @@ class mock_SchedulingManager: SchedulingManagerProtocol {
         self.refreshInactivityReminderCounter += 1
     }
 
-    func shouldShowInactivityNotificationAlert() async -> Bool {
+    @MainActor func shouldShowInactivityNotificationAlert() async -> Bool {
         self.shouldShowInactivityNotificationAlertCounter += 1
         return self.shouldShowInactivityNotificationAlertClosure?() ?? false
     }

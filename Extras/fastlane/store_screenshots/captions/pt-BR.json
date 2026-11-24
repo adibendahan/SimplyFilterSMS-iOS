@@ -1,5 +1,7 @@
 {
-    "1": "Mensagens de spam, *simplesmente filtradas*.",
+    "tagline": "Mensagens de spam, *simplesmente filtradas*.",
+    "trio": ["Privado*.*", "Gratuito*.*", "Código\naberto*.*"],
+    "1": "Um toque, e adeus spam.",
     "2": "Listas de spam com AI em 10 idiomas",
     "3": "Suas palavras. Suas regras.",
     "4": "O que importa sempre chega.",
@@ -7,7 +9,7 @@
     "6": "Silencie idiomas desconhecidos.",
     "7": "Veja o que passa.",
     "8": "Bloqueie números estrangeiros.",
-    "9": "Listas de bloqueio da comunidade, sempre atualizadas.",
+    "9": "Listas da comunidade, atualizadas.",
     "private": "Privacidade em primeiro lugar",
     "openSource": "Código aberto"
 }

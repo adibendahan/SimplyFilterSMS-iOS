@@ -1,5 +1,7 @@
 {
-    "1": "Spam texts, *simply filter*ed.",
+    "tagline": "Spam texts, *simply filter*ed.",
+    "trio": ["Private*.*", "Free*.*", "Open\nsource*.*"],
+    "1": "Flip a switch, stop the spam.",
     "2": "AI spam lists in 10 languages",
     "3": "Your words. Your rules.",
     "4": "Never block what matters.",
@@ -7,7 +9,7 @@
     "6": "Mute unknown languages.",
     "7": "See what gets through.",
     "8": "Block foreign numbers.",
-    "9": "Community blocklists, auto-updated.",
+    "9": "Community lists, auto-updated.",
     "private": "Private by design",
     "openSource": "Open source"
 }

@@ -110,7 +110,7 @@ class mock_FilterListManager: FilterListManagerProtocol {
         self.removeCommunityListClosure?(communityList)
     }
 
-    func previewCommunityList(at url: URL) async -> Result<CommunityListItem, CommunityListPreviewError> {
+    @MainActor func previewCommunityList(at url: URL) async -> Result<CommunityListItem, CommunityListPreviewError> {
         self.previewCommunityListCounter += 1
         return await self.previewCommunityListClosure?(url) ?? .failure(.notAList)
     }

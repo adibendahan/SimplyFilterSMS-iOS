@@ -259,40 +259,40 @@ private struct BounceOnAppearModifier: ViewModifier {
 }
 
 private enum RevealHighlightMotion {
-    static let fade = Animation.easeOut(duration: 0.8).delay(0.6)
+    static let hold: TimeInterval = 0.6
+    static let fade: TimeInterval = 0.8
     static let rowBleed: CGFloat = -40
 }
 
 private struct RevealHighlightModifier: ViewModifier {
     let isRevealed: Bool
 
-    @State private var highlightOpacity: Double = 0
+    @State private var trigger = 0
 
     func body(content: Content) -> some View {
         content
             .background {
                 Color(UIColor.systemGray4)
                     .padding(RevealHighlightMotion.rowBleed)
-                    .opacity(self.highlightOpacity)
+                    .keyframeAnimator(initialValue: Double.zero, trigger: self.trigger) { view, opacity in
+                        view.opacity(opacity)
+                    } keyframes: { _ in
+                        KeyframeTrack {
+                            MoveKeyframe(1)
+                            LinearKeyframe(1, duration: RevealHighlightMotion.hold)
+                            CubicKeyframe(0, duration: RevealHighlightMotion.fade)
+                        }
+                    }
                     .allowsHitTesting(false)
             }
             .onAppear {
                 guard self.isRevealed else { return }
-                self.flash()
+                self.trigger += 1
             }
             .onChange(of: self.isRevealed) { _, isRevealed in
                 guard isRevealed else { return }
-                self.flash()
+                self.trigger += 1
             }
-    }
-
-    private func flash() {
-        self.highlightOpacity = 1
-        DispatchQueue.main.async {
-            withAnimation(RevealHighlightMotion.fade) {
-                self.highlightOpacity = 0
-            }
-        }
     }
 }
 

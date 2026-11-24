@@ -178,7 +178,7 @@ class FilterListManager: FilterListManagerProtocol {
         _ = persistenceManager.commitAndAnnounce()
     }
 
-    func previewCommunityList(at url: URL) async -> Result<CommunityListItem, CommunityListPreviewError> {
+    @MainActor func previewCommunityList(at url: URL) async -> Result<CommunityListItem, CommunityListPreviewError> {
         guard url.scheme?.lowercased() == "https", url.host != nil else {
             Log.debug("community list link isn't https, url: \(url.absoluteString) → refused")
             return .failure(.invalidURL)

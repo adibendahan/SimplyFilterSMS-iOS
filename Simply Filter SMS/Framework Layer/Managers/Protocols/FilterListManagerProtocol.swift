@@ -21,7 +21,7 @@ protocol FilterListManagerProtocol {
     func setFilterListActive(for language: NLLanguage, value: Bool)
     func setCommunityListActive(_ communityList: CommunityListItem, value: Bool)
     func removeCommunityList(_ communityList: CommunityListItem)
-    func previewCommunityList(at url: URL) async -> Result<CommunityListItem, CommunityListPreviewError>
+    @MainActor func previewCommunityList(at url: URL) async -> Result<CommunityListItem, CommunityListPreviewError>
     @MainActor func subscribeCommunityList(_ communityList: CommunityListItem) async -> Bool
     @MainActor func refreshFilterLists() async
     @MainActor func updateFilterListsWhenOnline()

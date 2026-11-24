@@ -4,8 +4,9 @@
 #
 # Reads the captures that screenshots.sh writes to <output>/<version>/<locale>/,
 # puts each one in Apple's device frame on the store background with its
-# caption, and writes the result to <output>/<version>-store/<locale>/ as
-# <device>-<shot>-<name>.png, ready for fastlane upload_screenshots.
+# caption, draws each device's title card, and writes the result to
+# <output>/<version>-store/<locale>/ as <device>-<shot>-<name>.png, ready for
+# fastlane upload_screenshots.
 #
 set -Eeuo pipefail
 
@@ -13,6 +14,8 @@ readonly PROGRAM="${0##*/}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 readonly HERE
 readonly TEMPLATE="${HERE}/fastlane/store_screenshots/frame.html"
+readonly TITLE_TEMPLATE="${HERE}/fastlane/store_screenshots/title.html"
+readonly APP_ICON="${HERE}/../Simply Filter SMS/Resources/Assets.xcassets/AppIcon.appiconset/1024.png"
 readonly CAPTIONS="${HERE}/fastlane/store_screenshots/captions"
 readonly BEZELS="${HERE}/local/bezels"
 readonly CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -22,7 +25,8 @@ readonly EXIT_FAILED=1
 readonly EXIT_USAGE=2
 readonly EXIT_ENVIRONMENT=3
 
-# Languages and shots mirror the tables in screenshots.sh.
+# Languages and shots 1-9 mirror the tables in screenshots.sh; shot 0 is the
+# title card, drawn here with no capture.
 # code | App Store Connect folder | text direction | name
 readonly LANGUAGES=(
     "en|en-US|ltr|English"
@@ -55,6 +59,7 @@ readonly SCREENS=(
 
 # number | file name | screens
 readonly SHOTS=(
+    "0|title|iphone ipad duo-inner"
     "1|home|iphone duo-outer"
     "2|ai-filtering|iphone ipad duo-inner"
     "3|blocked-texts|iphone ipad duo-inner"
@@ -100,7 +105,8 @@ Options:
   -l, --language CODE    Frame only this language. Repeat for more. Default: every
                          language that has a captions file.
   -d, --device DEVICE    iphone, ipad or duo. Repeat for more. Default: all.
-  -s, --shot NUMBER      Frame only this shot (1-9). Repeat for more. Default: all.
+  -s, --shot NUMBER      Frame only this shot (0-9; 0 is the title card). Repeat for
+                         more. Default: all.
   -o, --output DIR       The folder that keeps every app version. Default: Extras/screenshots
       --list             List the languages, devices and shots, then exit.
   -h, --help             Show this help, then exit.
@@ -113,10 +119,10 @@ share it, so each Duo shot is taken on one of its two screens.
 Upload them with: cd Extras && fastlane upload_screenshots path:screenshots/<version>-store
 
 Captions come from fastlane/store_screenshots/captions/<locale>.json, keyed by
-shot number, plus "private" and "openSource", the two labels of the privacy
-row under caption 1 on each device's first image. Words between asterisks are
-drawn in green (*simply filter*ed). A device without a Home shot opens on
-shot 2, which then carries caption 1 and the privacy row instead of caption 2.
+shot number. Each device opens on a title card (shot 0, no capture) drawn from
+"tagline" and "trio", the list of its big lines ("\n" breaks a line inside one
+item). Words between asterisks are drawn in green (*simply filter*ed). The
+iPhone Duo's title card is on its unfolded screen.
 
 Apple's device frames are not in the repository: their license forbids
 redistributing them. Download them from ${BEZELS_URL}
@@ -273,6 +279,8 @@ check_environment() {
     [[ -x "${CHROME}" ]] || die "Google Chrome is not installed at ${CHROME}"
     command -v jq >/dev/null || die "jq is not installed"
     [[ -f "${TEMPLATE}" ]] || die "the template is missing: ${TEMPLATE}"
+    [[ -f "${TITLE_TEMPLATE}" ]] || die "the title card template is missing: ${TITLE_TEMPLATE}"
+    [[ -f "${APP_ICON}" ]] || die "the app icon is missing: ${APP_ICON}"
 
     local entry screen frame missing=()
     for entry in "${SCREENS[@]}"; do
@@ -305,23 +313,43 @@ caption() {
     jq -r --arg key "$2" '.[$key] // empty' "$1"
 }
 
+caption_list() {
+    jq -c --arg key "$2" '.[$key] // empty' "$1"
+}
+
 render() {
-    local screen="$1" input="$2" output="$3" title="$4" private="$5" open_source="$6" language="$7" direction="$8"
+    local screen="$1" input="$2" output="$3" title="$4" language="$5" direction="$6"
     local entry width height
     entry="$(screen_entry "${screen}")"
     IFS='|' read -r _ width height _ <<<"${entry}"
 
     local query
     query="device=${screen}&lang=$(uri "${language}")&dir=${direction}"
-    query="${query}&title=$(uri "${title}")&private=$(uri "${private}")&openSource=$(uri "${open_source}")"
-    query="${query}&shot=$(uri "file://${input}")"
+    query="${query}&title=$(uri "${title}")&shot=$(uri "file://${input}")"
+    capture "${TEMPLATE}" "${query}" "${width}" "${height}" "${output}"
+}
+
+render_title() {
+    local screen="$1" output="$2" tagline="$3" trio="$4" language="$5" direction="$6"
+    local entry width height
+    entry="$(screen_entry "${screen}")"
+    IFS='|' read -r _ width height _ <<<"${entry}"
+
+    local query
+    query="device=${screen}&lang=$(uri "${language}")&dir=${direction}"
+    query="${query}&tagline=$(uri "${tagline}")&trio=$(uri "${trio}")&icon=$(uri "file://${APP_ICON}")"
+    capture "${TITLE_TEMPLATE}" "${query}" "${width}" "${height}" "${output}"
+}
+
+capture() {
+    local template="$1" query="$2" width="$3" height="$4" output="$5"
 
     local rendered="${profile}/render.png"
     rm -f "${rendered}"
     "${CHROME}" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 \
         --user-data-dir="${profile}/chrome" --allow-file-access-from-files --virtual-time-budget=5000 \
         --window-size="${width},${height}" --screenshot="${rendered}" \
-        "file://${TEMPLATE}?${query}" >/dev/null 2>&1 || return 1
+        "file://${template}?${query}" >/dev/null 2>&1 || return 1
     [[ -f "${rendered}" ]] || return 1
 
     local size
@@ -346,11 +374,6 @@ frame_language() {
     for device_key in "${selected_devices[@]}"; do
         device="$(device_entry "${device_key}")"
         IFS='|' read -r _ screens <<<"${device}"
-        local opens_on_home=false home_screens
-        home_screens=" $(shot_entry 1 | cut -d'|' -f3) "
-        for screen in ${screens}; do
-            [[ "${home_screens}" = *" ${screen} "* ]] && opens_on_home=true
-        done
         for screen in ${screens}; do
             for number in "${selected_shots[@]}"; do
                 shot="$(shot_entry "${number}")"
@@ -360,25 +383,21 @@ frame_language() {
                 local name store_name
                 name="$(printf '%s-%02d-%s.png' "${screen}" "${number}" "${file}")"
                 store_name="$(printf '%s-%02d-%s.png' "${device_key}" "${number}" "${file}")"
-                local title private="" open_source=""
-                local opens_here=false
-                [[ "${number}" = "1" ]] && opens_here=true
-                [[ "${number}" = "2" ]] && [[ "${opens_on_home}" = false ]] && opens_here=true
-                if [[ "${opens_here}" = true ]]; then
-                    title="$(caption "${captions}" 1)"
-                    private="$(caption "${captions}" private)"
-                    open_source="$(caption "${captions}" openSource)"
-                else
-                    title="$(caption "${captions}" "${number}")"
+
+                if [[ "${number}" = "0" ]]; then
+                    frame_title "${screen}" "${captions}" "${output_dir}/${store_name}" "${code}" "${direction}"
+                    continue
                 fi
 
+                local title
+                title="$(caption "${captions}" "${number}")"
                 if [[ ! -f "${input_dir}/${name}" ]]; then
                     fail "${name}: no capture"
                     failures=$((failures + 1))
                 elif [[ -z "${title}" ]]; then
                     fail "${name}: no caption for shot ${number} in ${folder}.json"
                     failures=$((failures + 1))
-                elif render "${screen}" "${input_dir}/${name}" "${output_dir}/${store_name}" "${title}" "${private}" "${open_source}" "${code}" "${direction}"; then
+                elif render "${screen}" "${input_dir}/${name}" "${output_dir}/${store_name}" "${title}" "${code}" "${direction}"; then
                     ok "${store_name}"
                     written=$((written + 1))
                 else
@@ -388,6 +407,24 @@ frame_language() {
             done
         done
     done
+}
+
+frame_title() {
+    local screen="$1" captions="$2" output="$3" code="$4" direction="$5"
+    local store_name tagline trio
+    store_name="$(basename "${output}")"
+    tagline="$(caption "${captions}" tagline)"
+    trio="$(caption_list "${captions}" trio)"
+    if [[ -z "${tagline}" ]] || [[ -z "${trio}" ]]; then
+        fail "${store_name}: no \"tagline\" or \"trio\" in $(basename "${captions}")"
+        failures=$((failures + 1))
+    elif render_title "${screen}" "${output}" "${tagline}" "${trio}" "${code}" "${direction}"; then
+        ok "${store_name}"
+        written=$((written + 1))
+    else
+        fail "${store_name}: the render failed"
+        failures=$((failures + 1))
+    fi
 }
 
 #MARK: - Main -

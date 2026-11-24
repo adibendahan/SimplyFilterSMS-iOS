@@ -120,8 +120,16 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             .homeSearch(model: self.model.search, title: self.model.title)
             .listStyle(.insetGrouped)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    self.addFilterMenu
+                if #available(iOS 26.0, *), horizontalSizeClass == .compact {
+                    DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                    ToolbarSpacer(placement: .bottomBar)
+                    ToolbarItem(placement: .bottomBar) {
+                        self.addFilterMenu
+                    }
+                } else {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        self.addFilterMenu
+                    }
                 }
                 ToolbarItem(placement: .pinnedTrailing) {
                     self.appMenu
@@ -439,6 +447,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         } label: {
             Label("menu_addFilter"~, systemImage: "plus")
         }
+        .menuOrder(.fixed)
         .accessibilityIdentifier(TestIdentifier.addFilterMenuButton.rawValue)
         .tint(.primary)
     }

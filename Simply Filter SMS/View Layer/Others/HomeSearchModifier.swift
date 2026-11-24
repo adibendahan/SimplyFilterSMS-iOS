@@ -93,10 +93,19 @@ private struct SearchFieldSelectionApplier: ViewModifier {
             .onChange(of: self.request) { _, request in
                 let text = self.text
                 DispatchQueue.main.async {
-                    guard let start = text.index(text.startIndex, offsetBy: request.start, limitedBy: text.endIndex) else { return }
-                    self.selection = TextSelection(range: start..<text.endIndex)
+                    self.select(from: request.start, in: text)
                 }
             }
+    }
+
+    private func select(from start: Int, in text: String) {
+        guard start > 0 else {
+            let didSelectAll = UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
+            Log.debug("search selected the restored query, handled: \(didSelectAll)")
+            return
+        }
+        guard let startIndex = text.index(text.startIndex, offsetBy: start, limitedBy: text.endIndex) else { return }
+        self.selection = TextSelection(range: startIndex..<text.endIndex)
     }
 
     private var fittingSelection: Binding<TextSelection?> {

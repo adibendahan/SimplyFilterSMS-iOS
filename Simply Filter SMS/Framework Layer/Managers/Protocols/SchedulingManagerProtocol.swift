@@ -12,7 +12,7 @@ protocol SchedulingManagerProtocol: AnyObject {
     func scheduleFilterListsProcessing()
     func handleFilterListsProcessing(task: BGProcessingTask)
     func refreshInactivityReminder()
-    func shouldShowInactivityNotificationAlert() async -> Bool
+    @MainActor func shouldShowInactivityNotificationAlert() async -> Bool
     func requestInactivityNotificationPermission() async
     func recordInactivityNotificationDecline()
 
