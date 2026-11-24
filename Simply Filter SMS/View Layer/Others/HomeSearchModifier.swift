@@ -33,7 +33,6 @@ struct HomeSearchModifier: ViewModifier {
                 .motionOrFadeAnimation(HomeSearchMotion.reveal, value: self.model.isShowingOverlay)
             }
             .searchable(text: self.$model.query, isPresented: self.$model.isPresented, prompt: "general_search"~)
-            .searchDictationBehavior(.inline(activation: .onSelect))
             .onSubmit(of: .search) {
                 self.model.submit()
             }
