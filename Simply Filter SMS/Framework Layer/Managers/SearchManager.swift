@@ -92,6 +92,12 @@ class SearchManager: SearchManagerProtocol {
         self.lastQuery = nil
     }
 
+    func forgetLastQuery() {
+        guard self.lastQuery != nil else { return }
+        Log.debug("last search forgotten, last: \(self.lastQuery)")
+        self.lastQuery = nil
+    }
+
     func resetSession() {
         Log.debug("search session reset, last: \(self.lastQuery), recents: \(self.recentQueries.count), keptAcrossLaunches: \(kSearchHistoryKeepsAcrossLaunches)")
         self.lastQuery = nil

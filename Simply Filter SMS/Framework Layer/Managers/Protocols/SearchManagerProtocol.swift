@@ -16,6 +16,7 @@ protocol SearchManagerProtocol: AnyObject {
     func sections(matching query: String) -> [SearchResultSection]
     func recordSearch(_ query: String)
     func clearRecentQueries()
+    func forgetLastQuery()
     func resetSession()
     func setPendingFocus(_ focus: SearchFocus)
     func takeFocus<Value>(_ value: KeyPath<SearchFocus, Value?>) -> Value?

@@ -206,10 +206,12 @@ extension HomeSearchModifier {
         private func searchDidOpen() {
             self.results.reloadEmptyState()
             guard let lastQuery = self.appManager.searchManager.lastQuery else { return }
+            self.results.update(query: lastQuery)
             DispatchQueue.main.async { [weak self] in
                 guard let self, self.isPresented, self.query.isEmpty else { return }
                 Log.debug("search reopened, restored: \(lastQuery)")
                 self.setQuery(lastQuery)
+                self.pendingResultsUpdate?.cancel()
                 self.requestSelection(from: 0)
             }
         }
@@ -224,6 +226,18 @@ extension HomeSearchModifier {
                 self.requestSelection(from: typed.count)
             } else {
                 self.scheduleResultsUpdate(for: typed)
+            }
+
+            let isClearedByUser = typed.isEmpty && !self.isSettingQuery
+            if isClearedByUser {
+                self.forgetLastQueryIfStillCleared()
+            }
+        }
+
+        private func forgetLastQueryIfStillCleared() {
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.isPresented, self.query.isEmpty else { return }
+                self.appManager.searchManager.forgetLastQuery()
             }
         }
 

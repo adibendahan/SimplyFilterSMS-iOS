@@ -19,6 +19,7 @@ class mock_SearchManager: SearchManagerProtocol {
     var sectionsCounter = 0
     var recordSearchCounter = 0
     var clearRecentQueriesCounter = 0
+    var forgetLastQueryCounter = 0
     var resetSessionCounter = 0
     var setPendingFocusCounter = 0
     var takeFocusCounter = 0
@@ -41,6 +42,10 @@ class mock_SearchManager: SearchManagerProtocol {
 
     func clearRecentQueries() {
         self.clearRecentQueriesCounter += 1
+    }
+
+    func forgetLastQuery() {
+        self.forgetLastQueryCounter += 1
     }
 
     func resetSession() {
@@ -70,6 +75,7 @@ class mock_SearchManager: SearchManagerProtocol {
         self.sectionsCounter = 0
         self.recordSearchCounter = 0
         self.clearRecentQueriesCounter = 0
+        self.forgetLastQueryCounter = 0
         self.resetSessionCounter = 0
         self.setPendingFocusCounter = 0
         self.takeFocusCounter = 0
