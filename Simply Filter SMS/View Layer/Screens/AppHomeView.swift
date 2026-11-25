@@ -430,13 +430,13 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Button {
                 self.model.requestSheet(.addAllowFilter)
             } label: {
-                Label("addFilter_addFilter_allow"~, systemImage: "person.crop.circle.badge.checkmark")
+                Label("addFilter_addFilter_allow"~, systemImage: FilterType.allow.iconName)
             }
 
             Button {
                 self.model.requestSheet(.addDenyFilter)
             } label: {
-                Label("addFilter_addFilter_deny"~, systemImage: "person.crop.circle.badge.xmark")
+                Label("addFilter_addFilter_deny"~, systemImage: FilterType.deny.iconName)
             }
 
             Button {

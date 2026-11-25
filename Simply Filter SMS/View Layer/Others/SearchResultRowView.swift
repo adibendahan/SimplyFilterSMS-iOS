@@ -160,7 +160,7 @@ extension SearchResultRowView.Row {
                   title: communityList.name,
                   subtitle: Self.joined([ruleCountText, communityList.localeLabel, authorText]),
                   value: Self.onOffText(communityList.isActive),
-                  icon: .symbol("person.2.circle", .indigo))
+                  icon: .symbol("person.2.fill", .indigo))
     }
 
     private init(filter: Filter, kind: SearchResultKind) {

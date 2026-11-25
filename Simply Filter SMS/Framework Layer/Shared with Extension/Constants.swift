@@ -786,7 +786,7 @@ enum WhatsNewEntry: String, CaseIterable {
         case .help:
             return "questionmark.circle.fill"
         case .communityLists:
-            return "person.2.circle"
+            return "person.2.fill"
         case .siriShortcuts:
             return "mic.fill"
         case .search:
@@ -796,7 +796,7 @@ enum WhatsNewEntry: String, CaseIterable {
         case .newLanguages:
             return "globe"
         case .trustedCountries:
-            return "globe.americas"
+            return "location.fill"
         case .accessibility:
             return "accessibility"
         case .ipad:
