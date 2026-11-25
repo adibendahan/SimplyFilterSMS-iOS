@@ -43,7 +43,6 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                                 .accessibilityLabel(spokenParts.joined(separator: ", "))
                         }
                         .accessibilityIdentifier("\(TestIdentifier.filterListLanguageToggle.rawValue)-\(language.rawValue)")
-                        .settle(delay: LanguagesMotion.rowDelay(for: index))
                         .revealHighlight(isRevealed: self.model.revealedLanguage == language)
                     }
                 }
@@ -74,7 +73,6 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
             } footer: {
                 Text(self.model.footer)
                     .multilineTextAlignment(.leading)
-                    .settle(delay: LanguagesMotion.footerDelay)
             } // Section
 
             Section {
@@ -89,11 +87,9 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                     }
                 }
                 .foregroundStyle(.primary)
-                .settle(delay: LanguagesMotion.footerDelay)
             } footer: {
                 Text("autoFilter_improveFooter"~)
                     .multilineTextAlignment(.leading)
-                    .settle(delay: LanguagesMotion.footerDelay)
             } // Section
         } // List
         .modifier(FeatureStatusHeader.CollapseTracker(progress: self.$headerCollapse))
@@ -144,25 +140,6 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
             label = label + countText
         }
         return label
-    }
-}
-
-
-//MARK: - Motion -
-private enum LanguagesMotion {
-    static let footerDelay: Double = 0.5
-    static let rise: CGFloat = 10
-    static let blur: CGFloat = 6
-    static let settleAnimation = Animation.spring(response: 0.6, dampingFraction: 0.85)
-
-    static func rowDelay(for index: Int) -> Double {
-        return Stagger.delay(for: index, step: 0.04, base: 0.3, limit: 5)
-    }
-}
-
-private extension View {
-    func settle(delay: Double) -> some View {
-        return self.entranceOnAppear(delay: delay, rise: LanguagesMotion.rise, blur: LanguagesMotion.blur, animation: LanguagesMotion.settleAnimation)
     }
 }
 
