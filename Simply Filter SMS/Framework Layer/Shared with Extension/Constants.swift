@@ -138,9 +138,9 @@ enum FilterType: Int64, CaseIterable, Identifiable {
     var iconName: String {
         switch self {
         case .deny:
-            return "person.crop.circle.badge.xmark"
+            return "exclamationmark.message"
         case .allow:
-            return "person.crop.circle.badge.checkmark"
+            return "checkmark.message"
         case .denyLanguage:
             return "globe"
         }
@@ -510,20 +510,29 @@ enum SmartFilterType: Int64, CaseIterable, Equatable, Identifiable {
         case .links:
             return "link"
         case .numbersOnly:
-            return "number.circle.fill"
+            return "number.sign"
         case .shortSender:
-            return "textformat.123"
+            return "textformat.numbers"
         case .email:
-            return "envelope.fill"
+            return "at"
         case .emojis:
             return "🙄"
         case .countryAllowlist:
-            return "globe.americas.fill"
+            return "location.fill"
         }
     }
     
     var isTextIcon: Bool {
         return self == .emojis
+    }
+
+    var iconWeight: Font.Weight {
+        switch self {
+        case .allUnknown:
+            return .bold
+        default:
+            return .regular
+        }
     }
 
     var iconColor: Color {
