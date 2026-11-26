@@ -11,7 +11,7 @@ How tests are written here and the traps around them. The test names say what ea
 - Unit tests: the `Tests` target, through the app scheme with Xcode's MCP.
 - From the command line, use the `Tests` scheme. Running the app scheme's test action can fail to load an unsigned `Tests.xctest`.
 - UI scenarios: the `Scenario Tests` scheme, only before a release or when asked.
-- App Store screenshots: `Extras/screenshots.sh` captures to `Extras/screenshots/<version>/`, `Extras/store-screenshots.sh` frames them into `Extras/screenshots/<version>-store/`, and `cd Extras && fastlane upload_screenshots path:screenshots/<version>-store` uploads the framed set (fastlane runs from `Extras/`, where its folder is). Upload the `-store` folder, never the raw captures.
+- App Store screenshots: `Extras/screenshots.sh` captures to `Extras/screenshots/<version>/captures/`, `Extras/store-screenshots.sh` frames it into `<version>/store/` (`--set-latest` on either points `Extras/screenshots/latest` at that version), and `cd Extras && fastlane upload_screenshots` uploads `latest/store` (fastlane runs from `Extras/`, where its folder is). Upload `store/`, never the raw captures.
 - **Apple's device frames are never committed.** Their license forbids redistributing them and the repo is public: they live in the git-ignored `Extras/local/bezels/` (`store-screenshots.sh --list` names the files). Apple's marketing guidelines require them as-is: no added shadow, reflection or tint.
 - Each frame's screen opening is exactly the capture's size, and `frame.html`'s `screenOrigin` and `screenRadii` are measured from the frame's transparent pixels. A new frame is measured the same way; a guessed radius lets the background or the capture's corners show around the screen.
 

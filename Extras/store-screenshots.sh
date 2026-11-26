@@ -2,10 +2,10 @@
 #
 # store-screenshots.sh — turn the captured App Store screenshots into store images.
 #
-# Reads the captures that screenshots.sh writes to <output>/<version>/<locale>/,
+# Reads the captures that screenshots.sh writes to <output>/<version>/captures/<locale>/,
 # puts each one in Apple's device frame on the store background with its
 # caption, draws each device's title card, and writes the result to
-# <output>/<version>-store/<locale>/ as <device>-<shot>-<name>.png, ready for
+# <output>/<version>/store/<locale>/ as <device>-<shot>-<name>.png, ready for
 # fastlane upload_screenshots.
 #
 set -Eeuo pipefail
@@ -18,6 +18,9 @@ readonly TITLE_TEMPLATE="${HERE}/fastlane/store_screenshots/title.html"
 readonly APP_ICON="${HERE}/../Simply Filter SMS/Resources/Assets.xcassets/AppIcon.appiconset/1024.png"
 readonly CAPTIONS="${HERE}/fastlane/store_screenshots/captions"
 readonly BEZELS="${HERE}/local/bezels"
+readonly README_IMAGES="${HERE}/../docs/images"
+readonly README_LANGUAGE="en"
+readonly README_LOCALE="en-US"
 readonly CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 readonly BEZELS_URL="https://developer.apple.com/design/resources/#product-bezels"
 
@@ -76,6 +79,7 @@ version=""
 selected_languages=()
 selected_devices=()
 selected_shots=()
+set_latest=false
 profile=""
 
 #MARK: - Output -
@@ -101,22 +105,26 @@ Turn the captured App Store screenshots into store images: each capture in
 Apple's device frame, on the store background, with its caption.
 
 Options:
-  -v, --version VERSION  The app version to frame. Default: the newest one captured.
+  -v, --version VERSION  The app version to frame. Default: latest, the one captured last.
   -l, --language CODE    Frame only this language. Repeat for more. Default: every
                          language that has a captions file.
   -d, --device DEVICE    iphone, ipad or duo. Repeat for more. Default: all.
   -s, --shot NUMBER      Frame only this shot (0-9; 0 is the title card). Repeat for
                          more. Default: all.
   -o, --output DIR       The folder that keeps every app version. Default: Extras/screenshots
+      --set-latest       When every image is written, point DIR/latest at this
+                         version. Without it, latest is left alone.
       --list             List the languages, devices and shots, then exit.
   -h, --help             Show this help, then exit.
 
-Reads DIR/<version>/<App Store Connect locale>/ and writes the store images to
-DIR/<version>-store/<App Store Connect locale>/ as <device>-<shot>-<name>.png.
+Reads DIR/<version>/captures/<App Store Connect locale>/ and writes the store images to
+DIR/<version>/store/<App Store Connect locale>/ as <device>-<shot>-<name>.png.
 fastlane orders each device's images by file name, and App Store Connect keeps
 one set of at most 10 per device: the iPhone Duo's folded and unfolded shots
 share it, so each Duo shot is taken on one of its two screens.
-Upload them with: cd Extras && fastlane upload_screenshots path:screenshots/<version>-store
+Upload them with: cd Extras && fastlane upload_screenshots
+Framing English iPhone shots of the version in latest also writes them, at half
+size, over the README's images in docs/images/.
 
 Captions come from fastlane/store_screenshots/captions/<locale>.json, keyed by
 shot number. Each device opens on a title card (shot 0, no capture) drawn from
@@ -246,6 +254,10 @@ parse_arguments() {
                 output_root="$2"
                 shift 2
                 ;;
+            --set-latest)
+                set_latest=true
+                shift
+                ;;
             --list)
                 list
                 exit 0
@@ -262,18 +274,6 @@ parse_arguments() {
 }
 
 #MARK: - Environment -
-
-newest_version() {
-    local folder name newest=""
-    for folder in "${output_root}"/*/; do
-        name="$(basename "${folder}")"
-        [[ "${name}" =~ ^[0-9]+(\.[0-9]+)*$ ]] || continue
-        if [[ -z "${newest}" ]] || [[ "$(printf '%s\n%s\n' "${newest}" "${name}" | sort -V | tail -1)" = "${name}" ]]; then
-            newest="${name}"
-        fi
-    done
-    echo "${newest}"
-}
 
 check_environment() {
     [[ -x "${CHROME}" ]] || die "Google Chrome is not installed at ${CHROME}"
@@ -294,10 +294,10 @@ check_environment() {
     fi
 
     if [[ -z "${version}" ]]; then
-        version="$(newest_version)"
-        [[ -n "${version}" ]] || die "no captured version in ${output_root}; run screenshots.sh first"
+        [[ -L "${output_root}/latest" ]] || die "no ${output_root}/latest; pass -v VERSION"
+        version="$(readlink "${output_root}/latest")"
     fi
-    [[ -d "${output_root}/${version}" ]] || die "no captures for version ${version} in ${output_root}"
+    [[ -d "${output_root}/${version}/captures" ]] || die "no captures for version ${version} in ${output_root}"
 
     profile="$(mktemp -d "${TMPDIR:-/tmp}/store-screenshots.XXXXXX")"
     trap 'rm -rf "${profile}"' EXIT
@@ -365,9 +365,9 @@ frame_language() {
     IFS='|' read -r _ folder direction _ <<<"${entry}"
 
     local captions="${CAPTIONS}/${folder}.json"
-    local input_dir="${output_root}/${version}/${folder}"
-    local output_dir="${output_root}/${version}-store/${folder}"
-    step "${code} → ${version}-store/${folder}"
+    local input_dir="${output_root}/${version}/captures/${folder}"
+    local output_dir="${output_root}/${version}/store/${folder}"
+    step "${code} → ${version}/store/${folder}"
     mkdir -p "${output_dir}"
 
     local device_key device screens screen shot number file shot_screens
@@ -427,6 +427,27 @@ frame_title() {
     fi
 }
 
+update_readme_images() {
+    local store_dir="${output_root}/${version}/store/${README_LOCALE}"
+    [[ " ${selected_languages[*]} " = *" ${README_LANGUAGE} "* ]] || return 0
+    [[ " ${selected_devices[*]} " = *" iphone "* ]] || return 0
+
+    local number shot file name
+    for number in "${selected_shots[@]}"; do
+        [[ "${number}" = "0" ]] && continue
+        shot="$(shot_entry "${number}")"
+        IFS='|' read -r _ file _ <<<"${shot}"
+        name="$(printf '%02d-%s.png' "${number}" "${file}")"
+        [[ -f "${store_dir}/iphone-${name}" ]] || continue
+        if sips -z 1434 660 "${store_dir}/iphone-${name}" --out "${README_IMAGES}/${name}" >/dev/null; then
+            ok "README ${name}"
+        else
+            fail "README ${name}: the resize failed"
+            failures=$((failures + 1))
+        fi
+    done
+}
+
 #MARK: - Main -
 
 main() {
@@ -472,7 +493,15 @@ main() {
         fail "${written} written, ${failures} failed"
         exit "${EXIT_FAILED}"
     fi
-    ok "${written} written to ${output_root}/${version}-store"
+    ok "${written} written to ${output_root}/${version}/store"
+    if [[ "${set_latest}" == true ]]; then
+        ln -sfn "${version}" "${output_root}/latest"
+        ok "latest → ${version}"
+    fi
+    if [[ "$(readlink "${output_root}/latest")" = "${version}" ]]; then
+        update_readme_images
+        [[ ${failures} -eq 0 ]] || exit "${EXIT_FAILED}"
+    fi
 }
 
 main "$@"

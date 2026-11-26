@@ -3,9 +3,9 @@
 # search-banner.sh — draw the App Store search results banner, and upload it.
 #
 # Copies the iPhone captures of shots 1, 2 and 3 that screenshots.sh wrote to
-# screenshots/<version>/<locale>/ into fastlane/creative_assets/source/screens/<lang>/,
-# draws fastlane/creative_assets/source/search-3x2.html with headless Chrome,
-# and writes fastlane/creative_assets/search-3x2-<lang>.png (3840 × 2560).
+# screenshots/<version>/captures/<locale>/ into fastlane/creative_assets/source/screens/<lang>/
+# (ignored by git, like the captures), draws fastlane/creative_assets/source/search-3x2.html
+# with headless Chrome, and writes fastlane/creative_assets/search-3x2-<lang>.png (3840 × 2560).
 #
 set -Eeuo pipefail
 
@@ -66,12 +66,12 @@ usage() {
     cat <<EOF
 Usage: ${PROGRAM} [options]
 
-Draw the App Store search results banner in every language from the newest
+Draw the App Store search results banner in every language from the latest
 captured screenshots, and optionally upload it to the App Asset Library.
 
 Options:
-  -v, --version VERSION  The app version whose captures to use. Default: the newest
-                         one captured in Extras/screenshots.
+  -v, --version VERSION  The app version whose captures to use. Default: latest,
+                         the one captured last (Extras/screenshots/latest).
   -l, --language CODE    Only this language (en, he, de, es, fr, it, pt-BR, ar, ja,
                          ko, zh-Hans). Repeat for more. Default: all 11.
       --upload           After drawing, upload each banner as
@@ -115,10 +115,10 @@ done
 command -v python3 >/dev/null || die "python3 is not installed"
 
 if [[ -z "${version}" ]]; then
-    version="$(find "${output_root}" -mindepth 1 -maxdepth 1 -type d ! -name '*-store' -exec basename {} \; | sort -V | tail -1)"
-    [[ -n "${version}" ]] || die "no captures in ${output_root}; run screenshots.sh first"
+    [[ -L "${output_root}/latest" ]] || die "no ${output_root}/latest; pass -v VERSION"
+    version="$(readlink "${output_root}/latest")"
 fi
-[[ -d "${output_root}/${version}" ]] || die "no captures for ${version} in ${output_root}"
+[[ -d "${output_root}/${version}/captures" ]] || die "no captures for ${version} in ${output_root}"
 
 
 #MARK: - Drawing -
@@ -151,9 +151,10 @@ EOF
 
 draw() {
     local code="$1" folder="$2" direction="$3"
-    local captures="${output_root}/${version}/${folder}"
+    local captures="${output_root}/${version}/captures/${folder}"
     local screens="${ASSETS}/source/screens/${code}"
     local entry capture name
+    mkdir -p "${screens}"
     for entry in "${PHONES[@]}"; do
         IFS='|' read -r capture name <<<"${entry}"
         [[ -f "${captures}/${capture}" ]] || { fail "${code}: missing ${captures}/${capture}"; return 1; }

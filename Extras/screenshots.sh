@@ -5,7 +5,8 @@
 # Runs the Screenshots Automation tests on dedicated simulators, several of each
 # device at once, each working through its own share of the languages with its
 # system language switched for every run. Each shot is written to
-# <output>/<app version>/<App Store Connect locale>/ as soon as its test passes.
+# <output>/<app version>/captures/<App Store Connect locale>/ as soon as its test passes.
+# With --set-latest, a run that captures everything points <output>/latest at that version.
 # The iPhone Duo is shot folded and unfolded; hinge
 # (brew install artemnovichkov/tap/hinge) folds it between the two runs.
 #
@@ -76,7 +77,9 @@ readonly SHOTS=(
 )
 
 output_root="${HERE}/screenshots"
+version=""
 version_dir=""
+set_latest=false
 skip_build=false
 parallel=0
 selected_languages=()
@@ -115,10 +118,14 @@ Options:
   -p, --parallel N      Simulators per selected device, instead of one each. Only for a
                         run of one device: the Mac copes with three simulators in all.
       --skip-build      Reuse the previous build instead of building again.
+      --set-latest      When every language is captured, point DIR/latest at this
+                        version. Without it, latest is left alone.
       --list            List the languages, devices and shots, then exit.
   -h, --help            Show this help, then exit.
 
-Each app version has its own folder, DIR/<app version>/<App Store Connect locale>/.
+Each app version has its own folder, DIR/<app version>/captures/<App Store Connect locale>/.
+DIR/latest is what store-screenshots.sh, search-banner.sh and the upload use; it
+moves only with --set-latest.
 Every shot is written there as soon as its test passes, replacing the file of
 the same name; a shot whose test failed keeps its previous file.
 
@@ -246,6 +253,9 @@ parse_arguments() {
                 shift 2 ;;
             --skip-build)
                 skip_build=true
+                shift ;;
+            --set-latest)
+                set_latest=true
                 shift ;;
             --list)
                 list
@@ -519,10 +529,9 @@ PYTHON
 }
 
 choose_version_dir() {
-    local version
     version=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "${APP_INFO_PLIST}" 2>/dev/null) \
         || die "could not read the app version from ${APP_INFO_PLIST}"
-    version_dir="${output_root}/${version}"
+    version_dir="${output_root}/${version}/captures"
 }
 
 file_size() {
@@ -696,6 +705,10 @@ main() {
         exit "${EXIT_FAILED_LANGUAGE}"
     fi
     printf '%sAll %d languages captured in %s%s → %s\n' "${green}" ${#selected_languages[@]} "$(elapsed "${started}")" "${reset}" "${version_dir}"
+    if [[ "${set_latest}" == true ]]; then
+        ln -sfn "${version}" "${output_root}/latest"
+        ok "latest → ${version}"
+    fi
 }
 
 main "$@"

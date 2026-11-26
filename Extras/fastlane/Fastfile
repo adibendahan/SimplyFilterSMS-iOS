@@ -10,12 +10,13 @@ platform :ios do
     )
   end
 
-  desc "Upload screenshots to App Store Connect"
+  desc "Upload the framed screenshots (screenshots/latest/store, or path:screenshots/<version>/store) to App Store Connect"
   lane :upload_screenshots do |options|
-    UI.user_error!("Pass the version to upload: fastlane upload_screenshots path:screenshots/<version>-store (run from Extras/)") unless options[:path]
+    path = File.realpath(options[:path] || "screenshots/latest/store")
+    UI.message("Uploading #{path}")
     upload_to_app_store(
       api_key: api_key,
-      screenshots_path: options[:path],
+      screenshots_path: path,
       skip_metadata: true,
       skip_binary_upload: true,
       overwrite_screenshots: true,
