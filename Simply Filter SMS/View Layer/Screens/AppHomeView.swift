@@ -28,6 +28,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     @ScaledMetric(relativeTo: .title3) private var filterListsTitleSize: CGFloat = 20
     @ScaledMetric(relativeTo: .caption2) private var statusLineGap: CGFloat = 4
     @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
+    @ScaledMetric(relativeTo: .caption2) private var secondLineRowSqueeze: CGFloat = 7.5
 
     @State private var dynamicEmojis: [String: String] = [:]
     @State private var selectedScreen: Screen? = nil
@@ -72,6 +73,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         smartFilterToggle(index: index, rule: rule, isDisabled: isDisabled)
                         .if(rule.isDestructive) { $0.tint(.red) }
                         .disabled(isDisabled)
+                        .if(hasSecondLine(index: index, rule: rule)) { $0.padding(.vertical, -self.secondLineRowSqueeze) }
                         .listRowBackground(Color(UIColor.secondarySystemGroupedBackground))
                         .revealHighlight(isRevealed: self.model.revealedSmartFilter == rule)
                         .if(rule.subtitle != nil) {
@@ -277,7 +279,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 
     @ViewBuilder
     private func smartFilterLabel(index: Int, rule: SmartFilterType, isDisabled: Bool) -> some View {
-        HStack(alignment: .top, spacing: 8) {
+        HStack(alignment: .center, spacing: 8) {
             smartFilterIcon(index: index, rule: rule, isDisabled: isDisabled)
 
             smartFilterTextColumn(index: index, rule: rule, isDisabled: isDisabled)
@@ -304,7 +306,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         } else {
             Image(systemName: rule.icon)
                 .foregroundColor(rule.iconColor.opacity(isDisabled ? 0.5 : 1))
-                .font(rule.isDestructive ? Font.body.bold() : .body)
+                .font(.body.weight(rule.iconWeight))
                 .bounceOnAppear(isShown: self.model.revealedSmartFilter == rule, delay: SearchMotion.revealBounceDelay, bouncesOnTap: true)
                 .adaptiveIconColumn()
         }
@@ -330,6 +332,12 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 countryAllowlistControls
             }
         }
+    }
+
+    private func hasSecondLine(index: Int, rule: SmartFilterType) -> Bool {
+        let hasSubtitle = rule.subtitle != nil
+        let showsCountries = rule == .countryAllowlist && self.model.rules[index].state
+        return hasSubtitle || showsCountries
     }
 
     @ViewBuilder
@@ -382,7 +390,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         let activeCount = String.localizedStringWithFormat("communityLists_active_count"~, self.model.activeCommunityListsCount)
 
         AdaptiveRow {
-            Image(systemName: "person.2.circle")
+            Image(systemName: "person.2.fill")
                 .foregroundColor(.indigo)
                 .adaptiveIconColumn()
         } content: {
@@ -422,13 +430,13 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Button {
                 self.model.requestSheet(.addAllowFilter)
             } label: {
-                Label("addFilter_addFilter_allow"~, systemImage: "person.crop.circle.badge.checkmark")
+                Label("addFilter_addFilter_allow"~, systemImage: FilterType.allow.iconName)
             }
 
             Button {
                 self.model.requestSheet(.addDenyFilter)
             } label: {
-                Label("addFilter_addFilter_deny"~, systemImage: "person.crop.circle.badge.xmark")
+                Label("addFilter_addFilter_deny"~, systemImage: FilterType.deny.iconName)
             }
 
             Button {

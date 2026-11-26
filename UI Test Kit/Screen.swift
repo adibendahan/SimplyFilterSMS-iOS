@@ -132,16 +132,21 @@ extension Screen {
 
     private func isReachable(_ element: XCUIElement) -> Bool {
         guard element.exists && element.isHittable else { return false }
+        let frame = element.frame.insetBy(dx: self.edgeTolerance, dy: self.edgeTolerance)
         let window = self.app.windows.firstMatch.frame
-        guard window.contains(element.frame) else { return false }
+        guard window.contains(frame) else { return false }
         let searchField = self.app.searchFields.firstMatch
         guard searchField.exists else { return true }
         let searchBar = searchField.frame.insetBy(dx: 0, dy: -self.searchBarMargin)
-        return !element.frame.intersects(searchBar)
+        return !frame.intersects(searchBar)
     }
 
     private var searchBarMargin: CGFloat {
         return 16
+    }
+
+    private var edgeTolerance: CGFloat {
+        return 1
     }
 
     private func swipeAlongMargin(of list: XCUIElement, _ direction: HomeSwipe) {

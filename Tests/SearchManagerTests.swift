@@ -208,6 +208,18 @@ class SearchManagerTests: XCTestCase {
         XCTAssertNil(self.testSubject.lastQuery)
     }
 
+    func test_forgetLastQuery_keepsRecents() {
+        // Prepare
+        self.testSubject.recordSearch("promo")
+
+        // Act
+        self.testSubject.forgetLastQuery()
+
+        // Verify
+        XCTAssertNil(self.testSubject.lastQuery)
+        XCTAssertEqual(self.testSubject.recentQueries, ["promo"])
+    }
+
 
     func test_suggestions_areDistinctPicksFromThePool() {
         // Prepare

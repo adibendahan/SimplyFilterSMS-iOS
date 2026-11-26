@@ -16,6 +16,7 @@ protocol SearchManagerProtocol: AnyObject {
     func sections(matching query: String) -> [SearchResultSection]
     func recordSearch(_ query: String)
     func clearRecentQueries()
+    func forgetLastQuery()
     func resetSession()
     func setPendingFocus(_ focus: SearchFocus)
     func takeFocus<Value>(_ value: KeyPath<SearchFocus, Value?>) -> Value?
@@ -150,7 +151,7 @@ enum SearchList: CaseIterable {
         case .aiFiltering:
             return "bolt.shield.fill"
         case .communityLists:
-            return "person.2.circle"
+            return "person.2.fill"
         case .allow:
             return FilterType.allow.iconName
         case .deny:
@@ -217,9 +218,9 @@ enum SearchAction: CaseIterable {
     var iconName: String {
         switch self {
         case .addAllowFilter:
-            return "person.crop.circle.badge.checkmark"
+            return FilterType.allow.iconName
         case .addDenyFilter:
-            return "person.crop.circle.badge.xmark"
+            return FilterType.deny.iconName
         case .addLanguageFilter:
             return "globe"
         case .stayReachable:
