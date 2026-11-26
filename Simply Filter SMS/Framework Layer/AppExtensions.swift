@@ -243,17 +243,9 @@ extension UTType {
 
 extension UIApplication {
     func openSettings() {
-        if #available(iOS 18.3, *) {
-            if let url = URL(string: UIApplication.openDefaultApplicationsSettingsURLString) {
-                Log.debug("opening Settings, url: \(url)")
-                UIApplication.shared.open(url)
-            }
-        } else {
-            if let url = URL(string: UIApplication.openSettingsURLString) {
-                Log.debug("opening Settings, url: \(url)")
-                UIApplication.shared.open(url)
-            }
-        }
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        Log.debug("opening Settings, url: \(url)")
+        UIApplication.shared.open(url)
     }
 }
 
