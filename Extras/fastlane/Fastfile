@@ -123,4 +123,80 @@ platform :ios do
     pending.each_value { |file_name| UI.important("#{file_name}: still processing, check App Store Connect") }
   end
 
+  desc "Set the uploaded search-3x2-<lang>-<suffix>.png images as a version's search results banner"
+  lane :place_search_banner do |options|
+    UI.user_error!("Pass the app version and the uploaded images' suffix: fastlane place_search_banner version:4.0.2 suffix:4.0.2") unless options[:version] && options[:suffix]
+    api_key
+    client = Spaceship::ConnectAPI.client.tunes_request_client
+    app = Spaceship::ConnectAPI::App.find(CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier))
+    UI.user_error!("App not found") unless app
+
+    languages = {
+      "en-US" => "en", "he" => "he", "de-DE" => "de", "es-ES" => "es", "fr-FR" => "fr", "it" => "it",
+      "pt-BR" => "pt-BR", "ar-SA" => "ar", "ja" => "ja", "ko" => "ko", "zh-Hans" => "zh-Hans"
+    }
+    only = options[:locales] ? options[:locales].split(",").map(&:strip) : nil
+
+    version = client.get("v1/apps/#{app.id}/appStoreVersions", { "filter[versionString]" => options[:version] }).body["data"].first
+    UI.user_error!("Version #{options[:version]} not found in App Store Connect") unless version
+
+    library_id = client.get("v1/apps/#{app.id}/assetLibrary").body["data"]["id"]
+    images = client.get("v1/appAssetLibraries/#{library_id}/images", { limit: 200 })
+      .all_pages
+      .flat_map { |page| page.body["data"] }
+      .reject { |image| image["attributes"]["state"] == "FAILED" }
+
+    localizations = client.get("v1/appStoreVersions/#{version['id']}/appStoreVersionLocalizations", { limit: 50 }).body["data"]
+    localizations.each do |localization|
+      locale = localization["attributes"]["locale"]
+      next if only && !only.include?(locale)
+
+      code = languages[locale]
+      unless code
+        UI.important("#{locale}: no banner for this language, skipped")
+        next
+      end
+
+      file_name = "search-3x2-#{code}-#{options[:suffix]}.png"
+      image = images.find { |candidate| candidate["attributes"]["fileName"] == file_name }
+      unless image
+        UI.error("#{locale}: #{file_name} is not in the asset library; upload it first")
+        next
+      end
+
+      placements = client.get("v1/appStoreVersionLocalizations/#{localization['id']}/placements", { limit: 200, include: "image" }).body["data"]
+      current = placements.select { |placement| placement["attributes"]["placementType"] == "APP_STORE_SEARCH_RESULTS_ASSET" }
+      if current.any? { |placement| placement.dig("relationships", "image", "data", "id") == image["id"] }
+        UI.message("#{locale}: already shows #{file_name}")
+        next
+      end
+
+      place = lambda do |image_id|
+        client.post("v1/appAssetLibraryPlacements", {
+          data: {
+            type: "appAssetLibraryPlacements",
+            attributes: { placementType: "APP_STORE_SEARCH_RESULTS_ASSET", placementGroup: "DEFAULT_PROFILE" },
+            relationships: {
+              image: { data: { type: "appAssetLibraryImages", id: image_id } },
+              appStoreVersionLocalization: { data: { type: "appStoreVersionLocalizations", id: localization["id"] } }
+            }
+          }
+        })
+      end
+
+      old_image_id = current.first&.dig("relationships", "image", "data", "id")
+      current.each { |placement| client.delete("v1/appAssetLibraryPlacements/#{placement['id']}") }
+      begin
+        place.call(image["id"])
+        UI.success("#{locale}: now shows #{file_name}")
+      rescue => error
+        UI.error("#{locale}: App Store Connect refused #{file_name}: #{error.message}")
+        if old_image_id
+          place.call(old_image_id)
+          UI.important("#{locale}: put the previous banner back")
+        end
+      end
+    end
+  end
+
 end

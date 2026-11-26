@@ -56,12 +56,102 @@ fastlane download_metadata
 fastlane upload_metadata
 
 # Upload every fastlane/creative_assets/*.png to the App Asset Library,
-# or only the named ones. Placing them on the product page is done by hand.
+# or only the named ones. This only stores them; see the next lane.
 fastlane upload_creative_assets
 fastlane upload_creative_assets files:header-21x9-en.png,header-21x9-he.png
+
+# Make the uploaded search-3x2-<lang>-<suffix>.png images the search banner of
+# an app version, in every language (or only the listed App Store locales).
+fastlane place_search_banner version:4.0.2 suffix:4.0.2
+fastlane place_search_banner version:4.0.2 suffix:4.0.2 locales:en-US,he
 ```
 
-The search results banner (`search-3x2-<lang>.png`) is one template, `fastlane/creative_assets/source/search-3x2.html`, rendered per language with headless Chrome at 3840 × 2560 (`--allow-file-access-from-files`). Its query takes `lang`, `dir`, and from the store screenshots' captions file `title` (the `tagline` key), `private` and `openSource`. Its phones show `source/screens/<lang>/`: copies of the iPhone shots 1, 2 and 3 as `home.png`, `ai.png` and `blocked.png`. The same banner shows on every device, each cropping it differently, so keep its layout: a crop shows more or less of the phones.
+The App Asset Library skips any file name it already holds (the lane prints `Skipping <name>: already in the library`), so an updated image needs a new name. Uploaded images are only stored there, shown as "Prepare for Submission"; a *placement* is what puts an image on a version's page, one per language.
+
+`place_search_banner` finds the version in App Store Connect (create it there first, as you do for every release), and for each language deletes its current search banner placement and creates one with the new image: Apple allows only one search banner per language, so the old one must go first. If Apple refuses the new image, the lane puts the old one straight back and prints the error. A language whose image is already set is left alone, so running it twice is safe. It changes only the version you name; the live version keeps its banner until the new one is released.
+
+## App Store search banner
+
+The banner shown in App Store search results (`fastlane/creative_assets/search-3x2-<lang>.png`, 3840 × 2560, one per language). It is drawn from one template, `fastlane/creative_assets/source/search-3x2.html`: the tagline and the "Private by design" / "Open source" row from the store screenshots' captions file, over three phones showing the iPhone shots 1, 2 and 3 (Home in the middle, AI Filtering and Block List tilted on the sides). The same banner shows on every device, each cropping it differently, so keep its layout: a crop shows more or less of the phones.
+
+Redo it whenever Home, AI Filtering or the Block List look different in a release. It needs Google Chrome and the new captures from `screenshots.sh`.
+
+```sh
+cd Extras
+
+# 1. Draw English only and look at it
+./search-banner.sh -l en
+open fastlane/creative_assets/search-3x2-en.png
+
+# 2. Draw all 11 languages from the newest captures (or a given version)
+./search-banner.sh
+./search-banner.sh -v 4.0.2
+
+# 3. Draw all 11, upload them as search-3x2-<lang>-<version>.png,
+#    and set them as that version's search banner
+./search-banner.sh --upload
+```
+
+What each step does:
+- **Drawing** copies `screenshots/<version>/<locale>/iphone-01-home.png`, `iphone-02-ai-filtering.png` and `iphone-03-blocked-texts.png` into `fastlane/creative_assets/source/screens/<lang>/` as `home.png`, `ai.png` and `blocked.png`, then has headless Chrome take a picture of the template and saves it over `search-3x2-<lang>.png`. Without `-v` it uses the newest version folder in `screenshots/`.
+- **`--upload`** copies each banner to `search-3x2-<lang>-<version>.png` (the library already holds last release's names), runs `fastlane upload_creative_assets` with those files, waits until App Store Connect has processed them, deletes the copies, then runs `fastlane place_search_banner version:<version> suffix:<version>` (above). The version in App Store Connect must exist and have the same number as the captures folder; if they differ, upload with the script and run the lane yourself with the right `version:`.
+- **Check it** in App Store Connect on that version's page: each language's search banner shows the new image. It goes live with the version, once Apple approves it.
+- **Commit** the changed `search-3x2-*.png` and `source/screens/` files.
+
+## README screenshots
+
+The README shows nine iPhone images from the App Store set in `docs/images/`, at half size (660 × 1434). After framing a new version (`store-screenshots.sh`), copy them over:
+
+```sh
+cd "<repo root>"
+version=4.0.2
+for name in 01-home 02-ai-filtering 03-blocked-texts 04-allowed-texts 05-add-filter \
+            06-blocked-languages 07-test-your-filters 08-countries 09-community-lists; do
+    sips -z 1434 660 "Extras/screenshots/${version}-store/en-US/iphone-${name}.png" \
+        --out "docs/images/${name}.png"
+done
+git status --short docs/images
+```
+
+`sips` is the Mac's built-in image tool; `-z 1434 660` resizes to that height and width. `git status` lists only the images that actually changed; screens that look the same come out byte-identical and don't show up.
+
+## Branches and pull requests
+
+Work goes on a branch off `develop`, and every PR targets `develop` (never `master`).
+
+```sh
+# Start: a new branch from an up-to-date develop
+git switch develop && git pull --ff-only
+git switch -c bugfix/short-name
+
+# Commit and push (the first push of a branch needs -u)
+git add <files>
+git commit -m "One short line saying what changed."
+git push -u origin bugfix/short-name
+
+# Open the PR into develop; it prints the PR's link
+gh pr create --base develop --title "Title" --body "- What changed"
+
+# A later push to the same branch updates the open PR. Check for one:
+gh pr list --head bugfix/short-name --state all
+
+# Edit an open PR's description
+gh pr edit <number> --body-file description.md
+```
+
+After the PR is merged on GitHub, clean up:
+
+```sh
+git fetch --prune                     # forget branches deleted on GitHub
+gh pr view <number> --json state      # must say MERGED
+git switch develop && git pull --ff-only
+git merge-base --is-ancestor bugfix/short-name origin/develop && echo merged
+git branch -d bugfix/short-name       # deletes only if merged; refuses otherwise
+git push origin --delete bugfix/short-name
+git branch -a                         # should list only develop and master
+```
+
+`git branch -d` (lower case) refuses to delete unmerged work; never switch it to `-D` to force it.
 
 ## Localization
 
