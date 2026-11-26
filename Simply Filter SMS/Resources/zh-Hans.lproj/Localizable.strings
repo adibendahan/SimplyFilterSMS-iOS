@@ -92,8 +92,6 @@
 
 "addFilter_target_all" = "全部";
 
-"addFilter_target_all_multiline" = "全部";
-
 "addFilter_target_sender" = "发件人";
 
 "addFilter_target_body" = "正文";

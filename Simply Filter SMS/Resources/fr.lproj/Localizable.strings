@@ -76,8 +76,6 @@
 
 "addFilter_target_all" = "Tous";
 
-"addFilter_target_all_multiline" = "Tous";
-
 "addFilter_target_sender" = "Expéditeur";
 
 "addFilter_target_body" = "Contenu";

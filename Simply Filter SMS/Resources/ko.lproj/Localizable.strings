@@ -76,8 +76,6 @@
 
 "addFilter_target_all" = "전체";
 
-"addFilter_target_all_multiline" = "전체";
-
 "addFilter_target_sender" = "발신자";
 
 "addFilter_target_body" = "본문";

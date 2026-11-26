@@ -76,8 +76,6 @@
 
 "addFilter_target_all" = "Tutti";
 
-"addFilter_target_all_multiline" = "Tutti";
-
 "addFilter_target_sender" = "Mittente";
 
 "addFilter_target_body" = "Corpo";

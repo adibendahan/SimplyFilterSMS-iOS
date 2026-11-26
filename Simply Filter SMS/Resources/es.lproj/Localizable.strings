@@ -76,8 +76,6 @@
 
 "addFilter_target_all" = "Todos";
 
-"addFilter_target_all_multiline" = "Todos";
-
 "addFilter_target_sender" = "Remitente";
 
 "addFilter_target_body" = "Cuerpo";

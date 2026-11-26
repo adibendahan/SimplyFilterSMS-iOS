@@ -76,8 +76,6 @@
 
 "addFilter_target_all" = "すべて";
 
-"addFilter_target_all_multiline" = "すべて";
-
 "addFilter_target_sender" = "送信者";
 
 "addFilter_target_body" = "本文";

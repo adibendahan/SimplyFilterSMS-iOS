@@ -76,8 +76,6 @@
 
 "addFilter_target_all" = "Alle";
 
-"addFilter_target_all_multiline" = "Alle";
-
 "addFilter_target_sender" = "Absender";
 
 "addFilter_target_body" = "Inhalt";
