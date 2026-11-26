@@ -80,15 +80,6 @@ enum HTTPMethod: String {
 enum HTTPTask {
     case requestPlain
     case requestParameters(bodyParameters: BodyParameters?, urlParameters: URLParameters?)
-    
-    var isPlain: Bool {
-        switch self {
-        case .requestPlain:
-            return true
-        case .requestParameters(_,_):
-            return false
-        }
-    }
 }
 
 enum RequestError: Error {

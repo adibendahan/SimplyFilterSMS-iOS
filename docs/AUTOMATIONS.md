@@ -6,7 +6,10 @@ How to run each automation in this repo.
 
 ## App Store screenshots
 
-Three steps, all from `Extras/`: capture (`screenshots/<version>/`), frame (`screenshots/<version>-store/`), upload.
+Three steps, all from `Extras/`: capture (`screenshots/<version>/captures/`), frame (`screenshots/<version>/store/`), upload. Framing, the search banner and the upload use `screenshots/latest` unless given a version, and `latest` moves only when `screenshots.sh` or `store-screenshots.sh` is given `--set-latest` and every shot it was asked for succeeds. `screenshots.sh` always writes to the app's current version, so after a version bump its captures aren't in `latest` until you move it.
+
+- **Move `latest` only once the set is whole.** The upload replaces every screenshot in App Store Connect, so a `latest` pointing at a half-captured version uploads half a set. During a release, frame the new captures with `-v <version>`, and pass `--set-latest` only on the run that frames everything.
+- **Old versions stay on disk** (about 390 MB each) until you delete their folders; nothing reads them unless given `-v` or `path:`.
 
 Needs `hinge` for the Duo (`brew install artemnovichkov/tap/hinge`), Google Chrome for framing, and Apple's device frames in `Extras/local/bezels/`. Captions live in `Extras/fastlane/store_screenshots/captions/<locale>.json`.
 
@@ -19,8 +22,8 @@ cd Extras
 
 # Check a change on one shot first
 ./screenshots.sh -l en -d iphone -s 1
-./store-screenshots.sh -l en -d iphone -s 1
-open screenshots/4.0.0-store/en-US/iphone-01-home.png
+./store-screenshots.sh -v 4.0.3 -l en -d iphone -s 1
+open screenshots/4.0.3/store/en-US/iphone-01-home.png
 
 # A few languages, reusing the last build
 ./screenshots.sh --skip-build -l he -l ar
@@ -33,12 +36,17 @@ open screenshots/4.0.0-store/en-US/iphone-01-home.png
 nohup ./screenshots.sh > "$TMPDIR/screenshots.log" 2>&1 &
 tail -f "$TMPDIR/screenshots.log"
 
-# Frame everything captured for the newest version, or a given one
+# Frame everything in latest, or a given version
 ./store-screenshots.sh
-./store-screenshots.sh -v 4.0.0
+./store-screenshots.sh -v 4.0.3
 
-# Upload the framed set (never the raw captures)
-fastlane upload_screenshots path:screenshots/4.0.0-store
+# A new release: capture everything, frame it, and make it latest
+./screenshots.sh
+./store-screenshots.sh -v 4.0.3 --set-latest
+
+# Upload the framed set in latest (never the raw captures), or a given version's
+fastlane upload_screenshots
+fastlane upload_screenshots path:screenshots/4.0.3/store
 ```
 
 ## App Store metadata and assets
@@ -58,7 +66,7 @@ fastlane upload_metadata
 # Upload every fastlane/creative_assets/*.png to the App Asset Library,
 # or only the named ones. This only stores them; see the next lane.
 fastlane upload_creative_assets
-fastlane upload_creative_assets files:header-21x9-en.png,header-21x9-he.png
+fastlane upload_creative_assets files:search-3x2-en-4.0.2.png,search-3x2-he-4.0.2.png
 
 # Make the uploaded search-3x2-<lang>-<suffix>.png images the search banner of
 # an app version, in every language (or only the listed App Store locales).
@@ -83,7 +91,7 @@ cd Extras
 ./search-banner.sh -l en
 open fastlane/creative_assets/search-3x2-en.png
 
-# 2. Draw all 11 languages from the newest captures (or a given version)
+# 2. Draw all 11 languages from latest (or a given version)
 ./search-banner.sh
 ./search-banner.sh -v 4.0.2
 
@@ -93,27 +101,18 @@ open fastlane/creative_assets/search-3x2-en.png
 ```
 
 What each step does:
-- **Drawing** copies `screenshots/<version>/<locale>/iphone-01-home.png`, `iphone-02-ai-filtering.png` and `iphone-03-blocked-texts.png` into `fastlane/creative_assets/source/screens/<lang>/` as `home.png`, `ai.png` and `blocked.png`, then has headless Chrome take a picture of the template and saves it over `search-3x2-<lang>.png`. Without `-v` it uses the newest version folder in `screenshots/`.
+- **Drawing** copies `screenshots/<version>/captures/<locale>/iphone-01-home.png`, `iphone-02-ai-filtering.png` and `iphone-03-blocked-texts.png` into `fastlane/creative_assets/source/screens/<lang>/` as `home.png`, `ai.png` and `blocked.png`, then has headless Chrome take a picture of the template and saves it over `search-3x2-<lang>.png`. Without `-v` it uses `screenshots/latest`.
 - **`--upload`** copies each banner to `search-3x2-<lang>-<version>.png` (the library already holds last release's names), runs `fastlane upload_creative_assets` with those files, waits until App Store Connect has processed them, deletes the copies, then runs `fastlane place_search_banner version:<version> suffix:<version>` (above). The version in App Store Connect must exist and have the same number as the captures folder; if they differ, upload with the script and run the lane yourself with the right `version:`.
 - **Check it** in App Store Connect on that version's page: each language's search banner shows the new image. It goes live with the version, once Apple approves it.
-- **Commit** the changed `search-3x2-*.png` and `source/screens/` files.
+- **Commit** the changed `search-3x2-*.png` files.
 
 ## README screenshots
 
-The README shows nine iPhone images from the App Store set in `docs/images/`, at half size (660 × 1434). After framing a new version (`store-screenshots.sh`), copy them over:
+The README shows nine iPhone images from the App Store set in `docs/images/`, at half size (660 × 1434). `store-screenshots.sh` writes them whenever it frames the English iPhone shots of the version in `latest`, so after framing a release with `--set-latest`, commit whatever `git status --short docs/images` lists; screens that look the same come out byte-identical and don't show up.
 
-```sh
-cd "<repo root>"
-version=4.0.2
-for name in 01-home 02-ai-filtering 03-blocked-texts 04-allowed-texts 05-add-filter \
-            06-blocked-languages 07-test-your-filters 08-countries 09-community-lists; do
-    sips -z 1434 660 "Extras/screenshots/${version}-store/en-US/iphone-${name}.png" \
-        --out "docs/images/${name}.png"
-done
-git status --short docs/images
-```
+## What git keeps
 
-`sips` is the Mac's built-in image tool; `-z 1434 660` resizes to that height and width. `git status` lists only the images that actually changed; screens that look the same come out byte-identical and don't show up.
+Only what's published from the repo: the README images (`docs/images/`) and the search banners (`fastlane/creative_assets/search-3x2-<lang>.png`), at the same paths every release. Never commit the captures, the framed set or the banner's copies of the captures (`creative_assets/source/screens/`): they're git-ignored, rebuilt by the scripts, and one release's set is about 390 MB that would stay in the history for good.
 
 ## Branches and pull requests
 

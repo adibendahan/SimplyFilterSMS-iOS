@@ -238,10 +238,6 @@ extension View {
         frame(width: width, alignment: .center)
     }
 
-    func adaptiveStackedRowPadding() -> some View {
-        modifier(AdaptiveStackedRowPadding())
-    }
-
     func adaptiveLineLimit(_ limit: Int) -> some View {
         modifier(AdaptiveLineLimit(limit: limit))
     }

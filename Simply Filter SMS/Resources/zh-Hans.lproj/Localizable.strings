@@ -1,7 +1,3 @@
-"general_allow" = "允许";
-
-"general_deny" = "拒绝";
-
 "general_null" = "（空）";
 
 "general_copyright" = "© %ld Adi Ben-Dahan。保留所有权利。";
@@ -17,8 +13,6 @@
 "general_edit" = "编辑";
 
 "lang_supported" = "支持的语言";
-
-"lang_allBlocked" = "你已屏蔽所有支持的语言！";
 
 "lang_how" = "语言处理和识别由 iOS 的自然语言引擎在设备上**本地**完成。只有当文本的**主要语言**位于“已屏蔽语言”列表中时，信息才会被过滤。";
 
@@ -41,8 +35,6 @@
 "accentColor_picker" = "颜色";
 
 "accentColor_reset" = "恢复默认";
-
-"menu_filters" = "过滤器";
 
 "menu_filterTools" = "过滤工具";
 
@@ -74,10 +66,6 @@
 
 "addFilter_text" = "输入单词或字母";
 
-"addFilter_type" = "类型";
-
-"addFilter_type_caption" = "选择操作：";
-
 "addFilter_folder_caption" = "选择目标文件夹（轻点可更改）：";
 
 "addFilter_folder_junk" = "垃圾短信";
@@ -104,8 +92,6 @@
 
 "addFilter_target_all" = "全部";
 
-"addFilter_target_all_multiline" = "全部";
-
 "addFilter_target_sender" = "发件人";
 
 "addFilter_target_body" = "正文";
@@ -127,8 +113,6 @@
 "addFilter_match_regex" = "正则表达式";
 
 "enableExtension_ready_callToAction" = "设置";
-
-"enableExtension_ready_cancel" = "取消";
 
 "enableExtension_welcome" = "欢迎";
 
@@ -189,8 +173,6 @@
 "enableReportingExtension_step7_desc" = "轻点“报告信息”以提交信息用于 AI 训练。";
 
 "aboutView_aboutSection" = "开发者说明";
-
-"aboutView_linksSection" = "链接";
 
 "aboutView_aboutText" = "**Adi Ben-Dahan 在特拉维夫 🇮🇱 用 ❤️ 制作**\n\n这个项目源于我个人的一个愿望：找到一款真正尊重隐私的消息工具。\n\n没有云端。\n没有分析。\n没有默默观察你的服务。\n\n只有一个快速可靠的过滤器，完全在你的设备上运行，不让任何内容离开你的手中。\n而且，既然这个领域的许多工具都需要订阅或付费，我觉得拥有一个无需附加条件、拿来即用的版本会很好。这款 App **免费**使用，并且会**一直免费**。\n\n**如果你愿意在 App Store 给我们五星好评 ⭐️❤️，我会非常开心。**\n\n如果哪里感觉不对或运行异常，欢迎在 GitHub Issues 页面留言或发送邮件。";
 
@@ -282,10 +264,6 @@
 
 "autoFilter_lastUpdated" = "更新于 %@";
 
-"autoFilter_forceUpdate" = "强制更新";
-
-"autoFilter_neverUpdated" = "从未更新";
-
 "autoFilter_ON" = "开";
 
 "autoFilter_OFF" = "关";
@@ -336,17 +314,11 @@
 
 "autoFilter_countryAllowlist_explanation" = "添加你希望允许其信息的国家/地区。不在此列表中的国家/地区注册的电话号码发送的信息会被过滤。只有包含完整国际区号（例如 +1、+86）的发件人会被检查 - 没有国际区号的发件人不受影响。";
 
-"autoFilter_reportSpam" = "报告垃圾短信";
-
 "autoFilter_improveAIFiltering" = "改进 AI 过滤";
 
 "general_search" = "搜索";
 
 "general_more" = "更多";
-
-"general_selected" = "已选择";
-
-"general_all" = "所有国家/地区";
 
 "general_noResults" = "无结果";
 
@@ -501,8 +473,6 @@
 "a11y_home_shortSenderHint" = "当前为 %ld 个字符。使用操作更改字符限制";
 
 "a11y_home_shortSenderAction" = "更改字符限制";
-
-"a11y_filterRow_editHint" = "轻点两下以编辑";
 
 "a11y_about_versionHint" = "轻点两下以复制版本";
 

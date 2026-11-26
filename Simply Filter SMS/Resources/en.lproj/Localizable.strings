@@ -8,8 +8,6 @@
 
 
 //MARK: General
-"general_allow" = "Allow";
-"general_deny" = "Deny";
 "general_null" = "(null)";
 "general_copyright" = "© %ld Adi Ben-Dahan. All rights reserved.";
 "general_close" = "Close";
@@ -21,7 +19,6 @@
 
 //MARK: Languages
 "lang_supported" = "Supported Languages";
-"lang_allBlocked" = "You've blocked all supported languages!";
 "lang_how" = "Language processing and identification is done **locally** by the Natural Language engine of iOS. A message will be filtered only if the **dominant language** of the text is on the 'Blocked Languages' list.";
 
 
@@ -37,7 +34,6 @@
 "accentColor_picker" = "Color";
 "accentColor_reset" = "Reset to Default";
 
-"menu_filters" = "Filters";
 "menu_filterTools" = "Filter Tools";
 "menu_addFilter" = "Add Filter";
 "filterList_menu_debug" = "Load Debug Data";
@@ -64,8 +60,6 @@
 "addFilter_addFilter_deny" = "Add Blocked Text";
 "addFilter_addLanguage" = "Add Blocked Language";
 "addFilter_text" = "Type a word/letter";
-"addFilter_type" = "Type";
-"addFilter_type_caption" = "Select an action:";
 "addFilter_folder_caption" = "Select destination folder (tap to change):";
 "addFilter_folder_junk" = "Junk";
 "addFilter_folder_transactions" = "Transactions";
@@ -81,7 +75,6 @@
 "addFilter_more" = "See more options";
 "addFilter_less" = "See less";
 "addFilter_target_all" = "All";
-"addFilter_target_all_multiline" = "All";
 "addFilter_target_sender" = "Sender";
 "addFilter_target_body" = "Body";
 "addFilter_target_title" = "Select a target:";
@@ -95,7 +88,6 @@
 
 //MARK: Enable Extension View
 "enableExtension_ready_callToAction" = "Settings";
-"enableExtension_ready_cancel" = "Cancel";
 "enableExtension_welcome" = "Welcome";
 "enableExtension_welcome_desc" = "Enable 'Simply Filter SMS' as your SMS filter app in iOS Settings. Follow the steps below, then tap the Settings button when you're ready.";
 "enableExtension_step1_title" = "Open iOS Settings";
@@ -137,7 +129,6 @@
 
 //MARK: About View
 "aboutView_aboutSection" = "Developer Notes";
-"aboutView_linksSection" = "Links";
 "aboutView_aboutText" = "**Made with ❤️ by Adi Ben-Dahan in Tel Aviv 🇮🇱**\n\nThis project started as a personal quest for a messaging tool that truly respected privacy.\n\nNo clouds.\nNo analytics.\nNo silent observers.\n\nJust a fast, reliable filter running entirely on your device with nothing that leaves your hands.\nAnd since many tools in this space sit behind a subscription or paywall, I thought it’d be nice to have a version that just works with no strings attached. This app is **free** to use, and it will **stay free**.\n\n**I'll be very happy to receive a five-star rating on the App Store ⭐️❤️.**\n\nIf something feels off or isn’t behaving as expected, a quick note on the GitHub issues page or an email is always appreciated.";
 "aboutView_twitter" = "a_bd";
 "aboutView_github" = "GitHub";
@@ -200,8 +191,6 @@
 //MARK: Automatic Filtering
 "autoFilter_title" = "AI Filtering";
 "autoFilter_lastUpdated" = "Updated %@";
-"autoFilter_forceUpdate" = "Force Update";
-"autoFilter_neverUpdated" = "Never";
 "autoFilter_ON" = "On";
 "autoFilter_OFF" = "Off";
 "autoFilter_allUnknown" = "Block All Unknown";
@@ -229,7 +218,6 @@
 "autoFilter_countryAllowlist_shortTitle" = "Country allowlist";
 "autoFilter_countryAllowlist_empty" = "No countries selected";
 "autoFilter_countryAllowlist_explanation" = "Add the countries you want to allow messages from. Messages sent from phone numbers registered in countries not on this list will be filtered. Only senders with a full international calling code (e.g. +1, +972) are checked - senders without one are not affected.";
-"autoFilter_reportSpam" = "Report Spam";
 "autoFilter_improveAIFiltering" = "Improve AI Filtering";
 "autoFilter_description" = "Uses AI to catch spam from unknown senders and move it to **Junk** or **Promotions**. Your own filters still apply.";
 "autoFilter_turnOnHint" = "Turn on the languages you get messages in";
@@ -281,8 +269,6 @@
 "spotlight_testFilters_keywords" = "test, check, try, message, tester";
 "spotlight_reportMessage_keywords" = "report, spam, junk, missed spam, improve";
 "general_more" = "more";
-"general_selected" = "Selected";
-"general_all" = "All Countries";
 "general_noResults" = "No results";
 
 // MARK: Test Filters
@@ -404,7 +390,6 @@
 "a11y_filterRow_folderLabel" = "Folder: %@";
 "a11y_home_shortSenderHint" = "Currently %ld characters. Use actions to change the character limit";
 "a11y_home_shortSenderAction" = "Change character limit";
-"a11y_filterRow_editHint" = "Double tap to edit";
 "a11y_about_versionHint" = "Double tap to copy version";
 "a11y_about_versionCopied" = "Version";
 "a11y_enableExtension_stepLabel" = "Step %ld: %@. %@";

@@ -1,7 +1,3 @@
-"general_allow" = "허용";
-
-"general_deny" = "차단";
-
 "general_null" = "(없음)";
 
 "general_copyright" = "© %ld Adi Ben-Dahan. 모든 권리 보유.";
@@ -15,8 +11,6 @@
 "general_edit" = "편집";
 
 "lang_supported" = "지원 언어";
-
-"lang_allBlocked" = "지원되는 모든 언어가 차단되었습니다!";
 
 "lang_how" = "언어 처리 및 식별은 iOS 자연어 엔진에 의해 **기기에서** 이루어집니다. 텍스트의 **주요 언어**가 차단된 언어 목록에 있는 경우에만 메시지가 필터링됩니다.";
 
@@ -66,10 +60,6 @@
 
 "addFilter_text" = "단어/글자 입력";
 
-"addFilter_type" = "유형";
-
-"addFilter_type_caption" = "작업 선택:";
-
 "addFilter_folder_caption" = "대상 폴더 선택 (탭하여 변경):";
 
 "addFilter_folder_junk" = "스팸";
@@ -85,8 +75,6 @@
 "addFilter_less" = "간단히 보기";
 
 "addFilter_target_all" = "전체";
-
-"addFilter_target_all_multiline" = "전체";
 
 "addFilter_target_sender" = "발신자";
 
@@ -107,8 +95,6 @@
 "addFilter_match_contains" = "포함";
 
 "enableExtension_ready_callToAction" = "설정";
-
-"enableExtension_ready_cancel" = "취소";
 
 "enableExtension_welcome" = "환영합니다";
 
@@ -139,8 +125,6 @@
 "enableExtension_step6_desc" = "'문자 메시지 필터'를 탭하고 'SimplyFilterSMS'를 선택하세요";
 
 "aboutView_aboutSection" = "개발자 노트";
-
-"aboutView_linksSection" = "링크";
 
 "aboutView_aboutText" = "**Adi Ben-Dahan이 Tel Aviv 🇮🇱에서 ❤️을 담아 만들었습니다**\n\n이 프로젝트는 진정으로 개인정보를 존중하는 메시지 필터링 도구를 찾는 개인적인 여정에서 시작되었습니다.\n\n클라우드 없음.\n분석 없음.\n숨겨진 감시 없음.\n\n기기에서 완전히 실행되는 빠르고 신뢰할 수 있는 필터입니다. 이 분야의 많은 도구들이 구독이나 결제 뒤에 숨어 있기에, 아무 조건 없이 그냥 작동하는 버전이 있으면 좋겠다고 생각했습니다. 이 앱은 **무료**로 사용할 수 있으며, **계속 무료**로 유지될 것입니다.\n\n**App Store에서 별 다섯 개를 주시면 정말 기쁩니다 ⭐️❤️.**\n\n무언가 이상하거나 예상대로 작동하지 않는 경우, GitHub 이슈 페이지에 짧은 메모나 이메일을 남겨주세요.";
 
@@ -226,10 +210,6 @@
 
 "autoFilter_lastUpdated" = "%@ 업데이트됨";
 
-"autoFilter_forceUpdate" = "강제 업데이트";
-
-"autoFilter_neverUpdated" = "없음";
-
 "autoFilter_ON" = "켬";
 
 "autoFilter_OFF" = "끔";
@@ -283,10 +263,6 @@
 "general_search" = "검색";
 
 "general_more" = "더 보기";
-
-"general_selected" = "선택됨";
-
-"general_all" = "모든 국가";
 
 "general_noResults" = "결과 없음";
 
@@ -418,8 +394,6 @@
 
 "a11y_home_shortSenderAction" = "글자 수 제한 변경";
 
-"a11y_filterRow_editHint" = "이중 탭하여 편집";
-
 "a11y_about_versionHint" = "이중 탭하여 버전 복사";
 
 "a11y_about_versionCopied" = "버전";
@@ -490,8 +464,6 @@
 
 "notification_reportingExtension_button" = "참여하기";
 
-"autoFilter_reportSpam" = "스팸 신고";
-
 "enableReportingExtension_desc" = "신고 확장 기능을 활성화하여 메시지 앱에서 직접 스팸을 신고하고 모든 사용자를 위한 AI 필터링 개선에 도움을 주세요. 아래 단계를 따른 후 준비가 되면 설정 버튼을 탭하세요.";
 
 "enableReportingExtension_step5_title" = "메시지 길게 누르기";
@@ -507,8 +479,6 @@
 "enableReportingExtension_step7_desc" = "'메시지 신고'를 탭하여 AI 학습을 위해 제출하세요.";
 
 "autoFilter_improveAIFiltering" = "AI 필터링 개선";
-
-"menu_filters" = "필터";
 
 "menu_filterTools" = "필터 도구";
 

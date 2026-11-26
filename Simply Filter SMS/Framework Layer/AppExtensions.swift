@@ -66,15 +66,6 @@ extension Color {
     }
 }
 
-extension AnyTransition {
-    static var opacitySlowInFastOut: AnyTransition {
-        .asymmetric(
-            insertion: .opacity.animation(.easeIn(duration: 0.35)),
-            removal: .opacity.animation(.easeOut(duration: 0.15)).combined(with: .scale)
-        )
-    }
-}
-
 extension ToolbarItemPlacement {
     static var pinnedTrailing: ToolbarItemPlacement {
         let placement: ToolbarItemPlacement
@@ -222,18 +213,6 @@ extension View {
         }
     }
 }
-
-extension View {
-    @ViewBuilder func phoneOnlyStackNavigationView() -> some View {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            self.navigationViewStyle(.stack)
-
-        } else {
-            self
-        }
-    }
-}
-
 
 extension UTType {
     static var sfsFilters: UTType {

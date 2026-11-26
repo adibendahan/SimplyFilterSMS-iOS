@@ -21,7 +21,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios upload_screenshots
 ```
 
-Upload screenshots to App Store Connect
+Upload the framed screenshots (screenshots/latest/store, or path:screenshots/<version>/store) to App Store Connect
 
 ### ios download_metadata
 

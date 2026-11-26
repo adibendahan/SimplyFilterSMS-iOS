@@ -82,6 +82,7 @@ Extras/fastlane/Preview.html
 Extras/fastlane/screenshots/**/*.png
 Extras/fastlane/test_output
 /Extras/screenshots/
+/Extras/fastlane/creative_assets/source/screens/
 /Extras/local/
 
 # Code Injection

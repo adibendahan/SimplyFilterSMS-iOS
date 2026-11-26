@@ -1,7 +1,3 @@
-"general_allow" = "Permitir";
-
-"general_deny" = "Bloquear";
-
 "general_null" = "(nulo)";
 
 "general_copyright" = "© %ld Adi Ben-Dahan. Todos os direitos reservados.";
@@ -15,8 +11,6 @@
 "general_edit" = "Editar";
 
 "lang_supported" = "Idiomas Suportados";
-
-"lang_allBlocked" = "Você bloqueou todos os idiomas suportados!";
 
 "lang_how" = "O processamento e identificação do idioma é feito **localmente** pelo motor de linguagem natural do iOS. Uma mensagem será filtrada somente se o **idioma predominante** do texto estiver na lista de idiomas bloqueados.";
 
@@ -66,10 +60,6 @@
 
 "addFilter_text" = "Digite uma palavra/letra";
 
-"addFilter_type" = "Tipo";
-
-"addFilter_type_caption" = "Selecione uma ação:";
-
 "addFilter_folder_caption" = "Selecione a pasta de destino (toque para alterar):";
 
 "addFilter_folder_junk" = "Lixo Eletrônico";
@@ -85,8 +75,6 @@
 "addFilter_less" = "Ver menos";
 
 "addFilter_target_all" = "Todos";
-
-"addFilter_target_all_multiline" = "Todos";
 
 "addFilter_target_sender" = "Remetente";
 
@@ -107,8 +95,6 @@
 "addFilter_match_contains" = "Contém";
 
 "enableExtension_ready_callToAction" = "Ajustes";
-
-"enableExtension_ready_cancel" = "Cancelar";
 
 "enableExtension_welcome" = "Bem-vindo";
 
@@ -139,8 +125,6 @@
 "enableExtension_step6_desc" = "Toque em 'Filtro de Mensagens de Texto' e selecione 'SimplyFilterSMS'";
 
 "aboutView_aboutSection" = "Notas do Desenvolvedor";
-
-"aboutView_linksSection" = "Links";
 
 "aboutView_aboutText" = "**Feito com ❤️ por Adi Ben-Dahan em Tel Aviv 🇮🇱**\n\nEste projeto começou como uma busca pessoal por uma ferramenta de mensagens que realmente respeitasse a privacidade.\n\nSem nuvem.\nSem análises.\nSem observadores silenciosos.\n\nApenas um filtro rápido e confiável rodando inteiramente no seu dispositivo, sem que nada saia das suas mãos.\nE como muitas ferramentas nessa área ficam atrás de assinatura ou paywall, achei que seria ótimo ter uma versão que simplesmente funciona sem compromisso. Este app é **gratuito** e vai **continuar gratuito**.\n\n**Ficaria muito feliz em receber cinco estrelas na App Store ⭐️❤️.**\n\nSe algo parecer errado ou não estiver funcionando como esperado, uma nota rápida na página de Issues do GitHub ou um e-mail é sempre bem-vindo.";
 
@@ -225,10 +209,6 @@
 "autoFilter_title" = "Filtro AI";
 
 "autoFilter_lastUpdated" = "Atualizado em %@";
-
-"autoFilter_forceUpdate" = "Forçar Atualização";
-
-"autoFilter_neverUpdated" = "Nunca";
 
 "autoFilter_ON" = "Ativado";
 
@@ -400,8 +380,6 @@
 
 "a11y_home_shortSenderAction" = "Alterar limite de caracteres";
 
-"a11y_filterRow_editHint" = "Toque duas vezes para editar";
-
 "a11y_about_versionHint" = "Toque duas vezes para copiar a versão";
 
 "a11y_about_versionCopied" = "Versão";
@@ -441,10 +419,6 @@
 "callingCode_+599" = "Antilhas Holandesas";
 
 "autoFilter_countryAllowlist_explanation" = "Adicione os países dos quais você deseja permitir mensagens. Mensagens enviadas de números de telefone registrados em países que não estão nesta lista serão filtradas. Apenas remetentes com um código de discagem internacional completo (ex.: +1, +972) são verificados - remetentes sem código não são afetados.";
-
-"general_selected" = "Selecionados";
-
-"general_all" = "Todos os países";
 
 "general_noResults" = "Sem resultados";
 
@@ -490,8 +464,6 @@
 
 "notification_reportingExtension_button" = "Participar";
 
-"autoFilter_reportSpam" = "Denunciar spam";
-
 "enableReportingExtension_desc" = "Ative a extensão de denúncias para reportar spam diretamente do app Mensagens e ajudar a melhorar a filtragem de IA para todos os usuários. Siga os passos abaixo e toque em Ajustes quando estiver pronto.";
 
 "enableReportingExtension_step5_title" = "Pressione e segure uma mensagem";
@@ -507,8 +479,6 @@
 "enableReportingExtension_step7_desc" = "Toque em 'Denunciar mensagens' para enviá-las ao treinamento da IA.";
 
 "autoFilter_improveAIFiltering" = "Melhorar filtragem de IA";
-
-"menu_filters" = "Filtros";
 
 "menu_filterTools" = "Ferramentas de filtro";
 

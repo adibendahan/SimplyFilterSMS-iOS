@@ -131,10 +131,6 @@ enum FilterType: Int64, CaseIterable, Identifiable {
         }
     }
     
-    var allowedWhenAllSendersBlocked: Bool {
-        return self == .allow
-    }
-    
     var iconName: String {
         switch self {
         case .deny:
@@ -239,15 +235,6 @@ enum FilterTarget: Int64, CaseIterable, Identifiable, TestIdentifiable {
         }
     }
     
-    var multilineName: String {
-        switch self {
-        case .all:
-            return "addFilter_target_all_multiline"~
-        default:
-            return self.name
-        }
-    }
-
     var icon: String {
         switch self {
         case .all:
