@@ -1,7 +1,3 @@
-"general_allow" = "سماح";
-
-"general_deny" = "حظر";
-
 "general_null" = "(فارغ)";
 
 "general_copyright" = "© %ld عدي بن-دهان. جميع الحقوق محفوظة.";
@@ -15,8 +11,6 @@
 "general_edit" = "تعديل";
 
 "lang_supported" = "اللغات المدعومة";
-
-"lang_allBlocked" = "لقد حظرت جميع اللغات المدعومة!";
 
 "lang_how" = "تتم معالجة اللغة وتحديدها **محليًا** بواسطة محرّك اللغة الطبيعية في iOS. سيتم تصفية الرسالة فقط إذا كانت **اللغة السائدة** في النص موجودة في قائمة اللغات المحظورة.";
 
@@ -66,10 +60,6 @@
 
 "addFilter_text" = "اكتب كلمة/حرفًا";
 
-"addFilter_type" = "النوع";
-
-"addFilter_type_caption" = "اختر إجراءً:";
-
 "addFilter_folder_caption" = "اختر المجلد المستهدف (اضغط للتغيير):";
 
 "addFilter_folder_junk" = "غير مرغوب فيه";
@@ -108,8 +98,6 @@
 
 "enableExtension_ready_callToAction" = "الإعدادات";
 
-"enableExtension_ready_cancel" = "إلغاء";
-
 "enableExtension_welcome" = "مرحبًا";
 
 "enableExtension_welcome_desc" = "فعّل 'Simply Filter SMS' كتطبيق تصفية SMS في إعدادات iOS. اتبع الخطوات أدناه، ثم اضغط زر الإعدادات عندما تكون مستعدًا.";
@@ -139,8 +127,6 @@
 "enableExtension_step6_desc" = "اضغط على 'مرشح الرسائل النصية' واختر 'SimplyFilterSMS'";
 
 "aboutView_aboutSection" = "ملاحظات المطور";
-
-"aboutView_linksSection" = "روابط";
 
 "aboutView_aboutText" = "**صُنع بـ ❤️ بواسطة Adi Ben-Dahan في Tel Aviv 🇮🇱**\n\nبدأ هذا المشروع كبحث شخصي عن أداة مراسلة تحترم الخصوصية حقًا.\n\nبدون سحابة.\nبدون تحليلات.\nبدون مراقبة صامتة.\n\nمجرد مرشح سريع وموثوق يعمل بالكامل على جهازك دون أن يغادر أي شيء يديك.\nونظرًا لأن كثيرًا من الأدوات في هذا المجال تقف خلف اشتراكات أو جدران دفع، اعتقدت أنه سيكون رائعًا أن تكون هناك نسخة تعمل فقط بلا قيود. هذا التطبيق **مجاني** للاستخدام، وسيظل **مجانيًا**.\n\n**سيسعدني جدًا أن تمنحني تقييمًا من خمس نجوم في App Store ⭐️❤️.**\n\nإذا شعرت بشيء غير صحيح أو لا يعمل كما هو متوقع، ملاحظة سريعة على صفحة GitHub Issues أو بريد إلكتروني ستكون موضع ترحيب دائمًا.";
 
@@ -225,10 +211,6 @@
 "autoFilter_title" = "تصفية AI";
 
 "autoFilter_lastUpdated" = "آخر تحديث: %@";
-
-"autoFilter_forceUpdate" = "تحديث الآن";
-
-"autoFilter_neverUpdated" = "أبدًا";
 
 "autoFilter_ON" = "تشغيل";
 
@@ -400,8 +382,6 @@
 
 "a11y_home_shortSenderAction" = "تغيير حد الأحرف";
 
-"a11y_filterRow_editHint" = "اضغط مرتين للتعديل";
-
 "a11y_about_versionHint" = "اضغط مرتين لنسخ الإصدار";
 
 "a11y_about_versionCopied" = "الإصدار";
@@ -441,10 +421,6 @@
 "callingCode_+599" = "جزر الأنتيل الهولندية";
 
 "autoFilter_countryAllowlist_explanation" = "أضف الدول التي تريد السماح بالرسائل منها. سيتم تصفية الرسائل المُرسَلة من أرقام هاتف مسجَّلة في دول غير موجودة في هذه القائمة. يتم فحص المرسِلين الذين يمتلكون رمز اتصال دولي كاملاً فقط (مثل +1، +972) - المرسِلون الذين لا يمتلكون رمزاً كهذا لا يتأثرون.";
-
-"general_selected" = "المحددة";
-
-"general_all" = "جميع البلدان";
 
 "general_noResults" = "لا نتائج";
 
@@ -490,8 +466,6 @@
 
 "notification_reportingExtension_button" = "انضم";
 
-"autoFilter_reportSpam" = "الإبلاغ عن سبام";
-
 "enableReportingExtension_desc" = "فعّل ملحق الإبلاغ للإبلاغ عن الرسائل المزعجة مباشرة من تطبيق الرسائل والمساعدة في تحسين تصفية الذكاء الاصطناعي لجميع المستخدمين. اتبع الخطوات أدناه، ثم اضغط زر الإعدادات عندما تكون مستعدًا.";
 
 "enableReportingExtension_step5_title" = "اضغط مطولاً على رسالة";
@@ -507,8 +481,6 @@
 "enableReportingExtension_step7_desc" = "اضغط 'الإبلاغ عن الرسائل' لإرسالها لتدريب الذكاء الاصطناعي.";
 
 "autoFilter_improveAIFiltering" = "تحسين تصفية الذكاء الاصطناعي";
-
-"menu_filters" = "المرشحات";
 
 "menu_filterTools" = "أدوات المرشحات";
 

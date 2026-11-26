@@ -58,7 +58,7 @@ fastlane upload_metadata
 # Upload every fastlane/creative_assets/*.png to the App Asset Library,
 # or only the named ones. This only stores them; see the next lane.
 fastlane upload_creative_assets
-fastlane upload_creative_assets files:header-21x9-en.png,header-21x9-he.png
+fastlane upload_creative_assets files:search-3x2-en-4.0.2.png,search-3x2-he-4.0.2.png
 
 # Make the uploaded search-3x2-<lang>-<suffix>.png images the search banner of
 # an app version, in every language (or only the listed App Store locales).

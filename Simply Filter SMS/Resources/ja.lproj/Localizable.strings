@@ -1,7 +1,3 @@
-"general_allow" = "許可";
-
-"general_deny" = "ブロック";
-
 "general_null" = "(なし)";
 
 "general_copyright" = "© %ld Adi Ben-Dahan. 全著作権所有。";
@@ -15,8 +11,6 @@
 "general_edit" = "編集";
 
 "lang_supported" = "対応言語";
-
-"lang_allBlocked" = "対応言語がすべてブロックされています!";
 
 "lang_how" = "言語の処理と識別はiOSの自然言語エンジンによって**ローカルで**行われます。テキストの**主要言語**が「ブロック言語」リストにある場合のみ、メッセージがフィルタリングされます。";
 
@@ -66,10 +60,6 @@
 
 "addFilter_text" = "単語・文字を入力";
 
-"addFilter_type" = "種類";
-
-"addFilter_type_caption" = "操作を選択:";
-
 "addFilter_folder_caption" = "保存先フォルダを選択 (タップで変更):";
 
 "addFilter_folder_junk" = "迷惑メール";
@@ -108,8 +98,6 @@
 
 "enableExtension_ready_callToAction" = "設定";
 
-"enableExtension_ready_cancel" = "キャンセル";
-
 "enableExtension_welcome" = "ようこそ";
 
 "enableExtension_welcome_desc" = "iOSの設定でSMSフィルターアプリとして「Simply Filter SMS」を有効にしてください。以下のステップに従い、準備ができたら設定ボタンをタップしてください。";
@@ -139,8 +127,6 @@
 "enableExtension_step6_desc" = "「テキストメッセージフィルター」をタップし、「SimplyFilterSMS」を選択します";
 
 "aboutView_aboutSection" = "開発者ノート";
-
-"aboutView_linksSection" = "リンク";
 
 "aboutView_aboutText" = "**❤️を込めてAdi Ben-DahanがTel Aviv 🇮🇱で制作**\n\nこのプロジェクトは、プライバシーを本当に尊重するメッセージングツールを求めた個人的な探求から始まりました。\n\nクラウドなし。\n分析なし。\n静かな監視者なし。\n\nすべてデバイス上で動作する、高速で信頼性の高いフィルター - 何も外に出ません。\nこの分野の多くのツールはサブスクリプションや有料なので、条件なしにただ動くバージョンがあればいいと思いました。このアプリは**無料**で使え、**無料であり続け**ます。\n\n**App Storeで星5つの評価をいただけると大変嬉しいです ⭐️❤️。**\n\n何かおかしいと感じたり、期待どおりに動作しない場合は、GitHubのIssuesページへの短いメモやメールをお待ちしています。";
 
@@ -226,10 +212,6 @@
 
 "autoFilter_lastUpdated" = "%@に更新";
 
-"autoFilter_forceUpdate" = "今すぐ更新";
-
-"autoFilter_neverUpdated" = "なし";
-
 "autoFilter_ON" = "オン";
 
 "autoFilter_OFF" = "オフ";
@@ -283,10 +265,6 @@
 "general_search" = "検索";
 
 "general_more" = "もっと見る";
-
-"general_selected" = "選択済み";
-
-"general_all" = "すべての国";
 
 "general_noResults" = "結果なし";
 
@@ -418,8 +396,6 @@
 
 "a11y_home_shortSenderAction" = "文字数上限を変更";
 
-"a11y_filterRow_editHint" = "ダブルタップで編集";
-
 "a11y_about_versionHint" = "ダブルタップでバージョンをコピー";
 
 "a11y_about_versionCopied" = "バージョン";
@@ -490,8 +466,6 @@
 
 "notification_reportingExtension_button" = "参加する";
 
-"autoFilter_reportSpam" = "スパムを報告";
-
 "enableReportingExtension_desc" = "レポート拡張機能を有効にして、メッセージアプリから直接スパムを報告し、すべてのユーザーのAIフィルタリング改善に貢献できます。以下の手順に従い、準備ができたら設定ボタンをタップしてください。";
 
 "enableReportingExtension_step5_title" = "メッセージを長押し";
@@ -507,8 +481,6 @@
 "enableReportingExtension_step7_desc" = "「メッセージを報告」をタップして、AIのトレーニングに送信します。";
 
 "autoFilter_improveAIFiltering" = "AIフィルタリングを改善";
-
-"menu_filters" = "フィルタ";
 
 "menu_filterTools" = "フィルタツール";
 

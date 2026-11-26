@@ -1,7 +1,3 @@
-"general_allow" = "Autoriser";
-
-"general_deny" = "Bloquer";
-
 "general_null" = "(null)";
 
 "general_copyright" = "© %ld Adi Ben-Dahan. Tous droits réservés.";
@@ -15,8 +11,6 @@
 "general_edit" = "Éditer";
 
 "lang_supported" = "Langues prises en charge";
-
-"lang_allBlocked" = "Tu as bloqué toutes les langues prises en charge !";
 
 "lang_how" = "Le traitement et la détection de la langue sont effectués **localement** par le moteur de langue naturelle d'iOS. Un message sera filtré uniquement si la **langue dominante** du texte figure dans la liste des langues bloquées.";
 
@@ -66,10 +60,6 @@
 
 "addFilter_text" = "Saisir un mot/une lettre";
 
-"addFilter_type" = "Type";
-
-"addFilter_type_caption" = "Sélectionner une action :";
-
 "addFilter_folder_caption" = "Sélectionner le dossier de destination (toucher pour modifier) :";
 
 "addFilter_folder_junk" = "Indésirables";
@@ -108,8 +98,6 @@
 
 "enableExtension_ready_callToAction" = "Réglages";
 
-"enableExtension_ready_cancel" = "Annuler";
-
 "enableExtension_welcome" = "Bienvenue";
 
 "enableExtension_welcome_desc" = "Active 'Simply Filter SMS' comme application de filtrage SMS dans les Réglages iOS. Suis les étapes ci-dessous, puis touche le bouton Réglages quand tu es prêt.";
@@ -139,8 +127,6 @@
 "enableExtension_step6_desc" = "Touche 'Filtre de messages texte' et sélectionne 'SimplyFilterSMS'";
 
 "aboutView_aboutSection" = "Notes du développeur";
-
-"aboutView_linksSection" = "Liens";
 
 "aboutView_aboutText" = "**Fait avec ❤️ par Adi Ben-Dahan à Tel Aviv 🇮🇱**\n\nCe projet est né d'une quête personnelle d'un outil de messagerie qui respecte vraiment la vie privée.\n\nSans cloud.\nSans analyses.\nSans observateurs silencieux.\n\nJuste un filtre rapide et fiable fonctionnant entièrement sur ton appareil, sans que rien ne quitte tes mains.\nEt comme beaucoup d'outils dans ce domaine se cachent derrière un abonnement ou un paywall, j'ai pensé qu'il serait bien d'avoir une version qui fonctionne simplement sans engagement. Cette app est **gratuite** et le **restera**.\n\n**Je serais vraiment heureux de recevoir cinq étoiles sur l'App Store ⭐️❤️.**\n\nSi quelque chose semble anormal ou ne fonctionne pas comme prévu, une note rapide sur la page GitHub Issues ou un e-mail est toujours la bienvenue.";
 
@@ -225,10 +211,6 @@
 "autoFilter_title" = "Filtrage AI";
 
 "autoFilter_lastUpdated" = "Mis à jour le %@";
-
-"autoFilter_forceUpdate" = "Forcer la mise à jour";
-
-"autoFilter_neverUpdated" = "Jamais";
 
 "autoFilter_ON" = "Activé";
 
@@ -400,8 +382,6 @@
 
 "a11y_home_shortSenderAction" = "Modifier la limite de caractères";
 
-"a11y_filterRow_editHint" = "Appuyer deux fois pour modifier";
-
 "a11y_about_versionHint" = "Appuyer deux fois pour copier la version";
 
 "a11y_about_versionCopied" = "Version";
@@ -441,10 +421,6 @@
 "callingCode_+599" = "Antilles néerlandaises";
 
 "autoFilter_countryAllowlist_explanation" = "Ajoute les pays depuis lesquels tu souhaites autoriser les messages. Les messages envoyés depuis des numéros enregistrés dans des pays absents de cette liste seront filtrés. Seuls les expéditeurs avec un indicatif international complet (ex. +1, +972) sont vérifiés - les expéditeurs sans indicatif ne sont pas affectés.";
-
-"general_selected" = "Sélectionnés";
-
-"general_all" = "Tous les pays";
 
 "general_noResults" = "Aucun résultat";
 
@@ -490,8 +466,6 @@
 
 "notification_reportingExtension_button" = "Rejoindre";
 
-"autoFilter_reportSpam" = "Signaler du spam";
-
 "enableReportingExtension_desc" = "Activez l'extension de signalement pour signaler des spams directement depuis l'app Messages et aider a améliorer le filtrage IA pour tous les utilisateurs. Suivez les étapes ci-dessous, puis appuyez sur Réglages quand vous êtes prêt.";
 
 "enableReportingExtension_step5_title" = "Appui long sur un message";
@@ -507,8 +481,6 @@
 "enableReportingExtension_step7_desc" = "Appuyez sur 'Signaler les messages' pour les soumettre a l'entrainement de l'IA.";
 
 "autoFilter_improveAIFiltering" = "Améliorer le filtrage IA";
-
-"menu_filters" = "Filtres";
 
 "menu_filterTools" = "Outils de filtrage";
 

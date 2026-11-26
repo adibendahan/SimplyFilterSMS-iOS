@@ -1,7 +1,3 @@
-"general_allow" = "אפשר";
-
-"general_deny" = "חסום";
-
 "general_null" = "(ריק)";
 
 "general_copyright" = "© %ld עדי בן-דהן, כל הזכויות שמורות.";
@@ -11,8 +7,6 @@
 "general_edit" = "עריכה";
 
 "lang_supported" = "שפות נתמכות";
-
-"lang_allBlocked" = "כל השפות הנתמכות כבר חסומות!";
 
 "lang_how" = "עיבוד וזיהוי השפה נעשה **לוקאלית** ע״י מנוע השפות של מערכת ההפעלה. הודעה תחסם רק אם **השפה הדומיננטית** של הטקסט נמצאת ברשימת השפות החסומות.";
 
@@ -48,10 +42,6 @@
 
 "addFilter_text" = "הקלידו מילה";
 
-"addFilter_type" = "סוג פילטר";
-
-"addFilter_type_caption" = "בחרו פעולה";
-
 "addFilter_folder_caption" = "בחרו תיקיית יעד (לחצו כדי לשנות):";
 
 "addFilter_folder_junk" = "זבל";
@@ -67,8 +57,6 @@
 "enableExtension_welcome_desc" = "יש לאפשר את Simply Filter SMS כאפליקציה שמסננת הודעות בהגדרות של מערכת ההפעלה. עקבו אחר השלבים למטה וכאשר תהיו מוכנים, לחצו על כפתור ההגדרות.";
 
 "enableExtension_ready_callToAction" = "הגדרות";
-
-"enableExtension_ready_cancel" = "ביטול";
 
 "enableExtension_step1_title" = "פתיחת הגדרות iOS";
 
@@ -95,8 +83,6 @@
 "enableExtension_step6_desc" = "לחצו על 'מסנן הודעות טקסט' ובחרו 'SimplyFilterSMS'";
 
 "aboutView_aboutSection" = "אודות";
-
-"aboutView_linksSection" = "קישורים";
 
 "aboutView_aboutText" = "**פותח על ידי עדי בן-דהן ב-❤️ בתל אביב 🇮🇱**\n\nהפרויקט הזה התחיל מחיפוש אישי אחר כלי סינון הודעות שמכבד באמת את פרטיות.\n\nבלי ענן.\nבלי אנליטיקות.\nבלי מציצנים שקטים.\n\nרק מסנן מהיר ואמין שרץ כולו על המכשיר מבלי ששום דבר יוצא מהידיים שלך. ומכיוון שהרבה כלים בתחום הזה דורשים מנוי חודשי או תשלום, חשבתי שיהיה נחמד שתהיה גרסה חינמית שפשוט עובדת - בלי התחייבויות. האפליקציה הזו **חינמית** לשימוש, והיא **תישאר חינמית**.\n\n**אשמח מאד אם תדרגו בחמישה כוכבים את האפליקציה ב-App Store ⭐️❤️.**\n\nאם משהו מרגיש מוזר או לא מתנהג כמו שציפיתם, הערה קצרה בעמוד ה-Issues ב-GitHub או מייל יתקבלו בברכה.";
 
@@ -171,10 +157,6 @@
 "autoFilter_title" = "סינון AI";
 
 "autoFilter_lastUpdated" = "עודכן ב %@";
-
-"autoFilter_forceUpdate" = "עדכן עכשיו";
-
-"autoFilter_neverUpdated" = "לעולם לא";
 
 "autoFilter_ON" = "פועל";
 
@@ -322,10 +304,6 @@
 
 "general_more" = "נוספות";
 
-"general_selected" = "נבחרו";
-
-"general_all" = "כל המדינות";
-
 "general_noResults" = "אין תוצאות";
 
 "notification_clipboard_subtitle" = "הועתק ללוח";
@@ -420,8 +398,6 @@
 
 "a11y_home_shortSenderAction" = "שינוי מגבלת תווים";
 
-"a11y_filterRow_editHint" = "הקשה כפולה לעריכה";
-
 "a11y_about_versionHint" = "הקשה כפולה להעתקת גרסה";
 
 "a11y_about_versionCopied" = "גרסה";
@@ -490,8 +466,6 @@
 
 "notification_reportingExtension_button" = "הצטרף";
 
-"autoFilter_reportSpam" = "דווח על ספאם";
-
 "enableReportingExtension_desc" = "הפעל את תוסף הדיווח כדי לדווח על ספאם ישירות מאפליקציית ההודעות ולעזור לשפר את סינון ה-AI עבור כל המשתמשים. עקוב אחר השלבים הבאים ולחץ על כפתור ההגדרות כשאתה מוכן.";
 
 "enableReportingExtension_step5_title" = "לחץ לחיצה ארוכה על הודעה";
@@ -507,8 +481,6 @@
 "enableReportingExtension_step7_desc" = "לחץ על 'דווח על הודעות' כדי לשלוח אותן לאימון ה-AI.";
 
 "autoFilter_improveAIFiltering" = "שיפור סינון AI";
-
-"menu_filters" = "פילטרים";
 
 "menu_filterTools" = "כלי פילטור";
 
