@@ -17,6 +17,7 @@ The main screen: AI Filtering, the smart rules, and the three user filter lists;
 A generic step-by-step setup sheet, built with different steps for first-run onboarding, enabling the message filter, and enabling the Reporting Extension (`EnableReportingExtensionStep`).
 - The steps animate in a loop; with VoiceOver on, all steps show at once and the loop doesn't run.
 - `EnableExtensionStepView` uses `.task(id: isActive)` for its toggle, so a fast loop can't race an earlier activation.
+- "Open Settings" opens the app's own page in Settings. Apple has no supported link to Messages → Unknown & Spam, and `openDefaultApplicationsSettingsURLString` lands on Default Apps, which isn't where the steps start. `App-prefs:` links risk App Review rejection.
 
 ## HelpView
 Setup shortcuts, Siri tips, the FAQ link and contact, as a sheet from the menu.

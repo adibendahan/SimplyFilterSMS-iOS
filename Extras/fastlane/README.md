@@ -47,6 +47,14 @@ Upload metadata to App Store Connect
 
 Upload creative assets (fastlane/creative_assets/*.png, or files:a.png,b.png) to the App Asset Library
 
+### ios place_search_banner
+
+```sh
+[bundle exec] fastlane ios place_search_banner
+```
+
+Set the uploaded search-3x2-<lang>-<suffix>.png images as a version's search results banner
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
