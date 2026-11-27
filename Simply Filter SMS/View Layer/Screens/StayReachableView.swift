@@ -102,7 +102,7 @@ struct StayReachableView: View {
         } // NavigationView
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                guard let firstSection = self.model.sections.first else { return }
+                guard let firstSection = self.model.sections.first, firstSection.trimmedText(.firstName).isEmpty else { return }
                 self.focusedField = FieldFocus(sectionID: firstSection.id, field: .firstName)
             }
         }
