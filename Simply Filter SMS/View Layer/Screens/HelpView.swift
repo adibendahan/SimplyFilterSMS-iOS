@@ -44,12 +44,12 @@ struct HelpView: View {
                             Image(systemName: "switch.2")
                                 .foregroundStyle(.tint)
                                 .font(.body)
-                                .adaptiveIconColumn(width: 22)
+                                .adaptiveIconColumn()
                                 .accessibilityHidden(true)
                         } content: {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("help_enableFiltering_title"~)
-                                    .font(.body.weight(.semibold))
+                                    .font(.body)
                                     .foregroundColor(.primary)
                                 Text("help_enableFiltering_caption"~)
                                     .font(.caption)
@@ -68,12 +68,12 @@ struct HelpView: View {
                             Image(systemName: "wand.and.stars")
                                 .foregroundStyle(.tint)
                                 .font(.body)
-                                .adaptiveIconColumn(width: 22)
+                                .adaptiveIconColumn()
                                 .accessibilityHidden(true)
                         } content: {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("help_enableReporting_title"~)
-                                    .font(.body.weight(.semibold))
+                                    .font(.body)
                                     .foregroundColor(.primary)
                                 Text("help_enableReporting_caption"~)
                                     .font(.caption)
@@ -144,12 +144,12 @@ struct HelpView: View {
                             Image(systemName: "questionmark.bubble")
                                 .foregroundStyle(.tint)
                                 .font(.body)
-                                .adaptiveIconColumn(width: 22)
+                                .adaptiveIconColumn()
                                 .accessibilityHidden(true)
                         } content: {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("help_faq_title"~)
-                                    .font(.body.weight(.semibold))
+                                    .font(.body)
                                     .foregroundColor(.primary)
                                 Text("help_faq_caption"~)
                                     .font(.caption)

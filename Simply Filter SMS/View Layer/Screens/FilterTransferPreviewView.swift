@@ -36,7 +36,7 @@ struct FilterTransferPreviewView: View {
                                                   count: self.model.selectedCount(for: filterType),
                                                   willClear: self.model.willForceClear(filterType))
                         }
-                        .accentColor(Color.primary.opacity(0.35))
+                        .accentColor(Color(.tertiaryLabel))
                         .disabled(self.model.candidates(for: filterType).isEmpty)
                     }
                 } header: {
@@ -114,7 +114,7 @@ struct FilterTransferTypeRow: View {
 
                 if self.willClear {
                     Text("\(Image(systemName: "exclamationmark.triangle.fill")) \("importFilters_willClear"~)")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundColor(.red)
                         .padding(.leading, 8)
                 }
@@ -124,7 +124,7 @@ struct FilterTransferTypeRow: View {
                 .contentTransition(.numericText(value: Double(self.count)))
                 .textCase(.uppercase)
                 .foregroundColor(.secondary)
-                .font(Font.caption2)
+                .font(Font.caption)
                 .limitedDynamicTypeSize()
         }
     }

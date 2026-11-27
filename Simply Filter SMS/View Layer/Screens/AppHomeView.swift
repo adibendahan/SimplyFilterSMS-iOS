@@ -25,10 +25,10 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     @ObservedObject var model: ViewModel
 
     @ScaledMetric(relativeTo: .title) private var shieldIconSize: CGFloat = 34
-    @ScaledMetric(relativeTo: .title3) private var filterListsTitleSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .title2) private var filterListsTitleSize: CGFloat = 22
     @ScaledMetric(relativeTo: .caption2) private var statusLineGap: CGFloat = 4
     @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
-    @ScaledMetric(relativeTo: .caption2) private var secondLineRowSqueeze: CGFloat = 7.5
+    @ScaledMetric(relativeTo: .caption) private var secondLineRowSqueeze: CGFloat = 8.5
 
     @State private var dynamicEmojis: [String: String] = [:]
     @State private var selectedScreen: Screen? = nil
@@ -56,7 +56,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 20))
                         .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
                         .accessibility(identifier: TestIdentifier.filterListsLink.rawValue)
-                        .accentColor(Color.primary.opacity(0.35))
+                        .accentColor(Color(.tertiaryLabel))
                 } header: {
                     Spacer()
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -100,7 +100,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == .communityLists ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
                         .disabled(self.model.isAllUnknownFilteringOn)
                         .accessibilityIdentifier(TestIdentifier.communityListsLink.rawValue)
-                        .accentColor(Color.primary.opacity(0.35))
+                        .accentColor(Color(.tertiaryLabel))
 
                     ForEach(FilterType.allCases.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.self) { filterType in
                         userFilterRow(filterType: filterType)
@@ -110,7 +110,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == filterType.screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
                         .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
                         .accessibilityIdentifier(filterType.testIdentifier.rawValue)
-                        .accentColor(Color.primary.opacity(0.35))
+                        .accentColor(Color(.tertiaryLabel))
                     }
                 } header: {
                     Text("autoFilter_yourFilters"~)
@@ -344,7 +344,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     private func smartFilterShortSenderControls(subtitle: String, action: String, actionTitle: String, rule: SmartFilterType) -> some View {
         AdaptiveFlowRow {
             Text(subtitle)
-                .font(.caption2)
+                .font(.caption)
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -360,7 +360,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 }
         } label: {
             Text(action)
-                .font(.caption2)
+                .font(.caption)
         }
         .buttonStyle(AccessibleTextButtonStyle())
     }
@@ -370,7 +370,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     private var countryAllowlistControls: some View {
         AdaptiveFlowRow {
             Text(self.model.selectedCountriesSummary)
-                .font(.caption2)
+                .font(.caption)
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -378,7 +378,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 self.model.requestSheet(.countryList)
             } label: {
                 Text("autoFilter_shortSender_change"~)
-                    .font(.caption2)
+                    .font(.caption)
             }
             .buttonStyle(AccessibleTextButtonStyle())
             .accessibilityIdentifier(TestIdentifier.countryAllowlistButton.rawValue)
@@ -400,7 +400,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Text(activeCount)
                 .textCase(.uppercase)
                 .foregroundColor(.secondary)
-                .font(.caption2)
+                .font(.caption)
                 .limitedDynamicTypeSize()
         }
     }
@@ -420,7 +420,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
             Text(activeCount)
                 .textCase(.uppercase)
                 .foregroundColor(.secondary)
-                .font(.caption2)
+                .font(.caption)
                 .limitedDynamicTypeSize()
         }
     }

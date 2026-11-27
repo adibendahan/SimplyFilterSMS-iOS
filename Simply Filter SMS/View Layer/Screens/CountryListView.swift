@@ -91,7 +91,7 @@ struct CountryListView: View {
                 Text(entry.flagEmoji)
                     .font(.title2)
                     .accessibilityHidden(true)
-                    .adaptiveIconColumn(width: 36)
+                    .adaptiveIconColumn()
             } content: {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.displayName)

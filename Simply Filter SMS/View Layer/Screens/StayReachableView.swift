@@ -83,6 +83,7 @@ struct StayReachableView: View {
                 .padding(.vertical, 8)
                 .background(Color(.systemGroupedBackground).ignoresSafeArea())
             }
+            .navigationTitle("stayReachable_title"~)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -116,11 +117,6 @@ struct StayReachableView: View {
                 .frame(width: self.iconSize, height: self.iconSize)
                 .background(.green, in: RoundedRectangle(cornerRadius: self.iconSize * 0.25, style: .continuous))
                 .accessibilityHidden(true)
-
-            Text("stayReachable_title"~)
-                .font(.title.bold())
-                .foregroundColor(.primary)
-                .accessibilityAddTraits(.isHeader)
 
             if let description = self.description {
                 Text(description)

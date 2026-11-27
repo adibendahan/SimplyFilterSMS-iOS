@@ -76,7 +76,6 @@ struct AddFilterView: View {
                         Text(FilterMatching.title)
                             .font(.footnote)
                             .foregroundColor(.secondary)
-                            .italic()
                             .bold()
 
                         GlassPicker(selection: $model.selectedFilterMatching) { matching in
@@ -90,7 +89,6 @@ struct AddFilterView: View {
                             Text(MessageFolder.title)
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
-                                .italic()
                                 .bold()
 
                             GlassPicker(selection: $model.selectedMessageFolder) { folder in
@@ -103,7 +101,6 @@ struct AddFilterView: View {
                         Text(FilterTarget.title)
                             .font(.footnote)
                             .foregroundColor(.secondary)
-                            .italic()
                             .bold()
 
                         GlassPicker(selection: $model.selectedFilterTarget) { target in
@@ -117,7 +114,6 @@ struct AddFilterView: View {
                                 Text(FilterCase.title)
                                     .font(.footnote)
                                     .foregroundColor(.secondary)
-                                    .italic()
                                     .bold()
 
                                 GlassPicker(selection: $model.selectedFilterCase) { filterCase in
@@ -134,7 +130,6 @@ struct AddFilterView: View {
                                 Text("addFilter_regexTestCaption"~)
                                     .font(.footnote)
                                     .foregroundColor(.secondary)
-                                    .italic()
                                     .bold()
 
                                 AdaptiveRow {

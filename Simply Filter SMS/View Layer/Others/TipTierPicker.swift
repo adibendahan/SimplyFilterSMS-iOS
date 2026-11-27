@@ -73,7 +73,7 @@ struct TipTierPicker: View {
                     .accessibilityHidden(true)
 
                 Text(option.displayPrice)
-                    .font(self.isCompact ? .subheadline.weight(.semibold) : .body.weight(.semibold))
+                    .font(self.isCompact ? .subheadline.weight(.semibold) : .headline)
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)

@@ -92,7 +92,7 @@ struct TipJarView: View {
                     .multilineTextAlignment(.center)
 
                 Text("tipJar_subheader"~)
-                    .font(self.isCompact ? .callout : .body)
+                    .font(.body)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
@@ -125,7 +125,7 @@ struct TipJarView: View {
 
             if !self.model.isLoading && self.model.options.isEmpty {
                 Text("tipJar_unavailable"~)
-                    .font(.callout)
+                    .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)

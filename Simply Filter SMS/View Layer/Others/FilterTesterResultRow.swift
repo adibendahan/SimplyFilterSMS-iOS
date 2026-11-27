@@ -15,7 +15,6 @@ struct FilterTesterResultRow: View {
     let result: MessageEvaluationResult
 
     @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 20
-    @ScaledMetric(relativeTo: .body) private var titleSize: CGFloat = 16
 
     var body: some View {
         AdaptiveRow {
@@ -26,13 +25,13 @@ struct FilterTesterResultRow: View {
         } content: {
             VStack(alignment: .leading, spacing: 2) {
                 Text(style.title)
-                    .font(.system(size: titleSize, weight: .heavy))
+                    .font(.headline)
                     .foregroundColor(style.color)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if let caption = Self.caption(for: result.match) {
                     caption
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }

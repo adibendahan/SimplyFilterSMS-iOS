@@ -126,7 +126,7 @@ struct ListEmptyStateView: View {
             case .regular:
                 return .title2.bold()
             case .compact:
-                return .title3.bold()
+                return .title2.bold()
             }
         }
     }

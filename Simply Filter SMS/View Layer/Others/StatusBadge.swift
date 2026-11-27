@@ -104,7 +104,7 @@ struct StatusLine: View {
                 .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .font(.caption2)
+        .font(.caption)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(spokenParts.joined(separator: ", "))
     }

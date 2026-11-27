@@ -91,7 +91,7 @@ struct ReportMessageView: View {
                             .opacity(self.model.state.isResult ? 0 : 1)
 
                         Text(self.model.state.resultText ?? "")
-                            .font(.headline.weight(.bold))
+                            .font(.headline)
                             .foregroundStyle(Color.primary)
                             .multilineTextAlignment(.center)
                             .entrance(isShown: self.model.state.isResult, delay: ReportMessageMotion.thanksDelay, rise: ReportMessageMotion.thanksRise)

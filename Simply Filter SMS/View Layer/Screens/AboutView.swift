@@ -74,7 +74,7 @@ struct AboutView: View {
                                 Text("aboutView_aboutText"~)
                             }
                         }
-                        .font(.callout)
+                        .font(.body)
                         .foregroundColor(.primary)
                         .padding(.bottom, 4)
                         .padding(.leading, -20)
@@ -95,7 +95,7 @@ struct AboutView: View {
                                 Text("aboutView_aboutText"~)
                             }
                         }
-                        .font(.callout)
+                        .font(.body)
                         .foregroundColor(.primary)
                         .lineLimit(2)
                         .padding(.bottom, -20)

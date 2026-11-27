@@ -42,7 +42,7 @@ struct WhatsNewView: View {
                             .rowEntrance(isShown: self.hasAppeared, index: self.currentEntryCount)
 
                         Text("whatsNew_earlierUpdates"~)
-                            .font(.title3.bold())
+                            .font(.title2.bold())
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.top, 20)
                             .padding(.horizontal, 32)
@@ -143,7 +143,7 @@ struct WhatsNewView: View {
             VStack(alignment: .leading, spacing: 2) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.title)
-                        .font(.subheadline.bold())
+                        .font(.headline)
                         .foregroundColor(.primary)
 
                     self.descriptionText(entry.description)

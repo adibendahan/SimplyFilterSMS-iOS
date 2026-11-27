@@ -70,7 +70,7 @@ struct AddCommunityListView: View {
                                 FilterTransferTypeRow(filterType: filterType,
                                                       count: self.areCountsShown ? self.model.candidates(for: filterType).count : 0)
                             }
-                            .accentColor(Color.primary.opacity(0.35))
+                            .accentColor(Color(.tertiaryLabel))
                             .previewReveal(index: index + 1)
                         }
                     } header: {

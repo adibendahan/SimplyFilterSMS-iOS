@@ -170,8 +170,6 @@ struct ToastView: View {
             Text(self.model.buttonTitle)
                 .font(.caption.bold())
                 .foregroundColor(.primary)
-                .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-                .modifier(ToastActionChipBackground())
         }
         .modifier(ToastActionButtonStyle())
         .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
@@ -562,27 +560,18 @@ private struct ToastGlassBackground: ViewModifier {
     }
 }
 
-private struct ToastActionChipBackground: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content
-                .contentShape(Capsule())
-        } else {
-            content
-                .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .background(Color.secondary.opacity(0.2))
-        }
-    }
-}
-
 private struct ToastActionButtonStyle: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
-                .buttonStyle(.plain)
-                .glassEffect(.clear.interactive(), in: Capsule())
+                .buttonStyle(.glass)
+                .buttonBorderShape(.capsule)
+                .controlSize(.small)
         } else {
-            content.buttonStyle(.plain)
+            content
+                .buttonStyle(.bordered)
+                .buttonBorderShape(.capsule)
+                .controlSize(.small)
         }
     }
 }

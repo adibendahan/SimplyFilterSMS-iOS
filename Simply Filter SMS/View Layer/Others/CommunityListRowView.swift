@@ -43,7 +43,7 @@ struct CommunityListRow: View {
                             self.chevron(isExpanded: isExpanded)
                         }
                         Text(self.communityList.name)
-                            .font(.body.weight(.semibold))
+                            .font(.body)
                             .foregroundColor(.primary)
                             .adaptiveLineLimit(1)
                             .minimumScaleFactor(0.8)
