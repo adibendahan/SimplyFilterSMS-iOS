@@ -272,7 +272,8 @@ private struct RevealHighlightModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background {
-                Color(UIColor.systemGray4)
+                Rectangle()
+                    .fill(.tint.opacity(0.12))
                     .padding(RevealHighlightMotion.rowBleed)
                     .keyframeAnimator(initialValue: Double.zero, trigger: self.trigger) { view, opacity in
                         view.opacity(opacity)

@@ -53,7 +53,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     .sidebarNavigationRow(screen: screen, isRegular: horizontalSizeClass == .regular) {
                         model.navigationScreen = screen
                     }
-                        .listRowInsets(EdgeInsets(top: 0, leading: 11, bottom: 0, trailing: 20))
+                        .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 20))
                         .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
                         .accessibility(identifier: TestIdentifier.filterListsLink.rawValue)
                         .accentColor(Color.primary.opacity(0.35))

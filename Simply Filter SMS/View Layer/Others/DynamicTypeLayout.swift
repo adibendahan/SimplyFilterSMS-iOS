@@ -150,20 +150,21 @@ struct FilterRowOptionChip: View {
     let systemName: String
     let isActive: Bool
 
-    private let iconSize: CGFloat = 15
+    @ScaledMetric(relativeTo: .subheadline) private var iconSize: CGFloat = 15
 
     var body: some View {
-        Image(systemName: systemName)
+        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
+        let icon = Image(systemName: systemName)
             .resizable()
             .aspectRatio(contentMode: .fit)
             .foregroundStyle(isActive ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
             .frame(width: iconSize, height: iconSize)
-            .padding(7)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(Color.primary.opacity(0.12), lineWidth: 0.5)
-            )
+            .padding(8)
+        if #available(iOS 26.0, *) {
+            icon.glassEffect(.regular, in: shape)
+        } else {
+            icon.background(Color(.tertiarySystemFill), in: shape)
+        }
     }
 }
 

@@ -33,8 +33,8 @@ struct FilterBadge: View {
                 .fontWeight(.medium)
         }
         .foregroundColor(color)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 5)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
         .background(color.opacity(0.12))
         .clipShape(Capsule())
         .accessibilityElement(children: .combine)

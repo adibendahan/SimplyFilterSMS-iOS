@@ -16,6 +16,7 @@ struct EnableExtensionStepView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.needsStackedLayout) private var needsStackedLayout
     @State private var toggleOn = false
+    @ScaledMetric(relativeTo: .title2) private var circleSize: CGFloat = 48
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
@@ -23,12 +24,12 @@ struct EnableExtensionStepView: View {
             VStack(spacing: 0) {
                 ZStack {
                     Circle()
-                        .fill(isActive ? Color.primary : Color(UIColor.systemGray3))
-                        .frame(width: 48, height: 48)
+                        .fill(isActive ? Color.primary : Color(.tertiarySystemFill))
+                        .frame(width: self.circleSize, height: self.circleSize)
                         .scaleEffect(isActive || reduceMotion ? 1.0 : 0.85)
                     Text("\(step.stepNumber)")
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(Color(UIColor.systemBackground))
+                        .font(.title2.bold())
+                        .foregroundStyle(isActive ? Color(UIColor.systemBackground) : Color.secondary)
                 }
                 .animation(reduceMotion ? .easeInOut(duration: 0.2) : .spring(response: 0.4, dampingFraction: 0.65), value: isActive)
                 .accessibilityHidden(true)
@@ -38,7 +39,7 @@ struct EnableExtensionStepView: View {
                         .fill(Color.primary.opacity(0.2))
                         .frame(width: 2)
                         .frame(maxHeight: .infinity)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 2)
                 }
             }
 
@@ -47,13 +48,13 @@ struct EnableExtensionStepView: View {
                 EmptyView()
             } content: {
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
                         if step.showsAppIcon {
                             AppIconView()
                                 .accessibilityHidden(true)
                         } else if let symbolName = step.symbolName {
                             Image(systemName: symbolName)
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(step.symbolColor.map { AnyShapeStyle($0) } ?? AnyShapeStyle(.tint))
                                 .accessibilityHidden(true)
                         }
@@ -86,7 +87,7 @@ struct EnableExtensionStepView: View {
                         .accessibilityHidden(true)
                 }
             }
-            .padding(.bottom, 14)
+            .padding(.bottom, 12)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(String(format: "a11y_enableExtension_stepLabel"~, step.stepNumber, step.title, step.description))
@@ -107,6 +108,8 @@ struct EnableExtensionStepView: View {
 }
 
 private struct AppIconView: View {
+    @ScaledMetric(relativeTo: .subheadline) private var iconSize: CGFloat = 15
+
     var body: some View {
         if let icons = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
            let primary = icons["CFBundlePrimaryIcon"] as? [String: Any],
@@ -115,8 +118,8 @@ private struct AppIconView: View {
            let uiImage = UIImage(named: name) {
             Image(uiImage: uiImage)
                 .resizable()
-                .frame(width: 15, height: 15)
-                .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
+                .frame(width: self.iconSize, height: self.iconSize)
+                .clipShape(RoundedRectangle(cornerRadius: self.iconSize * 0.225, style: .continuous))
         }
     }
 }

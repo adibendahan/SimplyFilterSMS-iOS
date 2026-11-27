@@ -166,4 +166,5 @@ extension EnableExtensionView {
             appManager: AppManager.previews
         )
     )
+    .adaptiveLayoutEnvironment()
 }

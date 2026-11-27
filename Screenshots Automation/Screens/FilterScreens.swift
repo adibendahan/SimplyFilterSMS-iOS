@@ -73,7 +73,7 @@ struct FilterTesterScreen: Screen {
 
     func show(_ message: Message) {
         self.openFilterTool(.testYourFilters)
-        self.type(message.body, into: self.app.textViews[.testBodyInput])
+        self.type(message.body, into: self.app.textFields[.testBodyInput])
         self.waitForVerdict(on: message)
         let senderField = self.app.textFields[.testSenderInput]
         self.type(message.sender, into: senderField)

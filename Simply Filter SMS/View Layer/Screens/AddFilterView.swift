@@ -190,7 +190,7 @@ struct AddFilterView: View {
                             Spacer()
                         }
                     }
-                    .padding(.vertical, 6)
+                    .padding(.vertical, 4)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(TestIdentifier.expandButton.rawValue)
                     .accessibilityLabel(self.model.isExpanded ? "addFilter_less"~ : "addFilter_more"~)

@@ -38,7 +38,7 @@ struct StatusBadge: View {
                 }
             }
             .padding(.vertical, 8)
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 12)
             .modifier(StatusBadgeModifier(isOn: roomIsOn, onColor: self.onColor))
         }
         .accessibilityElement(children: .ignore)
@@ -195,7 +195,7 @@ private struct StatusBadgeModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         let badgeColor = self.isOn ? self.onColor : Color.secondary
-        let backgroundColor = self.isOn ? self.onColor.opacity(0.12) : Color.gray.opacity(0.15)
+        let backgroundColor = self.isOn ? self.onColor.opacity(0.12) : Color(.tertiarySystemFill)
 
         content
             .foregroundStyle(badgeColor)

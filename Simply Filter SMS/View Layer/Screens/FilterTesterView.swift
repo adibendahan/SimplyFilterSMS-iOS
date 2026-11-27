@@ -28,30 +28,25 @@ struct FilterTesterView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 0) {
+            Form {
+                Section {
+                    ZStack(alignment: .top) {
+                        Text("testFilters_senderTitle"~)
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.secondary)
+                            .accessibilityHidden(true)
+
+                        TextField("", text: $model.sender)
+                            .focused($focusedField, equals: .sender)
+                            .autocorrectionDisabled()
+                            .padding(.top, 16)
+                            .accessibilityLabel("testFilters_senderTitle"~)
+                            .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
+                    }
+                    .listRowInsets(EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 20))
+
                     VStack(alignment: .leading, spacing: 0) {
-                        ZStack(alignment: .top) {
-                            Text("testFilters_senderTitle"~)
-                                .font(.caption)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.secondary)
-                                .accessibilityHidden(true)
-
-                            TextField("", text: $model.sender)
-                                .focused($focusedField, equals: .sender)
-                                .autocorrectionDisabled()
-                                .padding(.top, 18)
-                                .accessibilityLabel("testFilters_senderTitle"~)
-                                .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 20)
-                        .padding(.bottom, 15)
-
-                        Divider()
-                            .padding(.leading, 20)
-
                         ZStack(alignment: .top) {
                             Text("testFilters_messageTitle"~)
                                 .font(.caption)
@@ -59,46 +54,28 @@ struct FilterTesterView: View {
                                 .foregroundColor(.secondary)
                                 .accessibilityHidden(true)
 
-                            TextEditor(text: $model.text)
-                                .scrollContentBackground(.hidden)
+                            TextField("", text: $model.text, axis: .vertical)
+                                .lineLimit(4...)
                                 .autocorrectionDisabled()
-                                .frame(minHeight: 80, idealHeight: 80, alignment: .top)
                                 .focused($focusedField, equals: .text)
-                                .multilineTextAlignment(.leading)
-                                .padding(.top, 18)
+                                .padding(.top, 16)
                                 .accessibilityLabel("testFilters_messageTitle"~)
                                 .accessibilityIdentifier(TestIdentifier.testBodyInput.rawValue)
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 15)
 
-                        ZStack(alignment: .topLeading) {
-                            if let result = self.model.result {
-                                FilterTesterResultRow(result: result)
-                                    .padding(.horizontal, 20)
-                                    .padding(.top, 16)
-                                    .id(result.action.rawValue)
-                                    .transition(.opacity)
-                            }
+                        if let result = self.model.result {
+                            FilterTesterResultRow(result: result)
+                                .padding(.top, 16)
+                                .id(result.action.rawValue)
+                                .transition(.opacity)
                         }
                     }
-                    .padding(.bottom, 15)
-                    .background(Color(UIColor.secondarySystemGroupedBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .padding(.horizontal, 16)
-                    .padding(.top, 20)
-
+                    .listRowInsets(EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 20))
+                } footer: {
                     Text("testFilters_footer"~)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 32)
-                        .padding(.top, 8)
-                        .padding(.bottom, 20)
                 }
-                .animation(self.reduceMotion ? nil : .easeInOut(duration: 0.28), value: self.model.result?.action.rawValue)
             }
-            .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .animation(self.reduceMotion ? nil : .easeInOut(duration: 0.28), value: self.model.result?.action.rawValue)
             .onChange(of: self.model.result) { _, result in
                 guard UIAccessibility.isVoiceOverRunning, let result else { return }
                 UIAccessibility.post(notification: .announcement, argument: FilterTesterResultRow.accessibilityText(for: result))

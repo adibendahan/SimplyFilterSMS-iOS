@@ -39,7 +39,7 @@ struct AboutView: View {
                             .clipShape(RoundedRectangle(cornerRadius: cardLogoSize * 0.225, style: .continuous))
                             .accessibilityHidden(true)
                     } content: {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 4) {
                             Text("Simply Filter SMS")
                                 .font(.title2.bold())
                                 .foregroundColor(.primary)
@@ -51,7 +51,7 @@ struct AboutView: View {
                                 Text("v\(appVersion) (\(appBuild))")
                                     .font(.footnote)
                                     .foregroundColor(.secondary)
-                                    .padding(.horizontal, 9)
+                                    .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
                                     .background(.secondary.opacity(0.12))
                                     .clipShape(Capsule())

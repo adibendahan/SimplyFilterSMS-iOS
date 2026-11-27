@@ -34,16 +34,16 @@ struct ReportMessageView: View {
                         Text("reportMessage_senderTitle"~)
                             .font(.caption)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, -20)
                             .foregroundColor(.secondary)
 
                         TextField("", text: $model.sender)
                             .focused($focusedField, equals: .sender)
+                            .padding(.top, 16)
                             .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
                             
 
                     }
-                    .listRowInsets(EdgeInsets(top: 30, leading: 20, bottom: 15, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 20))
 
                     ZStack (alignment: .top) {
                         Text("testFilters_messageTitle"~)
@@ -51,11 +51,10 @@ struct ReportMessageView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundColor(.secondary)
 
-                        TextEditor(text: $model.text)
-                            .frame(minHeight: 80, idealHeight: 80, alignment: .top)
+                        TextField("", text: $model.text, axis: .vertical)
+                            .lineLimit(4...)
                             .focused($focusedField, equals: .text)
-                            .multilineTextAlignment(.leading)
-                            .padding(.top, 15)
+                            .padding(.top, 16)
                             .accessibilityIdentifier(TestIdentifier.testBodyInput.rawValue)
                     }
                     .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))

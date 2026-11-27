@@ -35,7 +35,7 @@ struct CommunityListRow: View {
     var isActive: Binding<Bool>? = nil
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center, spacing: 12) {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .center, spacing: 0) {
@@ -75,7 +75,7 @@ struct CommunityListRow: View {
                 CommunityListDetails(communityList: self.communityList)
             }
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 4)
     }
 
     private var ruleCountText: String? {
@@ -102,7 +102,7 @@ struct CommunityListRow: View {
     }
 
     private var infoLine: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 4) {
             if let localeLabel = self.communityList.localeLabel {
                 Text(localeLabel)
                     .fixedSize()
@@ -131,7 +131,7 @@ struct CommunityListDetails: View {
     let communityList: CommunityListItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             if let description = self.communityList.description {
                 Text(description)
                     .foregroundColor(.secondary)
@@ -141,7 +141,7 @@ struct CommunityListDetails: View {
             }
             if let homepage = self.communityList.homepage {
                 Link(destination: homepage) {
-                    HStack(alignment: .center, spacing: 5) {
+                    HStack(alignment: .center, spacing: 4) {
                         if homepage.isGitHubLink {
                             Image("GitHub")
                                 .resizable()

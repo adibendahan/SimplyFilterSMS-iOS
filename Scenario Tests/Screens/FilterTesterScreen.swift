@@ -13,7 +13,7 @@ struct FilterTesterScreen: Screen {
     private let debounce: TimeInterval = 1.5
 
     private var bodyInput: XCUIElement {
-        return self.app.textViews[.testBodyInput]
+        return self.app.textFields[.testBodyInput]
     }
 
     private var senderInput: XCUIElement {

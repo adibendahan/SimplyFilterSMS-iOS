@@ -141,7 +141,7 @@ struct ToastView: View {
     private var toastIcon: some View {
         Image(systemName: self.model.icon)
             .font(.body)
-            .padding(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 0))
+            .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 0))
             .foregroundStyle(self.model.iconColor)
     }
 
@@ -170,7 +170,7 @@ struct ToastView: View {
             Text(self.model.buttonTitle)
                 .font(.caption.bold())
                 .foregroundColor(.primary)
-                .padding(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
+                .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
                 .modifier(ToastActionChipBackground())
         }
         .modifier(ToastActionButtonStyle())

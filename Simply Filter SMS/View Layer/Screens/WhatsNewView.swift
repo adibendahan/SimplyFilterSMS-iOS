@@ -58,7 +58,7 @@ struct WhatsNewView: View {
             }
             .onScrollProgress(distance: self.heroCollapseDistance, progress: self.$heroCollapse)
             .modifier(BottomActionBar(bar: self.continueButton))
-            .background(Color(.systemBackground))
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("whatsNew_title"~)
             .modifier(AppNameSubtitle())
             .navigationBarTitleDisplayMode(.large)
@@ -140,8 +140,8 @@ struct WhatsNewView: View {
                     dimensions[.top] + self.titleCapHeight
                 }
         } content: {
-            VStack(alignment: .leading, spacing: 3) {
-                VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(entry.title)
                         .font(.subheadline.bold())
                         .foregroundColor(.primary)
@@ -229,7 +229,7 @@ private struct BottomActionBar<Bar: View>: ViewModifier {
             content
                 .safeAreaInset(edge: .bottom) {
                     self.bar
-                        .background(Color(.systemBackground).ignoresSafeArea())
+                        .background(Color(.systemGroupedBackground).ignoresSafeArea())
                 }
         }
     }

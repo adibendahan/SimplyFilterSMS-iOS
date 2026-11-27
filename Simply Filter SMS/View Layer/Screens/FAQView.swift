@@ -27,7 +27,6 @@ struct FAQView: View {
                         .font(.footnote.weight(.regular))
                         .foregroundColor(.primary)
                         .padding(.leading, -20)
-                        .padding(.top, -4)
                         .padding(.bottom, 4)
                         .listRowSeparator(.hidden)
                         .accessibilityIdentifier("\(TestIdentifier.faqAnswer.rawValue)-\(item.rawValue)")

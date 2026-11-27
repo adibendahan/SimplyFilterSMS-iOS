@@ -8,6 +8,21 @@
 import SwiftUI
 import UIKit
 
+struct SelectedChip: View {
+    let cornerRadius: CGFloat
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: self.cornerRadius, style: .continuous)
+        if #available(iOS 26.0, *) {
+            Color.clear
+                .glassEffect(.regular, in: shape)
+        } else {
+            shape
+                .fill(Color(UIColor { $0.userInterfaceStyle == .dark ? .systemGray2 : .systemBackground }))
+        }
+    }
+}
+
 private struct GlassPickerLabelStyle: LabelStyle {
     let isSelected: Bool
 
@@ -73,37 +88,11 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
         .padding(4)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(.ultraThinMaterial)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .strokeBorder(LinearGradient(
-                            colors: [.white.opacity(0.3), .white.opacity(0.08)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        ), lineWidth: 0.5)
-                }
+                .fill(Color(.tertiarySystemFill))
         )
     }
 
     private var chip: some View {
-        RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .fill(.regularMaterial)
-            .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(LinearGradient(
-                        colors: [.white.opacity(0.2), .white.opacity(0.05)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ))
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(LinearGradient(
-                        colors: [.white.opacity(0.6), .white.opacity(0.15)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ), lineWidth: 0.5)
-            }
-            .shadow(color: .black.opacity(0.15), radius: 5, x: 0, y: 2)
+        SelectedChip(cornerRadius: 10)
     }
 }

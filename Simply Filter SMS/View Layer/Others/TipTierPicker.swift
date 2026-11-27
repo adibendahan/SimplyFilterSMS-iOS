@@ -27,9 +27,6 @@ struct TipTierPicker: View {
     @Environment(\.accessibilityReduceMotion)
     private var reduceMotion
 
-    @Environment(\.colorScheme)
-    private var colorScheme
-
     @Namespace private var chipNamespace
 
     @ScaledMetric(relativeTo: .largeTitle) private var emojiSizeRegular: CGFloat = 38
@@ -38,16 +35,16 @@ struct TipTierPicker: View {
     @ScaledMetric(relativeTo: .body) private var segmentHeightCompact: CGFloat = 64
 
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 4) {
             ForEach(Array(self.options.enumerated()), id: \.element.id) { index, option in
                 self.segment(for: option)
                     .entrance(isShown: self.isRevealed, delay: SegmentMotion.delay(for: index), rise: SegmentMotion.rise, scale: SegmentMotion.startScale, blur: SegmentMotion.blur, animation: SegmentMotion.animation)
             }
         }
-        .padding(5)
+        .padding(4)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(.gray.opacity(0.12))
+                .fill(Color(.tertiarySystemFill))
         )
         .sensoryFeedback(.selection, trigger: self.selection)
         .accessibilityRepresentation {
@@ -94,9 +91,7 @@ struct TipTierPicker: View {
 
     @ViewBuilder
     private var selectedChip: some View {
-        let chip = RoundedRectangle(cornerRadius: 19, style: .continuous)
-            .fill(self.colorScheme == .dark ? Color(.systemGray2) : Color(.systemBackground))
-            .shadow(color: .black.opacity(0.12), radius: 8, y: 3)
+        let chip = SelectedChip(cornerRadius: 20)
         if self.reduceMotion {
             chip
                 .transition(.opacity)

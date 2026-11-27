@@ -32,14 +32,14 @@ struct DetailPlaceholderView: View {
                 .font(.title2)
                 .foregroundColor(.primary)
             
-            VStack (spacing: 5) {
+            VStack (spacing: 4) {
                 Text("placeholder_choose_detail"~)
                     .font(.body)
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                 
-                AdaptiveStack(spacing: 5) {
+                AdaptiveStack(spacing: 4) {
                     Text("placeholder_choose_sub_detail1"~)
                         .font(.body)
                         .foregroundColor(.primary)

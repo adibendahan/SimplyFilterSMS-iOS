@@ -90,9 +90,9 @@ struct HelpView: View {
 
                 Section {
                     if model.showsSiriTips {
-                        VStack(spacing: 10) {
+                        VStack(spacing: 8) {
                             ScrollView(.horizontal) {
-                                HStack(spacing: 10) {
+                                HStack(spacing: 8) {
                                     ForEach(model.siriTipSlots, id: \.self) { slot in
                                         siriTipView(model.siriTip(at: slot))
                                             .containerRelativeFrame(.horizontal)
@@ -112,7 +112,7 @@ struct HelpView: View {
                                 }
                             }
 
-                            HStack(spacing: 7) {
+                            HStack(spacing: 8) {
                                 ForEach(HelpSiriTip.allCases, id: \.self) { tip in
                                     Circle()
                                         .fill(tip == model.currentSiriTip ? Color.primary : Color.secondary.opacity(0.4))
@@ -123,7 +123,7 @@ struct HelpView: View {
                         }
                     }
 
-                    VStack(spacing: 10) {
+                    VStack(spacing: 8) {
                         Text("help_shortcuts_caption"~)
                             .font(.caption)
                             .foregroundColor(.secondary)

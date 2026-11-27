@@ -21,7 +21,7 @@ struct FeatureStatusHeader: View {
     let collapseProgress: CGFloat
 
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 4) {
             self.icon
                 .font(.system(size: self.iconSize))
                 .scrollCollapse(progress: self.collapseProgress)
