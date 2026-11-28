@@ -17,14 +17,18 @@ struct StayReachableView: View {
     @Environment(\.layoutDirection)
     private var layoutDirection
 
-    @Environment(\.needsStackedLayout)
-    private var needsStackedLayout
+    @ScaledMetric(relativeTo: .largeTitle)
+    private var iconSizeRegular: CGFloat = IconSize.header
 
-    @ScaledMetric(relativeTo: .body)
-    private var labelWidth: CGFloat = 104
+    @ScaledMetric(relativeTo: .title2)
+    private var iconSizeCompact: CGFloat = IconSize.headerLandscape
 
-    @ScaledMetric(relativeTo: .title)
-    private var iconSize: CGFloat = 60
+    @Environment(\.verticalSizeClass)
+    private var verticalSizeClass
+
+    private var iconSize: CGFloat {
+        return self.verticalSizeClass == .compact ? self.iconSizeCompact : self.iconSizeRegular
+    }
 
     @StateObject private var model: ViewModel
     @FocusState private var focusedField: FieldFocus?
@@ -79,9 +83,9 @@ struct StayReachableView: View {
                 .buttonStyle(FilledButton())
                 .disabled(self.model.changeCount == 0)
                 .accessibilityIdentifier(TestIdentifier.stayReachableAddButton.rawValue)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color(.systemGroupedBackground).ignoresSafeArea())
+                .padding(.horizontal, Spacing.edge)
+                .padding(.vertical, Spacing.item)
+                .background(Color.surfaceScreen.ignoresSafeArea())
             }
             .navigationTitle("stayReachable_title"~)
             .navigationBarTitleDisplayMode(.inline)
@@ -92,7 +96,7 @@ struct StayReachableView: View {
                         self.dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondary)
                     }
                     .tint(.primary)
                     .accessibilityLabel("general_close"~)
@@ -110,7 +114,7 @@ struct StayReachableView: View {
     }
 
     private var header: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: Spacing.item) {
             Image(systemName: "person.badge.shield.checkmark.fill")
                 .font(.system(size: self.iconSize * 0.55))
                 .foregroundStyle(.white)
@@ -120,14 +124,14 @@ struct StayReachableView: View {
 
             if let description = self.description {
                 Text(description)
-                    .font(.subheadline)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .font(.description)
+                    .foregroundColor(.text)
             }
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
         .textCase(nil)
-        .padding(.bottom, 8)
+        .padding(.bottom, Spacing.item)
     }
 
     private var description: AttributedString? {
@@ -176,7 +180,7 @@ struct StayReachableView: View {
                     Label("stayReachable_removeLanguage"~, systemImage: "trash")
                 }
             } label: {
-                HStack(spacing: 4) {
+                HStack(spacing: Spacing.tight) {
                     Text(self.model.title(for: section))
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.caption2)
@@ -220,20 +224,19 @@ struct StayReachableView: View {
         let prompt = self.model.prompt(for: field, in: section)
         let focus = FieldFocus(sectionID: section.id, field: field)
         let isSkipped = self.model.isSkipped(field, in: section)
-        let layout = self.needsStackedLayout ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4)) : AnyLayout(HStackLayout(spacing: 8))
-        return layout {
+        let input = TextField(title, text: text, prompt: Text(prompt))
+            .focused($focusedField, equals: focus)
+            .accessibilityIdentifier(field.testIdentifier.rawValue)
+            .textContentType(field.contentType)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .environment(\.layoutDirection, self.layoutDirection)
+            .opacity(isSkipped ? Opacity.dim : 1)
+        return LabeledContent {
+            input
+                .multilineTextAlignment(self.textAlignment(for: language) == .leading ? .trailing : .leading)
+        } label: {
             Text(title)
-                .frame(width: self.needsStackedLayout ? nil : self.labelWidth, alignment: .leading)
-
-            TextField(title, text: text, prompt: Text(prompt))
-                .focused($focusedField, equals: focus)
-                .accessibilityIdentifier(field.testIdentifier.rawValue)
-                .textContentType(field.contentType)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-                .multilineTextAlignment(self.textAlignment(for: language))
-                .environment(\.layoutDirection, self.layoutDirection)
-                .opacity(isSkipped ? 0.5 : 1)
         }
     }
 

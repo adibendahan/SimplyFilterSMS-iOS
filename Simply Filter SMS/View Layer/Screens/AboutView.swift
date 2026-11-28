@@ -16,8 +16,9 @@ struct AboutView: View {
     @Environment(\.dismiss)
     var dismiss
 
-    @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 22
-    @ScaledMetric(relativeTo: .title) private var cardLogoSize: CGFloat = 72
+    @ScaledMetric(relativeTo: .largeTitle) private var cardLogoSizeRegular: CGFloat = IconSize.header
+    @ScaledMetric(relativeTo: .title2) private var cardLogoSizeCompact: CGFloat = IconSize.headerLandscape
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var notesExpanded = false
 
     @StateObject var model: ViewModel
@@ -26,34 +27,38 @@ struct AboutView: View {
         _model = StateObject(wrappedValue: model)
     }
 
+    private var cardLogoSize: CGFloat {
+        return self.verticalSizeClass == .compact ? self.cardLogoSizeCompact : self.cardLogoSizeRegular
+    }
+
     var body: some View {
         NavigationView {
             List {
                 // Identity
                 Section {
-                    AdaptiveRow(compactSpacing: 14) {
+                    AdaptiveRow(compactSpacing: Spacing.edge) {
                         Image("logo")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: cardLogoSize, height: cardLogoSize)
-                            .clipShape(RoundedRectangle(cornerRadius: cardLogoSize * 0.225, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Radius.appIcon(side: cardLogoSize), style: .continuous))
                             .accessibilityHidden(true)
                     } content: {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: Spacing.tight) {
                             Text("Simply Filter SMS")
-                                .font(.title2.bold())
-                                .foregroundColor(.primary)
+                                .font(.heading)
+                                .foregroundColor(.text)
                                 .fixedSize(horizontal: false, vertical: true)
 
                             Button {
                                 model.setClipboard(content: "v\(appVersion) (\(appBuild))", displayName: "a11y_about_versionCopied"~)
                             } label: {
                                 Text("v\(appVersion) (\(appBuild))")
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(.secondary.opacity(0.12))
+                                    .font(.label)
+                                    .foregroundColor(.textSecondary)
+                                    .padding(.horizontal, Spacing.item)
+                                    .padding(.vertical, Spacing.tight)
+                                    .background(.secondary.opacity(Opacity.tintFill))
                                     .clipShape(Capsule())
                             }
                             .buttonStyle(.plain)
@@ -61,7 +66,7 @@ struct AboutView: View {
                             .accessibilityHint("a11y_about_versionHint"~)
                         }
                     }
-                    .padding(.vertical, 8)
+                    .padding(.vertical, Spacing.item)
                 }
 
                 // Developer Notes (expandable)
@@ -75,15 +80,15 @@ struct AboutView: View {
                             }
                         }
                         .font(.body)
-                        .foregroundColor(.primary)
-                        .padding(.bottom, 4)
-                        .padding(.leading, -20)
+                        .foregroundColor(.text)
+                        .padding(.bottom, Spacing.tight)
+                        .padding(.leading, LayoutOffset.disclosureFlush)
                     } label: {
                         Label {
                             Text("aboutView_aboutSection"~)
                         } icon: {
                             Image(systemName: "quote.bubble")
-                                .foregroundColor(.primary.opacity(0.4))
+                                .foregroundColor(.gray)
                         }
                     }
 
@@ -96,9 +101,9 @@ struct AboutView: View {
                             }
                         }
                         .font(.body)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.text)
                         .lineLimit(2)
-                        .padding(.bottom, -20)
+                        .padding(.bottom, LayoutOffset.collapsedPeek)
                         .allowsHitTesting(false)
                         .accessibilityHidden(true)
                     }
@@ -114,11 +119,11 @@ struct AboutView: View {
                         }
                     } label: {
                         Label {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: Spacing.tight) {
                                 Text("aboutView_sendMail"~)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.text)
                                 Text(kSupportEmail)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.textSecondary)
                                     .font(.caption)
                             }
                         } icon: {
@@ -132,35 +137,31 @@ struct AboutView: View {
                 Section("aboutView_connectSection"~) {
                     Link(destination: .appGithubURL) {
                         Label {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: Spacing.tight) {
                                 Text("aboutView_github"~)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.text)
                                 Text(URL.appGithubURL.lastPathComponent)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.textSecondary)
                                     .font(.caption)
                             }
                         } icon: {
-                            Image("GitHub")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: iconSize, height: iconSize)
+                            Image("logo.github")
+                                .foregroundStyle(Color.text)
                         }
                     }
 
                     Link(destination: .appTwitterURL) {
                         Label {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: Spacing.tight) {
                                 Text("X")
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.text)
                                 Text("aboutView_twitter"~)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.textSecondary)
                                     .font(.caption)
                             }
                         } icon: {
-                            Image("X")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: iconSize, height: iconSize)
+                            Image("logo.x")
+                                .foregroundStyle(Color.text)
                         }
                     }
                 }
@@ -172,7 +173,7 @@ struct AboutView: View {
                     } label: {
                         Label {
                             Text("tipJar_aboutRow"~)
-                                .foregroundColor(.primary)
+                                .foregroundColor(.text)
                         } icon: {
                             Image(systemName: "heart.fill")
                                 .foregroundColor(.pink)
@@ -182,7 +183,7 @@ struct AboutView: View {
                     Link(destination: .appReviewURL) {
                         Label {
                             Text("aboutView_review"~)
-                                .foregroundColor(.primary)
+                                .foregroundColor(.text)
                         } icon: {
                             Image(systemName: "star.fill")
                                 .foregroundColor(.yellow)

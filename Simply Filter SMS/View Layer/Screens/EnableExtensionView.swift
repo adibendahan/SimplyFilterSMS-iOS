@@ -29,7 +29,7 @@ struct EnableExtensionView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: Spacing.rowMargin) {
                     Text(model.description)
                         .fixedSize(horizontal: false, vertical: true)
 
@@ -80,16 +80,16 @@ struct EnableExtensionView: View {
                 .padding()
                 .background(RefreshControlDisabler())
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.surfaceScreen)
             .safeAreaInset(edge: .bottom) {
                 Button(action: openSettings) {
                     Text("enableExtension_ready_callToAction"~)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(FilledButton())
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color(.systemGroupedBackground).ignoresSafeArea())
+                .padding(.horizontal, Spacing.edge)
+                .padding(.vertical, Spacing.item)
+                .background(Color.surfaceScreen.ignoresSafeArea())
                 .accessibilityIdentifier(TestIdentifier.callToActionButton.rawValue)
                 .accessibilityHint("a11y_enableExtension_ctaHint"~)
             }

@@ -44,9 +44,9 @@ struct FilterRowView: View {
     @ViewBuilder
     private var filterTextColumn: some View {
         HStack(alignment: .center) {
-            Circle()
-                .fill(.tint)
-                .frame(width: 8, height: 8)
+            Image(systemName: "circle.fill")
+                .font(.caption2)
+                .foregroundStyle(.tint)
                 .opacity(dotOpacity)
                 .onAppear {
                     guard dotFilterID == model.id, dotOpacity == 0 else { return }
@@ -121,7 +121,7 @@ struct FilterRowView: View {
                 collapsedOptionsMenu
             }
         } else {
-            HStack(spacing: 8) {
+            HStack(spacing: Spacing.item) {
                 if self.model.filterType.supportsAdvancedOptions {
                     targetMenu
                     if self.model.filterMatching != .regex {

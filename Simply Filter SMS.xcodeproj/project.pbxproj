@@ -106,6 +106,7 @@
 				"Framework Layer/Shared with Extension/Log.swift",
 				"Framework Layer/Shared with Extension/SharedExtensions.swift",
 				"Framework Layer/SharedUITestsHelpers.swift",
+				"View Layer/Others/DesignSystem.swift",
 				"View Layer/Others/FooterView.swift",
 			);
 			target = 27D207A4BE0B737DCB991319 /* Reporting Extension */;

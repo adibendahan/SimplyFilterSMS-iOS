@@ -11,13 +11,13 @@ struct FooterView: View {
     var body: some View {
         VStack (alignment: .center, spacing: 0) {
             Rectangle()
-                .frame(height: 1, alignment: .bottom)
-                .foregroundColor(.primary.opacity(0.05))
-                .padding(.bottom, 8)
+                .frame(height: SystemMetric.separatorWidth, alignment: .bottom)
+                .foregroundColor(Color(.separator))
+                .padding(.bottom, Spacing.item)
             Text("Simply Filter SMS v\(Text(appVersion))\n\(Text(String(format: "general_copyright"~, Calendar.current.component(.year, from: Date()))))")
                 .frame(maxWidth: .infinity, alignment: .center)
-                .font(.footnote)
-                .foregroundColor(.primary)
+                .font(.label)
+                .foregroundColor(.text)
                 .multilineTextAlignment(.center)
                 .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         }

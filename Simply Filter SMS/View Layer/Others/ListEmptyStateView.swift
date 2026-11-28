@@ -206,7 +206,7 @@ struct ListEmptyStateView: View {
 
     @ScaledMetric(relativeTo: .body) private var regularIllustrationHeight: CGFloat = 124
     @ScaledMetric(relativeTo: .body) private var compactIllustrationHeight: CGFloat = 76
-    @ScaledMetric(relativeTo: .subheadline) private var twoCaptionLinesHeight: CGFloat = 40
+    @ScaledMetric(relativeTo: .subheadline) private var twoCaptionLinesHeight: CGFloat = LineHeight.description * 2
 
     @State private var hasAppeared = false
 
@@ -224,7 +224,7 @@ struct ListEmptyStateView: View {
                 .entrance(isShown: self.isRevealed, delay: Motion.titleDelay)
 
             Text(self.kind.caption)
-                .font(.subheadline)
+                .font(.description)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(minHeight: self.captionMinHeight, alignment: .top)
@@ -241,7 +241,7 @@ struct ListEmptyStateView: View {
                     .fontWeight(.semibold)
                 }
                 .buttonStyle(FilledButton())
-                .padding(.top, 10)
+                .padding(.top, Spacing.item)
                 .accessibilityIdentifier(action.testIdentifier.rawValue)
                 .entrance(isShown: self.isRevealed, delay: Motion.buttonDelay)
             }

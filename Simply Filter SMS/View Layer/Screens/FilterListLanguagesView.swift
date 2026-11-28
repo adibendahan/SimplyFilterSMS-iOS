@@ -27,7 +27,7 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
                                     collapseProgress: self.headerCollapse)
             }
             .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
+            .listRowInsets(EdgeInsets(top: 0, leading: Spacing.edge, bottom: Spacing.item, trailing: Spacing.edge))
 
             Section {
                 ForEach (self.model.languages.indices, id: \.self) { index in
@@ -126,16 +126,16 @@ struct FilterListLanguagesView: View, ViewWithPersistentStoreReload {
         var label = Text(name)
         if let nativeName {
             let separator = Text(" / ")
-                .font(.footnote)
+                .font(.label)
                 .foregroundStyle(.primary)
             let nativeNameText = Text(nativeName)
-                .font(.footnote)
+                .font(.label)
                 .foregroundStyle(.primary)
             label = label + separator + nativeNameText
         }
         if let ruleCountText {
             let countText = Text(" (\(ruleCountText))")
-                .font(.footnote)
+                .font(.label)
                 .foregroundStyle(.secondary)
             label = label + countText
         }

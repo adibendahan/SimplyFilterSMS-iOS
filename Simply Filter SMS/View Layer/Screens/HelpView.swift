@@ -24,7 +24,6 @@ struct HelpView: View {
     @Environment(\.colorScheme)
     private var colorScheme
 
-    @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 22
 
     @StateObject var model: ViewModel
 
@@ -47,13 +46,13 @@ struct HelpView: View {
                                 .adaptiveIconColumn()
                                 .accessibilityHidden(true)
                         } content: {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: Spacing.tight) {
                                 Text("help_enableFiltering_title"~)
                                     .font(.body)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.text)
                                 Text("help_enableFiltering_caption"~)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.textSecondary)
                             }
                         }
                     }
@@ -71,13 +70,13 @@ struct HelpView: View {
                                 .adaptiveIconColumn()
                                 .accessibilityHidden(true)
                         } content: {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: Spacing.tight) {
                                 Text("help_enableReporting_title"~)
                                     .font(.body)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.text)
                                 Text("help_enableReporting_caption"~)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.textSecondary)
                             }
                         }
                     }
@@ -90,9 +89,9 @@ struct HelpView: View {
 
                 Section {
                     if model.showsSiriTips {
-                        VStack(spacing: 8) {
+                        VStack(spacing: Spacing.item) {
                             ScrollView(.horizontal) {
-                                HStack(spacing: 8) {
+                                HStack(spacing: Spacing.item) {
                                     ForEach(model.siriTipSlots, id: \.self) { slot in
                                         siriTipView(model.siriTip(at: slot))
                                             .containerRelativeFrame(.horizontal)
@@ -112,21 +111,21 @@ struct HelpView: View {
                                 }
                             }
 
-                            HStack(spacing: 8) {
+                            HStack(spacing: Spacing.item) {
                                 ForEach(HelpSiriTip.allCases, id: \.self) { tip in
                                     Circle()
-                                        .fill(tip == model.currentSiriTip ? Color.primary : Color.secondary.opacity(0.4))
-                                        .frame(width: 7, height: 7)
+                                        .fill(tip == model.currentSiriTip ? Color.primary : Color(.tertiaryLabel))
+                                        .frame(width: SystemMetric.pageDot, height: SystemMetric.pageDot)
                                 }
                             }
                             .accessibilityHidden(true)
                         }
                     }
 
-                    VStack(spacing: 8) {
+                    VStack(spacing: Spacing.item) {
                         Text("help_shortcuts_caption"~)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondary)
                             .multilineTextAlignment(.center)
 
                         ShortcutsLink()
@@ -147,13 +146,13 @@ struct HelpView: View {
                                 .adaptiveIconColumn()
                                 .accessibilityHidden(true)
                         } content: {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: Spacing.tight) {
                                 Text("help_faq_title"~)
                                     .font(.body)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.text)
                                 Text("help_faq_caption"~)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.textSecondary)
                             }
                         }
                     }
@@ -172,11 +171,11 @@ struct HelpView: View {
                         }
                     } label: {
                         Label {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: Spacing.tight) {
                                 Text("aboutView_sendMail"~)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.text)
                                 Text(kSupportEmail)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.textSecondary)
                                     .font(.caption)
                             }
                         } icon: {
@@ -190,18 +189,16 @@ struct HelpView: View {
 
                     Link(destination: .appGithubURL) {
                         Label {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: Spacing.tight) {
                                 Text("aboutView_github"~)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.text)
                                 Text(URL.appGithubURL.lastPathComponent)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.textSecondary)
                                     .font(.caption)
                             }
                         } icon: {
-                            Image("GitHub")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: iconSize, height: iconSize)
+                            Image("logo.github")
+                                .foregroundStyle(Color.text)
                                 .accessibilityHidden(true)
                         }
                     }

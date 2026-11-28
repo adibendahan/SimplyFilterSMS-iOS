@@ -24,7 +24,7 @@ struct AddFilterView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: Spacing.item) {
 
                     Spacer()
 
@@ -37,7 +37,7 @@ struct AddFilterView: View {
                                 if self.model.filterText.isEmpty {
                                     Text("[A-Za-z0-9]+".highlightedAsRegex)
                                         .font(.system(.body, design: .monospaced))
-                                        .opacity(0.4)
+                                        .opacity(Opacity.dim)
                                         .allowsHitTesting(false)
                                         .transition(.opacity)
                                 } else {
@@ -74,8 +74,8 @@ struct AddFilterView: View {
                         Spacer()
 
                         Text(FilterMatching.title)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
+                            .font(.label)
+                            .foregroundColor(.textSecondary)
                             .bold()
 
                         GlassPicker(selection: $model.selectedFilterMatching) { matching in
@@ -87,8 +87,8 @@ struct AddFilterView: View {
                             Spacer()
 
                             Text(MessageFolder.title)
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
+                                .font(.label)
+                                .foregroundColor(.textSecondary)
                                 .bold()
 
                             GlassPicker(selection: $model.selectedMessageFolder) { folder in
@@ -99,8 +99,8 @@ struct AddFilterView: View {
                         Spacer()
 
                         Text(FilterTarget.title)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
+                            .font(.label)
+                            .foregroundColor(.textSecondary)
                             .bold()
 
                         GlassPicker(selection: $model.selectedFilterTarget) { target in
@@ -112,8 +112,8 @@ struct AddFilterView: View {
                                 Spacer()
 
                                 Text(FilterCase.title)
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
+                                    .font(.label)
+                                    .foregroundColor(.textSecondary)
                                     .bold()
 
                                 GlassPicker(selection: $model.selectedFilterCase) { filterCase in
@@ -128,8 +128,8 @@ struct AddFilterView: View {
                                 Spacer()
 
                                 Text("addFilter_regexTestCaption"~)
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
+                                    .font(.label)
+                                    .foregroundColor(.textSecondary)
                                     .bold()
 
                                 AdaptiveRow {
@@ -169,13 +169,13 @@ struct AddFilterView: View {
                             self.model.isExpanded.toggle()
                         }
                     } label: {
-                        HStack (alignment: .center, spacing: 8) {
+                        HStack (alignment: .center, spacing: Spacing.item) {
                             Spacer()
 
                             Text(self.model.isExpanded ? "addFilter_less"~ : "addFilter_more"~)
-                                .font(.footnote)
+                                .font(.label)
                                 .bold()
-                                .foregroundColor(.primary)
+                                .foregroundColor(.text)
 
                             Image(systemName: "arrowtriangle.down.circle")
                                 .font(.caption)
@@ -185,7 +185,7 @@ struct AddFilterView: View {
                             Spacer()
                         }
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, Spacing.tight)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(TestIdentifier.expandButton.rawValue)
                     .accessibilityLabel(self.model.isExpanded ? "addFilter_less"~ : "addFilter_more"~)
@@ -207,10 +207,10 @@ struct AddFilterView: View {
 
                     if let siriTipIntent = self.model.siriTipIntent {
                         SiriTipView(intent: siriTipIntent, isVisible: $model.showsSiriTip)
-                            .padding(.top, 16)
+                            .padding(.top, Spacing.edge)
                     }
                 } // VStack
-                .padding(.horizontal, 16)
+                .padding(.horizontal, Spacing.edge)
                 .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: self.model.selectedFilterMatching)
                 .navigationTitle(self.model.title)
                 .toolbar {
@@ -219,7 +219,7 @@ struct AddFilterView: View {
                             dismiss()
                         } label: {
                             Image(systemName: "xmark")
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.textSecondary)
                         }
                         .tint(.primary)
                         .accessibilityLabel("general_close"~)

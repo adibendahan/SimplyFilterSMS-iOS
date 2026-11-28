@@ -36,7 +36,7 @@ struct SearchResultRowView: View {
                 .adaptiveIconColumn()
                 .accessibilityHidden(true)
         } content: {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: Spacing.tight) {
                 Text(AttributedString(self.row.title).highlighting(self.query))
                     .multilineTextAlignment(.leading)
                 if let subtitle = self.row.subtitle {
@@ -46,13 +46,13 @@ struct SearchResultRowView: View {
                 }
             }
         } trailing: {
-            HStack(spacing: 8) {
+            HStack(spacing: Spacing.item) {
                 if let value = self.row.value {
                     Text(value)
                         .foregroundStyle(.secondary)
                 }
                 Image(systemName: "chevron.forward")
-                    .font(.footnote.weight(.semibold))
+                    .font(.label.weight(.semibold))
                     .foregroundStyle(.tertiary)
                     .accessibilityHidden(true)
             }

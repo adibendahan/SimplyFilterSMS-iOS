@@ -14,25 +14,23 @@ struct FilterTesterResultRow: View {
 
     let result: MessageEvaluationResult
 
-    @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 20
-
     var body: some View {
         AdaptiveRow {
             Image(systemName: style.icon)
                 .foregroundColor(style.color)
-                .frame(width: iconSize, alignment: .center)
+                .adaptiveIconColumn()
                 .accessibilityHidden(true)
         } content: {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: Spacing.tight) {
                 Text(style.title)
-                    .font(.headline)
+                    .font(.emphasis)
                     .foregroundColor(style.color)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if let caption = Self.caption(for: result.match) {
                     caption
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondary)
                 }
             }
         }

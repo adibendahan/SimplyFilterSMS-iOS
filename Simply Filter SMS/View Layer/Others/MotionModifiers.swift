@@ -273,7 +273,7 @@ private struct RevealHighlightModifier: ViewModifier {
         content
             .background {
                 Rectangle()
-                    .fill(.tint.opacity(0.12))
+                    .fill(.tint.opacity(Opacity.tintFill))
                     .padding(RevealHighlightMotion.rowBleed)
                     .keyframeAnimator(initialValue: Double.zero, trigger: self.trigger) { view, opacity in
                         view.opacity(opacity)

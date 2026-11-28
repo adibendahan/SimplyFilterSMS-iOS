@@ -529,7 +529,7 @@ enum SmartFilterType: Int64, CaseIterable, Equatable, Identifiable {
         case .links:
             return .blue
         case .numbersOnly:
-            return .purple.opacity(0.8)
+            return .purple
         case .shortSender:
             return .orange
         case .email:

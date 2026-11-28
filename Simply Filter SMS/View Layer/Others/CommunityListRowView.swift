@@ -26,7 +26,7 @@ struct CommunityListRowView: View {
 
 struct CommunityListRow: View {
 
-    static let chevronColumnBaseWidth: CGFloat = 18
+    static let chevronColumnBaseWidth: CGFloat = IconSize.column
 
     @ScaledMetric(relativeTo: .caption2) private var chevronColumnWidth = CommunityListRow.chevronColumnBaseWidth
 
@@ -35,26 +35,26 @@ struct CommunityListRow: View {
     var isActive: Binding<Bool>? = nil
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .center, spacing: 12) {
-                VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Spacing.item) {
+            HStack(alignment: .center, spacing: Spacing.item) {
+                VStack(alignment: .leading, spacing: Spacing.item) {
                     HStack(alignment: .center, spacing: 0) {
                         if let isExpanded = self.isExpanded {
                             self.chevron(isExpanded: isExpanded)
                         }
                         Text(self.communityList.name)
                             .font(.body)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.text)
                             .adaptiveLineLimit(1)
                             .minimumScaleFactor(0.8)
 
                         if let ruleCountText = self.ruleCountText {
                             Text("(\(ruleCountText))")
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
+                                .font(.label)
+                                .foregroundColor(.textSecondary)
                                 .lineLimit(1)
                                 .fixedSize()
-                                .padding(.leading, 4)
+                                .padding(.leading, Spacing.tight)
                                 .accessibilityLabel(ruleCountText)
                         }
                     }
@@ -75,7 +75,7 @@ struct CommunityListRow: View {
                 CommunityListDetails(communityList: self.communityList)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, Spacing.tight)
     }
 
     private var ruleCountText: String? {
@@ -102,7 +102,7 @@ struct CommunityListRow: View {
     }
 
     private var infoLine: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: Spacing.tight) {
             if let localeLabel = self.communityList.localeLabel {
                 Text(localeLabel)
                     .fixedSize()
@@ -118,7 +118,7 @@ struct CommunityListRow: View {
             }
         }
         .font(.caption)
-        .foregroundColor(.secondary)
+        .foregroundColor(.textSecondary)
         .adaptiveLineLimit(1)
     }
 }
@@ -126,27 +126,24 @@ struct CommunityListRow: View {
 struct CommunityListDetails: View {
 
     @Environment(\.layoutDirection) private var layoutDirection
-    @ScaledMetric(relativeTo: .footnote) private var gitHubIconSize: CGFloat = 11
 
     let communityList: CommunityListItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Spacing.item) {
             if let description = self.communityList.description {
                 Text(description)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .environment(\.layoutDirection, self.descriptionLayoutDirection)
             }
             if let homepage = self.communityList.homepage {
                 Link(destination: homepage) {
-                    HStack(alignment: .center, spacing: 4) {
+                    HStack(alignment: .center, spacing: Spacing.tight) {
                         if homepage.isGitHubLink {
-                            Image("GitHub")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: self.gitHubIconSize, height: self.gitHubIconSize)
+                            Image("logo.github")
+                                .foregroundStyle(Color.text)
                                 .accessibilityHidden(true)
                         }
                         Text(homepage.displayLink)
@@ -158,7 +155,7 @@ struct CommunityListDetails: View {
                 .foregroundStyle(.tint)
             }
         }
-        .font(.footnote)
+        .font(.label)
     }
 
     private var descriptionLayoutDirection: LayoutDirection {

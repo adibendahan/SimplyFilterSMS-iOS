@@ -8,7 +8,7 @@ import SwiftUI
 
 //MARK: - Motion -
 private enum ReportSubmitMotion {
-    static let fallbackHeight: CGFloat = 50
+    static let fallbackHeight: CGFloat = SystemMetric.buttonHeight
     static let checkFont = Font.title3.weight(.bold)
     static let checkDelay: Double = 0.05
     static let checkDuration: Double = 0.3

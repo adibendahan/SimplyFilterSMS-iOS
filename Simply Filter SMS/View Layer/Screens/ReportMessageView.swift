@@ -34,30 +34,30 @@ struct ReportMessageView: View {
                         Text("reportMessage_senderTitle"~)
                             .font(.caption)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondary)
 
                         TextField("", text: $model.sender)
                             .focused($focusedField, equals: .sender)
-                            .padding(.top, 16)
+                            .padding(.top, Spacing.edge)
                             .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
                             
 
                     }
-                    .listRowInsets(EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: Spacing.edge, leading: Spacing.rowMargin, bottom: Spacing.edge, trailing: Spacing.rowMargin))
 
                     ZStack (alignment: .top) {
                         Text("testFilters_messageTitle"~)
                             .font(.caption)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondary)
 
                         TextField("", text: $model.text, axis: .vertical)
                             .lineLimit(4...)
                             .focused($focusedField, equals: .text)
-                            .padding(.top, 16)
+                            .padding(.top, Spacing.edge)
                             .accessibilityIdentifier(TestIdentifier.testBodyInput.rawValue)
                     }
-                    .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: Spacing.rowMargin, leading: Spacing.rowMargin, bottom: 0, trailing: Spacing.rowMargin))
 
                     Picker(selection: $model.selectedReport, label: EmptyView()) {
                         ForEach(ReportType.allCases.filter { $0 != .junkAndBlockSender }, id: \.rawValue) { reportType in
@@ -67,7 +67,7 @@ struct ReportMessageView: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                    .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: Spacing.rowMargin, leading: Spacing.rowMargin, bottom: Spacing.edge, trailing: Spacing.rowMargin))
 
                     ReportSubmitButton(phase: self.model.state.submitPhase) {
                         withAnimation {
@@ -76,7 +76,7 @@ struct ReportMessageView: View {
                         }
                     }
                     .listRowSeparator(.hidden)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, Spacing.item)
                     .disabled(self.model.text.isEmpty && self.model.sender.isEmpty)
                     .accessibilityIdentifier(TestIdentifier.testYourFiltersButton.rawValue)
                     .accessibilityHint("a11y_reportMessage_submitHint"~)
@@ -91,7 +91,7 @@ struct ReportMessageView: View {
                             .opacity(self.model.state.isResult ? 0 : 1)
 
                         Text(self.model.state.resultText ?? "")
-                            .font(.headline)
+                            .font(.emphasis)
                             .foregroundStyle(Color.primary)
                             .multilineTextAlignment(.center)
                             .entrance(isShown: self.model.state.isResult, delay: ReportMessageMotion.thanksDelay, rise: ReportMessageMotion.thanksRise)
@@ -116,7 +116,7 @@ struct ReportMessageView: View {
                                 dismiss()
                             } label: {
                                 Image(systemName: "xmark")
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.textSecondary)
                             }
                             .tint(.primary)
                             .accessibilityLabel("general_close"~)

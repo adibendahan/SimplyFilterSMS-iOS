@@ -27,7 +27,7 @@ private struct GlassPickerLabelStyle: LabelStyle {
     let isSelected: Bool
 
     func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: 4) {
+        HStack(spacing: Spacing.tight) {
             configuration.icon
                 .foregroundStyle(isSelected ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
             configuration.title
@@ -56,7 +56,7 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
                     content(option)
                         .labelStyle(GlassPickerLabelStyle(isSelected: selection == option))
                         .foregroundStyle(selection == option ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
-                        .font(.footnote.weight(selection == option ? .semibold : .regular))
+                        .font(.label.weight(selection == option ? .semibold : .regular))
                         .lineLimit(1)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .contentShape(Rectangle())
@@ -84,15 +84,15 @@ struct GlassPicker<T, Content: View>: View where T: CaseIterable & Identifiable 
             }
             .pickerStyle(.segmented)
         }
-        .frame(height: 36)
-        .padding(4)
+        .frame(height: SystemMetric.minTapTarget - Spacing.tight * 2)
+        .padding(Spacing.tight)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color(.tertiarySystemFill))
+            RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
+                .fill(Color.surfaceControl)
         )
     }
 
     private var chip: some View {
-        SelectedChip(cornerRadius: 10)
+        SelectedChip(cornerRadius: Radius.nested(in: Radius.medium, inset: Spacing.tight))
     }
 }

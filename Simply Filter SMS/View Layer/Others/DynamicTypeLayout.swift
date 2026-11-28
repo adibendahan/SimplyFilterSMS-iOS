@@ -9,9 +9,9 @@ import SwiftUI
 
 enum DynamicTypeLayout {
     static let stackedThreshold: DynamicTypeSize = .xxLarge
-    static let iconColumnWidth: CGFloat = 28
-    static let stackedSpacing: CGFloat = 8
-    static let stackedVerticalPadding: CGFloat = 4
+    static let iconColumnWidth: CGFloat = IconSize.column
+    static let stackedSpacing: CGFloat = Spacing.item
+    static let stackedVerticalPadding: CGFloat = Spacing.tight
 
     static func needsStackedLayout(_ size: DynamicTypeSize) -> Bool {
         size.isAccessibilitySize || size >= stackedThreshold
@@ -125,9 +125,9 @@ struct AdaptiveFlowRow<Content: View>: View {
 
     var body: some View {
         if needsStackedLayout {
-            VStack(alignment: .leading, spacing: 4, content: content)
+            VStack(alignment: .leading, spacing: Spacing.tight, content: content)
         } else {
-            HStack(alignment: .center, spacing: 4, content: content)
+            HStack(alignment: .center, spacing: Spacing.tight, content: content)
         }
     }
 }
@@ -150,20 +150,20 @@ struct FilterRowOptionChip: View {
     let systemName: String
     let isActive: Bool
 
-    @ScaledMetric(relativeTo: .subheadline) private var iconSize: CGFloat = 15
+    @ScaledMetric(relativeTo: .subheadline) private var iconSize: CGFloat = TextSize.description
 
     var body: some View {
-        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: Radius.small, style: .continuous)
         let icon = Image(systemName: systemName)
             .resizable()
             .aspectRatio(contentMode: .fit)
             .foregroundStyle(isActive ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
             .frame(width: iconSize, height: iconSize)
-            .padding(8)
+            .padding(Spacing.item)
         if #available(iOS 26.0, *) {
             icon.glassEffect(.regular, in: shape)
         } else {
-            icon.background(Color(.tertiarySystemFill), in: shape)
+            icon.background(Color.surfaceControl, in: shape)
         }
     }
 }
@@ -180,11 +180,11 @@ struct AdaptiveColumnHeader<Leading: View>: View {
         if needsStackedLayout {
             HStack(alignment: .top, spacing: DynamicTypeLayout.stackedSpacing) {
                 leadingAccessory()
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: Spacing.tight) {
                     Text(primary)
                     if !secondary.isEmpty {
                         Text(secondary)
-                            .if(secondaryIsMuted) { $0.foregroundColor(.secondary) }
+                            .if(secondaryIsMuted) { $0.foregroundColor(.textSecondary) }
                     }
                 }
             }
@@ -195,8 +195,8 @@ struct AdaptiveColumnHeader<Leading: View>: View {
                 if !secondary.isEmpty {
                     Spacer()
                     Text(secondary)
-                        .if(secondaryIsMuted) { $0.foregroundColor(.secondary) }
-                        .padding(.trailing, 8)
+                        .if(secondaryIsMuted) { $0.foregroundColor(.textSecondary) }
+                        .padding(.trailing, Spacing.item)
                 }
             }
         }

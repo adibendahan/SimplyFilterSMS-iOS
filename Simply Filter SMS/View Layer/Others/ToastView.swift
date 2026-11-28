@@ -120,7 +120,7 @@ struct ToastView: View {
     }
 
     private var compactLayout: some View {
-        HStack(alignment: .center, spacing: 8) {
+        HStack(alignment: .center, spacing: Spacing.item) {
             toastIcon
             textColumn
             actionButton
@@ -128,8 +128,8 @@ struct ToastView: View {
     }
 
     private var accessibilityLayout: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .top, spacing: 8) {
+        VStack(alignment: .leading, spacing: Spacing.item) {
+            HStack(alignment: .top, spacing: Spacing.item) {
                 toastIcon
                 textColumn
             }
@@ -141,7 +141,7 @@ struct ToastView: View {
     private var toastIcon: some View {
         Image(systemName: self.model.icon)
             .font(.body)
-            .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 0))
+            .padding(EdgeInsets(top: Spacing.item, leading: Spacing.item, bottom: Spacing.item, trailing: 0))
             .foregroundStyle(self.model.iconColor)
     }
 
@@ -149,13 +149,13 @@ struct ToastView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(self.model.title)
                 .font(.caption.bold())
-                .foregroundColor(.primary)
+                .foregroundColor(.text)
 
             Text(self.model.subtitle)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.textSecondary)
         }
-        .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 4))
+        .padding(EdgeInsets(top: Spacing.tight, leading: 0, bottom: Spacing.tight, trailing: Spacing.tight))
         .if(needsStackedLayout) { content in
             content
                 .fixedSize(horizontal: false, vertical: true)
@@ -169,10 +169,10 @@ struct ToastView: View {
         } label: {
             Text(self.model.buttonTitle)
                 .font(.caption.bold())
-                .foregroundColor(.primary)
+                .foregroundColor(.text)
         }
         .modifier(ToastActionButtonStyle())
-        .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+        .padding(EdgeInsets(top: Spacing.item, leading: Spacing.item, bottom: Spacing.item, trailing: Spacing.item))
     }
 
     private var dismissDragGesture: some Gesture {
@@ -307,23 +307,23 @@ struct ToastView: View {
         var iconColor: Color {
             switch self {
             case .offline:
-                return .red.opacity(0.4)
+                return .red.opacity(Opacity.soft)
             case .cloudSyncOperationComplete:
-                return .green.opacity(0.6)
+                return .green.opacity(Opacity.soft)
             case .filterListsUpdated:
-                return .indigo.opacity(0.6)
+                return .indigo.opacity(Opacity.soft)
             case .onClipboardSet:
-                return .primary.opacity(0.6)
+                return .primary.opacity(Opacity.soft)
             case .tipSuccessful:
-                return .pink.opacity(0.8)
+                return .pink.opacity(Opacity.soft)
             case .tipPromotion:
-                return .pink.opacity(0.8)
+                return .pink.opacity(Opacity.soft)
             case .enableReportingExtension, .stayReachable:
-                return .green.opacity(0.8)
+                return .green.opacity(Opacity.soft)
             case .filtersImported:
-                return .green.opacity(0.6)
+                return .green.opacity(Opacity.soft)
             case .filterImportFailed, .filterExportFailed, .saveFailed:
-                return .red.opacity(0.6)
+                return .red.opacity(Opacity.soft)
             }
         }
 
@@ -545,7 +545,7 @@ struct ToastView: View {
 }
 
 private struct ToastGlassBackground: ViewModifier {
-    private let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
+    private let shape = RoundedRectangle(cornerRadius: Radius.large, style: .continuous)
 
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {

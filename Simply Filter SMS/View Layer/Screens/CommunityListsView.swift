@@ -32,7 +32,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                                     collapseProgress: self.headerCollapse)
             }
             .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
+            .listRowInsets(EdgeInsets(top: 0, leading: Spacing.edge, bottom: Spacing.item, trailing: Spacing.edge))
             .listSectionSpacing(.compact)
 
             if !self.model.curatedRowViewModels.isEmpty {
@@ -130,7 +130,7 @@ struct CommunityListsView: View, ViewWithPersistentStoreReload {
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier(TestIdentifier.communityListDetails.rawValue)
                 .padding(.leading, self.detailsIndent)
-                .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 16, trailing: 20))
+                .listRowInsets(EdgeInsets(top: 0, leading: Spacing.rowMargin, bottom: Spacing.edge, trailing: Spacing.rowMargin))
                 .listRowSeparator(.hidden)
                 .deleteDisabled(true)
         }

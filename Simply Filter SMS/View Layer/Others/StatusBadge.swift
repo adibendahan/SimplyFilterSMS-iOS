@@ -37,8 +37,8 @@ struct StatusBadge: View {
                     StatusBadgeIcon(isOn: iconIsOn)
                 }
             }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 12)
+            .padding(.vertical, Spacing.item)
+            .padding(.horizontal, Spacing.item)
             .modifier(StatusBadgeModifier(isOn: roomIsOn, onColor: self.onColor))
         }
         .accessibilityElement(children: .ignore)
@@ -88,17 +88,15 @@ struct StatusLine: View {
     let text: String
     var onColor: Color = .green
 
-    @ScaledMetric(relativeTo: .caption2) private var iconSize: CGFloat = 8
-
     var body: some View {
         let statusColor = self.isOn ? self.onColor : Color.secondary
         let statusText = self.isOn ? "autoFilter_ON"~ : "autoFilter_OFF"~
         let shownText = self.isOn ? self.text : ""
         let spokenParts = [statusText, shownText].filter { !$0.isEmpty }
 
-        HStack(alignment: .center, spacing: 4) {
+        HStack(alignment: .center, spacing: Spacing.tight) {
             StatusBadgeIcon(isOn: self.isOn)
-                .font(.system(size: self.iconSize))
+                .imageScale(.small)
                 .foregroundStyle(statusColor)
             self.label(statusText: statusText, shownText: shownText, statusColor: statusColor)
                 .lineLimit(3)
@@ -195,7 +193,7 @@ private struct StatusBadgeModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         let badgeColor = self.isOn ? self.onColor : Color.secondary
-        let backgroundColor = self.isOn ? self.onColor.opacity(0.12) : Color(.tertiarySystemFill)
+        let backgroundColor = self.isOn ? self.onColor.opacity(Opacity.tintFill) : Color.surfaceControl
 
         content
             .foregroundStyle(badgeColor)

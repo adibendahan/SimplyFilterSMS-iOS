@@ -11,7 +11,9 @@ import SwiftUI
 //MARK: - View -
 struct FeatureStatusHeader: View {
 
-    @ScaledMetric(relativeTo: .largeTitle) private var iconSize: CGFloat = 76
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @ScaledMetric(relativeTo: .largeTitle) private var iconSizeRegular: CGFloat = IconSize.header
+    @ScaledMetric(relativeTo: .title2) private var iconSizeCompact: CGFloat = IconSize.headerLandscape
 
     let feature: Feature
     let isOn: Bool
@@ -21,23 +23,23 @@ struct FeatureStatusHeader: View {
     let collapseProgress: CGFloat
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: Spacing.tight) {
             self.icon
                 .font(.system(size: self.iconSize))
                 .scrollCollapse(progress: self.collapseProgress)
-                .padding(.bottom, 8)
+                .padding(.bottom, Spacing.item)
                 .accessibilityHidden(true)
 
             StatusBadge(isOn: self.isOn,
                         title: self.badgeTitle,
                         onWidthSamples: self.badgeOnWidthSamples,
                         offTitle: self.badgeOffTitle)
-            .font(.headline)
-            .padding(.bottom, 4)
+            .font(.emphasis)
+            .padding(.bottom, Spacing.tight)
 
             Text(.init(self.feature.description))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .font(.description)
+                .foregroundStyle(.primary)
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
@@ -46,6 +48,10 @@ struct FeatureStatusHeader: View {
 
 
     //MARK: - Private -
+    private var iconSize: CGFloat {
+        return self.verticalSizeClass == .compact ? self.iconSizeCompact : self.iconSizeRegular
+    }
+
     @ViewBuilder
     private var icon: some View {
         switch self.feature {

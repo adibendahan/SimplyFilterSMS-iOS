@@ -16,9 +16,9 @@ struct WhatsNewView: View {
 
     @ObservedObject var model: ViewModel
 
-    @ScaledMetric(relativeTo: .subheadline) private var iconWidth: CGFloat = 36
-    @ScaledMetric(relativeTo: .subheadline) private var iconSize: CGFloat = 30
-    @ScaledMetric(relativeTo: .subheadline) private var titleCapHeight: CGFloat = 10.57
+    @ScaledMetric(relativeTo: .subheadline) private var iconWidth: CGFloat = IconSize.column
+    @ScaledMetric(relativeTo: .subheadline) private var iconSize: CGFloat = IconSize.column
+    @ScaledMetric(relativeTo: .headline) private var titleCapHeight: CGFloat = CapHeight.emphasis
     @ScaledMetric(relativeTo: .largeTitle) private var heroCollapseDistance: CGFloat = 200
 
     @State private var hasAppeared = false
@@ -29,7 +29,7 @@ struct WhatsNewView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     WhatsNewOrbitView(entries: self.model.orbitEntries, hasAppeared: self.hasAppeared, collapse: self.heroCollapse)
-                        .padding(.top, 8)
+                        .padding(.top, Spacing.item)
 
                     if let currentSection = self.model.currentSection {
                         self.releaseSection(currentSection, startIndex: 0)
@@ -37,15 +37,15 @@ struct WhatsNewView: View {
 
                     if !self.model.earlierSections.isEmpty {
                         Divider()
-                            .padding(.top, 28)
-                            .padding(.horizontal, 28)
+                            .padding(.top, Spacing.rowMargin)
+                            .padding(.horizontal, Spacing.edge)
                             .rowEntrance(isShown: self.hasAppeared, index: self.currentEntryCount)
 
                         Text("whatsNew_earlierUpdates"~)
-                            .font(.title2.bold())
+                            .font(.heading)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 20)
-                            .padding(.horizontal, 32)
+                            .padding(.top, Spacing.rowMargin)
+                            .padding(.horizontal, Spacing.edge)
                             .accessibilityAddTraits(.isHeader)
                             .rowEntrance(isShown: self.hasAppeared, index: self.currentEntryCount)
 
@@ -54,11 +54,11 @@ struct WhatsNewView: View {
                         }
                     }
                 }
-                .padding(.bottom, 16)
+                .padding(.bottom, Spacing.edge)
             }
             .onScrollProgress(distance: self.heroCollapseDistance, progress: self.$heroCollapse)
             .modifier(BottomActionBar(bar: self.continueButton))
-            .background(Color(.systemGroupedBackground))
+            .background(Color.surfaceScreen)
             .navigationTitle("whatsNew_title"~)
             .modifier(AppNameSubtitle())
             .navigationBarTitleDisplayMode(.large)
@@ -98,36 +98,36 @@ struct WhatsNewView: View {
         }
         .buttonStyle(FilledButton())
         .accessibilityIdentifier(TestIdentifier.callToActionButton.rawValue)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Spacing.edge)
+        .padding(.vertical, Spacing.item)
     }
 
     private func releaseSection(_ section: ViewModel.ReleaseSection, startIndex: Int) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Spacing.item) {
             Text(section.title)
-                .font(.footnote.weight(.semibold))
-                .foregroundColor(.secondary)
+                .font(.label.weight(.semibold))
+                .foregroundColor(.textSecondary)
                 .textCase(.uppercase)
-                .padding(.horizontal, 32)
+                .padding(.horizontal, Spacing.edge)
                 .accessibilityAddTraits(.isHeader)
                 .rowEntrance(isShown: self.hasAppeared, index: startIndex)
 
             self.entryList(section.entries, startIndex: startIndex)
         }
-        .padding(.top, 20)
+        .padding(.top, Spacing.rowMargin)
     }
 
     private func entryList(_ entries: [WhatsNewEntry], startIndex: Int) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: Spacing.rowMargin) {
             ForEach(Array(entries.enumerated()), id: \.element) { offset, entry in
                 self.entryRow(entry, index: startIndex + offset)
             }
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, Spacing.edge)
     }
 
     private func entryRow(_ entry: WhatsNewEntry, index: Int) -> some View {
-        AdaptiveRow(compactAlignment: .firstTextBaseline, compactSpacing: 14) {
+        AdaptiveRow(compactAlignment: .firstTextBaseline, compactSpacing: Spacing.edge) {
             Image(systemName: entry.imageName)
                 .resizable()
                 .scaledToFit()
@@ -140,15 +140,15 @@ struct WhatsNewView: View {
                     dimensions[.top] + self.titleCapHeight
                 }
         } content: {
-            VStack(alignment: .leading, spacing: 2) {
-                VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: Spacing.tight) {
+                VStack(alignment: .leading, spacing: Spacing.tight) {
                     Text(entry.title)
-                        .font(.headline)
-                        .foregroundColor(.primary)
+                        .font(.emphasis)
+                        .foregroundColor(.text)
 
                     self.descriptionText(entry.description)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .font(.description)
+                        .foregroundColor(.text)
                 }
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityElement(children: .combine)
@@ -160,11 +160,11 @@ struct WhatsNewView: View {
                         self.dismiss()
                     } label: {
                         Text(actionTitle)
-                            .font(.subheadline.weight(.medium))
+                            .font(.description.weight(.medium))
                             .multilineTextAlignment(.leading)
                     }
                     .buttonStyle(.borderless)
-                    .padding(.top, 4)
+                    .padding(.top, Spacing.tight)
                 }
             }
         }
@@ -229,7 +229,7 @@ private struct BottomActionBar<Bar: View>: ViewModifier {
             content
                 .safeAreaInset(edge: .bottom) {
                     self.bar
-                        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+                        .background(Color.surfaceScreen.ignoresSafeArea())
                 }
         }
     }

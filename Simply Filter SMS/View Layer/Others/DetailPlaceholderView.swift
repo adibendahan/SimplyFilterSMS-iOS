@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DetailPlaceholderView: View {
 
-    @ScaledMetric(relativeTo: .largeTitle) private var placeholderIconSize: CGFloat = 60
+    @ScaledMetric(relativeTo: .largeTitle) private var placeholderIconSize: CGFloat = IconSize.header
 
     var body: some View {
         var symbol: String {
@@ -20,29 +20,29 @@ struct DetailPlaceholderView: View {
             }
         }
         
-        VStack(spacing: 20) {
+        VStack(spacing: Spacing.rowMargin) {
             Spacer()
             
             Image(systemName: "square.text.square")
                 .font(.system(size: placeholderIconSize))
-                .foregroundColor(.primary)
+                .foregroundColor(.text)
                 .accessibilityHidden(true)
             
             Text("placeholder_choose_title"~)
-                .font(.title2)
-                .foregroundColor(.primary)
+                .font(.heading)
+                .foregroundColor(.text)
             
-            VStack (spacing: 4) {
+            VStack (spacing: Spacing.tight) {
                 Text("placeholder_choose_detail"~)
                     .font(.body)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.text)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                 
-                AdaptiveStack(spacing: 4) {
+                AdaptiveStack(spacing: Spacing.tight) {
                     Text("placeholder_choose_sub_detail1"~)
                         .font(.body)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.text)
                         .multilineTextAlignment(.center)
 
                     Image(systemName: symbol)
@@ -51,7 +51,7 @@ struct DetailPlaceholderView: View {
 
                     Text("placeholder_choose_sub_detail2"~)
                         .font(.body)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.text)
                         .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity)

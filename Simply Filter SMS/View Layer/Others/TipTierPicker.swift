@@ -29,22 +29,18 @@ struct TipTierPicker: View {
 
     @Namespace private var chipNamespace
 
-    @ScaledMetric(relativeTo: .largeTitle) private var emojiSizeRegular: CGFloat = 38
-    @ScaledMetric(relativeTo: .title2) private var emojiSizeCompact: CGFloat = 24
-    @ScaledMetric(relativeTo: .body) private var segmentHeightRegular: CGFloat = 104
-    @ScaledMetric(relativeTo: .body) private var segmentHeightCompact: CGFloat = 64
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: Spacing.tight) {
             ForEach(Array(self.options.enumerated()), id: \.element.id) { index, option in
                 self.segment(for: option)
                     .entrance(isShown: self.isRevealed, delay: SegmentMotion.delay(for: index), rise: SegmentMotion.rise, scale: SegmentMotion.startScale, blur: SegmentMotion.blur, animation: SegmentMotion.animation)
             }
         }
-        .padding(4)
+        .padding(Spacing.tight)
         .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color(.tertiarySystemFill))
+            RoundedRectangle(cornerRadius: Radius.large, style: .continuous)
+                .fill(Color.surfaceControl)
         )
         .sensoryFeedback(.selection, trigger: self.selection)
         .accessibilityRepresentation {
@@ -62,14 +58,14 @@ struct TipTierPicker: View {
     //MARK: - Private -
     private func segment(for option: Option) -> some View {
         let isSelected = self.selection == option.tier
-        let emojiSize = self.isCompact ? self.emojiSizeCompact : self.emojiSizeRegular
-        let segmentHeight = self.isCompact ? self.segmentHeightCompact : self.segmentHeightRegular
+        let emojiFont: Font = self.isCompact ? .title2 : .largeTitle
+        let verticalPadding = self.isCompact ? Spacing.item : Spacing.edge
         return Button {
             self.select(option.tier)
         } label: {
-            VStack(spacing: self.isCompact ? 2 : 6) {
+            VStack(spacing: self.isCompact ? Spacing.tight : Spacing.item) {
                 Text(option.tier.emoji)
-                    .font(.system(size: emojiSize))
+                    .font(emojiFont)
                     .accessibilityHidden(true)
 
                 Text(option.displayPrice)
@@ -78,7 +74,8 @@ struct TipTierPicker: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
-            .frame(maxWidth: .infinity, minHeight: segmentHeight)
+            .padding(.vertical, verticalPadding)
+            .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
             .background {
                 if isSelected {
@@ -86,12 +83,12 @@ struct TipTierPicker: View {
                 }
             }
         }
-        .buttonStyle(TipTierButtonStyle())
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder
     private var selectedChip: some View {
-        let chip = SelectedChip(cornerRadius: 20)
+        let chip = SelectedChip(cornerRadius: Radius.nested(in: Radius.large, inset: Spacing.tight))
         if self.reduceMotion {
             chip
                 .transition(.opacity)
@@ -126,18 +123,5 @@ private enum SegmentMotion {
 
     static func delay(for index: Int) -> Double {
         return Stagger.delay(for: index, step: 0.06, base: 0.1)
-    }
-}
-
-
-//MARK: - Button Style -
-private struct TipTierButtonStyle: ButtonStyle {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect((self.reduceMotion || !configuration.isPressed) ? 1.0 : 0.95)
-            .opacity(configuration.isPressed ? 0.7 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
 }

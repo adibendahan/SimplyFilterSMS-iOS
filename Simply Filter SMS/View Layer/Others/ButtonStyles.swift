@@ -22,20 +22,20 @@ struct FilterBadge: View {
     var systemImage: String? = nil
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: Spacing.tight) {
             if let systemImage {
                 Image(systemName: systemImage)
-                    .font(.footnote)
+                    .font(.label)
                     .accessibilityHidden(true)
             }
             Text(text)
-                .font(.footnote)
+                .font(.label)
                 .fontWeight(.medium)
         }
         .foregroundColor(color)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(color.opacity(0.12))
+        .padding(.horizontal, Spacing.item)
+        .padding(.vertical, Spacing.tight)
+        .background(color.opacity(Opacity.tintFill))
         .clipShape(Capsule())
         .accessibilityElement(children: .combine)
     }
@@ -52,7 +52,7 @@ struct OutlineButton: ButtonStyle {
             .foregroundStyle(configuration.isPressed ? AnyShapeStyle(.gray) : AnyShapeStyle(.tint))
             .padding()
             .background(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                RoundedRectangle(cornerRadius: Radius.small, style: .continuous)
                     .stroke(.tint)
             )
     }
@@ -65,12 +65,12 @@ struct AccessibleTextButtonStyle: ButtonStyle {
         configuration.label
             .foregroundStyle(.tint)
             .fixedSize(horizontal: true, vertical: false)
-            .padding(.vertical, showButtonShapes ? 4 : 0)
-            .padding(.horizontal, showButtonShapes ? 8 : 0)
+            .padding(.vertical, showButtonShapes ? Spacing.tight : 0)
+            .padding(.horizontal, showButtonShapes ? Spacing.item : 0)
             .background {
                 if showButtonShapes {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(.tint.opacity(0.12))
+                    RoundedRectangle(cornerRadius: Radius.small, style: .continuous)
+                        .fill(.tint.opacity(Opacity.tintFill))
                 }
             }
     }

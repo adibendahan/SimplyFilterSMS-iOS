@@ -24,11 +24,9 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 
     @ObservedObject var model: ViewModel
 
-    @ScaledMetric(relativeTo: .title) private var shieldIconSize: CGFloat = 34
-    @ScaledMetric(relativeTo: .title2) private var filterListsTitleSize: CGFloat = 22
-    @ScaledMetric(relativeTo: .caption2) private var statusLineGap: CGFloat = 4
-    @ScaledMetric(relativeTo: .body) private var emojiIconSize: CGFloat = 16
-    @ScaledMetric(relativeTo: .caption) private var secondLineRowSqueeze: CGFloat = 8.5
+    @ScaledMetric(relativeTo: .largeTitle) private var shieldIconSize: CGFloat = IconSize.featureMark
+    @ScaledMetric(relativeTo: .caption2) private var statusLineGap: CGFloat = Spacing.tight
+    @ScaledMetric(relativeTo: .caption) private var secondLineRowSqueeze: CGFloat = LayoutOffset.rowHeightMatch
 
     @State private var dynamicEmojis: [String: String] = [:]
     @State private var selectedScreen: Screen? = nil
@@ -44,17 +42,17 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                     AdaptiveRow {
                         AIFilteringShieldIcon(isGlinting: self.model.hasActiveFilterLists && !self.model.isAllUnknownFilteringOn)
                         .font(.system(size: shieldIconSize))
-                        .frame(width: shieldIconSize + 4, alignment: .center)
+                        .frame(width: shieldIconSize + Spacing.tight, alignment: .center)
                         .accessibilityHidden(true)
                     } content: {
                         filterListsTextColumn
                     }
-                    .padding(.vertical, 12)
+                    .padding(.vertical, Spacing.edge)
                     .sidebarNavigationRow(screen: screen, isRegular: horizontalSizeClass == .regular) {
                         model.navigationScreen = screen
                     }
-                        .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 20))
-                        .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
+                        .listRowInsets(EdgeInsets(top: 0, leading: LayoutOffset.shieldAlign, bottom: 0, trailing: Spacing.rowMargin))
+                        .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == screen ? self.selectedRowColor : Color.surfaceRow) : nil)
                         .accessibility(identifier: TestIdentifier.filterListsLink.rawValue)
                         .accentColor(Color(.tertiaryLabel))
                 } header: {
@@ -74,7 +72,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         .if(rule.isDestructive) { $0.tint(.red) }
                         .disabled(isDisabled)
                         .if(hasSecondLine(index: index, rule: rule)) { $0.padding(.vertical, -self.secondLineRowSqueeze) }
-                        .listRowBackground(Color(UIColor.secondarySystemGroupedBackground))
+                        .listRowBackground(Color.surfaceRow)
                         .revealHighlight(isRevealed: self.model.revealedSmartFilter == rule)
                         .if(rule.subtitle != nil) {
                             $0.accessibilityHint(String(format: "a11y_home_shortSenderHint"~, self.model.shortSenderChoice))
@@ -97,7 +95,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         .sidebarNavigationRow(screen: .communityLists, isRegular: horizontalSizeClass == .regular) {
                             model.navigationScreen = .communityLists
                         }
-                        .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == .communityLists ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
+                        .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == .communityLists ? self.selectedRowColor : Color.surfaceRow) : nil)
                         .disabled(self.model.isAllUnknownFilteringOn)
                         .accessibilityIdentifier(TestIdentifier.communityListsLink.rawValue)
                         .accentColor(Color(.tertiaryLabel))
@@ -107,7 +105,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                         .sidebarNavigationRow(screen: filterType.screen, isRegular: horizontalSizeClass == .regular) {
                             model.navigationScreen = filterType.screen
                         }
-                        .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == filterType.screen ? Color.primary.opacity(0.08) : Color(UIColor.secondarySystemGroupedBackground)) : nil)
+                        .listRowBackground(horizontalSizeClass == .regular ? (model.navigationScreen == filterType.screen ? self.selectedRowColor : Color.surfaceRow) : nil)
                         .disabled(self.model.isAllUnknownFilteringOn && filterType != .allow)
                         .accessibilityIdentifier(filterType.testIdentifier.rawValue)
                         .accentColor(Color(.tertiaryLabel))
@@ -258,10 +256,14 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
     }
 
     @ViewBuilder
+    private var selectedRowColor: Color {
+        return (self.model.customAccent ?? Color.accentColor).highlight()
+    }
+
     private var filterListsTextColumn: some View {
         VStack(alignment: .leading, spacing: self.statusLineGap) {
             Text("autoFilter_title"~)
-                .font(.system(size: filterListsTitleSize, weight: .bold, design: .rounded))
+                .font(.system(.title2, design: .rounded, weight: .bold))
                 .fixedSize(horizontal: false, vertical: true)
 
             StatusLine(isOn: self.model.hasActiveFilterLists, text: self.model.subtitle)
@@ -279,7 +281,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 
     @ViewBuilder
     private func smartFilterLabel(index: Int, rule: SmartFilterType, isDisabled: Bool) -> some View {
-        HStack(alignment: .center, spacing: 8) {
+        HStack(alignment: .center, spacing: Spacing.item) {
             smartFilterIcon(index: index, rule: rule, isDisabled: isDisabled)
 
             smartFilterTextColumn(index: index, rule: rule, isDisabled: isDisabled)
@@ -297,15 +299,15 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
                 dynamicEmojis[ruleKey] = EmojiGenerator.randomEmoji()
             } label: {
                 Text(currentEmoji)
-                    .opacity(isDisabled ? 0.5 : 1)
-                    .font(.system(size: emojiIconSize))
+                    .opacity(isDisabled ? Opacity.dim : 1)
+                    .font(.callout)
             }
             .buttonStyle(.plain)
             .disabled(isDisabled)
             .adaptiveIconColumn()
         } else {
             Image(systemName: rule.icon)
-                .foregroundColor(rule.iconColor.opacity(isDisabled ? 0.5 : 1))
+                .foregroundColor(rule.iconColor.opacity(isDisabled ? Opacity.dim : 1))
                 .font(.body.weight(rule.iconWeight))
                 .bounceOnAppear(isShown: self.model.revealedSmartFilter == rule, delay: SearchMotion.revealBounceDelay, bouncesOnTap: true)
                 .adaptiveIconColumn()
@@ -314,10 +316,10 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
 
     @ViewBuilder
     private func smartFilterTextColumn(index: Int, rule: SmartFilterType, isDisabled: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: Spacing.tight) {
             let color = rule.isDestructive && model.rules[index].state ? Color.red : .primary
             Text(rule.title)
-                .foregroundColor(color.opacity(isDisabled ? 0.5 : 1))
+                .foregroundColor(color.opacity(isDisabled ? Opacity.dim : 1))
                 .fixedSize(horizontal: false, vertical: true)
 
             if let subtitle = rule.subtitle,
@@ -345,7 +347,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         AdaptiveFlowRow {
             Text(subtitle)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             Menu {
@@ -371,7 +373,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         AdaptiveFlowRow {
             Text(self.model.selectedCountriesSummary)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             Button {
@@ -399,7 +401,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         } trailing: {
             Text(activeCount)
                 .textCase(.uppercase)
-                .foregroundColor(.secondary)
+                .foregroundColor(.textSecondary)
                 .font(.caption)
                 .limitedDynamicTypeSize()
         }
@@ -419,7 +421,7 @@ struct AppHomeView: View, ViewWithPersistentStoreReload {
         } trailing: {
             Text(activeCount)
                 .textCase(.uppercase)
-                .foregroundColor(.secondary)
+                .foregroundColor(.textSecondary)
                 .font(.caption)
                 .limitedDynamicTypeSize()
         }

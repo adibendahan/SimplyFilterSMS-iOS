@@ -16,9 +16,9 @@ struct TipJarView: View {
     @Environment(\.verticalSizeClass)
     var verticalSizeClass
 
-    @ScaledMetric(relativeTo: .largeTitle) private var heartSizeRegular: CGFloat = 64
-    @ScaledMetric(relativeTo: .title2) private var heartSizeCompact: CGFloat = 32
-    @ScaledMetric(relativeTo: .title) private var signatureHeight: CGFloat = 27
+    @ScaledMetric(relativeTo: .largeTitle) private var heartSizeRegular: CGFloat = IconSize.header
+    @ScaledMetric(relativeTo: .title2) private var heartSizeCompact: CGFloat = IconSize.headerLandscape
+    @ScaledMetric(relativeTo: .title) private var signatureHeight: CGFloat = IconSize.signature
 
     @StateObject var model: ViewModel
 
@@ -42,11 +42,11 @@ struct TipJarView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         self.headerSection
-                        Spacer(minLength: self.isCompact ? 12 : 24)
+                        Spacer(minLength: self.isCompact ? Spacing.item : Spacing.rowMargin)
                         self.tipSection
                         self.footerSection
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, Spacing.rowMargin)
                     .frame(minHeight: geometry.size.height)
                 }
             }
@@ -83,12 +83,12 @@ struct TipJarView: View {
                 .breathe()
                 .bounceOnAppear(isShown: self.hasAppeared, delay: TipJarMotion.heartBounceDelay)
                 .strokeRippleOnTap(systemName: "heart", color: .red)
-                .padding(.vertical, self.isCompact ? 4 : 20)
+                .padding(.vertical, self.isCompact ? Spacing.tight : Spacing.rowMargin)
                 .entrance(isShown: self.hasAppeared, delay: TipJarMotion.heartDelay, rise: 0, scale: TipJarMotion.heartStartScale, blur: TipJarMotion.heartBlur, animation: TipJarMotion.heartAnimation)
 
             VStack(spacing: 0) {
                 Text("tipJar_header"~)
-                    .font(self.isCompact ? .headline : .title2.bold())
+                    .font(self.isCompact ? .emphasis : .heading)
                     .multilineTextAlignment(.center)
 
                 Text("tipJar_subheader"~)
@@ -96,8 +96,8 @@ struct TipJarView: View {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
+                    .padding(.horizontal, Spacing.rowMargin)
+                    .padding(.top, Spacing.item)
             }
             .settle(isShown: self.hasAppeared, delay: TipJarMotion.textDelay)
 
@@ -108,28 +108,28 @@ struct TipJarView: View {
                 .foregroundStyle(.tint)
                 .writeOn(isShown: self.hasAppeared, delay: TipJarMotion.signatureDelay, duration: TipJarMotion.signatureDuration)
                 .frame(maxWidth: .infinity, alignment: .trailing)
-                .padding(.horizontal, 20)
+                .padding(.horizontal, Spacing.rowMargin)
                 .accessibilityHidden(true)
         }
     }
 
     @ViewBuilder
     private var tipSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Spacing.item) {
             Text("tipJar_chooseATip"~)
-                .font(.footnote)
-                .foregroundColor(.secondary)
+                .font(.label)
+                .foregroundColor(.textSecondary)
                 .textCase(.uppercase)
-                .padding(.leading, 4)
+                .padding(.leading, Spacing.tight)
                 .settle(isShown: self.hasAppeared, delay: TipJarMotion.pickerDelay)
 
             if !self.model.isLoading && self.model.options.isEmpty {
                 Text("tipJar_unavailable"~)
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.textSecondary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 20)
+                    .padding(.vertical, Spacing.rowMargin)
                     .transition(.opacity)
             } else {
                 TipTierPicker(options: self.model.options, selection: self.$model.selectedTier, isCompact: self.isCompact, isRevealed: self.isTipContentRevealed)
@@ -144,11 +144,11 @@ struct TipJarView: View {
                     .settle(isShown: self.hasAppeared, delay: TipJarMotion.pickerDelay)
 
                 self.tierCaption
-                    .padding(.top, 4)
+                    .padding(.top, Spacing.tight)
                     .settle(isShown: self.isTipContentRevealed, delay: TipJarMotion.captionDelay)
 
                 self.tipButton
-                    .padding(.top, 8)
+                    .padding(.top, Spacing.item)
                     .settle(isShown: self.isTipContentRevealed, delay: TipJarMotion.buttonDelay)
             }
         }
@@ -158,8 +158,8 @@ struct TipJarView: View {
         let tier = self.model.selectedTier
         return ZStack {
             Text("\(tier.displayName) · \(tier.tierDescription)")
-                .font(self.isCompact ? .footnote : .subheadline)
-                .foregroundColor(.secondary)
+                .font(self.isCompact ? .label : .description)
+                .foregroundColor(.textSecondary)
                 .adaptiveLineLimit(1)
                 .minimumScaleFactor(0.8)
                 .id(tier)
@@ -176,7 +176,7 @@ struct TipJarView: View {
             Text(String(format: "tipJar_tipButton"~, self.model.selectedDisplayPrice))
                 .contentTransition(.numericText())
                 .spinnerSwap(isActive: self.model.isPurchasing, tint: .white)
-                .font(.headline)
+                .font(.emphasis)
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(FilledButton())
@@ -187,13 +187,13 @@ struct TipJarView: View {
     private var footerSection: some View {
         Text("tipJar_footer"~)
             .font(.caption)
-            .foregroundColor(.secondary)
+            .foregroundColor(.textSecondary)
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
             .limitedDynamicTypeSize()
             .frame(maxWidth: .infinity)
-            .padding(.top, 12)
-            .padding(.bottom, 16)
+            .padding(.top, Spacing.item)
+            .padding(.bottom, Spacing.edge)
             .settle(isShown: self.isTipContentRevealed, delay: TipJarMotion.footerDelay)
     }
 }

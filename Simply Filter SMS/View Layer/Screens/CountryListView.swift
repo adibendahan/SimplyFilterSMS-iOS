@@ -25,10 +25,10 @@ struct CountryListView: View {
         List {
             Section {
                 Text(.init("autoFilter_countryAllowlist_explanation"~))
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .font(.label)
+                    .foregroundColor(.textSecondary)
                     .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 0))
+                    .listRowInsets(EdgeInsets(top: Spacing.edge, leading: 0, bottom: Spacing.edge, trailing: 0))
             }
 
             let selected = model.selectedEntries
@@ -55,7 +55,7 @@ struct CountryListView: View {
             if unselected.isEmpty && selected.isEmpty {
                 Section {
                     Text("general_noResults"~)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondary)
                 }
             }
         }
@@ -71,7 +71,7 @@ struct CountryListView: View {
                     dismiss()
                 } label: {
                     Image(systemName: "xmark")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondary)
                 }
                 .tint(.primary)
                 .accessibilityLabel("general_close"~)
@@ -93,12 +93,12 @@ struct CountryListView: View {
                     .accessibilityHidden(true)
                     .adaptiveIconColumn()
             } content: {
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: Spacing.tight) {
                     Text(entry.displayName)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.text)
                     Text(entry.callingCode)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondary)
                 }
             } trailing: {
                 if model.isSelected(entry) {

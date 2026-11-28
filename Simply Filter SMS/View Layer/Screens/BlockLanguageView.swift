@@ -28,7 +28,7 @@ struct BlockLanguageView: View, ViewWithPersistentStoreReload {
                                 dismiss()
                             } label: {
                                 Text(localizedName)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.text)
                             }
                         }
                     }
@@ -47,7 +47,7 @@ struct BlockLanguageView: View, ViewWithPersistentStoreReload {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondary)
                     }
                     .tint(.primary)
                     .accessibilityLabel("general_close"~)

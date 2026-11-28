@@ -34,43 +34,43 @@ struct FilterTesterView: View {
                         Text("testFilters_senderTitle"~)
                             .font(.caption)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondary)
                             .accessibilityHidden(true)
 
                         TextField("", text: $model.sender)
                             .focused($focusedField, equals: .sender)
                             .autocorrectionDisabled()
-                            .padding(.top, 16)
+                            .padding(.top, Spacing.edge)
                             .accessibilityLabel("testFilters_senderTitle"~)
                             .accessibilityIdentifier(TestIdentifier.testSenderInput.rawValue)
                     }
-                    .listRowInsets(EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: Spacing.edge, leading: Spacing.rowMargin, bottom: Spacing.edge, trailing: Spacing.rowMargin))
 
                     VStack(alignment: .leading, spacing: 0) {
                         ZStack(alignment: .top) {
                             Text("testFilters_messageTitle"~)
                                 .font(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.textSecondary)
                                 .accessibilityHidden(true)
 
                             TextField("", text: $model.text, axis: .vertical)
                                 .lineLimit(4...)
                                 .autocorrectionDisabled()
                                 .focused($focusedField, equals: .text)
-                                .padding(.top, 16)
+                                .padding(.top, Spacing.edge)
                                 .accessibilityLabel("testFilters_messageTitle"~)
                                 .accessibilityIdentifier(TestIdentifier.testBodyInput.rawValue)
                         }
 
                         if let result = self.model.result {
                             FilterTesterResultRow(result: result)
-                                .padding(.top, 16)
+                                .padding(.top, Spacing.edge)
                                 .id(result.action.rawValue)
                                 .transition(.opacity)
                         }
                     }
-                    .listRowInsets(EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: Spacing.edge, leading: Spacing.rowMargin, bottom: Spacing.edge, trailing: Spacing.rowMargin))
                 } footer: {
                     Text("testFilters_footer"~)
                 }
@@ -93,7 +93,7 @@ struct FilterTesterView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondary)
                     }
                     .tint(.primary)
                     .accessibilityLabel("general_close"~)

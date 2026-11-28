@@ -24,7 +24,7 @@ struct AddCommunityListView: View {
             List {
                 if !self.isPreviewRevealed {
                     Section {
-                        HStack(spacing: 8) {
+                        HStack(spacing: Spacing.item) {
                             TextField("https://", text: $model.urlText)
                                 .accessibilityLabel("a11y_communityLists_urlField"~)
                                 .keyboardType(.URL)
@@ -94,7 +94,7 @@ struct AddCommunityListView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondary)
                     }
                     .tint(.primary)
                     .accessibilityLabel("general_close"~)

@@ -43,7 +43,7 @@ struct FilterTransferPreviewView: View {
                     Text(self.model.sectionTitle)
                         .accessibilityAddTraits(.isHeader)
                 } footer: {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Spacing.tight) {
                         Text(self.model.subtitle)
 
                         if self.model.kind == .importFilters, self.model.preview.duplicateCount > 0 {
@@ -65,7 +65,7 @@ struct FilterTransferPreviewView: View {
                         self.dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondary)
                     }
                     .tint(.primary)
                     .accessibilityLabel("general_close"~)
@@ -109,21 +109,21 @@ struct FilterTransferTypeRow: View {
         } content: {
             VStack(alignment: .leading, spacing: 0) {
                 Text(filterType.name)
-                    .padding(.leading, 8)
+                    .padding(.leading, Spacing.item)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if self.willClear {
                     Text("\(Image(systemName: "exclamationmark.triangle.fill")) \("importFilters_willClear"~)")
                         .font(.caption)
                         .foregroundColor(.red)
-                        .padding(.leading, 8)
+                        .padding(.leading, Spacing.item)
                 }
             }
         } trailing: {
             Text(activeCount)
                 .contentTransition(.numericText(value: Double(self.count)))
                 .textCase(.uppercase)
-                .foregroundColor(.secondary)
+                .foregroundColor(.textSecondary)
                 .font(Font.caption)
                 .limitedDynamicTypeSize()
         }
@@ -219,7 +219,7 @@ struct FilterTransferCandidateListView: View {
         } content: {
             Text(candidate.text)
                 .font(candidate.filterMatching == .regex ? .system(.body, design: .monospaced) : .body)
-                .foregroundColor(.primary)
+                .foregroundColor(.text)
                 .fixedSize(horizontal: false, vertical: true)
         } trailing: {
             HStack {

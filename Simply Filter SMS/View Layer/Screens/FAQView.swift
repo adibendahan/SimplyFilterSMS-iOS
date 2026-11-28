@@ -24,16 +24,16 @@ struct FAQView: View {
                 ForEach(self.model.visibleItems, id: \.self) { item in
                     DisclosureGroup(isExpanded: self.expansion(item)) {
                         Text(self.answerText(for: item))
-                        .font(.footnote.weight(.regular))
-                        .foregroundColor(.primary)
-                        .padding(.leading, -20)
-                        .padding(.bottom, 4)
+                        .font(.label.weight(.regular))
+                        .foregroundColor(.text)
+                        .padding(.leading, LayoutOffset.disclosureFlush)
+                        .padding(.bottom, Spacing.tight)
                         .listRowSeparator(.hidden)
                         .accessibilityIdentifier("\(TestIdentifier.faqAnswer.rawValue)-\(item.rawValue)")
                     } label: {
                         Text(AttributedString(item.question).highlighting(self.model.searchTerm))
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(.primary)
+                            .font(.description.weight(.semibold))
+                            .foregroundColor(.text)
                             .multilineTextAlignment(.leading)
                     }
                     .accessibilityHint("a11y_faq_answerHint"~)
@@ -51,7 +51,7 @@ struct FAQView: View {
             if self.model.visibleItems.isEmpty {
                 Section {
                     Text("general_noResults"~)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondary)
                 }
             }
         }
